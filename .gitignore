@@ -6,3 +6,5 @@
 /build
 /captures
 .externalNativeBuild
+/release
+/tmp
