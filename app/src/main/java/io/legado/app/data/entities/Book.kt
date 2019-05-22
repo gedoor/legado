@@ -1,9 +1,9 @@
 package io.legado.app.data.entities
 
+import android.annotation.SuppressLint
 import android.os.Parcelable
 import androidx.room.*
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
 @Entity(tableName = "books",
@@ -18,9 +18,10 @@ data class Book(@PrimaryKey
                 var introduction: String? = null,
                 var charset: String? = null,
                 var type: Int = 0,   // 0: text, 1: audio
+                var group: Int = 0,  // fenqu
                 var latestChapterName: String? = null,
-                var lastUpdateTime: Date? = null,
-                var latestChapterTime: Date? = null,
+                var lastUpdateTime: Long? = null,
+                var latestChapterTime: Long? = null,
                 var durChapterIndex: Int = 0,
                 var durChapterPage: Int = 0,
                 var totalChapterNum: Int = 0,
