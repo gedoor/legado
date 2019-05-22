@@ -1,4 +1,4 @@
-package io.legado.book
+package io.legado.app
 
 import org.junit.Test
 
