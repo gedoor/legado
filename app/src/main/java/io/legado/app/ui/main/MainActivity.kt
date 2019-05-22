@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { it.longSnackbar(R.string.action) }
+        fab.setOnClickListener { it.longSnackbar(R.string.app_name) }
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
