@@ -26,7 +26,7 @@
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <activity
-                android:name="io.legado.app.view.MainActivity"
+                android:name="io.legado.app.ui.main.MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

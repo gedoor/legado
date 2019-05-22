@@ -1,4 +1,4 @@
-package io.legado.app.view
+package io.legado.app.ui.main
 
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
