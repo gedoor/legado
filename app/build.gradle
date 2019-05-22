@@ -9,6 +9,9 @@ androidExtensions {
 
 android {
     compileSdkVersion 28
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "io.legado.app"
         minSdkVersion 21
