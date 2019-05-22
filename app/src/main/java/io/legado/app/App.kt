@@ -4,8 +4,10 @@ import android.app.Application
 
 class App : Application() {
 
-    companion object{
+    companion object {
+        @JvmStatic
         lateinit var INSTANCE: App
+            private set
     }
 
     override fun onCreate() {
