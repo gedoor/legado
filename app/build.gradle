@@ -36,11 +36,12 @@ dependencies {
 
     implementation 'androidx.paging:paging-runtime:2.1.0'
 
+    //anko
     def anko_version = '0.10.8'
     implementation "org.jetbrains.anko:anko-sdk27:$anko_version"
     implementation "org.jetbrains.anko:anko-sdk27-listeners:$anko_version"
-
-
+    //协程
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
