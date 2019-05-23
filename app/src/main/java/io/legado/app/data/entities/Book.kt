@@ -20,7 +20,7 @@ data class Book(@PrimaryKey
                 var description: String? = null,            // 简介内容(书源获取)
                 var customDescription: String? = null,      // 简介内容(用户修改)
                 var charset: String? = null,                // 自定义字符集名称(仅适用于本地书籍)
-                var type: Int = 0,                          // 0: 文本读物, 1: 有声读物, 3: 本地书籍
+                var type: Int = 0,                          // 0: 文本读物, 1: 有声读物
                 var group: Int = 0,                         // 自定义分组索引号
                 var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
                 var latestChapterTitle: String? = null,     // 最新章节标题
