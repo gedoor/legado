@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data class=".search.SearchDataBinding">
+    <data class=".ui.search.SearchDataBinding">
         <variable name="SearchViewModel" type="io.legado.app.ui.search.SearchViewModel"/>
     </data>
 

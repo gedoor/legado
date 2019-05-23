@@ -5,27 +5,24 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.navigation.NavigationView
 import io.legado.app.R
+import io.legado.app.base.BaseActivity
 import io.legado.app.ui.search.SearchActivity
-import io.legado.app.utils.longSnackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import org.jetbrains.anko.startActivity
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity<MainDataBinding, MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
+    override val viewModel: MainViewModel
+        get() = ViewModelProvider.AndroidViewModelFactory.getInstance(application).create(MainViewModel::class.java)
+    override val layoutID: Int
+        get() = R.layout.activity_main
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
-
         fab.setOnClickListener { startActivity(Intent(this, SearchActivity::class.java)) }
 
         val toggle = ActionBarDrawerToggle(
@@ -37,7 +34,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        val mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
     }
 
     override fun onBackPressed() {
@@ -55,14 +51,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onCompatOptionsItemSelected(item)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
