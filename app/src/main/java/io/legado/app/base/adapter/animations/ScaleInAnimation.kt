@@ -1,9 +1,8 @@
-package io.legado.app.base.animations
+package io.legado.app.base.adapter.animations
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.view.View
-import io.legado.app.base.adapter.animations.BaseAnimation
 
 
 class ScaleInAnimation @JvmOverloads constructor(private val mFrom: Float = DEFAULT_SCALE_FROM) : BaseAnimation {

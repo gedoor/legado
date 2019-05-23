@@ -29,6 +29,8 @@
         </attr>
     </declare-styleable>
 
+    <attr name="titleBarStyle" format="reference" />
+
     <declare-styleable name="DynamicFrameLayout">
         <attr name="errorSrc" format="reference" />
         <attr name="emptySrc" format="reference" />

@@ -15,7 +15,6 @@ class SearchActivity : BaseActivity<SearchDataBinding, SearchViewModel>() {
         get() = R.layout.activity_search
 
     override fun onViewModelCreated(viewModel: SearchViewModel, savedInstanceState: Bundle?) {
-
     }
 
 }

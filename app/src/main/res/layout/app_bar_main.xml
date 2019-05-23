@@ -7,19 +7,10 @@
         android:layout_height="match_parent"
         tools:context=".ui.main.MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-            android:layout_height="wrap_content"
+    <io.legado.app.ui.widget.TitleBar
+            android:id="@+id/titleBar"
             android:layout_width="match_parent"
-            android:theme="@style/AppTheme.AppBarOverlay">
-
-        <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
-
-    </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="wrap_content"/>
 
     <include layout="@layout/content_main"/>
 

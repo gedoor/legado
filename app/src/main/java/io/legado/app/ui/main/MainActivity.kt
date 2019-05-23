@@ -14,6 +14,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.ui.search.SearchActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.view_titlebar.*
 
 class MainActivity : BaseActivity<MainDataBinding, MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
     override val viewModel: MainViewModel
@@ -22,11 +23,10 @@ class MainActivity : BaseActivity<MainDataBinding, MainViewModel>(), NavigationV
         get() = R.layout.activity_main
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
         fab.setOnClickListener { startActivity(Intent(this, SearchActivity::class.java)) }
 
         val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar,
+            this, drawer_layout, titleBar.toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )

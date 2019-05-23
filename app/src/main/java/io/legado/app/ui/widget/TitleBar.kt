@@ -5,7 +5,10 @@ import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
@@ -13,11 +16,16 @@ import kotlinx.android.synthetic.main.view_titlebar.view.*
 
 class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
 
+    val toolbar: Toolbar
+    val menu: Menu
+        get() = toolbar.menu
+
     init {
         inflate(context, R.layout.view_titlebar, this)
+        toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.TitleBar,
-            0, 0
+            R.attr.titleBarStyle, 0
         )
         val navigationIcon = a.getDrawable(R.styleable.TitleBar_navigationIcon)
         val navigationContentDescription = a.getText(R.styleable.TitleBar_navigationContentDescription)
@@ -40,13 +48,15 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
     }
 
+    fun setNavigationOnClickListener(clickListener: ((View) -> Unit)){
+        toolbar.setNavigationOnClickListener(clickListener)
+    }
+
     private fun attachToActivity(context: Context) {
         val activity = getCompatActivity(context)
         activity?.let {
             activity.setSupportActionBar(toolbar)
-            activity.supportActionBar?.let {
-                it.setDisplayHomeAsUpEnabled(true)
-            }
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
     }
 
