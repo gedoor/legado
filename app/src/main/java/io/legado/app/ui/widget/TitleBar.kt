@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.View
+import androidx.annotation.ColorInt
+import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
@@ -77,6 +79,38 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
 
     fun setNavigationOnClickListener(clickListener: ((View) -> Unit)){
         toolbar.setNavigationOnClickListener(clickListener)
+    }
+
+    fun setTitle(title: CharSequence?) {
+        toolbar.title = title
+    }
+
+    fun setTitle(titleId: Int) {
+        toolbar.setTitle(titleId)
+    }
+
+    fun setSubTitle(subtitle: CharSequence?) {
+        toolbar.subtitle = subtitle
+    }
+
+    fun setSubTitle(subtitleId: Int) {
+        toolbar.setSubtitle(subtitleId)
+    }
+
+    fun setTitleTextColor(@ColorInt color: Int){
+        toolbar.setTitleTextColor(color)
+    }
+
+    fun setTitleTextAppearance(@StyleRes resId: Int){
+        toolbar.setTitleTextAppearance(context, resId)
+    }
+
+    fun setSubTitleTextColor(@ColorInt color: Int){
+        toolbar.setSubtitleTextColor(color)
+    }
+
+    fun setSubTitleTextAppearance(@StyleRes resId: Int){
+        toolbar.setSubtitleTextAppearance(context, resId)
     }
 
     private fun attachToActivity(context: Context) {
