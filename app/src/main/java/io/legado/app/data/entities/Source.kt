@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -8,11 +9,12 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Entity(tableName = "sources",
-    indices = [(Index(value = ["id"]))])
-data class Source(@PrimaryKey
+    indices = [(Index(value = ["sourceId"]))])
+data class Source(@PrimaryKey(autoGenerate = true)
+                  @ColumnInfo(name = "sourceId")
                   var id: Int = 0,                          // 编号
-                  var host: String = "",                    // 地址，包括 http/https
                   var name: String = "",                    // 名称
+                  var origin: String = "",                    // 地址，包括 http/https
                   var type: Int = 0,                        // 类型，0 文本，1 音频
                   var group: String? = null,                // 分组
                   var header: String? = null,               // header
