@@ -16,8 +16,8 @@ data class ReplaceRule(
                 val pattern: String? = null,
                 val replacement: String? = null,
                 val scope: String? = null,
-                val isEnabled: Boolean? = null,
-                val isRegex: Boolean? = null,
+                val isEnabled: Boolean = true,
+                val isRegex: Boolean = true,
                 val order: Int = 0
 ) : Parcelable
 
