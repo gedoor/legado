@@ -22,7 +22,9 @@ abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatAct
         onViewModelCreated(viewModel, savedInstanceState)
     }
 
-    abstract fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?)
+    open fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?){
+
+    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {

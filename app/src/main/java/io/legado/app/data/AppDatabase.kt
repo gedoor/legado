@@ -13,7 +13,7 @@ import io.legado.app.data.entities.ReplaceRule
 import javax.xml.transform.Source
 
 
-@Database(entities = [Book::class, Chapter::class, ReplaceRule::class, Source::class], version = 1, exportSchema = true)
+@Database(entities = [Book::class, Chapter::class, ReplaceRule::class], version = 1, exportSchema = true)
 // @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
