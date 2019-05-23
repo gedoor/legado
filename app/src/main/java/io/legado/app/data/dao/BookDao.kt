@@ -13,7 +13,7 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE `group` = :group")
     fun observeByGroup(group: Int): DataSource.Factory<Int, Book>
 
-    @Query("SELECT url FROM books WHERE `group` = :group")
+    @Query("SELECT descUrl FROM books WHERE `group` = :group")
     fun observeUrlsByGroup(group: Int): LiveData<List<String>>
 
 }
