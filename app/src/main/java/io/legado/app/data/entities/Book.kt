@@ -5,7 +5,7 @@ import androidx.room.*
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity(tableName = "books", indices = [(Index(value = ["descUrl"]))])
+@Entity(tableName = "books", indices = [(Index(value = ["descUrl"], unique = true))])
 data class Book(@PrimaryKey
                 var descUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
                 var sourceId: Int = -1,                     // 书源规则id(默认-1,表示本地书籍)
