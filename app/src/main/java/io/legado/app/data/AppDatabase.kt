@@ -8,9 +8,12 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.data.dao.BookDao
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.Chapter
+import io.legado.app.data.entities.ReplaceRule
+import javax.xml.transform.Source
 
 
-@Database(entities = [Book::class], version = 1, exportSchema = true)
+@Database(entities = [Book::class, Chapter::class, ReplaceRule::class, Source::class], version = 1, exportSchema = true)
 // @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 

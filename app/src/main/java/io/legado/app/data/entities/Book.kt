@@ -1,6 +1,5 @@
 package io.legado.app.data.entities
 
-import android.annotation.SuppressLint
 import android.os.Parcelable
 import androidx.room.*
 import kotlinx.android.parcel.Parcelize
@@ -14,7 +13,7 @@ data class Book(@PrimaryKey
                 var tag: String = "",
                 var author: String? = null,
                 var coverUrl: String? = null,
-                var customCoverUrl: String? = null,
+                var userCoverUrl: String? = null,
                 var introduction: String? = null,
                 var charset: String? = null,
                 var type: Int = 0,   // 0: text, 1: audio
@@ -26,7 +25,7 @@ data class Book(@PrimaryKey
                 var durChapterPage: Int = 0,
                 var totalChapterNum: Int = 0,
                 var hasNewChapter: Boolean = false,
-                var allowUpdate: Boolean = true
+                var canUpdate: Boolean = true
                 ) : Parcelable {
 
     fun getUnreadChapterNum() = Math.max(totalChapterNum - durChapterIndex - 1, 0)
