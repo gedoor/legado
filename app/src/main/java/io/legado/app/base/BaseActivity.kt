@@ -2,17 +2,28 @@ package io.legado.app.base
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.ViewModel
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatActivity() {
 
-    @LayoutRes
-    abstract fun getLayoutID(): Int
+    protected lateinit var dataBinding: BD
+        private set
+
+    protected abstract val viewModel: VM
+
+    protected abstract val layoutID: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getLayoutID())
+        dataBinding = DataBindingUtil.setContentView(this, layoutID)
+        onViewModelCreated(viewModel, savedInstanceState)
+    }
+
+    open fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?){
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -22,7 +33,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 return true
             }
         }
-        return if (item == null) true else onCompatOptionsItemSelected(item)
+        return if (item == null) false else onCompatOptionsItemSelected(item)
     }
 
     open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
@@ -30,26 +41,18 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     override fun setTitle(title: CharSequence?) {
-        supportActionBar?.let {
-            it.title = title
-        }
+        supportActionBar?.title = title
     }
 
     override fun setTitle(titleId: Int) {
-        supportActionBar?.let {
-            it.setTitle(titleId)
-        }
+        supportActionBar?.setTitle(titleId)
     }
 
-    fun setSubTitle(subtitle: CharSequence?){
-        supportActionBar?.let {
-            it.subtitle = subtitle;
-        }
+    fun setSubTitle(subtitle: CharSequence?) {
+        supportActionBar?.subtitle = subtitle
     }
 
-    fun setSubTitle(subtitleId: Int){
-        supportActionBar?.let {
-            it.setSubtitle(subtitleId)
-        }
+    fun setSubTitle(subtitleId: Int) {
+        supportActionBar?.setSubtitle(subtitleId)
     }
 }
