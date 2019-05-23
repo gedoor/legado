@@ -9,15 +9,16 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity(tableName = "replace_rules",
     indices = [(Index(value = ["id"]))])
-data class ReplaceRule(@PrimaryKey
-                       val id: Int = 0,
-                       val summary: String? = null,
-                       val pattern: String? = null,
-                       val replacement: String? = null,
-                       val scope: String? = null,
-                       val isEnabled: Boolean? = null,
-                       val isRegex: Boolean? = null,
-                       val order: Int = 0
+data class ReplaceRule(
+                @PrimaryKey(autoGenerate = true)
+                val id: Int = 0,
+                val summary: String? = null,
+                val pattern: String? = null,
+                val replacement: String? = null,
+                val scope: String? = null,
+                val isEnabled: Boolean? = null,
+                val isRegex: Boolean? = null,
+                val order: Int = 0
 ) : Parcelable
 
 
