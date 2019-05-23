@@ -9,12 +9,16 @@ import kotlinx.android.parcel.Parcelize
 data class Book(@PrimaryKey
                 var descUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
                 var sourceId: Int = -1,                     // 书源规则id(默认-1,表示本地书籍)
-                var name: String = "",                      // 书籍名称(允许用户修改,适用于本地书籍)
-                var author: String? = null,                 // 作者名称(允许用户修改,适用于本地书籍)
-                var tag: String? = null,                    // 分类信息(允许用户修改,适用于本地书籍)
-                var coverUrl: String? = null,               // 封面Url
-                var customCoverUrl: String? = null,         // 自定义封面Url(允许用户修改,适用于网络和本地书籍)
-                var description: String? = null,            // 简介内容(允许用户修改,适用于网络和本地书籍)
+                var name: String = "",                      // 书籍名称(书源获取)
+                var customName: String = "",                // 书籍名称(用户修改)
+                var author: String? = null,                 // 作者名称(书源获取)
+                var customAuthor: String? = null,           // 作者名称(用户修改)
+                var tag: String? = null,                    // 分类信息(书源获取)
+                var customTag: String? = null,              // 分类信息(用户修改)
+                var coverUrl: String? = null,               // 封面Url(书源获取)
+                var customCoverUrl: String? = null,         // 封面Url(用户修改)
+                var description: String? = null,            // 简介内容(书源获取)
+                var customDescription: String? = null,      // 简介内容(用户修改)
                 var charset: String? = null,                // 自定义字符集名称(仅适用于本地书籍)
                 var type: Int = 0,                          // 0: 文本读物, 1: 有声读物
                 var group: Int = 0,                         // 自定义分组索引号
