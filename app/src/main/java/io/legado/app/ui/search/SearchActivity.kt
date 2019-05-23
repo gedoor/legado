@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.help.LayoutManager
 
 class SearchActivity : BaseActivity<SearchDataBinding, SearchViewModel>() {
 
@@ -14,7 +15,6 @@ class SearchActivity : BaseActivity<SearchDataBinding, SearchViewModel>() {
         get() = R.layout.activity_search
 
     override fun onViewModelCreated(viewModel: SearchViewModel, savedInstanceState: Bundle?) {
-
 
     }
 
