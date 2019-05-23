@@ -13,4 +13,8 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+
+
+    <string name="dynamic_click_retry">点击重试</string>
+    <string name="dynamic_loading">正在加载</string>
 </resources>
