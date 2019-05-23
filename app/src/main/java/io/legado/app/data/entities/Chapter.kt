@@ -15,7 +15,7 @@ data class Chapter(@PrimaryKey
                     var name: String = "",
                     var bookUrl: String = "",
                     var index: Int = 0,
-                    var ResourceUrl: String? = null,
+                    var resourceUrl: String? = null,
                     var tag: String? = null,
                     var start: Long? = null,
                     var end: Long? = null
