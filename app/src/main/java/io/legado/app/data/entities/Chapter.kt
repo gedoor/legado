@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
@@ -9,9 +10,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Entity(tableName = "chapters",
-    indices = [(Index(value = ["url"]))])
+    indices = [(Index(value = ["feedId", "feedLink"], unique = true))])
 data class Chapter(@PrimaryKey
-                    var url: String = "",
                     var name: String = "",
                     var bookUrl: String = "",
                     var index: Int = 0,
