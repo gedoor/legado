@@ -33,15 +33,42 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         val navigationIconTintMode = a.getInt(R.styleable.TitleBar_navigationIconTintMode, 9)
         val showNavigationIcon = a.getBoolean(R.styleable.TitleBar_showNavigationIcon, true)
         val attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
+        val titleText = a.getString(R.styleable.TitleBar_title)
+        val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
         a.recycle()
 
-        if (showNavigationIcon) {
-            toolbar.apply {
+        toolbar.apply {
+            if(showNavigationIcon){
                 this.navigationIcon = navigationIcon
                 this.navigationContentDescription = navigationContentDescription
                 wrapDrawableTint(this.navigationIcon, navigationIconTint, navigationIconTintMode)
             }
+
+            if (a.hasValue(R.styleable.TitleBar_titleTextAppearance)) {
+                this.setTitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_titleTextAppearance, 0))
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_titleTextColor)) {
+                this.setTitleTextColor(a.getColor(R.styleable.TitleBar_titleTextColor, -0x1))
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_subtitleTextAppearance)) {
+                this.setSubtitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_subtitleTextAppearance, 0))
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_subtitleTextColor)) {
+                this.setSubtitleTextColor(a.getColor(R.styleable.TitleBar_subtitleTextColor, -0x1))
+            }
+
+            if(!titleText.isNullOrBlank()){
+                this.title = titleText
+            }
+
+            if(!subtitleText.isNullOrBlank()){
+                this.subtitle = subtitleText
+            }
         }
+
 
         if (attachToActivity) {
             attachToActivity(context)

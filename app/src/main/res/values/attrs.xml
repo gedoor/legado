@@ -2,6 +2,12 @@
 <resources>
     
     <declare-styleable name="TitleBar">
+        <attr name="title" />
+        <attr name="subtitle" />
+        <attr name="titleTextAppearance" />
+        <attr name="titleTextColor" />
+        <attr name="subtitleTextAppearance" />
+        <attr name="subtitleTextColor" />
         <attr name="attachToActivity" format="boolean" />
         <attr name="showNavigationIcon" format="boolean" />
         <attr name="navigationIcon" format="reference" />

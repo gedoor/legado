@@ -17,7 +17,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-        />
+                app:title="搜索"/>
 
         <io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout
                 android:layout_width="match_parent"
