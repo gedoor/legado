@@ -19,15 +19,14 @@ data class Book(@PrimaryKey
                 var type: Int = 0,                          // 0: 文本读物, 1: 有声读物
                 var group: Int = 0,                         // 自定义分组索引号
                 var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
-                var latestChapterName: String? = null,      // 最新章节
-                var lastCheckTime: Long? = null,            // 最近一次更新书籍信息的时间
-                var hasNewChapter: Boolean = false,         // 最近一次更新书籍信息时是否发现新章节
-                var latestChapterTime: Long? = null,        // 最近一次发现新章节的时间
-                var latestCheckCount: Int = 0,              // 最近一次发现新章节的数量
+                var latestChapterTitle: String? = null,     // 最新章节标题
+                var latestChapterTime: Long = 0,            // 最新章节标题更新时间
+                var lastCheckTime: Long = 0,                // 最近一次更新书籍信息的时间
+                var lastCheckCount: Int = 0,                // 最近一次发现新章节的数量
                 var totalChapterNum: Int = 0,               // 书籍目录总数
-                var durChapterName: String = "",            // 当前章节名称
+                var durChapterTitle: String = "",           // 当前章节名称
                 var durChapterIndex: Int = 0,               // 当前章节索引
-                var durChapterMark: Int = 0,                // 当前阅读的进度(首行字符的索引位置)
+                var durChapterPos: Int = 0,                 // 当前阅读的进度(首行字符的索引位置)
                 var durChapterTime: Long = 0,               // 最近一次阅读书籍的时间(打开正文的时间)
                 var canUpdate: Boolean = true,              // 刷新书架时更新书籍信息
                 var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
