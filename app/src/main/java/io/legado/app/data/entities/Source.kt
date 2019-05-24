@@ -26,6 +26,6 @@ data class Source(@PrimaryKey(autoGenerate = true)
                   var exploreRule: String? = null,          // 发现规则
                   var searchRule: String? = null,           // 搜索规则
                   var bookInfoRule: String? = null,         // 书籍信息页规则
-                  var tocRule: String? = null,              // 目录页规则
+                  var chapterRule: String? = null,          // 目录页规则
                   var contentRule: String? = null           // 正文页规则
                   ) : Parcelable
