@@ -22,7 +22,7 @@ abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatAct
         onViewModelCreated(viewModel, savedInstanceState)
     }
 
-    open fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?){
+    open fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?) {
 
     }
 
@@ -38,21 +38,5 @@ abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatAct
 
     open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         return true
-    }
-
-    override fun setTitle(title: CharSequence?) {
-        supportActionBar?.title = title
-    }
-
-    override fun setTitle(titleId: Int) {
-        supportActionBar?.setTitle(titleId)
-    }
-
-    fun setSubTitle(subtitle: CharSequence?) {
-        supportActionBar?.subtitle = subtitle
-    }
-
-    fun setSubTitle(subtitleId: Int) {
-        supportActionBar?.setSubtitle(subtitleId)
     }
 }

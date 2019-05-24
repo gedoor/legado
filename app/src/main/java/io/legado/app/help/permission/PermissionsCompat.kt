@@ -6,35 +6,35 @@ import androidx.fragment.app.Fragment
 
 class PermissionsCompat private constructor() {
 
-    private var mRequest: Request? = null
+    private var request: Request? = null
 
     fun request() {
-        RequestManager.pushRequest(mRequest)
+        RequestManager.pushRequest(request)
     }
 
     class Builder {
-        private val mRequest: Request
+        private val request: Request
 
         constructor(activity: AppCompatActivity) {
-            mRequest = Request(activity)
+            request = Request(activity)
         }
 
         constructor(fragment: Fragment) {
-            mRequest = Request(fragment)
+            request = Request(fragment)
         }
 
         fun addPermissions(vararg permissions: String): Builder {
-            mRequest.addPermissions(*permissions)
+            request.addPermissions(*permissions)
             return this
         }
 
         fun requestCode(requestCode: Int): Builder {
-            mRequest.setRequestCode(requestCode)
+            request.setRequestCode(requestCode)
             return this
         }
 
         fun onGranted(callback: (requestCode: Int) -> Unit): Builder {
-            mRequest.setOnGrantedCallback(object : OnPermissionsGrantedCallback {
+            request.setOnGrantedCallback(object : OnPermissionsGrantedCallback {
                 override fun onPermissionsGranted(requestCode: Int) {
                     callback(requestCode)
                 }
@@ -43,7 +43,7 @@ class PermissionsCompat private constructor() {
         }
 
         fun onDenied(callback: (requestCode: Int, deniedPermissions: Array<String>) -> Unit): Builder {
-            mRequest.setOnDeniedCallback(object : OnPermissionsDeniedCallback {
+            request.setOnDeniedCallback(object : OnPermissionsDeniedCallback {
                 override fun onPermissionsDenied(requestCode: Int, deniedPermissions: Array<String>) {
                     callback(requestCode, deniedPermissions)
                 }
@@ -52,24 +52,24 @@ class PermissionsCompat private constructor() {
         }
 
         fun rationale(rationale: CharSequence): Builder {
-            mRequest.setRationale(rationale)
+            request.setRationale(rationale)
             return this
         }
 
         fun rationale(@StringRes resId: Int): Builder {
-            mRequest.setRationale(resId)
+            request.setRationale(resId)
             return this
         }
 
         fun build(): PermissionsCompat {
             val compat = PermissionsCompat()
-            compat.mRequest = mRequest
+            compat.request = request
             return compat
         }
 
         fun request(): PermissionsCompat {
             val compat = build()
-            compat.mRequest = mRequest
+            compat.request = request
             compat.request()
             return compat
         }

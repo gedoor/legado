@@ -14,13 +14,24 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
-import kotlinx.android.synthetic.main.view_titlebar.view.*
 
 class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
 
     val toolbar: Toolbar
     val menu: Menu
         get() = toolbar.menu
+
+    var title: CharSequence?
+        get() = toolbar.title
+        set(title) {
+            toolbar.title = title
+        }
+
+    var subtitle: CharSequence?
+        get() = toolbar.subtitle
+        set(subtitle) {
+            toolbar.subtitle = subtitle
+        }
 
     init {
         inflate(context, R.layout.view_titlebar, this)
@@ -39,7 +50,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
 
         toolbar.apply {
-            if(showNavigationIcon){
+            if (showNavigationIcon) {
                 this.navigationIcon = navigationIcon
                 this.navigationContentDescription = navigationContentDescription
                 wrapDrawableTint(this.navigationIcon, navigationIconTint, navigationIconTintMode)
@@ -61,11 +72,11 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
                 this.setSubtitleTextColor(a.getColor(R.styleable.TitleBar_subtitleTextColor, -0x1))
             }
 
-            if(!titleText.isNullOrBlank()){
+            if (!titleText.isNullOrBlank()) {
                 this.title = titleText
             }
 
-            if(!subtitleText.isNullOrBlank()){
+            if (!subtitleText.isNullOrBlank()) {
                 this.subtitle = subtitleText
             }
         }
@@ -77,39 +88,31 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
     }
 
-    fun setNavigationOnClickListener(clickListener: ((View) -> Unit)){
+    fun setNavigationOnClickListener(clickListener: ((View) -> Unit)) {
         toolbar.setNavigationOnClickListener(clickListener)
-    }
-
-    fun setTitle(title: CharSequence?) {
-        toolbar.title = title
     }
 
     fun setTitle(titleId: Int) {
         toolbar.setTitle(titleId)
     }
 
-    fun setSubTitle(subtitle: CharSequence?) {
-        toolbar.subtitle = subtitle
-    }
-
     fun setSubTitle(subtitleId: Int) {
         toolbar.setSubtitle(subtitleId)
     }
 
-    fun setTitleTextColor(@ColorInt color: Int){
+    fun setTitleTextColor(@ColorInt color: Int) {
         toolbar.setTitleTextColor(color)
     }
 
-    fun setTitleTextAppearance(@StyleRes resId: Int){
+    fun setTitleTextAppearance(@StyleRes resId: Int) {
         toolbar.setTitleTextAppearance(context, resId)
     }
 
-    fun setSubTitleTextColor(@ColorInt color: Int){
+    fun setSubTitleTextColor(@ColorInt color: Int) {
         toolbar.setSubtitleTextColor(color)
     }
 
-    fun setSubTitleTextAppearance(@StyleRes resId: Int){
+    fun setSubTitleTextAppearance(@StyleRes resId: Int) {
         toolbar.setSubtitleTextAppearance(context, resId)
     }
 
