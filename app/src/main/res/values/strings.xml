@@ -7,14 +7,17 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
-    <string name="menu_share">Share</string>
+    <string name="menu_backup">Home</string>
+    <string name="menu_import">导入</string>
+    <string name="menu_import_old">导入阅读数据</string>
+    <string name="menu_import_github">导入Github数据</string>
+    <string name="menu_replace_rule">净化替换</string>
     <string name="menu_send">Send</string>
 
 
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
+    <string name="perm_request_storage">阅读需要访问存储卡权限：</string>
+    <string name="edit">编辑</string>
+    <string name="delete">删除</string>
 </resources>

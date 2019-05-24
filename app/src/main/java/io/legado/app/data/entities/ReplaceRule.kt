@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -11,14 +12,15 @@ import kotlinx.android.parcel.Parcelize
     indices = [(Index(value = ["id"]))])
 data class ReplaceRule(
                 @PrimaryKey(autoGenerate = true)
-                val id: Int = 0,
-                val summary: String? = null,
-                val pattern: String? = null,
-                val replacement: String? = null,
-                val scope: String? = null,
-                val isEnabled: Boolean = true,
-                val isRegex: Boolean = true,
-                val order: Int = 0
+                var id: Int = 0,
+                var name: String? = null,
+                var pattern: String? = null,
+                var replacement: String? = null,
+                var scope: String? = null,
+                var isEnabled: Boolean = true,
+                var isRegex: Boolean = true,
+                @ColumnInfo(name = "sortOrder")
+                var order: Int = 0
 ) : Parcelable
 
 
