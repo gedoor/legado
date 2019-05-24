@@ -8,7 +8,7 @@
         tools:context=".ui.main.MainActivity">
 
     <io.legado.app.ui.widget.TitleBar
-            android:id="@+id/titleBar"
+            android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

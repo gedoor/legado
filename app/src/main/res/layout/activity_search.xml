@@ -12,7 +12,7 @@
             tools:context="io.legado.app.ui.search.SearchActivity">
 
         <io.legado.app.ui.widget.TitleBar
-                android:id="@+id/titleBar"
+                android:id="@+id/title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
@@ -22,11 +22,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/titleBar">
+                app:layout_constraintTop_toBottomOf="@id/title_bar">
 
 
             <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/searchList"
+                    android:id="@+id/rv_search_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
