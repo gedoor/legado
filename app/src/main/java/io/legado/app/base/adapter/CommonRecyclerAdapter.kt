@@ -257,7 +257,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         return footerItems?.size() ?: 0
     }
 
-    fun getItem(position: Int): ITEM = items[position % items.size]
+    fun getItem(position: Int): ITEM? = if (position in 0 until items.size) items[position] else null
 
     fun getItems(): List<ITEM> = items
 
@@ -280,7 +280,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         return when {
             isHeader(position) -> TYPE_HEADER_VIEW + position
             isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount() - getHeaderCount()
-            else -> getItemViewType(getItem(getRealPosition(position)), getRealPosition(position))
+            else -> getItem(getActualPosition(position))?.let { getItemViewType(it, getActualPosition(position)) } ?: 0
         }
     }
 
@@ -299,13 +299,17 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
 
                 if (itemClickListener != null) {
                     holder.itemView.setOnClickListener {
-                        itemClickListener!!.invoke(holder, getItem(holder.layoutPosition))
+                        getItem(holder.layoutPosition)?.let {
+                            itemClickListener?.invoke(holder, it)
+                        }
                     }
                 }
 
                 if (itemLongClickListener != null) {
                     holder.itemView.setOnLongClickListener {
-                        itemLongClickListener!!.invoke(holder, getItem(holder.layoutPosition))
+                        getItem(holder.layoutPosition)?.let {
+                            itemLongClickListener?.invoke(holder, it) ?: true
+                        } ?: true
                     }
                 }
 
@@ -315,14 +319,15 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
     }
 
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        onBindViewHolder(holder, position, mutableListOf())
+    final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int, payloads: MutableList<Any>) {
+    final override fun onBindViewHolder(holder: ItemViewHolder, position: Int, payloads: MutableList<Any>) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
-            itemDelegates.getValue(getItemViewType(holder.layoutPosition))
-                .convert(holder, getItem(holder.layoutPosition), payloads)
+            getItem(holder.layoutPosition)?.let {
+                itemDelegates.getValue(getItemViewType(holder.layoutPosition))
+                    .convert(holder, it, payloads)
+            }
         }
     }
 
@@ -339,15 +344,17 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         if (manager is GridLayoutManager) {
             manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (isHeader(position) || isFooter(position)) manager.spanCount else getSpanSize(
-                        getItem(position), getItemViewType(position), position
-                    )
+                    return getItem(position)?.let {
+                        if (isHeader(position) || isFooter(position)) manager.spanCount else getSpanSize(
+                            it, getItemViewType(position), position
+                        )
+                    } ?: manager.spanCount
                 }
             }
         }
     }
 
-    fun setAnimationConfig(item: ItemAnimation) {
+    fun setItemAnimation(item: ItemAnimation) {
         itemAnimation = item
     }
 
@@ -359,7 +366,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         return position >= getActualItemCount() + getHeaderCount()
     }
 
-    private fun getRealPosition(position: Int): Int {
+    private fun getActualPosition(position: Int): Int {
         return position - getHeaderCount()
     }
 

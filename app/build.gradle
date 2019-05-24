@@ -41,6 +41,12 @@ kapt {
     }
 }
 
+kotlin{
+    experimental{
+        coroutines "enable"
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -68,11 +74,16 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sdk27-listeners:$anko_version"
     //协程
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
-
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
+    //规则相关
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
     implementation 'org.jsoup:jsoup:1.12.1'
+
+    //Retrofit
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'//
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'

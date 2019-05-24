@@ -2,7 +2,6 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class=".ui.search.SearchDataBinding">
-        <variable name="SearchViewModel" type="io.legado.app.ui.search.SearchViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
