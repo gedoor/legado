@@ -1,7 +1,6 @@
 package io.legado.app.data.entities.rule
 
 data class PutRule (
-    var selector: BaseRule,
-    var type: RuleType,
+    var selector: Rule,
     var key: String
 )

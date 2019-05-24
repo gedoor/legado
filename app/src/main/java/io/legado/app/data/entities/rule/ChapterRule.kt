@@ -5,5 +5,5 @@ data class ChapterRule (
     var title: Rule,
     var contentUrl: Rule,
     var resourceUrl: Rule,
-    var isAllInOne: Boolean = false
+    var nextUrl: Rule
 )
