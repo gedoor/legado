@@ -33,12 +33,17 @@ interface ReplaceRuleDao {
     @Query("SELECT * FROM replace_rules WHERE isEnabled = 1 AND scope LIKE '%' || :scope || '%'")
     fun findEnabledByScope(scope: String): List<ReplaceRule>
 
+    @get:Query("SELECT COUNT(*) - SUM(isEnabled) FROM replace_rules")
+    val summary: Int
+
+    @Query("UPDATE replace_rules SET isEnabled = :enable")
+    fun enableAll(enable: Boolean)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg replaceRules: ReplaceRule)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(replaceRule: ReplaceRule): Long
-
     @Update
     fun update(vararg replaceRules: ReplaceRule)
 
