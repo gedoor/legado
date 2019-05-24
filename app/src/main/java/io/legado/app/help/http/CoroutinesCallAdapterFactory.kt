@@ -6,10 +6,10 @@ import retrofit2.*
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() {
+class CoroutinesCallAdapterFactory private constructor() : CallAdapter.Factory() {
     companion object {
         @JvmStatic @JvmName("create")
-        operator fun invoke() = CoroutineCallAdapterFactory()
+        operator fun invoke() = CoroutinesCallAdapterFactory()
     }
 
     override fun get(

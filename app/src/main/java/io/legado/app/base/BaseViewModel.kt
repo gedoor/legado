@@ -13,13 +13,12 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     private val launchManager: MutableList<Job> = mutableListOf()
 
     protected fun launchOnUI(
-        tryBlock: suspend CoroutineScope.() -> Unit,
-        cacheBlock: suspend CoroutineScope.(Throwable) -> Unit,
-        finallyBlock: suspend CoroutineScope.() -> Unit,
-        handleCancellationExceptionManually: Boolean
+        tryBlock: suspend CoroutineScope.() -> Unit,//成功
+        errorBlock: suspend CoroutineScope.(Throwable) -> Unit,//失败
+        finallyBlock: suspend CoroutineScope.() -> Unit//结束
     ) {
         launchOnUI {
-            tryCatch(tryBlock, cacheBlock, finallyBlock, handleCancellationExceptionManually)
+            tryCatch(tryBlock, errorBlock, finallyBlock)
         }
     }
 
@@ -27,25 +26,20 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
      * add launch task to [launchManager]
      */
     private fun launchOnUI(block: suspend CoroutineScope.() -> Unit) {
-        val job = launch { block() }
+        val job = launch { block() }//主线程
         launchManager.add(job)
         job.invokeOnCompletion { launchManager.remove(job) }
     }
 
     private suspend fun tryCatch(
         tryBlock: suspend CoroutineScope.() -> Unit,
-        catchBlock: suspend CoroutineScope.(Throwable) -> Unit,
-        finallyBlock: suspend CoroutineScope.() -> Unit,
-        handleCancellationExceptionManually: Boolean = false
+        errorBlock: suspend CoroutineScope.(Throwable) -> Unit,
+        finallyBlock: suspend CoroutineScope.() -> Unit
     ) {
         try {
             coroutineScope { tryBlock() }
         } catch (e: Throwable) {
-            if (e !is CancellationException || handleCancellationExceptionManually) {
-                coroutineScope { catchBlock(e) }
-            } else {
-                throw e
-            }
+            coroutineScope { errorBlock(e) }
         } finally {
             coroutineScope { finallyBlock() }
         }

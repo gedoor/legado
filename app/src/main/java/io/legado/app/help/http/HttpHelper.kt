@@ -1,6 +1,7 @@
 package io.legado.app.help.http
 
 import okhttp3.*
+import retrofit2.Retrofit
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -8,6 +9,20 @@ object HttpHelper {
 
     val client: OkHttpClient = getOkHttpClient()
 
+
+    fun <T> getApiService(baseUrl: String, clazz: Class<T>): T {
+        return getRetrofit(baseUrl).create(clazz)
+    }
+
+    fun getRetrofit(baseUrl: String): Retrofit {
+        return Retrofit.Builder().baseUrl(baseUrl)
+            //增加返回值为字符串的支持(以实体类返回)
+//            .addConverterFactory(EncodeConverter.create())
+            //增加返回值为Observable<T>的支持
+            .addCallAdapterFactory(CoroutinesCallAdapterFactory.invoke())
+            .client(client)
+            .build()
+    }
 
     private fun getOkHttpClient(): OkHttpClient {
         val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
