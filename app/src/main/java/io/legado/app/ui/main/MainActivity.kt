@@ -7,26 +7,26 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.ui.search.SearchActivity
+import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : BaseActivity<MainDataBinding, MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
     override val viewModel: MainViewModel
-        get() = ViewModelProvider.AndroidViewModelFactory.getInstance(application).create(MainViewModel::class.java)
+        get() = getViewModel(MainViewModel::class.java)
+
     override val layoutID: Int
         get() = R.layout.activity_main
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
         fab.setOnClickListener { startActivity(Intent(this, SearchActivity::class.java)) }
 
         val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar,
+            this, drawer_layout, titleBar.toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
@@ -58,21 +58,6 @@ class MainActivity : BaseActivity<MainDataBinding, MainViewModel>(), NavigationV
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_home -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_tools -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
             R.id.nav_send -> {
 
             }

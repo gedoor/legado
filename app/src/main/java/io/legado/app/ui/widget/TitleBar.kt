@@ -5,7 +5,12 @@ import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.Menu
+import android.view.View
+import androidx.annotation.ColorInt
+import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
@@ -13,11 +18,16 @@ import kotlinx.android.synthetic.main.view_titlebar.view.*
 
 class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
 
+    val toolbar: Toolbar
+    val menu: Menu
+        get() = toolbar.menu
+
     init {
         inflate(context, R.layout.view_titlebar, this)
+        toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.TitleBar,
-            0, 0
+            R.attr.titleBarStyle, 0
         )
         val navigationIcon = a.getDrawable(R.styleable.TitleBar_navigationIcon)
         val navigationContentDescription = a.getText(R.styleable.TitleBar_navigationContentDescription)
@@ -25,28 +35,89 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         val navigationIconTintMode = a.getInt(R.styleable.TitleBar_navigationIconTintMode, 9)
         val showNavigationIcon = a.getBoolean(R.styleable.TitleBar_showNavigationIcon, true)
         val attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
+        val titleText = a.getString(R.styleable.TitleBar_title)
+        val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
         a.recycle()
 
-        if (showNavigationIcon) {
-            toolbar.apply {
+        toolbar.apply {
+            if(showNavigationIcon){
                 this.navigationIcon = navigationIcon
                 this.navigationContentDescription = navigationContentDescription
                 wrapDrawableTint(this.navigationIcon, navigationIconTint, navigationIconTintMode)
             }
+
+            if (a.hasValue(R.styleable.TitleBar_titleTextAppearance)) {
+                this.setTitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_titleTextAppearance, 0))
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_titleTextColor)) {
+                this.setTitleTextColor(a.getColor(R.styleable.TitleBar_titleTextColor, -0x1))
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_subtitleTextAppearance)) {
+                this.setSubtitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_subtitleTextAppearance, 0))
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_subtitleTextColor)) {
+                this.setSubtitleTextColor(a.getColor(R.styleable.TitleBar_subtitleTextColor, -0x1))
+            }
+
+            if(!titleText.isNullOrBlank()){
+                this.title = titleText
+            }
+
+            if(!subtitleText.isNullOrBlank()){
+                this.subtitle = subtitleText
+            }
         }
+
 
         if (attachToActivity) {
             attachToActivity(context)
         }
     }
 
+    fun setNavigationOnClickListener(clickListener: ((View) -> Unit)){
+        toolbar.setNavigationOnClickListener(clickListener)
+    }
+
+    fun setTitle(title: CharSequence?) {
+        toolbar.title = title
+    }
+
+    fun setTitle(titleId: Int) {
+        toolbar.setTitle(titleId)
+    }
+
+    fun setSubTitle(subtitle: CharSequence?) {
+        toolbar.subtitle = subtitle
+    }
+
+    fun setSubTitle(subtitleId: Int) {
+        toolbar.setSubtitle(subtitleId)
+    }
+
+    fun setTitleTextColor(@ColorInt color: Int){
+        toolbar.setTitleTextColor(color)
+    }
+
+    fun setTitleTextAppearance(@StyleRes resId: Int){
+        toolbar.setTitleTextAppearance(context, resId)
+    }
+
+    fun setSubTitleTextColor(@ColorInt color: Int){
+        toolbar.setSubtitleTextColor(color)
+    }
+
+    fun setSubTitleTextAppearance(@StyleRes resId: Int){
+        toolbar.setSubtitleTextAppearance(context, resId)
+    }
+
     private fun attachToActivity(context: Context) {
         val activity = getCompatActivity(context)
         activity?.let {
             activity.setSupportActionBar(toolbar)
-            activity.supportActionBar?.let {
-                it.setDisplayHomeAsUpEnabled(true)
-            }
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
     }
 
