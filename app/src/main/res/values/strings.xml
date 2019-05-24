@@ -20,4 +20,5 @@
     <string name="perm_request_storage">阅读需要访问存储卡权限：</string>
     <string name="edit">编辑</string>
     <string name="delete">删除</string>
+    <string name="replace">净化替换</string>
 </resources>
