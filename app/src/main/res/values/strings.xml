@@ -15,9 +15,17 @@
     <string name="menu_send">Send</string>
 
 
+    <string name="dialog_title">提示</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_confirm">确定</string>
+    <string name="dialog_setting">去设置</string>
+
+    <string name="tip_cannot_jump_setting_page">无法跳转至设置界面</string>
+    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—”应用权限“—打开所需权限</string>
+
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
-    <string name="perm_request_storage">阅读需要访问存储卡权限：</string>
+
     <string name="edit">编辑</string>
     <string name="delete">删除</string>
 </resources>

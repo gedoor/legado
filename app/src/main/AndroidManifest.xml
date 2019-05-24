@@ -40,6 +40,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.replacerule.ReplaceRuleActivity"/>
+
+        <activity android:name=".help.permission.PermissionActivity"
+                  android:theme="@style/Activity.Permission"/>
     </application>
 
 </manifest>

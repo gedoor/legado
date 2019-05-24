@@ -37,7 +37,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         val attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
         val titleText = a.getString(R.styleable.TitleBar_title)
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
-        a.recycle()
 
         toolbar.apply {
             if(showNavigationIcon){
@@ -71,6 +70,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
         }
 
+        a.recycle()
 
         if (attachToActivity) {
             attachToActivity(context)
