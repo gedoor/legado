@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import java.io.File
 
@@ -122,15 +123,14 @@ class MainActivity : BaseActivity<MainDataBinding, MainViewModel>(), NavigationV
                 rRule.isEnabled = jsonItem.readBool("$.enable")
                 rRule.order = jsonItem.readInt("$.serialNumber")
                 replaceRules.add(rRule)
-                // Log.e(APP_TAG, rRule.toString())
             }
 
             doAsync {
                 App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
-                val count = App.db.replaceRuleDao().all.size
+                val count = items.size
                 val maxId = App.db.replaceRuleDao().maxOrder
                 uiThread {
-                    Log.e(APP_TAG, "$count records were inserted to database, and max id is $maxId.")
+                    toast("成功地导入 $count 条净化替换规则")
                 }
             }
 
