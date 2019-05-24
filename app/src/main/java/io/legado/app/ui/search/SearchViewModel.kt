@@ -20,9 +20,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             {
                 start()
                 val searchResponse = withContext(IO) {
-                    HttpHelper.getApiService(
-                        "http:www.baidu.com",
-                        CommonHttpApi::class.java
+                    HttpHelper.getApiService<CommonHttpApi>(
+                        "http:www.baidu.com"
                     ).get("", mutableMapOf())
                 }
 

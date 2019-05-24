@@ -9,17 +9,20 @@ object HttpHelper {
 
     val client: OkHttpClient = getOkHttpClient()
 
-
-    fun <T> getApiService(baseUrl: String, clazz: Class<T>): T {
-        return getRetrofit(baseUrl).create(clazz)
+    inline fun <reified T> getApiService(baseUrl: String): T {
+        return getRetrofit(baseUrl).create(T::class.java)
     }
 
-    fun getRetrofit(baseUrl: String): Retrofit {
+    inline fun <reified T> getApiService(baseUrl: String, encode: String): T {
+        return getRetrofit(baseUrl, encode).create(T::class.java)
+    }
+
+    fun getRetrofit(baseUrl: String, encode: String? = null): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl)
             //增加返回值为字符串的支持(以实体类返回)
-//            .addConverterFactory(EncodeConverter.create())
+            .addConverterFactory(EncodeConverter.create(encode))
             //增加返回值为Observable<T>的支持
-            .addCallAdapterFactory(CoroutinesCallAdapterFactory.invoke())
+            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
             .client(client)
             .build()
     }
@@ -34,20 +37,22 @@ object HttpHelper {
         specs.add(ConnectionSpec.COMPATIBLE_TLS)
         specs.add(ConnectionSpec.CLEARTEXT)
 
-        val sslParams = SSLHelper.getSslSocketFactory()
-        return OkHttpClient.Builder()
+        val builder = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
-            .sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager)
             .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
             .connectionSpecs(specs)
             .followRedirects(true)
             .followSslRedirects(true)
             .protocols(listOf(Protocol.HTTP_1_1))
             .addInterceptor(getHeaderInterceptor())
-            .build()
+
+        SSLHelper.getSslSocketFactory()?.let {
+            builder.sslSocketFactory(it.sSLSocketFactory, it.trustManager)
+        }
+        return builder.build()
     }
 
     private fun getHeaderInterceptor(): Interceptor {
