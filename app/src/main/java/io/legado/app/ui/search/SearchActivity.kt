@@ -3,7 +3,6 @@ package io.legado.app.ui.search
 import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.search.SearchDataBinding
 import io.legado.app.utils.getViewModel
 
 class SearchActivity : BaseActivity<SearchDataBinding, SearchViewModel>() {
