@@ -34,7 +34,6 @@ constructor(url: String) {
     private var httpUrl: String? = null
 
     var displayName: String? = null
-    var createTime: Long = 0
     var lastModified: Long = 0
     var size: Long = 0
     var isDirectory = true
@@ -110,7 +109,7 @@ constructor(url: String) {
         val response = propFindResponse(ArrayList())
         var s = ""
         try {
-            if (response == null || !response.isSuccessful) {
+            if (!response.isSuccessful) {
                 this.exists = false
                 return false
             }
@@ -134,7 +133,6 @@ constructor(url: String) {
     fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
         val response = propFindResponse(propsList)
         try {
-            assert(response != null)
             if (response.isSuccessful) {
                 return parseDir(response.body()!!.string())
             }
@@ -217,22 +215,13 @@ constructor(url: String) {
      * @return 下载是否成功
      */
     fun download(savedPath: String, replaceExisting: Boolean): Boolean {
-        val file = File(savedPath)
-        if (file.exists()) {
-            if (replaceExisting) {
-                file.delete()
-            } else {
+        if (File(savedPath).exists()) {
+            if (!replaceExisting) {
                 return false
             }
         }
         val inputS = inputStream ?: return false
-        try {
-            file.createNewFile()
-            file.writeBytes(inputS.readBytes())
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        File(savedPath).writeBytes(inputS.readBytes())
         return false
     }
 
