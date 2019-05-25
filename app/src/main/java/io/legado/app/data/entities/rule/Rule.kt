@@ -10,8 +10,8 @@ data class Rule (
     var extra: String?
 ) {
     companion object {
-        val JS_PATTERN = Regex("""\{\{([^}]+?)\}\}""")
-        val CONST_PATTERN = Regex("""\{(\$\.[^}]+?)\}""")
+        val JS_PATTERN = Regex("""\{\{([^}]+?)}}""")
+        val CONST_PATTERN = Regex("""\{(\$\.[^}]+?)}""")
 
         fun parse(input: String) = when {
             input.startsWith("$.") -> parseJSON(input)
@@ -69,7 +69,7 @@ data class Rule (
             for (line in rawRule.splitNotBlank("\n")) {
                 subRule.clear()
                 val baseRule = BaseRule(type = RuleType.JSON)
-                baseRule.template = CONST_PATTERN.replace(line) { match ->
+                baseRule.template = CONST_PATTERN.replace(line.replace("%", "%%")) { match ->
                     subRule.add(match.groupValues[1])
                     "%s"
                 }
