@@ -4,16 +4,8 @@ import okhttp3.OkHttpClient
 
 class OkHttp private constructor() {
 
-    val okHttpClient: OkHttpClient = OkHttpClient.Builder().build()
-
-    private object SingletonHelper {
-        val INSTANCE = OkHttp()
-    }
-
-    companion object {
-
-        val instance: OkHttp
-            get() = SingletonHelper.INSTANCE
+    object SingletonHelper {
+        val okHttpClient: OkHttpClient = OkHttpClient.Builder().build()
     }
 
 }

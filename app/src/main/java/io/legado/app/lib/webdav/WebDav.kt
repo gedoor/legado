@@ -29,7 +29,6 @@ import okhttp3.Response
 
 class WebDav @Throws(MalformedURLException::class)
 constructor(url: String) {
-
     private val url: URL = URL(null, url, Handler.HANDLER)
     private var httpUrl: String? = null
 
@@ -45,7 +44,7 @@ constructor(url: String) {
             return field
         }
 
-    private val okHttpClient: OkHttpClient = OkHttp.instance.okHttpClient
+    private val okHttpClient: OkHttpClient = OkHttp.SingletonHelper.okHttpClient
 
     val path: String
         get() = url.toString()
@@ -157,21 +156,22 @@ constructor(url: String) {
         val list = ArrayList<WebDav>()
         val document = Jsoup.parse(s)
         val elements = document.getElementsByTag("d:response")
-        val baseUrl = if (getUrl()!!.endsWith("/")) getUrl() else getUrl()!! + "/"
-        for (element in elements) {
-            val href = element.getElementsByTag("d:href")[0].text()
-            if (!href.endsWith("/")) {
-                val fileName = href.substring(href.lastIndexOf("/") + 1)
-                val webDavFile: WebDav
-                try {
-                    webDavFile = WebDav(baseUrl!! + fileName)
-                    webDavFile.displayName = fileName
-                    webDavFile.urlName = href
-                    list.add(webDavFile)
-                } catch (e: MalformedURLException) {
-                    e.printStackTrace()
+        getUrl()?.let { url->
+            val baseUrl = if (url.endsWith("/")) url else "$url/"
+            for (element in elements) {
+                val href = element.getElementsByTag("d:href")[0].text()
+                if (!href.endsWith("/")) {
+                    val fileName = href.substring(href.lastIndexOf("/") + 1)
+                    val webDavFile: WebDav
+                    try {
+                        webDavFile = WebDav(baseUrl + fileName)
+                        webDavFile.displayName = fileName
+                        webDavFile.urlName = href
+                        list.add(webDavFile)
+                    } catch (e: MalformedURLException) {
+                        e.printStackTrace()
+                    }
                 }
-
             }
         }
         return list
@@ -184,10 +184,13 @@ constructor(url: String) {
      */
     @Throws(IOException::class)
     fun makeAsDir(): Boolean {
-        val request = Request.Builder()
-            .url(getUrl()!!)
-            .method("MKCOL", null)
-        return execRequest(request)
+        getUrl()?.let { url->
+            val request = Request.Builder()
+                .url(url)
+                .method("MKCOL", null)
+            return execRequest(request)
+        }
+        return false
     }
 
     /**
@@ -219,11 +222,13 @@ constructor(url: String) {
         val mediaType = if (contentType == null) null else MediaType.parse(contentType)
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = RequestBody.create(mediaType, file)
-        val request = Request.Builder()
-            .url(getUrl()!!)
-            .put(fileBody)
-
-        return execRequest(request)
+        getUrl()?.let {
+            val request = Request.Builder()
+                .url(it)
+                .put(fileBody)
+            return execRequest(request)
+        }
+        return false
     }
 
     /**
@@ -234,10 +239,7 @@ constructor(url: String) {
      */
     @Throws(IOException::class)
     private fun execRequest(requestBuilder: Request.Builder): Boolean {
-        val auth = HttpAuth.auth
-        if (auth != null) {
-            requestBuilder.header("Authorization", Credentials.basic(auth!!.user, auth!!.pass))
-        }
+        HttpAuth.auth?.let { requestBuilder.header("Authorization", Credentials.basic(it.user, it.pass)) }
 
         val response = okHttpClient.newCall(requestBuilder.build()).execute()
         return response.isSuccessful
