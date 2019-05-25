@@ -11,7 +11,7 @@
         <item
                 android:id="@+id/nav_import"
                 android:icon="@drawable/ic_menu_gallery"
-                android:title="@string/menu_import"/>
+                android:title="@string/menu_restore"/>
         <item
                 android:id="@+id/nav_import_old"
                 android:icon="@drawable/ic_menu_slideshow"

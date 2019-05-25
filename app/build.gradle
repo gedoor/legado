@@ -77,8 +77,11 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
     //规则相关
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.jayway.jsonpath:json-path:2.4.0'
     implementation 'org.jsoup:jsoup:1.12.1'
+    // implementation 'org.apache.commons:commons-text:1.6'
+    // Default json parser for jsonpath
+    implementation 'net.minidev:json-smart:2.3'
+    // implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
     //Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'//
