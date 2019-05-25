@@ -13,6 +13,8 @@ import io.legado.app.data.entities.ReplaceRule
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 
 
 class ReplaceRuleActivity : AppCompatActivity() {
@@ -26,6 +28,7 @@ class ReplaceRuleActivity : AppCompatActivity() {
         rv_replace_rule.layoutManager = LinearLayoutManager(this)
         initRecyclerView()
         initDataObservers()
+        initSwipeToDelete()
     }
 
     private fun initRecyclerView() {
@@ -68,5 +71,29 @@ class ReplaceRuleActivity : AppCompatActivity() {
                 allEnabled = it == 0
             }
         }
+    }
+
+    private fun initSwipeToDelete() {
+        ItemTouchHelper(object : ItemTouchHelper.Callback() {
+
+            override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                return ItemTouchHelper.Callback.makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                toast("You swiped the item!")
+                TODO()
+                // remove((viewHolder as TodoViewHolder).todo)
+            }
+        }).attachToRecyclerView(rv_replace_rule)
+
     }
 }

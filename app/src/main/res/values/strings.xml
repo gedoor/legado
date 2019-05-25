@@ -30,4 +30,5 @@
     <string name="delete">删除</string>
     <string name="replace">净化替换</string>
     <string name="not_available">暂无</string>
+    <string name="enable">启用</string>
 </resources>
