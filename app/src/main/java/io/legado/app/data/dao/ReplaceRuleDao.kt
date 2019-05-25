@@ -44,6 +44,7 @@ interface ReplaceRuleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(replaceRule: ReplaceRule): Long
+
     @Update
     fun update(vararg replaceRules: ReplaceRule)
 

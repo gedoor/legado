@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatActivity() {
 
@@ -33,7 +34,7 @@ abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatAct
                 return true
             }
         }
-        return if (item == null) false else onCompatOptionsItemSelected(item)
+        return item != null && onCompatOptionsItemSelected(item)
     }
 
     open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
