@@ -30,13 +30,11 @@ import okhttp3.Response
 class WebDav @Throws(MalformedURLException::class)
 constructor(url: String) {
 
-    private val url: URL
+    private val url: URL = URL(null, url, Handler.HANDLER)
     private var httpUrl: String? = null
 
     var displayName: String? = null
-    var lastModified: Long = 0
     var size: Long = 0
-    var isDirectory = true
     private var exists = false
     var parent = ""
     var urlName = ""
@@ -47,43 +45,30 @@ constructor(url: String) {
             return field
         }
 
-    private val okHttpClient: OkHttpClient
+    private val okHttpClient: OkHttpClient = OkHttp.instance.okHttpClient
 
     val path: String
         get() = url.toString()
 
     private val inputStream: InputStream?
-        get() {
-            val request = Request.Builder()
-                .url(getUrl()!!)
-
-            val auth = HttpAuth.auth
-
-            if (auth != null) {
-                request.header("Authorization", Credentials.basic(auth!!.user, auth!!.pass))
-            }
+        get() = getUrl()?.let {url ->
+            val request = Request.Builder().url(url)
+            HttpAuth.auth?.let {request.header("Authorization", Credentials.basic(it.user, it.pass)) }
 
             try {
-                val response = okHttpClient.newCall(request.build()).execute()
-                return response.body()!!.byteStream()
+                return okHttpClient.newCall(request.build()).execute().body()?.byteStream()
             } catch (e: IOException) {
                 e.printStackTrace()
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }
-
             return null
         }
 
     val host: String
         get() = url.host
 
-    init {
-        this.url = URL(null, url, Handler.HANDLER)
-        okHttpClient = OkHttp.instance.okHttpClient
-    }
-
-    fun getUrl(): String? {
+    private fun getUrl(): String? {
         if (httpUrl == null) {
             val raw = url.toString().replace("davs://", "https://").replace("dav://", "http://")
             try {
@@ -106,19 +91,17 @@ constructor(url: String) {
      */
     @Throws(IOException::class)
     fun indexFileInfo(): Boolean {
-        val response = propFindResponse(ArrayList())
-        var s = ""
-        try {
+        propFindResponse(ArrayList())?.let { response ->
             if (!response.isSuccessful) {
                 this.exists = false
                 return false
             }
-            s = response.body()!!.string()
-        } catch (e: Exception) {
-            e.printStackTrace()
+            response.body()?.let {
+                if (it.string().isNotEmpty()) {
+                    return true
+                }
+            }
         }
-
-
         return false
     }
 
@@ -131,43 +114,43 @@ constructor(url: String) {
     @Throws(IOException::class)
     @JvmOverloads
     fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
-        val response = propFindResponse(propsList)
-        try {
+            propFindResponse(propsList)?.let {response->
             if (response.isSuccessful) {
-                return parseDir(response.body()!!.string())
+                response.body()?.let {body->
+                    return parseDir(body.string())
+                }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
+        }
         return ArrayList()
     }
 
     @Throws(IOException::class)
-    private fun propFindResponse(propsList: ArrayList<String>, depth: Int = 1): Response {
+    private fun propFindResponse(propsList: ArrayList<String>, depth: Int = 1): Response? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
         }
         val requestPropsStr: String
-        if (requestProps.toString().isEmpty()) {
-            requestPropsStr = DIR.replace("%s", "")
+        requestPropsStr = if (requestProps.toString().isEmpty()) {
+            DIR.replace("%s", "")
         } else {
-            requestPropsStr = String.format(DIR, requestProps.toString() + "\n")
+            String.format(DIR, requestProps.toString() + "\n")
         }
-        val request = Request.Builder()
-            .url(getUrl()!!)
-            // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
-            // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-            .method("PROPFIND", RequestBody.create(MediaType.parse("text/plain"), requestPropsStr))
+        getUrl()?.let {url->
+            val request = Request.Builder()
+                .url(url)
+                // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+                // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+                .method("PROPFIND", RequestBody.create(MediaType.parse("text/plain"), requestPropsStr))
 
-        val auth = HttpAuth.auth
-        if (auth != null) {
-            request.header("Authorization", Credentials.basic(auth!!.user, auth!!.pass))
+            HttpAuth.auth?.let {request.header("Authorization", Credentials.basic(it.user, it.pass)) }
+
+            request.header("Depth", if (depth < 0) "infinity" else Integer.toString(depth))
+
+            return okHttpClient.newCall(request.build()).execute()
         }
-        request.header("Depth", if (depth < 0) "infinity" else Integer.toString(depth))
-
-        return okHttpClient.newCall(request.build()).execute()
+        return null
     }
 
     private fun parseDir(s: String): List<WebDav> {
@@ -214,7 +197,7 @@ constructor(url: String) {
      * @param replaceExisting 是否替换本地的同名文件
      * @return 下载是否成功
      */
-    fun download(savedPath: String, replaceExisting: Boolean): Boolean {
+    fun downloadTo(savedPath: String, replaceExisting: Boolean): Boolean {
         if (File(savedPath).exists()) {
             if (!replaceExisting) {
                 return false
@@ -222,9 +205,12 @@ constructor(url: String) {
         }
         val inputS = inputStream ?: return false
         File(savedPath).writeBytes(inputS.readBytes())
-        return false
+        return true
     }
 
+    /**
+     * 上传文件
+     */
     @Throws(IOException::class)
     @JvmOverloads
     fun upload(localPath: String, contentType: String? = null): Boolean {
