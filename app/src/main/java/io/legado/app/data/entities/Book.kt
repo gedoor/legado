@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.*
+import io.legado.app.constant.AppConst.NOT_AVAILABLE
 import io.legado.app.utils.strim
 import kotlinx.android.parcel.Parcelize
 
@@ -11,7 +12,7 @@ data class Book(@PrimaryKey
                 var descUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
                 var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
                 var sourceId: Int = -1,                     // 书源规则id(默认-1,表示本地书籍)
-                var name: String = "",                      // 书籍名称(书源获取)
+                var name: String? = null,                      // 书籍名称(书源获取)
                 var customName: String? = null,                // 书籍名称(用户修改)
                 var author: String? = null,                 // 作者名称(书源获取)
                 var customAuthor: String? = null,           // 作者名称(用户修改)
@@ -39,12 +40,12 @@ data class Book(@PrimaryKey
 
     fun getUnreadChapterNum() = Math.max(totalChapterNum - durChapterIndex - 1, 0)
 
-    fun getDisplayName() = customName.strim() ?: name
+    fun getDisplayName() = customName ?: name ?: NOT_AVAILABLE
 
-    fun getDisplayAuthor() = customAuthor.strim() ?: author
+    fun getDisplayAuthor() = customAuthor ?: author ?: NOT_AVAILABLE
 
-    fun getDisplayCover() = customCoverUrl.strim() ?: coverUrl
+    fun getDisplayCover() = customCoverUrl ?: coverUrl
 
-    fun getDisplayDescription() = customDescription.strim() ?: description
+    fun getDisplayDescription() = customDescription ?: description
 
 }

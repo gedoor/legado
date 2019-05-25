@@ -18,10 +18,25 @@ data class Rule (
             input.startsWith("$.") -> parseJSON(input)
             input.startsWith("//") -> parseXPATH(input)
             input.startsWith("RE:") -> parseREGEX(input)
-            input.contains("{{") && input.contains("}}") -> parseJS(input)
-            input.contains("{") && input.contains("}") -> parseCONST(input)
+            isJsRule(input) -> parseJS(input)
+            isConstRule(input) -> parseCONST(input)
             else -> parseCSS(input)
         }
+
+        private fun isJsRule(input: String): Boolean {
+            val open = input.indexOf("{{")
+            if (open < 0) return false
+            val close = input.indexOf("}}", open)
+            return close > 0
+        }
+
+        private fun isConstRule(input: String): Boolean {
+            val open = input.indexOf("{")
+            if (open < 0) return false
+            val close = input.indexOf("}", open)
+            return close > 0
+        }
+
 
         private fun parseCSS(rawRule: String): List<BaseRule> {
             val rules = mutableListOf<BaseRule>()
@@ -60,10 +75,6 @@ data class Rule (
             return rules
         }
 
-        private fun parseREGEX(rawRule: String): List<BaseRule> {
-            TODO()
-        }
-
         private fun parseCONST(rawRule: String): List<BaseRule> {
             val rules = mutableListOf<BaseRule>()
             val subRule = mutableListOf<String>()
@@ -82,6 +93,10 @@ data class Rule (
         }
 
         private fun parseJS(rawRule: String): List<BaseRule> {
+            TODO()
+        }
+
+        private fun parseREGEX(rawRule: String): List<BaseRule> {
             TODO()
         }
 

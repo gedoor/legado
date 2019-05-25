@@ -16,4 +16,7 @@ interface BookDao {
     @Query("SELECT descUrl FROM books WHERE `group` = :group")
     fun observeUrlsByGroup(group: Int): LiveData<List<String>>
 
+    @Query("SELECT * FROM books WHERE `name` in (:names)")
+    fun findByName(vararg names: String): List<Book>
+
 }
