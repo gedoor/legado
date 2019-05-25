@@ -1,6 +1,7 @@
 package io.legado.app.data.entities.rule
 
 import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.strim
 
 data class Rule (
     var selectors: List<BaseRule>,
@@ -29,7 +30,7 @@ data class Rule (
                 if (line.contains("@@")) {
                     val temp = line.split("@@")
                     baseRule.selector = temp[0].trim()
-                    baseRule.attr = temp[1].trim()
+                    baseRule.attr = temp[1].strim() ?: "text"    // 写了 @@ 但是后面空白的也默认为 text
                 } else {
                     baseRule.selector = line
                     baseRule.attr = "text"
@@ -69,6 +70,7 @@ data class Rule (
             for (line in rawRule.splitNotBlank("\n")) {
                 subRule.clear()
                 val baseRule = BaseRule(type = RuleType.JSON)
+                // 保留 URL 中的 % 字符
                 baseRule.template = CONST_PATTERN.replace(line.replace("%", "%%")) { match ->
                     subRule.add(match.groupValues[1])
                     "%s"
@@ -87,10 +89,16 @@ data class Rule (
 }
 
 /*
+*
+* CSS 规则说明
+* 使用 JSOUP 的"选择规则"，后面加上需要获取的属性名或者方法，如 href, data-url, text 等，如果不加默认为 text
+* CSS "选择规则" 和 "属性方法" 之间用 @@ 隔开
+*
 * CONST 规则说明：
-* {$.xxx} 表示要获取 JSON 变量 $.xxx
+* {$.xxx} 表示要获取 JSON 变量 $.xxx，最先解析
 * {@.yyy} 表示要获取之前存储的变量 yyy
 * {#.zzz} 表示直接输出 zzz，可以留空，{#.} 什么也不输出
+*
 * */
 enum class RuleType {
     CSS, XPATH, JSON, REGEX, CONST, JS, HYBRID
