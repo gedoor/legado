@@ -50,13 +50,15 @@ class ReplaceRuleAdapter(context: Context) :
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(rule: ReplaceRule, listener: OnClickListener?, hideDivider: Boolean) = with(itemView) {
-            cb_enable.text      = rule.name
-            cb_enable.isChecked = rule.isEnabled
-            divider.isGone      = hideDivider
-            iv_delete.onClick { listener?.delete(rule) }
-            iv_edit.onClick { listener?.edit(rule) }
-            cb_enable.onClick {
-                rule.isEnabled = cb_enable.isChecked
+            tv_name.text            = rule.name
+            swt_enabled.isChecked = rule.isEnabled
+            divider.isGone          = hideDivider
+            iv_delete.isGone = true
+            iv_edit.isGone = true
+            // iv_delete.onClick { listener?.delete(rule) }
+            // iv_edit.onClick { listener?.edit(rule) }
+            swt_enabled.onClick {
+                rule.isEnabled = swt_enabled.isChecked
                 listener?.update(rule)
             }
         }
