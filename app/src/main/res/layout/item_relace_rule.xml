@@ -4,9 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp">
+        android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_edit"
@@ -42,7 +40,7 @@
             android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
+            android:paddingStart="8dp"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +52,8 @@
             android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
             android:textSize="16sp"
             android:text="Item Name"
             android:textColor="@color/text_default"
@@ -77,12 +76,13 @@
             app:layout_constraintStart_toEndOf="@id/tv_name"
             app:layout_constraintHorizontal_bias="1"/>
 
-
+    <!--
     <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/divider"
             app:layout_constraintBottom_toBottomOf="parent"/>
+    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,8 @@ package io.legado.app.data.dao
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.Book
 
@@ -18,5 +20,14 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE `name` in (:names)")
     fun findByName(vararg names: String): List<Book>
+
+    @get:Query("SELECT descUrl FROM books")
+    val allBookUrls: List<String>
+
+    @get:Query("SELECT COUNT(*) FROM books")
+    val allBookCount: Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg books: Book)
 
 }

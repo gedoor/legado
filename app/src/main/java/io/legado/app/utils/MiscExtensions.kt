@@ -7,3 +7,6 @@ fun ReadContext.readString(path: String): String? = this.read(path, String::clas
 fun ReadContext.readBool(path: String): Boolean? = this.read(path, Boolean::class.java)
 
 fun ReadContext.readInt(path: String): Int? = this.read(path, Int::class.java)
+
+fun ReadContext.readLong(path: String): Long? = this.read(path, Long::class.java)
+
