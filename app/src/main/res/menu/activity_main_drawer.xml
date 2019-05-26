@@ -9,7 +9,7 @@
                 android:icon="@drawable/ic_menu_camera"
                 android:title="@string/menu_backup"/>
         <item
-                android:id="@+id/nav_import"
+                android:id="@+id/nav_restore"
                 android:icon="@drawable/ic_menu_gallery"
                 android:title="@string/menu_restore"/>
         <item

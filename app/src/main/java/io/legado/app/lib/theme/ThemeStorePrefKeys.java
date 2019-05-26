@@ -5,7 +5,7 @@ package io.legado.app.lib.theme;
  */
 interface ThemeStorePrefKeys {
 
-    String CONFIG_PREFS_KEY_DEFAULT = "[[kabouzeid_app-theme-helper]]";
+    String CONFIG_PREFS_KEY_DEFAULT = "app_themes";
     String IS_CONFIGURED_KEY = "is_configured";
     String IS_CONFIGURED_VERSION_KEY = "is_configured_version";
     String VALUES_CHANGED = "values_changed";
