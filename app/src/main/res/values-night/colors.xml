@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">@color/md_grey_800</color>
+    <color name="background_card">#353535</color>
+    <color name="background_menu">#282828</color>
+
+    <color name="night_mask">#69000000</color>
+
+    <color name="colorPrimary">@color/md_grey_800</color>
+    <color name="colorPrimaryDark">@color/md_grey_900</color>
+    <color name="colorAccent">@color/md_grey_100</color>
+
+    <color name="transparent30">#30ffffff</color>
+
+    <color name="bg_divider_line">#363636</color>
+    <color name="btn_bg_press">#804D4D4D</color>
+    <color name="btn_bg_press_2">#80686868</color>
+    <color name="btn_bg_press_tp">#88111111</color>
+    <color name="darker_gray">#66666666</color>
+
+    <color name="tv_btn_normal_black">#737373</color>
+    <color name="tv_btn_press_black">#565656</color>
+
+    <color name="tv_text_default">#ffffffff</color>
+    <color name="tv_text_secondary">#e5ffffff</color>
+    <color name="tv_text_summary">#b3ffffff</color>
+    <color name="menu_color_default">#b7b7b7</color>
+
+
+    <color name="tv_text_button_nor">#303030</color>
+
+    <!--statusBarBackground-->
+    <color name="navigation_bar_bag">#222222</color>
+</resources>

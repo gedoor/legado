@@ -1,11 +1,14 @@
 package io.legado.app.ui.replacerule
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -13,6 +16,10 @@ import io.legado.app.data.entities.ReplaceRule
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
+import io.legado.app.constant.AppConst.APP_TAG
+import kotlinx.android.synthetic.main.item_relace_rule.*
 
 
 class ReplaceRuleActivity : AppCompatActivity() {
@@ -23,9 +30,9 @@ class ReplaceRuleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_replace_rule)
-        rv_replace_rule.layoutManager = LinearLayoutManager(this)
         initRecyclerView()
         initDataObservers()
+        initSwipeToDelete()
     }
 
     private fun initRecyclerView() {
@@ -54,6 +61,12 @@ class ReplaceRuleActivity : AppCompatActivity() {
             }
         }
         rv_replace_rule.adapter = adapter
+        rv_replace_rule.addItemDecoration(
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
+                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
+                    Log.e(APP_TAG, it.toString())
+                    this.setDrawable(it) }
+            })
     }
 
     private fun initDataObservers() {
@@ -68,5 +81,29 @@ class ReplaceRuleActivity : AppCompatActivity() {
                 allEnabled = it == 0
             }
         }
+    }
+
+    private fun initSwipeToDelete() {
+        ItemTouchHelper(object : ItemTouchHelper.Callback() {
+
+            override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                return ItemTouchHelper.Callback.makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                toast("You swiped the item!")
+                // TODO()
+                // remove((viewHolder as TodoViewHolder).todo)
+            }
+        }).attachToRecyclerView(rv_replace_rule)
+
     }
 }

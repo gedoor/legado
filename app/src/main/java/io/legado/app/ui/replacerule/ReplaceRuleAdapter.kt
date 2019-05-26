@@ -1,6 +1,7 @@
 package io.legado.app.ui.replacerule
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.constant.AppConst.APP_TAG
 import io.legado.app.data.entities.ReplaceRule
 import kotlinx.android.synthetic.main.item_relace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -45,18 +47,20 @@ class ReplaceRuleAdapter(context: Context) :
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, pos: Int) {
-        getItem(pos)?.let { holder.bind(it, onClickListener, pos == itemCount - 1) }
+        getItem(pos)?.let { holder.bind(it, onClickListener) }
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(rule: ReplaceRule, listener: OnClickListener?, hideDivider: Boolean) = with(itemView) {
-            cb_enable.text      = rule.name
-            cb_enable.isChecked = rule.isEnabled
-            divider.isGone      = hideDivider
-            iv_delete.onClick { listener?.delete(rule) }
-            iv_edit.onClick { listener?.edit(rule) }
-            cb_enable.onClick {
-                rule.isEnabled = cb_enable.isChecked
+        fun bind(rule: ReplaceRule, listener: OnClickListener?) = with(itemView) {
+            tv_name.text            = rule.name
+            swt_enabled.isChecked   = rule.isEnabled
+            // divider.isGone          = hideDivider
+            iv_delete.isGone        = true
+            iv_edit.isGone          = true
+            // iv_delete.onClick { listener?.delete(rule) }
+            // iv_edit.onClick { listener?.edit(rule) }
+            swt_enabled.onClick {
+                rule.isEnabled = swt_enabled.isChecked
                 listener?.update(rule)
             }
         }
