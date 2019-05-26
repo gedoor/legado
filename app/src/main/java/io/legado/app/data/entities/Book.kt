@@ -3,7 +3,6 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import androidx.room.*
 import io.legado.app.constant.AppConst.NOT_AVAILABLE
-import io.legado.app.utils.strim
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

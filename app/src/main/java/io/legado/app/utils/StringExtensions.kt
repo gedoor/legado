@@ -1,7 +1,7 @@
 package io.legado.app.utils
 // import org.apache.commons.text.StringEscapeUtils
 
-fun String?.strim() = if (this.isNullOrBlank()) null else this.trim()
+fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
 fun String.isAbsUrl() = this.startsWith("http://", true)
         || this.startsWith("https://", true)

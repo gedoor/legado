@@ -28,12 +28,12 @@ object HttpHelper {
     }
 
     private fun getOkHttpClient(): OkHttpClient {
-        val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+        val default = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
             .tlsVersions(TlsVersion.TLS_1_2)
             .build()
 
         val specs = ArrayList<ConnectionSpec>()
-        specs.add(cs)
+        specs.add(default)
         specs.add(ConnectionSpec.COMPATIBLE_TLS)
         specs.add(ConnectionSpec.CLEARTEXT)
 

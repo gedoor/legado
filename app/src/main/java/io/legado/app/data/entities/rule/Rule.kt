@@ -1,7 +1,7 @@
 package io.legado.app.data.entities.rule
 
 import io.legado.app.utils.splitNotBlank
-import io.legado.app.utils.strim
+import io.legado.app.utils.safeTrim
 
 data class Rule (
     var selectors: List<BaseRule>,
@@ -45,7 +45,7 @@ data class Rule (
                 if (line.contains("@@")) {
                     val temp = line.split("@@")
                     baseRule.selector = temp[0].trim()
-                    baseRule.attr = temp[1].strim() ?: "text"    // 写了 @@ 但是后面空白的也默认为 text
+                    baseRule.attr = temp[1].safeTrim() ?: "text"    // 写了 @@ 但是后面空白的也默认为 text
                 } else {
                     baseRule.selector = line
                     baseRule.attr = "text"

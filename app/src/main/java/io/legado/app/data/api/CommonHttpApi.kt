@@ -11,4 +11,6 @@ interface CommonHttpApi {
     @FormUrlEncoded
     @POST
     fun post(@Url url: String, @FieldMap map: Map<String, String>): Deferred<String>
+
+
 }
