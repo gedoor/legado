@@ -1,0 +1,19 @@
+<resources>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="overlapAnchor">false</item>
+        <item name="colorAccent">@color/md_grey_100</item>
+    </style>
+
+    <style name="Style.Shadow.Top" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/shadow_height</item>
+        <item name="android:background">@drawable/bg_shadow_top_night</item>
+    </style>
+
+    <style name="Style.Shadow.Bottom" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/shadow_height</item>
+        <item name="android:background">@drawable/bg_shadow_bottom_night</item>
+    </style>
+</resources>
