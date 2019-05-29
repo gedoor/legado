@@ -14,8 +14,7 @@ import java.util.*
 
 internal class Request : OnRequestPermissionsResultCallback {
 
-    var startTime: Long = 0
-        private set
+    val startTime: Long
     private var requestCode: Int = 0
     private var source: RequestSource? = null
     private var permissions: ArrayList<String>? = null
@@ -28,22 +27,17 @@ internal class Request : OnRequestPermissionsResultCallback {
 
     private val deniedPermissions: Array<String>?
         get() {
-            val permissions: Array<String>?
-            val size = this.permissions?.size ?: 0
-            if (size > 0) {
-                permissions = this.permissions?.toTypedArray()
-            } else {
-                permissions = null
-            }
-            return getDeniedPermissions(permissions)
+            return getDeniedPermissions(this.permissions?.toTypedArray())
         }
 
     constructor(activity: AppCompatActivity) {
+        startTime = System.currentTimeMillis()
         source = ActivitySource(activity)
         permissions = ArrayList()
     }
 
     constructor(fragment: Fragment) {
+        startTime = System.currentTimeMillis()
         source = FragmentSource(fragment)
         permissions = ArrayList()
     }
@@ -101,8 +95,6 @@ internal class Request : OnRequestPermissionsResultCallback {
                 onPermissionsGranted(requestCode)
             }
         }
-
-        startTime = System.currentTimeMillis()
     }
 
     fun clear() {

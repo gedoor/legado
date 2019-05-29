@@ -17,7 +17,6 @@ class SearchActivity : BaseActivity<SearchDataBinding, SearchViewModel>() {
 
     override fun onViewModelCreated(viewModel: SearchViewModel, savedInstanceState: Bundle?) {
 
-        startActivity<SearchActivity>()
     }
 
 }
