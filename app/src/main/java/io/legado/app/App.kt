@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -28,12 +29,24 @@ class App : Application() {
             private set
     }
 
+    private var versionCode = 0
+
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
         db = AppDatabase.createDatabase(INSTANCE)
+        versionCode = try {
+            packageManager.getPackageInfo(packageName, 0).versionCode
+        } catch (e: PackageManager.NameNotFoundException) {
+            0
+        }
         initNightTheme()
-        upThemeStore()
+        if (!ThemeStore.isConfigured(this, versionCode)) {
+            upThemeStore()
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannelId()
+        }
     }
 
     fun initNightTheme() {
@@ -44,6 +57,9 @@ class App : Application() {
         }
     }
 
+    /**
+     * 更新主题
+     */
     fun upThemeStore() {
         if (getPrefBoolean("isNightTheme", false)) {
             ThemeStore.editTheme(this)
@@ -63,6 +79,7 @@ class App : Application() {
     /**
      * 创建通知ID
      */
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannelId() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
