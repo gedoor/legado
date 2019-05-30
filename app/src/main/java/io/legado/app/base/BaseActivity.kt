@@ -33,8 +33,8 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
      * 设置MENU图标颜色
      */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val primaryTextColor =
-            MaterialValueHelper.getPrimaryTextColor(this, ColorUtil.isColorLight(ThemeStore.primaryColor(this)))
+        val primaryTextColor = MaterialValueHelper
+            .getPrimaryTextColor(this, ColorUtil.isColorLight(ThemeStore.primaryColor(this)))
         for (i in 0 until menu.size()) {
             val drawable = menu.getItem(i).icon
             if (drawable != null) {
@@ -56,7 +56,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
                     method.invoke(menu, true)
                     method = menu.javaClass.getDeclaredMethod("getNonActionItems")
                     val menuItems = method.invoke(menu) as ArrayList<MenuItem>
-                    if (!menuItems.isEmpty()) {
+                    if (menuItems.isNotEmpty()) {
                         for (menuItem in menuItems) {
                             val drawable = menuItem.icon
                             if (drawable != null) {
