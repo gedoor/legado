@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/transparent" android:state_pressed="false"/>
+    <item android:drawable="@color/btn_bg_press" android:state_pressed="true"/>
+</selector>

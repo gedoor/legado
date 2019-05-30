@@ -3,15 +3,9 @@ package io.legado.app.base
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
-abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatActivity() {
-
-    protected lateinit var dataBinding: BD
-        private set
+abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
 
     protected abstract val viewModel: VM
 
@@ -19,7 +13,7 @@ abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatAct
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dataBinding = DataBindingUtil.setContentView(this, layoutID)
+        setContentView(layoutID)
         onViewModelCreated(viewModel, savedInstanceState)
     }
 
