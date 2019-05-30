@@ -14,8 +14,8 @@ import java.util.*
 
 internal class Request : OnRequestPermissionsResultCallback {
 
-    val startTime: Long
-    private var requestCode: Int = 0
+    private val requestTime: Long
+    private var requestCode: Int = TYPE_REQUEST_PERMISSION
     private var source: RequestSource? = null
     private var permissions: ArrayList<String>? = null
     private var grantedCallback: OnPermissionsGrantedCallback? = null
@@ -31,15 +31,15 @@ internal class Request : OnRequestPermissionsResultCallback {
         }
 
     constructor(activity: AppCompatActivity) {
-        startTime = System.currentTimeMillis()
         source = ActivitySource(activity)
         permissions = ArrayList()
+        requestTime = System.currentTimeMillis()
     }
 
     constructor(fragment: Fragment) {
-        startTime = System.currentTimeMillis()
         source = FragmentSource(fragment)
         permissions = ArrayList()
+        requestTime = System.currentTimeMillis()
     }
 
     fun addPermissions(vararg permissions: String) {
