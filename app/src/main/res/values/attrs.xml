@@ -44,5 +44,59 @@
         <attr name="emptyActionDescription" format="string|reference" />
         <attr name="emptyDescription" format="string|reference" />
     </declare-styleable>
-    
+
+    <declare-styleable name="RefreshProgressBar">
+        <attr name="max_progress" format="integer"/>
+        <attr name="dur_progress" format="integer"/>
+        <attr name="second_dur_progress" format="dimension"/>
+        <attr name="second_max_progress" format="dimension"/>
+        <attr name="bg_color" format="color"/>
+        <attr name="second_color" format="color"/>
+        <attr name="font_color" format="color"/>
+        <attr name="speed" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="SmoothCheckBox">
+        <attr name="duration" format="integer"/>
+        <attr name="stroke_width" format="dimension"/>
+        <attr name="color_tick" format="color"/>
+        <attr name="color_checked" format="color"/>
+        <attr name="color_unchecked" format="color"/>
+        <attr name="color_unchecked_stroke" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="NumberPickerPreference">
+        <attr name="MinValue" format="integer"/>
+        <attr name="MaxValue" format="integer"/>
+        <attr name="android:summary"/>
+    </declare-styleable>
+
+    <declare-styleable name="RefreshLayout">
+        <attr name="layout_refresh_empty" format="reference"/>
+        <attr name="layout_refresh_error" format="reference"/>
+        <attr name="layout_refresh_loading" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="FastScroller">
+        <attr name="fadeScrollbar" format="boolean"/>
+        <attr name="showBubble" format="boolean"/>
+        <attr name="showTrack" format="boolean"/>
+        <attr name="trackColor" format="color"/>
+        <attr name="handleColor" format="color"/>
+        <attr name="bubbleColor" format="color"/>
+        <attr name="bubbleTextColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="FilletImageView">
+        <attr name="radius" format="dimension"/>
+        <attr name="left_top_radius" format="dimension"/>
+        <attr name="right_top_radius" format="dimension"/>
+        <attr name="right_bottom_radius" format="dimension"/>
+        <attr name="left_bottom_radius" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="IconListPreference">
+        <attr name="icons" format="reference"/>
+    </declare-styleable>
+
 </resources>
