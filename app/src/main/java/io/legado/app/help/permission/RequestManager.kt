@@ -15,7 +15,7 @@ internal object RequestManager : OnPermissionsResultCallback {
     }
 
     private val isCurrentRequestInvalid: Boolean
-        get() = request?.let { System.currentTimeMillis() - it.startTime > 5 * 1000L } ?: true
+        get() = request?.let { System.currentTimeMillis() - it.requestTime > 5 * 1000L } ?: true
 
     init {
         RequestPlugins.setOnPermissionsResultCallback(this)
@@ -52,7 +52,7 @@ internal object RequestManager : OnPermissionsResultCallback {
 
         requests?.let {
             request = if (it.empty()) null else it.pop()
-            request?.let {  handler.post(requestRunnable) }
+            request?.let { handler.post(requestRunnable) }
         }
     }
 

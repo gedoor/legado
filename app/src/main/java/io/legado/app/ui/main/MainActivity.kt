@@ -16,7 +16,7 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.search.SearchActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.startActivity

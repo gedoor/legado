@@ -8,7 +8,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatActivity() {
+abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel?> : AppCompatActivity() {
 
     protected lateinit var dataBinding: BD
         private set

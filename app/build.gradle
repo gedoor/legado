@@ -43,7 +43,7 @@ kapt {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     implementation 'androidx.core:core-ktx:1.0.2'
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -80,6 +80,9 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'//
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'

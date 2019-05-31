@@ -14,7 +14,7 @@ import java.util.*
 
 internal class Request : OnRequestPermissionsResultCallback {
 
-    val requestTime: Long
+    internal val requestTime: Long
     private var requestCode: Int = TYPE_REQUEST_PERMISSION
     private var source: RequestSource? = null
     private var permissions: ArrayList<String>? = null
