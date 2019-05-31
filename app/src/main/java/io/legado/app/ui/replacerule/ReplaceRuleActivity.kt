@@ -2,34 +2,37 @@ package io.legado.app.ui.replacerule
 
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BaseActivity
+import io.legado.app.constant.AppConst.APP_TAG
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
-import io.legado.app.constant.AppConst.APP_TAG
-import kotlinx.android.synthetic.main.item_relace_rule.*
 
 
-class ReplaceRuleActivity : AppCompatActivity() {
+class ReplaceRuleActivity : BaseActivity<ReplaceRuleViewModel>() {
+    override val viewModel: ReplaceRuleViewModel
+        get() = getViewModel(ReplaceRuleViewModel::class.java)
+    override val layoutID: Int
+        get() = R.layout.activity_replace_rule
     private lateinit var adapter: ReplaceRuleAdapter
     private var rulesLiveData: LiveData<PagedList<ReplaceRule>>? = null
     private var allEnabled = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_replace_rule)
+    override fun onViewModelCreated(viewModel: ReplaceRuleViewModel, savedInstanceState: Bundle?) {
+        super.onViewModelCreated(viewModel, savedInstanceState)
         initRecyclerView()
         initDataObservers()
         initSwipeToDelete()
