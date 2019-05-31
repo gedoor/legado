@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
     <declare-styleable name="TitleBar">
-        <attr name="title" />
-        <attr name="subtitle" />
-        <attr name="titleTextAppearance" />
-        <attr name="titleTextColor" />
-        <attr name="subtitleTextAppearance" />
-        <attr name="subtitleTextColor" />
-        <attr name="attachToActivity" format="boolean" />
-        <attr name="showNavigationIcon" format="boolean" />
-        <attr name="navigationIcon" format="reference" />
-        <attr name="navigationContentDescription" format="reference|string" />
-        <attr name="navigationIconTint" format="color|reference" />
+        <attr name="title"/>
+        <attr name="subtitle"/>
+        <attr name="titleTextAppearance"/>
+        <attr name="titleTextColor"/>
+        <attr name="subtitleTextAppearance"/>
+        <attr name="subtitleTextColor"/>
+        <attr name="attachToActivity" format="boolean"/>
+        <attr name="displayHomeAsUp" format="boolean"/>
+        <attr name="navigationIcon" format="reference"/>
+        <attr name="navigationContentDescription" format="reference|string"/>
+        <attr name="navigationIconTint" format="color|reference"/>
         <attr name="navigationIconTintMode" format="enum">
-            <enum name="clear" value="0" />
-            <enum name="src" value="1" />
-            <enum name="dst" value="2" />
-            <enum name="src_over" value="3" />
-            <enum name="dst_over" value="4" />
-            <enum name="src_in" value="5" />
-            <enum name="dst_in" value="6" />
-            <enum name="src_out" value="7" />
-            <enum name="dst_out" value="8" />
-            <enum name="src_atop" value="9" />
-            <enum name="dst_atop" value="10" />
-            <enum name="xor" value="11" />
-            <enum name="darken" value="16" />
-            <enum name="lighten" value="17" />
-            <enum name="multiply" value="13" />
-            <enum name="screen" value="14" />
-            <enum name="add" value="12" />
-            <enum name="overlay" value="15" />
+            <enum name="clear" value="0"/>
+            <enum name="src" value="1"/>
+            <enum name="dst" value="2"/>
+            <enum name="src_over" value="3"/>
+            <enum name="dst_over" value="4"/>
+            <enum name="src_in" value="5"/>
+            <enum name="dst_in" value="6"/>
+            <enum name="src_out" value="7"/>
+            <enum name="dst_out" value="8"/>
+            <enum name="src_atop" value="9"/>
+            <enum name="dst_atop" value="10"/>
+            <enum name="xor" value="11"/>
+            <enum name="darken" value="16"/>
+            <enum name="lighten" value="17"/>
+            <enum name="multiply" value="13"/>
+            <enum name="screen" value="14"/>
+            <enum name="add" value="12"/>
+            <enum name="overlay" value="15"/>
         </attr>
     </declare-styleable>
 
-    <attr name="titleBarStyle" format="reference" />
+    <attr name="titleBarStyle" format="reference"/>
 
     <declare-styleable name="DynamicFrameLayout">
-        <attr name="errorSrc" format="reference" />
-        <attr name="emptySrc" format="reference" />
-        <attr name="errorActionDescription" format="string|reference" />
-        <attr name="emptyActionDescription" format="string|reference" />
-        <attr name="emptyDescription" format="string|reference" />
+        <attr name="errorSrc" format="reference"/>
+        <attr name="emptySrc" format="reference"/>
+        <attr name="errorActionDescription" format="string|reference"/>
+        <attr name="emptyActionDescription" format="string|reference"/>
+        <attr name="emptyDescription" format="string|reference"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshProgressBar">

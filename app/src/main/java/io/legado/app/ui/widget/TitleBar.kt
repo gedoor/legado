@@ -33,6 +33,8 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             toolbar.subtitle = subtitle
         }
 
+    private val mDisplayHomeAsUp: Boolean
+
     init {
         inflate(context, R.layout.view_titlebar, this)
         toolbar = findViewById(R.id.toolbar)
@@ -44,14 +46,15 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         val navigationContentDescription = a.getText(R.styleable.TitleBar_navigationContentDescription)
         val navigationIconTint = a.getColorStateList(R.styleable.TitleBar_navigationIconTint)
         val navigationIconTintMode = a.getInt(R.styleable.TitleBar_navigationIconTintMode, 9)
-        val showNavigationIcon = a.getBoolean(R.styleable.TitleBar_showNavigationIcon, true)
         val attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
         val titleText = a.getString(R.styleable.TitleBar_title)
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
 
+        mDisplayHomeAsUp = a.getBoolean(R.styleable.TitleBar_displayHomeAsUp, true)
+
         toolbar.apply {
-            if (showNavigationIcon) {
-                this.navigationIcon = navigationIcon
+            navigationIcon?.let {
+                this.navigationIcon = it
                 this.navigationContentDescription = navigationContentDescription
                 wrapDrawableTint(this.navigationIcon, navigationIconTint, navigationIconTintMode)
             }
@@ -120,7 +123,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         val activity = getCompatActivity(context)
         activity?.let {
             activity.setSupportActionBar(toolbar)
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(mDisplayHomeAsUp)
         }
     }
 

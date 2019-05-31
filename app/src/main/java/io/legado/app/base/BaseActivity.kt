@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -30,17 +31,29 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
 
     }
 
-    /**
-     * 设置MENU图标颜色
-     */
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val primaryTextColor = getPrimaryTextColor(ColorUtils.isColorLight(ThemeStore.primaryColor(this)))
-        val defaultTextColor = ContextCompat.getColor(this, R.color.tv_text_default)
-        for (i in 0 until menu.size()) {
-            (menu.getItem(i) as MenuItemImpl).let {//overflow：展开的item
-                DrawableUtils.setTint(it.icon, if (it.requiresOverflow()) defaultTextColor else primaryTextColor)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return menu?.let {
+            if (it is MenuBuilder) {
+                it.setOptionalIconsVisible(true)
             }
-        }
+            val bool = onCompatCreateOptionsMenu(it)
+            val primaryTextColor = getPrimaryTextColor(ColorUtils.isColorLight(ThemeStore.primaryColor(this)))
+            val defaultTextColor = ContextCompat.getColor(this, R.color.tv_text_default)
+            for (i in 0 until menu.size()) {
+                (menu.getItem(i) as MenuItemImpl).let { item ->
+                    //overflow：展开的item
+                    DrawableUtils.setTint(
+                        item.icon,
+                        if (item.requiresOverflow()) defaultTextColor else primaryTextColor
+                    )
+                }
+            }
+            bool
+        } ?: super.onCreateOptionsMenu(menu)
+    }
+
+
+    open fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -74,7 +87,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
 //        return super.onMenuOpened(featureId, menu)
 //    }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    final override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
             if (it.itemId == android.R.id.home) {
                 supportFinishAfterTransition()
@@ -85,7 +98,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
     }
 
     open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
     protected fun initTheme() {
