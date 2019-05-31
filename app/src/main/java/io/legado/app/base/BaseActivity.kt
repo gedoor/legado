@@ -20,6 +20,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
     protected abstract val layoutID: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        initTheme()
         super.onCreate(savedInstanceState)
         setContentView(layoutID)
         onViewModelCreated(viewModel, savedInstanceState)
@@ -87,5 +88,13 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
 
     open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         return true
+    }
+
+    protected fun initTheme() {
+        if (ColorUtil.isColorLight(ThemeStore.primaryColor(this))) {
+            setTheme(R.style.CAppTheme)
+        } else {
+            setTheme(R.style.CAppThemeBarDark)
+        }
     }
 }
