@@ -4,13 +4,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Switch
+import androidx.appcompat.widget.SwitchCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ATEStockSwitch : Switch {
+class ATEStockSwitch : SwitchCompat {
 
     constructor(context: Context) : super(context) {
         init(context, null)

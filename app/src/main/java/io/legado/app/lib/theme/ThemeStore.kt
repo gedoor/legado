@@ -26,7 +26,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     override fun primaryColor(@ColorInt color: Int): ThemeStore {
         mEditor.putInt(ThemeStorePrefKeys.KEY_PRIMARY_COLOR, color)
         if (autoGeneratePrimaryDark(mContext))
-            primaryColorDark(ColorUtil.darkenColor(color))
+            primaryColorDark(ColorUtils.darkenColor(color))
         return this
     }
 
@@ -35,7 +35,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun primaryColorAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return primaryColor(ATHUtil.resolveColor(mContext, colorAttr))
+        return primaryColor(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun primaryColorDark(@ColorInt color: Int): ThemeStore {
@@ -48,7 +48,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun primaryColorDarkAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return primaryColorDark(ATHUtil.resolveColor(mContext, colorAttr))
+        return primaryColorDark(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun accentColor(@ColorInt color: Int): ThemeStore {
@@ -61,7 +61,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun accentColorAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return accentColor(ATHUtil.resolveColor(mContext, colorAttr))
+        return accentColor(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun statusBarColor(@ColorInt color: Int): ThemeStore {
@@ -74,7 +74,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun statusBarColorAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return statusBarColor(ATHUtil.resolveColor(mContext, colorAttr))
+        return statusBarColor(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun navigationBarColor(@ColorInt color: Int): ThemeStore {
@@ -87,7 +87,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun navigationBarColorAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return navigationBarColor(ATHUtil.resolveColor(mContext, colorAttr))
+        return navigationBarColor(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun textColorPrimary(@ColorInt color: Int): ThemeStore {
@@ -100,7 +100,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun textColorPrimaryAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return textColorPrimary(ATHUtil.resolveColor(mContext, colorAttr))
+        return textColorPrimary(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun textColorPrimaryInverse(@ColorInt color: Int): ThemeStore {
@@ -113,7 +113,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun textColorPrimaryInverseAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return textColorPrimaryInverse(ATHUtil.resolveColor(mContext, colorAttr))
+        return textColorPrimaryInverse(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun textColorSecondary(@ColorInt color: Int): ThemeStore {
@@ -126,7 +126,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun textColorSecondaryAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return textColorSecondary(ATHUtil.resolveColor(mContext, colorAttr))
+        return textColorSecondary(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun textColorSecondaryInverse(@ColorInt color: Int): ThemeStore {
@@ -139,7 +139,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
     }
 
     override fun textColorSecondaryInverseAttr(@AttrRes colorAttr: Int): ThemeStore {
-        return textColorSecondaryInverse(ATHUtil.resolveColor(mContext, colorAttr))
+        return textColorSecondaryInverse(ATHUtils.resolveColor(mContext, colorAttr))
     }
 
     override fun backgroundColor(color: Int): ThemeStore {
@@ -179,7 +179,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         // Static getters
 
         @CheckResult
-        protected fun prefs(context: Context): SharedPreferences {
+        internal fun prefs(context: Context): SharedPreferences {
             return context.getSharedPreferences(ThemeStorePrefKeys.CONFIG_PREFS_KEY_DEFAULT, Context.MODE_PRIVATE)
         }
 
@@ -192,7 +192,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun primaryColor(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_PRIMARY_COLOR,
-                ATHUtil.resolveColor(context, R.attr.colorPrimary, Color.parseColor("#455A64"))
+                ATHUtils.resolveColor(context, R.attr.colorPrimary, Color.parseColor("#455A64"))
             )
         }
 
@@ -201,7 +201,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun primaryColorDark(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_PRIMARY_COLOR_DARK,
-                ATHUtil.resolveColor(context, R.attr.colorPrimaryDark, Color.parseColor("#37474F"))
+                ATHUtils.resolveColor(context, R.attr.colorPrimaryDark, Color.parseColor("#37474F"))
             )
         }
 
@@ -210,7 +210,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun accentColor(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_ACCENT_COLOR,
-                ATHUtil.resolveColor(context, R.attr.colorAccent, Color.parseColor("#263238"))
+                ATHUtils.resolveColor(context, R.attr.colorAccent, Color.parseColor("#263238"))
             )
         }
 
@@ -235,7 +235,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun textColorPrimary(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_TEXT_COLOR_PRIMARY,
-                ATHUtil.resolveColor(context, android.R.attr.textColorPrimary)
+                ATHUtils.resolveColor(context, android.R.attr.textColorPrimary)
             )
         }
 
@@ -244,7 +244,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun textColorPrimaryInverse(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_TEXT_COLOR_PRIMARY_INVERSE,
-                ATHUtil.resolveColor(context, android.R.attr.textColorPrimaryInverse)
+                ATHUtils.resolveColor(context, android.R.attr.textColorPrimaryInverse)
             )
         }
 
@@ -253,7 +253,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun textColorSecondary(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_TEXT_COLOR_SECONDARY,
-                ATHUtil.resolveColor(context, android.R.attr.textColorSecondary)
+                ATHUtils.resolveColor(context, android.R.attr.textColorSecondary)
             )
         }
 
@@ -262,7 +262,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun textColorSecondaryInverse(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_TEXT_COLOR_SECONDARY_INVERSE,
-                ATHUtil.resolveColor(context, android.R.attr.textColorSecondaryInverse)
+                ATHUtils.resolveColor(context, android.R.attr.textColorSecondaryInverse)
             )
         }
 
@@ -271,7 +271,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun backgroundColor(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_BACKGROUND_COLOR,
-                ATHUtil.resolveColor(context, android.R.attr.colorBackground)
+                ATHUtils.resolveColor(context, android.R.attr.colorBackground)
             )
         }
 

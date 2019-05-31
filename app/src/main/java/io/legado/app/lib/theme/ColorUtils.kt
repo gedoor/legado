@@ -4,7 +4,7 @@ import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 
-object ColorUtil {
+object ColorUtils {
 
     fun intToString(intColor: Int): String {
         return String.format("#%06X", 0xFFFFFF and intColor)

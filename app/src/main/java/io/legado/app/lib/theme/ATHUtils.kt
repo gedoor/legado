@@ -6,10 +6,10 @@ import androidx.annotation.AttrRes
 /**
  * @author Aidan Follestad (afollestad)
  */
-object ATHUtil {
+object ATHUtils {
 
     fun isWindowBackgroundDark(context: Context): Boolean {
-        return !ColorUtil.isColorLight(ATHUtil.resolveColor(context, android.R.attr.windowBackground))
+        return !ColorUtils.isColorLight(resolveColor(context, android.R.attr.windowBackground))
     }
 
     @JvmOverloads

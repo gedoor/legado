@@ -46,13 +46,13 @@ object TintHelper {
     }
 
     fun setTintSelector(view: View, @ColorInt color: Int, darker: Boolean, useDarkTheme: Boolean) {
-        val isColorLight = ColorUtil.isColorLight(color)
+        val isColorLight = ColorUtils.isColorLight(color)
         val disabled = ContextCompat.getColor(
             view.context,
             if (useDarkTheme) R.color.ate_button_disabled_dark else R.color.ate_button_disabled_light
         )
-        val pressed = ColorUtil.shiftColor(color, if (darker) 0.9f else 1.1f)
-        val activated = ColorUtil.shiftColor(color, if (darker) 1.1f else 0.9f)
+        val pressed = ColorUtils.shiftColor(color, if (darker) 0.9f else 1.1f)
+        val activated = ColorUtils.shiftColor(color, if (darker) 1.1f else 0.9f)
         val rippleColor = getDefaultRippleColor(view.context, isColorLight)
         val textColor = ContextCompat.getColor(
             view.context,
@@ -107,7 +107,7 @@ object TintHelper {
         var drawable: Drawable? = view.background
         if (drawable != null) {
             drawable = createTintedDrawable(drawable, sl)
-            ViewUtil.setBackgroundCompat(view, drawable)
+            ViewUtils.setBackgroundCompat(view, drawable)
         }
 
         if (view is TextView && view !is Button) {
@@ -127,7 +127,7 @@ object TintHelper {
         view: View, @ColorInt color: Int,
         background: Boolean
     ) {
-        setTintAuto(view, color, background, ATHUtil.isWindowBackgroundDark(view.context))
+        setTintAuto(view, color, background, ATHUtils.isWindowBackgroundDark(view.context))
     }
 
     fun setTintAuto(
@@ -175,7 +175,7 @@ object TintHelper {
                     view.context,
                     if (isDark) R.color.ripple_material_dark else R.color.ripple_material_light
                 )
-                val checked = ColorUtil.adjustAlpha(color, 0.4f)
+                val checked = ColorUtils.adjustAlpha(color, 0.4f)
                 val sl = ColorStateList(
                     arrayOf(
                         intArrayOf(-android.R.attr.state_activated, -android.R.attr.state_checked),
@@ -195,7 +195,7 @@ object TintHelper {
                 var drawable: Drawable? = view.background
                 if (drawable != null) {
                     drawable = createTintedDrawable(drawable, color)
-                    ViewUtil.setBackgroundCompat(view, drawable)
+                    ViewUtils.setBackgroundCompat(view, drawable)
                 }
             }
         }
@@ -209,7 +209,7 @@ object TintHelper {
                 intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
             ), intArrayOf(
                 // Rdio button includes own alpha for disabled state
-                ColorUtil.stripAlpha(
+                ColorUtils.stripAlpha(
                     ContextCompat.getColor(
                         radioButton.context,
                         if (useDarker) R.color.ate_control_disabled_dark else R.color.ate_control_disabled_light
@@ -335,9 +335,9 @@ object TintHelper {
     ): Drawable? {
         var tint = tint
         if (useDarker) {
-            tint = ColorUtil.shiftColor(tint, 1.1f)
+            tint = ColorUtils.shiftColor(tint, 1.1f)
         }
-        tint = ColorUtil.adjustAlpha(tint, if (compatSwitch && !thumb) 0.5f else 1.0f)
+        tint = ColorUtils.adjustAlpha(tint, if (compatSwitch && !thumb) 0.5f else 1.0f)
         val disabled: Int
         var normal: Int
         if (thumb) {
@@ -362,7 +362,7 @@ object TintHelper {
 
         // Stock switch includes its own alpha
         if (!compatSwitch) {
-            normal = ColorUtil.stripAlpha(normal)
+            normal = ColorUtils.stripAlpha(normal)
         }
 
         val sl = ColorStateList(

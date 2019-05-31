@@ -18,7 +18,7 @@ object ATH {
     @SuppressLint("CommitPrefEdits")
     fun didThemeValuesChange(context: Context, since: Long): Boolean {
         return ThemeStore.isConfigured(context) && ThemeStore.prefs(context).getLong(
-            ThemeStore.VALUES_CHANGED,
+            ThemeStorePrefKeys.VALUES_CHANGED,
             -1
         ) > since
     }
@@ -35,7 +35,7 @@ object ATH {
     }
 
     fun setLightStatusbarAuto(activity: Activity, bgColor: Int) {
-        setLightStatusbar(activity, ColorUtil.isColorLight(bgColor))
+        setLightStatusbar(activity, ColorUtils.isColorLight(bgColor))
     }
 
     fun setLightStatusbar(activity: Activity, enabled: Boolean) {
@@ -64,7 +64,7 @@ object ATH {
     }
 
     fun setLightNavigationbarAuto(activity: Activity, bgColor: Int) {
-        setLightNavigationbar(activity, ColorUtil.isColorLight(bgColor))
+        setLightNavigationbar(activity, ColorUtils.isColorLight(bgColor))
     }
 
     fun setNavigationbarColorAuto(activity: Activity) {
@@ -86,7 +86,7 @@ object ATH {
         val color1: Int
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // Task description requires fully opaque color
-            color1 = ColorUtil.stripAlpha(color)
+            color1 = ColorUtils.stripAlpha(color)
             // Sets color of entry in the system recents page
             activity.setTaskDescription(ActivityManager.TaskDescription(activity.title as String, null, color1))
         }
@@ -103,7 +103,7 @@ object ATH {
     fun setAlertDialogTint(dialog: AlertDialog): AlertDialog {
         val colorStateList = Selector.colorBuild()
             .setDefaultColor(ThemeStore.accentColor(dialog.context))
-            .setPressedColor(ColorUtil.darkenColor(ThemeStore.accentColor(dialog.context)))
+            .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(dialog.context)))
             .create()
         if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(colorStateList)

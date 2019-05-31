@@ -8,7 +8,7 @@ import com.google.android.material.navigation.NavigationView
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
-object NavigationViewUtil {
+object NavigationViewUtils {
 
     fun setItemIconColors(navigationView: NavigationView, @ColorInt normalColor: Int, @ColorInt selectedColor: Int) {
         val iconSl = ColorStateList(

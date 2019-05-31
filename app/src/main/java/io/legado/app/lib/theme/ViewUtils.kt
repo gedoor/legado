@@ -10,7 +10,7 @@ import androidx.annotation.ColorInt
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
-object ViewUtil {
+object ViewUtils {
 
     fun removeOnGlobalLayoutListener(v: View, listener: ViewTreeObserver.OnGlobalLayoutListener) {
         v.viewTreeObserver.removeOnGlobalLayoutListener(listener)
@@ -21,7 +21,7 @@ object ViewUtil {
     }
 
     fun setBackgroundTransition(view: View, newDrawable: Drawable): TransitionDrawable {
-        val transition = DrawableUtil.createTransitionDrawable(view.background, newDrawable)
+        val transition = DrawableUtils.createTransitionDrawable(view.background, newDrawable)
         setBackgroundCompat(view, transition)
         return transition
     }
@@ -32,7 +32,7 @@ object ViewUtil {
         val start = oldColor ?: ColorDrawable(view.solidColor)
         val end = ColorDrawable(newColor)
 
-        val transition = DrawableUtil.createTransitionDrawable(start, end)
+        val transition = DrawableUtils.createTransitionDrawable(start, end)
 
         setBackgroundCompat(view, transition)
 

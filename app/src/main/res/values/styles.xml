@@ -1,23 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    //**************************************************************Theme******************************************************************************//
+
     <!-- 亮色主题 -->
-    <style name="CAppTheme" parent="Base.AppTheme">
+    <style name="AppTheme.Light" parent="Base.AppTheme">
         <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Light</item>
     </style>
 
     <!-- 暗色主题 -->
-    <style name="CAppThemeBarDark" parent="Base.AppTheme">
+    <style name="AppTheme.Dark" parent="Base.AppTheme">
         <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Dark</item>
     </style>
 
     <!-- 透明主题 -->
-    <style name="CAppTransparentTheme" parent="Base.AppTheme">
+    <style name="AppTheme.Transparent" parent="Base.AppTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <!-- Welcome主题 -->
-    <style name="CAppWelcomeTheme" parent="Base.AppTheme">
+    <style name="AppTheme.Welcome" parent="Base.AppTheme">
         <item name="android:windowNoTitle">true</item>
     </style>
 
@@ -27,41 +29,54 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="actionOverflowMenuStyle">@style/PopupMenu</item>
-        <item name="android:itemTextAppearance">@style/MenuItemTextStyle</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Style.PopupMenu</item>
+        <item name="android:itemTextAppearance">@style/Style.MenuItemText</item>
+        <item name="android:popupMenuStyle">@style/Style.PopupMenu</item>
     </style>
 
-    <style name="NavigationViewStyle">
-        <item name="android:listPreferredItemHeightSmall">44dp</item>
+    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">@color/md_grey_900</item>
     </style>
 
-    <style name="alertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">@color/background_card</item>
-        <item name="android:textColor">@color/tv_text_default</item>
-        <item name="android:textColorPrimary">@color/tv_text_default</item>
-        <item name="textColorAlertDialogListItem">@color/tv_text_default</item>
-
+    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorAccent">@color/md_grey_100</item>
     </style>
 
-    <style name="MenuItemTextStyle" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
-        <item name="android:textColor">@color/menu_color_default</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="PopupMenu" parent="Widget.AppCompat.PopupMenu">
-        <item name="android:popupBackground">@color/background_menu</item>
-    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="overlapAnchor">false</item>
         <item name="colorAccent">@color/md_grey_900</item>
     </style>
 
-    <style name="NoPaddingToolbar" parent="Base.Widget.AppCompat.Toolbar">
+    <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/background_card</item>
+        <item name="android:textColor">@color/tv_text_default</item>
+        <item name="android:textColorPrimary">@color/tv_text_default</item>
+        <item name="textColorAlertDialogListItem">@color/tv_text_default</item>
+    </style>
+
+    //**************************************************************System Style******************************************************************************//
+
+    <style name="Style.NavigationView" parent="android:Widget">
+        <item name="android:listPreferredItemHeightSmall">44dp</item>
+    </style>
+
+    <style name="Style.Toolbar.NoPadding" parent="Base.Widget.AppCompat.Toolbar">
         <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
+
+    <style name="Style.MenuItemText" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="android:textColor">@color/menu_color_default</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Style.PopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@color/background_menu</item>
+    </style>
+
+    //**************************************************************Widget Style******************************************************************************//
 
     <style name="Style.Shadow.Top" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
@@ -75,15 +90,6 @@
         <item name="android:background">@drawable/bg_shadow_bottom</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorAccent">@color/md_grey_900</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorAccent">@color/md_grey_100</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>

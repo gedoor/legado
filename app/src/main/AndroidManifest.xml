@@ -23,7 +23,7 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/CAppTheme"
+            android:theme="@style/AppTheme.Light"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity android:name=".ui.search.SearchActivity">
         </activity>
@@ -32,7 +32,7 @@
         <activity
                 android:name=".ui.main.MainActivity"
                 android:label="@string/app_name"
-                android:theme="@style/CAppTheme.NoActionBar">
+                android:theme="@style/AppTheme.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
