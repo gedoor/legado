@@ -99,7 +99,7 @@ public final class ATH {
         TintHelper.setTintAuto(view, color, true);
     }
 
-    public static void setAlertDialogTint(@NonNull AlertDialog dialog) {
+    public static AlertDialog setAlertDialogTint(@NonNull AlertDialog dialog) {
         ColorStateList colorStateList = Selector.colorBuild()
                 .setDefaultColor(ThemeStore.accentColor(dialog.getContext()))
                 .setPressedColor(ColorUtil.darkenColor(ThemeStore.accentColor(dialog.getContext())))
@@ -110,6 +110,7 @@ public final class ATH {
         if (dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE) != null) {
             dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(colorStateList);
         }
+        return dialog;
     }
 
     private ATH() {
