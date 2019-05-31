@@ -25,14 +25,9 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme.Light"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".ui.search.SearchActivity">
-        </activity>
-        <activity android:name=".ui.about.AboutActivity">
-        </activity>
         <activity
                 android:name=".ui.main.MainActivity"
-                android:label="@string/app_name"
-                android:theme="@style/AppTheme.Light.NoActionBar">
+                android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -40,6 +35,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.replacerule.ReplaceRuleActivity"/>
+        <activity android:name=".ui.search.SearchActivity"/>
+        <activity android:name=".ui.about.AboutActivity"/>
 
         <activity android:name=".help.permission.PermissionActivity"
                   android:theme="@style/Activity.Permission"/>
