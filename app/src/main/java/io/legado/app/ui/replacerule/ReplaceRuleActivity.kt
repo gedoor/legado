@@ -32,7 +32,6 @@ class ReplaceRuleActivity : BaseActivity<ReplaceRuleViewModel>() {
     private var allEnabled = false
 
     override fun onViewModelCreated(viewModel: ReplaceRuleViewModel, savedInstanceState: Bundle?) {
-        super.onViewModelCreated(viewModel, savedInstanceState)
         initRecyclerView()
         initDataObservers()
         initSwipeToDelete()

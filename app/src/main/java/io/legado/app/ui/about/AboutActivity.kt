@@ -13,7 +13,7 @@ class AboutActivity : BaseActivity<AndroidViewModel>() {
         get() = R.layout.activity_about
 
     override fun onViewModelCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
-        super.onViewModelCreated(viewModel, savedInstanceState)
+
     }
 
 }

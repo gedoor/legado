@@ -27,9 +27,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
         onViewModelCreated(viewModel, savedInstanceState)
     }
 
-    open fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?) {
-
-    }
+    abstract fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?)
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {
