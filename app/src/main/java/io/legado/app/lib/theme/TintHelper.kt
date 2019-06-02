@@ -125,16 +125,16 @@ object TintHelper {
 
     fun setTintAuto(
         view: View, @ColorInt color: Int,
-        background: Boolean
+        isBackground: Boolean
     ) {
-        setTintAuto(view, color, background, ATHUtils.isWindowBackgroundDark(view.context))
+        setTintAuto(view, color, isBackground, ATHUtils.isWindowBackgroundDark(view.context))
     }
 
     fun setTintAuto(
         view: View, @ColorInt color: Int,
-        background: Boolean, isDark: Boolean
+        isBackground: Boolean, isDark: Boolean
     ) {
-        var isBg = background
+        var isBg = isBackground
         if (!isBg) {
             when (view) {
                 is RadioButton -> setTint(view, color, isDark)
@@ -180,7 +180,7 @@ object TintHelper {
             }
         }
         if (isBg) {
-            // Need to tint the background of a view
+            // Need to tint the isBackground of a view
             if (view is FloatingActionButton || view is Button) {
                 setTintSelector(view, color, false, isDark)
             } else if (view.background != null) {
