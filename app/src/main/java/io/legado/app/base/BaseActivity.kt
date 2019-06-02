@@ -57,36 +57,6 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-//    @SuppressLint("PrivateApi")
-//    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
-//        if (menu != null) {
-//            //展开菜单显示图标
-//            if (menu.javaClass.simpleName.equals("MenuBuilder", ignoreCase = true)) {
-//                try {
-//                    var method = menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", java.lang.Boolean.TYPE)
-//                    method.isAccessible = true
-//                    method.invoke(menu, true)
-//                    method = menu.javaClass.getDeclaredMethod("getNonActionItems")
-//                    val menuItems = method.invoke(menu) as ArrayList<MenuItem>
-//                    if (menuItems.isNotEmpty()) {
-//                        for (menuItem in menuItems) {
-//                            val drawable = menuItem.icon
-//                            if (drawable != null) {
-//                                drawable.mutate()
-//                                drawable.setColorFilter(
-//                                    resources.getColor(R.color.tv_text_default),
-//                                    PorterDuff.Mode.SRC_ATOP
-//                                )
-//                            }
-//                        }
-//                    }
-//                } catch (ignored: Exception) {
-//                }
-//            }
-//        }
-//        return super.onMenuOpened(featureId, menu)
-//    }
-
     final override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
             if (it.itemId == android.R.id.home) {
