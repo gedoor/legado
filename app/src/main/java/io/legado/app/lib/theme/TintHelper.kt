@@ -134,40 +134,32 @@ object TintHelper {
         view: View, @ColorInt color: Int,
         background: Boolean, isDark: Boolean
     ) {
-        var background = background
-        if (!background) {
-            if (view is RadioButton)
-                setTint(view, color, isDark)
-            else if (view is SeekBar)
-                setTint(view, color, isDark)
-            else if (view is ProgressBar)
-                setTint(view, color)
-            else if (view is AppCompatEditText)
-                setTint(view, color, isDark)
-            else if (view is CheckBox)
-                setTint(view, color, isDark)
-            else if (view is ImageView)
-                setTint(view, color)
-            else if (view is Switch)
-                setTint(view, color, isDark)
-            else if (view is SwitchCompat)
-                setTint(view, color, isDark)
-            else if (view is SearchView) {
-                val iconIdS =
-                    intArrayOf(androidx.appcompat.R.id.search_button, androidx.appcompat.R.id.search_close_btn)
-                for (iconId in iconIdS) {
-                    val icon = view.findViewById<ImageView>(iconId)
-                    if (icon != null) {
-                        setTint(icon, color)
+        var isBg = background
+        if (!isBg) {
+            when (view) {
+                is RadioButton -> setTint(view, color, isDark)
+                is SeekBar -> setTint(view, color, isDark)
+                is ProgressBar -> setTint(view, color)
+                is AppCompatEditText -> setTint(view, color, isDark)
+                is CheckBox -> setTint(view, color, isDark)
+                is ImageView -> setTint(view, color)
+                is Switch -> setTint(view, color, isDark)
+                is SwitchCompat -> setTint(view, color, isDark)
+                is SearchView -> {
+                    val iconIdS =
+                        intArrayOf(androidx.appcompat.R.id.search_button, androidx.appcompat.R.id.search_close_btn)
+                    for (iconId in iconIdS) {
+                        val icon = view.findViewById<ImageView>(iconId)
+                        if (icon != null) {
+                            setTint(icon, color)
+                        }
                     }
                 }
-
-            } else {
-                background = true
+                else -> isBg = true
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
-                !background && view.background is RippleDrawable
+                !isBg && view.background is RippleDrawable
             ) {
                 // Ripples for the above views (e.g. when you tap and hold a switch or checkbox)
                 val rd = view.background as RippleDrawable
@@ -187,7 +179,7 @@ object TintHelper {
                 rd.setColor(sl)
             }
         }
-        if (background) {
+        if (isBg) {
             // Need to tint the background of a view
             if (view is FloatingActionButton || view is Button) {
                 setTintSelector(view, color, false, isDark)
