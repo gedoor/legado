@@ -88,5 +88,5 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
 }
