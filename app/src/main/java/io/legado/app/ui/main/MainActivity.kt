@@ -3,14 +3,17 @@ package io.legado.app.ui.main
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : BaseActivity<MainViewModel>() {
+class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavigationItemSelectedListener {
+
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
@@ -18,7 +21,13 @@ class MainActivity : BaseActivity<MainViewModel>() {
         get() = R.layout.activity_main
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
+        bottom_navigation_view.setOnNavigationItemSelectedListener(this)
+    }
 
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+
+        return false
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
