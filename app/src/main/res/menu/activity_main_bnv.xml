@@ -6,18 +6,18 @@
     <item
             android:id="@+id/nav_backup"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_backup"/>
+            android:title="书架"/>
     <item
             android:id="@+id/nav_restore"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_restore"/>
+            android:title="发现"/>
     <item
             android:id="@+id/nav_import_old"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_import_old"/>
+            android:title="书源"/>
     <item
             android:id="@+id/nav_import_github"
             android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_import_github"/>
+            android:title="我的"/>
 
 </menu>
