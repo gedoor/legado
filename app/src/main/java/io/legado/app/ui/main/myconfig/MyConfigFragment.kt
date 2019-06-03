@@ -13,4 +13,8 @@ class MyConfigFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_my_config, container)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
 }

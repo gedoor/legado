@@ -13,4 +13,8 @@ class FindBookFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_find_book, container)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
 }

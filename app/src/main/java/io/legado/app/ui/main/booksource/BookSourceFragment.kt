@@ -13,4 +13,8 @@ class BookSourceFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_book_source, container)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
 }
