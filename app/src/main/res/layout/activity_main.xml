@@ -17,14 +17,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:menu="@menu/activity_main_bnv"
-                tools:layout_editor_absoluteX="-16dp"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.viewpager.widget.ViewPager
                 android:id="@+id/view_pager_main"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"/>
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+                app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
