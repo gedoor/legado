@@ -1,6 +1,5 @@
 package io.legado.app.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,9 +8,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Restore
-import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity<MainViewModel>() {
     override val viewModel: MainViewModel
@@ -21,8 +18,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
         get() = R.layout.activity_main
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
-        fab.setOnClickListener { startActivity(Intent(this, SearchActivity::class.java)) }
-
 
     }
 

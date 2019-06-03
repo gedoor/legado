@@ -1,4 +1,4 @@
-package io.legado.app.ui.main
+package io.legado.app.ui.main.bookshelf
 
 import androidx.fragment.app.Fragment
 
