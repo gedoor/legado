@@ -9,6 +9,7 @@
             android:id="@+id/bottom_navigation_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/background"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/activity_main_bnv"
             app:layout_constraintBottom_toBottomOf="parent"/>
