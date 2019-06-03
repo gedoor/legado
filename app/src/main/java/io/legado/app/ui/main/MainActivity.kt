@@ -26,18 +26,10 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_bookshelf -> {
-                view_pager_main.currentItem = 0
-            }
-            R.id.menu_find_book -> {
-                view_pager_main.currentItem = 1
-            }
-            R.id.menu_book_source -> {
-                view_pager_main.currentItem = 3
-            }
-            R.id.menu_my_config -> {
-                view_pager_main.currentItem = 4
-            }
+            R.id.menu_bookshelf -> view_pager_main.currentItem = 0
+            R.id.menu_find_book -> view_pager_main.currentItem = 1
+            R.id.menu_book_source -> view_pager_main.currentItem = 2
+            R.id.menu_my_config -> view_pager_main.currentItem = 3
         }
         return false
     }
