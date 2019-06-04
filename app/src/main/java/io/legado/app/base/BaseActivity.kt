@@ -11,6 +11,7 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.forEach
 import androidx.lifecycle.ViewModel
+import io.legado.app.R
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.ThemeStore
@@ -41,7 +42,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
             }
             val bool = onCompatCreateOptionsMenu(it)
             val primaryTextColor = getPrimaryTextColor(ColorUtils.isColorLight(ThemeStore.primaryColor(this)))
-            val defaultTextColor = getCompatColor(io.legado.app.R.color.tv_text_default)
+            val defaultTextColor = getCompatColor(R.color.tv_text_default)
             menu.forEach { item ->
                 (item as MenuItemImpl).let { impl ->
                     //overflow：展开的item
@@ -76,9 +77,9 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
 
     protected fun initTheme() {
         if (ColorUtils.isColorLight(ThemeStore.primaryColor(this))) {
-            setTheme(io.legado.app.R.style.AppTheme_Light)
+            setTheme(R.style.AppTheme_Light)
         } else {
-            setTheme(io.legado.app.R.style.AppTheme_Dark)
+            setTheme(R.style.AppTheme_Dark)
         }
     }
 
