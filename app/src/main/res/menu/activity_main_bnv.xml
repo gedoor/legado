@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="bottom_navigation_view">
+
+    <item
+            android:id="@+id/menu_bookshelf"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="书架"/>
+    <item
+            android:id="@+id/menu_find_book"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="发现"/>
+    <item
+            android:id="@+id/menu_book_source"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="书源"/>
+    <item
+            android:id="@+id/menu_my_config"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="我的"/>
+
+</menu>

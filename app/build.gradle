@@ -7,20 +7,50 @@ androidExtensions {
     experimental = true
 }
 
+static def releaseTime() {
+    return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))
+}
+
+def name = "legado"
+def version = "0." + releaseTime()
+def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
+
 android {
     compileSdkVersion 28
+    signingConfigs {
+        myConfig {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_KEY_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_STORE_PASSWORD
+        }
+    }
     defaultConfig {
         applicationId "io.legado.app"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode gitCommits
+        versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        project.ext.set("archivesBaseName", name + "_" + version)
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.myConfig
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.myConfig
+            applicationIdSuffix '.debug'
+            versionNameSuffix 'debug'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "${name}_${defaultConfig.versionName}.apk"
+            }
         }
     }
 

@@ -45,6 +45,7 @@
     <string name="action_list_grid">列表/网格</string>
     <string name="book_library">书城</string>
     <string name="book_local">添加本地</string>
+    <string name="book_source">书源</string>
     <string name="book_source_manage">书源管理</string>
     <string name="setting">设置</string>
     <string name="theme_setting">主题设置</string>
