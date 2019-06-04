@@ -31,10 +31,10 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         get() = R.layout.activity_main
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
-        mFragmentList.add(BookshelfFragment(R.layout.fragment_bookshelf))
-        mFragmentList.add(FindBookFragment(R.layout.fragment_find_book))
-        mFragmentList.add(BookSourceFragment(R.layout.fragment_book_source))
-        mFragmentList.add(MyConfigFragment(R.layout.fragment_my_config))
+        mFragmentList.add(BookshelfFragment())
+        mFragmentList.add(FindBookFragment())
+        mFragmentList.add(BookSourceFragment())
+        mFragmentList.add(MyConfigFragment())
         view_pager_main.adapter =
             TabFragmentPageAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         view_pager_main.addOnPageChangeListener(this)

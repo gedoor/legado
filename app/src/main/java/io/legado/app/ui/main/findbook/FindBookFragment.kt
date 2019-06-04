@@ -3,8 +3,9 @@ package io.legado.app.ui.main.findbook
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import io.legado.app.R
 
-class FindBookFragment(contentLayoutId: Int) : Fragment(contentLayoutId) {
+class FindBookFragment : Fragment(R.layout.fragment_find_book) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
