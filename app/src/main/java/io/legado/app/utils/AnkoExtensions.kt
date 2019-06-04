@@ -1,6 +1,12 @@
 package io.legado.app.utils
 
+import android.app.Activity
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.view.WindowManager
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
@@ -51,3 +57,9 @@ fun Fragment.longToast(text: CharSequence) = requireActivity().longToast(text)
 fun Fragment.dip(value: Int): Int = requireActivity().dip(value)
 
 fun Fragment.dip(value: Float): Int = requireActivity().dip(value)
+
+fun Fragment.getCompatColor(@ColorRes id: Int): Int = requireContext().getCompatColor(id)
+
+fun Fragment.getCompatDrawable(@DrawableRes id: Int): Drawable? = requireContext().getCompatDrawable(id)
+
+fun Fragment.getCompatColorStateList(@ColorRes id: Int): ColorStateList? = requireContext().getCompatColorStateList(id)

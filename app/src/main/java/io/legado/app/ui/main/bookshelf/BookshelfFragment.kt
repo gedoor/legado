@@ -11,8 +11,8 @@ class BookshelfFragment : Fragment(R.layout.fragment_bookshelf) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.e("TAG", "BookshelfFragment")
-    }
 
+    }
 
 
 }
