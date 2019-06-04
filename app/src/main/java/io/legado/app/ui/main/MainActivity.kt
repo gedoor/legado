@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.R
@@ -22,7 +23,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener {
-    private val mFragmentList: ArrayList<Fragment> = ArrayList()
 
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
@@ -31,12 +31,8 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         get() = R.layout.activity_main
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
-        mFragmentList.add(BookshelfFragment())
-        mFragmentList.add(FindBookFragment())
-        mFragmentList.add(BookSourceFragment())
-        mFragmentList.add(MyConfigFragment())
-        view_pager_main.adapter =
-            TabFragmentPageAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
+        view_pager_main.offscreenPageLimit = 3
+        view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
     }
@@ -81,17 +77,21 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         bottom_navigation_view.menu.getItem(position).isChecked = true
     }
 
-    inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager, behavior: Int) :
-        FragmentPagerAdapter(fm, behavior) {
+    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItem(position: Int): Fragment {
-            return mFragmentList[position]
+            return when (position) {
+                0 -> BookshelfFragment()
+                1 -> FindBookFragment()
+                2 -> BookSourceFragment()
+                else -> MyConfigFragment()
+            }
         }
 
         override fun getCount(): Int {
-            return mFragmentList.size
+            return 4
         }
-
     }
 
 }

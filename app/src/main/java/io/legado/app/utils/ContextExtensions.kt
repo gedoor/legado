@@ -40,3 +40,8 @@ fun Context.putPrefStringSet(key: String, value: MutableSet<String>) =
 
 fun Context.removePref(key: String) =
     defaultSharedPreferences.edit { remove(key) }
+
+fun Context.getStatusBarHeight(): Int {
+    val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+    return resources.getDimensionPixelSize(resourceId)
+}
