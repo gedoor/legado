@@ -46,15 +46,6 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         return false
     }
 
-    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        return super.onCompatCreateOptionsMenu(menu)
-    }
-
-    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onCompatOptionsItemSelected(item)
-    }
-
     private fun importYueDu() {
         PermissionsCompat.Builder(this)
             .addPermissions(*Permissions.Group.STORAGE)
