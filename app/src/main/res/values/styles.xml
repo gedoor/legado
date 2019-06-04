@@ -76,6 +76,15 @@
         <item name="android:popupBackground">@color/background_menu</item>
     </style>
 
+
+    <style name="Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     //**************************************************************Widget Style******************************************************************************//
 
     <style name="Style.Shadow.Top" parent="android:Widget">
@@ -90,14 +99,6 @@
         <item name="android:background">@drawable/bg_shadow_bottom</item>
     </style>
 
-
-    <style name="Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowDisablePreview">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
-        <item name="android:windowAnimationStyle">@null</item>
-    </style>
 
     <style name="Style.Line" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
