@@ -78,7 +78,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     }
 
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
-        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
