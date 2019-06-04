@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
+          android:title="@string/help"
+          android:icon="@drawable/ic_live_help_black_24dp"
+          app:showAsAction="always"/>
 
-
-    <item android:id="@+id/action_test"
-          android:title="测试"
-          android:icon="@drawable/ic_search"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
 </menu>
