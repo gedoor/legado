@@ -26,8 +26,8 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initTheme()
-        super.onCreate(savedInstanceState)
         setupSystemBar()
+        super.onCreate(savedInstanceState)
         setContentView(layoutID)
         onViewModelCreated(viewModel, savedInstanceState)
     }
