@@ -21,8 +21,8 @@ abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId
         supportToolbar = toolbar
         supportToolbar?.let {
             it.menu.apply {
-                setIconColor(requireContext())
                 onCompatCreateOptionsMenu(this)
+                setIconColor(requireContext())
             }
 
             it.setOnMenuItemClickListener { item ->
