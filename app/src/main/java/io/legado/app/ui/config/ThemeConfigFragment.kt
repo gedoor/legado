@@ -9,6 +9,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.Bus
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
@@ -85,7 +86,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     private fun upTheme(isNightTheme: Boolean) {
         if (App.INSTANCE.getPrefBoolean("isNightTheme", false) == isNightTheme) {
             App.INSTANCE.upThemeStore()
-            LiveEventBus.get().with("recreate").post("")
+            LiveEventBus.get().with(Bus.recreate).post("")
             Handler().postDelayed({activity?.recreate()}, 300)
         }
     }

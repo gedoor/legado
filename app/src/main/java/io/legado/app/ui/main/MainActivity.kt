@@ -12,6 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.constant.Bus
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Restore
@@ -87,7 +88,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     }
 
     override fun observeLiveBus() {
-        LiveEventBus.get().with("recreate", String::class.java)
+        LiveEventBus.get().with(Bus.recreate, String::class.java)
             .observe(this, Observer {
                 recreate()
             })
