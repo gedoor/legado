@@ -2,27 +2,20 @@ package io.legado.app.ui.main.myconfig
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
+import android.view.Menu
 import android.view.View
-import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
-import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BaseFragment
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
-import io.legado.app.utils.setIconColor
 import kotlinx.android.synthetic.main.fragment_my_config.*
 import kotlinx.android.synthetic.main.view_titlebar.*
 
-class MyConfigFragment : Fragment(R.layout.fragment_my_config), Toolbar.OnMenuItemClickListener {
+class MyConfigFragment : BaseFragment(R.layout.fragment_my_config) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.e("TAG", "MyConfigFragment")
-        toolbar.inflateMenu(R.menu.my_config)
-        toolbar.menu.setIconColor(App.INSTANCE)
-        toolbar.setOnMenuItemClickListener(this)
+        setSupportToolbar(toolbar)
+
         tv_theme_config.setOnClickListener {
             val intent = Intent(context, ConfigActivity::class.java)
             intent.putExtra("configType", ConfigViewModel.TYPE_THEME_CONFIG)
@@ -30,8 +23,7 @@ class MyConfigFragment : Fragment(R.layout.fragment_my_config), Toolbar.OnMenuIt
         }
     }
 
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        return false
+    override fun onCompatCreateOptionsMenu(menu: Menu) {
+        menuInflater.inflate(R.menu.my_config, menu)
     }
-
 }
