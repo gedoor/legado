@@ -14,6 +14,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
+import io.legado.app.utils.getStatusBarHeight
+import org.jetbrains.anko.bottomPadding
+import org.jetbrains.anko.topPadding
 
 class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
 
@@ -84,6 +87,14 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
         }
 
+        if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
+            topPadding = context.getStatusBarHeight()
+        }
+
+        if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
+            bottomPadding = context.getStatusBarHeight()
+        }
+
         a.recycle()
 
         if (attachToActivity) {
@@ -122,8 +133,8 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     private fun attachToActivity(context: Context) {
         val activity = getCompatActivity(context)
         activity?.let {
-            activity.setSupportActionBar(toolbar)
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(mDisplayHomeAsUp)
+            it.setSupportActionBar(toolbar)
+            it.supportActionBar?.setDisplayHomeAsUpEnabled(mDisplayHomeAsUp)
         }
     }
 

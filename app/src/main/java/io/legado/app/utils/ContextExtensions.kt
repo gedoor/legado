@@ -1,6 +1,11 @@
 package io.legado.app.utils
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.defaultSharedPreferences
@@ -40,3 +45,15 @@ fun Context.putPrefStringSet(key: String, value: MutableSet<String>) =
 
 fun Context.removePref(key: String) =
     defaultSharedPreferences.edit { remove(key) }
+
+
+fun Context.getCompatColor(@ColorRes id: Int): Int = ContextCompat.getColor(this, id)
+
+fun Context.getCompatDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.getDrawable(this, id)
+
+fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? = ContextCompat.getColorStateList(this, id)
+
+fun Context.getStatusBarHeight(): Int {
+    val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+    return resources.getDimensionPixelSize(resourceId)
+}
