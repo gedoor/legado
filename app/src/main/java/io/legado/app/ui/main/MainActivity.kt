@@ -36,7 +36,6 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
-        observeLiveBus()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -87,7 +86,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         }
     }
 
-    private fun observeLiveBus() {
+    override fun observeLiveBus() {
         LiveEventBus.get().with("recreate", String::class.java)
             .observe(this, Observer {
                 recreate()

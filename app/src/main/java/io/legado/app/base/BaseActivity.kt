@@ -28,6 +28,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(layoutID)
         onViewModelCreated(viewModel, savedInstanceState)
+        observeLiveBus()
     }
 
     abstract fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?)
@@ -59,7 +60,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    protected fun initTheme() {
+    private fun initTheme() {
         window.decorView.setBackgroundColor(ThemeStore.backgroundColor(this))
         if (ColorUtils.isColorLight(ThemeStore.primaryColor(this))) {
             setTheme(R.style.AppTheme_Light)
@@ -68,7 +69,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
         }
     }
 
-    protected fun setupSystemBar() {
+    private fun setupSystemBar() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -77,5 +78,9 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
         } else {
             window.statusBarColor = getCompatColor(R.color.status_bar_bag)
         }
+    }
+
+    open fun observeLiveBus() {
+
     }
 }
