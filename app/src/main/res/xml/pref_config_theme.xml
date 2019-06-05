@@ -6,7 +6,7 @@
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
             android:defaultValue="false"
-            android:key="immersionStatusBar"
+            android:key="transparentStatusBar"
             android:summary="@string/status_bar_immersion"
             android:title="@string/immersion_status_bar"
             app:iconSpaceReserved="false"/>

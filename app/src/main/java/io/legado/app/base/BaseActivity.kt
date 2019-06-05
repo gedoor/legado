@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.setIconColor
 
 
@@ -69,6 +71,10 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.TRANSPARENT
+        if (getPrefBoolean("transparentStatusBar", false)) {
+            window.statusBarColor = Color.TRANSPARENT
+        } else {
+            window.statusBarColor = getCompatColor(R.color.status_bar_bag)
+        }
     }
 }
