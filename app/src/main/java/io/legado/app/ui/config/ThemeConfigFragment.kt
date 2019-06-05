@@ -2,6 +2,8 @@ package io.legado.app.ui.config
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
@@ -32,47 +34,49 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
-            "colorPrimary", "colorAccent", "colorBackground" -> if (!ColorUtils.isColorLight(
-                    sharedPreferences.getInt(
-                        "colorBackground",
-                        App.INSTANCE.getCompatColor(R.color.md_grey_100)
+            "colorPrimary", "colorAccent", "colorBackground" ->
+                if (!ColorUtils.isColorLight(
+                        sharedPreferences.getInt(
+                            "colorBackground",
+                            App.INSTANCE.getCompatColor(R.color.md_grey_100)
+                        )
                     )
-                )
-            ) {
-                AlertDialog.Builder(App.INSTANCE)
-                    .setTitle("白天背景太暗")
-                    .setMessage("将会恢复默认背景？")
-                    .setPositiveButton(R.string.ok) { dialog, which ->
-                        App.INSTANCE.putPrefInt("colorBackground", App.INSTANCE.getCompatColor(R.color.md_grey_100))
-                        upTheme(false)
-                    }
-                    .setNegativeButton(R.string.cancel) { dialogInterface, i -> upTheme(false) }
-                    .show().upTint
-            } else {
-                upTheme(false)
-            }
-            "colorPrimaryNight", "colorAccentNight", "colorBackgroundNight" -> if (ColorUtils.isColorLight(
-                    sharedPreferences.getInt(
-                        "colorBackgroundNight",
-                        App.INSTANCE.getCompatColor(R.color.md_grey_800)
-                    )
-                )
-            ) {
-                AlertDialog.Builder(App.INSTANCE)
-                    .setTitle("夜间背景太亮")
-                    .setMessage("将会恢复默认背景？")
-                    .setPositiveButton(R.string.ok) { dialog, which ->
-                        App.INSTANCE.putPrefInt(
+                ) {
+                    AlertDialog.Builder(App.INSTANCE)
+                        .setTitle("白天背景太暗")
+                        .setMessage("将会恢复默认背景？")
+                        .setPositiveButton(R.string.ok) { _, _ ->
+                            App.INSTANCE.putPrefInt("colorBackground", App.INSTANCE.getCompatColor(R.color.md_grey_100))
+                            upTheme(false)
+                        }
+                        .setNegativeButton(R.string.cancel) { _, _ -> upTheme(false) }
+                        .show().upTint
+                } else {
+                    upTheme(false)
+                }
+            "colorPrimaryNight", "colorAccentNight", "colorBackgroundNight" ->
+                if (ColorUtils.isColorLight(
+                        sharedPreferences.getInt(
                             "colorBackgroundNight",
                             App.INSTANCE.getCompatColor(R.color.md_grey_800)
                         )
-                        upTheme(true)
-                    }
-                    .setNegativeButton(R.string.cancel) { dialogInterface, i -> upTheme(true) }
-                    .show()
-            } else {
-                upTheme(true)
-            }
+                    )
+                ) {
+                    AlertDialog.Builder(App.INSTANCE)
+                        .setTitle("夜间背景太亮")
+                        .setMessage("将会恢复默认背景？")
+                        .setPositiveButton(R.string.ok) { _, _ ->
+                            App.INSTANCE.putPrefInt(
+                                "colorBackgroundNight",
+                                App.INSTANCE.getCompatColor(R.color.md_grey_800)
+                            )
+                            upTheme(true)
+                        }
+                        .setNegativeButton(R.string.cancel) { _, _ -> upTheme(true) }
+                        .show()
+                } else {
+                    upTheme(true)
+                }
         }
 
     }
