@@ -14,7 +14,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
+import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.isDarkTheme
 import io.legado.app.utils.getStatusBarHeight
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
@@ -98,6 +101,10 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         a.recycle()
+
+        val primaryTextColor = context.getPrimaryTextColor(context.isDarkTheme())
+        DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
+        toolbar.setTitleTextColor(primaryTextColor)
 
         if (attachToActivity) {
             attachToActivity(context)

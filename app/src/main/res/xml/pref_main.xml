@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.preference.Preference
+            android:key="setting"
+            android:title="设置"
+            android:summary="与功能相关的一些设置"
+            app:iconSpaceReserved="false"/>
+
+    <androidx.preference.Preference
+            android:key="theme_setting"
+            android:title="主题设置"
+            android:summary="与界面/颜色相关的一些设置"
+            app:iconSpaceReserved="false"/>
+
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+            android:defaultValue="false"
+            android:key="isNightTheme"
+            android:summary="开启/关闭暗色主题"
+            android:title="暗色主题"
+            app:iconSpaceReserved="false"/>
+
+</androidx.preference.PreferenceScreen>

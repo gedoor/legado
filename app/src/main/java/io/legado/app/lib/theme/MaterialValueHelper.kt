@@ -74,3 +74,11 @@ fun Fragment.getSecondaryDisabledTextColor(dark: Boolean): Int {
         ContextCompat.getColor(requireContext(), R.color.secondary_text_disabled_material_light)
     } else ContextCompat.getColor(requireContext(), R.color.secondary_text_disabled_material_dark)
 }
+
+fun Context.isDarkTheme(): Boolean {
+    return ColorUtils.isColorLight(ThemeStore.primaryColor(this))
+}
+
+fun Fragment.isDarkTheme(): Boolean {
+    return requireContext().isDarkTheme()
+}

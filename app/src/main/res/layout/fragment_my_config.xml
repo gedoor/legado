@@ -1,30 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <io.legado.app.ui.widget.TitleBar
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:attachToActivity="false"
-            app:layout_constraintTop_toTopOf="parent"
             app:title="我的"/>
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
+            android:id="@+id/pre_fragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/title_bar">
+            android:layout_height="match_parent"
+            android:orientation="vertical"/>
 
-        <TextView
-                android:id="@+id/tv_theme_config"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="@string/theme_setting"/>
-
-    </androidx.core.widget.NestedScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

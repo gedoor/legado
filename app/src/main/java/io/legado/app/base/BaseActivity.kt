@@ -60,6 +60,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
     }
 
     protected fun initTheme() {
+        window.decorView.setBackgroundColor(ThemeStore.backgroundColor(this))
         if (ColorUtils.isColorLight(ThemeStore.primaryColor(this))) {
             setTheme(R.style.AppTheme_Light)
         } else {

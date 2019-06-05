@@ -77,6 +77,11 @@ class App : Application() {
         }
     }
 
+    fun applyDayNight(){
+        initNightTheme()
+        upThemeStore()
+    }
+
     /**
      * 创建通知ID
      */
