@@ -64,14 +64,14 @@ class App : Application() {
     fun upThemeStore() {
         if (getPrefBoolean("isNightTheme", false)) {
             ThemeStore.editTheme(this)
-                .primaryColor(getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_grey_800)))
-                .accentColor(getPrefInt("colorAccentNight", getCompatColor(R.color.md_pink_800)))
+                .primaryColor(getPrefInt("colorPrimaryNight", getCompatColor(R.color.colorPrimary)))
+                .accentColor(getPrefInt("colorAccentNight", getCompatColor(R.color.colorAccent)))
                 .backgroundColor(getPrefInt("colorBackgroundNight", getCompatColor(R.color.md_grey_800)))
                 .apply()
         } else {
             ThemeStore.editTheme(this)
-                .primaryColor(getPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100)))
-                .accentColor(getPrefInt("colorAccent", getCompatColor(R.color.md_pink_600)))
+                .primaryColor(getPrefInt("colorPrimary", getCompatColor(R.color.colorPrimary)))
+                .accentColor(getPrefInt("colorAccent", getCompatColor(R.color.colorAccent)))
                 .backgroundColor(getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100)))
                 .apply()
         }
