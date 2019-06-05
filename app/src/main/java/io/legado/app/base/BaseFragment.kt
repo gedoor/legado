@@ -39,5 +39,4 @@ abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId
     open fun onCompatOptionsItemSelected(item: MenuItem) {
     }
 
-    //TODO
 }
