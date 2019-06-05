@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.preference.EditTextPreference
+        android:key="web_dav_url"
+        android:title="WebDav 服务器地址"
+        android:summary="输入你的服务器地址"
+        android:singleLine="true"/>
+
+    <androidx.preference.EditTextPreference
+        android:key="web_dav_account"
+        android:title="WebDav 账号"
+        android:summary="输入你的WebDav账号"
+        android:singleLine="true"/>
+
+    <androidx.preference.EditTextPreference
+        android:key="web_dav_password"
+        android:title="WebDav 密码"
+        android:summary="输入你的WebDav授权密码"
+        android:singleLine="true"
+        android:password="true" />
+
+    <androidx.preference.Preference
+        android:key="web_dav_restore"
+        android:title="恢复"
+        android:summary="从WebDav恢复"/>
+
+</androidx.preference.PreferenceScreen>

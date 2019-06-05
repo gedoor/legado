@@ -10,6 +10,12 @@
             app:iconSpaceReserved="false"/>
 
     <androidx.preference.Preference
+            android:key="web_dav_setting"
+            android:title="云备份设置"
+            android:summary="通过WebDav云备份"
+            app:iconSpaceReserved="false"/>
+
+    <androidx.preference.Preference
             android:key="theme_setting"
             android:title="主题设置"
             android:summary="与界面/颜色相关的一些设置"

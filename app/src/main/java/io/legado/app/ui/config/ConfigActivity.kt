@@ -22,11 +22,20 @@ class ConfigActivity : BaseActivity<ConfigViewModel>() {
         when (viewModel.configType) {
             ConfigViewModel.TYPE_CONFIG -> {
                 title_bar.title = "设置"
-                supportFragmentManager.beginTransaction().replace(R.id.configFrameLayout, ConfigFragment()).commit()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.configFrameLayout, ConfigFragment())
+                    .commit()
             }
             ConfigViewModel.TYPE_THEME_CONFIG -> {
                 title_bar.title = "主题设置"
-                supportFragmentManager.beginTransaction().replace(R.id.configFrameLayout, ThemeConfigFragment())
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.configFrameLayout, ThemeConfigFragment())
+                    .commit()
+            }
+            ConfigViewModel.TYPE_WEBDAV_CONFIG -> {
+                title_bar.title = "WebDav设置"
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.configFrameLayout, WebDavConfigFragment())
                     .commit()
             }
         }

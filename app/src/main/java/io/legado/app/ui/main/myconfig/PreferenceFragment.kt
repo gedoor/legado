@@ -38,13 +38,18 @@ class PreferenceFragment : PreferenceFragmentCompat(), SharedPreferences.OnShare
         preference?.let {
             when (preference.key) {
                 "setting" -> {
+                    requireContext().startActivity<ConfigActivity>(
+                        Pair("configType", ConfigViewModel.TYPE_CONFIG)
+                    )
+                }
+                "web_dav_setting" -> {
+                    requireContext().startActivity<ConfigActivity>(
+                        Pair("configType", ConfigViewModel.TYPE_WEBDAV_CONFIG)
+                    )
                 }
                 "theme_setting" -> {
                     requireContext().startActivity<ConfigActivity>(
-                        Pair(
-                            "configType",
-                            ConfigViewModel.TYPE_THEME_CONFIG
-                        )
+                        Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
                     )
                 }
             }
