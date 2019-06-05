@@ -13,6 +13,7 @@ import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.data.AppDatabase
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import java.util.*
@@ -63,15 +64,15 @@ class App : Application() {
     fun upThemeStore() {
         if (getPrefBoolean("isNightTheme", false)) {
             ThemeStore.editTheme(this)
-                .primaryColor(getPrefInt("colorPrimaryNight", resources.getColor(R.color.md_grey_800)))
-                .accentColor(getPrefInt("colorAccentNight", resources.getColor(R.color.md_pink_800)))
-                .backgroundColor(getPrefInt("colorBackgroundNight", resources.getColor(R.color.md_grey_800)))
+                .primaryColor(getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_grey_800)))
+                .accentColor(getPrefInt("colorAccentNight", getCompatColor(R.color.md_pink_800)))
+                .backgroundColor(getPrefInt("colorBackgroundNight", getCompatColor(R.color.md_grey_800)))
                 .apply()
         } else {
             ThemeStore.editTheme(this)
-                .primaryColor(getPrefInt("colorPrimary", resources.getColor(R.color.md_grey_100)))
-                .accentColor(getPrefInt("colorAccent", resources.getColor(R.color.md_pink_600)))
-                .backgroundColor(getPrefInt("colorBackground", resources.getColor(R.color.md_grey_100)))
+                .primaryColor(getPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100)))
+                .accentColor(getPrefInt("colorAccent", getCompatColor(R.color.md_pink_600)))
+                .backgroundColor(getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100)))
                 .apply()
         }
     }
