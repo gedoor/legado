@@ -87,7 +87,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         if (App.INSTANCE.getPrefBoolean("isNightTheme", false) == isNightTheme) {
             App.INSTANCE.upThemeStore()
             LiveEventBus.get().with(Bus.recreate).post("")
-            Handler().postDelayed({activity?.recreate()}, 300)
+            Handler().postDelayed({activity?.recreate()}, 100)
         }
     }
 
