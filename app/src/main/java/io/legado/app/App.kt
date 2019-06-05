@@ -41,13 +41,9 @@ class App : Application() {
         } catch (e: PackageManager.NameNotFoundException) {
             0
         }
+        if (!ThemeStore.isConfigured(this, versionCode)) upThemeStore()
         initNightTheme()
-        if (!ThemeStore.isConfigured(this, versionCode)) {
-            upThemeStore()
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createChannelId()
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
     }
 
     fun initNightTheme() {
@@ -85,7 +81,6 @@ class App : Application() {
     /**
      * 创建通知ID
      */
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannelId() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
