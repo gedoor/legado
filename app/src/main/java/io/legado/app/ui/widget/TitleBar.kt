@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getStatusBarHeight
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
@@ -40,6 +41,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
 
     init {
         inflate(context, R.layout.view_titlebar, this)
+        setBackgroundColor(ThemeStore.primaryColor(context))
         toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.TitleBar,
