@@ -1,15 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
+      xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
 
+    <item
+            android:id="@+id/action_select_all"
+            android:icon="@drawable/ic_select_all"
+            android:title="@string/select_all"
+            app:showAsAction="always"
+            tools:ignore="AlwaysShowAction"/>
 
-    <item android:id="@+id/action_test"
-          android:title="测试"
-          android:icon="@drawable/ic_search"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
+    <item
+            android:id="@+id/action_group"
+            android:icon="@drawable/ic_groups"
+            android:title="@string/menu_action_group"
+            app:showAsAction="always"
+            tools:ignore="AlwaysShowAction">
+
+        <menu>
+            <group android:id="@+id/source_group">
+
+            </group>
+
+        </menu>
+
+    </item>
+
+    <item
+            android:id="@+id/action_sort"
+            android:icon="@drawable/ic_format_line_spacing"
+            android:title="@string/sort"
+            app:showAsAction="always"
+            tools:ignore="AlwaysShowAction">
+
+        <menu>
+
+            <item
+                    android:id="@+id/sort_manual"
+                    android:checkable="true"
+                    android:title="@string/sort_manual"/>
+
+            <item
+                    android:id="@+id/sort_auto"
+                    android:checkable="true"
+                    android:title="@string/sort_auto"/>
+
+            <item
+                    android:id="@+id/sort_pin_yin"
+                    android:checkable="true"
+                    android:title="@string/sort_pin_yin"/>
+
+        </menu>
+
+    </item>
+
+    <item
+            android:id="@+id/action_add_book_source"
+            android:icon="@drawable/ic_add"
+            android:title="@string/add_book_source"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/action_import_book_source_local"
+            android:icon="@drawable/ic_import"
+            android:title="@string/import_book_source_local"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/action_import_book_source_onLine"
+            android:icon="@drawable/ic_import"
+            android:title="@string/import_book_source_on_line"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/action_import_book_source_rwm"
+            android:icon="@drawable/ic_import"
+            android:title="@string/import_by_qr_code"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/action_revert_selection"
+            android:icon="@drawable/ic_swap_outline_24dp"
+            android:title="@string/revert_selection"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/action_del_select"
+            android:icon="@drawable/ic_clear_all"
+            android:title="@string/del_select"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/action_check_book_source"
+            android:icon="@drawable/ic_check_source"
+            android:title="@string/check_select_source"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/action_share_wifi"
+            android:icon="@drawable/ic_share"
+            android:title="@string/wifi_share"
+            app:showAsAction="never"/>
+
 </menu>
