@@ -295,7 +295,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
             }
 
             else -> {
-                val holder = ItemViewHolder(inflater.inflate(itemDelegates.getValue(viewType).layoutID, parent, false))
+                val holder = ItemViewHolder(inflater.inflate(itemDelegates.getValue(viewType).layoutId, parent, false))
 
                 if (itemClickListener != null) {
                     holder.itemView.setOnClickListener {
