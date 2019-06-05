@@ -20,9 +20,11 @@ android {
     signingConfigs {
         myConfig {
             storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_KEY_PASSWORD
+            storePassword RELEASE_STORE_PASSWORD
             keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_STORE_PASSWORD
+            keyPassword RELEASE_KEY_PASSWORD
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     defaultConfig {
