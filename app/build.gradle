@@ -103,6 +103,9 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sdk27:$anko_version"
     implementation "org.jetbrains.anko:anko-sdk27-listeners:$anko_version"
 
+    //liveEventBus
+    implementation 'com.jeremyliao:live-event-bus-x:1.4.4'
+
     //协程
     def coroutines_version = '1.2.1'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -117,7 +120,7 @@ dependencies {
     // implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
     //Retrofit
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'//
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
 
     //Glide
@@ -125,4 +128,5 @@ dependencies {
 
     //颜色选择
     implementation 'com.jaredrummler:colorpicker:1.1.0'
+
 }

@@ -32,7 +32,7 @@ class ConfigActivity : BaseActivity<ConfigViewModel>() {
                     .replace(R.id.configFrameLayout, ThemeConfigFragment())
                     .commit()
             }
-            ConfigViewModel.TYPE_WEBDAV_CONFIG -> {
+            ConfigViewModel.TYPE_WEB_DAV_CONFIG -> {
                 title_bar.title = "WebDav设置"
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.configFrameLayout, WebDavConfigFragment())

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
@@ -44,6 +45,11 @@ class App : Application() {
         if (!ThemeStore.isConfigured(this, versionCode)) upThemeStore()
         initNightTheme()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
+        LiveEventBus.get()
+            .config()
+            .supportBroadcast(this)
+            .lifecycleObserverAlwaysActive(true)
+            .autoClear(false)
     }
 
     fun initNightTheme() {

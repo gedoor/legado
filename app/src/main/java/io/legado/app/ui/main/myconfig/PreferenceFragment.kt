@@ -44,7 +44,7 @@ class PreferenceFragment : PreferenceFragmentCompat(), SharedPreferences.OnShare
                 }
                 "web_dav_setting" -> {
                     requireContext().startActivity<ConfigActivity>(
-                        Pair("configType", ConfigViewModel.TYPE_WEBDAV_CONFIG)
+                        Pair("configType", ConfigViewModel.TYPE_WEB_DAV_CONFIG)
                     )
                 }
                 "theme_setting" -> {

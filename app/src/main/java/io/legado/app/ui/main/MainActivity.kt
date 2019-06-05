@@ -6,8 +6,10 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.help.permission.Permissions
@@ -34,6 +36,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
+        observeLiveBus()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -84,4 +87,10 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         }
     }
 
+    private fun observeLiveBus() {
+        LiveEventBus.get().with("recreate", String::class.java)
+            .observe(this, Observer {
+                recreate()
+            })
+    }
 }
