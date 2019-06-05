@@ -23,11 +23,11 @@ class MyConfigFragment : Fragment(R.layout.fragment_my_config), Toolbar.OnMenuIt
         toolbar.inflateMenu(R.menu.my_config)
         toolbar.menu.setIconColor(App.INSTANCE)
         toolbar.setOnMenuItemClickListener(this)
-        tv_theme_config.setOnClickListener(View.OnClickListener {
+        tv_theme_config.setOnClickListener {
             val intent = Intent(context, ConfigActivity::class.java)
             intent.putExtra("configType", ConfigViewModel.TYPE_THEME_CONFIG)
             startActivity(intent)
-        })
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
