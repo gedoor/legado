@@ -6,9 +6,9 @@
 
     <color name="night_mask">#69000000</color>
 
-    <color name="colorPrimary">@color/md_grey_800</color>
-    <color name="colorPrimaryDark">@color/md_grey_900</color>
-    <color name="colorAccent">@color/md_grey_100</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
 
     <color name="transparent30">#30ffffff</color>
 
