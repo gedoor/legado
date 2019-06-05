@@ -13,5 +13,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="我的"/>
 
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/title_bar">
+
+        <TextView
+                android:id="@+id/tv_theme_config"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="@string/theme_setting"/>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

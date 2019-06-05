@@ -41,6 +41,7 @@
 
         <activity android:name=".help.permission.PermissionActivity"
                   android:theme="@style/Activity.Permission"/>
+        <activity android:name=".ui.config.ConfigActivity"/>
     </application>
 
 </manifest>

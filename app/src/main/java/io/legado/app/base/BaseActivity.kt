@@ -7,16 +7,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuItemImpl
-import androidx.core.view.forEach
 import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.lib.theme.ColorUtils
-import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.setIconColor
 
 
 abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
@@ -37,21 +32,8 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
 
     final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {
-            if (it is MenuBuilder) {
-                it.setOptionalIconsVisible(true)
-            }
             val bool = onCompatCreateOptionsMenu(it)
-            val primaryTextColor = getPrimaryTextColor(ColorUtils.isColorLight(ThemeStore.primaryColor(this)))
-            val defaultTextColor = getCompatColor(R.color.tv_text_default)
-            menu.forEach { item ->
-                (item as MenuItemImpl).let { impl ->
-                    //overflow：展开的item
-                    DrawableUtils.setTint(
-                        impl.icon,
-                        if (impl.requiresOverflow()) defaultTextColor else primaryTextColor
-                    )
-                }
-            }
+            it.setIconColor(this)
             bool
         } ?: super.onCreateOptionsMenu(menu)
     }
