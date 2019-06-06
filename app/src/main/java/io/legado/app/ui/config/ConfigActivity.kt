@@ -22,20 +22,29 @@ class ConfigActivity : BaseActivity<ConfigViewModel>() {
         when (viewModel.configType) {
             ConfigViewModel.TYPE_CONFIG -> {
                 title_bar.title = "设置"
+                val fTag = "configFragment"
+                var configFragment = supportFragmentManager.findFragmentByTag(fTag)
+                if (configFragment == null) configFragment = ConfigFragment()
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.configFrameLayout, ConfigFragment())
+                    .replace(R.id.configFrameLayout, configFragment, fTag)
                     .commit()
             }
             ConfigViewModel.TYPE_THEME_CONFIG -> {
                 title_bar.title = "主题设置"
+                val fTag = "themeConfigFragment"
+                var configFragment = supportFragmentManager.findFragmentByTag(fTag)
+                if (configFragment == null) configFragment = ThemeConfigFragment()
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.configFrameLayout, ThemeConfigFragment())
+                    .replace(R.id.configFrameLayout, configFragment, fTag)
                     .commit()
             }
             ConfigViewModel.TYPE_WEB_DAV_CONFIG -> {
                 title_bar.title = "WebDav设置"
+                val fTag = "webDavFragment"
+                var configFragment = supportFragmentManager.findFragmentByTag(fTag)
+                if (configFragment == null) configFragment = WebDavConfigFragment()
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.configFrameLayout, WebDavConfigFragment())
+                    .replace(R.id.configFrameLayout, configFragment, fTag)
                     .commit()
             }
         }
