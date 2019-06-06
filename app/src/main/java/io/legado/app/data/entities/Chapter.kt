@@ -10,12 +10,13 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Entity(tableName = "chapters",
+    primaryKeys = ["url", "bookUrl"],
     indices = [(Index(value = ["url"], unique = true)), (Index(value = ["bookUrl", "index"], unique = true))],
     foreignKeys = [(ForeignKey(entity = Book::class,
         parentColumns = ["descUrl"],
         childColumns = ["bookUrl"],
         onDelete = ForeignKey.CASCADE))])    // 删除书籍时自动删除章节
-data class Chapter(@PrimaryKey
+data class Chapter(
                     var url: String = "",               // 章节地址
                     var title: String = "",              // 章节标题
                     var bookUrl: String = "",           // 书籍地址
