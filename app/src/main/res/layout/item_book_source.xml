@@ -11,7 +11,7 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
-        <com.kunfei.bookshelf.widget.views.ATECheckBox
+        <io.legado.app.lib.theme.view.ATECheckBox
                 android:id="@+id/cb_book_source"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

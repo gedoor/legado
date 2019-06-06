@@ -37,11 +37,8 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source) {
 
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(context)
-        context?.let {
-            adapter = BookSourceAdapter(it)
-            recycler_view.adapter = adapter
-        }
-
+        adapter = BookSourceAdapter()
+        recycler_view.adapter = adapter
     }
 
     private fun initDataObservers() {
