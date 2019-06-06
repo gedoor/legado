@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">@color/md_teal_800</color>
+    <color name="colorPrimaryDark">@color/md_teal_900</color>
+    <color name="colorAccent">@color/md_pink_A400</color>
     <color name="text_default">#222222</color>
     <color name="divider">#66666666</color>
 

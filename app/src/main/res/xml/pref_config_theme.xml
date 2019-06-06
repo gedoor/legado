@@ -43,7 +43,7 @@
             app:iconSpaceReserved="false">
 
         <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
-                android:defaultValue="@color/md_grey_100"
+                android:defaultValue="@color/colorPrimary"
                 android:key="colorPrimary"
                 android:summary="白天，主色调"
                 android:title="主色调"
@@ -51,7 +51,7 @@
                 app:iconSpaceReserved="false"/>
 
         <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
-                android:defaultValue="@color/md_pink_600"
+                android:defaultValue="@color/colorAccent"
                 android:key="colorAccent"
                 android:summary="白天，强调色"
                 android:title="强调色"
@@ -73,7 +73,7 @@
             app:iconSpaceReserved="false">
 
         <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
-                android:defaultValue="@color/md_grey_800"
+                android:defaultValue="@color/colorPrimary"
                 android:key="colorPrimaryNight"
                 android:summary="夜间，主色调"
                 android:title="主色调"
@@ -81,7 +81,7 @@
                 app:iconSpaceReserved="false"/>
 
         <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
-                android:defaultValue="@color/md_pink_800"
+                android:defaultValue="@color/colorAccent"
                 android:key="colorAccentNight"
                 android:summary="夜间，强调色"
                 android:title="强调色"
