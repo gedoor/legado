@@ -3,13 +3,14 @@ package io.legado.app.data.dao
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
+import io.legado.app.constant.DbTable
 import io.legado.app.data.entities.ReplaceRule
 
 
 @Dao
 interface ReplaceRuleDao {
 
-    @Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
+    @Query("SELECT * FROM ${DbTable.replace_rules} ORDER BY sortOrder ASC")
     fun observeAll(): DataSource.Factory<Int, ReplaceRule>
 
     @Query("SELECT id FROM replace_rules ORDER BY sortOrder ASC")

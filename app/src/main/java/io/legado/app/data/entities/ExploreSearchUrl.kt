@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity(tableName = "explore_search_urls",
     indices = [(Index(value = ["sourceId", "url"], unique = true))],
-    foreignKeys = [(ForeignKey(entity = Source::class,
+    foreignKeys = [(ForeignKey(entity = BookSource::class,
         parentColumns = ["sourceId"],
         childColumns = ["sourceId"],
         onDelete = ForeignKey.CASCADE))])       // 删除书源时自动删除章节

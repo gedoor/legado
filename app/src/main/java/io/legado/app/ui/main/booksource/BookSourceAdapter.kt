@@ -6,18 +6,18 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.data.entities.Source
+import io.legado.app.data.entities.BookSource
 
-class BookSourceAdapter(context : Context) : PagedListAdapter<Source, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookSourceAdapter(context : Context) : PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
 
         @JvmField
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Source>() {
-            override fun areItemsTheSame(oldItem: Source, newItem: Source): Boolean =
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookSource>() {
+            override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
                 oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: Source, newItem: Source): Boolean =
+            override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
                 oldItem.id == newItem.id
                         && oldItem.name == newItem.name
                         && oldItem.group == newItem.group

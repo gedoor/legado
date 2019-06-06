@@ -3,16 +3,17 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import androidx.room.*
 import io.legado.app.constant.AppUtils.GSON_CONVERTER
+import io.legado.app.constant.DbTable
 import io.legado.app.data.entities.rule.*
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Entity(
-    tableName = "sources",
+    tableName = DbTable.book_sources,
     indices = [(Index(value = ["sourceId"])), (Index(value = ["origin"], unique = false))]
 )
-data class Source (
+data class BookSource (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "sourceId")
     var id: Int = 0,                          // 编号
