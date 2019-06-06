@@ -14,7 +14,10 @@ class MyConfigFragment : BaseFragment(R.layout.fragment_my_config) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
-        childFragmentManager.beginTransaction().add(R.id.pre_fragment, PreferenceFragment()).commit()
+        val fragmentTag = "prefFragment"
+        var preferenceFragment = childFragmentManager.findFragmentByTag(fragmentTag)
+        if (preferenceFragment == null) preferenceFragment = PreferenceFragment()
+        childFragmentManager.beginTransaction().replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
