@@ -53,15 +53,15 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             attrs, R.styleable.TitleBar,
             R.attr.titleBarStyle, 0
         )
-        val navigationIcon = a.getDrawable(R.styleable.TitleBar_navigationIcon)
-        val navigationContentDescription = a.getText(R.styleable.TitleBar_navigationContentDescription)
-        val titleText = a.getString(R.styleable.TitleBar_title)
-        val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
-
         navigationIconTint = a.getColorStateList(R.styleable.TitleBar_navigationIconTint)
         navigationIconTintMode = a.getInt(R.styleable.TitleBar_navigationIconTintMode, 9)
         attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
         displayHomeAsUp = a.getBoolean(R.styleable.TitleBar_displayHomeAsUp, true)
+
+        val navigationIcon = a.getDrawable(R.styleable.TitleBar_navigationIcon)
+        val navigationContentDescription = a.getText(R.styleable.TitleBar_navigationContentDescription)
+        val titleText = a.getString(R.styleable.TitleBar_title)
+        val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
 
         toolbar.apply {
             navigationIcon?.let {
@@ -103,8 +103,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         a.recycle()
-
-
     }
 
     override fun onAttachedToWindow() {
