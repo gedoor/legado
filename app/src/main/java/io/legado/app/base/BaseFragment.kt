@@ -6,9 +6,11 @@ import android.view.MenuItem
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import io.legado.app.utils.setIconColor
 
-abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId) {
+abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId){
 
     var supportToolbar: Toolbar? = null
         private set

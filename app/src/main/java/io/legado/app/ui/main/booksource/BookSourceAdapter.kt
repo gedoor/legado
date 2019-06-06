@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.booksource
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
@@ -7,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.data.entities.Source
 
-class BookSourceAdapter : PagedListAdapter<Source, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookSourceAdapter(context : Context) : PagedListAdapter<Source, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
 
