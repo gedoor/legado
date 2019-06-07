@@ -83,6 +83,8 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
 
     private fun getSource(): BookSource? {
         val bookSource = BookSource()
+        bookSource.isEnabled = cb_is_enable.isChecked
+        bookSource.exploreIsEnabled = cb_is_enable_find.isChecked
         for (entity in adapter.sourceEditEntities) {
             when (entity.key) {
                 "origin" -> {
