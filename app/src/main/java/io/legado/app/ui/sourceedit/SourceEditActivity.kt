@@ -69,6 +69,10 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
     }
 
     private fun upRecyclerView(bookSource: BookSource?) {
+        bookSource?.let {
+            cb_is_enable.isChecked = it.isEnabled
+            cb_is_enable_find.isChecked = it.exploreIsEnabled
+        }
         sourceEditEntities.clear()
         sourceEditEntities.add(SourceEditEntity("origin", bookSource?.origin, R.string.book_source_url))
         sourceEditEntities.add(SourceEditEntity("name", bookSource?.name, R.string.book_source_name))
