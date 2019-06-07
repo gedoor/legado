@@ -46,10 +46,10 @@ interface ReplaceRuleDao {
     fun insert(replaceRule: ReplaceRule): Long
 
     @Update
-    fun update(vararg replaceRules: ReplaceRule)
+    fun update(replaceRules: ReplaceRule)
 
     @Delete
-    fun delete(vararg replaceRules: ReplaceRule)
+    fun delete(replaceRules: ReplaceRule)
 
 
 }

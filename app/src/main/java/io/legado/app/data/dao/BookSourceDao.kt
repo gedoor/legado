@@ -17,5 +17,5 @@ interface BookSourceDao {
     fun insert(bookSource: BookSource): Long
 
     @Update
-    fun update(vararg bookSource: BookSource)
+    fun update(bookSource: BookSource)
 }
