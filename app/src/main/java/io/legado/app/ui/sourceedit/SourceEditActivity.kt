@@ -21,7 +21,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
         initRecyclerView()
     }
 
-    fun initRecyclerView() {
+    private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
     }
