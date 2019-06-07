@@ -4,4 +4,7 @@
     <item name="menu_del" type="id"/>
     <item name="menu_top" type="id"/>
 
+    <item name="tag1" type="id"/>
+    <item name="tag2" type="id"/>
+
 </resources>
