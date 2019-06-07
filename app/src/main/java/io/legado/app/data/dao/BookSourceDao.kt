@@ -16,6 +16,18 @@ interface BookSourceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(bookSource: BookSource): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg bookSource: BookSource)
+
     @Update
     fun update(bookSource: BookSource)
+
+    @Update
+    fun update(vararg bookSource: BookSource)
+
+    @Delete
+    fun delete(bookSource: BookSource)
+
+    @Delete
+    fun delete(vararg bookSource: BookSource)
 }
