@@ -16,6 +16,8 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import kotlinx.android.synthetic.main.fragment_book_source.*
 import kotlinx.android.synthetic.main.view_titlebar.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
 class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSourceAdapter.CallBack {
@@ -59,7 +61,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun update(bookSource: BookSource) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        GlobalScope.launch { App.db.bookSourceDao().update(bookSource) }
     }
 
     override fun edit(bookSource: BookSource) {

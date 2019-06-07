@@ -1,10 +1,7 @@
 package io.legado.app.data.dao
 
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.BookSource
 
 @Dao
@@ -18,4 +15,7 @@ interface BookSourceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(bookSource: BookSource): Long
+
+    @Update
+    fun update(vararg bookSource: BookSource)
 }

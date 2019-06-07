@@ -4,7 +4,7 @@
               android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res-auto"
               android:padding="16dp"
               android:orientation="horizontal"
-              android:layout_gravity="center_vertical">
+              android:gravity="center_vertical">
 
     <io.legado.app.lib.theme.view.ATECheckBox
             android:id="@+id/cb_book_source"
@@ -23,13 +23,12 @@
 
     <ImageView
             android:id="@+id/iv_more"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
-            android:layout_weight="1"
             android:background="@drawable/bg_ib_pre_round"
+            android:layout_margin="6dp"
             android:contentDescription="@string/to_top"
-            android:padding="8dp"
             android:src="@drawable/ic_more_vert"
             app:tint="@color/tv_text_default"/>
 </LinearLayout>

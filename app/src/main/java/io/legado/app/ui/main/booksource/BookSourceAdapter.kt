@@ -60,7 +60,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
                 callBack?.update(bookSource)
             }
             iv_more.setOnClickListener{
-                val popupMenu = PopupMenu(context, this)
+                val popupMenu = PopupMenu(context, iv_more)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
