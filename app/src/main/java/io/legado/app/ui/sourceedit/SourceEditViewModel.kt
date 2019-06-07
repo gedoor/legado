@@ -6,13 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.data.dao.BookSourceDao
 import io.legado.app.data.entities.BookSource
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class SourceEditViewModel(application: Application) : AndroidViewModel(application) {
 
     val sourceLiveData:MutableLiveData<BookSource> = MutableLiveData()
 
     fun setBookSource(key: String) {
-        sourceLiveData.value = App.db.bookSourceDao().findByKey(key)
+        GlobalScope.launch {
+            val source = App.db.bookSourceDao().findByKey(key)
+            sourceLiveData.postValue(source)
+        }
     }
 
 

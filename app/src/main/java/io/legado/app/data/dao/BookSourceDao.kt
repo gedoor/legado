@@ -2,6 +2,8 @@ package io.legado.app.data.dao
 
 import androidx.paging.DataSource
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.BookSource
 
@@ -14,4 +16,6 @@ interface BookSourceDao {
     @Query("select * from book_sources where origin = :key")
     fun findByKey(key:String): BookSource?
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(bookSource: BookSource): Long
 }
