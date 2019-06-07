@@ -26,6 +26,13 @@
                 android:text="@string/is_enable"/>
 
         <io.legado.app.lib.theme.view.ATECheckBox
+                android:id="@+id/cb_is_enable_find"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/find"/>
+
+        <io.legado.app.lib.theme.view.ATECheckBox
                 android:id="@+id/cb_is_audio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

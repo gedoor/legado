@@ -27,6 +27,7 @@ data class BookSource (
     var lastUpdateTime: Long = 0,             // 最后更新时间，用于排序
     var customOrder: Int = 0,                 // 手动排序编号
     var weight: Int = 0,                      // 智能排序的权重
+    var exploreIsEnabled: Boolean = true,     //启用发现
     var exploreRule: String? = null,          // 发现规则
     var searchRule: String? = null,           // 搜索规则
     var bookInfoRule: String? = null,         // 书籍信息页规则
