@@ -20,10 +20,10 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         @JvmField
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookSource>() {
             override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.id == newItem.id
+                oldItem.origin == newItem.origin
 
             override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.id == newItem.id
+                oldItem.origin == newItem.origin
                         && oldItem.name == newItem.name
                         && oldItem.group == newItem.group
                         && oldItem.isEnabled == newItem.isEnabled

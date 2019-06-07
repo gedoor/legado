@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity(
     tableName = "book_sources",
-    indices = [(Index(value = ["sourceId"])), (Index(value = ["origin"], unique = false))]
+    indices = [(Index(value = ["origin"], unique = false))]
 )
 data class BookSource (
     @PrimaryKey
