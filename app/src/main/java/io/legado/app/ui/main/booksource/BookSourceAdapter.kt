@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import android.widget.PopupMenu
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -54,9 +55,9 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
                     checkedList.remove(bookSource.origin)
                 }
             }
-            sw_enabled.isEnabled = bookSource.isEnabled
+            sw_enabled.isChecked = bookSource.isEnabled
             sw_enabled.setOnClickListener{
-                bookSource.isEnabled = sw_enabled.isEnabled
+                bookSource.isEnabled = sw_enabled.isChecked
                 callBack?.update(bookSource)
             }
             iv_more.setOnClickListener{

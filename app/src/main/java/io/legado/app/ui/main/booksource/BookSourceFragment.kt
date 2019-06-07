@@ -65,6 +65,6 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun edit(bookSource: BookSource) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        context?.let { it.startActivity<SourceEditActivity>(Pair("data", bookSource.origin)) }
     }
 }
