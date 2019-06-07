@@ -3,11 +3,10 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import androidx.room.*
 import io.legado.app.constant.AppConst.NOT_AVAILABLE
-import io.legado.app.constant.DbTable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity(tableName = DbTable.books, indices = [(Index(value = ["descUrl"], unique = true))])
+@Entity(tableName = "books", indices = [(Index(value = ["descUrl"], unique = true))])
 data class Book(@PrimaryKey
                 var descUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
                 var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)

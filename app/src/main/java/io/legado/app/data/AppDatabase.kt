@@ -51,5 +51,5 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun bookDao(): BookDao
     abstract fun replaceRuleDao(): ReplaceRuleDao
-    abstract fun sourceDao() : BookSourceDao
+    abstract fun bookSourceDao() : BookSourceDao
 }

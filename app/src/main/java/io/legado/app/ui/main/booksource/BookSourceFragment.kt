@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_book_source.*
 import kotlinx.android.synthetic.main.view_titlebar.*
 import org.jetbrains.anko.startActivity
 
-class BookSourceFragment : BaseFragment(R.layout.fragment_book_source) {
+class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSourceAdapter.CallBack {
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
@@ -44,12 +44,25 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source) {
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(context)
         adapter = BookSourceAdapter()
+        adapter.callBack = this
         recycler_view.adapter = adapter
     }
 
     private fun initDataObservers() {
         bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
-        bookSourceLiveDate = LivePagedListBuilder(App.db.sourceDao().observeAll(), 30).build()
+        bookSourceLiveDate = LivePagedListBuilder(App.db.bookSourceDao().observeAll(), 30).build()
         bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+    }
+
+    override fun del(bookSource: BookSource) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun update(bookSource: BookSource) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun edit(bookSource: BookSource) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

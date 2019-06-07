@@ -12,7 +12,8 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
         get() = R.layout.activity_source_edit
 
     override fun onViewModelCreated(viewModel: SourceEditViewModel, savedInstanceState: Bundle?) {
-
+        val sourceID = intent.getStringExtra("data")
+        sourceID?.let { viewModel.setBookSource(sourceID)}
     }
 
 

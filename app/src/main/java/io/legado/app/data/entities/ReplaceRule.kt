@@ -5,11 +5,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.legado.app.constant.DbTable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity(tableName = DbTable.replace_rules,
+@Entity(tableName = "replace_rules",
     indices = [(Index(value = ["id"]))])
 data class ReplaceRule(
                 @PrimaryKey(autoGenerate = true)

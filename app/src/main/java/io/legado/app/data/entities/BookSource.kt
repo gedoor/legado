@@ -3,22 +3,19 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import androidx.room.*
 import io.legado.app.constant.AppUtils.GSON_CONVERTER
-import io.legado.app.constant.DbTable
 import io.legado.app.data.entities.rule.*
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Entity(
-    tableName = DbTable.book_sources,
+    tableName = "book_sources",
     indices = [(Index(value = ["sourceId"])), (Index(value = ["origin"], unique = false))]
 )
 data class BookSource (
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "sourceId")
-    var id: Int = 0,                          // 编号
-    var name: String = "",                    // 名称
+    @PrimaryKey
     var origin: String = "",                  // 地址，包括 http/https
+    var name: String = "",                    // 名称
     var type: Int = 0,                        // 类型，0 文本，1 音频
     var group: String? = null,                // 分组
     var header: String? = null,               // header
