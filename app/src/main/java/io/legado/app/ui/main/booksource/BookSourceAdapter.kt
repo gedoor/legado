@@ -1,8 +1,10 @@
 package io.legado.app.ui.main.booksource
 
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +53,30 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
                 } else {
                     checkedList.remove(bookSource.origin)
                 }
+            }
+            sw_enabled.isEnabled = bookSource.isEnabled
+            sw_enabled.setOnClickListener{
+                bookSource.isEnabled = sw_enabled.isEnabled
+                callback?.update(bookSource)
+            }
+            iv_more.setOnClickListener{
+                val popupMenu = PopupMenu(context, this)
+                popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
+                popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
+                popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
+                popupMenu.setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.menu_edit ->{
+                            callback?.edit(bookSource)
+                            true}
+                        R.id.menu_del ->{
+                            callback?.del(bookSource)
+                            true}
+                        R.id.menu_top ->{ true}
+                        else -> {false}
+                    }
+                }
+                popupMenu.show()
             }
         }
     }
