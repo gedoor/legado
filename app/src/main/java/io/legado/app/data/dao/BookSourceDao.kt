@@ -9,6 +9,6 @@ import io.legado.app.data.entities.BookSource
 @Dao
 interface BookSourceDao {
 
-    @Query("select * from ${DbTable.book_sources} where ")
+    @Query("select * from ${DbTable.book_sources}")
     fun observeAll(): DataSource.Factory<Int, BookSource>
 }
