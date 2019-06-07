@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_source_edit.view.*
 
 class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>() {
 
-    var sourceEditEntities:ArrayList<SourceEditEntity> = ArrayList()
+    var sourceEditEntities:ArrayList<SourceEditActivity.SourceEditEntity> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_source_edit, parent, false))
@@ -26,7 +26,7 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(sourceEditEntity: SourceEditEntity) = with(itemView) {
+        fun bind(sourceEditEntity: SourceEditActivity.SourceEditEntity) = with(itemView) {
             if (editText.getTag(R.id.tag1) == null) {
                 val listener = object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {
@@ -49,7 +49,7 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
                 }
             }
             editText.setText(sourceEditEntity.value)
-            sourceEditEntity.hint?.let { textInputLayout.hint = context.getString(it) }
+            textInputLayout.hint = context.getString(sourceEditEntity.hint)
             val textWatcher = object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
@@ -68,9 +68,5 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
         }
     }
 
-    class SourceEditEntity {
-        var key:String?=null
-        var value:String?=null
-        var hint:Int?=null
-    }
+
 }

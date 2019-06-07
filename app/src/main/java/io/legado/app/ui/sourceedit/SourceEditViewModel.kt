@@ -9,10 +9,12 @@ import io.legado.app.data.entities.BookSource
 
 class SourceEditViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val sourceLiveData:MutableLiveData<BookSource> = MutableLiveData()
+    val sourceLiveData:MutableLiveData<BookSource> = MutableLiveData()
 
     fun setBookSource(key: String) {
         sourceLiveData.value = App.db.bookSourceDao().findByKey(key)
     }
+
+
 
 }
