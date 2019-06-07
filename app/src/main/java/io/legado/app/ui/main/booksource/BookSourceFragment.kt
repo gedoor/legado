@@ -8,7 +8,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -45,6 +47,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
 
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(context)
+        recycler_view.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         adapter = BookSourceAdapter()
         adapter.callBack = this
         recycler_view.adapter = adapter
