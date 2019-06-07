@@ -13,8 +13,10 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.BookSource
+import io.legado.app.ui.sourceedit.SourceEditActivity
 import kotlinx.android.synthetic.main.fragment_book_source.*
 import kotlinx.android.synthetic.main.view_titlebar.*
+import org.jetbrains.anko.startActivity
 
 class BookSourceFragment : BaseFragment(R.layout.fragment_book_source) {
 
@@ -32,7 +34,11 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source) {
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
-
+        when (item.itemId) {
+            R.id.action_add_book_source -> {
+                context?.startActivity<SourceEditActivity>()
+            }
+        }
     }
 
     private fun initRecyclerView() {

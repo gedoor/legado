@@ -30,7 +30,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         }
     }
 
-    var callback: Callback? = null
+    var callBack: CallBack? = null
     val checkedList = HashSet<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -39,13 +39,13 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
 
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, checkedList, callback) }
+        getItem(position)?.let { holder.bind(it, checkedList, callBack) }
     }
 
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(bookSource: BookSource, checkedList: HashSet<String>, callback: Callback?) = with(itemView) {
+        fun bind(bookSource: BookSource, checkedList: HashSet<String>, callBack: CallBack?) = with(itemView) {
             cb_book_source.text = String.format("%s (%s)", bookSource.name, bookSource.group)
             cb_book_source.onClick {
                 if (cb_book_source.isChecked) {
@@ -57,7 +57,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
             sw_enabled.isEnabled = bookSource.isEnabled
             sw_enabled.setOnClickListener{
                 bookSource.isEnabled = sw_enabled.isEnabled
-                callback?.update(bookSource)
+                callBack?.update(bookSource)
             }
             iv_more.setOnClickListener{
                 val popupMenu = PopupMenu(context, this)
@@ -67,10 +67,10 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
                 popupMenu.setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.menu_edit ->{
-                            callback?.edit(bookSource)
+                            callBack?.edit(bookSource)
                             true}
                         R.id.menu_del ->{
-                            callback?.del(bookSource)
+                            callBack?.del(bookSource)
                             true}
                         R.id.menu_top ->{ true}
                         else -> {false}
@@ -81,7 +81,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         }
     }
 
-    interface Callback {
+    interface CallBack {
         fun del(bookSource: BookSource)
         fun edit(bookSource: BookSource)
         fun update(bookSource: BookSource)
