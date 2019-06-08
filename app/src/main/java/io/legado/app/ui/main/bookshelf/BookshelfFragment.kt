@@ -5,7 +5,7 @@ import android.view.Menu
 import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import kotlinx.android.synthetic.main.view_titlebar.*
+import kotlinx.android.synthetic.main.view_title_bar.*
 
 class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
 

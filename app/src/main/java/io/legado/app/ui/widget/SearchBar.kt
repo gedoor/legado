@@ -22,7 +22,7 @@ import io.legado.app.utils.getStatusBarHeight
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
 
-class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
+class SearchBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
 
     val toolbar: Toolbar
     val menu: Menu
@@ -46,7 +46,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     private val attachToActivity: Boolean
 
     init {
-        inflate(context, R.layout.view_title_bar, this)
+        inflate(context, R.layout.view_search_bar, this)
         setBackgroundColor(ThemeStore.primaryColor(context))
         toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(

@@ -19,7 +19,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import kotlinx.android.synthetic.main.fragment_book_source.*
-import kotlinx.android.synthetic.main.view_titlebar.*
+import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
