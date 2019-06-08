@@ -121,7 +121,7 @@ dependencies {
 
     //Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
