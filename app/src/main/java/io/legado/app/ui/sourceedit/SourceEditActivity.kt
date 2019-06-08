@@ -54,7 +54,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
                     toast("书源名称和URL不能为空")
                 } else {
                     GlobalScope.launch {
-                        App.db.bookSourceDao().insert(bookSource)
+                        viewModel.save(bookSource)
                         GlobalScope.launch(Dispatchers.Main) { finish() }
                     }
                 }

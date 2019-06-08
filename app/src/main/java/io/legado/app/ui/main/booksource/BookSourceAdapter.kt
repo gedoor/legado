@@ -11,8 +11,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
+import kotlin.collections.HashSet
 
 class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
@@ -33,6 +37,27 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
 
     var callBack: CallBack? = null
     val checkedList = HashSet<String>()
+
+    val itemTouchCallbackListener = object : OnItemTouchCallbackListener {
+        override fun onSwiped(adapterPosition: Int) {
+
+        }
+
+        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            currentList?.let {
+                val srcSource = it[srcPosition]
+                val targetSource = it[targetPosition]
+                srcSource?.let { a->
+                    targetSource?.let { b->
+                        a.customOrder = targetPosition
+                        b.customOrder = srcPosition
+                        callBack?.update(a, b)
+                    }
+                }
+            }
+            return true
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_book_source, parent, false))
@@ -86,5 +111,6 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         fun del(bookSource: BookSource)
         fun edit(bookSource: BookSource)
         fun update(bookSource: BookSource)
+        fun update(vararg bookSource: BookSource)
     }
 }

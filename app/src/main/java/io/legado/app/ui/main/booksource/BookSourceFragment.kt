@@ -9,12 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.ItemTouchCallback
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import kotlinx.android.synthetic.main.fragment_book_source.*
 import kotlinx.android.synthetic.main.view_titlebar.*
@@ -51,6 +53,10 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         adapter = BookSourceAdapter()
         adapter.callBack = this
         recycler_view.adapter = adapter
+        val itemTouchCallback = ItemTouchCallback()
+        itemTouchCallback.onItemTouchCallbackListener = adapter.itemTouchCallbackListener
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
     private fun initDataObservers() {
@@ -65,6 +71,10 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
 
     override fun update(bookSource: BookSource) {
         GlobalScope.launch { App.db.bookSourceDao().update(bookSource) }
+    }
+
+    override fun update(vararg bookSource: BookSource) {
+        GlobalScope.launch { App.db.bookSourceDao().update(*bookSource) }
     }
 
     override fun edit(bookSource: BookSource) {

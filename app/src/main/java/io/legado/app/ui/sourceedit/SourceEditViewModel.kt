@@ -20,6 +20,13 @@ class SourceEditViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    fun save(bookSource: BookSource) {
+        val source = App.db.bookSourceDao().findByKey(bookSource.origin)
+        if (source == null) {
+            bookSource.customOrder = App.db.bookSourceDao().allCount()
+        }
+        App.db.bookSourceDao().insert(bookSource)
+    }
 
 
 }
