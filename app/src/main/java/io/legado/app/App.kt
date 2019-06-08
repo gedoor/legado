@@ -89,41 +89,43 @@ class App : Application() {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannelId() {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        //用唯一的ID创建渠道对象
-        val downloadChannel = NotificationChannel(
-            channelIdDownload,
-            getString(R.string.download_offline),
-            NotificationManager.IMPORTANCE_LOW
-        )
-        //初始化channel
-        downloadChannel.enableLights(false)
-        downloadChannel.enableVibration(false)
-        downloadChannel.setSound(null, null)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.let {
+            //用唯一的ID创建渠道对象
+            val downloadChannel = NotificationChannel(
+                channelIdDownload,
+                getString(R.string.download_offline),
+                NotificationManager.IMPORTANCE_LOW
+            )
+            //初始化channel
+            downloadChannel.enableLights(false)
+            downloadChannel.enableVibration(false)
+            downloadChannel.setSound(null, null)
 
-        //用唯一的ID创建渠道对象
-        val readAloudChannel = NotificationChannel(
-            channelIdReadAloud,
-            getString(R.string.read_aloud),
-            NotificationManager.IMPORTANCE_LOW
-        )
-        //初始化channel
-        readAloudChannel.enableLights(false)
-        readAloudChannel.enableVibration(false)
-        readAloudChannel.setSound(null, null)
+            //用唯一的ID创建渠道对象
+            val readAloudChannel = NotificationChannel(
+                channelIdReadAloud,
+                getString(R.string.read_aloud),
+                NotificationManager.IMPORTANCE_LOW
+            )
+            //初始化channel
+            readAloudChannel.enableLights(false)
+            readAloudChannel.enableVibration(false)
+            readAloudChannel.setSound(null, null)
 
-        //用唯一的ID创建渠道对象
-        val webChannel = NotificationChannel(
-            channelIdWeb,
-            getString(R.string.web_service),
-            NotificationManager.IMPORTANCE_LOW
-        )
-        //初始化channel
-        webChannel.enableLights(false)
-        webChannel.enableVibration(false)
-        webChannel.setSound(null, null)
+            //用唯一的ID创建渠道对象
+            val webChannel = NotificationChannel(
+                channelIdWeb,
+                getString(R.string.web_service),
+                NotificationManager.IMPORTANCE_LOW
+            )
+            //初始化channel
+            webChannel.enableLights(false)
+            webChannel.enableVibration(false)
+            webChannel.setSound(null, null)
 
-        //向notification manager 提交channel
-        notificationManager.createNotificationChannels(Arrays.asList(downloadChannel, readAloudChannel, webChannel))
+            //向notification manager 提交channel
+            it.createNotificationChannels(Arrays.asList(downloadChannel, readAloudChannel, webChannel))
+        }
     }
 }
