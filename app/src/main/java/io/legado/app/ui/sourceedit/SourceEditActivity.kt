@@ -5,14 +5,14 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_edit.*
-import kotlinx.coroutines.*
-import org.jetbrains.anko.UI
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 
 class SourceEditActivity : BaseActivity<SourceEditViewModel>() {

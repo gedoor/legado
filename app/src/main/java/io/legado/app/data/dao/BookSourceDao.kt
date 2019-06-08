@@ -11,10 +11,10 @@ interface BookSourceDao {
     fun observeAll(): DataSource.Factory<Int, BookSource>
 
     @Query("select * from book_sources where name like :searchKey or `group` like :searchKey or origin like :searchKey order by customOrder asc")
-    fun observeSearch(searchKey:String = ""): DataSource.Factory<Int, BookSource>
+    fun observeSearch(searchKey: String = ""): DataSource.Factory<Int, BookSource>
 
     @Query("select * from book_sources where origin = :key")
-    fun findByKey(key:String): BookSource?
+    fun findByKey(key: String): BookSource?
 
     @Query("select count(*) from book_sources")
     fun allCount(): Int

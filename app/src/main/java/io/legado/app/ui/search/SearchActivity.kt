@@ -4,7 +4,6 @@ import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.utils.getViewModel
-import org.jetbrains.anko.startActivity
 
 class SearchActivity : BaseActivity<SearchViewModel>() {
 

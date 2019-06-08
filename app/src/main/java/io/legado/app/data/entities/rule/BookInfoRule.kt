@@ -1,6 +1,6 @@
 package io.legado.app.data.entities.rule
 
-data class BookInfoRule (
+data class BookInfoRule(
     var name: Rule,
     var author: Rule,
     var desc: Rule,

@@ -7,7 +7,7 @@ import android.content.Context
  *
  * item代理，
  */
-abstract class ItemViewDelegate<in ITEM>(protected val context: Context, val layoutId: Int)  {
+abstract class ItemViewDelegate<in ITEM>(protected val context: Context, val layoutId: Int) {
 
     abstract fun convert(holder: ItemViewHolder, item: ITEM, payloads: MutableList<Any>)
 

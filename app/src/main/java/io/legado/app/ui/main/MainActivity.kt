@@ -1,7 +1,6 @@
 package io.legado.app.ui.main
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

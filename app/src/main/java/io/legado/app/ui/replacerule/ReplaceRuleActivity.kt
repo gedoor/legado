@@ -40,19 +40,21 @@ class ReplaceRuleActivity : BaseActivity<ReplaceRuleViewModel>() {
     private fun initRecyclerView() {
         rv_replace_rule.layoutManager = LinearLayoutManager(this)
         adapter = ReplaceRuleAdapter(this)
-        adapter.onClickListener = object: ReplaceRuleAdapter.OnClickListener {
+        adapter.onClickListener = object : ReplaceRuleAdapter.OnClickListener {
             override fun update(rule: ReplaceRule) {
                 doAsync {
                     App.db.replaceRuleDao().update(rule)
                     updateEnableAll()
                 }
             }
+
             override fun delete(rule: ReplaceRule) {
                 doAsync {
                     App.db.replaceRuleDao().delete(rule)
                     updateEnableAll()
                 }
             }
+
             override fun edit(rule: ReplaceRule) {
                 doAsync {
                     App.db.replaceRuleDao().enableAll(!allEnabled)
@@ -67,7 +69,8 @@ class ReplaceRuleActivity : BaseActivity<ReplaceRuleViewModel>() {
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
                 ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
                     Log.e(APP_TAG, it.toString())
-                    this.setDrawable(it) }
+                    this.setDrawable(it)
+                }
             })
     }
 

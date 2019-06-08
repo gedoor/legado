@@ -1,6 +1,6 @@
 package io.legado.app.data.entities.rule
 
-data class ChapterRule (
+data class ChapterRule(
     var chapterList: Rule,
     var isReversed: Boolean = false,
     var title: Rule,

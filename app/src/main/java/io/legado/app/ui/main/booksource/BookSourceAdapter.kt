@@ -4,20 +4,16 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import android.widget.PopupMenu
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import java.util.*
-import kotlin.collections.HashSet
 
 class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
@@ -48,8 +44,8 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
             currentList?.let {
                 val srcSource = it[srcPosition]
                 val targetSource = it[targetPosition]
-                srcSource?.let { a->
-                    targetSource?.let { b->
+                srcSource?.let { a ->
+                    targetSource?.let { b ->
                         a.customOrder = targetPosition
                         b.customOrder = srcPosition
                         callBack?.update(a, b)
@@ -86,25 +82,31 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
                 }
             }
             sw_enabled.isChecked = bookSource.isEnabled
-            sw_enabled.setOnClickListener{
+            sw_enabled.setOnClickListener {
                 bookSource.isEnabled = sw_enabled.isChecked
                 callBack?.update(bookSource)
             }
-            iv_more.setOnClickListener{
+            iv_more.setOnClickListener {
                 val popupMenu = PopupMenu(context, iv_more)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
                 popupMenu.setOnMenuItemClickListener {
                     when (it.itemId) {
-                        R.id.menu_edit ->{
+                        R.id.menu_edit -> {
                             callBack?.edit(bookSource)
-                            true}
-                        R.id.menu_del ->{
+                            true
+                        }
+                        R.id.menu_del -> {
                             callBack?.del(bookSource)
-                            true}
-                        R.id.menu_top ->{ true}
-                        else -> {false}
+                            true
+                        }
+                        R.id.menu_top -> {
+                            true
+                        }
+                        else -> {
+                            false
+                        }
                     }
                 }
                 popupMenu.show()

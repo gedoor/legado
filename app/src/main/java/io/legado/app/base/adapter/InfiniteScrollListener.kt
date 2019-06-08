@@ -14,7 +14,7 @@ abstract class InfiniteScrollListener() : RecyclerView.OnScrollListener() {
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 //        if (dy < 0 || dataLoading.isDataLoading()) return
 
-        val layoutManager:LinearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+        val layoutManager: LinearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
         val visibleItemCount = recyclerView.childCount
         val totalItemCount = layoutManager.itemCount
         val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()

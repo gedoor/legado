@@ -89,7 +89,12 @@ class RotateLoading : View {
         arc = 10f
 
         loadingRectF =
-            RectF((2 * thisWidth).toFloat(), (2 * thisWidth).toFloat(), (w - 2 * thisWidth).toFloat(), (h - 2 * thisWidth).toFloat())
+            RectF(
+                (2 * thisWidth).toFloat(),
+                (2 * thisWidth).toFloat(),
+                (w - 2 * thisWidth).toFloat(),
+                (h - 2 * thisWidth).toFloat()
+            )
         shadowRectF = RectF(
             (2 * thisWidth + shadowPosition).toFloat(),
             (2 * thisWidth + shadowPosition).toFloat(),

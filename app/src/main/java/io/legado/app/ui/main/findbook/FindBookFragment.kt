@@ -2,7 +2,6 @@ package io.legado.app.ui.main.findbook
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseFragment

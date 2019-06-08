@@ -79,7 +79,7 @@ class App : Application() {
         }
     }
 
-    fun applyDayNight(){
+    fun applyDayNight() {
         upThemeStore()
         initNightTheme()
     }

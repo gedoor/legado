@@ -6,7 +6,9 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.forEach
 import io.legado.app.R
-import io.legado.app.lib.theme.*
+import io.legado.app.lib.theme.DrawableUtils
+import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.isDarkTheme
 
 fun Menu.setIconColor(context: Context): Menu = this.let { menu ->
     if (menu is MenuBuilder) {

@@ -24,7 +24,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
-class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSourceAdapter.CallBack, SearchView.OnQueryTextListener {
+class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSourceAdapter.CallBack,
+    SearchView.OnQueryTextListener {
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
@@ -68,9 +69,12 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         search_view.setOnQueryTextListener(this)
     }
 
-    private fun initDataObservers(searchKey:String = "") {
+    private fun initDataObservers(searchKey: String = "") {
         bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
-        val dataFactory = if (searchKey.isEmpty()) App.db.bookSourceDao().observeAll() else App.db.bookSourceDao().observeSearch(searchKey)
+        val dataFactory =
+            if (searchKey.isEmpty()) App.db.bookSourceDao().observeAll() else App.db.bookSourceDao().observeSearch(
+                searchKey
+            )
         bookSourceLiveDate = LivePagedListBuilder(dataFactory, 30).build()
         bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }

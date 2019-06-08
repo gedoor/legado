@@ -1,7 +1,9 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import io.legado.app.constant.AppUtils.GSON_CONVERTER
 import io.legado.app.data.entities.rule.*
 import kotlinx.android.parcel.IgnoredOnParcel
@@ -12,7 +14,7 @@ import kotlinx.android.parcel.Parcelize
     tableName = "book_sources",
     indices = [(Index(value = ["origin"], unique = false))]
 )
-data class BookSource (
+data class BookSource(
     @PrimaryKey
     var origin: String = "",                  // 地址，包括 http/https
     var name: String = "",                    // 名称

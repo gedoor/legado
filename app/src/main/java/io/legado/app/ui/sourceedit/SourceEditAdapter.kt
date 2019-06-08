@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_source_edit.view.*
 
 class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>() {
 
-    var sourceEditEntities:ArrayList<SourceEditActivity.SourceEditEntity> = ArrayList()
+    var sourceEditEntities: ArrayList<SourceEditActivity.SourceEditEntity> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_source_edit, parent, false))
@@ -60,7 +60,7 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    sourceEditEntity.value=(s?.toString())
+                    sourceEditEntity.value = (s?.toString())
                 }
             }
             editText.addTextChangedListener(textWatcher)
