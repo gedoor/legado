@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
@@ -11,7 +12,6 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -24,7 +24,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
-class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSourceAdapter.CallBack {
+class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSourceAdapter.CallBack, SearchView.OnQueryTextListener {
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
@@ -65,12 +65,21 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         search_view.onActionViewExpanded()
         search_view.queryHint = getString(R.string.search_book_source)
         search_view.clearFocus()
+        search_view.setOnQueryTextListener(this)
     }
 
     private fun initDataObservers() {
         bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
         bookSourceLiveDate = LivePagedListBuilder(App.db.bookSourceDao().observeAll(), 30).build()
         bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
     }
 
     override fun del(bookSource: BookSource) {
