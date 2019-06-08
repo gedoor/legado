@@ -60,7 +60,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun del(bookSource: BookSource) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        GlobalScope.launch { App.db.bookSourceDao().delete(bookSource) }
     }
 
     override fun update(bookSource: BookSource) {
