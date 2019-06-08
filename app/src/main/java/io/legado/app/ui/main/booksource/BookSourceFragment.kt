@@ -33,6 +33,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         setSupportToolbar(toolbar)
         initRecyclerView()
         initDataObservers()
+        initSearchView()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -57,6 +58,13 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         itemTouchCallback.onItemTouchCallbackListener = adapter.itemTouchCallbackListener
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
+    }
+
+    private fun initSearchView() {
+        search_view.visibility = View.VISIBLE
+        search_view.onActionViewExpanded()
+        search_view.queryHint = getString(R.string.search_book_source)
+        search_view.clearFocus()
     }
 
     private fun initDataObservers() {
