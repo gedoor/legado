@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 L4 Digital LLC. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,25 +14,24 @@
   ~ limitations under the License.
   -->
 
-<shape
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:shape="rectangle">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:shape="rectangle">
 
-    <tools:solid android:color="#777777"/>
+    <tools:solid android:color="#777777" />
 
     <corners
-            android:topLeftRadius="@dimen/fastscroll_bubble_radius"
-            android:topRightRadius="@dimen/fastscroll_bubble_radius"
-            android:bottomLeftRadius="@dimen/fastscroll_bubble_radius"
-            android:bottomRightRadius="0dp"/>
+        android:topLeftRadius="@dimen/fastscroll_bubble_radius"
+        android:topRightRadius="@dimen/fastscroll_bubble_radius"
+        android:bottomLeftRadius="@dimen/fastscroll_bubble_radius"
+        android:bottomRightRadius="0dp" />
 
     <size
-            android:height="@dimen/fastscroll_bubble_size"
-            android:width="@dimen/fastscroll_bubble_size"/>
+        android:height="@dimen/fastscroll_bubble_size"
+        android:width="@dimen/fastscroll_bubble_size" />
 
     <padding
-            android:left="@dimen/fastscroll_bubble_padding"
-            android:right="@dimen/fastscroll_bubble_padding"/>
+        android:left="@dimen/fastscroll_bubble_padding"
+        android:right="@dimen/fastscroll_bubble_padding" />
 
 </shape>

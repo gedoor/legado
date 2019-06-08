@@ -56,7 +56,8 @@
         <item name="textColorAlertDialogListItem">@color/tv_text_default</item>
     </style>
 
-    //**************************************************************System Style******************************************************************************//
+    //**************************************************************System
+    Style******************************************************************************//
 
     <style name="Style.NavigationView" parent="android:Widget">
         <item name="android:listPreferredItemHeightSmall">44dp</item>
@@ -84,7 +85,8 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    //**************************************************************Widget Style******************************************************************************//
+    //**************************************************************Widget
+    Style******************************************************************************//
 
     <style name="Style.Shadow.Top" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
