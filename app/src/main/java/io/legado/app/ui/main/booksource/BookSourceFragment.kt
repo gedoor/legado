@@ -68,13 +68,15 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         search_view.setOnQueryTextListener(this)
     }
 
-    private fun initDataObservers() {
+    private fun initDataObservers(searchKey:String = "") {
         bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
-        bookSourceLiveDate = LivePagedListBuilder(App.db.bookSourceDao().observeAll(), 30).build()
+        val dataFactory = if (searchKey.isEmpty()) App.db.bookSourceDao().observeAll() else App.db.bookSourceDao().observeSearch(searchKey)
+        bookSourceLiveDate = LivePagedListBuilder(dataFactory, 30).build()
         bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
+        newText?.let { initDataObservers("%$it%") }
         return false
     }
 
