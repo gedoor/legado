@@ -16,6 +16,7 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Restore
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.booksource.BookSourceFragment
 import io.legado.app.ui.main.findbook.FindBookFragment
@@ -33,6 +34,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         get() = R.layout.activity_main
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
+        bottom_navigation_view.setBackgroundColor(ThemeStore.backgroundColor(this))
         view_pager_main.offscreenPageLimit = 3
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)

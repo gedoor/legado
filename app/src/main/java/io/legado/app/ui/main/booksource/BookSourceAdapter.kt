@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
+import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
@@ -70,6 +71,10 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
 
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        init {
+            itemView.setBackgroundColor(ThemeStore.backgroundColor(itemView.context))
+        }
 
         fun bind(bookSource: BookSource, checkedList: HashSet<String>, callBack: CallBack?) = with(itemView) {
             cb_book_source.text = String.format("%s (%s)", bookSource.name, bookSource.group)
