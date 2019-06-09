@@ -36,6 +36,10 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
+            "transparentStatusBar" -> {
+                LiveEventBus.get().with(Bus.recreate).post("")
+                Handler().postDelayed({ activity?.recreate() }, 100)
+            }
             "colorPrimary", "colorAccent", "colorBackground" ->
                 if (backgroundIsDark(sharedPreferences)) {
                     activity?.let {
