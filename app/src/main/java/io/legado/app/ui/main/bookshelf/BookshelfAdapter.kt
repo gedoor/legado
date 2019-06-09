@@ -57,7 +57,7 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
             tv_last.text = book.latestChapterTitle
             val cover = if (isEmpty(book.customCoverUrl)) book.coverUrl else book.customCoverUrl
             cover?.let {
-                if (cover.startsWith("http")) {
+                if (it.startsWith("http")) {
                     Glide.with(itemView).load(it)
                             .apply(RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                     .centerCrop().placeholder(R.drawable.img_cover_default))
