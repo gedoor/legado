@@ -33,7 +33,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         initRecyclerView()
-        initDataObservers()
+        initDataObserve()
         initSearchView()
     }
 
@@ -69,7 +69,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         search_view.setOnQueryTextListener(this)
     }
 
-    private fun initDataObservers(searchKey: String = "") {
+    private fun initDataObserve(searchKey: String = "") {
         bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
         val dataFactory =
             if (searchKey.isEmpty()) App.db.bookSourceDao().observeAll() else App.db.bookSourceDao().observeSearch(
@@ -80,7 +80,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        newText?.let { initDataObservers("%$it%") }
+        newText?.let { initDataObserve("%$it%") }
         return false
     }
 

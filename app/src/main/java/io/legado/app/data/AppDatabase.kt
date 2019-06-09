@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.data.dao.BookDao
+import io.legado.app.data.dao.BookGroupDao
 import io.legado.app.data.dao.BookSourceDao
 import io.legado.app.data.dao.ReplaceRuleDao
 import io.legado.app.data.entities.Book
@@ -49,6 +50,8 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun bookDao(): BookDao
-    abstract fun replaceRuleDao(): ReplaceRuleDao
+    abstract fun bookGroupDao(): BookGroupDao
     abstract fun bookSourceDao(): BookSourceDao
+    abstract fun replaceRuleDao(): ReplaceRuleDao
+
 }
