@@ -37,13 +37,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         sharedPreferences ?: return
         when (key) {
             "colorPrimary", "colorAccent", "colorBackground" ->
-                if (!ColorUtils.isColorLight(
-                        sharedPreferences.getInt(
-                            "colorBackground",
-                            App.INSTANCE.getCompatColor(R.color.md_grey_100)
-                        )
-                    )
-                ) {
+                if (backgroundIsDark(sharedPreferences)) {
                     activity?.let {
                         AlertDialog.Builder(it)
                             .setTitle("白天背景太暗")
@@ -62,13 +56,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                     upTheme(false)
                 }
             "colorPrimaryNight", "colorAccentNight", "colorBackgroundNight" ->
-                if (ColorUtils.isColorLight(
-                        sharedPreferences.getInt(
-                            "colorBackgroundNight",
-                            App.INSTANCE.getCompatColor(R.color.md_grey_800)
-                        )
-                    )
-                ) {
+                if (backgroundIsLight(sharedPreferences)) {
                     activity?.let {
                         AlertDialog.Builder(it)
                             .setTitle("夜间背景太亮")
@@ -116,6 +104,24 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             }
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun backgroundIsDark(sharedPreferences: SharedPreferences): Boolean {
+        return !ColorUtils.isColorLight(
+            sharedPreferences.getInt(
+                "colorBackground",
+                App.INSTANCE.getCompatColor(R.color.md_grey_100)
+            )
+        )
+    }
+
+    private fun backgroundIsLight(sharedPreferences: SharedPreferences): Boolean {
+        return ColorUtils.isColorLight(
+            sharedPreferences.getInt(
+                "colorBackgroundNight",
+                App.INSTANCE.getCompatColor(R.color.md_grey_800)
+            )
+        )
     }
 
     private fun upTheme(isNightTheme: Boolean) {
