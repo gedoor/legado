@@ -18,16 +18,16 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 
 class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
 
-    private lateinit var recentReadAdapter: RecentReadAdapter
+    private lateinit var bookshelfAdapter: BookshelfAdapter
     private lateinit var bookGroupAdapter: BookGroupAdapter
     private var bookGroupLiveData: LiveData<PagedList<BookGroup>>? = null
-    private var recentReadLiveData: LiveData<PagedList<Book>>? = null
+    private var bookshelfLiveData: LiveData<PagedList<Book>>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         initRecyclerView()
         initBookGroupData()
-        initRecentReadData()
+        initBookshelfData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -35,12 +35,12 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
     }
 
     private fun initRecyclerView() {
-        rv_bookshelf.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        rv_book_group.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter()
-        rv_bookshelf.adapter = bookGroupAdapter
-        rv_read_books.layoutManager = LinearLayoutManager(context)
-        recentReadAdapter = RecentReadAdapter()
-        rv_read_books.adapter = recentReadAdapter
+        rv_book_group.adapter = bookGroupAdapter
+        rv_bookshelf.layoutManager = LinearLayoutManager(context)
+        bookshelfAdapter = BookshelfAdapter()
+        rv_bookshelf.adapter = bookshelfAdapter
     }
 
     private fun initBookGroupData() {
@@ -49,10 +49,10 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer { bookGroupAdapter.submitList(it) })
     }
 
-    private fun initRecentReadData() {
-        recentReadLiveData?.removeObservers(viewLifecycleOwner)
-        recentReadLiveData = LivePagedListBuilder(App.db.bookDao().recentRead(), 20).build()
-        recentReadLiveData?.observe(viewLifecycleOwner, Observer { recentReadAdapter.submitList(it) })
+    private fun initBookshelfData() {
+        bookshelfLiveData?.removeObservers(viewLifecycleOwner)
+        bookshelfLiveData = LivePagedListBuilder(App.db.bookDao().recentRead(), 20).build()
+        bookshelfLiveData?.observe(viewLifecycleOwner, Observer { bookshelfAdapter.submitList(it) })
     }
 
 }

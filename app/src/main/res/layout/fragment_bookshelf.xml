@@ -13,12 +13,12 @@
         app:title="@string/bookshelf" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bookshelf"
+        android:id="@+id/rv_book_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_read_books"
+        android:id="@+id/rv_bookshelf"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

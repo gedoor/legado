@@ -1,13 +1,15 @@
 package io.legado.app.ui.main.bookshelf
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import io.legado.app.R
 import io.legado.app.data.entities.Book
 
-class RecentReadAdapter : PagedListAdapter<Book, RecentReadAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         @JvmField
@@ -23,11 +25,11 @@ class RecentReadAdapter : PagedListAdapter<Book, RecentReadAdapter.MyViewHolder>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bookshelf_list, parent, false))
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
