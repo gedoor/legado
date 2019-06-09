@@ -1,7 +1,6 @@
 package io.legado.app.ui.config
 
 import android.os.Bundle
-import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -12,7 +11,8 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_web_dav)
-        bindPreferenceSummaryToValue(findPreference<EditTextPreference>("web_dav_url"))
+        bindPreferenceSummaryToValue(findPreference("web_dav_url"))
+        bindPreferenceSummaryToValue(findPreference("web_dav_account"))
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
