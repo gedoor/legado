@@ -40,7 +40,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                 LiveEventBus.get().with(Bus.recreate).post("")
                 Handler().postDelayed({ activity?.recreate() }, 100)
             }
-            "colorPrimary", "colorAccent", "colorBackground" ->
+            "colorPrimary", "colorAccent", "colorBackground" -> {
                 if (backgroundIsDark(sharedPreferences)) {
                     activity?.let {
                         AlertDialog.Builder(it)
@@ -59,7 +59,8 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                 } else {
                     upTheme(false)
                 }
-            "colorPrimaryNight", "colorAccentNight", "colorBackgroundNight" ->
+            }
+            "colorPrimaryNight", "colorAccentNight", "colorBackgroundNight" -> {
                 if (backgroundIsLight(sharedPreferences)) {
                     activity?.let {
                         AlertDialog.Builder(it)
@@ -78,6 +79,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                 } else {
                     upTheme(true)
                 }
+            }
         }
 
     }
