@@ -35,7 +35,6 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
-        activity ?: return
         when (key) {
             "colorPrimary", "colorAccent", "colorBackground" ->
                 if (!ColorUtils.isColorLight(
@@ -45,15 +44,20 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                         )
                     )
                 ) {
-                    AlertDialog.Builder(activity!!)
-                        .setTitle("白天背景太暗")
-                        .setMessage("将会恢复默认背景？")
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            App.INSTANCE.putPrefInt("colorBackground", App.INSTANCE.getCompatColor(R.color.md_grey_100))
-                            upTheme(false)
-                        }
-                        .setNegativeButton(R.string.cancel) { _, _ -> upTheme(false) }
-                        .show().upTint
+                    activity?.let {
+                        AlertDialog.Builder(it)
+                            .setTitle("白天背景太暗")
+                            .setMessage("将会恢复默认背景？")
+                            .setPositiveButton(R.string.ok) { _, _ ->
+                                App.INSTANCE.putPrefInt(
+                                    "colorBackground",
+                                    App.INSTANCE.getCompatColor(R.color.md_grey_100)
+                                )
+                                upTheme(false)
+                            }
+                            .setNegativeButton(R.string.cancel) { _, _ -> upTheme(false) }
+                            .show().upTint
+                    }
                 } else {
                     upTheme(false)
                 }
@@ -65,18 +69,20 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                         )
                     )
                 ) {
-                    AlertDialog.Builder(activity!!)
-                        .setTitle("夜间背景太亮")
-                        .setMessage("将会恢复默认背景？")
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            App.INSTANCE.putPrefInt(
-                                "colorBackgroundNight",
-                                App.INSTANCE.getCompatColor(R.color.md_grey_800)
-                            )
-                            upTheme(true)
-                        }
-                        .setNegativeButton(R.string.cancel) { _, _ -> upTheme(true) }
-                        .show()
+                    activity?.let {
+                        AlertDialog.Builder(it)
+                            .setTitle("夜间背景太亮")
+                            .setMessage("将会恢复默认背景？")
+                            .setPositiveButton(R.string.ok) { _, _ ->
+                                App.INSTANCE.putPrefInt(
+                                    "colorBackgroundNight",
+                                    App.INSTANCE.getCompatColor(R.color.md_grey_800)
+                                )
+                                upTheme(true)
+                            }
+                            .setNegativeButton(R.string.cancel) { _, _ -> upTheme(true) }
+                            .show().upTint
+                    }
                 } else {
                     upTheme(true)
                 }
@@ -87,25 +93,26 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "defaultTheme" -> {
-                AlertDialog.Builder(activity!!)
-                    .setTitle("恢复默认主题")
-                    .setMessage("是否确认恢复？")
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        preferenceManager.sharedPreferences.edit()
-                            .putInt("colorPrimary", App.INSTANCE.getCompatColor(R.color.md_grey_100))
-                            .putInt("colorAccent", App.INSTANCE.getCompatColor(R.color.md_pink_600))
-                            .putInt("colorBackground", App.INSTANCE.getCompatColor(R.color.md_grey_100))
-                            .putInt("colorPrimaryNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
-                            .putInt("colorAccentNight", App.INSTANCE.getCompatColor(R.color.md_pink_800))
-                            .putInt("colorBackgroundNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
-                            .apply()
-                        App.INSTANCE.upThemeStore()
-                        LiveEventBus.get().with(Bus.recreate).post("")
-                        Handler().postDelayed({ activity?.recreate() }, 100)
-                    }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
-                    .upTint
+                activity?.let {
+                    AlertDialog.Builder(it)
+                        .setTitle("恢复默认主题")
+                        .setMessage("是否确认恢复？")
+                        .setPositiveButton(R.string.ok) { _, _ ->
+                            preferenceManager.sharedPreferences.edit()
+                                .putInt("colorPrimary", App.INSTANCE.getCompatColor(R.color.md_grey_100))
+                                .putInt("colorAccent", App.INSTANCE.getCompatColor(R.color.md_pink_600))
+                                .putInt("colorBackground", App.INSTANCE.getCompatColor(R.color.md_grey_100))
+                                .putInt("colorPrimaryNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
+                                .putInt("colorAccentNight", App.INSTANCE.getCompatColor(R.color.md_pink_800))
+                                .putInt("colorBackgroundNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
+                                .apply()
+                            App.INSTANCE.upThemeStore()
+                            LiveEventBus.get().with(Bus.recreate).post("")
+                            Handler().postDelayed({ activity?.recreate() }, 100)
+                        }
+                        .setNegativeButton(R.string.cancel, null)
+                        .show().upTint
+                }
             }
         }
         return super.onPreferenceTreeClick(preference)
