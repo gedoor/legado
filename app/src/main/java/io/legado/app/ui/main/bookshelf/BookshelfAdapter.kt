@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.lib.theme.ThemeStore
@@ -59,13 +58,15 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
             cover?.let {
                 if (it.startsWith("http")) {
                     Glide.with(itemView).load(it)
-                            .apply(RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                                    .centerCrop().placeholder(R.drawable.img_cover_default))
+                            .placeholder(R.drawable.img_cover_default)
+                            .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .into(iv_cover)
                 } else {
                     Glide.with(itemView).load(File(it))
-                            .apply(RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                                    .centerCrop().placeholder(R.drawable.img_cover_default))
+                            .placeholder(R.drawable.img_cover_default)
+                            .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .into(iv_cover)
                 }
             }
