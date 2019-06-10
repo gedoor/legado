@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background"
+    android:padding="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <io.legado.app.lib.theme.view.ATECheckBox
+        android:id="@+id/cb_book_source"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/tv_text_default" />
+
+    <io.legado.app.lib.theme.view.ATESwitch
+        android:id="@+id/sw_enabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/iv_more"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_ib_pre_round"
+        android:layout_margin="6dp"
+        android:contentDescription="@string/to_top"
+        android:src="@drawable/ic_more_vert"
+        app:tint="@color/tv_text_default" />
+</LinearLayout>

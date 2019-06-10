@@ -7,15 +7,17 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.data.dao.BookDao
+import io.legado.app.data.dao.BookGroupDao
+import io.legado.app.data.dao.BookSourceDao
 import io.legado.app.data.dao.ReplaceRuleDao
-import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.Chapter
-import io.legado.app.data.entities.ReplaceRule
-import javax.xml.transform.Source
+import io.legado.app.data.entities.*
 
 
-@Database(entities = [Book::class, Chapter::class, ReplaceRule::class], version = 1, exportSchema = true)
-// @TypeConverters(Converters::class)
+@Database(
+    entities = [Book::class, BookGroup::class, BookSource::class, Chapter::class, ReplaceRule::class],
+    version = 1,
+    exportSchema = true
+)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
@@ -39,17 +41,14 @@ abstract class AppDatabase : RoomDatabase() {
                 // .addMigrations(MIGRATION_3_4)
                 // .addMigrations(MIGRATION_4_5)
                 // .addMigrations(MIGRATION_5_6)
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                    }
-                })
                 .build()
         }
 
     }
 
     abstract fun bookDao(): BookDao
+    abstract fun bookGroupDao(): BookGroupDao
+    abstract fun bookSourceDao(): BookSourceDao
     abstract fun replaceRuleDao(): ReplaceRuleDao
 
 }

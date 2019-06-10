@@ -7,7 +7,7 @@ import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.ui.search.SearchActivity
-import kotlinx.android.synthetic.main.view_titlebar.*
+import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
 class MyConfigFragment : BaseFragment(R.layout.fragment_my_config) {

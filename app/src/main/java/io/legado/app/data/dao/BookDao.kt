@@ -8,7 +8,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.Book
 
-
 @Dao
 interface BookDao {
 
@@ -26,6 +25,9 @@ interface BookDao {
 
     @get:Query("SELECT COUNT(*) FROM books")
     val allBookCount: Int
+
+    @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,10")
+    fun recentRead(): DataSource.Factory<Int, Book>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg books: Book)

@@ -3,29 +3,16 @@ package io.legado.app.lib.webdav
 import io.legado.app.lib.webdav.http.Handler
 import io.legado.app.lib.webdav.http.HttpAuth
 import io.legado.app.lib.webdav.http.OkHttp
-
+import okhttp3.*
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.UnsupportedEncodingException
-import java.lang.reflect.Field
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
-import java.util.ArrayList
-
-import okhttp3.Credentials
-import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.Response
+import java.util.*
 
 class WebDav @Throws(MalformedURLException::class)
 constructor(url: String) {
@@ -50,9 +37,9 @@ constructor(url: String) {
         get() = url.toString()
 
     private val inputStream: InputStream?
-        get() = getUrl()?.let {url ->
+        get() = getUrl()?.let { url ->
             val request = Request.Builder().url(url)
-            HttpAuth.auth?.let {request.header("Authorization", Credentials.basic(it.user, it.pass)) }
+            HttpAuth.auth?.let { request.header("Authorization", Credentials.basic(it.user, it.pass)) }
 
             try {
                 return okHttpClient.newCall(request.build()).execute().body()?.byteStream()
@@ -113,9 +100,9 @@ constructor(url: String) {
     @Throws(IOException::class)
     @JvmOverloads
     fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
-            propFindResponse(propsList)?.let {response->
+        propFindResponse(propsList)?.let { response ->
             if (response.isSuccessful) {
-                response.body()?.let {body->
+                response.body()?.let { body ->
                     return parseDir(body.string())
                 }
             }
@@ -136,14 +123,14 @@ constructor(url: String) {
         } else {
             String.format(DIR, requestProps.toString() + "\n")
         }
-        getUrl()?.let {url->
+        getUrl()?.let { url ->
             val request = Request.Builder()
                 .url(url)
                 // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
                 // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
                 .method("PROPFIND", RequestBody.create(MediaType.parse("text/plain"), requestPropsStr))
 
-            HttpAuth.auth?.let {request.header("Authorization", Credentials.basic(it.user, it.pass)) }
+            HttpAuth.auth?.let { request.header("Authorization", Credentials.basic(it.user, it.pass)) }
 
             request.header("Depth", if (depth < 0) "infinity" else Integer.toString(depth))
 
@@ -156,7 +143,7 @@ constructor(url: String) {
         val list = ArrayList<WebDav>()
         val document = Jsoup.parse(s)
         val elements = document.getElementsByTag("d:response")
-        getUrl()?.let { url->
+        getUrl()?.let { url ->
             val baseUrl = if (url.endsWith("/")) url else "$url/"
             for (element in elements) {
                 val href = element.getElementsByTag("d:href")[0].text()
@@ -184,7 +171,7 @@ constructor(url: String) {
      */
     @Throws(IOException::class)
     fun makeAsDir(): Boolean {
-        getUrl()?.let { url->
+        getUrl()?.let { url ->
             val request = Request.Builder()
                 .url(url)
                 .method("MKCOL", null)

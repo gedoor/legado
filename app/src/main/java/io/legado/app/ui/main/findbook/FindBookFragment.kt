@@ -2,11 +2,10 @@ package io.legado.app.ui.main.findbook
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import kotlinx.android.synthetic.main.view_titlebar.*
+import kotlinx.android.synthetic.main.view_title_bar.*
 
 class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
 

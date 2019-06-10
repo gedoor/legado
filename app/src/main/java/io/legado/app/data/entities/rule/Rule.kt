@@ -1,9 +1,9 @@
 package io.legado.app.data.entities.rule
 
-import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.safeTrim
+import io.legado.app.utils.splitNotBlank
 
-data class Rule (
+data class Rule(
     var selectors: List<BaseRule>,
     var regex: String?,
     var replacement: String?,

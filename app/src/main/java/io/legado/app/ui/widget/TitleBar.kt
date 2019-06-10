@@ -46,7 +46,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     private val attachToActivity: Boolean
 
     init {
-        inflate(context, R.layout.view_titlebar, this)
+        inflate(context, R.layout.view_title_bar, this)
         setBackgroundColor(ThemeStore.primaryColor(context))
         toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(

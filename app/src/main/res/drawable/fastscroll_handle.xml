@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 L4 Digital LLC. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +14,16 @@
   ~ limitations under the License.
   -->
 
-<shape
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:shape="rectangle">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:shape="rectangle">
 
-    <tools:solid android:color="#555555"/>
+    <tools:solid android:color="#555555" />
 
-    <corners android:radius="@dimen/fastscroll_handle_radius"/>
+    <corners android:radius="@dimen/fastscroll_handle_radius" />
 
     <size
-            android:height="@dimen/fastscroll_handle_height"
-            android:width="@dimen/fastscroll_handle_width"/>
+        android:height="@dimen/fastscroll_handle_height"
+        android:width="@dimen/fastscroll_handle_width" />
 
 </shape>

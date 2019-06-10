@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_save"
+        android:title="@string/action_save"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_copy_source"
+        android:title="@string/copy_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_paste_source"
+        android:title="@string/paste_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_qr_code_camera"
+        android:title="@string/import_by_qr_code"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share_it"
+        android:title="@string/qr_share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share_wifi"
+        android:title="@string/wifi_share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_debug_source"
+        android:title="@string/debug_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_rule_summary"
+        android:title="@string/rule_summary"
+        app:showAsAction="never" />
+
+</menu>

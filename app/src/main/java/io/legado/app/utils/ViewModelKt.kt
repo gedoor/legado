@@ -9,4 +9,5 @@ fun <T : ViewModel> AppCompatActivity.getViewModel(clazz: Class<T>) = ViewModelP
 
 fun <T : ViewModel> Fragment.getViewModel(clazz: Class<T>) = ViewModelProviders.of(this).get(clazz)
 
-fun <T : ViewModel> Fragment.getViewModelOfActivity(clazz: Class<T>) = ViewModelProviders.of(requireActivity()).get(clazz)
+fun <T : ViewModel> Fragment.getViewModelOfActivity(clazz: Class<T>) =
+    ViewModelProviders.of(requireActivity()).get(clazz)

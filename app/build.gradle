@@ -80,7 +80,7 @@ dependencies {
 
     //androidX
     implementation 'androidx.core:core-ktx:1.2.0-alpha01'
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha05'
+    implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
     implementation 'androidx.preference:preference:1.1.0-alpha05'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
@@ -121,7 +121,7 @@ dependencies {
 
     //Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'

@@ -5,7 +5,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_config.*
-import kotlinx.android.synthetic.main.view_titlebar.*
+import kotlinx.android.synthetic.main.view_title_bar.*
 
 class ConfigActivity : BaseActivity<ConfigViewModel>() {
     override val viewModel: ConfigViewModel

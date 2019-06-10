@@ -3,7 +3,6 @@ package io.legado.app.lib.theme.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.Switch
 import androidx.appcompat.widget.SwitchCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore

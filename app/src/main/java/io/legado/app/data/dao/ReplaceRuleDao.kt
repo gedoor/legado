@@ -40,16 +40,20 @@ interface ReplaceRuleDao {
     fun enableAll(enable: Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg replaceRules: ReplaceRule)
+    fun insert(vararg replaceRules: ReplaceRule): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(replaceRule: ReplaceRule): Long
 
     @Update
+    fun update(replaceRules: ReplaceRule)
+
+    @Update
     fun update(vararg replaceRules: ReplaceRule)
 
     @Delete
+    fun delete(replaceRules: ReplaceRule)
+
+    @Delete
     fun delete(vararg replaceRules: ReplaceRule)
-
-
 }
