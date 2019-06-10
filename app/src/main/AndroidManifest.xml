@@ -43,6 +43,7 @@
                   android:theme="@style/Activity.Permission"/>
         <activity android:name=".ui.config.ConfigActivity"/>
         <activity android:name=".ui.sourceedit.SourceEditActivity"/>
+        <activity android:name=".ui.bookshelf.BookshelfActivity" />
     </application>
 
 </manifest>
