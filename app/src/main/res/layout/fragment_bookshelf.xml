@@ -17,6 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/tv_recent_reading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/recent_reading" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bookshelf"
         android:layout_width="match_parent"
