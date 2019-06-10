@@ -10,14 +10,11 @@ import io.legado.app.data.dao.BookDao
 import io.legado.app.data.dao.BookGroupDao
 import io.legado.app.data.dao.BookSourceDao
 import io.legado.app.data.dao.ReplaceRuleDao
-import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookSource
-import io.legado.app.data.entities.Chapter
-import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.data.entities.*
 
 
 @Database(
-    entities = [Book::class, BookSource::class, Chapter::class, ReplaceRule::class],
+    entities = [Book::class, BookGroup::class, BookSource::class, Chapter::class, ReplaceRule::class],
     version = 1,
     exportSchema = true
 )
