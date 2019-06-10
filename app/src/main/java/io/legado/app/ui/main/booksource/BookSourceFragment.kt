@@ -101,6 +101,6 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun edit(bookSource: BookSource) {
-        context?.let { it.startActivity<SourceEditActivity>(Pair("data", bookSource.origin)) }
+        context?.startActivity<SourceEditActivity>(Pair("data", bookSource.origin))
     }
 }
