@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
 import java.io.File
 
-class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookshelfAdapter : PagedListAdapter<Book, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         @JvmField
@@ -33,13 +33,40 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
 
     var callBack: CallBack? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    override fun getItemViewType(position: Int): Int {
+        if (position == itemCount - 1) {
+            return 1
+        }
+        return super.getItemViewType(position)
+    }
+
+    override fun getItemCount(): Int {
+        return super.getItemCount() + 1
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (viewType == 1) {
+            return AddViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bookshelf_list_add, parent, false))
+        }
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bookshelf_list, parent, false))
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        currentList?.get(position)?.let {
-            holder.bind(it, callBack)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is MyViewHolder -> {
+                currentList?.get(position)?.let {
+                    holder.bind(it, callBack)
+                }
+            }
+            is AddViewHolder -> holder.bind(callBack)
+        }
+
+    }
+
+    class AddViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        fun bind(callBack: CallBack?) = with(itemView) {
+            setOnClickListener { callBack?.search() }
         }
     }
 
@@ -76,5 +103,6 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
 
     interface CallBack {
         fun open(book: Book)
+        fun search()
     }
 }

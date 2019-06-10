@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -42,6 +43,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
         bookGroupAdapter = BookGroupAdapter()
         rv_book_group.adapter = bookGroupAdapter
         rv_bookshelf.layoutManager = LinearLayoutManager(context)
+        rv_bookshelf.addItemDecoration(DividerItemDecoration(rv_bookshelf.context, LinearLayoutManager.VERTICAL))
         bookshelfAdapter = BookshelfAdapter()
         rv_bookshelf.adapter = bookshelfAdapter
     }
