@@ -10,13 +10,12 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
-
     private val launchManager: MutableList<Job> = mutableListOf()
 
     protected fun launchOnUI(
-        tryBlock: suspend CoroutineScope.() -> Unit,//成功
-        errorBlock: suspend CoroutineScope.(Throwable) -> Unit,//失败
-        finallyBlock: suspend CoroutineScope.() -> Unit//结束
+        tryBlock: suspend CoroutineScope.() -> Unit,
+        errorBlock: (suspend CoroutineScope.(Throwable) -> Unit)? = null,//失败
+        finallyBlock: (suspend CoroutineScope.() -> Unit)? = null//结束
     ) {
         launchOnUI {
             tryCatch(tryBlock, errorBlock, finallyBlock)
@@ -34,15 +33,15 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     private suspend fun tryCatch(
         tryBlock: suspend CoroutineScope.() -> Unit,
-        errorBlock: suspend CoroutineScope.(Throwable) -> Unit,
-        finallyBlock: suspend CoroutineScope.() -> Unit
+        errorBlock: (suspend CoroutineScope.(Throwable) -> Unit)? = null,
+        finallyBlock: (suspend CoroutineScope.() -> Unit)? = null
     ) {
         try {
             coroutineScope { tryBlock() }
         } catch (e: Throwable) {
-            coroutineScope { errorBlock(e) }
+            coroutineScope { errorBlock?.let { it(e) } }
         } finally {
-            coroutineScope { finallyBlock() }
+            coroutineScope { finallyBlock?.let { it() } }
         }
     }
 
