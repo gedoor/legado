@@ -3,6 +3,7 @@ package io.legado.app.data.dao
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.BookGroup
 
@@ -15,6 +16,6 @@ interface BookGroupDao {
     @get:Query("SELECT MAX(groupId) FROM book_groups")
     val maxId: Int
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(bookGroup: BookGroup)
 }
