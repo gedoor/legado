@@ -5,6 +5,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -15,6 +17,7 @@ import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.data.AppDatabase
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import java.util.*
@@ -42,14 +45,18 @@ class App : Application() {
         } catch (e: PackageManager.NameNotFoundException) {
             0
         }
+
         if (!ThemeStore.isConfigured(this, versionCode)) upThemeStore()
         initNightTheme()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
+
         LiveEventBus.get()
             .config()
             .supportBroadcast(this)
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
+
     }
 
     fun initNightTheme() {

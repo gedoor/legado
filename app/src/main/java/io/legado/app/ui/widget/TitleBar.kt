@@ -2,6 +2,7 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -17,7 +18,6 @@ import io.legado.app.R
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.lib.theme.isDarkTheme
 import io.legado.app.utils.getStatusBarHeight
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
@@ -142,7 +142,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     }
 
     private fun wrapAppTheme() {
-        val primaryTextColor = context.getPrimaryTextColor(context.isDarkTheme())
+        val primaryTextColor = if (isInEditMode) Color.BLACK else context.getPrimaryTextColor()
         DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
         toolbar.setTitleTextColor(primaryTextColor)
 

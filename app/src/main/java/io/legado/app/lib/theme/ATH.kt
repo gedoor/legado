@@ -7,8 +7,11 @@ import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+import android.widget.EdgeEffect
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
+
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -112,5 +115,15 @@ object ATH {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(colorStateList)
         }
         return dialog
+    }
+
+    fun setEdgeEffectColor(view: RecyclerView, color: Int) {
+        view.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                val edgeEffect = super.createEdgeEffect(view, direction)
+                edgeEffect.color = color
+                return edgeEffect
+            }
+        }
     }
 }

@@ -19,14 +19,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-        <com.kunfei.bookshelf.widget.views.ATECheckBox
+        <io.legado.app.lib.theme.view.ATECheckBox
                 android:id="@+id/cb_is_enable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="@string/is_enable"/>
 
-        <com.kunfei.bookshelf.widget.views.ATECheckBox
+        <io.legado.app.lib.theme.view.ATECheckBox
                 android:id="@+id/cb_is_audio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import kotlinx.android.synthetic.main.view_titlebar.*
