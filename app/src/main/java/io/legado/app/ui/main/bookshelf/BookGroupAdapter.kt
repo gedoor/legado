@@ -46,12 +46,10 @@ class BookGroupAdapter : PagedListAdapter<BookGroup, BookGroupAdapter.MyViewHold
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        if (position < defaultGroups.size) {
-            holder.bind(defaultGroups[position], callBack)
-        } else if (position == itemCount - 1) {
-            holder.bind(addBookGroup, callBack)
-        } else {
-            currentList?.get(position - defaultGroups.size)?.let {
+        when {
+            position < defaultGroups.size -> holder.bind(defaultGroups[position], callBack)
+            position == itemCount - 1 -> holder.bind(addBookGroup, callBack)
+            else -> currentList?.get(position - defaultGroups.size)?.let {
                 holder.bind(it, callBack)
             }
         }
@@ -61,11 +59,11 @@ class BookGroupAdapter : PagedListAdapter<BookGroup, BookGroupAdapter.MyViewHold
 
         fun bind(bookGroup: BookGroup, callBack: CallBack?) = with(itemView) {
             tv_group.text = bookGroup.groupName
-            tv_group.setOnClickListener { callBack?.open(bookGroup.groupId) }
+            tv_group.setOnClickListener { callBack?.open(bookGroup) }
         }
     }
 
     interface CallBack {
-        fun open(groupId: Int)
+        fun open(bookGroup: BookGroup)
     }
 }

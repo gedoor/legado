@@ -17,11 +17,13 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.utils.disableAutoFill
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
 
 class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
@@ -48,8 +50,8 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
         bookGroupAdapter = BookGroupAdapter()
         rv_book_group.adapter = bookGroupAdapter
         bookGroupAdapter.callBack = object : BookGroupAdapter.CallBack {
-            override fun open(groupId: Int) {
-                when (groupId) {
+            override fun open(bookGroup: BookGroup) {
+                when (bookGroup.groupId) {
                     -10 -> context?.let {
                         MaterialDialog(it).show {
                             window?.decorView?.disableAutoFill()
@@ -69,6 +71,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
                             positiveButton(R.string.ok)
                         }
                     }
+                    else -> context?.startActivity<BookshelfActivity>(Pair("data", bookGroup))
                 }
             }
         }

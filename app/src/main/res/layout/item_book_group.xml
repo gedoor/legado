@@ -3,5 +3,6 @@
     android:id="@+id/tv_group"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_ib_pre"
     android:layout_margin="5dp"
     android:padding="5dp" />
