@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.disableAutoFill
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.setIconColor
@@ -23,6 +24,7 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
     protected abstract val layoutID: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.decorView.disableAutoFill()
         initTheme()
         setupSystemBar()
         super.onCreate(savedInstanceState)

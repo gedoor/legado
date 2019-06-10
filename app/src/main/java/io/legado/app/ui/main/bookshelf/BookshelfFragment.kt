@@ -17,6 +17,7 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.disableAutoFill
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.GlobalScope
@@ -51,6 +52,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
                 when (groupId) {
                     -10 -> context?.let {
                         MaterialDialog(it).show {
+                            window?.decorView?.disableAutoFill()
                             title(text = "新建分组")
                             input(hint = "分组名称") { _, charSequence ->
                                 run {
