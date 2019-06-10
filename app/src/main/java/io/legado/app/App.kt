@@ -19,6 +19,7 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import java.util.*
 
+@Suppress("DEPRECATION")
 class App : Application() {
 
     companion object {
