@@ -98,11 +98,11 @@ class QrCodeActivity : BaseActivity<AndroidViewModel>(), QRCodeView.Delegate {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        data?.let {
+        data?.data?.let {
             zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
 
             if (resultCode == Activity.RESULT_OK && requestCode == requestQrImage) {
-                val picturePath = FileUtils.getPath(this, it.data)
+                val picturePath = FileUtils.getPath(this, it)
                 // 本来就用到 QRCodeView 时可直接调 QRCodeView 的方法，走通用的回调
                 zxingview.decodeQRCode(picturePath)
             }
