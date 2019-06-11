@@ -9,10 +9,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.View
 import android.view.animation.LinearInterpolator
+import androidx.core.view.isVisible
 import io.legado.app.R
+import io.legado.app.utils.dp
 
 /**
  * RotateLoading
@@ -59,8 +60,8 @@ class RotateLoading : View {
 
     private fun initView(context: Context, attrs: AttributeSet?) {
         loadingColor = Color.WHITE
-        thisWidth = dpToPx(context, DEFAULT_WIDTH.toFloat())
-        shadowPosition = dpToPx(getContext(), DEFAULT_SHADOW_POSITION.toFloat())
+        thisWidth = DEFAULT_WIDTH.dp
+        shadowPosition = DEFAULT_SHADOW_POSITION.dp
         speedOfDegree = DEFAULT_SPEED_OF_DEGREE
 
         if (null != attrs) {
@@ -68,7 +69,7 @@ class RotateLoading : View {
             loadingColor = typedArray.getColor(R.styleable.RotateLoading_loading_color, Color.WHITE)
             thisWidth = typedArray.getDimensionPixelSize(
                 R.styleable.RotateLoading_loading_width,
-                dpToPx(context, DEFAULT_WIDTH.toFloat())
+                DEFAULT_WIDTH.dp
             )
             shadowPosition = typedArray.getInt(R.styleable.RotateLoading_shadow_position, DEFAULT_SHADOW_POSITION)
             speedOfDegree = typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
@@ -145,13 +146,29 @@ class RotateLoading : View {
         }
     }
 
-    fun start() {
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (isVisible) {
+            start()
+        }
+    }
+
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        if (visibility == VISIBLE) {
+            start()
+        } else {
+            stop()
+        }
+    }
+
+    private fun start() {
         startAnimator()
         isStart = true
         invalidate()
     }
 
-    fun stop() {
+    private fun stop() {
         stopAnimator()
         invalidate()
     }
@@ -197,16 +214,11 @@ class RotateLoading : View {
         animatorSet.start()
     }
 
-
-    fun dpToPx(context: Context, dpVal: Float): Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, context.resources.displayMetrics).toInt()
-    }
-
     companion object {
 
-        private val DEFAULT_WIDTH = 6
-        private val DEFAULT_SHADOW_POSITION = 2
-        private val DEFAULT_SPEED_OF_DEGREE = 10
+        private const val DEFAULT_WIDTH = 6
+        private const val DEFAULT_SHADOW_POSITION = 2
+        private const val DEFAULT_SPEED_OF_DEGREE = 10
     }
 
 }

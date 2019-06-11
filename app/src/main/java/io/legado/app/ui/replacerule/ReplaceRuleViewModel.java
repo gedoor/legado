@@ -7,5 +7,6 @@ import org.jetbrains.annotations.NotNull;
 public class ReplaceRuleViewModel extends BaseViewModel {
     public ReplaceRuleViewModel(@NotNull Application application) {
         super(application);
+
     }
 }
