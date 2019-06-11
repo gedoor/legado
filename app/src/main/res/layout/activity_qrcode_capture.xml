@@ -8,6 +8,7 @@
         android:id="@+id/zxingview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:qrcv_animTime="1000"
         app:qrcv_barCodeTipText="将条码放入框内，即可自动扫描"
         app:qrcv_barcodeRectHeight="120dp"

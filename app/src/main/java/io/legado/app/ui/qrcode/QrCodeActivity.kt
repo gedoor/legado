@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import cn.bingoogolapple.qrcode.core.QRCodeView
 import io.legado.app.R
@@ -66,7 +67,7 @@ class QrCodeActivity : BaseActivity<AndroidViewModel>(), QRCodeView.Delegate {
             .addPermissions(*Permissions.Group.CAMERA)
             .rationale(R.string.qr_per)
             .onGranted {
-                zxingview.startCamera() // 打开后置摄像头开始预览，但是并未开始识别
+                zxingview.visibility = View.VISIBLE
                 zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
             }.request()
     }
