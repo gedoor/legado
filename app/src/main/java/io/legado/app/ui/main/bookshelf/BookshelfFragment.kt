@@ -54,6 +54,9 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), BookGroupAd
 
     private fun initRecyclerView() {
         refresh_layout.setColorSchemeColors(ThemeStore.accentColor(refresh_layout.context))
+        refresh_layout.setOnRefreshListener {
+            refresh_layout.isRefreshing = false
+        }
         tv_recent_reading.textColor = ThemeStore.accentColor(tv_recent_reading.context)
         rv_book_group.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter()
