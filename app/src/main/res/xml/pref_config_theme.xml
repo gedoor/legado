@@ -31,7 +31,7 @@
         android:title="@string/e_ink_mode"
         app:iconSpaceReserved="false" />
 
-    <Preference
+    <androidx.preference.Preference
         android:key="defaultTheme"
         android:summary="@string/restore_default_theme"
         android:title="@string/default_theme"

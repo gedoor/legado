@@ -2,29 +2,58 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.preference.Preference
-        android:key="setting"
-        android:title="设置"
-        android:summary="与功能相关的一些设置"
-        app:iconSpaceReserved="false" />
-
-    <androidx.preference.Preference
-        android:key="web_dav_setting"
-        android:title="云备份设置"
-        android:summary="通过WebDav云备份"
-        app:iconSpaceReserved="false" />
-
-    <androidx.preference.Preference
-        android:key="theme_setting"
-        android:title="主题设置"
-        android:summary="与界面/颜色相关的一些设置"
-        app:iconSpaceReserved="false" />
-
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="isNightTheme"
         android:summary="开启/关闭暗色主题"
         android:title="暗色主题"
         app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
+        android:key="webService"
+        android:summary="开启/关闭Web阅读和写源"
+        android:title="Web服务"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+        android:title="设置"
+        app:iconSpaceReserved="false">
+
+        <androidx.preference.Preference
+            android:key="web_dav_setting"
+            android:summary="通过WebDav云备份"
+            android:title="云备份设置"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="theme_setting"
+            android:summary="与界面/颜色相关的一些设置"
+            android:title="主题设置"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="setting"
+            android:summary="与功能相关的一些设置"
+            android:title="其它设置"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+
+    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory app:iconSpaceReserved="false">
+
+        <androidx.preference.Preference
+            android:key="about"
+            android:summary="您的支持是我更新的动力"
+            android:title="@string/donate"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="about"
+            android:summary="公众号[开源阅读软件]"
+            android:title="@string/about"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
 
 </androidx.preference.PreferenceScreen>
