@@ -68,7 +68,7 @@ class QrCodeActivity : BaseActivity<AndroidViewModel>(), QRCodeView.Delegate {
             .onGranted {
                 zxingview.startCamera() // 打开后置摄像头开始预览，但是并未开始识别
                 zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
-            }.build()
+            }.request()
     }
 
     override fun onStop() {
