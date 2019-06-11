@@ -471,4 +471,5 @@
     <string name="edit_find">编辑发现</string>
     <string name="change_icon_summary">切换软件显示在桌面的图标</string>
     <string name="help">帮助</string>
+    <string name="my">我的</string>
 </resources>
