@@ -21,6 +21,8 @@
             android:id="@+id/tv_recent_reading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:elevation="3dp"
             android:padding="5dp"
             android:text="@string/recent_reading"/>
 
