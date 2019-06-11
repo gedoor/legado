@@ -58,17 +58,17 @@ class QrCodeActivity : BaseActivity<AndroidViewModel>(), QRCodeView.Delegate {
 
     override fun onStart() {
         super.onStart()
-        startCamera()
-    }
-
-    private fun startCamera() {
         PermissionsCompat.Builder(this)
             .addPermissions(*Permissions.Group.CAMERA)
             .rationale(R.string.qr_per)
             .onGranted {
-                zxingview.startCamera() // 打开后置摄像头开始预览，但是并未开始识别
-                zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
+                startCamera()
             }.request()
+    }
+
+    private fun startCamera() {
+        zxingview.startCamera() // 打开后置摄像头开始预览，但是并未开始识别
+        zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
     }
 
     override fun onStop() {
