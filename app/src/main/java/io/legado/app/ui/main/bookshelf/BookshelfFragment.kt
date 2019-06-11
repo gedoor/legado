@@ -35,6 +35,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
+        initSearchView()
         initRecyclerView()
         initBookGroupData()
         initBookshelfData()
@@ -42,6 +43,13 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
         menuInflater.inflate(R.menu.bookshelf, menu)
+    }
+
+    private fun initSearchView() {
+        search_view.visibility = View.VISIBLE
+        search_view.onActionViewExpanded()
+        search_view.queryHint = getString(R.string.search_book_key)
+        search_view.clearFocus()
     }
 
     private fun initRecyclerView() {
