@@ -119,6 +119,9 @@ dependencies {
     implementation 'net.minidev:json-smart:2.3'
     // implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
+    //JS
+    implementation 'com.github.gedoor:rhino-android:1.3'
+
     //Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
