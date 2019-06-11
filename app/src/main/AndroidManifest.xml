@@ -44,6 +44,7 @@
         <activity android:name=".ui.config.ConfigActivity"/>
         <activity android:name=".ui.sourceedit.SourceEditActivity"/>
         <activity android:name=".ui.bookshelf.BookshelfActivity" />
+        <activity android:name=".ui.qrcode.QrCodeActivity" />
     </application>
 
 </manifest>
