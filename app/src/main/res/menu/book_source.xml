@@ -72,7 +72,7 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_import_book_source_rwm"
+        android:id="@+id/action_import_book_source_qr"
         android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
         app:showAsAction="never" />
