@@ -1,10 +1,15 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import android.text.TextUtils.isEmpty
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.google.gson.Gson
 import io.legado.app.constant.AppConst.NOT_AVAILABLE
+import io.legado.app.utils.fromJson
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -40,7 +45,10 @@ data class Book(
     var order: Int = 0,                         // 手动排序
     var useReplaceRule: Boolean = true,         // 正文使用净化替换规则
     var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
-) : Parcelable {
+) : Parcelable, BaseBook {
+    @IgnoredOnParcel
+    @Ignore
+    override var variableMap: HashMap<String, String>? = null
 
     fun getUnreadChapterNum() = Math.max(totalChapterNum - durChapterIndex - 1, 0)
 
@@ -52,4 +60,17 @@ data class Book(
 
     fun getDisplayDescription() = customDescription ?: description
 
+    private fun initVariableMap() {
+        if (variableMap == null) {
+            variableMap = if (isEmpty(variable)) {
+                HashMap()
+            } else {
+                Gson().fromJson<HashMap<String, String>>(variable!!)
+            }
+        }
+    }
+
+    override fun putVariable(key: String, value: String) {
+        initVariableMap()
+    }
 }

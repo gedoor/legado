@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/md_teal_800</color>
-    <color name="colorPrimaryDark">@color/md_teal_900</color>
+    <color name="colorPrimary">@color/md_light_blue_500</color>
+    <color name="colorPrimaryDark">@color/md_light_blue_600</color>
     <color name="colorAccent">@color/md_pink_A400</color>
     <color name="text_default">#222222</color>
     <color name="divider">#66666666</color>
@@ -23,7 +23,7 @@
 
     <color name="btn_bg_press">#80ACACAC</color>
     <color name="btn_bg_press_2">#80858585</color>
-    <color name="btn_bg_press_tp">#88000000</color>
+    <color name="btn_bg_press_tp">#802C2C2C</color>
 
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#adadad</color>

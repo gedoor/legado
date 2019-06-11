@@ -4,20 +4,20 @@
     tools:showIn="bottom_navigation_view">
 
     <item
-        android:id="@+id/menu_bookshelf"
-        android:icon="@drawable/ic_menu_camera"
-        android:title="书架" />
+            android:id="@+id/menu_bookshelf"
+            android:icon="@drawable/ic_library_books_black_24dp"
+            android:title="@string/bookshelf"/>
     <item
-        android:id="@+id/menu_find_book"
-        android:icon="@drawable/ic_menu_gallery"
-        android:title="发现" />
+            android:id="@+id/menu_find_book"
+            android:icon="@drawable/ic_explore_black_24dp"
+            android:title="@string/find"/>
     <item
-        android:id="@+id/menu_book_source"
-        android:icon="@drawable/ic_menu_slideshow"
-        android:title="书源" />
+            android:id="@+id/menu_book_source"
+            android:icon="@drawable/ic_storage_black_24dp"
+            android:title="@string/book_source"/>
     <item
-        android:id="@+id/menu_my_config"
-        android:icon="@drawable/ic_menu_manage"
-        android:title="我的" />
+            android:id="@+id/menu_my_config"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="@string/my"/>
 
 </menu>

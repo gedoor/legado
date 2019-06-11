@@ -15,11 +15,13 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Restore
+import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.booksource.BookSourceFragment
 import io.legado.app.ui.main.findbook.FindBookFragment
 import io.legado.app.ui.main.myconfig.MyConfigFragment
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -34,6 +36,11 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
 
     override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
         bottom_navigation_view.setBackgroundColor(ThemeStore.backgroundColor(this))
+        val colorStateList = Selector.colorBuild()
+            .setDefaultColor(bottom_navigation_view.context.getCompatColor(R.color.btn_bg_press_tp))
+            .setSelectedColor(ThemeStore.primaryColor(bottom_navigation_view.context)).create()
+        bottom_navigation_view.itemIconTintList = colorStateList
+        bottom_navigation_view.itemTextColor = colorStateList
         view_pager_main.offscreenPageLimit = 3
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)

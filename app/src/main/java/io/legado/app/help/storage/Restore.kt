@@ -26,7 +26,7 @@ object Restore {
     }
 
     fun importYueDuData(context: Context) {
-        val yuedu = File(getSdPath(), "YueDu")
+        val yuedu = File(FileUtils.getSdPath(), "YueDu")
         val jsonPath = JsonPath.using(
             Configuration.builder()
                 .options(Option.SUPPRESS_EXCEPTIONS)

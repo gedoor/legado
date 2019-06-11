@@ -17,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import kotlinx.android.synthetic.main.fragment_book_source.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -45,6 +46,9 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
         when (item.itemId) {
             R.id.action_add_book_source -> {
                 context?.startActivity<SourceEditActivity>()
+            }
+            R.id.action_import_book_source_qr -> {
+                context?.startActivity<QrCodeActivity>()
             }
         }
     }
@@ -101,6 +105,6 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun edit(bookSource: BookSource) {
-        context?.let { it.startActivity<SourceEditActivity>(Pair("data", bookSource.origin)) }
+        context?.startActivity<SourceEditActivity>(Pair("data", bookSource.origin))
     }
 }

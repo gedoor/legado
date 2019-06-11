@@ -11,14 +11,31 @@
             android:layout_height="wrap_content"
             app:attachToActivity="false"
             app:title="@string/bookshelf"/>
-    
+
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_book_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_bookshelf"
+    <TextView
+            android:id="@+id/tv_recent_reading"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:elevation="3dp"
+            android:padding="5dp"
+            android:text="@string/recent_reading"/>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_bookshelf"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>
