@@ -5,14 +5,12 @@
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="isNightTheme"
-        android:summary="开启/关闭暗色主题"
         android:title="暗色主题"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="webService"
-        android:summary="开启/关闭Web阅读和写源"
         android:title="Web服务"
         app:iconSpaceReserved="false" />
 
@@ -43,7 +41,7 @@
     <io.legado.app.lib.theme.prefs.ATEPreferenceCategory app:iconSpaceReserved="false">
 
         <androidx.preference.Preference
-            android:key="about"
+            android:key="donate"
             android:summary="您的支持是我更新的动力"
             android:title="@string/donate"
             app:iconSpaceReserved="false" />
