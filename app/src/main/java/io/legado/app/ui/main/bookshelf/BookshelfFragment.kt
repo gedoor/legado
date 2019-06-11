@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
 
-class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
+class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), BookGroupAdapter.CallBack {
 
     private lateinit var bookshelfAdapter: BookshelfAdapter
     private lateinit var bookGroupAdapter: BookGroupAdapter
@@ -53,36 +53,12 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
     }
 
     private fun initRecyclerView() {
+        refresh_layout.setColorSchemeColors(ThemeStore.accentColor(refresh_layout.context))
         tv_recent_reading.textColor = ThemeStore.accentColor(tv_recent_reading.context)
         rv_book_group.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter()
         rv_book_group.adapter = bookGroupAdapter
-        bookGroupAdapter.callBack = object : BookGroupAdapter.CallBack {
-            override fun open(bookGroup: BookGroup) {
-                when (bookGroup.groupId) {
-                    -10 -> context?.let {
-                        MaterialDialog(it).show {
-                            window?.decorView?.disableAutoFill()
-                            title(text = "新建分组")
-                            input(hint = "分组名称") { _, charSequence ->
-                                run {
-                                    GlobalScope.launch {
-                                        App.db.bookGroupDao().insert(
-                                            BookGroup(
-                                                App.db.bookGroupDao().maxId + 1,
-                                                charSequence.toString()
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                            positiveButton(R.string.ok)
-                        }
-                    }
-                    else -> context?.startActivity<BookshelfActivity>(Pair("data", bookGroup))
-                }
-            }
-        }
+        bookGroupAdapter.callBack = this
         rv_bookshelf.layoutManager = LinearLayoutManager(context)
         rv_bookshelf.addItemDecoration(DividerItemDecoration(rv_bookshelf.context, LinearLayoutManager.VERTICAL))
         bookshelfAdapter = BookshelfAdapter()
@@ -99,6 +75,31 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf) {
         bookshelfLiveData?.removeObservers(viewLifecycleOwner)
         bookshelfLiveData = LivePagedListBuilder(App.db.bookDao().recentRead(), 20).build()
         bookshelfLiveData?.observe(viewLifecycleOwner, Observer { bookshelfAdapter.submitList(it) })
+    }
+
+    override fun open(bookGroup: BookGroup) {
+        when (bookGroup.groupId) {
+            -10 -> context?.let {
+                MaterialDialog(it).show {
+                    window?.decorView?.disableAutoFill()
+                    title(text = "新建分组")
+                    input(hint = "分组名称") { _, charSequence ->
+                        run {
+                            GlobalScope.launch {
+                                App.db.bookGroupDao().insert(
+                                    BookGroup(
+                                        App.db.bookGroupDao().maxId + 1,
+                                        charSequence.toString()
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    positiveButton(R.string.ok)
+                }
+            }
+            else -> context?.startActivity<BookshelfActivity>(Pair("data", bookGroup))
+        }
     }
 
 }
