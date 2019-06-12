@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -32,16 +31,16 @@ class App : Application() {
             private set
     }
 
-    private var versionCode = 0
+    var versionCode = 0
+    var versionName = ""
 
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
         db = AppDatabase.createDatabase(INSTANCE)
-        versionCode = try {
-            packageManager.getPackageInfo(packageName, 0).versionCode
-        } catch (e: PackageManager.NameNotFoundException) {
-            0
+        packageManager.getPackageInfo(packageName, 0)?.let {
+            versionCode = it.versionCode
+            versionName = it.versionName
         }
         if (!ThemeStore.isConfigured(this, versionCode)) upThemeStore()
         initNightTheme()
