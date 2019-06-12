@@ -12,4 +12,10 @@ class AboutFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("version")?.summary = App.INSTANCE.versionName
     }
 
+    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        when (preference?.key) {
+
+        }
+        return super.onPreferenceTreeClick(preference)
+    }
 }
