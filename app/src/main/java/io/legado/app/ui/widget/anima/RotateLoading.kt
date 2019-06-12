@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.widget.anima
 
 import android.animation.Animator
 import android.animation.AnimatorSet
@@ -61,7 +61,8 @@ class RotateLoading : View {
         loadingColor = Color.WHITE
         thisWidth = dpToPx(context, DEFAULT_WIDTH.toFloat())
         shadowPosition = dpToPx(getContext(), DEFAULT_SHADOW_POSITION.toFloat())
-        speedOfDegree = DEFAULT_SPEED_OF_DEGREE
+        speedOfDegree =
+            DEFAULT_SPEED_OF_DEGREE
 
         if (null != attrs) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RotateLoading)
@@ -70,8 +71,14 @@ class RotateLoading : View {
                 R.styleable.RotateLoading_loading_width,
                 dpToPx(context, DEFAULT_WIDTH.toFloat())
             )
-            shadowPosition = typedArray.getInt(R.styleable.RotateLoading_shadow_position, DEFAULT_SHADOW_POSITION)
-            speedOfDegree = typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
+            shadowPosition = typedArray.getInt(
+                R.styleable.RotateLoading_shadow_position,
+                DEFAULT_SHADOW_POSITION
+            )
+            speedOfDegree = typedArray.getInt(
+                R.styleable.RotateLoading_loading_speed,
+                DEFAULT_SPEED_OF_DEGREE
+            )
             typedArray.recycle()
         }
         speedOfArc = (speedOfDegree / 4).toFloat()
