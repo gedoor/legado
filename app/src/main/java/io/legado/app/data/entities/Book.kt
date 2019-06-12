@@ -16,7 +16,7 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "books", indices = [(Index(value = ["descUrl"], unique = true))])
 data class Book(
         @PrimaryKey
-    var descUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
+        var descUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
         var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
         var origin: String = "",                     // 书源规则id(默认-1,表示本地书籍)
         var name: String? = null,                      // 书籍名称(书源获取)
