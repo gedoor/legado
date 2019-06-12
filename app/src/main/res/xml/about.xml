@@ -29,6 +29,21 @@
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
+        android:key="mail"
+        android:title="@string/send_mail"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="git"
+        android:title="@string/git_hub"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="home_page"
+        android:title="@string/home_page"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
         android:key="disclaimer"
         android:title="@string/disclaimer"
         app:iconSpaceReserved="false" />
