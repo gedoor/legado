@@ -40,7 +40,7 @@ class AboutActivity : BaseActivity<AndroidViewModel>() {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    internal fun openIntent(intentName: String, address: String) {
+    private fun openIntent(intentName: String, address: String) {
         try {
             val intent = Intent(intentName)
             intent.data = Uri.parse(address)
@@ -48,6 +48,5 @@ class AboutActivity : BaseActivity<AndroidViewModel>() {
         } catch (e: Exception) {
             toast(R.string.can_not_open)
         }
-
     }
 }
