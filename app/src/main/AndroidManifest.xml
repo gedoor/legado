@@ -38,7 +38,6 @@
         <activity android:name=".ui.replacerule.ReplaceRuleActivity"/>
         <activity android:name=".ui.search.SearchActivity"/>
         <activity android:name=".ui.about.AboutActivity"/>
-
         <activity android:name=".help.permission.PermissionActivity"
                   android:theme="@style/Activity.Permission"/>
         <activity android:name=".ui.config.ConfigActivity"/>
@@ -46,6 +45,7 @@
         <activity android:name=".ui.bookshelf.BookshelfActivity" />
         <activity android:name=".ui.qrcode.QrCodeActivity" />
         <activity android:name=".ui.about.DonateActivity" />
+        <activity android:name=".ui.bookinfo.BookInfoActivity" />
     </application>
 
 </manifest>
