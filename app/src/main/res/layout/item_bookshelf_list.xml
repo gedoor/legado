@@ -40,7 +40,7 @@
             android:includeFontPadding="false"
             tools:ignore="RtlHardcoded" />
 
-        <com.victor.loading.rotate.RotateLoading
+        <io.legado.app.ui.widget.anima.RotateLoading
             android:id="@+id/rl_loading"
             android:layout_width="26dp"
             android:layout_height="26dp"
