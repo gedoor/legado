@@ -49,6 +49,10 @@ data class Book(
     @IgnoredOnParcel
     @Ignore
     override var variableMap: HashMap<String, String>? = null
+        get() = run {
+            initVariableMap()
+            return field
+        }
 
     fun getUnreadChapterNum() = Math.max(totalChapterNum - durChapterIndex - 1, 0)
 
@@ -72,5 +76,7 @@ data class Book(
 
     override fun putVariable(key: String, value: String) {
         initVariableMap()
+        variableMap?.put(key, value)
+        variable = Gson().toJson(variableMap)
     }
 }
