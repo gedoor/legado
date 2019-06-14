@@ -48,6 +48,11 @@
         <activity android:name=".ui.bookinfo.BookInfoActivity" />
         <activity android:name=".ui.bookinfo.BookInfoEditActivity" />
 
+        <service android:name=".service.CheckSourceService" />
+        <service android:name=".service.DownloadService" />
+        <service android:name=".service.ReadAloudService" />
+        <service android:name=".service.UpdateService" />
+        <service android:name=".service.WebService" />
     </application>
 
 </manifest>
