@@ -6,15 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.legado.app.data.dao.BookDao
-import io.legado.app.data.dao.BookGroupDao
-import io.legado.app.data.dao.BookSourceDao
-import io.legado.app.data.dao.ReplaceRuleDao
+import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
 
 
 @Database(
-    entities = [Book::class, BookGroup::class, BookSource::class, Chapter::class, ReplaceRule::class],
+    entities = [Book::class, BookGroup::class, BookSource::class, Chapter::class, ReplaceRule::class, SearchBook::class, SearchKeyword::class],
     version = 1,
     exportSchema = true
 )
@@ -35,7 +32,11 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         fun createDatabase(context: Context): AppDatabase {
-            return Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
+            return Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                DATABASE_NAME
+            )
                 // .addMigrations(MIGRATION_1_2)
                 // .addMigrations(MIGRATION_2_3)
                 // .addMigrations(MIGRATION_3_4)
@@ -50,5 +51,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun bookGroupDao(): BookGroupDao
     abstract fun bookSourceDao(): BookSourceDao
     abstract fun replaceRuleDao(): ReplaceRuleDao
-
+    abstract fun searchBookDao(): SearchBookDao
+    abstract fun searchKeywordDao(): SearchKeywordDao
 }
