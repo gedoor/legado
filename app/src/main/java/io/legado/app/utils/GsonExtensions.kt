@@ -1,34 +1,24 @@
 package io.legado.app.utils
 
-import android.text.TextUtils
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
+import org.jetbrains.anko.attempt
+
+val GSON: Gson = GsonBuilder().create()
 
 inline fun <reified T> Gson.fromJson(json: String): T = fromJson(json, T::class.java)
 
-inline fun <reified T> Gson.arrayFromJson(json: String): ArrayList<T>? = kotlin.run {
-    var result: ArrayList<T>? = null
-    if (!TextUtils.isEmpty(json)) {
-        val gson = GsonBuilder().create()
-        try {
-            val parser = JsonParser()
-            val jArray = parser.parse(json).asJsonArray
-            jArray?.let {
-                result = java.util.ArrayList()
-                for (obj in it) {
-                    try {
-                        val cse = gson.fromJson(obj, T::class.java)
-                        result?.add(cse)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
+inline fun <reified T> Gson.arrayFromJson(json: String): ArrayList<T>? = run {
+    return@run attempt {
+        val result = ArrayList<T>()
+        val parser = JsonParser()
+        val jArray = parser.parse(json).asJsonArray
+        jArray?.let {
+            for (obj in it) {
+                attempt { fromJson(obj, T::class.java) }.value?.run { result.add(this) }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
-
-    }
-    return result
+        result
+    }.value
 }
