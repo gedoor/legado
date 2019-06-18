@@ -44,14 +44,12 @@ class BookshelfActivity : BaseActivity<BookshelfViewModel>() {
 
     private fun upRecyclerData() {
         viewModel.bookGroup?.let {
+            bookshelfLiveData?.removeObservers(this)
             when (it.groupId) {
                 -1 -> {
-                    bookshelfLiveData?.removeObservers(this)
+
                     bookshelfLiveData =
                         LivePagedListBuilder(App.db.bookDao().observeAll(), 10).build()
-                    bookshelfLiveData?.observe(
-                        this,
-                        Observer { pageList -> bookshelfAdapter.submitList(pageList) })
                 }
                 -2 -> {
 
@@ -60,17 +58,16 @@ class BookshelfActivity : BaseActivity<BookshelfViewModel>() {
 
                 }
                 else -> {
-                    bookshelfLiveData?.removeObservers(this)
                     bookshelfLiveData =
                         LivePagedListBuilder(
                             App.db.bookDao().observeByGroup(it.groupId),
                             10
                         ).build()
-                    bookshelfLiveData?.observe(
-                        this,
-                        Observer { pageList -> bookshelfAdapter.submitList(pageList) })
                 }
             }
+            bookshelfLiveData?.observe(
+                this,
+                Observer { pageList -> bookshelfAdapter.submitList(pageList) })
         }
     }
 
