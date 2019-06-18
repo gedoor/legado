@@ -55,7 +55,12 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
 
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(context)
-        recycler_view.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        recycler_view.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         adapter = BookSourceAdapter()
         adapter.callBack = this
         recycler_view.adapter = adapter
@@ -76,9 +81,10 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     private fun initDataObserve(searchKey: String = "") {
         bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
         val dataFactory =
-            if (searchKey.isEmpty()) App.db.bookSourceDao().observeAll() else App.db.bookSourceDao().observeSearch(
-                searchKey
-            )
+            if (searchKey.isEmpty())
+                App.db.bookSourceDao().observeAll()
+            else
+                App.db.bookSourceDao().observeSearch(searchKey)
         bookSourceLiveDate = LivePagedListBuilder(dataFactory, 30).build()
         bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }

@@ -27,24 +27,32 @@
             android:theme="@style/AppTheme.Light"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-                android:name=".ui.main.MainActivity"
-                android:label="@string/app_name">
+            android:name=".ui.welcome.WelcomeActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.main.MainActivity" />
         <activity android:name=".ui.replacerule.ReplaceRuleActivity"/>
         <activity android:name=".ui.search.SearchActivity"/>
         <activity android:name=".ui.about.AboutActivity"/>
-
         <activity android:name=".help.permission.PermissionActivity"
                   android:theme="@style/Activity.Permission"/>
         <activity android:name=".ui.config.ConfigActivity"/>
         <activity android:name=".ui.sourceedit.SourceEditActivity"/>
         <activity android:name=".ui.bookshelf.BookshelfActivity" />
         <activity android:name=".ui.qrcode.QrCodeActivity" />
+        <activity android:name=".ui.about.DonateActivity" />
+        <activity android:name=".ui.bookinfo.BookInfoActivity" />
+        <activity android:name=".ui.bookinfo.BookInfoEditActivity" />
+
+        <service android:name=".service.CheckSourceService" />
+        <service android:name=".service.DownloadService" />
+        <service android:name=".service.ReadAloudService" />
+        <service android:name=".service.UpdateService" />
+        <service android:name=".service.WebService" />
     </application>
 
 </manifest>

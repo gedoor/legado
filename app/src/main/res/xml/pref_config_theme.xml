@@ -6,8 +6,7 @@
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="transparentStatusBar"
-        android:summary="@string/status_bar_immersion"
-        android:title="@string/immersion_status_bar"
+        android:title="@string/status_bar_immersion"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
@@ -15,13 +14,6 @@
         android:key="navigationBarColorChange"
         android:summary="@string/navigation_bar_color_change_s"
         android:title="@string/navigation_bar_color_change"
-        app:iconSpaceReserved="false" />
-
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="true"
-        android:key="behaviorMain"
-        android:summary="@string/behavior_main_s"
-        android:title="@string/behavior_main_t"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference

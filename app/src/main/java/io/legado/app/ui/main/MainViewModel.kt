@@ -1,22 +1,16 @@
 package io.legado.app.ui.main
 
 import android.app.Application
-import io.legado.app.App
-import io.legado.app.base.BaseViewModel
-import kotlinx.coroutines.async
-import org.jetbrains.anko.toast
+import androidx.lifecycle.AndroidViewModel
+import io.legado.app.help.storage.Restore
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class MainViewModel(application: Application) : BaseViewModel(application) {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    fun test() {
-        launchOnUI({
-
-            val result = async {
-                "结果"
-            }
-
-//            App.INSTANCE.toast("result: $result")
-        })
+    fun restore() {
+        GlobalScope.launch {
+            Restore.importYueDuData(getApplication())
+        }
     }
-
 }

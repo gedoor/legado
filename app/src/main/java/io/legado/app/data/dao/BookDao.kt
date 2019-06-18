@@ -11,6 +11,9 @@ import io.legado.app.data.entities.Book
 @Dao
 interface BookDao {
 
+    @Query("SELECT * FROM books")
+    fun observeAll(): DataSource.Factory<Int, Book>
+
     @Query("SELECT * FROM books WHERE `group` = :group")
     fun observeByGroup(group: Int): DataSource.Factory<Int, Book>
 

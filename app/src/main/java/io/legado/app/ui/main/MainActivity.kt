@@ -9,12 +9,12 @@ import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jeremyliao.liveeventbus.LiveEventBus
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.help.storage.Restore
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
@@ -24,6 +24,9 @@ import io.legado.app.ui.main.myconfig.MyConfigFragment
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener {
@@ -45,6 +48,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
+        importYueDu()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -58,10 +62,17 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     }
 
     private fun importYueDu() {
-        PermissionsCompat.Builder(this)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted { Restore.importYueDuData(this) }.request()
+        GlobalScope.launch {
+            if (App.db.bookDao().allBookCount == 0) {
+                GlobalScope.launch(Dispatchers.Main) {
+                    PermissionsCompat.Builder(this@MainActivity)
+                        .addPermissions(*Permissions.Group.STORAGE)
+                        .rationale(R.string.tip_perm_request_storage)
+                        .onGranted { viewModel.restore() }
+                        .request()
+                }
+            }
+        }
     }
 
     override fun onPageScrollStateChanged(state: Int) {
