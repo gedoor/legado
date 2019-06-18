@@ -15,9 +15,15 @@ import io.legado.app.utils.disableAutoFill
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.setIconColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 
 
-abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
+abstract class BaseActivity<VM : ViewModel> : AppCompatActivity(), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO
 
     protected abstract val viewModel: VM
 

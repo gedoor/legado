@@ -24,8 +24,7 @@ import io.legado.app.ui.main.myconfig.MyConfigFragment
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavigationItemSelectedListener,
@@ -62,9 +61,9 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     }
 
     private fun importYueDu() {
-        GlobalScope.launch {
+        launch {
             if (App.db.bookDao().allBookCount == 0) {
-                GlobalScope.launch(Dispatchers.Main) {
+                launch(Main) {
                     PermissionsCompat.Builder(this@MainActivity)
                         .addPermissions(*Permissions.Group.STORAGE)
                         .rationale(R.string.tip_perm_request_storage)

@@ -22,7 +22,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 val searchResponse = withContext(IO) {
                     HttpHelper.getApiService<CommonHttpApi>(
                         "http:www.baidu.com"
-                    ).get("", mutableMapOf())
+                    ).post("", mutableMapOf(Pair("key", "value")))
                 }
 
                 val result = searchResponse.await()
