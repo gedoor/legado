@@ -53,8 +53,22 @@ class BookshelfActivity : BaseActivity<BookshelfViewModel>() {
                         this,
                         Observer { pageList -> bookshelfAdapter.submitList(pageList) })
                 }
-                else -> {
+                -2 -> {
 
+                }
+                -3 -> {
+
+                }
+                else -> {
+                    bookshelfLiveData?.removeObservers(this)
+                    bookshelfLiveData =
+                        LivePagedListBuilder(
+                            App.db.bookDao().observeByGroup(it.groupId),
+                            10
+                        ).build()
+                    bookshelfLiveData?.observe(
+                        this,
+                        Observer { pageList -> bookshelfAdapter.submitList(pageList) })
                 }
             }
         }
