@@ -53,7 +53,7 @@ class App : Application() {
     }
 
     fun initNightTheme() {
-        if (getPrefBoolean("isNightTheme", false)) {
+        if (getPrefBoolean("isNightTheme")) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -64,7 +64,7 @@ class App : Application() {
      * 更新主题
      */
     fun upThemeStore() {
-        if (getPrefBoolean("isNightTheme", false)) {
+        if (getPrefBoolean("isNightTheme")) {
             ThemeStore.editTheme(this)
                 .primaryColor(getPrefInt("colorPrimaryNight", getCompatColor(R.color.colorPrimary)))
                 .accentColor(getPrefInt("colorAccentNight", getCompatColor(R.color.colorAccent)))

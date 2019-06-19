@@ -30,14 +30,13 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
     }
 
     private fun bindPreferenceSummaryToValue(preference: Preference?) {
-        preference?.let {
-            preference.onPreferenceChangeListener = this
+        preference?.apply {
+            onPreferenceChangeListener = this@WebDavConfigFragment
             onPreferenceChange(
-                preference,
-                preference.context.getPrefString(preference.key, "")
+                this,
+                context.getPrefString(key)
             )
         }
-
     }
 
 }
