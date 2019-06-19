@@ -18,7 +18,7 @@ data class Book(
     @PrimaryKey
     var descUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
-    var origin: String = "",                     // 书源规则id(默认-1,表示本地书籍)
+    var origin: String = "",                     // 书源URL(默认BookType.local)
     var name: String? = null,                      // 书籍名称(书源获取)
     var customName: String? = null,                // 书籍名称(用户修改)
     var author: String? = null,                 // 作者名称(书源获取)
@@ -30,7 +30,7 @@ data class Book(
     var description: String? = null,            // 简介内容(书源获取)
     var customDescription: String? = null,      // 简介内容(用户修改)
     var charset: String? = null,                // 自定义字符集名称(仅适用于本地书籍)
-    var type: Int = 0,                          // 0: 文本读物, 1: 有声读物
+    var type: Int = 0,                          // @BookType
     var group: Int = 0,                         // 自定义分组索引号
     var latestChapterTitle: String? = null,     // 最新章节标题
     var latestChapterTime: Long = 0,            // 最新章节标题更新时间

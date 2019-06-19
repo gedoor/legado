@@ -52,10 +52,12 @@ class BookshelfActivity : BaseActivity<BookshelfViewModel>() {
                         LivePagedListBuilder(App.db.bookDao().observeAll(), 10).build()
                 }
                 -2 -> {
-
+                    bookshelfLiveData =
+                        LivePagedListBuilder(App.db.bookDao().observeLocal(), 10).build()
                 }
                 -3 -> {
-
+                    bookshelfLiveData =
+                        LivePagedListBuilder(App.db.bookDao().observeAudio(), 10).build()
                 }
                 else -> {
                     bookshelfLiveData =

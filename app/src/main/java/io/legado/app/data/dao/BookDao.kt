@@ -6,6 +6,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 
 @Dao
@@ -13,6 +14,12 @@ interface BookDao {
 
     @Query("SELECT * FROM books")
     fun observeAll(): DataSource.Factory<Int, Book>
+
+    @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
+    fun observeAudio(): DataSource.Factory<Int, Book>
+
+    @Query("SELECT * FROM books WHERE origin = ${BookType.local}")
+    fun observeLocal(): DataSource.Factory<Int, Book>
 
     @Query("SELECT * FROM books WHERE `group` = :group")
     fun observeByGroup(group: Int): DataSource.Factory<Int, Book>
