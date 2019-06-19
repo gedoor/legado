@@ -21,7 +21,7 @@ import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import kotlinx.android.synthetic.main.fragment_book_source.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
@@ -99,15 +99,15 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun del(bookSource: BookSource) {
-        GlobalScope.launch { App.db.bookSourceDao().delete(bookSource) }
+        launch(IO) { App.db.bookSourceDao().delete(bookSource) }
     }
 
     override fun update(bookSource: BookSource) {
-        GlobalScope.launch { App.db.bookSourceDao().update(bookSource) }
+        launch(IO) { App.db.bookSourceDao().update(bookSource) }
     }
 
     override fun update(vararg bookSource: BookSource) {
-        GlobalScope.launch { App.db.bookSourceDao().update(*bookSource) }
+        launch(IO) { App.db.bookSourceDao().update(*bookSource) }
     }
 
     override fun edit(bookSource: BookSource) {

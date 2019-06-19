@@ -10,9 +10,9 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_edit.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 
 class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
@@ -53,9 +53,9 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
                 if (bookSource == null) {
                     toast("书源名称和URL不能为空")
                 } else {
-                    GlobalScope.launch {
-                        viewModel.save(bookSource)
-                        GlobalScope.launch(Dispatchers.Main) { finish() }
+                    launch {
+                        withContext(IO) { viewModel.save(bookSource) }
+                        finish()
                     }
                 }
             }
