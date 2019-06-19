@@ -8,6 +8,8 @@ import io.legado.app.data.api.CommonHttpApi
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.http.HttpHelper
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.error
 
@@ -29,6 +31,14 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             },
             { error { "${it.message}" } },
             { finally() })
+
+        launchOnUI({
+            //TODO
+        })
+
+        launch {
+
+        }
     }
 
 }

@@ -4,31 +4,19 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
-import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope, AnkoLogger {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
+open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope by MainScope(),
+    AnkoLogger {
 
-    private val launchManager: MutableList<Job> = mutableListOf()
 
     protected fun launchOnUI(
         tryBlock: suspend CoroutineScope.() -> Unit,
         errorBlock: (suspend CoroutineScope.(Throwable) -> Unit)? = null,//失败
         finallyBlock: (suspend CoroutineScope.() -> Unit)? = null//结束
     ) {
-        launchOnUI {
+        launch {
             tryCatch(tryBlock, errorBlock, finallyBlock)
         }
-    }
-
-    /**
-     * add launch task to [launchManager]
-     */
-    private fun launchOnUI(block: suspend CoroutineScope.() -> Unit) {
-        val job = launch { block() }//主线程
-        launchManager.add(job)
-        job.invokeOnCompletion { launchManager.remove(job) }
     }
 
     private suspend fun tryCatch(
@@ -47,6 +35,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     override fun onCleared() {
         super.onCleared()
-        launchManager.clear()
+        cancel()
     }
 }
