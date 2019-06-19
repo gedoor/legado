@@ -53,10 +53,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
                 if (bookSource == null) {
                     toast("书源名称和URL不能为空")
                 } else {
-                    launch {
-                        withContext(IO) { viewModel.save(bookSource) }
-                        finish()
-                    }
+                    viewModel.save(bookSource) { finish() }
                 }
             }
         }
