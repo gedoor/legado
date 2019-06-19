@@ -86,7 +86,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
                 bookSource.isEnabled = sw_enabled.isChecked
                 callBack?.update(bookSource)
             }
-            iv_more.setOnClickListener {
+            iv_more.onClick {
                 val popupMenu = PopupMenu(context, iv_more)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
