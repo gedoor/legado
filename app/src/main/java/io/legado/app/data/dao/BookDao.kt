@@ -18,7 +18,7 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
     fun observeAudio(): DataSource.Factory<Int, Book>
 
-    @Query("SELECT * FROM books WHERE origin = ${BookType.local}")
+    @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
     fun observeLocal(): DataSource.Factory<Int, Book>
 
     @Query("SELECT * FROM books WHERE `group` = :group")
