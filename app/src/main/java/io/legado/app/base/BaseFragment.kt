@@ -7,8 +7,12 @@ import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import io.legado.app.utils.setIconColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
-abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId) {
+abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId),
+    CoroutineScope by MainScope() {
 
     var supportToolbar: Toolbar? = null
         private set
@@ -16,6 +20,10 @@ abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId
     val menuInflater: MenuInflater
         get() = SupportMenuInflater(requireContext())
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
+    }
 
     fun setSupportToolbar(toolbar: Toolbar) {
         supportToolbar = toolbar

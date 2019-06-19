@@ -16,14 +16,11 @@ import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.setIconColor
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity<VM : ViewModel> : AppCompatActivity(), CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
+abstract class BaseActivity<VM : ViewModel> : AppCompatActivity(), CoroutineScope by MainScope() {
 
     protected abstract val viewModel: VM
 
@@ -37,6 +34,11 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity(), CoroutineScop
         setContentView(layoutID)
         onViewModelCreated(viewModel, savedInstanceState)
         observeLiveBus()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 
     abstract fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?)
