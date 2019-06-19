@@ -4,11 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
-import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope, AnkoLogger {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
+open class BaseViewModel(application: Application) : AndroidViewModel(application),
+    CoroutineScope by MainScope(), AnkoLogger {
 
     private val launchManager: MutableList<Job> = mutableListOf()
 
