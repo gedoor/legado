@@ -21,7 +21,7 @@ import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.utils.disableAutoFill
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
@@ -88,7 +88,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), BookGroupAd
                     title(text = "新建分组")
                     input(hint = "分组名称") { _, charSequence ->
                         run {
-                            GlobalScope.launch {
+                            launch(IO) {
                                 App.db.bookGroupDao().insert(
                                     BookGroup(
                                         App.db.bookGroupDao().maxId + 1,
