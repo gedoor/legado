@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.widget.anima
 
 import android.animation.Animator
 import android.animation.AnimatorSet
