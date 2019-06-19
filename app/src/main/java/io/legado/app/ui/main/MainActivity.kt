@@ -24,8 +24,9 @@ import io.legado.app.ui.main.myconfig.MyConfigFragment
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener {
@@ -62,14 +63,12 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
 
     private fun importYueDu() {
         launch {
-            if (App.db.bookDao().allBookCount == 0) {
-                launch(Main) {
-                    PermissionsCompat.Builder(this@MainActivity)
-                        .addPermissions(*Permissions.Group.STORAGE)
-                        .rationale(R.string.tip_perm_request_storage)
-                        .onGranted { viewModel.restore() }
-                        .request()
-                }
+            if (withContext(IO) { App.db.bookDao().allBookCount == 0 }) {
+                PermissionsCompat.Builder(this@MainActivity)
+                    .addPermissions(*Permissions.Group.STORAGE)
+                    .rationale(R.string.tip_perm_request_storage)
+                    .onGranted { viewModel.restore() }
+                    .request()
             }
         }
     }
