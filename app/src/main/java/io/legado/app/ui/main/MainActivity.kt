@@ -1,6 +1,7 @@
 package io.legado.app.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -24,6 +25,7 @@ import io.legado.app.ui.main.myconfig.MyConfigFragment
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
@@ -61,7 +63,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     }
 
     private fun importYueDu() {
-        launch {
+        launch(IO) {
             if (App.db.bookDao().allBookCount == 0) {
                 launch(Main) {
                     PermissionsCompat.Builder(this@MainActivity)

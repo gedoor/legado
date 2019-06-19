@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.Gson
+import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJson
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
@@ -40,7 +41,7 @@ data class SearchBook(
             variableMap = if (TextUtils.isEmpty(variable)) {
                 HashMap()
             } else {
-                Gson().fromJson<HashMap<String, String>>(variable!!)
+                GSON.fromJson<HashMap<String, String>>(variable!!)
             }
         }
     }
@@ -48,6 +49,6 @@ data class SearchBook(
     override fun putVariable(key: String, value: String) {
         initVariableMap()
         variableMap?.put(key, value)
-        variable = Gson().toJson(variableMap)
+        variable = GSON.toJson(variableMap)
     }
 }
