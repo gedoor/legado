@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.findbook
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
+import io.legado.app.lib.theme.ColorUtils
 import kotlinx.android.synthetic.main.item_find_book.view.*
 
 class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>(DIFF_CALLBACK) {
@@ -36,6 +38,8 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(bookSource: BookSource) = with(itemView) {
+            val bgShape: GradientDrawable? = tv_name.background as? GradientDrawable
+            bgShape?.setStroke(1, ColorUtils.getRandomColor())
             tv_name.text = bookSource.name
         }
     }

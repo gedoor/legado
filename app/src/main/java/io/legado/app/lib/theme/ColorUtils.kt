@@ -3,6 +3,7 @@ package io.legado.app.lib.theme
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
+import java.util.*
 
 object ColorUtils {
 
@@ -76,4 +77,82 @@ object ColorUtils {
         return Color.argb(a.toInt(), r.toInt(), g.toInt(), b.toInt())
     }
 
+    /**
+     * 按条件的到随机颜色
+     *
+     * @param alpha 透明
+     * @param lower 下边界
+     * @param upper 上边界
+     * @return 颜色值
+     */
+    fun getRandomColor(alpha: Int, lower: Int, upper: Int): Int {
+        return RandomColor(alpha, lower, upper).color
+    }
+
+    /**
+     * @return 获取随机色
+     */
+    fun getRandomColor(): Int {
+        return RandomColor(255, 80, 200).color
+    }
+
+
+    /**
+     * 随机颜色
+     */
+    class RandomColor(alpha: Int, lower: Int, upper: Int) {
+        internal var alpha: Int = 0
+        internal var lower: Int = 0
+        internal var upper: Int = 0
+
+        //随机数是前闭  后开
+        val color: Int
+            get() {
+                val red = getLower() + Random().nextInt(getUpper() - getLower() + 1)
+                val green = getLower() + Random().nextInt(getUpper() - getLower() + 1)
+                val blue = getLower() + Random().nextInt(getUpper() - getLower() + 1)
+
+                return Color.argb(getAlpha(), red, green, blue)
+            }
+
+        init {
+            if (upper <= lower) {
+                throw IllegalArgumentException("must be lower < upper")
+            }
+            setAlpha(alpha)
+            setLower(lower)
+            setUpper(upper)
+        }
+
+        fun getAlpha(): Int {
+            return alpha
+        }
+
+        fun setAlpha(alpha: Int) {
+            var alpha = alpha
+            if (alpha > 255) alpha = 255
+            if (alpha < 0) alpha = 0
+            this.alpha = alpha
+        }
+
+        fun getLower(): Int {
+            return lower
+        }
+
+        fun setLower(lower: Int) {
+            var lower = lower
+            if (lower < 0) lower = 0
+            this.lower = lower
+        }
+
+        fun getUpper(): Int {
+            return upper
+        }
+
+        fun setUpper(upper: Int) {
+            var upper = upper
+            if (upper > 255) upper = 255
+            this.upper = upper
+        }
+    }
 }
