@@ -16,6 +16,9 @@ interface BookSourceDao {
     @Query("select * from book_sources where exploreIsEnabled = 1 order by customOrder asc")
     fun observeFind(): DataSource.Factory<Int, BookSource>
 
+    @get:Query("select * from book_sources order by customOrder asc")
+    val all: List<BookSource>
+
     @Query("select * from book_sources where origin = :key")
     fun findByKey(key: String): BookSource?
 

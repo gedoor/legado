@@ -8,6 +8,7 @@ import com.jayway.jsonpath.Option
 import io.legado.app.App
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.*
 import org.jetbrains.anko.doAsync
@@ -86,6 +87,32 @@ object Restore {
             Log.e(AppConst.APP_TAG, "Failed to import book shelf.", e)
             context.toast("Unable to import books:\n${e.localizedMessage}")
         }
+
+        // Book source
+        val sourceFile = File(yuedu, "myBookSource.json")
+        val bookSources = mutableListOf<BookSource>()
+        if (shelfFile.exists()) try {
+            doAsync {
+                val items: List<Map<String, Any>> = jsonPath.parse(sourceFile.readText()).read("$")
+                val existings = App.db.bookSourceDao().all.map { it.origin }.toSet()
+                for (item in items) {
+                    val jsonItem = jsonPath.parse(item)
+                    val source = BookSource()
+                    source.origin = jsonItem.readString("bookSourceUrl") ?: ""
+                    if (source.origin.isBlank()) continue
+                    if (source.origin in existings) continue
+                    source.name = jsonItem.readString("bookSourceName") ?: ""
+                    source.group = jsonItem.readString("bookSourceGroup") ?: ""
+                    source.loginUrl = jsonItem.readString("loginUrl")
+
+                    bookSources.add(source)
+                }
+                App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+            }
+        } catch (e: Exception) {
+            error(e.localizedMessage)
+        }
+
 
         // Replace rules
         val ruleFile = File(yuedu, "myBookReplaceRule.json")
