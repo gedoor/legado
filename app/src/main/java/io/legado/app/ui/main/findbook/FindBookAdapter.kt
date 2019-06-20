@@ -39,7 +39,7 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
 
         fun bind(bookSource: BookSource) = with(itemView) {
             val bgShape: GradientDrawable? = tv_name.background as? GradientDrawable
-            bgShape?.setStroke(1, ColorUtils.getRandomColor())
+            bgShape?.setStroke(2, ColorUtils.getRandomColor())
             tv_name.text = bookSource.name
         }
     }

@@ -3,6 +3,6 @@
     <corners android:radius="16dp" />
     <solid android:color="#00ffffff" />
     <stroke
-        android:width="3dp"
+        android:width="1dp"
         android:color="@color/tv_text_secondary" />
 </shape>
