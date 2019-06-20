@@ -101,9 +101,9 @@ object ColorUtils {
      * 随机颜色
      */
     class RandomColor(alpha: Int, lower: Int, upper: Int) {
-        internal var alpha: Int = 0
-        internal var lower: Int = 0
-        internal var upper: Int = 0
+        private var alpha: Int = 0
+        private var lower: Int = 0
+        private var upper: Int = 0
 
         //随机数是前闭  后开
         val color: Int
@@ -124,32 +124,32 @@ object ColorUtils {
             setUpper(upper)
         }
 
-        fun getAlpha(): Int {
+        private fun getAlpha(): Int {
             return alpha
         }
 
-        fun setAlpha(alpha: Int) {
+        private fun setAlpha(alpha: Int) {
             var alpha = alpha
             if (alpha > 255) alpha = 255
             if (alpha < 0) alpha = 0
             this.alpha = alpha
         }
 
-        fun getLower(): Int {
+        private fun getLower(): Int {
             return lower
         }
 
-        fun setLower(lower: Int) {
+        private fun setLower(lower: Int) {
             var lower = lower
             if (lower < 0) lower = 0
             this.lower = lower
         }
 
-        fun getUpper(): Int {
+        private fun getUpper(): Int {
             return upper
         }
 
-        fun setUpper(upper: Int) {
+        private fun setUpper(upper: Int) {
             var upper = upper
             if (upper > 255) upper = 255
             this.upper = upper
