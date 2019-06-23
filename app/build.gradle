@@ -115,6 +115,7 @@ dependencies {
     //规则相关
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.jsoup:jsoup:1.12.1'
+    implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
     // implementation 'org.apache.commons:commons-text:1.6'
     // Default json parser for jsonpath
     implementation 'net.minidev:json-smart:2.3'
