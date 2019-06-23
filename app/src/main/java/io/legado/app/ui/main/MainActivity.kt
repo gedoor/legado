@@ -24,6 +24,7 @@ import io.legado.app.ui.main.myconfig.MyConfigFragment
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.putPrefInt
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -77,7 +78,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
 
     private fun upVersion() {
         if (getPrefInt("versionCode") != App.INSTANCE.versionCode) {
-
+            putPrefInt("versionCode", App.INSTANCE.versionCode)
         }
     }
 
