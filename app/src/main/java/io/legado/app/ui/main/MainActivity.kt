@@ -22,6 +22,7 @@ import io.legado.app.ui.main.booksource.BookSourceFragment
 import io.legado.app.ui.main.findbook.FindBookFragment
 import io.legado.app.ui.main.myconfig.MyConfigFragment
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -49,6 +50,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
         importYueDu()
+        upVersion()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -70,6 +72,12 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
                     .onGranted { viewModel.restore() }
                     .request()
             }
+        }
+    }
+
+    private fun upVersion() {
+        if (getPrefInt("versionCode") != App.INSTANCE.versionCode) {
+
         }
     }
 
