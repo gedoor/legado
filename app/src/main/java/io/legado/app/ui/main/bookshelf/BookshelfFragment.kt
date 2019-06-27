@@ -48,6 +48,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), BookGroupAd
     private fun initSearchView() {
         search_view.visibility = View.VISIBLE
         search_view.onActionViewExpanded()
+        search_view.isSubmitButtonEnabled = true
         search_view.queryHint = getString(R.string.search_book_key)
         search_view.clearFocus()
     }
