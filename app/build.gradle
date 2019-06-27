@@ -82,7 +82,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0-alpha02'
     implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
     implementation 'androidx.preference:preference:1.1.0-beta01'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
     implementation 'com.google.android:flexbox:1.1.0'
 
@@ -92,7 +92,7 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
     //room
-    def room_version = '2.0.0'
+    def room_version = '2.1.0'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
@@ -118,8 +118,7 @@ dependencies {
     implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
     // implementation 'org.apache.commons:commons-text:1.6'
     // Default json parser for jsonpath
-    implementation 'net.minidev:json-smart:2.3'
-    // implementation 'com.jayway.jsonpath:json-path:2.4.0'
+    implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
     //JS
     implementation 'com.github.gedoor:rhino-android:1.3'
