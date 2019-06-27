@@ -74,6 +74,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
 
         fun bind(bookSource: BookSource, checkedList: HashSet<String>, callBack: CallBack?) = with(itemView) {
             cb_book_source.text = String.format("%s (%s)", bookSource.name, bookSource.group)
+            cb_book_source.isChecked = checkedList.contains(bookSource.origin)
             cb_book_source.onClick {
                 if (cb_book_source.isChecked) {
                     checkedList.add(bookSource.origin)
