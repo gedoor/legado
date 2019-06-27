@@ -18,19 +18,40 @@
         android:text=""
         android:textColor="@color/tv_text_default" />
 
-    <io.legado.app.lib.theme.view.ATESwitch
-        android:id="@+id/sw_enabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_edit_source"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@drawable/bg_ib_pre_round"
+        android:contentDescription="@string/edit"
+        android:padding="8dp"
+        android:src="@drawable/ic_edit"
+        app:tint="@color/tv_text_default" />
 
     <ImageView
-        android:id="@+id/iv_more"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/iv_top_source"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="center"
+        android:layout_weight="1"
         android:background="@drawable/bg_ib_pre_round"
-        android:layout_margin="6dp"
         android:contentDescription="@string/to_top"
-        android:src="@drawable/ic_more_vert"
+        android:padding="8dp"
+        android:src="@drawable/ic_top_source"
         app:tint="@color/tv_text_default" />
+
+    <ImageView
+        android:id="@+id/iv_del_source"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@drawable/bg_ib_pre_round"
+        android:contentDescription="@string/delete"
+        android:padding="8dp"
+        android:src="@drawable/ic_clear_all"
+        app:tint="@color/tv_text_default" />
+
 </LinearLayout>

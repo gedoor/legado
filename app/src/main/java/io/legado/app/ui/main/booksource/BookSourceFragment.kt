@@ -50,7 +50,11 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
             R.id.action_import_book_source_qr -> {
                 context?.startActivity<QrCodeActivity>()
             }
-            R.id.action_select_all -> adapter.selectAll()
+            R.id.action_select_all -> {
+                launch {
+
+                }
+            }
         }
     }
 
@@ -92,7 +96,6 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
 
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let {
-            adapter.clearSelect()
             initDataObserve("%$it%")
         }
         return false

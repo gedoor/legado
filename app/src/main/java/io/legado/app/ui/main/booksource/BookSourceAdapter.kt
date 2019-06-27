@@ -1,10 +1,8 @@
 package io.legado.app.ui.main.booksource
 
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -34,7 +32,6 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
     }
 
     var callBack: CallBack? = null
-    private val checkedList = HashSet<String>()
 
     val itemTouchCallbackListener = object : OnItemTouchCallbackListener {
         override fun onSwiped(adapterPosition: Int) {
@@ -57,24 +54,6 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         }
     }
 
-    fun clearSelect() {
-        checkedList.clear()
-    }
-
-    fun selectAll() {
-        currentList?.let {
-            if (checkedList.size == it.size) {
-                checkedList.clear()
-                notifyDataSetChanged()
-            } else {
-                for (item in it) {
-                    item?.let { checkedList.add(item.origin) }
-                }
-                notifyDataSetChanged()
-            }
-        }
-    }
-
     override fun onCurrentListChanged(previousList: PagedList<BookSource>?, currentList: PagedList<BookSource>?) {
         super.onCurrentListChanged(previousList, currentList)
         callBack?.upCount(itemCount)
@@ -86,7 +65,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
 
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, checkedList, callBack) }
+        getItem(position)?.let { holder.bind(it, callBack) }
     }
 
 
@@ -96,46 +75,16 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
             itemView.setBackgroundColor(ThemeStore.backgroundColor(itemView.context))
         }
 
-        fun bind(bookSource: BookSource, checkedList: HashSet<String>, callBack: CallBack?) = with(itemView) {
+        fun bind(bookSource: BookSource, callBack: CallBack?) = with(itemView) {
             cb_book_source.text = String.format("%s (%s)", bookSource.name, bookSource.group)
-            cb_book_source.isChecked = checkedList.contains(bookSource.origin)
-            cb_book_source.onClick {
-                if (cb_book_source.isChecked) {
-                    checkedList.add(bookSource.origin)
-                } else {
-                    checkedList.remove(bookSource.origin)
-                }
-            }
-            sw_enabled.isChecked = bookSource.isEnabled
-            sw_enabled.setOnClickListener {
-                bookSource.isEnabled = sw_enabled.isChecked
+            cb_book_source.isChecked = bookSource.isEnabled
+            cb_book_source.setOnClickListener {
+                bookSource.isEnabled = cb_book_source.isChecked
                 callBack?.update(bookSource)
             }
-            iv_more.onClick {
-                val popupMenu = PopupMenu(context, iv_more)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
-                popupMenu.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.menu_edit -> {
-                            callBack?.edit(bookSource)
-                            true
-                        }
-                        R.id.menu_del -> {
-                            callBack?.del(bookSource)
-                            true
-                        }
-                        R.id.menu_top -> {
-                            true
-                        }
-                        else -> {
-                            false
-                        }
-                    }
-                }
-                popupMenu.show()
-            }
+            iv_edit_source.onClick { callBack?.edit(bookSource) }
+            iv_top_source.onClick { }
+            iv_del_source.onClick { callBack?.del(bookSource) }
         }
     }
 
