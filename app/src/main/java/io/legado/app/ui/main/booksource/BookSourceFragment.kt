@@ -51,8 +51,14 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
                 context?.startActivity<QrCodeActivity>()
             }
             R.id.action_select_all -> {
-                launch {
-
+                launch(IO) {
+                    val isEnableList =
+                        App.db.bookSourceDao().searchIsEnable("%${search_view.query}%")
+                    if (isEnableList.contains(false)) {
+                        App.db.bookSourceDao().enableAllSearch("%${search_view.query}%", "1")
+                    } else {
+                        App.db.bookSourceDao().enableAllSearch("%${search_view.query}%", "0")
+                    }
                 }
             }
         }
@@ -85,18 +91,14 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
 
     private fun initDataObserve(searchKey: String = "") {
         bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
-        val dataFactory =
-            if (searchKey.isEmpty())
-                App.db.bookSourceDao().observeAll()
-            else
-                App.db.bookSourceDao().observeSearch(searchKey)
+        val dataFactory = App.db.bookSourceDao().observeSearch("%$searchKey%")
         bookSourceLiveDate = LivePagedListBuilder(dataFactory, 2000).build()
         bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let {
-            initDataObserve("%$it%")
+            initDataObserve(it)
         }
         return false
     }
