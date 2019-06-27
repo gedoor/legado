@@ -41,7 +41,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
 
     private fun initData() {
         findLiveData?.removeObservers(viewLifecycleOwner)
-        findLiveData = LivePagedListBuilder(App.db.bookSourceDao().observeFind(), 10).build()
+        findLiveData = LivePagedListBuilder(App.db.bookSourceDao().observeFind(), 2000).build()
         findLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }
 }

@@ -86,7 +86,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
                 App.db.bookSourceDao().observeAll()
             else
                 App.db.bookSourceDao().observeSearch(searchKey)
-        bookSourceLiveDate = LivePagedListBuilder(dataFactory, 30).build()
+        bookSourceLiveDate = LivePagedListBuilder(dataFactory, 2000).build()
         bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }
 
