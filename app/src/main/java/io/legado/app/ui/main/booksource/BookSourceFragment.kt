@@ -50,6 +50,7 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
             R.id.action_import_book_source_qr -> {
                 context?.startActivity<QrCodeActivity>()
             }
+            R.id.action_select_all -> adapter.selectAll()
         }
     }
 
@@ -96,6 +97,10 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false
+    }
+
+    override fun upCount(count: Int) {
+        search_view.queryHint = getString(R.string.search_book_source_num, count)
     }
 
     override fun del(bookSource: BookSource) {

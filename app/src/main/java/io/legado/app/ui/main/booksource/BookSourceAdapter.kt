@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +34,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
     }
 
     var callBack: CallBack? = null
-    val checkedList = HashSet<String>()
+    private val checkedList = HashSet<String>()
 
     val itemTouchCallbackListener = object : OnItemTouchCallbackListener {
         override fun onSwiped(adapterPosition: Int) {
@@ -54,6 +55,25 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
             }
             return true
         }
+    }
+
+    fun selectAll() {
+        currentList?.let {
+            if (checkedList.size == it.size) {
+                checkedList.clear()
+                notifyDataSetChanged()
+            } else {
+                for (item in it) {
+                    item?.let { checkedList.add(item.origin) }
+                }
+                notifyDataSetChanged()
+            }
+        }
+    }
+
+    override fun onCurrentListChanged(previousList: PagedList<BookSource>?, currentList: PagedList<BookSource>?) {
+        super.onCurrentListChanged(previousList, currentList)
+        callBack?.upCount(itemCount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -116,6 +136,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
     }
 
     interface CallBack {
+        fun upCount(count: Int)
         fun del(bookSource: BookSource)
         fun edit(bookSource: BookSource)
         fun update(bookSource: BookSource)
