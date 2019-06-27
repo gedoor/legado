@@ -11,7 +11,7 @@ import io.legado.app.data.entities.*
 
 
 @Database(
-    entities = [Book::class, BookGroup::class, BookSource::class, Chapter::class, ReplaceRule::class, SearchBook::class, SearchKeyword::class],
+    entities = [Book::class, BookGroup::class, BookSource::class, Chapter::class, ReplaceRule::class, SearchBook::class, SearchKeyword::class, SourceCookie::class],
     version = 1,
     exportSchema = true
 )
@@ -53,4 +53,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun replaceRuleDao(): ReplaceRuleDao
     abstract fun searchBookDao(): SearchBookDao
     abstract fun searchKeywordDao(): SearchKeywordDao
+    abstract fun sourceCookieDao(): SourceCookieDao
 }
