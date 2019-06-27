@@ -57,6 +57,10 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         }
     }
 
+    fun clearSelect() {
+        checkedList.clear()
+    }
+
     fun selectAll() {
         currentList?.let {
             if (checkedList.size == it.size) {

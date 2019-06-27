@@ -8,10 +8,13 @@
     app:popupTheme="@style/AppTheme.PopupOverlay">
 
     <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:defaultQueryHint="搜索" />
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:imeOptions="actionSearch"
+            app:iconifiedByDefault="false"
+            app:searchIcon="@null"
+            app:defaultQueryHint="搜索" />
 
 </androidx.appcompat.widget.Toolbar>
