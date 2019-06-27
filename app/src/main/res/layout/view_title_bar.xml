@@ -13,8 +13,6 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:imeOptions="actionSearch"
-            app:iconifiedByDefault="false"
-            app:searchIcon="@null"
             app:defaultQueryHint="搜索" />
 
 </androidx.appcompat.widget.Toolbar>
