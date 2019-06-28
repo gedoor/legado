@@ -118,12 +118,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         var result: Any? = null
         for (rule in ruleList) {
             when (rule.mode) {
-                AnalyzeRule.Mode.Js -> {
+                Mode.Js -> {
                     if (result == null) result = `object`
                     result = evalJS(rule.rule, result)
                 }
-                AnalyzeRule.Mode.JSon -> result = getAnalyzeByJSonPath(result).getStringList(rule.rule)
-                AnalyzeRule.Mode.XPath -> result = getAnalyzeByXPath(result).getStringList(rule.rule)
+                Mode.JSon -> result = getAnalyzeByJSonPath(result).getStringList(rule.rule)
+                Mode.XPath -> result = getAnalyzeByXPath(result).getStringList(rule.rule)
                 else -> result = getAnalyzeByJSoup(result).getStringList(rule.rule)
             }
         }
@@ -168,12 +168,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         for (rule in ruleList) {
             if (rule.rule.isNotBlank()) {
                 when (rule.mode) {
-                    AnalyzeRule.Mode.Js -> {
+                    Mode.Js -> {
                         if (result == null) result = `object`
                         result = evalJS(rule.rule, result)
                     }
-                    AnalyzeRule.Mode.JSon -> result = getAnalyzeByJSonPath(result).getString(rule.rule)
-                    AnalyzeRule.Mode.XPath -> result = getAnalyzeByXPath(result).getString(rule.rule)
+                    Mode.JSon -> result = getAnalyzeByJSonPath(result).getString(rule.rule)
+                    Mode.XPath -> result = getAnalyzeByXPath(result).getString(rule.rule)
                     AnalyzeRule.Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
                         getAnalyzeByJSoup(result).getString0(rule.rule)
                     } else {
@@ -201,12 +201,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         val ruleList = splitSourceRule(ruleStr)
         for (rule in ruleList) {
             when (rule.mode) {
-                AnalyzeRule.Mode.Js -> {
+                Mode.Js -> {
                     if (result == null) result = `object`
                     result = evalJS(rule.rule, result)
                 }
-                AnalyzeRule.Mode.JSon -> result = getAnalyzeByJSonPath(result).getObject(rule.rule)
-                AnalyzeRule.Mode.XPath -> result = getAnalyzeByXPath(result).getElements(rule.rule)
+                Mode.JSon -> result = getAnalyzeByJSonPath(result).getObject(rule.rule)
+                Mode.XPath -> result = getAnalyzeByXPath(result).getElements(rule.rule)
                 else -> result = getAnalyzeByJSoup(result).getElements(rule.rule)
             }
         }
@@ -216,18 +216,19 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     /**
      * 获取列表
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(Exception::class)
     fun getElements(ruleStr: String): List<Any> {
         var result: Any? = null
         val ruleList = splitSourceRule(ruleStr)
         for (rule in ruleList) {
             when (rule.mode) {
-                AnalyzeRule.Mode.Js -> {
+                Mode.Js -> {
                     if (result == null) result = `object`
                     result = evalJS(rule.rule, result)
                 }
-                AnalyzeRule.Mode.JSon -> result = getAnalyzeByJSonPath(result).getList(rule.rule)
-                AnalyzeRule.Mode.XPath -> result = getAnalyzeByXPath(result).getElements(rule.rule)
+                Mode.JSon -> result = getAnalyzeByJSonPath(result).getList(rule.rule)
+                Mode.XPath -> result = getAnalyzeByXPath(result).getElements(rule.rule)
                 else -> result = getAnalyzeByJSoup(result).getElements(rule.rule)
             }
         }
