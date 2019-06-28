@@ -68,9 +68,10 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
             cb_is_enable_find.isChecked = it.enabledExplore
         }
         sourceEditEntities.clear()
-        sourceEditEntities.add(SourceEditEntity("origin", bookSource?.bookSourceOrigin, R.string.book_source_url))
+        sourceEditEntities.add(SourceEditEntity("origin", bookSource?.bookSourceUrl, R.string.book_source_url))
         sourceEditEntities.add(SourceEditEntity("name", bookSource?.bookSourceName, R.string.book_source_name))
         sourceEditEntities.add(SourceEditEntity("group", bookSource?.bookSourceGroup, R.string.book_source_group))
+
         adapter.sourceEditEntities = sourceEditEntities
         adapter.notifyDataSetChanged()
     }
@@ -85,7 +86,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
                     if (entity.value == null) {
                         return null
                     } else {
-                        bookSource.bookSourceOrigin = entity.value!!
+                        bookSource.bookSourceUrl = entity.value!!
                     }
                 }
                 "name" -> {

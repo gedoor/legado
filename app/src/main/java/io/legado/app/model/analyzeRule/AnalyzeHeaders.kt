@@ -5,7 +5,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJson
+import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefString
 import java.util.*
 
@@ -24,12 +24,12 @@ object AnalyzeHeaders {
         val headerMap = HashMap<String, String>()
         if (bookSource != null && !isEmpty(bookSource.header)) {
             bookSource.header?.let {
-                val map: HashMap<String, String>? = GSON.fromJson<HashMap<String, String>>(it)
+                val map: HashMap<String, String>? = GSON.fromJsonObject<HashMap<String, String>>(it)
                 map?.let { headerMap.putAll(map) }
             }
         }
         if (bookSource != null) {
-            val cookie = App.db.sourceCookieDao().getCookieByUrl(bookSource.origin)
+            val cookie = App.db.sourceCookieDao().getCookieByUrl(bookSource.bookSourceUrl)
             cookie?.let { headerMap["Cookie"] = cookie }
         }
         return headerMap

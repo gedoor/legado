@@ -20,7 +20,7 @@ class SourceEditViewModel(application: Application) : BaseViewModel(application)
 
     fun save(bookSource: BookSource, finally: (() -> Unit)? = null) {
         launch(IO) {
-            val source = App.db.bookSourceDao().findByKey(bookSource.bookSourceOrigin)
+            val source = App.db.bookSourceDao().findByKey(bookSource.bookSourceUrl)
             if (source == null) {
                 bookSource.customOrder = App.db.bookSourceDao().allCount()
             }

@@ -7,7 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJson
+import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -40,7 +40,7 @@ data class SearchBook(
             variableMap = if (TextUtils.isEmpty(variable)) {
                 HashMap()
             } else {
-                GSON.fromJson<HashMap<String, String>>(variable!!)
+                GSON.fromJsonObject<HashMap<String, String>>(variable!!)
             }
         }
     }

@@ -8,7 +8,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.legado.app.constant.AppConst.NOT_AVAILABLE
 import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJson
+import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -69,7 +69,7 @@ data class Book(
             variableMap = if (isEmpty(variable)) {
                 HashMap()
             } else {
-                GSON.fromJson<HashMap<String, String>>(variable!!)
+                GSON.fromJsonObject<HashMap<String, String>>(variable!!)
             }
         }
     }

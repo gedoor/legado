@@ -7,7 +7,7 @@ import org.jetbrains.anko.attempt
 
 val GSON: Gson by lazy { GsonBuilder().create() }
 
-inline fun <reified T> Gson.fromJson(json: String): T = fromJson(json, T::class.java)
+inline fun <reified T> Gson.fromJsonObject(json: String?): T? = fromJson(json, T::class.java)
 
 inline fun <reified T> Gson.fromJsonArray(json: String): ArrayList<T>? {
     return attempt {

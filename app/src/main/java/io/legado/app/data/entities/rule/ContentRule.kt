@@ -1,7 +1,6 @@
 package io.legado.app.data.entities.rule
 
 data class ContentRule(
-    var fulltext: Rule,
-    var resourceUrl: Rule,
-    var nextUrl: Rule
+    var content: String? = null,
+    var nextUrl: String? = null
 )

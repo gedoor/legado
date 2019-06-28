@@ -10,6 +10,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -94,17 +95,64 @@ object Restore {
         if (shelfFile.exists()) try {
             doAsync {
                 val items: List<Map<String, Any>> = jsonPath.parse(sourceFile.readText()).read("$")
-                val existings = App.db.bookSourceDao().all.map { it.origin }.toSet()
+                val existingSources = App.db.bookSourceDao().all.map { it.bookSourceUrl }.toSet()
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
                     val source = BookSource()
-                    source.origin = jsonItem.readString("bookSourceUrl") ?: ""
-                    if (source.origin.isBlank()) continue
-                    if (source.origin in existings) continue
-                    source.name = jsonItem.readString("bookSourceName") ?: ""
-                    source.group = jsonItem.readString("bookSourceGroup") ?: ""
+                    source.bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
+                    if (source.bookSourceUrl.isBlank()) continue
+                    if (source.bookSourceUrl in existingSources) continue
+                    source.bookSourceName = jsonItem.readString("bookSourceName") ?: ""
+                    source.bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
                     source.loginUrl = jsonItem.readString("loginUrl")
-
+                    val searchRule = SearchRule(
+                        searchUrl = jsonItem.readString("ruleSearchUrl"),
+                        bookList = jsonItem.readString("ruleSearchList"),
+                        name = jsonItem.readString("ruleSearchName"),
+                        author = jsonItem.readString("ruleSearchAuthor"),
+                        desc = jsonItem.readString("ruleSearchIntroduce"),
+                        meta = jsonItem.readString("ruleSearchKind"),
+                        bookUrl = jsonItem.readString("ruleSearchNoteUrl"),
+                        coverUrl = jsonItem.readString("ruleSearchCoverUrl"),
+                        lastChapter = jsonItem.readString("ruleSearchLastChapter")
+                    )
+                    source.ruleSearch = GSON.toJson(searchRule)
+                    val exploreRule = ExploreRule(
+                        exploreUrl = jsonItem.readString("ruleFindUrl"),
+                        bookList = jsonItem.readString("ruleFindList"),
+                        name = jsonItem.readString("ruleFindName"),
+                        author = jsonItem.readString("ruleFindAuthor"),
+                        desc = jsonItem.readString("ruleFindIntroduce"),
+                        meta = jsonItem.readString("ruleFindKind"),
+                        bookUrl = jsonItem.readString("ruleFindNoteUrl"),
+                        coverUrl = jsonItem.readString("ruleFindCoverUrl"),
+                        lastChapter = jsonItem.readString("ruleFindLastChapter")
+                    )
+                    source.ruleExplore = GSON.toJson(exploreRule)
+                    val bookInfoRule = BookInfoRule(
+                        urlPattern = jsonItem.readString("ruleBookUrlPattern"),
+                        init = jsonItem.readString("ruleBookInfoInit"),
+                        name = jsonItem.readString("ruleBookName"),
+                        author = jsonItem.readString("ruleBookAuthor"),
+                        desc = jsonItem.readString("ruleIntroduce"),
+                        meta = jsonItem.readString("ruleBookKind"),
+                        coverUrl = jsonItem.readString("ruleCoverUrl"),
+                        lastChapter = jsonItem.readString("ruleBookLastChapter"),
+                        tocUrl = jsonItem.readString("ruleChapterUrl")
+                    )
+                    source.ruleBookInfo = GSON.toJson(bookInfoRule)
+                    val chapterRule = TocRule(
+                        chapterList = jsonItem.readString("ruleChapterUrlNext"),
+                        chapterName = jsonItem.readString("ruleChapterName"),
+                        chapterUrl = jsonItem.readString("ruleContentUrl"),
+                        nextUrl = jsonItem.readString("ruleChapterUrlNext")
+                    )
+                    source.ruleToc = GSON.toJson(chapterRule)
+                    val contentRule = ContentRule(
+                        content = jsonItem.readString("ruleBookContent"),
+                        nextUrl = jsonItem.readString("ruleContentUrlNext")
+                    )
+                    source.ruleContent = GSON.toJson(contentRule)
                     bookSources.add(source)
                 }
                 App.db.bookSourceDao().insert(*bookSources.toTypedArray())

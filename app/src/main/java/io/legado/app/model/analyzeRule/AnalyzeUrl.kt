@@ -121,7 +121,7 @@ constructor(ruleUrl: String, key: String?, page: Int?, headerMapF: Map<String, S
 //            ruleUrl = ruleUrl.replace(find, "")
 //            find = find.substring(8)
 //            try {
-//                val map = Gson().fromJson<Map<String, String>>(find)
+//                val map = Gson().fromJsonObject<Map<String, String>>(find)
 //                headerMap.putAll(map)
 //            } catch (ignored: Exception) {
 //            }

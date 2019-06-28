@@ -259,7 +259,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         val putMatcher = putPattern.matcher(ruleStr)
         while (putMatcher.find()) {
             ruleStr = ruleStr.replace(putMatcher.group(), "")
-            val map = GSON.fromJson<Map<String, String>>(putMatcher.group(1))
+            val map = GSON.fromJsonObject<Map<String, String>>(putMatcher.group(1))
             putRule(map)
         }
         return ruleStr

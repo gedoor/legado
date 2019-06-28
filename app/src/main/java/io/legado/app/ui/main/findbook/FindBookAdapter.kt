@@ -17,10 +17,10 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
     companion object {
         var DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookSource>() {
             override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.bookSourceOrigin == newItem.bookSourceOrigin
+                oldItem.bookSourceUrl == newItem.bookSourceUrl
 
             override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.bookSourceOrigin == newItem.bookSourceOrigin
+                oldItem.bookSourceUrl == newItem.bookSourceUrl
                         && oldItem.bookSourceName == newItem.bookSourceName
         }
     }

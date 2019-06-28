@@ -10,13 +10,13 @@ interface BookSourceDao {
     @Query("select * from book_sources order by customOrder asc")
     fun observeAll(): DataSource.Factory<Int, BookSource>
 
-    @Query("select * from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceOrigin like :searchKey order by customOrder asc")
+    @Query("select * from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey order by customOrder asc")
     fun observeSearch(searchKey: String = ""): DataSource.Factory<Int, BookSource>
 
-    @Query("select distinct  enabled from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceOrigin like :searchKey")
+    @Query("select distinct  enabled from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey")
     fun searchIsEnable(searchKey: String = ""): List<Boolean>
 
-    @Query("UPDATE book_sources SET enabled = :enable where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceOrigin like :searchKey")
+    @Query("UPDATE book_sources SET enabled = :enable where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey")
     fun enableAllSearch(searchKey: String = "", enable: String = "1")
 
     @Query("select * from book_sources where enabledExplore = 1 order by customOrder asc")
@@ -25,7 +25,7 @@ interface BookSourceDao {
     @get:Query("select * from book_sources order by customOrder asc")
     val all: List<BookSource>
 
-    @Query("select * from book_sources where bookSourceOrigin = :key")
+    @Query("select * from book_sources where bookSourceUrl = :key")
     fun findByKey(key: String): BookSource?
 
     @Query("select count(*) from book_sources")
