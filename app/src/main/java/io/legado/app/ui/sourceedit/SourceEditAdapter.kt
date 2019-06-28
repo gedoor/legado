@@ -11,22 +11,22 @@ import kotlinx.android.synthetic.main.item_source_edit.view.*
 
 class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>() {
 
-    var sourceEditEntities: ArrayList<SourceEditActivity.SourceEditEntity> = ArrayList()
+    var editEntities: ArrayList<SourceEditActivity.EditEntity> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_source_edit, parent, false))
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(sourceEditEntities[position])
+        holder.bind(editEntities[position])
     }
 
     override fun getItemCount(): Int {
-        return sourceEditEntities.size
+        return editEntities.size
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(sourceEditEntity: SourceEditActivity.SourceEditEntity) = with(itemView) {
+        fun bind(editEntity: SourceEditActivity.EditEntity) = with(itemView) {
             if (editText.getTag(R.id.tag1) == null) {
                 val listener = object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {
@@ -48,8 +48,8 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
                     editText.removeTextChangedListener(it)
                 }
             }
-            editText.setText(sourceEditEntity.value)
-            textInputLayout.hint = context.getString(sourceEditEntity.hint)
+            editText.setText(editEntity.value)
+            textInputLayout.hint = context.getString(editEntity.hint)
             val textWatcher = object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
@@ -60,7 +60,7 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    sourceEditEntity.value = (s?.toString())
+                    editEntity.value = (s?.toString())
                 }
             }
             editText.addTextChangedListener(textWatcher)
