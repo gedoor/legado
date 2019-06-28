@@ -10,9 +10,6 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_edit.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 
 class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
@@ -67,38 +64,38 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
 
     private fun upRecyclerView(bookSource: BookSource?) {
         bookSource?.let {
-            cb_is_enable.isChecked = it.isEnabled
-            cb_is_enable_find.isChecked = it.exploreIsEnabled
+            cb_is_enable.isChecked = it.enabled
+            cb_is_enable_find.isChecked = it.enabledExplore
         }
         sourceEditEntities.clear()
-        sourceEditEntities.add(SourceEditEntity("origin", bookSource?.origin, R.string.book_source_url))
-        sourceEditEntities.add(SourceEditEntity("name", bookSource?.name, R.string.book_source_name))
-        sourceEditEntities.add(SourceEditEntity("group", bookSource?.group, R.string.book_source_group))
+        sourceEditEntities.add(SourceEditEntity("origin", bookSource?.bookSourceOrigin, R.string.book_source_url))
+        sourceEditEntities.add(SourceEditEntity("name", bookSource?.bookSourceName, R.string.book_source_name))
+        sourceEditEntities.add(SourceEditEntity("group", bookSource?.bookSourceGroup, R.string.book_source_group))
         adapter.sourceEditEntities = sourceEditEntities
         adapter.notifyDataSetChanged()
     }
 
     private fun getSource(): BookSource? {
         val bookSource = BookSource()
-        bookSource.isEnabled = cb_is_enable.isChecked
-        bookSource.exploreIsEnabled = cb_is_enable_find.isChecked
+        bookSource.enabled = cb_is_enable.isChecked
+        bookSource.enabledExplore = cb_is_enable_find.isChecked
         for (entity in adapter.sourceEditEntities) {
             when (entity.key) {
                 "origin" -> {
                     if (entity.value == null) {
                         return null
                     } else {
-                        bookSource.origin = entity.value!!
+                        bookSource.bookSourceOrigin = entity.value!!
                     }
                 }
                 "name" -> {
                     if (entity.value == null) {
                         return null
                     } else {
-                        bookSource.name = entity.value!!
+                        bookSource.bookSourceName = entity.value!!
                     }
                 }
-                "group" -> bookSource.group = entity.value
+                "group" -> bookSource.bookSourceGroup = entity.value
             }
         }
         return bookSource

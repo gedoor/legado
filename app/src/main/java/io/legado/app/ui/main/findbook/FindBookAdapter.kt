@@ -17,11 +17,11 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
     companion object {
         var DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookSource>() {
             override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.origin == newItem.origin
+                oldItem.bookSourceOrigin == newItem.bookSourceOrigin
 
             override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.origin == newItem.origin
-                        && oldItem.name == newItem.name
+                oldItem.bookSourceOrigin == newItem.bookSourceOrigin
+                        && oldItem.bookSourceName == newItem.bookSourceName
         }
     }
 
@@ -40,7 +40,7 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
         fun bind(bookSource: BookSource) = with(itemView) {
             val bgShape: GradientDrawable? = tv_name.background as? GradientDrawable
             bgShape?.setStroke(2, ColorUtils.getRandomColor())
-            tv_name.text = bookSource.name
+            tv_name.text = bookSource.bookSourceName
         }
     }
 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
@@ -21,7 +20,7 @@ class SourceEditViewModel(application: Application) : BaseViewModel(application)
 
     fun save(bookSource: BookSource, finally: (() -> Unit)? = null) {
         launch(IO) {
-            val source = App.db.bookSourceDao().findByKey(bookSource.origin)
+            val source = App.db.bookSourceDao().findByKey(bookSource.bookSourceOrigin)
             if (source == null) {
                 bookSource.customOrder = App.db.bookSourceDao().allCount()
             }

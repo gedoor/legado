@@ -21,13 +21,13 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         @JvmField
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookSource>() {
             override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.origin == newItem.origin
+                oldItem.bookSourceOrigin == newItem.bookSourceOrigin
 
             override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.origin == newItem.origin
-                        && oldItem.name == newItem.name
-                        && oldItem.group == newItem.group
-                        && oldItem.isEnabled == newItem.isEnabled
+                oldItem.bookSourceOrigin == newItem.bookSourceOrigin
+                        && oldItem.bookSourceName == newItem.bookSourceName
+                        && oldItem.bookSourceGroup == newItem.bookSourceGroup
+                        && oldItem.enabled == newItem.enabled
         }
     }
 
@@ -76,10 +76,10 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         }
 
         fun bind(bookSource: BookSource, callBack: CallBack?) = with(itemView) {
-            cb_book_source.text = String.format("%s (%s)", bookSource.name, bookSource.group)
-            cb_book_source.isChecked = bookSource.isEnabled
+            cb_book_source.text = String.format("%s (%s)", bookSource.bookSourceName, bookSource.bookSourceGroup)
+            cb_book_source.isChecked = bookSource.enabled
             cb_book_source.setOnClickListener {
-                bookSource.isEnabled = cb_book_source.isChecked
+                bookSource.enabled = cb_book_source.isChecked
                 callBack?.update(bookSource)
             }
             iv_edit_source.onClick { callBack?.edit(bookSource) }
