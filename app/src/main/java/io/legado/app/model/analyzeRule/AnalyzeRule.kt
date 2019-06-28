@@ -317,14 +317,16 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         if (TextUtils.isEmpty(vRuleStr)) return ruleList
         //检测Mode
         val mode: Mode
-        if (vRuleStr.startsWith("@XPath:", true)) {
-            mode = Mode.XPath
-            vRuleStr = vRuleStr.substring(7)
-        } else if (vRuleStr.startsWith("@JSon:", true)) {
-            mode = Mode.JSon
-            vRuleStr = vRuleStr.substring(6)
-        } else {
-            mode = if (isJSON!!) {
+        when {
+            vRuleStr.startsWith("@XPath:", true) -> {
+                mode = Mode.XPath
+                vRuleStr = vRuleStr.substring(7)
+            }
+            vRuleStr.startsWith("@JSon:", true) -> {
+                mode = Mode.JSon
+                vRuleStr = vRuleStr.substring(6)
+            }
+            else -> mode = if (isJSON!!) {
                 Mode.JSon
             } else {
                 Mode.Default
@@ -375,20 +377,24 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     rule = ruleStr.substring(4)
                 }
             } else {
-                if (ruleStr.startsWith("@XPath:", true)) {
-                    mode = Mode.XPath
-                    rule = ruleStr.substring(7)
-                } else if (ruleStr.startsWith("//")) {//XPath特征很明显,无需配置单独的识别标头
-                    mode = Mode.XPath
-                    rule = ruleStr
-                } else if (ruleStr.startsWith("@JSon:", true)) {
-                    mode = Mode.JSon
-                    rule = ruleStr.substring(6)
-                } else if (ruleStr.startsWith("$.")) {
-                    mode = Mode.JSon
-                    rule = ruleStr
-                } else {
-                    rule = ruleStr
+                when {
+                    ruleStr.startsWith("@XPath:", true) -> {
+                        mode = Mode.XPath
+                        rule = ruleStr.substring(7)
+                    }
+                    ruleStr.startsWith("//") -> {//XPath特征很明显,无需配置单独的识别标头
+                        mode = Mode.XPath
+                        rule = ruleStr
+                    }
+                    ruleStr.startsWith("@JSon:", true) -> {
+                        mode = Mode.JSon
+                        rule = ruleStr.substring(6)
+                    }
+                    ruleStr.startsWith("$.") -> {
+                        mode = Mode.JSon
+                        rule = ruleStr
+                    }
+                    else -> rule = ruleStr
                 }
             }
         }
