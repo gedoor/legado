@@ -174,7 +174,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     }
                     Mode.JSon -> result = getAnalyzeByJSonPath(result).getString(rule.rule)
                     Mode.XPath -> result = getAnalyzeByXPath(result).getString(rule.rule)
-                    AnalyzeRule.Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
+                    Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
                         getAnalyzeByJSoup(result).getString0(rule.rule)
                     } else {
                         getAnalyzeByJSoup(result).getString(rule.rule)
