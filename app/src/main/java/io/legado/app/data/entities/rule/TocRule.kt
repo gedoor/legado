@@ -4,5 +4,5 @@ data class TocRule(
     var chapterList: String? = null,
     var chapterName: String? = null,
     var chapterUrl: String? = null,
-    var nextUrl: String? = null
+    var nextTocUrl: String? = null
 )

@@ -106,24 +106,24 @@ object Restore {
                     source.bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
                     source.loginUrl = jsonItem.readString("loginUrl")
                     val searchRule = SearchRule(
-                        searchUrl = jsonItem.readString("ruleSearchUrl"),
+                        url = jsonItem.readString("ruleSearchUrl"),
                         bookList = jsonItem.readString("ruleSearchList"),
                         name = jsonItem.readString("ruleSearchName"),
                         author = jsonItem.readString("ruleSearchAuthor"),
-                        desc = jsonItem.readString("ruleSearchIntroduce"),
-                        meta = jsonItem.readString("ruleSearchKind"),
+                        intro = jsonItem.readString("ruleSearchIntroduce"),
+                        kind = jsonItem.readString("ruleSearchKind"),
                         bookUrl = jsonItem.readString("ruleSearchNoteUrl"),
                         coverUrl = jsonItem.readString("ruleSearchCoverUrl"),
                         lastChapter = jsonItem.readString("ruleSearchLastChapter")
                     )
                     source.ruleSearch = GSON.toJson(searchRule)
                     val exploreRule = ExploreRule(
-                        exploreUrl = jsonItem.readString("ruleFindUrl"),
+                        url = jsonItem.readString("ruleFindUrl"),
                         bookList = jsonItem.readString("ruleFindList"),
                         name = jsonItem.readString("ruleFindName"),
                         author = jsonItem.readString("ruleFindAuthor"),
-                        desc = jsonItem.readString("ruleFindIntroduce"),
-                        meta = jsonItem.readString("ruleFindKind"),
+                        intro = jsonItem.readString("ruleFindIntroduce"),
+                        kind = jsonItem.readString("ruleFindKind"),
                         bookUrl = jsonItem.readString("ruleFindNoteUrl"),
                         coverUrl = jsonItem.readString("ruleFindCoverUrl"),
                         lastChapter = jsonItem.readString("ruleFindLastChapter")
@@ -134,8 +134,8 @@ object Restore {
                         init = jsonItem.readString("ruleBookInfoInit"),
                         name = jsonItem.readString("ruleBookName"),
                         author = jsonItem.readString("ruleBookAuthor"),
-                        desc = jsonItem.readString("ruleIntroduce"),
-                        meta = jsonItem.readString("ruleBookKind"),
+                        intro = jsonItem.readString("ruleIntroduce"),
+                        kind = jsonItem.readString("ruleBookKind"),
                         coverUrl = jsonItem.readString("ruleCoverUrl"),
                         lastChapter = jsonItem.readString("ruleBookLastChapter"),
                         tocUrl = jsonItem.readString("ruleChapterUrl")
@@ -145,12 +145,12 @@ object Restore {
                         chapterList = jsonItem.readString("ruleChapterUrlNext"),
                         chapterName = jsonItem.readString("ruleChapterName"),
                         chapterUrl = jsonItem.readString("ruleContentUrl"),
-                        nextUrl = jsonItem.readString("ruleChapterUrlNext")
+                        nextTocUrl = jsonItem.readString("ruleChapterUrlNext")
                     )
                     source.ruleToc = GSON.toJson(chapterRule)
                     val contentRule = ContentRule(
                         content = jsonItem.readString("ruleBookContent"),
-                        nextUrl = jsonItem.readString("ruleContentUrlNext")
+                        nextContentUrl = jsonItem.readString("ruleContentUrlNext")
                     )
                     source.ruleContent = GSON.toJson(contentRule)
                     bookSources.add(source)
