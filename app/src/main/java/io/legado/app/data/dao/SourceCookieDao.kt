@@ -6,7 +6,7 @@ import androidx.room.Query
 @Dao
 interface SourceCookieDao {
 
-    @Query("SELECT cookie FROM cookies Where exploreUrl = :exploreUrl")
+    @Query("SELECT cookie FROM cookies Where url = :url")
     fun getCookieByUrl(url: String): String?
 
 }
