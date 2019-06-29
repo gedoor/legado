@@ -12,6 +12,8 @@ object AppConst {
     const val APP_TAG = "Legado"
     const val RC_IMPORT_YUEDU_DATA = 100
 
+    const val userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.2357.134 Safari/537.36"
+
     val SCRIPT_ENGINE = ScriptEngineManager().getEngineByName("rhino")
 
     val NOT_AVAILABLE = App.INSTANCE.getString(R.string.not_available)

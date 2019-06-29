@@ -4,10 +4,14 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import io.legado.app.App
+import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getPrefString
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
 @Entity(
@@ -33,6 +37,18 @@ data class BookSource(
     var ruleToc: String? = null,          // 目录页规则
     var ruleContent: String? = null           // 正文页规则
 ) : Parcelable {
+
+    fun getHeaderMap(): Map<String, String> {
+        val headerMap = HashMap<String, String>()
+        headerMap["user_agent"] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
+        header?.let {
+            GSON.fromJsonObject<Map<String, String>>(header)?.let {
+                headerMap.putAll(it)
+            }
+        }
+        return headerMap
+    }
+
 
     fun getSearchRule(): SearchRule? {
         return GSON.fromJsonObject<SearchRule>(ruleSearch)
