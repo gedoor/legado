@@ -216,10 +216,14 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
 
         @CheckResult
         @ColorInt
-        fun statusBarColor(context: Context): Int {
+        fun statusBarColor(context: Context, transparent: Boolean): Int {
             return if (!coloredStatusBar(context)) {
                 Color.BLACK
-            } else prefs(context).getInt(ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR, primaryColorDark(context))
+            } else if (transparent) {
+                prefs(context).getInt(ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR, primaryColor(context))
+            } else {
+                prefs(context).getInt(ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR, primaryColorDark(context))
+            }
         }
 
         @CheckResult

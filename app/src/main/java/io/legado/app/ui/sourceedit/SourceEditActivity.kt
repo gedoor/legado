@@ -23,7 +23,7 @@ import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
-class SourceEditActivity : BaseActivity<SourceEditViewModel>(), KeyboardToolPop.OnClickListener {
+class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToolPop.OnClickListener {
     override val viewModel: SourceEditViewModel
         get() = getViewModel(SourceEditViewModel::class.java)
     override val layoutID: Int

@@ -11,6 +11,7 @@ import android.widget.EdgeEffect
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import io.legado.app.utils.getPrefBoolean
 
 
 /**
@@ -27,7 +28,7 @@ object ATH {
     }
 
     fun setStatusbarColorAuto(activity: Activity) {
-        setStatusbarColor(activity, ThemeStore.statusBarColor(activity))
+        setStatusbarColor(activity, ThemeStore.statusBarColor(activity, activity.getPrefBoolean("transparentStatusBar")))
     }
 
     fun setStatusbarColor(activity: Activity, color: Int) {

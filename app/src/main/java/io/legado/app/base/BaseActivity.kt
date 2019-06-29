@@ -20,7 +20,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity<VM : ViewModel> : AppCompatActivity(), CoroutineScope by MainScope() {
+abstract class BaseActivity<VM : ViewModel>(private var fullScreen: Boolean = true) : AppCompatActivity(), CoroutineScope by MainScope() {
 
     protected abstract val viewModel: VM
 
@@ -80,13 +80,17 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity(), CoroutineScop
     }
 
     private fun setupSystemBar() {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        if (getPrefBoolean("transparentStatusBar")) {
-            window.statusBarColor = Color.TRANSPARENT
+        if (fullScreen) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            if (getPrefBoolean("transparentStatusBar")) {
+                window.statusBarColor = Color.TRANSPARENT
+            } else {
+                window.statusBarColor = getCompatColor(R.color.status_bar_bag)
+            }
         } else {
-            window.statusBarColor = getCompatColor(R.color.status_bar_bag)
+            window.statusBarColor = ThemeStore.statusBarColor(this, getPrefBoolean("transparentStatusBar"))
         }
     }
 
