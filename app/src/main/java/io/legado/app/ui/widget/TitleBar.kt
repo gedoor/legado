@@ -18,6 +18,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.utils.getNavigationBarHeight
 import io.legado.app.utils.getStatusBarHeight
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
@@ -99,7 +100,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
-            bottomPadding = context.getStatusBarHeight()
+            bottomPadding = context.getNavigationBarHeight()
         }
 
         a.recycle()
