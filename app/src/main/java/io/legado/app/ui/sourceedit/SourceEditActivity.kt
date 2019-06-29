@@ -116,7 +116,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
             searchEditList.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
             searchEditList.add(EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter))
             searchEditList.add(EditEntity("intro", this?.intro, R.string.rule_book_intro))
-            searchEditList.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_content_url))
+            searchEditList.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
             searchEditList.add(EditEntity("bookUrl", this?.bookUrl, R.string.rule_book_url))
         }
         //详情页
@@ -138,7 +138,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
             tocEditList.clear()
             tocEditList.add(EditEntity("chapterList", this?.chapterList, R.string.rule_chapter_list))
             tocEditList.add(EditEntity("chapterName", this?.chapterName, R.string.rule_chapter_name))
-            tocEditList.add(EditEntity("chapterUrl", this?.chapterUrl, R.string.rule_content_url))
+            tocEditList.add(EditEntity("chapterUrl", this?.chapterUrl, R.string.rule_chapter_url))
             tocEditList.add(EditEntity("nextTocUrl", this?.nextTocUrl, R.string.rule_next_toc_url))
         }
         //正文页
