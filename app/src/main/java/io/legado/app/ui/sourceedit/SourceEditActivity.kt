@@ -104,7 +104,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
         sourceEditList.add(EditEntity("bookSourceName", bookSource?.bookSourceName, R.string.book_source_name))
         sourceEditList.add(EditEntity("bookSourceGroup", bookSource?.bookSourceGroup, R.string.book_source_group))
         sourceEditList.add(EditEntity("loginUrl", bookSource?.loginUrl, R.string.book_source_login_url))
-        sourceEditList.add(EditEntity("header", bookSource?.header, R.string.source_user_agent))
+        sourceEditList.add(EditEntity("header", bookSource?.header, R.string.source_http_header))
         //搜索
         with(bookSource?.getSearchRule()) {
             searchEditList.clear()
@@ -131,7 +131,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
             infoEditList.add(EditEntity("kind", this?.kind, R.string.rule_book_kind))
             infoEditList.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
             infoEditList.add(EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter))
-            infoEditList.add(EditEntity("tocUrl", this?.tocUrl, R.string.rule_chapter_list_url))
+            infoEditList.add(EditEntity("tocUrl", this?.tocUrl, R.string.rule_toc_url))
         }
         //目录页
         with(bookSource?.getTocRule()) {
