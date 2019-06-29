@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 object HttpHelper {
 
-    val client: OkHttpClient = getOkHttpClient()
+    private val client: OkHttpClient = getOkHttpClient()
 
     inline fun <reified T> getApiService(baseUrl: String): T {
         return getRetrofit(baseUrl).create(T::class.java)
