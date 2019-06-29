@@ -1,8 +1,13 @@
 package io.legado.app.ui.sourceedit
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewTreeObserver
+import android.widget.EditText
+import android.widget.PopupWindow
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -10,12 +15,15 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_edit.*
+import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.toast
+import kotlin.math.abs
 
-class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
+class SourceEditActivity : BaseActivity<SourceEditViewModel>(), KeyboardToolPop.OnClickListener {
     override val viewModel: SourceEditViewModel
         get() = getViewModel(SourceEditViewModel::class.java)
     override val layoutID: Int
@@ -28,6 +36,9 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
     private val infoEditList: ArrayList<EditEntity> = ArrayList()
     private val tocEditList: ArrayList<EditEntity> = ArrayList()
     private val contentEditList: ArrayList<EditEntity> = ArrayList()
+
+    private var mSoftKeyboardTool: PopupWindow? = null
+    private var mIsSoftKeyBoardShowing = false
 
     override fun onViewModelCreated(viewModel: SourceEditViewModel, savedInstanceState: Bundle?) {
         initView()
@@ -66,6 +77,8 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
     }
 
     private fun initView() {
+        mSoftKeyboardTool = KeyboardToolPop(this, this)
+        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
         tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -283,6 +296,58 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
         source.ruleContent = GSON.toJson(contentRule)
         setEditEntities(tab_layout.selectedTabPosition)
         return source
+    }
+
+    override fun click(text: String) {
+        if (text.isNullOrBlank()) return
+        val view = window.decorView.findFocus()
+        if (view is EditText) {
+            val start = view.selectionStart
+            val end = view.selectionEnd
+            val edit = view.editableText//获取EditText的文字
+            if (start < 0 || start >= edit.length) {
+                edit.append(text)
+            } else {
+                edit.replace(start, end, text)//光标所在位置插入文字
+            }
+        }
+    }
+
+    private fun showKeyboardTopPopupWindow() {
+        mSoftKeyboardTool?.isShowing?.let { if (it) return }
+        if (!isFinishing) {
+            mSoftKeyboardTool?.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+        }
+    }
+
+    private fun closePopupWindow() {
+        mSoftKeyboardTool?.let {
+            if (it.isShowing) {
+                it.dismiss()
+            }
+        }
+    }
+
+    private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            val rect = Rect()
+            // 获取当前页面窗口的显示范围
+            window.decorView.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = this@SourceEditActivity.displayMetrics.heightPixels
+            val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
+            val preShowing = mIsSoftKeyBoardShowing
+            if (abs(keyboardHeight) > screenHeight / 5) {
+                mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
+                recycler_view.setPadding(0, 0, 0, 100)
+                showKeyboardTopPopupWindow()
+            } else {
+                mIsSoftKeyBoardShowing = false
+                recycler_view.setPadding(0, 0, 0, 0)
+                if (preShowing) {
+                    closePopupWindow()
+                }
+            }
+        }
     }
 
     class EditEntity(var key: String, var value: String?, var hint: Int)
