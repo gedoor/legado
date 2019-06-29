@@ -27,7 +27,9 @@ class KeyboardToolPop(context: Context, onClickListener: OnClickListener?) : Pop
         for (i in 0 until linearLayout.childCount) {
             val tv = linearLayout.getChildAt(i) as TextView
             tv.setOnClickListener { v ->
-                onClickListener?.click((v as TextView).text.toString())
+                (v as? TextView)?.text.toString().let {
+                    onClickListener?.click(it)
+                }
             }
         }
     }

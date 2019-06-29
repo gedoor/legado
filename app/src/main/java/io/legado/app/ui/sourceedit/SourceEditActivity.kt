@@ -121,7 +121,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         //搜索
         with(bookSource?.getSearchRule()) {
             searchEditList.clear()
-            searchEditList.add(EditEntity("url", this?.url, R.string.rule_search_url))
+            searchEditList.add(EditEntity("searchUrl", this?.searchUrl, R.string.rule_search_url))
             searchEditList.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
             searchEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
             searchEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
@@ -164,7 +164,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         //发现
         with(bookSource?.getExploreRule()) {
             findEditList.clear()
-            findEditList.add(EditEntity("url", this?.url, R.string.rule_find_url))
+            findEditList.add(EditEntity("exploreUrl", this?.exploreUrl, R.string.rule_find_url))
             findEditList.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
             findEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
             findEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
@@ -206,7 +206,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         for (entity in searchEditList) {
             with(entity) {
                 when (key) {
-                    "url" -> searchRule.url = value
+                    "searchUrl" -> searchRule.searchUrl = value
                     "searchList" -> searchRule.bookList = value
                     "searchName" -> searchRule.name = value
                     "searchAuthor" -> searchRule.author = value
@@ -223,7 +223,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         for (entity in findEditList) {
             with(entity) {
                 when (key) {
-                    "url" -> exploreRule.url = value
+                    "exploreUrl" -> exploreRule.exploreUrl = value
                     "searchList" -> exploreRule.bookList = value
                     "searchName" -> exploreRule.name = value
                     "searchAuthor" -> exploreRule.author = value
@@ -299,7 +299,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
     }
 
     override fun click(text: String) {
-        if (text.isNullOrBlank()) return
+        if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
             val start = view.selectionStart

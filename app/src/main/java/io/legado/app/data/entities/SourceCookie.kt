@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "cookies", indices = [(Index(value = ["url"], unique = true))])
+@Entity(tableName = "cookies", indices = [(Index(value = ["exploreUrl"], unique = true))])
 data class SourceCookie(
     @PrimaryKey
     var url: String = "",

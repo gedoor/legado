@@ -106,7 +106,7 @@ object Restore {
                     source.bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
                     source.loginUrl = jsonItem.readString("loginUrl")
                     val searchRule = SearchRule(
-                        url = jsonItem.readString("ruleSearchUrl"),
+                            searchUrl = jsonItem.readString("ruleSearchUrl"),
                         bookList = jsonItem.readString("ruleSearchList"),
                         name = jsonItem.readString("ruleSearchName"),
                         author = jsonItem.readString("ruleSearchAuthor"),
@@ -118,7 +118,7 @@ object Restore {
                     )
                     source.ruleSearch = GSON.toJson(searchRule)
                     val exploreRule = ExploreRule(
-                        url = jsonItem.readString("ruleFindUrl"),
+                            exploreUrl = jsonItem.readString("ruleFindUrl"),
                         bookList = jsonItem.readString("ruleFindList"),
                         name = jsonItem.readString("ruleFindName"),
                         author = jsonItem.readString("ruleFindAuthor"),
