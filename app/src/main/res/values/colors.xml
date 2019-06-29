@@ -44,7 +44,7 @@
     <!-- 分格线背景色 -->
     <color name="bg_divider_line">#FFD4D4D4</color>
     <!--statusBarBackground-->
-    <color name="status_bar_bag">#4D000000</color>
+    <color name="status_bar_bag">#19000000</color>
     <color name="navigation_bar_bag">#f4f4f4</color>
 
     <!--base-color-->
