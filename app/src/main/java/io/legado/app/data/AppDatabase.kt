@@ -50,6 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
     abstract fun bookGroupDao(): BookGroupDao
     abstract fun bookSourceDao(): BookSourceDao
+    abstract fun bookChapterDao(): BookChapterDao
     abstract fun replaceRuleDao(): ReplaceRuleDao
     abstract fun searchBookDao(): SearchBookDao
     abstract fun searchKeywordDao(): SearchKeywordDao
