@@ -439,6 +439,13 @@
     <string name="tip_padding">Tip边距</string>
     <string name="text_letter_spacing">字距</string>
 
+    <string name="source_tab_base">基本</string>
+    <string name="source_tab_search">搜索</string>
+    <string name="source_tab_find">发现</string>
+    <string name="source_tab_info">详情</string>
+    <string name="source_tab_toc">目录</string>
+    <string name="source_tab_content">内容</string>
+
     <string name="e_ink_mode">E-Ink 模式</string>
     <string name="e_ink_mode_detail">去除动画,优化电纸书使用体验</string>
     <string name="web_menu">Web服务</string>

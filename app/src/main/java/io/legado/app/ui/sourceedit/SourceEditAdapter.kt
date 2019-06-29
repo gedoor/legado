@@ -12,6 +12,10 @@ import kotlinx.android.synthetic.main.item_source_edit.view.*
 class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>() {
 
     var editEntities: ArrayList<SourceEditActivity.EditEntity> = ArrayList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_source_edit, parent, false))

@@ -38,24 +38,50 @@
             android:layout_height="wrap_content"
             android:checked="false"
             android:text="@string/audio" />
+    </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_edit_find"
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_base"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="3dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:textColor="@color/tv_text_default"
-            android:background="@drawable/selector_fillet_btn_bg"
-            android:text="@string/edit_find" />
+            android:text="@string/source_tab_base" />
 
-    </LinearLayout>
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_search" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_find"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_find" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_info" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_toc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_toc" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_content" />
+
+    </com.google.android.material.tabs.TabLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

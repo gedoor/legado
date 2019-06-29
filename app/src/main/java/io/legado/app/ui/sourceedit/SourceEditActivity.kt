@@ -5,10 +5,12 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_edit.*
 import org.jetbrains.anko.toast
@@ -28,7 +30,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
     private val contentEditList: ArrayList<EditEntity> = ArrayList()
 
     override fun onViewModelCreated(viewModel: SourceEditViewModel, savedInstanceState: Bundle?) {
-        initRecyclerView()
+        initView()
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)
         })
@@ -63,9 +65,33 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun initRecyclerView() {
+    private fun initView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
+        tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                setEditEntities(tab?.position)
+            }
+        })
+    }
+
+    private fun setEditEntities(tabPosition: Int?) {
+        when (tabPosition) {
+            1 -> adapter.editEntities = searchEditList
+            2 -> adapter.editEntities = findEditList
+            3 -> adapter.editEntities = infoEditList
+            4 -> adapter.editEntities = tocEditList
+            5 -> adapter.editEntities = contentEditList
+            else -> adapter.editEntities = sourceEditList
+        }
     }
 
     private fun upRecyclerView(bookSource: BookSource?) {
@@ -141,9 +167,13 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
     }
 
     private fun getSource(): BookSource? {
-        val bookSource = BookSource()
-        bookSource.enabled = cb_is_enable.isChecked
-        bookSource.enabledExplore = cb_is_enable_find.isChecked
+        val source = BookSource()
+        source.enabled = cb_is_enable.isChecked
+        source.enabledExplore = cb_is_enable_find.isChecked
+        viewModel.sourceLiveData.value?.let {
+            source.customOrder = it.customOrder
+            source.weight = it.weight
+        }
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()
         val bookInfoRule = BookInfoRule()
@@ -152,11 +182,11 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
         for (entity in sourceEditList) {
             with(entity) {
                 when (key) {
-                    "bookSourceUrl" -> if (value != null) bookSource.bookSourceUrl = value!! else return null
-                    "bookSourceName" -> if (value != null) bookSource.bookSourceName = value!! else return null
-                    "bookSourceGroup" -> bookSource.bookSourceGroup = value
-                    "loginUrl" -> bookSource.loginUrl = value
-                    "header" -> bookSource.header = value
+                    "bookSourceUrl" -> if (value != null) source.bookSourceUrl = value!! else return null
+                    "bookSourceName" -> if (value != null) source.bookSourceName = value!! else return null
+                    "bookSourceGroup" -> source.bookSourceGroup = value
+                    "loginUrl" -> source.loginUrl = value
+                    "header" -> source.header = value
                 }
             }
         }
@@ -246,7 +276,13 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>() {
                 }
             }
         }
-        return bookSource
+        source.ruleSearch = GSON.toJson(searchRule)
+        source.ruleExplore = GSON.toJson(exploreRule)
+        source.ruleBookInfo = GSON.toJson(bookInfoRule)
+        source.ruleToc = GSON.toJson(tocRule)
+        source.ruleContent = GSON.toJson(contentRule)
+        setEditEntities(tab_layout.selectedTabPosition)
+        return source
     }
 
     class EditEntity(var key: String, var value: String?, var hint: Int)
