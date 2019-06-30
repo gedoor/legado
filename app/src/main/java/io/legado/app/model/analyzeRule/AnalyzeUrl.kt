@@ -121,7 +121,7 @@ class AnalyzeUrl(
      * 处理URL
      */
     private fun initUrl() {
-        val urlArray = ruleUrl.split(",\n*".toRegex(), 2)
+        val urlArray = ruleUrl.split(",[^\\{]*".toRegex(), 2)
         url = urlArray[0]
         host = NetworkUtils.getBaseUrl(url)
         if (urlArray.size > 1) {
