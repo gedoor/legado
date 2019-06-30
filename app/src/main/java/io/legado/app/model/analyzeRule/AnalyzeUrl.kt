@@ -159,15 +159,6 @@ class AnalyzeUrl(
     }
 
     /**
-     * 分解URL
-     */
-    private fun generateUrlPath(ruleUrl: String) {
-        baseUrl?.let { url = NetworkUtils.getAbsoluteURL(it, ruleUrl) }
-        host = NetworkUtils.getBaseUrl(url)
-        path = url!!.substring(host!!.length)
-    }
-
-    /**
      * 执行JS
      */
     @Throws(Exception::class)
