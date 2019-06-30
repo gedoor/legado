@@ -5,6 +5,7 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.EXP_PATTERN
+import io.legado.app.utils.Encoder
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.fromJsonObject
@@ -119,6 +120,7 @@ class AnalyzeUrl(
     private fun initUrl() {
         val urlArray = ruleUrl.split(",\n*".toRegex(), 2)
         url = urlArray[0]
+        host = NetworkUtils.getBaseUrl(url)
         if (urlArray.size > 1) {
             val options = GSON.fromJsonObject<Map<String, String>>(urlArray[1])
             options?.let {
@@ -133,6 +135,7 @@ class AnalyzeUrl(
             }
         }
     }
+
 
     /**
      * 解析QueryMap
@@ -151,7 +154,7 @@ class AnalyzeUrl(
                     queryMap[queryM[0]] = URLEncoder.encode(value, "UTF-8")
                 }
             } else if (charset == "escape") {
-//                queryMap[queryM[0]] = StringUtils.escape(value)
+                queryMap[queryM[0]] = Encoder.escape(value)
             } else {
                 queryMap[queryM[0]] = URLEncoder.encode(value, charset)
             }
@@ -166,14 +169,6 @@ class AnalyzeUrl(
         val bindings = SimpleBindings()
         bindings["result"] = result
         return SCRIPT_ENGINE.eval(jsStr, bindings)
-    }
-
-    fun getQueryMap(): Map<String, String> {
-        return queryMap
-    }
-
-    fun getHeaderMap(): Map<String, String> {
-        return headerMap
     }
 
     enum class Method {
