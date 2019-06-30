@@ -5,6 +5,7 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.EXP_PATTERN
+import io.legado.app.data.entities.Book
 import io.legado.app.utils.Encoder
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
@@ -27,7 +28,8 @@ class AnalyzeUrl(
     key: String? = null,
     page: Int? = null,
     headerMapF: Map<String, String>? = null,
-    var baseUrl: String? = null
+    var baseUrl: String? = null,
+    book: Book? = null
 ) {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
@@ -64,7 +66,7 @@ class AnalyzeUrl(
         baseUrl = baseUrl?.split(",\n*".toRegex(), 1)?.get(0)
         headerMapF?.let { headerMap.putAll(it) }
         //替换参数
-        replaceKeyPageJs(key, page)
+        replaceKeyPageJs(key, page, book)
         //处理URL
         initUrl()
     }
@@ -72,7 +74,7 @@ class AnalyzeUrl(
     /**
      * 替换关键字,页数,JS
      */
-    private fun replaceKeyPageJs(key: String?, page: Int?) {
+    private fun replaceKeyPageJs(key: String?, page: Int?, book: Book?) {
         //page
         page?.let {
             val matcher = pagePattern.matcher(ruleUrl)
@@ -96,6 +98,7 @@ class AnalyzeUrl(
                     this["baseUrl"] = baseUrl
                     this["page"] = page
                     this["key"] = key
+                    this["book"] = book
                 }
             }
             val expMatcher = EXP_PATTERN.matcher(ruleUrl)
