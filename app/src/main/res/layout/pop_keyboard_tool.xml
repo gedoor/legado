@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="6dp"
-                android:text="<"
+                android:text="@string/dsm_start"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
@@ -109,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="6dp"
-                android:text=">"
+                android:text="@string/dsm_end"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
