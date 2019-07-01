@@ -25,7 +25,6 @@ public interface IHttpPostApi {
                                        @FieldMap(encoded = true) Map<String, String> fieldMap,
                                        @HeaderMap Map<String, String> headers);
 
-    @FormUrlEncoded
     @POST
     Deferred<Response<String>> postJson(@Url String url,
                                         @Body RequestBody body,
