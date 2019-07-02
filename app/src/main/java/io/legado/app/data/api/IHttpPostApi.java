@@ -26,7 +26,7 @@ public interface IHttpPostApi {
                                        @HeaderMap Map<String, String> headers);
 
     @POST
-    Deferred<Response<String>> postJson(@Url String url,
+    Deferred<Response<String>> postBody(@Url String url,
                                         @Body RequestBody body,
                                         @HeaderMap Map<String, String> headers);
 }
