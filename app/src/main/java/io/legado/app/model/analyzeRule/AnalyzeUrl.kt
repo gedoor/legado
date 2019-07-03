@@ -46,6 +46,7 @@ class AnalyzeUrl(
     private val queryMap = LinkedHashMap<String, String>()
     private val headerMap = HashMap<String, String>()
     private var charset: String? = null
+    private var bodyTxt: String? = null
     var body: RequestBody? = null
         private set
     var method = Method.GET
@@ -121,7 +122,7 @@ class AnalyzeUrl(
      * 处理URL
      */
     private fun initUrl() {
-        val urlArray = ruleUrl.split(",[^\\{]*".toRegex(), 2)
+        var urlArray = ruleUrl.split(",[^\\{]*".toRegex(), 2)
         url = urlArray[0]
         host = NetworkUtils.getBaseUrl(url)
         if (urlArray.size > 1) {
@@ -133,8 +134,20 @@ class AnalyzeUrl(
                         headers
                     )?.let { headerMap.putAll(it) }
                 }
-                options["body"]?.let { }
+                options["body"]?.let { bodyTxt = it }
                 options["charset"]?.let { charset = it }
+            }
+        }
+        when (method) {
+            Method.GET -> {
+                urlArray = url.split("\\?".toRegex())
+                url = urlArray[0]
+                if (urlArray.size > 1) {
+                    analyzePutFields(urlArray[1])
+                }
+            }
+            Method.POST -> {
+                bodyTxt
             }
         }
     }
@@ -144,9 +157,9 @@ class AnalyzeUrl(
      * 解析QueryMap
      */
     @Throws(Exception::class)
-    private fun analyzeQuery(allQuery: String) {
-        queryStr = allQuery
-        val queryS = allQuery.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    private fun analyzePutFields(fieldsTxt: String) {
+        queryStr = fieldsTxt
+        val queryS = fieldsTxt.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (query in queryS) {
             val queryM = query.split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val value = if (queryM.size > 1) queryM[1] else ""
