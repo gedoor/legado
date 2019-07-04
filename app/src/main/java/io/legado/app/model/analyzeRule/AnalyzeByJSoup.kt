@@ -414,7 +414,7 @@ class AnalyzeByJSoup {
         var replacement = ""
 
         init {
-            if (startWithIgnoreCase(ruleStr, "@CSS:")) {
+            if (ruleStr.startWithIgnoreCase("@CSS:")) {
                 isCss = true
                 elementsRule = ruleStr.substring(5).trim { it <= ' ' }
             } else {
