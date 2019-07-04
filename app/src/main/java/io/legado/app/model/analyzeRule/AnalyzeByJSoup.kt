@@ -2,7 +2,6 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils.isEmpty
 import android.text.TextUtils.join
-import io.legado.app.utils.startWithIgnoreCase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Collector
@@ -414,7 +413,7 @@ class AnalyzeByJSoup {
         var replacement = ""
 
         init {
-            if (ruleStr.startWithIgnoreCase("@CSS:")) {
+            if (ruleStr.startsWith("@CSS:", true)) {
                 isCss = true
                 elementsRule = ruleStr.substring(5).trim { it <= ' ' }
             } else {
