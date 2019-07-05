@@ -6,10 +6,9 @@ import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.EXP_PATTERN
 import io.legado.app.data.entities.Book
-import io.legado.app.utils.Encoder
-import io.legado.app.utils.GSON
-import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.*
+import okhttp3.FormBody
+import okhttp3.MediaType
 import okhttp3.RequestBody
 import java.net.URLEncoder
 import java.util.*
@@ -33,6 +32,7 @@ class AnalyzeUrl(
 ) {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
+        private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
 
     lateinit var url: String
@@ -43,7 +43,7 @@ class AnalyzeUrl(
         private set
     var queryStr: String? = null
         private set
-    private val queryMap = LinkedHashMap<String, String>()
+    private val fieldMap = LinkedHashMap<String, String>()
     private val headerMap = HashMap<String, String>()
     private var charset: String? = null
     private var bodyTxt: String? = null
@@ -55,9 +55,9 @@ class AnalyzeUrl(
     val postData: ByteArray
         get() {
             val builder = StringBuilder()
-            val keys = queryMap.keys
+            val keys = fieldMap.keys
             for (key in keys) {
-                builder.append(String.format("%s=%s&", key, queryMap[key]))
+                builder.append(String.format("%s=%s&", key, fieldMap[key]))
             }
             builder.deleteCharAt(builder.lastIndexOf("&"))
             return builder.toString().toByteArray()
@@ -130,9 +130,7 @@ class AnalyzeUrl(
             options?.let {
                 options["method"]?.let { if (it.equals("POST", true)) method = Method.POST }
                 options["headers"]?.let { headers ->
-                    GSON.fromJsonObject<Map<String, String>>(
-                        headers
-                    )?.let { headerMap.putAll(it) }
+                    GSON.fromJsonObject<Map<String, String>>(headers)?.let { headerMap.putAll(it) }
                 }
                 options["body"]?.let { bodyTxt = it }
                 options["charset"]?.let { charset = it }
@@ -143,11 +141,21 @@ class AnalyzeUrl(
                 urlArray = url.split("\\?".toRegex())
                 url = urlArray[0]
                 if (urlArray.size > 1) {
-                    analyzePutFields(urlArray[1])
+                    analyzeFields(urlArray[1])
                 }
             }
             Method.POST -> {
-                bodyTxt
+                bodyTxt?.let {
+                    if (it.isJson()) {
+                        body = RequestBody.create(jsonType, it)
+                    } else {
+                        analyzeFields(it)
+                        val builder = FormBody.Builder()
+                        for (item in fieldMap)
+                            builder.add(item.key, item.value)
+                        body = builder.build()
+                    }
+                }
             }
         }
     }
@@ -157,7 +165,7 @@ class AnalyzeUrl(
      * 解析QueryMap
      */
     @Throws(Exception::class)
-    private fun analyzePutFields(fieldsTxt: String) {
+    private fun analyzeFields(fieldsTxt: String) {
         queryStr = fieldsTxt
         val queryS = fieldsTxt.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (query in queryS) {
@@ -165,14 +173,14 @@ class AnalyzeUrl(
             val value = if (queryM.size > 1) queryM[1] else ""
             if (TextUtils.isEmpty(charset)) {
                 if (NetworkUtils.hasUrlEncoded(value)) {
-                    queryMap[queryM[0]] = value
+                    fieldMap[queryM[0]] = value
                 } else {
-                    queryMap[queryM[0]] = URLEncoder.encode(value, "UTF-8")
+                    fieldMap[queryM[0]] = URLEncoder.encode(value, "UTF-8")
                 }
             } else if (charset == "escape") {
-                queryMap[queryM[0]] = Encoder.escape(value)
+                fieldMap[queryM[0]] = Encoder.escape(value)
             } else {
-                queryMap[queryM[0]] = URLEncoder.encode(value, charset)
+                fieldMap[queryM[0]] = URLEncoder.encode(value, charset)
             }
         }
     }
