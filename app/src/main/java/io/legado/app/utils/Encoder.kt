@@ -3,26 +3,20 @@ package io.legado.app.utils
 object Encoder {
 
     fun escape(src: String): String {
-        var i = 0
-        var char: Char
         val tmp = StringBuilder()
-        tmp.ensureCapacity(src.length * 6)
-        while (i < src.length) {
-            char = src[i]
-            if (Character.isDigit(char) || Character.isLowerCase(char)
-                || Character.isUpperCase(char)
-            )
+        for (char in src) {
+            val charCode = char.toInt()
+            if (charCode in 48..57 || charCode in 65..90 || charCode in 97..122) {
                 tmp.append(char)
-            else if (char.toInt() < 256) {
-                tmp.append("%")
-                if (char.toInt() < 16)
-                    tmp.append("0")
-                tmp.append(char.toInt().toString(16))
-            } else {
-                tmp.append("%u")
-                tmp.append(char.toInt().toString(16))
+                continue
             }
-            i++
+
+            val prefix = when {
+                charCode < 16 -> "%0"
+                charCode < 256 -> "%"
+                else -> "%u"
+            }
+            tmp.append(prefix).append(charCode.toString(16))
         }
         return tmp.toString()
     }
