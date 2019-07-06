@@ -133,16 +133,6 @@ class AnalyzeByJSoup {
                 }
             }
         }
-        if (!isEmpty(sourceRule.replaceRegex)) {
-            val tempList = ArrayList(textS)
-            textS.clear()
-            for (text in tempList) {
-                val tmpText = text.replace(sourceRule.replaceRegex.toRegex(), sourceRule.replacement)
-                if (tmpText.isNotEmpty()) {
-                    textS.add(tmpText)
-                }
-            }
-        }
         return textS
     }
 
@@ -409,24 +399,13 @@ class AnalyzeByJSoup {
     internal inner class SourceRule(ruleStr: String) {
         var isCss = false
         var elementsRule: String
-        var replaceRegex = ""
-        var replacement = ""
 
         init {
             if (ruleStr.startsWith("@CSS:", true)) {
                 isCss = true
                 elementsRule = ruleStr.substring(5).trim { it <= ' ' }
             } else {
-                val ruleStrS: Array<String> =
-                    ruleStr.trim { it <= ' ' }.split("#".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                //分离正则表达式
-                elementsRule = ruleStrS[0]
-                if (ruleStrS.size > 1) {
-                    replaceRegex = ruleStrS[1]
-                }
-                if (ruleStrS.size > 2) {
-                    replacement = ruleStrS[2]
-                }
+                elementsRule = ruleStr
             }
         }
     }
