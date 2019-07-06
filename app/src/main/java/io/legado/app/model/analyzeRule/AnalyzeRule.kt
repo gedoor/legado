@@ -36,7 +36,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     @JvmOverloads
-    fun setContent(body: Any?, baseUrl: String? = null): AnalyzeRule {
+    fun setContent(body: Any?, baseUrl: String? = this.baseUrl): AnalyzeRule {
         if (body == null) throw AssertionError("Content cannot be null")
         isJSON = body.toString().isJson()
         `object` = body
@@ -129,21 +129,23 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         }
         if (result == null) return ArrayList()
         if (result is String) {
-            result = Arrays.asList((result as String?)?.htmlFormat()?.split("\n"))
+            result = listOf((result as String?)?.htmlFormat()?.split("\n"))
         }
         baseUrl?.let {
             if (isUrl && !TextUtils.isEmpty(it)) {
                 val urlList = ArrayList<String>()
-                for (url in (result as List<String>?)!!) {
-                    val absoluteURL = NetworkUtils.getAbsoluteURL(it, url)
-                    if (!urlList.contains(absoluteURL)) {
-                        urlList.add(absoluteURL)
+                if (result is List<*>) {
+                    for (url in result) {
+                        val absoluteURL = NetworkUtils.getAbsoluteURL(it, url.toString())
+                        if (!urlList.contains(absoluteURL)) {
+                            urlList.add(absoluteURL)
+                        }
                     }
                 }
                 return urlList
             }
         }
-        return result as List<String>?
+        return result as? List<String>
     }
 
     /**
