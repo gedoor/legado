@@ -13,4 +13,6 @@ interface CommonHttpApi {
     fun post(@Url url: String, @FieldMap map: Map<String, String>): Deferred<String>
 
 
+    @GET
+    fun get(@Url url: String) : Deferred<String>
 }
