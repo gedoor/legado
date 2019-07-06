@@ -8,37 +8,18 @@ object NetworkUtils {
 
     private val notNeedEncoding: BitSet by lazy {
         val bitSet = BitSet(256)
-        var i: Int = 'a'.toInt()
-        while (i <= 'z'.toInt()) {
+        for (i in 'a'.toInt()..'z'.toInt()) {
             bitSet.set(i)
-            i++
         }
-        i = 'A'.toInt()
-        while (i <= 'Z'.toInt()) {
+        for (i in 'A'.toInt()..'Z'.toInt()) {
             bitSet.set(i)
-            i++
         }
-        i = '0'.toInt()
-        while (i <= '9'.toInt()) {
+        for (i in '0'.toInt()..'9'.toInt()) {
             bitSet.set(i)
-            i++
         }
-        bitSet.set('+'.toInt())
-        bitSet.set('-'.toInt())
-        bitSet.set('_'.toInt())
-        bitSet.set('.'.toInt())
-        bitSet.set('$'.toInt())
-        bitSet.set(':'.toInt())
-        bitSet.set('('.toInt())
-        bitSet.set(')'.toInt())
-        bitSet.set('!'.toInt())
-        bitSet.set('*'.toInt())
-        bitSet.set('@'.toInt())
-        bitSet.set('&'.toInt())
-        bitSet.set('#'.toInt())
-        bitSet.set(','.toInt())
-        bitSet.set('['.toInt())
-        bitSet.set(']'.toInt())
+        for (char in "+-_.$:()!*@&#,[]") {
+            bitSet.set(char.toInt())
+        }
         return@lazy bitSet
     }
 
@@ -69,7 +50,6 @@ object NetworkUtils {
             // 其他字符，肯定需要urlEncode
             needEncode = true
             break
-            i++
         }
 
         return !needEncode
@@ -79,7 +59,7 @@ object NetworkUtils {
      * 判断c是否是16进制的字符
      */
     private fun isDigit16Char(c: Char): Boolean {
-        return c >= '0' && c <= '9' || c >= 'A' && c <= 'F'
+        return c in '0'..'9' || c in 'A'..'F' || c in 'a'..'f'
     }
 
     /**

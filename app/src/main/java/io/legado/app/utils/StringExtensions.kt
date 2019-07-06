@@ -17,7 +17,7 @@ fun String?.isJson(): Boolean = this?.run {
 } ?: false
 
 fun String?.htmlFormat(): String = if (this.isNullOrBlank()) "" else
-    this.replace("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>".toRegex(), "\n")// 替换特定标签为换行符
+    this.replace("(?i)<(br[\\s/]*|/*p\\b.*?|/*div\\b.*?)>".toRegex(), "\n")// 替换特定标签为换行符
         .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
         .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
         .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字

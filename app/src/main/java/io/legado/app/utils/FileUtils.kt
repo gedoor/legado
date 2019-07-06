@@ -21,20 +21,7 @@ object FileUtils {
     fun getSdPath() = Environment.getExternalStorageDirectory().absolutePath
 
     fun getFileByPath(filePath: String): File? {
-        return if (isSpace(filePath)) null else File(filePath)
-    }
-
-    fun isSpace(s: String?): Boolean {
-        if (s == null) return true
-        var i = 0
-        val len = s.length
-        while (i < len) {
-            if (!Character.isWhitespace(s[i])) {
-                return false
-            }
-            ++i
-        }
-        return true
+        return if (filePath.isBlank()) null else File(filePath)
     }
 
     fun getSdCardPath(): String {
@@ -101,12 +88,9 @@ object FileUtils {
         return paths
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     fun getPath(context: Context, uri: Uri): String? {
-        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
@@ -119,7 +103,7 @@ object FileUtils {
 
             } else if (isDownloadsDocument(uri)) {
                 val id = DocumentsContract.getDocumentId(uri)
-                val split = id.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                val split = id.split(":").dropLastWhile { it.isEmpty() }.toTypedArray()
                 val type = split[0]
                 if ("raw".equals(
                         type,
