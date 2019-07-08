@@ -7,13 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.api.CommonHttpApi
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.coroutine.Function
 import io.legado.app.help.http.HttpHelper
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import org.jetbrains.anko.error
-import java.lang.StringBuilder
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
 
@@ -37,10 +33,12 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 //            { error { "${it.message}" } },
 //            { finally?.let { it() } })
 
-       val task =  Coroutine.of {
+        execute {
             val response: String = HttpHelper.getApiService<CommonHttpApi>(
                 "http://www.baidu.com"
             ).get("http://www.baidu.com").await()
+
+            delay(4000L)
 
             Log.e("TAG1", Thread.currentThread().name)
 
@@ -50,7 +48,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 Log.e("TAG!", "start")
             }
             .onSuccess {
-               Log.e("TAG!", "success: $it")
+                Log.e("TAG!", "success: $it")
             }
             .onError {
                 error { "${it.message}" }
@@ -59,7 +57,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 Log.e("TAG!", "finally")
             }
 
-//        task.cancel()
     }
 
 }
