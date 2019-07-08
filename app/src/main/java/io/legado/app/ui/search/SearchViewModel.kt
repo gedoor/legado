@@ -5,12 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
-import io.legado.app.data.api.CommonHttpApi
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.help.http.HttpHelper
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeout
-import org.jetbrains.anko.error
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
 
@@ -18,7 +13,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     fun search(start: (() -> Unit)? = null, finally: (() -> Unit)? = null) {
         execute {
-//            val response: String = HttpHelper.getApiService<CommonHttpApi>(
+            //            val response: String = HttpHelper.getApiService<CommonHttpApi>(
 //                "http://www.baidu.com"
 //            ).get("http://www.baidu.com").await()
 //

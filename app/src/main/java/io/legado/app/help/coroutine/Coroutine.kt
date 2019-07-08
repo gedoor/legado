@@ -1,6 +1,5 @@
 package io.legado.app.help.coroutine
 
-import android.util.Log
 import kotlinx.coroutines.*
 
 class Coroutine<T>(scope: CoroutineScope, private val domain: suspend CoroutineScope.() -> T) {
@@ -75,7 +74,6 @@ class Coroutine<T>(scope: CoroutineScope, private val domain: suspend CoroutineS
 
     private suspend fun executeDomain(domain: suspend CoroutineScope.() -> T): T? {
         return withContext(Dispatchers.IO) {
-            Log.e("TAG!", "executeDomain")
             domain()
         }
     }
