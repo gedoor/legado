@@ -9,6 +9,7 @@ import io.legado.app.data.api.CommonHttpApi
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.http.HttpHelper
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeout
 import org.jetbrains.anko.error
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -17,16 +18,16 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     fun search(start: (() -> Unit)? = null, finally: (() -> Unit)? = null) {
         execute {
-            val response: String = HttpHelper.getApiService<CommonHttpApi>(
-                "http://www.baidu.com"
-            ).get("http://www.baidu.com").await()
+//            val response: String = HttpHelper.getApiService<CommonHttpApi>(
+//                "http://www.baidu.com"
+//            ).get("http://www.baidu.com").await()
+//
+//            delay(4000L)
+//
+//            Log.e("TAG1", Thread.currentThread().name)
 
-            delay(4000L)
-
-            Log.e("TAG1", Thread.currentThread().name)
-
-            response
-        }
+            null
+        }.timeout(30000L)
             .onStart {
                 Log.e("TAG!", "start")
             }
@@ -34,12 +35,11 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 Log.e("TAG!", "success: $it")
             }
             .onError {
-                error { "${it.message}" }
+                Log.e("TAG!", "error: $it")
             }
             .onFinally {
                 Log.e("TAG!", "finally")
             }
-
     }
 
 }

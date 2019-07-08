@@ -1,13 +1,20 @@
 package io.legado.app.help.coroutine
 
+import android.util.Log
 import kotlinx.coroutines.*
 
-class Coroutine<T>(private val scope: CoroutineScope) {
+class Coroutine<T>(scope: CoroutineScope, private val domain: suspend CoroutineScope.() -> T) {
 
     companion object {
 
-        fun <T> with(scope: CoroutineScope): Coroutine<T> {
-            return Coroutine(scope)
+        fun <T> with(scope: CoroutineScope, domain: suspend CoroutineScope.() -> T): Coroutine<T> {
+            return Coroutine(scope, domain)
+        }
+    }
+
+    init {
+        scope.launch {
+            executeInternal(domain)
         }
     }
 
@@ -16,28 +23,10 @@ class Coroutine<T>(private val scope: CoroutineScope) {
     private var error: ((Throwable) -> Unit)? = null
     private var finally: (() -> Unit)? = null
 
-    fun execute(domain: suspend CoroutineScope.() -> T): Coroutine<T> {
-        scope.launch {
-            tryCatch(
-                {
-                    start?.let { it() }
+    private var timeMillis: Long? = null
 
-
-                    val result: T? = withContext(Dispatchers.IO) {
-                        domain()
-                    }
-
-                    success?.let { it(result) }
-
-
-                },
-                { e ->
-                    error?.let { it(e) }
-                },
-                {
-                    finally?.let { it() }
-                })
-        }
+    fun timeout(timeMillis: Long): Coroutine<T> {
+        this.timeMillis = timeMillis
         return this@Coroutine
     }
 
@@ -59,6 +48,36 @@ class Coroutine<T>(private val scope: CoroutineScope) {
     fun onFinally(finally: () -> Unit): Coroutine<T> {
         this.finally = finally
         return this@Coroutine
+    }
+
+    private suspend fun executeInternal(domain: suspend CoroutineScope.() -> T) {
+        tryCatch(
+            {
+                start?.let { it() }
+
+                val result = if (timeMillis != null && timeMillis!! > 0) {
+                    withTimeout(timeMillis!!) {
+                        executeDomain(domain)
+                    }
+                } else {
+                    executeDomain(domain)
+                }
+
+                success?.let { it(result) }
+            },
+            { e ->
+                error?.let { it(e) }
+            },
+            {
+                finally?.let { it() }
+            })
+    }
+
+    private suspend fun executeDomain(domain: suspend CoroutineScope.() -> T): T? {
+        return withContext(Dispatchers.IO) {
+            Log.e("TAG!", "executeDomain")
+            domain()
+        }
     }
 
     private suspend fun tryCatch(

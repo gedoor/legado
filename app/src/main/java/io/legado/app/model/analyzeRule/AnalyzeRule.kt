@@ -152,7 +152,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             if (isUrl && !TextUtils.isEmpty(it)) {
                 val urlList = ArrayList<String>()
                 if (result is List<*>) {
-                    for (url in result) {
+                    for (url in result as List<*>) {
                         val absoluteURL = NetworkUtils.getAbsoluteURL(it, url.toString())
                         if (!urlList.contains(absoluteURL)) {
                             urlList.add(absoluteURL)

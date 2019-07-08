@@ -12,7 +12,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     AnkoLogger {
 
     fun <T> execute(domain: suspend CoroutineScope.() -> T): Coroutine<T> {
-        return Coroutine.with<T>(this).execute(domain)
+        return Coroutine.with(this) { domain() }
     }
 
     override fun onCleared() {
