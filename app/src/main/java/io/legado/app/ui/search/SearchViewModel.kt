@@ -16,23 +16,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     val searchBooks: LiveData<List<SearchBook>> = MutableLiveData()
 
     fun search(start: (() -> Unit)? = null, finally: (() -> Unit)? = null) {
-//        launchOnUI(
-//            {
-//                start?.let { it() }
-//                val searchResponse = withContext(IO) {
-//                    val response: Deferred<String> = HttpHelper.getApiService<CommonHttpApi>(
-//                        "http://www.baidu.com"
-//                    ).get("http://www.baidu.com")
-//
-//                }
-//
-////                val result = searchResponse.await()
-////
-////                println(result)
-//            },
-//            { error { "${it.message}" } },
-//            { finally?.let { it() } })
-
         execute {
             val response: String = HttpHelper.getApiService<CommonHttpApi>(
                 "http://www.baidu.com"
