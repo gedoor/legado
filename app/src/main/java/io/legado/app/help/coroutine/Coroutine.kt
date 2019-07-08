@@ -2,18 +2,18 @@ package io.legado.app.help.coroutine
 
 import kotlinx.coroutines.*
 
-class Coroutine<T>(scope: CoroutineScope, private val domain: suspend CoroutineScope.() -> T) {
+class Coroutine<T>(scope: CoroutineScope, private val block: suspend CoroutineScope.() -> T) {
 
     companion object {
 
-        fun <T> with(scope: CoroutineScope, domain: suspend CoroutineScope.() -> T): Coroutine<T> {
-            return Coroutine(scope, domain)
+        fun <T> with(scope: CoroutineScope, block: suspend CoroutineScope.() -> T): Coroutine<T> {
+            return Coroutine(scope, block)
         }
     }
 
     init {
         scope.launch {
-            executeInternal(domain)
+            executeInternal(block)
         }
     }
 
@@ -24,8 +24,15 @@ class Coroutine<T>(scope: CoroutineScope, private val domain: suspend CoroutineS
 
     private var timeMillis: Long? = null
 
-    fun timeout(timeMillis: Long): Coroutine<T> {
-        this.timeMillis = timeMillis
+    private var errorReturn: Result<T>? = null
+
+    fun timeout(timeMillis: () -> Long): Coroutine<T> {
+        this.timeMillis = timeMillis()
+        return this@Coroutine
+    }
+
+    fun onErrorReturn(value: () -> T?): Coroutine<T> {
+        errorReturn = Result(value())
         return this@Coroutine
     }
 
@@ -49,32 +56,40 @@ class Coroutine<T>(scope: CoroutineScope, private val domain: suspend CoroutineS
         return this@Coroutine
     }
 
-    private suspend fun executeInternal(domain: suspend CoroutineScope.() -> T) {
+    private suspend fun executeInternal(block: suspend CoroutineScope.() -> T) {
         tryCatch(
             {
                 start?.let { it() }
 
-                val result = if (timeMillis != null && timeMillis!! > 0) {
-                    withTimeout(timeMillis!!) {
-                        executeDomain(domain)
+                val time = timeMillis
+                val result = if (time != null && time > 0) {
+                    withTimeout(time) {
+                        executeBlock(block)
                     }
                 } else {
-                    executeDomain(domain)
+                    executeBlock(block)
                 }
 
                 success?.let { it(result) }
             },
             { e ->
-                error?.let { it(e) }
+                val consume: Boolean = errorReturn?.value?.let { value ->
+                    success?.let { it(value) }
+                    true
+                } ?: false
+
+                if (!consume) {
+                    error?.let { it(e) }
+                }
             },
             {
                 finally?.let { it() }
             })
     }
 
-    private suspend fun executeDomain(domain: suspend CoroutineScope.() -> T): T? {
+    private suspend fun executeBlock(block: suspend CoroutineScope.() -> T): T? {
         return withContext(Dispatchers.IO) {
-            domain()
+            block()
         }
     }
 
@@ -92,4 +107,5 @@ class Coroutine<T>(scope: CoroutineScope, private val domain: suspend CoroutineS
         }
     }
 
+    private data class Result<out T>(val value: T?)
 }

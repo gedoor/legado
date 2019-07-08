@@ -146,7 +146,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         }
         if (result == null) return ArrayList()
         if (result is String) {
-            result = listOf((result as String?)?.htmlFormat()?.split("\n"))
+            result = listOf((result as String).htmlFormat().split("\n"))
         }
         baseUrl?.let {
             if (isUrl && !TextUtils.isEmpty(it)) {
