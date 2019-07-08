@@ -1,10 +1,8 @@
 package io.legado.app.utils
 
-import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.DocumentsContract
@@ -171,8 +169,8 @@ object FileUtils {
                 selection,
                 selectionArgs,
                 null
-            )!!.use { cursor ->
-                if (cursor != null && cursor.moveToFirst()) {
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) {
                     val index = cursor.getColumnIndexOrThrow(column)
                     return cursor.getString(index)
                 }

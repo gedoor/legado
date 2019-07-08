@@ -20,7 +20,7 @@ import javax.script.SimpleBindings
 @Keep
 class AnalyzeRule(private var book: BaseBook? = null) {
     private var `object`: Any? = null
-    private var isJSON: Boolean? = false
+    private var isJSON: Boolean = false
     private var baseUrl: String? = null
 
     private var analyzeByXPath: AnalyzeByXPath? = null
@@ -36,7 +36,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     @JvmOverloads
-    fun setContent(body: Any?, baseUrl: String? = null): AnalyzeRule {
+    fun setContent(body: Any?, baseUrl: String? = this.baseUrl): AnalyzeRule {
         if (body == null) throw AssertionError("Content cannot be null")
         isJSON = body.toString().isJson()
         `object` = body
@@ -50,8 +50,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     /**
      * 获取XPath解析类
      */
-    private fun getAnalyzeByXPath(o: Any?): AnalyzeByXPath {
-        return if (o != null) {
+    private fun getAnalyzeByXPath(o: Any): AnalyzeByXPath {
+        return if (o != `object`) {
             AnalyzeByXPath().parse(o)
         } else getAnalyzeByXPath()
     }
@@ -68,8 +68,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     /**
      * 获取JSOUP解析类
      */
-    private fun getAnalyzeByJSoup(o: Any?): AnalyzeByJSoup {
-        return if (o != null) {
+    private fun getAnalyzeByJSoup(o: Any): AnalyzeByJSoup {
+        return if (o != `object`) {
             AnalyzeByJSoup().parse(o)
         } else getAnalyzeByJSoup()
     }
@@ -86,8 +86,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     /**
      * 获取JSON解析类
      */
-    private fun getAnalyzeByJSonPath(o: Any?): AnalyzeByJSonPath {
-        return if (o != null) {
+    private fun getAnalyzeByJSonPath(o: Any): AnalyzeByJSonPath {
+        return if (o != `object`) {
             AnalyzeByJSonPath().parse(o)
         } else getAnalyzeByJSonPath()
     }
@@ -116,34 +116,53 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @Throws(Exception::class)
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean): List<String>? {
         var result: Any? = null
-        for (rule in ruleList) {
-            when (rule.mode) {
-                Mode.Js -> {
-                    if (result == null) result = `object`
-                    result = evalJS(rule.rule, result)
+        `object`?.let { o ->
+            if (ruleList.isNotEmpty()) {
+                if (ruleList.isNotEmpty()) result = o
+                for (rule in ruleList) {
+                    result?.let {
+                        if (rule.rule.isNotEmpty()) {
+                            when (rule.mode) {
+                                Mode.Js -> result = evalJS(rule.rule, result)
+                                Mode.JSon -> result =
+                                    getAnalyzeByJSonPath(it).getStringList(rule.rule)
+                                Mode.XPath -> result =
+                                    getAnalyzeByXPath(it).getStringList(rule.rule)
+                                else -> result = getAnalyzeByJSoup(it).getStringList(rule.rule)
+                            }
+                        }
+                        if (rule.replaceRegex.isNotEmpty() && result is List<*>) {
+                            val newList = ArrayList<String>()
+                            for (item in result as List<*>) {
+                                newList.add(replaceRegex(item.toString(), rule))
+                            }
+                            result = newList
+                        } else if (rule.replaceRegex.isNotEmpty()) {
+                            result = replaceRegex(result.toString(), rule)
+                        }
+                    }
                 }
-                Mode.JSon -> result = getAnalyzeByJSonPath(result).getStringList(rule.rule)
-                Mode.XPath -> result = getAnalyzeByXPath(result).getStringList(rule.rule)
-                else -> result = getAnalyzeByJSoup(result).getStringList(rule.rule)
             }
         }
         if (result == null) return ArrayList()
         if (result is String) {
-            result = Arrays.asList((result as String?)?.htmlFormat()?.split("\n"))
+            result = listOf((result as String?)?.htmlFormat()?.split("\n"))
         }
         baseUrl?.let {
             if (isUrl && !TextUtils.isEmpty(it)) {
                 val urlList = ArrayList<String>()
-                for (url in (result as List<String>?)!!) {
-                    val absoluteURL = NetworkUtils.getAbsoluteURL(it, url)
-                    if (!urlList.contains(absoluteURL)) {
-                        urlList.add(absoluteURL)
+                if (result is List<*>) {
+                    for (url in result) {
+                        val absoluteURL = NetworkUtils.getAbsoluteURL(it, url.toString())
+                        if (!urlList.contains(absoluteURL)) {
+                            urlList.add(absoluteURL)
+                        }
                     }
                 }
                 return urlList
             }
         }
-        return result as List<String>?
+        return result as? List<String>
     }
 
     /**
@@ -165,19 +184,24 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @JvmOverloads
     fun getString(ruleList: List<SourceRule>, isUrl: Boolean = false): String {
         var result: Any? = null
-        for (rule in ruleList) {
-            if (rule.rule.isNotBlank()) {
-                when (rule.mode) {
-                    Mode.Js -> {
-                        if (result == null) result = `object`
-                        result = evalJS(rule.rule, result)
+        `object`?.let { o ->
+            if (ruleList.isNotEmpty()) result = o
+            for (rule in ruleList) {
+                result?.let {
+                    if (rule.rule.isNotBlank()) {
+                        when (rule.mode) {
+                            Mode.Js -> result = evalJS(rule.rule, it)
+                            Mode.JSon -> result = getAnalyzeByJSonPath(it).getString(rule.rule)
+                            Mode.XPath -> result = getAnalyzeByXPath(it).getString(rule.rule)
+                            Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
+                                getAnalyzeByJSoup(it).getString0(rule.rule)
+                            } else {
+                                getAnalyzeByJSoup(it).getString(rule.rule)
+                            }
+                        }
                     }
-                    Mode.JSon -> result = getAnalyzeByJSonPath(result).getString(rule.rule)
-                    Mode.XPath -> result = getAnalyzeByXPath(result).getString(rule.rule)
-                    Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
-                        getAnalyzeByJSoup(result).getString0(rule.rule)
-                    } else {
-                        getAnalyzeByJSoup(result).getString(rule.rule)
+                    if (rule.replaceRegex.isNotEmpty()) {
+                        result = replaceRegex(result.toString(), rule)
                     }
                 }
             }
@@ -199,15 +223,20 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         if (TextUtils.isEmpty(ruleStr)) return null
         var result: Any? = null
         val ruleList = splitSourceRule(ruleStr)
-        for (rule in ruleList) {
-            when (rule.mode) {
-                Mode.Js -> {
-                    if (result == null) result = `object`
-                    result = evalJS(rule.rule, result)
+        `object`?.let { o ->
+            if (ruleList.isNotEmpty()) result = o
+            for (rule in ruleList) {
+                result?.let {
+                    when (rule.mode) {
+                        Mode.Js -> result = evalJS(rule.rule, it)
+                        Mode.JSon -> result = getAnalyzeByJSonPath(it).getObject(rule.rule)
+                        Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
+                        else -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
+                    }
+                    if (rule.replaceRegex.isNotEmpty()) {
+                        result = replaceRegex(result.toString(), rule)
+                    }
                 }
-                Mode.JSon -> result = getAnalyzeByJSonPath(result).getObject(rule.rule)
-                Mode.XPath -> result = getAnalyzeByXPath(result).getElements(rule.rule)
-                else -> result = getAnalyzeByJSoup(result).getElements(rule.rule)
             }
         }
         return result
@@ -221,15 +250,23 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     fun getElements(ruleStr: String): List<Any> {
         var result: Any? = null
         val ruleList = splitSourceRule(ruleStr)
-        for (rule in ruleList) {
-            when (rule.mode) {
-                Mode.Js -> {
-                    if (result == null) result = `object`
-                    result = evalJS(rule.rule, result)
+        `object`?.let { o ->
+            if (ruleList.isNotEmpty()) result = o
+            for (rule in ruleList) {
+                result?.let {
+                    when (rule.mode) {
+                        Mode.Js -> {
+                            if (result == null) result = `object`
+                            result = evalJS(rule.rule, result)
+                        }
+                        Mode.JSon -> result = getAnalyzeByJSonPath(it).getList(rule.rule)
+                        Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
+                        else -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
+                    }
+                    if (rule.replaceRegex.isNotEmpty()) {
+                        result = replaceRegex(result.toString(), rule)
+                    }
                 }
-                Mode.JSon -> result = getAnalyzeByJSonPath(result).getList(rule.rule)
-                Mode.XPath -> result = getAnalyzeByXPath(result).getElements(rule.rule)
-                else -> result = getAnalyzeByJSoup(result).getElements(rule.rule)
             }
         }
         result?.let {
@@ -237,6 +274,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         }
         return ArrayList()
     }
+
 
     /**
      * 保存变量
@@ -279,6 +317,27 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             vRuleStr = vRuleStr.replace(getMatcher.group(), value)
         }
         return vRuleStr
+    }
+
+    /**
+     * 正则替换
+     */
+    private fun replaceRegex(result: String, rule: SourceRule): String {
+        var result = result
+        if (rule.replaceRegex.isNotEmpty()) {
+            result = if (rule.replaceFirst) {
+                val pattern = Pattern.compile(rule.replaceRegex)
+                val matcher = pattern.matcher(result)
+                if (matcher.find()) {
+                    matcher.group(0).replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+                } else {
+                    ""
+                }
+            } else {
+                result.replace(rule.replaceRegex.toRegex(), rule.replacement)
+            }
+        }
+        return result
     }
 
     /**
@@ -327,7 +386,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 mode = Mode.JSon
                 vRuleStr = vRuleStr.substring(6)
             }
-            else -> mode = if (isJSON!!) {
+            else -> mode = if (isJSON) {
                 Mode.JSon
             } else {
                 Mode.Default
@@ -368,14 +427,17 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     inner class SourceRule internal constructor(ruleStr: String, mainMode: Mode) {
         internal var mode: Mode
         internal var rule: String
+        internal var replaceRegex = ""
+        internal var replacement = ""
+        internal var replaceFirst = false
 
         init {
             this.mode = mainMode
             if (mode == Mode.Js) {
-                if (ruleStr.startsWith("<js>")) {
-                    rule = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
+                rule = if (ruleStr.startsWith("<js>")) {
+                    ruleStr.substring(4, ruleStr.lastIndexOf("<"))
                 } else {
-                    rule = ruleStr.substring(4)
+                    ruleStr.substring(4)
                 }
             } else {
                 when {
@@ -397,6 +459,20 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     }
                     else -> rule = ruleStr
                 }
+            }
+            //分离正则表达式
+            val ruleStrS =
+                rule.trim { it <= ' ' }.split("##".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()
+            rule = ruleStrS[0]
+            if (ruleStrS.size > 1) {
+                replaceRegex = ruleStrS[1]
+            }
+            if (ruleStrS.size > 2) {
+                replacement = ruleStrS[2]
+            }
+            if (ruleStrS.size > 3) {
+                replaceFirst = true
             }
         }
 
