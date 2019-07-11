@@ -31,6 +31,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             .onErrorReturn { "error return" }
             .onStart {
                 Log.e("TAG!", "start")
+                start
             }
             .onSuccess {
                 Log.e("TAG!", "success: $it")
@@ -40,6 +41,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             }
             .onFinally {
                 Log.e("TAG!", "finally")
+                finally
             }
     }
 
