@@ -159,6 +159,8 @@ class AnalyzeUrl(
                             builder.add(item.key, item.value)
                         body = builder.build()
                     }
+                } ?: let {
+                    body = FormBody.Builder().build()
                 }
             }
         }
