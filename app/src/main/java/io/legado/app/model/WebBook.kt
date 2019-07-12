@@ -11,7 +11,7 @@ import io.legado.app.model.webbook.BookList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
-class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
+class WebBook(private val bookSource: BookSource) : CoroutineScope by MainScope() {
 
     fun searchBook(key: String, page: Int?): Coroutine<List<SearchBook>> {
         return Coroutine.with(this) {
