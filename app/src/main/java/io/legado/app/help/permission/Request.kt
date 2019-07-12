@@ -127,19 +127,21 @@ internal class Request : OnRequestPermissionsResultCallback {
     private fun showSettingDialog(rationale: CharSequence, cancel: () -> Unit) {
         rationaleDialog?.dismiss()
         source?.context?.let {
-            rationaleDialog = AlertDialog.Builder(it)
-                .setTitle(R.string.dialog_title)
-                .setMessage(rationale)
-                .setPositiveButton(R.string.dialog_setting) { _, _ ->
-                    it.startActivity<PermissionActivity>(
-                        Pair(
-                            PermissionActivity.KEY_INPUT_REQUEST_TYPE,
-                            TYPE_REQUEST_SETTING
+            runCatching {
+                rationaleDialog = AlertDialog.Builder(it)
+                    .setTitle(R.string.dialog_title)
+                    .setMessage(rationale)
+                    .setPositiveButton(R.string.dialog_setting) { _, _ ->
+                        it.startActivity<PermissionActivity>(
+                            Pair(
+                                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
+                                TYPE_REQUEST_SETTING
+                            )
                         )
-                    )
-                }
-                .setNegativeButton(R.string.dialog_cancel) { _, _ -> cancel() }
-                .show()
+                    }
+                    .setNegativeButton(R.string.dialog_cancel) { _, _ -> cancel() }
+                    .show()
+            }
         }
     }
 
