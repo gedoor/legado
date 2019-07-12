@@ -33,7 +33,7 @@ class WebBook(private val bookSource: BookSource) : CoroutineScope by MainScope(
                 }
                 return@with BookList().analyzeBookList(response, bookSource, analyzeUrl)
             }
-            ArrayList()
+            return@with ArrayList<SearchBook>()
         }
     }
 

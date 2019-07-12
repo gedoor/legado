@@ -1,10 +1,16 @@
 package io.legado.app.utils
 
 import android.text.TextUtils
+import retrofit2.Response
 import java.net.URL
 import java.util.*
 
 object NetworkUtils {
+    fun getUrl(response: Response<*>): String {
+        val networkResponse = response.raw().networkResponse()
+        return networkResponse?.request()?.url()?.toString()
+            ?: response.raw().request().url().toString()
+    }
 
     private val notNeedEncoding: BitSet by lazy {
         val bitSet = BitSet(256)
