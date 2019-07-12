@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.legado.app.App
@@ -10,6 +11,7 @@ import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefString
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -37,6 +39,25 @@ data class BookSource(
     var ruleToc: String? = null,          // 目录页规则
     var ruleContent: String? = null           // 正文页规则
 ) : Parcelable {
+    @Ignore
+    @IgnoredOnParcel
+    var searchRuleV:SearchRule? = null
+
+    @Ignore
+    @IgnoredOnParcel
+    var exploreRuleV:ExploreRule? = null
+
+    @Ignore
+    @IgnoredOnParcel
+    var bookInfoRuleV:BookInfoRule? = null
+
+    @Ignore
+    @IgnoredOnParcel
+    var tocRuleV:TocRule? = null
+
+    @Ignore
+    @IgnoredOnParcel
+    var contentRuleV:ContentRule? = null
 
     fun getHeaderMap(): Map<String, String> {
         val headerMap = HashMap<String, String>()
@@ -50,23 +71,43 @@ data class BookSource(
     }
 
 
-    fun getSearchRule(): SearchRule? {
-        return GSON.fromJsonObject<SearchRule>(ruleSearch)
+    fun getSearchRule(): SearchRule {
+        searchRuleV?:let {
+            searchRuleV = GSON.fromJsonObject<SearchRule>(ruleSearch)
+            searchRuleV?:let { searchRuleV = SearchRule() }
+        }
+        return searchRuleV!!
     }
 
-    fun getExploreRule(): ExploreRule? {
-        return GSON.fromJsonObject<ExploreRule>(ruleExplore)
+    fun getExploreRule(): ExploreRule {
+        exploreRuleV?:let {
+            exploreRuleV = GSON.fromJsonObject<ExploreRule>(ruleExplore)
+            exploreRuleV?:let { exploreRuleV = ExploreRule() }
+        }
+        return exploreRuleV!!
     }
 
     fun getBookInfoRule(): BookInfoRule? {
-        return GSON.fromJsonObject<BookInfoRule>(ruleBookInfo)
+        bookInfoRuleV?:let {
+            bookInfoRuleV = GSON.fromJsonObject<BookInfoRule>(ruleBookInfo)
+            bookInfoRuleV?:let { bookInfoRuleV = BookInfoRule() }
+        }
+        return bookInfoRuleV!!
     }
 
     fun getTocRule(): TocRule? {
-        return GSON.fromJsonObject<TocRule>(ruleToc)
+        tocRuleV?:let {
+            tocRuleV = GSON.fromJsonObject<TocRule>(ruleToc)
+            tocRuleV?:let { tocRuleV = TocRule() }
+        }
+        return tocRuleV!!
     }
 
     fun getContentRule(): ContentRule? {
-        return GSON.fromJsonObject<ContentRule>(ruleContent)
+        contentRuleV?:let {
+            contentRuleV = GSON.fromJsonObject<ContentRule>(ruleContent)
+            contentRuleV?:let { contentRuleV = ContentRule() }
+        }
+        return contentRuleV!!
     }
 }

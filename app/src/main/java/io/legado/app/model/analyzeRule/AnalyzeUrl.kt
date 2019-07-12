@@ -27,7 +27,7 @@ class AnalyzeUrl(
     key: String? = null,
     page: Int? = null,
     headerMapF: Map<String, String>? = null,
-    var baseUrl: String? = null,
+    baseUrl: String? = null,
     book: Book? = null
 ) {
     companion object {
@@ -35,19 +35,19 @@ class AnalyzeUrl(
         private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
 
-    lateinit var url: String
+    lateinit var baseUrl: String
         private set
-    var host: String? = null
+    lateinit var url: String
         private set
     var path: String? = null
         private set
     var queryStr: String? = null
         private set
-    private val fieldMap = LinkedHashMap<String, String>()
-    private val headerMap = HashMap<String, String>()
+    val fieldMap = LinkedHashMap<String, String>()
+    val headerMap = HashMap<String, String>()
     private var charset: String? = null
     private var bodyTxt: String? = null
-    var body: RequestBody? = null
+    lateinit var body: RequestBody
         private set
     var method = Method.GET
         private set
@@ -64,7 +64,9 @@ class AnalyzeUrl(
         }
 
     init {
-        baseUrl = baseUrl?.split(",\n*".toRegex(), 1)?.get(0)
+        baseUrl?.let {
+            this.baseUrl = it.split(",\n*".toRegex(), 1)[0]
+        }
         headerMapF?.let { headerMap.putAll(it) }
         //替换参数
         replaceKeyPageJs(key, page, book)
@@ -124,7 +126,9 @@ class AnalyzeUrl(
     private fun initUrl() {
         var urlArray = ruleUrl.split(",[^\\{]*".toRegex(), 2)
         url = urlArray[0]
-        host = NetworkUtils.getBaseUrl(url)
+        NetworkUtils.getBaseUrl(url)?.let {
+            baseUrl = it
+        }
         if (urlArray.size > 1) {
             val options = GSON.fromJsonObject<Map<String, String>>(urlArray[1])
             options?.let {
@@ -155,6 +159,8 @@ class AnalyzeUrl(
                             builder.add(item.key, item.value)
                         body = builder.build()
                     }
+                } ?: let {
+                    body = FormBody.Builder().build()
                 }
             }
         }
