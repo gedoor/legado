@@ -4,18 +4,17 @@ import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webbook.BookList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 
 class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
 
-    fun searchBook(key: String, page: Int?, success: (() -> Unit), error: (() -> Unit)) {
-        launch(IO) {
+    fun searchBook(key: String, page: Int?): Coroutine<List<SearchBook>> {
+        return Coroutine.with(this) {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(searchUrl)
                 val response = when {
@@ -32,9 +31,9 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
                     else -> HttpHelper.getApiService<IHttpGetApi>(analyzeUrl.baseUrl)
                         .getMap(analyzeUrl.url, analyzeUrl.fieldMap, analyzeUrl.headerMap).await()
                 }
-                val bookList = BookList().analyzeBookList(response, bookSource)
+                return@with BookList().analyzeBookList(response, bookSource, analyzeUrl)
             }
-
+            ArrayList()
         }
     }
 
