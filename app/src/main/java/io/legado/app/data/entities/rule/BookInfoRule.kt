@@ -1,7 +1,6 @@
 package io.legado.app.data.entities.rule
 
 data class BookInfoRule(
-    var urlPattern: String? = null,
     var init: String? = null,
     var name: String? = null,
     var author: String? = null,

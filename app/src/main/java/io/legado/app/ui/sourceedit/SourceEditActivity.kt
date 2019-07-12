@@ -112,12 +112,46 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
             cb_is_enable.isChecked = it.enabled
             cb_is_enable_find.isChecked = it.enabledExplore
         }
-        sourceEditList.clear()
-        sourceEditList.add(EditEntity("bookSourceUrl", bookSource?.bookSourceUrl, R.string.book_source_url))
-        sourceEditList.add(EditEntity("bookSourceName", bookSource?.bookSourceName, R.string.book_source_name))
-        sourceEditList.add(EditEntity("bookSourceGroup", bookSource?.bookSourceGroup, R.string.book_source_group))
-        sourceEditList.add(EditEntity("loginUrl", bookSource?.loginUrl, R.string.book_source_login_url))
-        sourceEditList.add(EditEntity("header", bookSource?.header, R.string.source_http_header))
+        //基本信息
+        with(bookSource) {
+            sourceEditList.clear()
+            sourceEditList.add(
+                EditEntity(
+                    "bookSourceUrl",
+                    this?.bookSourceUrl,
+                    R.string.book_source_url
+                )
+            )
+            sourceEditList.add(
+                EditEntity(
+                    "bookSourceName",
+                    this?.bookSourceName,
+                    R.string.book_source_name
+                )
+            )
+            sourceEditList.add(
+                EditEntity(
+                    "bookSourceGroup",
+                    this?.bookSourceGroup,
+                    R.string.book_source_group
+                )
+            )
+            sourceEditList.add(
+                EditEntity(
+                    "loginUrl",
+                    this?.loginUrl,
+                    R.string.book_source_login_url
+                )
+            )
+            sourceEditList.add(
+                EditEntity(
+                    "urlPattern",
+                    this?.infoUrlPattern,
+                    R.string.book_url_pattern
+                )
+            )
+            sourceEditList.add(EditEntity("header", this?.header, R.string.source_http_header))
+        }
         //搜索
         with(bookSource?.getSearchRule()) {
             searchEditList.clear()
@@ -135,7 +169,6 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         //详情页
         with(bookSource?.getBookInfoRule()) {
             infoEditList.clear()
-            infoEditList.add(EditEntity("urlPattern", this?.urlPattern, R.string.book_url_pattern))
             infoEditList.add(EditEntity("init", this?.init, R.string.rule_book_info_init))
             infoEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
             infoEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
@@ -199,6 +232,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
                     "bookSourceName" -> if (value != null) source.bookSourceName = value!! else return null
                     "bookSourceGroup" -> source.bookSourceGroup = value
                     "loginUrl" -> source.loginUrl = value
+                    "infoUrlPattern" -> source.infoUrlPattern = value
                     "header" -> source.header = value
                 }
             }
@@ -240,24 +274,6 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         for (entity in infoEditList) {
             with(entity) {
                 when (key) {
-                    "urlPattern" -> bookInfoRule.urlPattern = value
-                    "init" -> bookInfoRule.init = value
-                    "searchName" -> bookInfoRule.name = value
-                    "searchAuthor" -> bookInfoRule.author = value
-                    "searchKind" -> bookInfoRule.kind = value
-                    "searchIntro" -> bookInfoRule.intro = value
-                    "updateTime" -> bookInfoRule.updateTime = value
-                    "wordCount" -> bookInfoRule.wordCount = value
-                    "lastChapter" -> bookInfoRule.lastChapter = value
-                    "coverUrl" -> bookInfoRule.coverUrl = value
-                    "tocUrl" -> bookInfoRule.tocUrl = value
-                }
-            }
-        }
-        for (entity in infoEditList) {
-            with(entity) {
-                when (key) {
-                    "urlPattern" -> bookInfoRule.urlPattern = value
                     "init" -> bookInfoRule.init = value
                     "searchName" -> bookInfoRule.name = value
                     "searchAuthor" -> bookInfoRule.author = value

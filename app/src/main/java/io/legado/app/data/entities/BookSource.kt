@@ -26,6 +26,7 @@ data class BookSource(
     @PrimaryKey
     var bookSourceUrl: String = "",                  // 地址，包括 http/https
     var bookSourceType: Int = 0,                        // 类型，0 文本，1 音频
+    var infoUrlPattern: String? = null,
     var customOrder: Int = 0,                 // 手动排序编号
     var enabled: Boolean = true,            // 是否启用
     var enabledExplore: Boolean = true,     //启用发现
