@@ -29,7 +29,21 @@ class BookList {
         )
         val analyzer = AnalyzeRule(null)
         analyzer.setContent(body, baseUrl)
-        
+        bookSource.bookUrlPattern?.let {
+            if (baseUrl.matches(it.toRegex())) {
+                getItem()?.let { searchBook ->
+                    searchBook.bookInfoHtml = body
+                    bookList.add(searchBook)
+                }
+                return bookList
+            }
+        }
         return bookList
+    }
+
+    fun getItem(): SearchBook? {
+        val searchBook = SearchBook()
+
+        return null
     }
 }
