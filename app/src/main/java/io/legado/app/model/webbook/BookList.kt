@@ -29,7 +29,7 @@ class BookList {
         )
         val analyzer = AnalyzeRule(null)
         analyzer.setContent(body, baseUrl)
-
+        
         return bookList
     }
 }

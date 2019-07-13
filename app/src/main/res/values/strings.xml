@@ -358,7 +358,7 @@
     <string name="rule_cover_url">封面规则(coverUrl)</string>
     <string name="rule_last_chapter">最新章节规则(lastChapter)</string>
     <string name="rule_word_count">字数规则(wordCount)</string>
-    <string name="book_url_pattern">详情URL正则(urlPattern)</string>
+    <string name="book_url_pattern">书籍URL正则(urlPattern)</string>
     <string name="rule_book_info_init">预处理规则(init)</string>
     <string name="rule_toc_url">目录URL规则(tocUrl)</string>
     <string name="rule_next_toc_url">目录下一页规则(nextTocUrl)</string>

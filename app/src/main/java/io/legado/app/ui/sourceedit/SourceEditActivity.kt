@@ -120,7 +120,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
             sourceEditList.add(EditEntity("bookSourceName", this?.bookSourceName, R.string.book_source_name))
             sourceEditList.add(EditEntity("bookSourceGroup", this?.bookSourceGroup, R.string.book_source_group))
             sourceEditList.add(EditEntity("loginUrl", this?.loginUrl, R.string.book_source_login_url))
-            sourceEditList.add(EditEntity("urlPattern", this?.infoUrlPattern, R.string.book_url_pattern))
+            sourceEditList.add(EditEntity("bookUrlPattern", this?.bookUrlPattern, R.string.book_url_pattern))
             sourceEditList.add(EditEntity("header", this?.header, R.string.source_http_header))
         }
         //搜索
@@ -203,7 +203,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
                     "bookSourceName" -> if (value != null) source.bookSourceName = value!! else return null
                     "bookSourceGroup" -> source.bookSourceGroup = value
                     "loginUrl" -> source.loginUrl = value
-                    "infoUrlPattern" -> source.infoUrlPattern = value
+                    "bookUrlPattern" -> source.bookUrlPattern = value
                     "header" -> source.header = value
                 }
             }

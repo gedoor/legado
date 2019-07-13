@@ -105,7 +105,7 @@ object Restore {
                     source.bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     source.bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
                     source.loginUrl = jsonItem.readString("loginUrl")
-                    source.infoUrlPattern = jsonItem.readString("ruleBookUrlPattern")
+                    source.bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                     val searchRule = SearchRule(
                             searchUrl = jsonItem.readString("ruleSearchUrl"),
                         bookList = jsonItem.readString("ruleSearchList"),
