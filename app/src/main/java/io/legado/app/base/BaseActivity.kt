@@ -20,7 +20,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity<VM : ViewModel>(private var fullScreen: Boolean = true) : AppCompatActivity(), CoroutineScope by MainScope() {
+abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = true) : AppCompatActivity(), CoroutineScope by MainScope() {
 
     protected abstract val viewModel: VM
 
