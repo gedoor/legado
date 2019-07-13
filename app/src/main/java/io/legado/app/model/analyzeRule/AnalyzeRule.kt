@@ -19,7 +19,7 @@ import javax.script.SimpleBindings
  */
 @Keep
 class AnalyzeRule(private var book: BaseBook? = null) {
-    private var `object`: Any? = null
+    private var content: Any? = null
     private var isJSON: Boolean = false
     private var baseUrl: String? = null
 
@@ -36,10 +36,10 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     @JvmOverloads
-    fun setContent(body: Any?, baseUrl: String? = this.baseUrl): AnalyzeRule {
-        if (body == null) throw AssertionError("Content cannot be null")
-        isJSON = body.toString().isJson()
-        `object` = body
+    fun setContent(content: Any?, baseUrl: String? = this.baseUrl): AnalyzeRule {
+        if (content == null) throw AssertionError("Content cannot be null")
+        isJSON = content.toString().isJson()
+        this.content = content
         this.baseUrl = baseUrl?.split("\n".toRegex(), 1)?.get(0)
         objectChangedXP = true
         objectChangedJS = true
@@ -51,7 +51,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 获取XPath解析类
      */
     private fun getAnalyzeByXPath(o: Any): AnalyzeByXPath {
-        return if (o != `object`) {
+        return if (o != content) {
             AnalyzeByXPath().parse(o)
         } else getAnalyzeByXPath()
     }
@@ -59,7 +59,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     private fun getAnalyzeByXPath(): AnalyzeByXPath {
         if (analyzeByXPath == null || objectChangedXP) {
             analyzeByXPath = AnalyzeByXPath()
-            analyzeByXPath!!.parse(`object`!!)
+            analyzeByXPath!!.parse(content!!)
             objectChangedXP = false
         }
         return analyzeByXPath as AnalyzeByXPath
@@ -69,7 +69,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 获取JSOUP解析类
      */
     private fun getAnalyzeByJSoup(o: Any): AnalyzeByJSoup {
-        return if (o != `object`) {
+        return if (o != content) {
             AnalyzeByJSoup().parse(o)
         } else getAnalyzeByJSoup()
     }
@@ -77,7 +77,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     private fun getAnalyzeByJSoup(): AnalyzeByJSoup {
         if (analyzeByJSoup == null || objectChangedJS) {
             analyzeByJSoup = AnalyzeByJSoup()
-            analyzeByJSoup!!.parse(`object`!!)
+            analyzeByJSoup!!.parse(content!!)
             objectChangedJS = false
         }
         return analyzeByJSoup as AnalyzeByJSoup
@@ -87,7 +87,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 获取JSON解析类
      */
     private fun getAnalyzeByJSonPath(o: Any): AnalyzeByJSonPath {
-        return if (o != `object`) {
+        return if (o != content) {
             AnalyzeByJSonPath().parse(o)
         } else getAnalyzeByJSonPath()
     }
@@ -95,7 +95,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     private fun getAnalyzeByJSonPath(): AnalyzeByJSonPath {
         if (analyzeByJSonPath == null || objectChangedJP) {
             analyzeByJSonPath = AnalyzeByJSonPath()
-            analyzeByJSonPath!!.parse(`object`!!)
+            analyzeByJSonPath!!.parse(content!!)
             objectChangedJP = false
         }
         return analyzeByJSonPath as AnalyzeByJSonPath
@@ -116,7 +116,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @Throws(Exception::class)
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean): List<String>? {
         var result: Any? = null
-        `object`?.let { o ->
+        content?.let { o ->
             if (ruleList.isNotEmpty()) {
                 if (ruleList.isNotEmpty()) result = o
                 for (rule in ruleList) {
@@ -184,7 +184,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @JvmOverloads
     fun getString(ruleList: List<SourceRule>, isUrl: Boolean = false): String {
         var result: Any? = null
-        `object`?.let { o ->
+        content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (rule in ruleList) {
                 result?.let {
@@ -223,7 +223,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         if (TextUtils.isEmpty(ruleStr)) return null
         var result: Any? = null
         val ruleList = splitSourceRule(ruleStr)
-        `object`?.let { o ->
+        content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (rule in ruleList) {
                 result?.let {
@@ -250,13 +250,13 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     fun getElements(ruleStr: String): List<Any> {
         var result: Any? = null
         val ruleList = splitSourceRule(ruleStr)
-        `object`?.let { o ->
+        content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (rule in ruleList) {
                 result?.let {
                     when (rule.mode) {
                         Mode.Js -> {
-                            if (result == null) result = `object`
+                            if (result == null) result = content
                             result = evalJS(rule.rule, result)
                         }
                         Mode.JSon -> result = getAnalyzeByJSonPath(it).getList(rule.rule)
@@ -352,7 +352,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             val sb = StringBuffer(ruleStr.length)
             val expMatcher = EXP_PATTERN.matcher(ruleStr)
             while (expMatcher.find()) {
-                jsEval = evalJS(expMatcher.group(1), `object`)
+                jsEval = evalJS(expMatcher.group(1), content)
                 if (jsEval is String) {
                     expMatcher.appendReplacement(sb, jsEval)
                 } else if (jsEval is Double && jsEval % 1.0 == 0.0) {

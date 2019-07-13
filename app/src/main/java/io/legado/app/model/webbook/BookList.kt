@@ -18,7 +18,7 @@ class BookList {
         analyzeUrl: AnalyzeUrl,
         isSearch: Boolean = true
     ): ArrayList<SearchBook> {
-        var bookList = ArrayList<SearchBook>()
+        val bookList = ArrayList<SearchBook>()
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
         body ?: throw Exception(
@@ -31,7 +31,7 @@ class BookList {
         analyzer.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
             if (baseUrl.matches(it.toRegex())) {
-                getItem()?.let { searchBook ->
+                getItem(analyzer, bookSource)?.let { searchBook ->
                     searchBook.bookInfoHtml = body
                     bookList.add(searchBook)
                 }
@@ -41,8 +41,12 @@ class BookList {
         return bookList
     }
 
-    fun getItem(): SearchBook? {
+    private fun getItem(analyzeRule: AnalyzeRule, bookSource: BookSource): SearchBook? {
         val searchBook = SearchBook()
+        analyzeRule.setBook(searchBook)
+        bookSource.getBookInfoRule().init?.let {
+            analyzeRule.setContent(analyzeRule.getElement(it))
+        }
 
         return null
     }

@@ -88,7 +88,7 @@ data class BookSource(
         return exploreRuleV!!
     }
 
-    fun getBookInfoRule(): BookInfoRule? {
+    fun getBookInfoRule(): BookInfoRule {
         bookInfoRuleV ?: let {
             bookInfoRuleV = GSON.fromJsonObject<BookInfoRule>(ruleBookInfo)
             bookInfoRuleV ?: let { bookInfoRuleV = BookInfoRule() }
@@ -96,7 +96,7 @@ data class BookSource(
         return bookInfoRuleV!!
     }
 
-    fun getTocRule(): TocRule? {
+    fun getTocRule(): TocRule {
         tocRuleV ?: let {
             tocRuleV = GSON.fromJsonObject<TocRule>(ruleToc)
             tocRuleV ?: let { tocRuleV = TocRule() }
@@ -104,7 +104,7 @@ data class BookSource(
         return tocRuleV!!
     }
 
-    fun getContentRule(): ContentRule? {
+    fun getContentRule(): ContentRule {
         contentRuleV ?: let {
             contentRuleV = GSON.fromJsonObject<ContentRule>(ruleContent)
             contentRuleV ?: let { contentRuleV = ContentRule() }
