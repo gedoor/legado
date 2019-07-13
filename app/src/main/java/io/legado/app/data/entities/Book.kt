@@ -10,6 +10,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import kotlin.math.max
 
 @Parcelize
 @Entity(tableName = "books", indices = [(Index(value = ["descUrl"], unique = true))])
@@ -51,7 +52,7 @@ data class Book(
             return field
         }
 
-    fun getUnreadChapterNum() = Math.max(totalChapterNum - durChapterIndex - 1, 0)
+    fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 
     fun getDisplayCover() = customCoverUrl ?: coverUrl
 
