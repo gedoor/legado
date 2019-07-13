@@ -115,41 +115,11 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         //基本信息
         with(bookSource) {
             sourceEditList.clear()
-            sourceEditList.add(
-                EditEntity(
-                    "bookSourceUrl",
-                    this?.bookSourceUrl,
-                    R.string.book_source_url
-                )
-            )
-            sourceEditList.add(
-                EditEntity(
-                    "bookSourceName",
-                    this?.bookSourceName,
-                    R.string.book_source_name
-                )
-            )
-            sourceEditList.add(
-                EditEntity(
-                    "bookSourceGroup",
-                    this?.bookSourceGroup,
-                    R.string.book_source_group
-                )
-            )
-            sourceEditList.add(
-                EditEntity(
-                    "loginUrl",
-                    this?.loginUrl,
-                    R.string.book_source_login_url
-                )
-            )
-            sourceEditList.add(
-                EditEntity(
-                    "urlPattern",
-                    this?.infoUrlPattern,
-                    R.string.book_url_pattern
-                )
-            )
+            sourceEditList.add(EditEntity("bookSourceUrl", this?.bookSourceUrl, R.string.book_source_url))
+            sourceEditList.add(EditEntity("bookSourceName", this?.bookSourceName, R.string.book_source_name))
+            sourceEditList.add(EditEntity("bookSourceGroup", this?.bookSourceGroup, R.string.book_source_group))
+            sourceEditList.add(EditEntity("loginUrl", this?.loginUrl, R.string.book_source_login_url))
+            sourceEditList.add(EditEntity("urlPattern", this?.infoUrlPattern, R.string.book_url_pattern))
             sourceEditList.add(EditEntity("header", this?.header, R.string.source_http_header))
         }
         //搜索
