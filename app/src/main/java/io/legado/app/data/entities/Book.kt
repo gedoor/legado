@@ -6,7 +6,6 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.legado.app.constant.AppConst.NOT_AVAILABLE
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
@@ -20,9 +19,7 @@ data class Book(
         var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
         var origin: String = "",                    // 书源URL(默认BookType.local)
         var name: String? = null,                   // 书籍名称(书源获取)
-        var customName: String? = null,             // 书籍名称(用户修改)
         var author: String? = null,                 // 作者名称(书源获取)
-        var customAuthor: String? = null,           // 作者名称(用户修改)
         var tag: String? = null,                    // 分类信息(书源获取)
         var customTag: String? = null,              // 分类信息(用户修改)
         var coverUrl: String? = null,               // 封面Url(书源获取)
@@ -55,10 +52,6 @@ data class Book(
         }
 
     fun getUnreadChapterNum() = Math.max(totalChapterNum - durChapterIndex - 1, 0)
-
-    fun getDisplayName() = customName ?: name ?: NOT_AVAILABLE
-
-    fun getDisplayAuthor() = customAuthor ?: author ?: NOT_AVAILABLE
 
     fun getDisplayCover() = customCoverUrl ?: coverUrl
 
