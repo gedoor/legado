@@ -105,6 +105,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
             5 -> adapter.editEntities = contentEditList
             else -> adapter.editEntities = sourceEditList
         }
+        recycler_view.scrollToPosition(0)
     }
 
     private fun upRecyclerView(bookSource: BookSource?) {
