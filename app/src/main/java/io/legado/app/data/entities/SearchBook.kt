@@ -20,7 +20,7 @@ data class SearchBook(
     var originName: String = "",
     var name: String? = null,
     var author: String? = null,
-    var tag: String? = null,
+    var kind: String? = null,
     var coverUrl: String? = null,
     var intro: String? = null,
     var latestChapterTitle: String? = null,

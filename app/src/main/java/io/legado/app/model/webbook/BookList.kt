@@ -8,6 +8,7 @@ import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
+import org.mozilla.javascript.NativeObject
 import retrofit2.Response
 
 class BookList {
@@ -64,7 +65,7 @@ class BookList {
         } else {
             if (allInOne) {
                 for (item in collections) {
-                    getAllInOneItem(analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
+                    getAllInOneItem(item, analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
                         if (baseUrl == searchBook.bookUrl) {
                             searchBook.bookInfoHtml = body
                         }
@@ -101,7 +102,7 @@ class BookList {
                 searchBook.coverUrl = analyzeRule.getString(coverUrl ?: "")
                 searchBook.intro = analyzeRule.getString(intro ?: "")
                 searchBook.latestChapterTitle = analyzeRule.getString(lastChapter ?: "")
-
+                searchBook.kind = analyzeRule.getString(kind ?: "")
                 return searchBook
             }
         }
@@ -109,6 +110,7 @@ class BookList {
     }
 
     private fun getAllInOneItem(
+        item: Any,
         analyzeRule: AnalyzeRule,
         bookListRule: BookListRule,
         bookSource: BookSource,
@@ -117,8 +119,14 @@ class BookList {
         val searchBook = SearchBook()
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
-
-
+        val nativeObject = item as NativeObject
+        searchBook.name = nativeObject[bookListRule.name]?.toString()
+        searchBook.name?.let {
+            searchBook.author = nativeObject[bookListRule.author]?.toString()
+            searchBook.coverUrl = nativeObject[bookListRule.coverUrl]?.toString()
+            searchBook.intro = nativeObject[bookListRule.intro]?.toString()
+            searchBook.kind = nativeObject[bookListRule.kind]?.toString()
+        }
         return null
     }
 

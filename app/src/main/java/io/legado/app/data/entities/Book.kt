@@ -21,7 +21,7 @@ data class Book(
     var origin: String = "",                    // 书源URL(默认BookType.local)
     var name: String? = null,                   // 书籍名称(书源获取)
     var author: String? = null,                 // 作者名称(书源获取)
-    var tag: String? = null,                    // 分类信息(书源获取)
+    var kind: String? = null,                    // 分类信息(书源获取)
     var customTag: String? = null,              // 分类信息(用户修改)
     var coverUrl: String? = null,               // 封面Url(书源获取)
     var customCoverUrl: String? = null,         // 封面Url(用户修改)
