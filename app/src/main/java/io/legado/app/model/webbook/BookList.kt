@@ -70,7 +70,9 @@ class BookList {
                 }
             } else {
                 for (item in collections) {
+                    getSearchItem(analyzer, bookListRule, bookSource)?.let {
 
+                    }
                 }
             }
         }
