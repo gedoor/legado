@@ -38,6 +38,31 @@ class BookList {
                 return bookList
             }
         }
+        val collections: List<Any>
+        var reverse = false
+        var allInOne = false
+        val bookListRule = if (isSearch) bookSource.getSearchRule() else bookSource.getExploreRule()
+        var ruleList = bookListRule.bookList ?: ""
+        if (ruleList.startsWith("-")) {
+            reverse = true
+            ruleList = ruleList.substring(1)
+        }
+        if (ruleList.startsWith(":")) {
+            ruleList = ruleList.substring(1)
+        }
+        if (ruleList.startsWith("+")) {
+            allInOne = true
+            ruleList = ruleList.substring(1)
+        }
+        collections = analyzer.getElements(ruleList)
+        if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
+            getItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
+                searchBook.bookInfoHtml = body
+                bookList.add(searchBook)
+            }
+        } else {
+
+        }
         return bookList
     }
 
