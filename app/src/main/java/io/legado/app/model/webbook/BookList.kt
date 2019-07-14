@@ -4,6 +4,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
@@ -31,7 +32,7 @@ class BookList {
         analyzer.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
             if (baseUrl.matches(it.toRegex())) {
-                getItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
+                getInfoItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
                     searchBook.bookInfoHtml = body
                     bookList.add(searchBook)
                 }
@@ -56,17 +57,27 @@ class BookList {
         }
         collections = analyzer.getElements(ruleList)
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
-            getItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
+            getInfoItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
                 searchBook.bookInfoHtml = body
                 bookList.add(searchBook)
             }
         } else {
+            if (allInOne) {
+                for (item in collections) {
+                    getAllInOneItem(analyzer, bookListRule, bookSource)?.let {
 
+                    }
+                }
+            } else {
+                for (item in collections) {
+
+                }
+            }
         }
         return bookList
     }
 
-    private fun getItem(analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String): SearchBook? {
+    private fun getInfoItem(analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String): SearchBook? {
         val searchBook = SearchBook()
         searchBook.bookUrl = baseUrl
         searchBook.origin = bookSource.bookSourceUrl
@@ -86,6 +97,32 @@ class BookList {
                 return searchBook
             }
         }
+        return null
+    }
+
+    private fun getAllInOneItem(
+        analyzeRule: AnalyzeRule,
+        bookListRule: BookListRule,
+        bookSource: BookSource
+    ): SearchBook? {
+        val searchBook = SearchBook()
+        searchBook.origin = bookSource.bookSourceUrl
+        searchBook.originName = bookSource.bookSourceName
+
+
+        return null
+    }
+
+    private fun getSearchItem(
+        analyzeRule: AnalyzeRule,
+        bookListRule: BookListRule,
+        bookSource: BookSource
+    ): SearchBook? {
+        val searchBook = SearchBook()
+        searchBook.origin = bookSource.bookSourceUrl
+        searchBook.originName = bookSource.bookSourceName
+
+
         return null
     }
 }
