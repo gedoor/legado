@@ -64,14 +64,20 @@ class BookList {
         } else {
             if (allInOne) {
                 for (item in collections) {
-                    getAllInOneItem(analyzer, bookListRule, bookSource)?.let {
-
+                    getAllInOneItem(analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
+                        if (baseUrl == searchBook.bookUrl) {
+                            searchBook.bookInfoHtml = body
+                        }
+                        bookList.add(searchBook)
                     }
                 }
             } else {
                 for (item in collections) {
-                    getSearchItem(analyzer, bookListRule, bookSource)?.let {
-
+                    getSearchItem(analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
+                        if (baseUrl == searchBook.bookUrl) {
+                            searchBook.bookInfoHtml = body
+                        }
+                        bookList.add(searchBook)
                     }
                 }
             }
@@ -105,7 +111,8 @@ class BookList {
     private fun getAllInOneItem(
         analyzeRule: AnalyzeRule,
         bookListRule: BookListRule,
-        bookSource: BookSource
+        bookSource: BookSource,
+        baseUrl: String
     ): SearchBook? {
         val searchBook = SearchBook()
         searchBook.origin = bookSource.bookSourceUrl
@@ -118,7 +125,8 @@ class BookList {
     private fun getSearchItem(
         analyzeRule: AnalyzeRule,
         bookListRule: BookListRule,
-        bookSource: BookSource
+        bookSource: BookSource,
+        baseUrl: String
     ): SearchBook? {
         val searchBook = SearchBook()
         searchBook.origin = bookSource.bookSourceUrl
