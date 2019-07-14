@@ -24,13 +24,13 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE `group` = :group")
     fun observeByGroup(group: Int): DataSource.Factory<Int, Book>
 
-    @Query("SELECT descUrl FROM books WHERE `group` = :group")
+    @Query("SELECT bookUrl FROM books WHERE `group` = :group")
     fun observeUrlsByGroup(group: Int): LiveData<List<String>>
 
     @Query("SELECT * FROM books WHERE `name` in (:names)")
     fun findByName(vararg names: String): List<Book>
 
-    @get:Query("SELECT descUrl FROM books")
+    @get:Query("SELECT bookUrl FROM books")
     val allBookUrls: List<String>
 
     @get:Query("SELECT COUNT(*) FROM books")

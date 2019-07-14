@@ -31,7 +31,7 @@ class BookList {
         analyzer.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
             if (baseUrl.matches(it.toRegex())) {
-                getItem(analyzer, bookSource)?.let { searchBook ->
+                getItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
                     searchBook.bookInfoHtml = body
                     bookList.add(searchBook)
                 }
@@ -41,7 +41,7 @@ class BookList {
         return bookList
     }
 
-    private fun getItem(analyzeRule: AnalyzeRule, bookSource: BookSource): SearchBook? {
+    private fun getItem(analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String): SearchBook? {
         val searchBook = SearchBook()
         analyzeRule.setBook(searchBook)
         with(bookSource.getBookInfoRule()) {
@@ -52,6 +52,7 @@ class BookList {
             if (!searchBook.name.isNullOrEmpty()) {
                 searchBook.author = analyzeRule.getString(author ?: "")
                 searchBook.coverUrl = analyzeRule.getString(coverUrl ?: "")
+                searchBook.bookUrl = baseUrl
                 return searchBook
             }
         }

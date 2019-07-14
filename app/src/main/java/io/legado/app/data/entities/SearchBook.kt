@@ -12,20 +12,20 @@ import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity(tableName = "searchBooks", indices = [(Index(value = ["descUrl"], unique = true))])
+@Entity(tableName = "searchBooks", indices = [(Index(value = ["bookUrl"], unique = true))])
 data class SearchBook(
-        @PrimaryKey
-    var descUrl: String = "",
-        var origin: String = "",                     // 书源规则id(默认-1,表示本地书籍)
-        var name: String? = null,
-        var author: String? = null,
-        var tag: String? = null,
-        var coverUrl: String? = null,
-        var description: String? = null,
-        var latestChapterTitle: String? = null,
-        var time: Long = 0L,
-        var variable: String? = null,
-        var bookInfoHtml: String? = null
+    @PrimaryKey
+    var bookUrl: String = "",
+    var origin: String = "",                     // 书源规则id(默认-1,表示本地书籍)
+    var name: String? = null,
+    var author: String? = null,
+    var tag: String? = null,
+    var coverUrl: String? = null,
+    var description: String? = null,
+    var latestChapterTitle: String? = null,
+    var time: Long = 0L,
+    var variable: String? = null,
+    var bookInfoHtml: String? = null
 ) : Parcelable, BaseBook {
 
     @IgnoredOnParcel

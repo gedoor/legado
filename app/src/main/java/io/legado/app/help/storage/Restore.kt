@@ -45,16 +45,16 @@ object Restore {
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
                     val book = Book()
-                    book.descUrl = jsonItem.readString("$.noteUrl") ?: ""
-                    if (book.descUrl.isBlank()) continue
+                    book.bookUrl = jsonItem.readString("$.noteUrl") ?: ""
+                    if (book.bookUrl.isBlank()) continue
                     book.name = jsonItem.readString("$.bookInfoBean.name")
-                    if (book.descUrl in existingBooks) {
+                    if (book.bookUrl in existingBooks) {
                         Log.d(AppConst.APP_TAG, "Found existing book: ${book.name}")
                         continue
                     }
                     book.author = jsonItem.readString("$.bookInfoBean.author")
                     book.type = if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
-                    book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.descUrl
+                    book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl
                     book.coverUrl = jsonItem.readString("$.bookInfoBean.coverUrl")
                     book.customCoverUrl = jsonItem.readString("$.customCoverPath")
                     book.lastCheckTime = jsonItem.readLong("$.bookInfoBean.finalRefreshData") ?: 0

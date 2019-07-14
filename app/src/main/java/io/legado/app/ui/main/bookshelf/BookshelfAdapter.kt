@@ -19,10 +19,10 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
         @JvmField
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Book>() {
             override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean =
-                oldItem.descUrl == newItem.descUrl
+                oldItem.bookUrl == newItem.bookUrl
 
             override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean =
-                oldItem.descUrl == newItem.descUrl
+                oldItem.bookUrl == newItem.bookUrl
                         && oldItem.durChapterTitle == newItem.durChapterTitle
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
         }

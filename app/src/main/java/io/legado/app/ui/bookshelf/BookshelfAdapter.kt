@@ -1,21 +1,17 @@
 package io.legado.app.ui.bookshelf
 
-import android.text.TextUtils.isEmpty
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
-import java.io.File
 
 class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
@@ -23,10 +19,10 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
         @JvmField
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Book>() {
             override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean =
-                oldItem.descUrl == newItem.descUrl
+                oldItem.bookUrl == newItem.bookUrl
 
             override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean =
-                oldItem.descUrl == newItem.descUrl
+                oldItem.bookUrl == newItem.bookUrl
                         && oldItem.durChapterTitle == newItem.durChapterTitle
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
         }
