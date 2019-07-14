@@ -43,6 +43,7 @@ class BookList {
 
     private fun getItem(analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String): SearchBook? {
         val searchBook = SearchBook()
+        searchBook.bookUrl = baseUrl
         analyzeRule.setBook(searchBook)
         with(bookSource.getBookInfoRule()) {
             init?.let {
@@ -52,7 +53,7 @@ class BookList {
             if (!searchBook.name.isNullOrEmpty()) {
                 searchBook.author = analyzeRule.getString(author ?: "")
                 searchBook.coverUrl = analyzeRule.getString(coverUrl ?: "")
-                searchBook.bookUrl = baseUrl
+                searchBook.intro = analyzeRule.getString(intro ?: "")
                 return searchBook
             }
         }

@@ -21,7 +21,7 @@ data class SearchBook(
     var author: String? = null,
     var tag: String? = null,
     var coverUrl: String? = null,
-    var description: String? = null,
+    var intro: String? = null,
     var latestChapterTitle: String? = null,
     var time: Long = 0L,
     var variable: String? = null,

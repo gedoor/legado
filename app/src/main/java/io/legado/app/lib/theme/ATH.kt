@@ -89,9 +89,7 @@ object ATH {
     fun setTaskDescriptionColor(activity: Activity, @ColorInt color: Int) {
         val color1: Int
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // Task description requires fully opaque color
             color1 = ColorUtils.stripAlpha(color)
-            // Sets color of entry in the system recents page
             activity.setTaskDescription(ActivityManager.TaskDescription(activity.title as String, null, color1))
         }
     }
