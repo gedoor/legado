@@ -16,7 +16,8 @@ import kotlinx.android.parcel.Parcelize
 data class SearchBook(
     @PrimaryKey
     var bookUrl: String = "",
-    var origin: String = "",                     // 书源规则id(默认-1,表示本地书籍)
+    var origin: String = "",                     // 书源规则
+    var originName: String = "",
     var name: String? = null,
     var author: String? = null,
     var tag: String? = null,

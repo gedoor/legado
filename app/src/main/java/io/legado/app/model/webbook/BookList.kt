@@ -44,6 +44,8 @@ class BookList {
     private fun getItem(analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String): SearchBook? {
         val searchBook = SearchBook()
         searchBook.bookUrl = baseUrl
+        searchBook.origin = bookSource.bookSourceUrl
+        searchBook.originName = bookSource.bookSourceName
         analyzeRule.setBook(searchBook)
         with(bookSource.getBookInfoRule()) {
             init?.let {
@@ -54,6 +56,8 @@ class BookList {
                 searchBook.author = analyzeRule.getString(author ?: "")
                 searchBook.coverUrl = analyzeRule.getString(coverUrl ?: "")
                 searchBook.intro = analyzeRule.getString(intro ?: "")
+                searchBook.latestChapterTitle = analyzeRule.getString(lastChapter ?: "")
+
                 return searchBook
             }
         }
