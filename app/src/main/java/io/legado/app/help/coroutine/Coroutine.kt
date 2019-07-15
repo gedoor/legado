@@ -2,7 +2,7 @@ package io.legado.app.help.coroutine
 
 import kotlinx.coroutines.*
 
-class Coroutine<T>(private val scope: CoroutineScope, private val block: suspend CoroutineScope.() -> T) {
+class Coroutine<T>(private val scope: CoroutineScope, block: suspend CoroutineScope.() -> T) {
 
     companion object {
 

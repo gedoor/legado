@@ -31,7 +31,7 @@ class WebBook(private val bookSource: BookSource) {
                 }
                 return@launch BookList.analyzeBookList(response, bookSource, analyzeUrl)
             }
-            return@launch mutableListOf()
+            return@launch arrayListOf<SearchBook>()
         }
     }
 
