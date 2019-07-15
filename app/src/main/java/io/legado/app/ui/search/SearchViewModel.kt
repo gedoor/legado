@@ -6,8 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.api.CommonHttpApi
+import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.model.WebBook
 import kotlinx.coroutines.delay
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -45,6 +48,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     finally()
                 }
             }
+
+        plus(WebBook(BookSource()).searchBook("keyword", 1))
     }
 
 }
