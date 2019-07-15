@@ -103,6 +103,8 @@ object BookList {
                 searchBook.intro = analyzeRule.getString(intro ?: "")
                 searchBook.latestChapterTitle = analyzeRule.getString(lastChapter ?: "")
                 searchBook.kind = analyzeRule.getString(kind ?: "")
+                searchBook.wordCount = analyzeRule.getString(wordCount ?: "")
+
                 return searchBook
             }
         }
@@ -126,7 +128,7 @@ object BookList {
             searchBook.coverUrl = nativeObject[bookListRule.coverUrl]?.toString()
             searchBook.intro = nativeObject[bookListRule.intro]?.toString()
             searchBook.kind = nativeObject[bookListRule.kind]?.toString()
-
+            searchBook.wordCount = nativeObject[bookListRule.wordCount]?.toString()
             return searchBook
         }
         return null
@@ -149,6 +151,7 @@ object BookList {
             searchBook.author = analyzeRule.getString(bookListRule.author ?: "")
             searchBook.kind = analyzeRule.getString(bookListRule.kind ?: "")
             searchBook.intro = analyzeRule.getString(bookListRule.intro ?: "")
+            searchBook.wordCount = analyzeRule.getString(bookListRule.wordCount ?: "")
 
             return searchBook
         }
