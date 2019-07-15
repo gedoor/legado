@@ -108,14 +108,7 @@ class Coroutine<T>() {
             {
                 start?.let { it() }
 
-                val time = timeMillis
-                val result = if (time != null && time > 0) {
-                    withTimeout(time) {
-                        executeBlock(block)
-                    }
-                } else {
-                    executeBlock(block)
-                }
+                val result = executeBlock(block, timeMillis ?: 0L)
 
                 success?.let { it(result) }
             },
@@ -134,10 +127,11 @@ class Coroutine<T>() {
             })
     }
 
-    private suspend fun executeBlock(block: suspend CoroutineScope.() -> T): T? {
-        return withContext(Dispatchers.IO) {
+    private suspend fun executeBlock(block: suspend CoroutineScope.() -> T, timeMillis: Long): T? {
+        val asyncBlock = withContext(Dispatchers.IO) {
             block()
         }
+        return if (timeMillis > 0L) withTimeout(timeMillis) { asyncBlock } else asyncBlock
     }
 
     private suspend fun tryCatch(
