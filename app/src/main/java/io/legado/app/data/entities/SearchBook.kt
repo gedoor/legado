@@ -23,6 +23,7 @@ data class SearchBook(
     var kind: String? = null,
     var coverUrl: String? = null,
     var intro: String? = null,
+    var wordCount: String? = null,
     var latestChapterTitle: String? = null,
     var time: Long = 0L,
     var variable: String? = null,
