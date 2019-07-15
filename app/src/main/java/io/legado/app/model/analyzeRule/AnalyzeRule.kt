@@ -293,14 +293,14 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      */
     @Throws(Exception::class)
     private fun splitPutRule(ruleStr: String): String {
-        var ruleStr = ruleStr
-        val putMatcher = putPattern.matcher(ruleStr)
+        var vRuleStr = ruleStr
+        val putMatcher = putPattern.matcher(vRuleStr)
         while (putMatcher.find()) {
-            ruleStr = ruleStr.replace(putMatcher.group(), "")
+            vRuleStr = vRuleStr.replace(putMatcher.group(), "")
             val map = GSON.fromJsonObject<Map<String, String>>(putMatcher.group(1))
             map?.let { putRule(map) }
         }
-        return ruleStr
+        return vRuleStr
     }
 
     /**
@@ -323,21 +323,21 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 正则替换
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
-        var result = result
+        var vResult = result
         if (rule.replaceRegex.isNotEmpty()) {
-            result = if (rule.replaceFirst) {
+            vResult = if (rule.replaceFirst) {
                 val pattern = Pattern.compile(rule.replaceRegex)
-                val matcher = pattern.matcher(result)
+                val matcher = pattern.matcher(vResult)
                 if (matcher.find()) {
                     matcher.group(0).replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
                 } else {
                     ""
                 }
             } else {
-                result.replace(rule.replaceRegex.toRegex(), rule.replacement)
+                vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
             }
         }
-        return result
+        return vResult
     }
 
     /**
@@ -346,11 +346,11 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @SuppressLint("DefaultLocale")
     @Throws(Exception::class)
     private fun replaceJs(ruleStr: String): String {
-        var ruleStr = ruleStr
-        if (ruleStr.contains("{{") && ruleStr.contains("}}")) {
+        var vRuleStr = ruleStr
+        if (vRuleStr.contains("{{") && vRuleStr.contains("}}")) {
             var jsEval: Any
-            val sb = StringBuffer(ruleStr.length)
-            val expMatcher = EXP_PATTERN.matcher(ruleStr)
+            val sb = StringBuffer(vRuleStr.length)
+            val expMatcher = EXP_PATTERN.matcher(vRuleStr)
             while (expMatcher.find()) {
                 jsEval = evalJS(expMatcher.group(1), content)
                 if (jsEval is String) {
@@ -362,9 +362,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 }
             }
             expMatcher.appendTail(sb)
-            ruleStr = sb.toString()
+            vRuleStr = sb.toString()
         }
-        return ruleStr
+        return vRuleStr
     }
 
     /**
