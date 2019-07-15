@@ -74,7 +74,7 @@ class BookList {
                 }
             } else {
                 for (item in collections) {
-                    getSearchItem(analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
+                    getSearchItem(item, analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
                         if (baseUrl == searchBook.bookUrl) {
                             searchBook.bookInfoHtml = body
                         }
@@ -126,11 +126,14 @@ class BookList {
             searchBook.coverUrl = nativeObject[bookListRule.coverUrl]?.toString()
             searchBook.intro = nativeObject[bookListRule.intro]?.toString()
             searchBook.kind = nativeObject[bookListRule.kind]?.toString()
+
+            return searchBook
         }
         return null
     }
 
     private fun getSearchItem(
+        item: Any,
         analyzeRule: AnalyzeRule,
         bookListRule: BookListRule,
         bookSource: BookSource,
@@ -139,8 +142,16 @@ class BookList {
         val searchBook = SearchBook()
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
+        analyzeRule.setBook(searchBook)
+        analyzeRule.setContent(item)
+        searchBook.name = analyzeRule.getString(bookListRule.name ?: "")
+        searchBook.name?.let {
+            searchBook.author = analyzeRule.getString(bookListRule.author ?: "")
+            searchBook.kind = analyzeRule.getString(bookListRule.kind ?: "")
+            searchBook.intro = analyzeRule.getString(bookListRule.intro ?: "")
 
-
+            return searchBook
+        }
         return null
     }
 }
