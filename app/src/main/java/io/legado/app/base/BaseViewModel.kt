@@ -20,6 +20,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         return Coroutine.launch(this) { block().await() }
     }
 
+    fun <T> plus(coroutine: Coroutine<T>): Coroutine<T> {
+        return Coroutine.plus(coroutine)
+    }
 
     override fun onCleared() {
         super.onCleared()

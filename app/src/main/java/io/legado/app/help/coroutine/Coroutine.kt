@@ -2,7 +2,7 @@ package io.legado.app.help.coroutine
 
 import kotlinx.coroutines.*
 
-class Coroutine<T>(private val scope: CoroutineScope, block: suspend CoroutineScope.() -> T) {
+class Coroutine<T>(private val scope: CoroutineScope, private val block: suspend CoroutineScope.() -> T) {
 
     companion object {
 
@@ -11,10 +11,22 @@ class Coroutine<T>(private val scope: CoroutineScope, block: suspend CoroutineSc
         fun <T> launch(scope: CoroutineScope = DEFAULT, block: suspend CoroutineScope.() -> T): Coroutine<T> {
             return Coroutine(scope, block)
         }
+
+        fun <T> plus(coroutine: Coroutine<T>): Coroutine<T>{
+            return Coroutine(coroutine.scope, coroutine.block)
+                .timeout{ coroutine.timeMillis?:0 }
+                .onErrorReturn { coroutine.errorReturn?.value }
+                .onStart { coroutine.start }
+                .onSuccess { coroutine.success }
+                .onError { coroutine.error }
+                .onFinally { coroutine.finally }
+        }
     }
 
+    private val job: Job
+    
     init {
-        scope.launch {
+        job = scope.launch {
             executeInternal(block)
         }
     }
@@ -27,6 +39,7 @@ class Coroutine<T>(private val scope: CoroutineScope, block: suspend CoroutineSc
     private var timeMillis: Long? = null
 
     private var errorReturn: Result<T>? = null
+
 
     fun timeout(timeMillis: () -> Long): Coroutine<T> {
         this.timeMillis = timeMillis()
@@ -58,8 +71,9 @@ class Coroutine<T>(private val scope: CoroutineScope, block: suspend CoroutineSc
         return this@Coroutine
     }
 
+    //取消当前任务
     fun cancel(cause: CancellationException? = null) {
-        scope.cancel(cause)
+        job.cancel(cause)
     }
 
     private suspend fun executeInternal(block: suspend CoroutineScope.() -> T) {
