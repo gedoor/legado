@@ -17,8 +17,17 @@ class Coroutine<T>() {
         }
     }
 
-    private var coroutine: Coroutine<T>? = null
+    private var interceptor: Coroutine<T>? = null
     private var job: Job? = null
+
+    private var start: (() -> Unit)? = null
+    private var success: ((T?) -> Unit)? = null
+    private var error: ((Throwable) -> Unit)? = null
+    private var finally: (() -> Unit)? = null
+
+    private var timeMillis: Long? = null
+
+    private var errorReturn: Result<T>? = null
 
     private constructor(
         scope: CoroutineScope? = null,
@@ -30,23 +39,13 @@ class Coroutine<T>() {
     }
 
     private constructor(coroutine: Coroutine<T>) : this() {
-        this.coroutine = coroutine
+        this.interceptor = coroutine
         this.job = coroutine.job
     }
 
-    private var start: (() -> Unit)? = null
-    private var success: ((T?) -> Unit)? = null
-    private var error: ((Throwable) -> Unit)? = null
-    private var finally: (() -> Unit)? = null
-
-    private var timeMillis: Long? = null
-
-    private var errorReturn: Result<T>? = null
-
-
     fun timeout(timeMillis: () -> Long): Coroutine<T> {
-        if (this.coroutine != null) {
-            this.coroutine!!.timeMillis = timeMillis()
+        if (this.interceptor != null) {
+            this.interceptor!!.timeMillis = timeMillis()
         } else {
             this.timeMillis = timeMillis()
         }
@@ -54,8 +53,8 @@ class Coroutine<T>() {
     }
 
     fun onErrorReturn(value: () -> T?): Coroutine<T> {
-        if (this.coroutine != null) {
-            this.coroutine!!.errorReturn = Result(value())
+        if (this.interceptor != null) {
+            this.interceptor!!.errorReturn = Result(value())
         } else {
             errorReturn = Result(value())
         }
@@ -63,8 +62,8 @@ class Coroutine<T>() {
     }
 
     fun onStart(start: (() -> Unit)): Coroutine<T> {
-        if (this.coroutine != null) {
-            this.coroutine!!.start = start
+        if (this.interceptor != null) {
+            this.interceptor!!.start = start
         } else {
             this.start = start
         }
@@ -72,8 +71,8 @@ class Coroutine<T>() {
     }
 
     fun onSuccess(success: (T?) -> Unit): Coroutine<T> {
-        if (this.coroutine != null) {
-            this.coroutine!!.success = success
+        if (this.interceptor != null) {
+            this.interceptor!!.success = success
         } else {
             this.success = success
         }
@@ -81,8 +80,8 @@ class Coroutine<T>() {
     }
 
     fun onError(error: (Throwable) -> Unit): Coroutine<T> {
-        if (this.coroutine != null) {
-            this.coroutine!!.error = error
+        if (this.interceptor != null) {
+            this.interceptor!!.error = error
         } else {
             this.error = error
         }
@@ -90,8 +89,8 @@ class Coroutine<T>() {
     }
 
     fun onFinally(finally: () -> Unit): Coroutine<T> {
-        if (this.coroutine != null) {
-            this.coroutine!!.finally = finally
+        if (this.interceptor != null) {
+            this.interceptor!!.finally = finally
         } else {
             this.finally = finally
         }
