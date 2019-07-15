@@ -82,6 +82,9 @@ object BookList {
                     }
                 }
             }
+            if (reverse) {
+                bookList.reverse()
+            }
         }
         return bookList
     }
