@@ -13,11 +13,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     AnkoLogger {
 
     fun <T> execute(block: suspend CoroutineScope.() -> T): Coroutine<T> {
-        return Coroutine.with(this) { block() }
+        return Coroutine.launch(this) { block() }
     }
 
     fun <T> submit(block: suspend CoroutineScope.() -> Deferred<T>): Coroutine<T> {
-        return Coroutine.with(this) { block().await() }
+        return Coroutine.launch(this) { block().await() }
     }
 
 

@@ -11,7 +11,7 @@ import io.legado.app.utils.NetworkUtils
 import org.mozilla.javascript.NativeObject
 import retrofit2.Response
 
-class BookList {
+object BookList {
 
     @Throws(Exception::class)
     fun analyzeBookList(

@@ -2,11 +2,13 @@ package io.legado.app.help.coroutine
 
 import kotlinx.coroutines.*
 
-class Coroutine<T>(scope: CoroutineScope, private val block: suspend CoroutineScope.() -> T) {
+class Coroutine<T>(private val scope: CoroutineScope, private val block: suspend CoroutineScope.() -> T) {
 
     companion object {
 
-        fun <T> with(scope: CoroutineScope, block: suspend CoroutineScope.() -> T): Coroutine<T> {
+        private val DEFAULT = MainScope()
+
+        fun <T> launch(scope: CoroutineScope = DEFAULT, block: suspend CoroutineScope.() -> T): Coroutine<T> {
             return Coroutine(scope, block)
         }
     }
@@ -54,6 +56,10 @@ class Coroutine<T>(scope: CoroutineScope, private val block: suspend CoroutineSc
     fun onFinally(finally: () -> Unit): Coroutine<T> {
         this.finally = finally
         return this@Coroutine
+    }
+
+    fun cancel(cause: CancellationException? = null) {
+        scope.cancel(cause)
     }
 
     private suspend fun executeInternal(block: suspend CoroutineScope.() -> T) {

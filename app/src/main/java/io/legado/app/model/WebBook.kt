@@ -8,13 +8,11 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webbook.BookList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
 
-class WebBook(private val bookSource: BookSource) : CoroutineScope by MainScope() {
+class WebBook(private val bookSource: BookSource) {
 
     fun searchBook(key: String, page: Int?): Coroutine<List<SearchBook>> {
-        return Coroutine.with(this) {
+        return Coroutine.launch {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(searchUrl)
                 val response = when {
@@ -31,9 +29,9 @@ class WebBook(private val bookSource: BookSource) : CoroutineScope by MainScope(
                     else -> HttpHelper.getApiService<IHttpGetApi>(analyzeUrl.baseUrl)
                         .getMap(analyzeUrl.url, analyzeUrl.fieldMap, analyzeUrl.headerMap).await()
                 }
-                return@with BookList().analyzeBookList(response, bookSource, analyzeUrl)
+                return@launch BookList.analyzeBookList(response, bookSource, analyzeUrl)
             }
-            return@with ArrayList<SearchBook>()
+            return@launch mutableListOf()
         }
     }
 
