@@ -12,7 +12,7 @@ import io.legado.app.model.webbook.BookList
 class WebBook(private val bookSource: BookSource) {
 
     fun searchBook(key: String, page: Int?): Coroutine<List<SearchBook>> {
-        return Coroutine.launch {
+        return Coroutine.async {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(searchUrl)
                 val response = when {
@@ -29,9 +29,9 @@ class WebBook(private val bookSource: BookSource) {
                     else -> HttpHelper.getApiService<IHttpGetApi>(analyzeUrl.baseUrl)
                         .getMap(analyzeUrl.url, analyzeUrl.fieldMap, analyzeUrl.headerMap).await()
                 }
-                return@launch BookList.analyzeBookList(response, bookSource, analyzeUrl)
+                return@async BookList.analyzeBookList(response, bookSource, analyzeUrl)
             }
-            return@launch arrayListOf<SearchBook>()
+            return@async arrayListOf<SearchBook>()
         }
     }
 

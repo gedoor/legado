@@ -12,26 +12,23 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     val searchBooks: LiveData<List<SearchBook>> = MutableLiveData()
 
     fun search(start: (() -> Unit)? = null, finally: (() -> Unit)? = null) {
-        execute {
+        val c = execute {
             val response: String = HttpHelper.getApiService<CommonHttpApi>(
                 "http://www.baidu.com"
             ).get("http://www.baidu.com").await()
 
-            delay(4000L)
-
-            Log.e("TAG1", Thread.currentThread().name)
+            delay(2000L)
 
             response
 
         }
-            .timeout { 100L }
-            .onErrorReturn { "error return" }
             .onStart {
                 Log.e("TAG!", "start")
                 start?.let { it() }
@@ -49,7 +46,32 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
 
-        plus(WebBook(BookSource()).searchBook("keyword", 1))
+        val c2 = plus(c)
+//            .timeout { 100L }
+//            .onErrorReturn { "error return2" }
+            .onStart {
+                Log.e("TAG!", "start2")
+                start?.let { it() }
+            }
+            .onSuccess {
+                Log.e("TAG!", "success2: $it")
+            }
+            .onError {
+                Log.e("TAG!", "error2: $it")
+            }
+            .onFinally {
+                Log.e("TAG!", "finally2")
+                if (finally != null) {
+                    finally()
+                }
+            }
+
+        launch {
+
+           delay(1500L)
+            c2.cancel()
+
+        }
     }
 
 }
