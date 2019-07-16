@@ -8,7 +8,6 @@ import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
-import org.mozilla.javascript.NativeObject
 import retrofit2.Response
 
 object BookList {
@@ -42,18 +41,10 @@ object BookList {
         }
         val collections: List<Any>
         var reverse = false
-        var allInOne = false
         val bookListRule = if (isSearch) bookSource.getSearchRule() else bookSource.getExploreRule()
         var ruleList = bookListRule.bookList ?: ""
         if (ruleList.startsWith("-")) {
             reverse = true
-            ruleList = ruleList.substring(1)
-        }
-        if (ruleList.startsWith(":")) {
-            ruleList = ruleList.substring(1)
-        }
-        if (ruleList.startsWith("+")) {
-            allInOne = true
             ruleList = ruleList.substring(1)
         }
         collections = analyzer.getElements(ruleList)
@@ -63,23 +54,12 @@ object BookList {
                 bookList.add(searchBook)
             }
         } else {
-            if (allInOne) {
-                for (item in collections) {
-                    getAllInOneItem(item, analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
-                        if (baseUrl == searchBook.bookUrl) {
-                            searchBook.bookInfoHtml = body
-                        }
-                        bookList.add(searchBook)
+            for (item in collections) {
+                getSearchItem(item, analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
+                    if (baseUrl == searchBook.bookUrl) {
+                        searchBook.bookInfoHtml = body
                     }
-                }
-            } else {
-                for (item in collections) {
-                    getSearchItem(item, analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
-                        if (baseUrl == searchBook.bookUrl) {
-                            searchBook.bookInfoHtml = body
-                        }
-                        bookList.add(searchBook)
-                    }
+                    bookList.add(searchBook)
                 }
             }
             if (reverse) {
@@ -110,29 +90,6 @@ object BookList {
 
                 return searchBook
             }
-        }
-        return null
-    }
-
-    private fun getAllInOneItem(
-        item: Any,
-        analyzeRule: AnalyzeRule,
-        bookListRule: BookListRule,
-        bookSource: BookSource,
-        baseUrl: String
-    ): SearchBook? {
-        val searchBook = SearchBook()
-        searchBook.origin = bookSource.bookSourceUrl
-        searchBook.originName = bookSource.bookSourceName
-        val nativeObject = item as NativeObject
-        searchBook.name = nativeObject[bookListRule.name]?.toString()
-        searchBook.name?.let {
-            searchBook.author = nativeObject[bookListRule.author]?.toString()
-            searchBook.coverUrl = nativeObject[bookListRule.coverUrl]?.toString()
-            searchBook.intro = nativeObject[bookListRule.intro]?.toString()
-            searchBook.kind = nativeObject[bookListRule.kind]?.toString()
-            searchBook.wordCount = nativeObject[bookListRule.wordCount]?.toString()
-            return searchBook
         }
         return null
     }
