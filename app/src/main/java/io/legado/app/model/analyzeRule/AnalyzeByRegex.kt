@@ -3,9 +3,6 @@ package io.legado.app.model.analyzeRule
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.arrayListOf
 import kotlin.collections.set
 
 object AnalyzeByRegex {
@@ -43,7 +40,7 @@ object AnalyzeByRegex {
         if (vIndex + 1 == regs.size) {
             // 创建书息缓存数组
             val books = ArrayList<Map<String, String>>()
-            // 提取书籍列表
+            // 提取列表
             do {
                 // 新建容器
                 val info = HashMap<String, String>()
