@@ -44,7 +44,12 @@ object BookInfo {
         analyzeRule.getString(infoRule.intro ?: "")?.let {
             if (it.isNotEmpty()) book.intro = it
         }
-
+        analyzeRule.getString(infoRule.wordCount ?: "")?.let {
+            if (it.isNotEmpty()) book.wordCount = it
+        }
+        analyzeRule.getString(infoRule.lastChapter ?: "")?.let {
+            if (it.isNotEmpty()) book.latestChapterTitle = it
+        }
     }
 
 }
