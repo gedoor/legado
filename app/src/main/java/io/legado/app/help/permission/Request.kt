@@ -87,9 +87,9 @@ internal class Request : OnRequestPermissionsResultCallback {
         } else {
             if (deniedPermissions != null) {
                 source?.context?.startActivity<PermissionActivity>(
-                    Pair(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION),
-                    Pair(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode),
-                    Pair(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                    PermissionActivity.KEY_INPUT_REQUEST_TYPE to TYPE_REQUEST_PERMISSION,
+                    PermissionActivity.KEY_INPUT_PERMISSIONS_CODE to requestCode,
+                    PermissionActivity.KEY_INPUT_PERMISSIONS to deniedPermissions
                 )
             } else {
                 onPermissionsGranted(requestCode)
@@ -133,10 +133,7 @@ internal class Request : OnRequestPermissionsResultCallback {
                     .setMessage(rationale)
                     .setPositiveButton(R.string.dialog_setting) { _, _ ->
                         it.startActivity<PermissionActivity>(
-                            Pair(
-                                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
-                                TYPE_REQUEST_SETTING
-                            )
+                            PermissionActivity.KEY_INPUT_REQUEST_TYPE to TYPE_REQUEST_SETTING
                         )
                     }
                     .setNegativeButton(R.string.dialog_cancel) { _, _ -> cancel() }

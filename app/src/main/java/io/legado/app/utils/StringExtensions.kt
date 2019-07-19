@@ -23,11 +23,14 @@ fun String?.htmlFormat(): String = if (this.isNullOrBlank()) "" else
         .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
         .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
 
-fun String?.splitNotBlank(delim: String) = this?.run {
-    if (!this.contains(delim)) sequenceOf(this) else
-        this.split(delim).asSequence().map { it.trim() }.filterNot { it.isBlank() }
+fun String.splitNotBlank(delimiter: String): Array<String> = run {
+    this.split(delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
-fun String?.startWithIgnoreCase(start: String): Boolean {
-    return if (this.isNullOrBlank()) false else startsWith(start, true)
+fun String.splitNotBlank(regex: Regex): Array<String> = run {
+    this.split(regex).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
+}
+
+fun String.startWithIgnoreCase(start: String): Boolean {
+    return if (this.isBlank()) false else startsWith(start, true)
 }

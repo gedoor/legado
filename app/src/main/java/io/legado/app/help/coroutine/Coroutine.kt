@@ -2,6 +2,7 @@ package io.legado.app.help.coroutine
 
 import kotlinx.coroutines.*
 
+
 class Coroutine<T>() {
 
     companion object {
