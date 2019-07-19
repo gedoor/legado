@@ -24,10 +24,10 @@ class AnalyzeByJSonPath {
         val rules: Array<String>
         val elementsType: String
         if (rule.contains("&&")) {
-            rules = rule.split("&&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            rules = rule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
             elementsType = "&"
         } else {
-            rules = rule.split("\\|\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            rules = rule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
             elementsType = "|"
         }
         if (rules.size == 1) {
@@ -82,15 +82,15 @@ class AnalyzeByJSonPath {
         val elementsType: String
         when {
             rule.contains("&&") -> {
-                rules = rule.split("&&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
                 elementsType = "&"
             }
             rule.contains("%%") -> {
-                rules = rule.split("%%".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
                 elementsType = "%"
             }
             else -> {
-                rules = rule.split("\\|\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
                 elementsType = "|"
             }
         }
@@ -159,15 +159,15 @@ class AnalyzeByJSonPath {
         val rules: Array<String>
         when {
             rule.contains("&&") -> {
-                rules = rule.split("&&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
                 elementsType = "&"
             }
             rule.contains("%%") -> {
-                rules = rule.split("%%".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
                 elementsType = "%"
             }
             else -> {
-                rules = rule.split("\\|\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
                 elementsType = "|"
             }
         }
