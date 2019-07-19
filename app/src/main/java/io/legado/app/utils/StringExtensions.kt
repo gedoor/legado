@@ -27,8 +27,8 @@ fun String.splitNotBlank(delimiter: String): Array<String> = run {
     this.split(delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
-fun String.splitNotBlank(regex: Regex): Array<String> = run {
-    this.split(regex).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
+fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
+    this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
 fun String.startWithIgnoreCase(start: String): Boolean {
