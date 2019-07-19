@@ -83,15 +83,15 @@ class AnalyzeByJSonPath {
         val elementsType: String
         when {
             rule.contains("&&") -> {
-                rules = rule.split("&&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("&&")
                 elementsType = "&"
             }
             rule.contains("%%") -> {
-                rules = rule.split("%%".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("%%")
                 elementsType = "%"
             }
             else -> {
-                rules = rule.split("\\|\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("||")
                 elementsType = "|"
             }
         }
@@ -160,15 +160,15 @@ class AnalyzeByJSonPath {
         val rules: Array<String>
         when {
             rule.contains("&&") -> {
-                rules = rule.split("&&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("&&")
                 elementsType = "&"
             }
             rule.contains("%%") -> {
-                rules = rule.split("%%".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("%%")
                 elementsType = "%"
             }
             else -> {
-                rules = rule.split("\\|\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("||")
                 elementsType = "|"
             }
         }
