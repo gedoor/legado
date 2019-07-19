@@ -33,15 +33,19 @@ class AnalyzeByXPath {
         val jxNodes = ArrayList<JXNode>()
         val elementsType: String
         val rules: Array<String>
-        if (xPath.contains("&&")) {
-            rules = xPath.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
-            elementsType = "&"
-        } else if (xPath.contains("%%")) {
-            rules = xPath.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
-            elementsType = "%"
-        } else {
-            rules = xPath.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
-            elementsType = "|"
+        when {
+            xPath.contains("&&") -> {
+                rules = xPath.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                elementsType = "&"
+            }
+            xPath.contains("%%") -> {
+                rules = xPath.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                elementsType = "%"
+            }
+            else -> {
+                rules = xPath.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                elementsType = "|"
+            }
         }
         if (rules.size == 1) {
             return jxDocument!!.selN(rules[0])
@@ -79,15 +83,19 @@ class AnalyzeByXPath {
         val result = ArrayList<String>()
         val elementsType: String
         val rules: Array<String>
-        if (xPath.contains("&&")) {
-            rules = xPath.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
-            elementsType = "&"
-        } else if (xPath.contains("%%")) {
-            rules = xPath.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
-            elementsType = "%"
-        } else {
-            rules = xPath.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
-            elementsType = "|"
+        when {
+            xPath.contains("&&") -> {
+                rules = xPath.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                elementsType = "&"
+            }
+            xPath.contains("%%") -> {
+                rules = xPath.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                elementsType = "%"
+            }
+            else -> {
+                rules = xPath.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                elementsType = "|"
+            }
         }
         if (rules.size == 1) {
             val jxNodes = jxDocument!!.selN(xPath)
