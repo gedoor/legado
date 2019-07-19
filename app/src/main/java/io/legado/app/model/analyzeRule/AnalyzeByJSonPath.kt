@@ -3,6 +3,7 @@ package io.legado.app.model.analyzeRule
 import android.text.TextUtils
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
+import io.legado.app.utils.splitNotBlank
 import java.util.*
 import java.util.regex.Pattern
 
@@ -24,10 +25,10 @@ class AnalyzeByJSonPath {
         val rules: Array<String>
         val elementsType: String
         if (rule.contains("&&")) {
-            rules = rule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+            rules = rule.splitNotBlank("&&")
             elementsType = "&"
         } else {
-            rules = rule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+            rules = rule.splitNotBlank("||")
             elementsType = "|"
         }
         if (rules.size == 1) {
@@ -82,15 +83,15 @@ class AnalyzeByJSonPath {
         val elementsType: String
         when {
             rule.contains("&&") -> {
-                rules = rule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("&&")
                 elementsType = "&"
             }
             rule.contains("%%") -> {
-                rules = rule.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("%%")
                 elementsType = "%"
             }
             else -> {
-                rules = rule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("||")
                 elementsType = "|"
             }
         }
@@ -159,15 +160,15 @@ class AnalyzeByJSonPath {
         val rules: Array<String>
         when {
             rule.contains("&&") -> {
-                rules = rule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("&&")
                 elementsType = "&"
             }
             rule.contains("%%") -> {
-                rules = rule.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("%%")
                 elementsType = "%"
             }
             else -> {
-                rules = rule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = rule.splitNotBlank("||")
                 elementsType = "|"
             }
         }

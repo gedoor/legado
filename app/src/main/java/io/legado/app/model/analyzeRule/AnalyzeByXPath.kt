@@ -1,6 +1,7 @@
 package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
+import io.legado.app.utils.splitNotBlank
 import org.jsoup.nodes.Document
 import org.seimicrawler.xpath.JXDocument
 import org.seimicrawler.xpath.JXNode
@@ -35,15 +36,15 @@ class AnalyzeByXPath {
         val rules: Array<String>
         when {
             xPath.contains("&&") -> {
-                rules = xPath.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = xPath.splitNotBlank("&&")
                 elementsType = "&"
             }
             xPath.contains("%%") -> {
-                rules = xPath.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = xPath.splitNotBlank("%%")
                 elementsType = "%"
             }
             else -> {
-                rules = xPath.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = xPath.splitNotBlank("||")
                 elementsType = "|"
             }
         }
@@ -85,15 +86,15 @@ class AnalyzeByXPath {
         val rules: Array<String>
         when {
             xPath.contains("&&") -> {
-                rules = xPath.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = xPath.splitNotBlank("&&")
                 elementsType = "&"
             }
             xPath.contains("%%") -> {
-                rules = xPath.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = xPath.splitNotBlank("%%")
                 elementsType = "%"
             }
             else -> {
-                rules = xPath.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                rules = xPath.splitNotBlank("||")
                 elementsType = "|"
             }
         }
@@ -140,10 +141,10 @@ class AnalyzeByXPath {
         val rules: Array<String>
         val elementsType: String
         if (rule.contains("&&")) {
-            rules = rule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+            rules = rule.splitNotBlank("&&")
             elementsType = "&"
         } else {
-            rules = rule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+            rules = rule.splitNotBlank("||")
             elementsType = "|"
         }
         if (rules.size == 1) {

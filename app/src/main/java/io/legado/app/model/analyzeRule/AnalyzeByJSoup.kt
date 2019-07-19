@@ -2,6 +2,7 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils.isEmpty
 import android.text.TextUtils.join
+import io.legado.app.utils.splitNotBlank
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Collector
@@ -81,15 +82,15 @@ class AnalyzeByJSoup {
             when {
                 sourceRule.elementsRule.contains("&&") -> {
                     elementsType = "&"
-                    ruleStrS = sourceRule.elementsRule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                    ruleStrS = sourceRule.elementsRule.splitNotBlank("&&")
                 }
                 sourceRule.elementsRule.contains("%%") -> {
                     elementsType = "%"
-                    ruleStrS = sourceRule.elementsRule.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                    ruleStrS = sourceRule.elementsRule.splitNotBlank("%%")
                 }
                 else -> {
                     elementsType = "|"
-                    ruleStrS = sourceRule.elementsRule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                    ruleStrS = sourceRule.elementsRule.splitNotBlank("||")
                 }
             }
             val results = ArrayList<List<String>>()
@@ -144,15 +145,15 @@ class AnalyzeByJSoup {
         when {
             sourceRule.elementsRule.contains("&&") -> {
                 elementsType = "&"
-                ruleStrS = sourceRule.elementsRule.split("&&").dropLastWhile { it.isEmpty() }.toTypedArray()
+                ruleStrS = sourceRule.elementsRule.splitNotBlank("&&")
             }
             sourceRule.elementsRule.contains("%%") -> {
                 elementsType = "%"
-                ruleStrS = sourceRule.elementsRule.split("%%").dropLastWhile { it.isEmpty() }.toTypedArray()
+                ruleStrS = sourceRule.elementsRule.splitNotBlank("%%")
             }
             else -> {
                 elementsType = "|"
-                ruleStrS = sourceRule.elementsRule.split("||").dropLastWhile { it.isEmpty() }.toTypedArray()
+                ruleStrS = sourceRule.elementsRule.splitNotBlank("||")
             }
         }
         val elementsList = ArrayList<Elements>()
@@ -215,7 +216,7 @@ class AnalyzeByJSoup {
     private fun getElementsSingle(temp: Element, rule: String): Elements {
         val elements = Elements()
         try {
-            val rs = rule.trim { it <= ' ' }.split("@").dropLastWhile { it.isEmpty() }.toTypedArray()
+            val rs = rule.trim { it <= ' ' }.splitNotBlank("@")
             if (rs.size > 1) {
                 elements.add(temp)
                 for (rl in rs) {
@@ -227,16 +228,15 @@ class AnalyzeByJSoup {
                     elements.addAll(es)
                 }
             } else {
-                val rulePcx = rule.split("!").dropLastWhile { it.isEmpty() }.toTypedArray()
+                val rulePcx = rule.splitNotBlank("!")
                 val rulePc =
-                    rulePcx[0].trim { it <= ' ' }.split(">").dropLastWhile { it.isEmpty() }.toTypedArray()
+                    rulePcx[0].trim { it <= ' ' }.splitNotBlank(">")
                 val rules =
-                    rulePc[0].trim { it <= ' ' }.split(".").dropLastWhile { it.isEmpty() }.toTypedArray()
+                    rulePc[0].trim { it <= ' ' }.splitNotBlank(".")
                 var filterRules: Array<String>? = null
                 var needFilterElements = rulePc.size > 1 && !isEmpty(rulePc[1].trim { it <= ' ' })
                 if (needFilterElements) {
-                    filterRules = rulePc[1].trim { it <= ' ' }.split(".").dropLastWhile { it.isEmpty() }
-                        .toTypedArray()
+                    filterRules = rulePc[1].trim { it <= ' ' }.splitNotBlank(".")
                     filterRules[0] = filterRules[0].trim { it <= ' ' }
                     val validKeys = listOf("class", "id", "tag", "text")
                     if (filterRules.size < 2 || !validKeys.contains(filterRules[0]) || isEmpty(filterRules[1].trim { it <= ' ' })) {
@@ -305,7 +305,7 @@ class AnalyzeByJSoup {
                     else -> elements.addAll(temp.select(rulePcx[0]))
                 }
                 if (rulePcx.size > 1) {
-                    val rulePcs = rulePcx[1].split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val rulePcs = rulePcx[1].splitNotBlank(":")
                     for (pc in rulePcs) {
                         val pcInt = Integer.parseInt(pc)
                         if (pcInt < 0 && elements.size + pcInt >= 0) {
@@ -334,7 +334,7 @@ class AnalyzeByJSoup {
         }
         var elements = Elements()
         elements.add(element)
-        val rules = ruleStr.split("@").dropLastWhile { it.isEmpty() }.toTypedArray()
+        val rules = ruleStr.splitNotBlank("@")
         for (i in 0 until rules.size - 1) {
             val es = Elements()
             for (elt in elements) {

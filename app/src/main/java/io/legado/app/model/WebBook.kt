@@ -14,7 +14,7 @@ class WebBook(private val bookSource: BookSource) {
     fun searchBook(key: String, page: Int?): Coroutine<List<SearchBook>> {
         return Coroutine.async {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
-                val analyzeUrl = AnalyzeUrl(searchUrl)
+                val analyzeUrl = AnalyzeUrl(searchUrl, key, page)
                 val response = when {
                     analyzeUrl.method == AnalyzeUrl.Method.POST -> HttpHelper.getApiService<IHttpPostApi>(
                         analyzeUrl.baseUrl

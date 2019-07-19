@@ -24,6 +24,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 channel.send(it)
             }
         }
+
         val c = execute {
             val response: String = HttpHelper.getApiService<CommonHttpApi>(
                 "http://www.baidu.com"
@@ -32,7 +33,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             delay(2000L)
 
             response
-
         }
             .onStart {
                 Log.e("TAG!", "start")
@@ -54,7 +54,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         val c2 = plus(c)
 //            .timeout { 100L }
 //            .onErrorReturn { "error return2" }
-            .onStart {//会拦截掉c的onStart
+            .onStart {
+                //会拦截掉c的onStart
                 Log.e("TAG!", "start2")
                 start?.let { it() }
             }
@@ -69,12 +70,11 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 if (finally != null) {
                     finally()
                 }
+
                 Log.e("TAG!", "rec2: " + channel.receive())
             }
 
-
         launch {
-
             delay(1500L)
 //            c2.cancel()
 
