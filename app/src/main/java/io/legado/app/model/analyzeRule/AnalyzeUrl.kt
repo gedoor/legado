@@ -5,11 +5,16 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.EXP_PATTERN
+import io.legado.app.data.api.IHttpGetApi
+import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.data.entities.Book
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.utils.*
+import kotlinx.coroutines.Deferred
 import okhttp3.FormBody
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import retrofit2.Response
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -203,5 +208,22 @@ class AnalyzeUrl(
 
     enum class Method {
         GET, POST
+    }
+
+    fun getResponseAsync(): Deferred<Response<String>> {
+        return when {
+            method == AnalyzeUrl.Method.POST -> HttpHelper.getApiService<IHttpPostApi>(
+                baseUrl
+            ).postBodyAsync(
+                url,
+                body,
+                headerMap
+            )
+            fieldMap.isEmpty() -> HttpHelper.getApiService<IHttpGetApi>(
+                baseUrl
+            ).getAsync(url, headerMap)
+            else -> HttpHelper.getApiService<IHttpGetApi>(baseUrl)
+                .getMapAsync(url, fieldMap, headerMap)
+        }
     }
 }

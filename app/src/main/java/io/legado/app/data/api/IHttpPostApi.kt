@@ -14,14 +14,14 @@ interface IHttpPostApi {
 
     @FormUrlEncoded
     @POST
-    fun postMap(
+    fun postMapAsync(
         @Url url: String,
         @FieldMap(encoded = true) fieldMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
     ): Deferred<Response<String>>
 
     @POST
-    fun postBody(
+    fun postBodyAsync(
         @Url url: String,
         @Body body: RequestBody,
         @HeaderMap headers: Map<String, String>

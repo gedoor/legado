@@ -14,8 +14,7 @@ object BookInfo {
         book: Book,
         body: String?,
         bookSource: BookSource,
-        analyzeUrl: AnalyzeUrl,
-        isSearch: Boolean = true
+        analyzeUrl: AnalyzeUrl
     ) {
         val baseUrl = analyzeUrl.url
         body ?: throw Exception(

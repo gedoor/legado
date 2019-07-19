@@ -14,13 +14,13 @@ import retrofit2.http.Url
 
 interface IHttpGetApi {
     @GET
-    operator fun get(
+    fun getAsync(
         @Url url: String,
         @HeaderMap headers: Map<String, String>
     ): Deferred<Response<String>>
 
     @GET
-    fun getMap(
+    fun getMapAsync(
         @Url url: String,
         @QueryMap(encoded = true) queryMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
