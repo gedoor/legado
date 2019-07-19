@@ -25,8 +25,8 @@ data class Book(
     var customTag: String? = null,              // 分类信息(用户修改)
     var coverUrl: String? = null,               // 封面Url(书源获取)
     var customCoverUrl: String? = null,         // 封面Url(用户修改)
-    var description: String? = null,            // 简介内容(书源获取)
-    var customDescription: String? = null,      // 简介内容(用户修改)
+    var intro: String? = null,            // 简介内容(书源获取)
+    var customIntro: String? = null,      // 简介内容(用户修改)
     var charset: String? = null,                // 自定义字符集名称(仅适用于本地书籍)
     var type: Int = 0,                          // @BookType
     var group: Int = 0,                         // 自定义分组索引号
@@ -56,7 +56,7 @@ data class Book(
 
     fun getDisplayCover() = customCoverUrl ?: coverUrl
 
-    fun getDisplayDescription() = customDescription ?: description
+    fun getDisplayIntro() = customIntro ?: intro
 
     private fun initVariableMap() {
         if (variableMap == null) {
