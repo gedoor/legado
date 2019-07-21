@@ -21,6 +21,17 @@ class WebBook(private val bookSource: BookSource) {
         }
     }
 
+    fun findBook(key: String, page: Int?): Coroutine<List<SearchBook>> {
+        return Coroutine.async {
+            bookSource.getSearchRule().searchUrl?.let { searchUrl ->
+                val analyzeUrl = AnalyzeUrl(searchUrl, key, page)
+                val response = analyzeUrl.getResponseAsync().await()
+                return@async BookList.analyzeBookList(response, bookSource, analyzeUrl, false)
+            }
+            return@async arrayListOf<SearchBook>()
+        }
+    }
+
     fun getBookInfo(book: Book): Coroutine<Book> {
         return Coroutine.async {
             val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = book.bookUrl)
