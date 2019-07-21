@@ -29,16 +29,26 @@ class BookChapterList {
         )
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
-        val chapterData = analyzeChapterList(body, tocRule)
+        var chapterData = analyzeChapterList(body, tocRule)
         chapterList.addAll(chapterData.chapterList)
         if (chapterData.nextUrlList.size == 1) {
             var nextUrl = chapterData.nextUrlList[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 nextUrlList.add(nextUrl)
-
+                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
+                    .body()?.let {
+                        chapterData = analyzeChapterList(it, tocRule)
+                        nextUrl = if (chapterData.nextUrlList.isEmpty()) {
+                            ""
+                        } else {
+                            chapterData.nextUrlList[0]
+                        }
+                        chapterList.addAll(chapterData.chapterList)
+                    }
             }
-        }
+        } else if (chapterData.nextUrlList.size > 1) {
 
+        }
         return chapterList
     }
 

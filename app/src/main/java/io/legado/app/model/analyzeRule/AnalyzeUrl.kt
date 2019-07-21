@@ -14,6 +14,7 @@ import kotlinx.coroutines.Deferred
 import okhttp3.FormBody
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.Response
 import java.net.URLEncoder
 import java.util.*
@@ -212,7 +213,7 @@ class AnalyzeUrl(
 
     fun getResponseAsync(): Deferred<Response<String>> {
         return when {
-            method == AnalyzeUrl.Method.POST -> HttpHelper.getApiService<IHttpPostApi>(
+            method == Method.POST -> HttpHelper.getApiService<IHttpPostApi>(
                 baseUrl
             ).postBodyAsync(
                 url,
@@ -224,6 +225,23 @@ class AnalyzeUrl(
             ).getAsync(url, headerMap)
             else -> HttpHelper.getApiService<IHttpGetApi>(baseUrl)
                 .getMapAsync(url, fieldMap, headerMap)
+        }
+    }
+
+    fun getResponse(): Call<String> {
+        return when {
+            method == Method.POST -> HttpHelper.getApiService<IHttpPostApi>(
+                baseUrl
+            ).postBody(
+                url,
+                body,
+                headerMap
+            )
+            fieldMap.isEmpty() -> HttpHelper.getApiService<IHttpGetApi>(
+                baseUrl
+            ).get(url, headerMap)
+            else -> HttpHelper.getApiService<IHttpGetApi>(baseUrl)
+                .getMap(url, fieldMap, headerMap)
         }
     }
 }
