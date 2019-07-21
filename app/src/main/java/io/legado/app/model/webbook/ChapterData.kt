@@ -4,5 +4,5 @@ import io.legado.app.data.entities.BookChapter
 
 data class ChapterData<T>(
     var chapterList: List<BookChapter>? = null,
-    var nextUrlList: T
+    var nextUrl: T
 )

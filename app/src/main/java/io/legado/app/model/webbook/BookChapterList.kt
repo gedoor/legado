@@ -9,11 +9,14 @@ import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import retrofit2.Response
 
 object BookChapterList {
 
     fun analyzeChapterList(
+        coroutineScope: CoroutineScope,
         book: Book,
         response: Response<String>,
         bookSource: BookSource,
@@ -35,17 +38,17 @@ object BookChapterList {
         chapterData.chapterList?.let {
             chapterList.addAll(it)
         }
-        if (chapterData.nextUrlList.size == 1) {
-            var nextUrl = chapterData.nextUrlList[0]
+        if (chapterData.nextUrl.size == 1) {
+            var nextUrl = chapterData.nextUrl[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 nextUrlList.add(nextUrl)
                 AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
                     .body()?.let { nextBody ->
                         chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, book)
-                        nextUrl = if (chapterData.nextUrlList.isEmpty()) {
+                        nextUrl = if (chapterData.nextUrl.isEmpty()) {
                             ""
                         } else {
-                            chapterData.nextUrlList[0]
+                            chapterData.nextUrl[0]
                         }
                         chapterData.chapterList?.let {
                             chapterList.addAll(it)
@@ -53,16 +56,23 @@ object BookChapterList {
                     }
             }
             success(chapterList)
-        } else if (chapterData.nextUrlList.size > 1) {
+        } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
-            for (item in chapterData.nextUrlList) {
+            for (item in chapterData.nextUrl) {
                 if (!nextUrlList.contains(item)) {
-                    val data = ChapterData(nextUrlList = item)
+                    val data = ChapterData(nextUrl = item)
                     chapterDataList.add(data)
+                }
+            }
+            var successCount = 0
+            for (item in chapterDataList) {
+                coroutineScope.launch {
+                    AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponse().execute().body()
                 }
             }
         }
     }
+
 
     private fun analyzeChapterList(
         body: String,
