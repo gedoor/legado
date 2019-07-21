@@ -112,7 +112,6 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         return getStringList(ruleList, isUrl)
     }
 
-
     @Throws(Exception::class)
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean): List<String>? {
         var result: Any? = null

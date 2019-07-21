@@ -1,10 +1,12 @@
 package io.legado.app.model
 
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.webbook.BookChapterList
 import io.legado.app.model.webbook.BookInfo
 import io.legado.app.model.webbook.BookList
 
@@ -38,6 +40,14 @@ class WebBook(private val bookSource: BookSource) {
             val response = analyzeUrl.getResponseAsync().await()
             BookInfo.analyzeBookInfo(book, response.body(), bookSource, analyzeUrl)
             return@async book
+        }
+    }
+
+    fun getChapterList(book: Book, success: (List<BookChapter>) -> Unit) {
+        Coroutine.async {
+            val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = book.tocUrl)
+            val response = analyzeUrl.getResponseAsync().await()
+            BookChapterList.analyzeChapterList(book, response, bookSource, analyzeUrl, success)
         }
     }
 }
