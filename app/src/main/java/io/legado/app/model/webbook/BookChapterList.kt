@@ -31,7 +31,13 @@ class BookChapterList {
         val nextUrlList = arrayListOf(baseUrl)
         val chapterData = analyzeChapterList(body, tocRule)
         chapterList.addAll(chapterData.chapterList)
+        if (chapterData.nextUrlList.size == 1) {
+            var nextUrl = chapterData.nextUrlList[0]
+            while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
+                nextUrlList.add(nextUrl)
 
+            }
+        }
 
         return chapterList
     }
