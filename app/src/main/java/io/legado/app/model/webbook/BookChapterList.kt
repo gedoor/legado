@@ -10,20 +10,18 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
-import java.util.concurrent.atomic.AtomicInteger
 
 object BookChapterList {
 
-    fun analyzeChapterList(
+    suspend fun analyzeChapterList(
         coroutineScope: CoroutineScope,
         book: Book,
         response: Response<String>,
         bookSource: BookSource,
-        analyzeUrl: AnalyzeUrl,
-        success: (List<BookChapter>) -> Unit
-    ) {
+        analyzeUrl: AnalyzeUrl
+    ): List<BookChapter> {
         val chapterList = arrayListOf<BookChapter>()
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
@@ -63,35 +61,27 @@ object BookChapterList {
                     }
             }
             if (reverse) chapterList.reverse()
-            success(chapterList)
         } else if (chapterData.nextUrl.size > 1) {
-            val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
                 if (!nextUrlList.contains(item)) {
-                    val data = ChapterData(nextUrl = item)
-                    chapterDataList.add(data)
-                }
-            }
-            val successCount = AtomicInteger(0)
-            for (item in chapterDataList) {
-                coroutineScope.launch {
-                    val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
-                    val nextChapterData =
-                        analyzeChapterList(nextResponse.body() ?: "", item.nextUrl, tocRule, listRule, book)
-                    item.chapterList = nextChapterData.chapterList
-                    val nowCount = successCount.incrementAndGet()
-                    if (nowCount == chapterDataList.size) {
-                        for (newItem in chapterDataList) {
-                            newItem.chapterList?.let {
-                                chapterList.addAll(it)
-                            }
+                    withContext(coroutineScope.coroutineContext) {
+                        val nextResponse = AnalyzeUrl(ruleUrl = item, book = book).getResponseAsync().await()
+                        val nextChapterData = analyzeChapterList(
+                            nextResponse.body() ?: "",
+                            item,
+                            tocRule,
+                            listRule,
+                            book
+                        )
+                        nextChapterData.chapterList?.let {
+                            chapterList.addAll(it)
                         }
-                        if (reverse) chapterList.reverse()
-                        success(chapterList)
                     }
                 }
             }
+            if (reverse) chapterList.reverse()
         }
+        return chapterList
     }
 
 

@@ -43,11 +43,13 @@ class WebBook(private val bookSource: BookSource) {
         }
     }
 
-    fun getChapterList(book: Book, success: (List<BookChapter>) -> Unit) {
-        Coroutine.async {
+    fun getChapterList(book: Book): Coroutine<List<BookChapter>> {
+        return Coroutine.async {
             val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = book.tocUrl)
             val response = analyzeUrl.getResponseAsync().await()
-            BookChapterList.analyzeChapterList(this, book, response, bookSource, analyzeUrl, success)
+            BookChapterList.analyzeChapterList(this, book, response, bookSource, analyzeUrl)
         }
     }
+
+
 }

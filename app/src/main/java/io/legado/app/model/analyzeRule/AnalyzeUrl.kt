@@ -89,8 +89,7 @@ class AnalyzeUrl(
             val matcher = pagePattern.matcher(ruleUrl)
             while (matcher.find()) {
                 val pages =
-                    matcher.group(1).split(",".toRegex()).dropLastWhile { it.isEmpty() }
-                        .toTypedArray()
+                    matcher.group(1).splitNotBlank(",")
                 ruleUrl = if (page <= pages.size) {
                     ruleUrl.replace(matcher.group(), pages[page - 1].trim { it <= ' ' })
                 } else {
@@ -148,7 +147,7 @@ class AnalyzeUrl(
         }
         when (method) {
             Method.GET -> {
-                urlArray = url.split("\\?".toRegex())
+                urlArray = url.split("?")
                 url = urlArray[0]
                 if (urlArray.size > 1) {
                     analyzeFields(urlArray[1])
@@ -179,9 +178,9 @@ class AnalyzeUrl(
     @Throws(Exception::class)
     private fun analyzeFields(fieldsTxt: String) {
         queryStr = fieldsTxt
-        val queryS = fieldsTxt.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val queryS = fieldsTxt.splitNotBlank("&")
         for (query in queryS) {
-            val queryM = query.split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val queryM = query.splitNotBlank("=")
             val value = if (queryM.size > 1) queryM[1] else ""
             if (TextUtils.isEmpty(charset)) {
                 if (NetworkUtils.hasUrlEncoded(value)) {

@@ -8,9 +8,11 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.api.CommonHttpApi
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.http.HttpHelper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
 
@@ -25,10 +27,16 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             }
         }
 
+
         val c = execute {
+
+            Log.e("TAG1", "start")
+
             val response: String = HttpHelper.getApiService<CommonHttpApi>(
                 "http://www.baidu.com"
             ).get("http://www.baidu.com").await()
+
+            Log.e("TAG1", "result: $response")
 
             delay(2000L)
 
@@ -80,6 +88,27 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
 //            c.cancel()
         }
+
+
+        launch {
+            val list = test()
+            println("size: ${list.size}   $list")
+        }
+
+
+    }
+
+    suspend fun test(): MutableList<String> {
+        val list = mutableListOf<String>()
+        repeat(10) {
+            withContext(Dispatchers.IO) {
+                val response: String = HttpHelper.getApiService<CommonHttpApi>(
+                    "http://www.baidu.com"
+                ).get("http://www.baidu.com").await()
+                list.add(response)
+            }
+        }
+        return list
     }
 
 }
