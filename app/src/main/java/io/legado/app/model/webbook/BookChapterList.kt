@@ -70,18 +70,16 @@ object BookChapterList {
                 }
             }
             for (item in chapterDataList) {
-                if (!nextUrlList.contains(item.nextUrl)) {
-                    withContext(coroutineScope.coroutineContext) {
-                        val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
-                        val nextChapterData = analyzeChapterList(
-                            nextResponse.body() ?: "",
-                            item.nextUrl,
-                            tocRule,
-                            listRule,
-                            book
-                        )
-                        item.chapterList = nextChapterData.chapterList
-                    }
+                withContext(coroutineScope.coroutineContext) {
+                    val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
+                    val nextChapterData = analyzeChapterList(
+                        nextResponse.body() ?: "",
+                        item.nextUrl,
+                        tocRule,
+                        listRule,
+                        book
+                    )
+                    item.chapterList = nextChapterData.chapterList
                 }
             }
             for (item in chapterDataList) {
