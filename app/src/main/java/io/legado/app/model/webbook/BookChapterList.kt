@@ -12,6 +12,7 @@ import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.util.concurrent.atomic.AtomicInteger
 
 object BookChapterList {
 
@@ -34,7 +35,13 @@ object BookChapterList {
         )
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
-        var chapterData = analyzeChapterList(body, baseUrl, tocRule, book)
+        var reverse = false
+        var listRule = tocRule.chapterList ?: ""
+        if (listRule.startsWith("-")) {
+            reverse = true
+            listRule = listRule.substring(1)
+        }
+        var chapterData = analyzeChapterList(body, baseUrl, tocRule, listRule, book)
         chapterData.chapterList?.let {
             chapterList.addAll(it)
         }
@@ -44,7 +51,7 @@ object BookChapterList {
                 nextUrlList.add(nextUrl)
                 AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
                     .body()?.let { nextBody ->
-                        chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, book)
+                        chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, listRule, book)
                         nextUrl = if (chapterData.nextUrl.isEmpty()) {
                             ""
                         } else {
@@ -55,6 +62,7 @@ object BookChapterList {
                         }
                     }
             }
+            if (reverse) chapterList.reverse()
             success(chapterList)
         } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
@@ -64,10 +72,23 @@ object BookChapterList {
                     chapterDataList.add(data)
                 }
             }
-            var successCount = 0
+            val successCount = AtomicInteger(0)
             for (item in chapterDataList) {
                 coroutineScope.launch {
-                    AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponse().execute().body()
+                    val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
+                    val nextChapterData =
+                        analyzeChapterList(nextResponse.body() ?: "", item.nextUrl, tocRule, listRule, book)
+                    item.chapterList = nextChapterData.chapterList
+                    val nowCount = successCount.incrementAndGet()
+                    if (nowCount == chapterDataList.size) {
+                        for (newItem in chapterDataList) {
+                            newItem.chapterList?.let {
+                                chapterList.addAll(it)
+                            }
+                        }
+                        if (reverse) chapterList.reverse()
+                        success(chapterList)
+                    }
                 }
             }
         }
@@ -78,6 +99,7 @@ object BookChapterList {
         body: String,
         baseUrl: String,
         tocRule: TocRule,
+        listRule: String,
         book: Book
     ): ChapterData<List<String>> {
         val chapterList = arrayListOf<BookChapter>()
