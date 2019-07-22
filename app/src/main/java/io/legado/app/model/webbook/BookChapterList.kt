@@ -62,21 +62,31 @@ object BookChapterList {
             }
             if (reverse) chapterList.reverse()
         } else if (chapterData.nextUrl.size > 1) {
+            val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
                 if (!nextUrlList.contains(item)) {
+                    val data = ChapterData(nextUrl = item)
+                    chapterDataList.add(data)
+                }
+            }
+            for (item in chapterDataList) {
+                if (!nextUrlList.contains(item.nextUrl)) {
                     withContext(coroutineScope.coroutineContext) {
-                        val nextResponse = AnalyzeUrl(ruleUrl = item, book = book).getResponseAsync().await()
+                        val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
                         val nextChapterData = analyzeChapterList(
                             nextResponse.body() ?: "",
-                            item,
+                            item.nextUrl,
                             tocRule,
                             listRule,
                             book
                         )
-                        nextChapterData.chapterList?.let {
-                            chapterList.addAll(it)
-                        }
+                        item.chapterList = nextChapterData.chapterList
                     }
+                }
+            }
+            for (item in chapterDataList) {
+                item.chapterList?.let {
+                    chapterList.addAll(it)
                 }
             }
             if (reverse) chapterList.reverse()
@@ -99,7 +109,7 @@ object BookChapterList {
         analyzeRule.getStringList(tocRule.nextTocUrl ?: "", true)?.let {
             nextUrlList.addAll(it)
         }
-        val elements = analyzeRule.getElements(tocRule.chapterList ?: "")
+        val elements = analyzeRule.getElements(listRule)
         if (elements.isNotEmpty()) {
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName ?: "")
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl ?: "")
