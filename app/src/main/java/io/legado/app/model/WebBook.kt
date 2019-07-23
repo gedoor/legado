@@ -56,7 +56,7 @@ class WebBook(private val bookSource: BookSource) {
         return Coroutine.async {
             val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = bookChapter.url)
             val response = analyzeUrl.getResponseAsync().await()
-            BookContent.analyzeContent(response, book, bookChapter, bookSource, analyzeUrl)
+            BookContent.analyzeContent(this, response, book, bookChapter, bookSource, analyzeUrl)
         }
     }
 }
