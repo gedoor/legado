@@ -2,12 +2,10 @@ package io.legado.app.model.analyzeRule
 
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.HashMap
-import kotlin.collections.set
 
 object AnalyzeByRegex {
 
-    fun getElement(res: String, regs: Array<String>, index: Int = 0): Map<String, String>? {
+    fun getElement(res: String, regs: Array<String>, index: Int = 0): List<String>? {
         var vIndex = index
         val resM = Pattern.compile(regs[vIndex]).matcher(res)
         if (!resM.find()) {
@@ -16,9 +14,9 @@ object AnalyzeByRegex {
         // 判断索引的规则是最后一个规则
         return if (vIndex + 1 == regs.size) {
             // 新建容器
-            val info = HashMap<String, String>()
-            for (groupIndex in 1 until resM.groupCount()) {
-                info["$$groupIndex"] = resM.group(groupIndex)
+            val info = arrayListOf<String>()
+            for (groupIndex in 0 until resM.groupCount()) {
+                info.add(resM.group(groupIndex))
             }
             info
         } else {
@@ -30,7 +28,7 @@ object AnalyzeByRegex {
         }
     }
 
-    fun getElements(res: String, regs: Array<String>, index: Int = 0): List<Map<String, String>> {
+    fun getElements(res: String, regs: Array<String>, index: Int = 0): List<List<String>> {
         var vIndex = index
         val resM = Pattern.compile(regs[vIndex]).matcher(res)
         if (!resM.find()) {
@@ -39,13 +37,13 @@ object AnalyzeByRegex {
         // 判断索引的规则是最后一个规则
         if (vIndex + 1 == regs.size) {
             // 创建书息缓存数组
-            val books = ArrayList<Map<String, String>>()
+            val books = ArrayList<List<String>>()
             // 提取列表
             do {
                 // 新建容器
-                val info = HashMap<String, String>()
-                for (groupIndex in 1 until resM.groupCount()) {
-                    info["$$groupIndex"] = resM.group(groupIndex)
+                val info = arrayListOf<String>()
+                for (groupIndex in 0 until resM.groupCount()) {
+                    info.add(resM.group(groupIndex))
                 }
                 books.add(info)
             } while (resM.find())
