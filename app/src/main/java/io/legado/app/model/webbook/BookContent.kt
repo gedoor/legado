@@ -31,6 +31,7 @@ object BookContent {
             )
         )
         val contentRule = bookSource.getContentRule()
+        var contentData = analyzeContent(body, contentRule)
 
         return ""
     }
