@@ -7,6 +7,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webbook.BookChapterList
+import io.legado.app.model.webbook.BookContent
 import io.legado.app.model.webbook.BookInfo
 import io.legado.app.model.webbook.BookList
 
@@ -51,5 +52,11 @@ class WebBook(private val bookSource: BookSource) {
         }
     }
 
-
+    fun getContent(book: Book, bookChapter: BookChapter): Coroutine<String> {
+        return Coroutine.async {
+            val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = bookChapter.url)
+            val response = analyzeUrl.getResponseAsync().await()
+            BookContent.analyzeContent(response, book, bookChapter, bookSource, analyzeUrl)
+        }
+    }
 }
