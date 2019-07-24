@@ -6,6 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ContentRule
+import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
@@ -30,17 +31,38 @@ object BookContent {
                 baseUrl
             )
         )
+        val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
-        var contentData = analyzeContent(body, contentRule)
+        var contentData = analyzeContent(body, contentRule, book, baseUrl)
+        var content = contentData.content
+        if (contentData.nextUrl.size == 1) {
+            var nextUrl = contentData.nextUrl[0]
+            while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
+                nextUrlList.add(nextUrl)
+                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
+                    .body()?.let { nextBody ->
+                        analyzeContent(nextBody, contentRule, book, baseUrl)
 
-        return ""
+                    }
+            }
+        } else if (contentData.nextUrl.size > 1) {
+
+        }
+        return content
     }
 
     fun analyzeContent(
         body: String,
-        contentRule: ContentRule
-    ): ContentData<String> {
-
-        return ContentData("", "")
+        contentRule: ContentRule,
+        book: Book,
+        baseUrl: String
+    ): ContentData<List<String>> {
+        val nextUrlList = arrayListOf<String>()
+        val analyzeRule = AnalyzeRule(book)
+        analyzeRule.setContent(body, baseUrl)
+        analyzeRule.getStringList(contentRule.nextContentUrl ?: "", true)?.let {
+            nextUrlList.addAll(it)
+        }
+        return ContentData("", nextUrlList)
     }
 }
