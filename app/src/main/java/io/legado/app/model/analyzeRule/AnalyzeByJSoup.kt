@@ -204,10 +204,8 @@ class AnalyzeByJSoup {
                 }
             } else {
                 val rulePcx = rule.splitNotBlank("!")
-                val rulePc =
-                    rulePcx[0].trim { it <= ' ' }.splitNotBlank(">")
-                val rules =
-                    rulePc[0].trim { it <= ' ' }.splitNotBlank(".")
+                val rulePc = rulePcx[0].trim { it <= ' ' }.splitNotBlank(">")
+                val rules = rulePc[0].trim { it <= ' ' }.splitNotBlank(".")
                 var filterRules: Array<String>? = null
                 var needFilterElements = rulePc.size > 1 && !isEmpty(rulePc[1].trim { it <= ' ' })
                 if (needFilterElements) {
@@ -219,6 +217,7 @@ class AnalyzeByJSoup {
                     }
                     filterRules[1] = filterRules[1].trim { it <= ' ' }
                 }
+                var isCss = false
                 when (rules[0]) {
                     "children" -> {
                         var children = temp.children()
@@ -277,9 +276,12 @@ class AnalyzeByJSoup {
                             elementsByText = filterElements(elementsByText, filterRules)
                         elements.addAll(elementsByText)
                     }
-                    else -> elements.addAll(temp.select(rule))
+                    else -> {
+                        elements.addAll(temp.select(rule))
+                        isCss = true
+                    }
                 }
-                if (rulePcx.size > 1) {
+                if (!isCss && rulePcx.size > 1) {
                     val rulePcs = rulePcx[1].splitNotBlank(":")
                     for (pc in rulePcs) {
                         val pcInt = Integer.parseInt(pc)
