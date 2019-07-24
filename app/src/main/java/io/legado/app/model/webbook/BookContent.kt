@@ -10,6 +10,7 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 object BookContent {
@@ -48,7 +49,26 @@ object BookContent {
                     }
             }
         } else if (contentData.nextUrl.size > 1) {
-
+            val contentDataList = arrayListOf<ContentData<String>>()
+            for (item in contentData.nextUrl) {
+                if (!nextUrlList.contains(item))
+                    contentDataList.add(ContentData(nextUrl = item))
+            }
+            for (item in contentDataList) {
+                withContext(coroutineScope.coroutineContext) {
+                    val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
+                    val nextContentData = analyzeContent(
+                        nextResponse.body() ?: "",
+                        contentRule,
+                        book,
+                        item.nextUrl
+                    )
+                    item.content = nextContentData.content
+                }
+            }
+            for (item in contentDataList) {
+                content.append(item.content)
+            }
         }
         return content.toString()
     }
@@ -65,6 +85,7 @@ object BookContent {
         analyzeRule.getStringList(contentRule.nextContentUrl ?: "", true)?.let {
             nextUrlList.addAll(it)
         }
-        return ContentData("", nextUrlList)
+        val content = analyzeRule.getString(contentRule.content ?: "") ?: ""
+        return ContentData(content, nextUrlList)
     }
 }
