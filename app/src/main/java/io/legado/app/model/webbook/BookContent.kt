@@ -31,27 +31,29 @@ object BookContent {
                 baseUrl
             )
         )
+        val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
         var contentData = analyzeContent(body, contentRule, book, baseUrl)
-        var content = contentData.content
+        content.append(contentData.content)
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 nextUrlList.add(nextUrl)
                 AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
                     .body()?.let { nextBody ->
-                        analyzeContent(nextBody, contentRule, book, baseUrl)
-
+                        contentData = analyzeContent(nextBody, contentRule, book, baseUrl)
+                        nextUrl = if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
+                        content.append(contentData.content)
                     }
             }
         } else if (contentData.nextUrl.size > 1) {
 
         }
-        return content
+        return content.toString()
     }
 
-    fun analyzeContent(
+    private fun analyzeContent(
         body: String,
         contentRule: ContentRule,
         book: Book,

@@ -50,11 +50,7 @@ object BookChapterList {
                 AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
                     .body()?.let { nextBody ->
                         chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, listRule, book)
-                        nextUrl = if (chapterData.nextUrl.isEmpty()) {
-                            ""
-                        } else {
-                            chapterData.nextUrl[0]
-                        }
+                        nextUrl = if (chapterData.nextUrl.isNotEmpty()) chapterData.nextUrl[0] else ""
                         chapterData.chapterList?.let {
                             chapterList.addAll(it)
                         }
