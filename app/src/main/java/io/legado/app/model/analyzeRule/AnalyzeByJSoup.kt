@@ -17,6 +17,8 @@ import java.util.*
  */
 
 class AnalyzeByJSoup {
+    private val validKeys = listOf("class", "id", "tag", "text")
+
     private var element: Element? = null
 
     fun parse(doc: Any): AnalyzeByJSoup {
@@ -211,7 +213,6 @@ class AnalyzeByJSoup {
                 if (needFilterElements) {
                     filterRules = rulePc[1].trim { it <= ' ' }.splitNotBlank(".")
                     filterRules[0] = filterRules[0].trim { it <= ' ' }
-                    val validKeys = listOf("class", "id", "tag", "text")
                     if (filterRules.size < 2 || !validKeys.contains(filterRules[0]) || isEmpty(filterRules[1].trim { it <= ' ' })) {
                         needFilterElements = false
                     }
