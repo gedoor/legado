@@ -60,10 +60,8 @@ object BookChapterList {
         } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
-                if (!nextUrlList.contains(item)) {
-                    val data = ChapterData(nextUrl = item)
-                    chapterDataList.add(data)
-                }
+                val data = ChapterData(nextUrl = item)
+                chapterDataList.add(data)
             }
             for (item in chapterDataList) {
                 withContext(coroutineScope.coroutineContext) {
