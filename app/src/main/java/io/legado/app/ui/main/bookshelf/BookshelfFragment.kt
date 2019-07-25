@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
@@ -26,7 +27,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
 
-class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), BookGroupAdapter.CallBack {
+class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), SearchView.OnQueryTextListener,
+    BookGroupAdapter.CallBack {
 
     private lateinit var bookshelfAdapter: BookshelfAdapter
     private lateinit var bookGroupAdapter: BookGroupAdapter
@@ -51,6 +53,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), BookGroupAd
         search_view.isSubmitButtonEnabled = true
         search_view.queryHint = getString(R.string.search_book_key)
         search_view.clearFocus()
+        search_view.setOnQueryTextListener(this)
     }
 
     private fun initRecyclerView() {
@@ -104,6 +107,14 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), BookGroupAd
             }
             else -> context?.startActivity<BookshelfActivity>(Pair("data", bookGroup))
         }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
     }
 
 }
