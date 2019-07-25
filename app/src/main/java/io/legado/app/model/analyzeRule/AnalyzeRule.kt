@@ -123,10 +123,11 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                         if (rule.rule.isNotEmpty()) {
                             when (rule.mode) {
                                 Mode.Js -> result = evalJS(rule.rule, result)
-                                Mode.JSon -> result = getAnalyzeByJSonPath(it).getStringList(rule.rule)
-                                Mode.XPath -> result = getAnalyzeByXPath(it).getStringList(rule.rule)
-                                Mode.Css -> result = getAnalyzeByJSoup(it).getStringList(rule.rule)
-                                else -> result = rule.rule
+                                Mode.JSon -> result =
+                                    getAnalyzeByJSonPath(it).getStringList(rule.rule)
+                                Mode.XPath -> result =
+                                    getAnalyzeByXPath(it).getStringList(rule.rule)
+                                else -> result = getAnalyzeByJSoup(it).getStringList(rule.rule)
                             }
                         }
                         if (rule.replaceRegex.isNotEmpty() && result is List<*>) {
@@ -191,12 +192,11 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                             Mode.Js -> result = evalJS(rule.rule, it)
                             Mode.JSon -> result = getAnalyzeByJSonPath(it).getString(rule.rule)
                             Mode.XPath -> result = getAnalyzeByXPath(it).getString(rule.rule)
-                            Mode.Css -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
+                            Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
                                 getAnalyzeByJSoup(it).getString0(rule.rule)
                             } else {
                                 getAnalyzeByJSoup(it).getString(rule.rule)
                             }
-                            else -> result = rule.rule
                         }
                     }
                     if (rule.replaceRegex.isNotEmpty()) {
@@ -230,8 +230,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                         Mode.Js -> result = evalJS(rule.rule, it)
                         Mode.JSon -> result = getAnalyzeByJSonPath(it).getObject(rule.rule)
                         Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
-                        Mode.Css -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
-                        else -> result = rule.rule
+                        else -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
                     }
                     if (rule.replaceRegex.isNotEmpty()) {
                         result = replaceRegex(result.toString(), rule)
@@ -261,8 +260,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                         }
                         Mode.JSon -> result = getAnalyzeByJSonPath(it).getList(rule.rule)
                         Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
-                        Mode.Css -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
-                        else -> result = rule.rule
+                        else -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
                     }
                     if (rule.replaceRegex.isNotEmpty()) {
                         result = replaceRegex(result.toString(), rule)
@@ -479,7 +477,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     enum class Mode {
-        XPath, JSon, Default, Js, Regex, Css
+        XPath, JSon, Default, Js
     }
 
     fun put(key: String, value: String): String {

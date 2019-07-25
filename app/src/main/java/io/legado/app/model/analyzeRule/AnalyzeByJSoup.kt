@@ -17,8 +17,6 @@ import java.util.*
  */
 
 class AnalyzeByJSoup {
-    private val validKeys = listOf("class", "id", "tag", "text")
-
     private var element: Element? = null
 
     fun parse(doc: Any): AnalyzeByJSoup {
@@ -75,44 +73,58 @@ class AnalyzeByJSoup {
             return textS
         }
         //拆分规则
-        val elementsType: String
-        val ruleStrS: Array<String>
-        when {
-            ruleStr.contains("&&") -> {
-                elementsType = "&"
-                ruleStrS = ruleStr.splitNotBlank("&&")
-            }
-            ruleStr.contains("%%") -> {
-                elementsType = "%"
-                ruleStrS = ruleStr.splitNotBlank("%%")
-            }
-            else -> {
-                elementsType = "|"
-                ruleStrS = ruleStr.splitNotBlank("||")
-            }
-        }
-        val results = ArrayList<List<String>>()
-        for (ruleStrX in ruleStrS) {
-            val temp: List<String>? = getResultList(ruleStrX)
-            if (temp != null && temp.isNotEmpty()) {
-                results.add(temp)
-                if (results.isNotEmpty() && elementsType == "|") {
-                    break
+        val sourceRule = SourceRule(ruleStr)
+        if (isEmpty(sourceRule.elementsRule)) {
+            textS.add(element!!.data())
+        } else {
+            val elementsType: String
+            val ruleStrS: Array<String>
+            when {
+                sourceRule.elementsRule.contains("&&") -> {
+                    elementsType = "&"
+                    ruleStrS = sourceRule.elementsRule.splitNotBlank("&&")
+                }
+                sourceRule.elementsRule.contains("%%") -> {
+                    elementsType = "%"
+                    ruleStrS = sourceRule.elementsRule.splitNotBlank("%%")
+                }
+                else -> {
+                    elementsType = "|"
+                    ruleStrS = sourceRule.elementsRule.splitNotBlank("||")
                 }
             }
-        }
-        if (results.size > 0) {
-            if ("%" == elementsType) {
-                for (i in 0 until results[0].size) {
-                    for (temp in results) {
-                        if (i < temp.size) {
-                            textS.add(temp[i])
-                        }
+            val results = ArrayList<List<String>>()
+            for (ruleStrX in ruleStrS) {
+                val temp: List<String>?
+                temp = if (sourceRule.isCss) {
+                    val lastIndex = ruleStrX.lastIndexOf('@')
+                    getResultLast(
+                        element!!.select(ruleStrX.substring(0, lastIndex)),
+                        ruleStrX.substring(lastIndex + 1)
+                    )
+                } else {
+                    getResultList(ruleStrX)
+                }
+                if (temp != null && temp.isNotEmpty()) {
+                    results.add(temp)
+                    if (results.isNotEmpty() && elementsType == "|") {
+                        break
                     }
                 }
-            } else {
-                for (temp in results) {
-                    textS.addAll(temp)
+            }
+            if (results.size > 0) {
+                if ("%" == elementsType) {
+                    for (i in 0 until results[0].size) {
+                        for (temp in results) {
+                            if (i < temp.size) {
+                                textS.add(temp[i])
+                            }
+                        }
+                    }
+                } else {
+                    for (temp in results) {
+                        textS.addAll(temp)
+                    }
                 }
             }
         }
@@ -127,28 +139,39 @@ class AnalyzeByJSoup {
         if (temp == null || isEmpty(rule)) {
             return elements
         }
+        val sourceRule = SourceRule(rule)
         val elementsType: String
         val ruleStrS: Array<String>
         when {
-            rule.contains("&&") -> {
+            sourceRule.elementsRule.contains("&&") -> {
                 elementsType = "&"
-                ruleStrS = rule.splitNotBlank("&&")
+                ruleStrS = sourceRule.elementsRule.splitNotBlank("&&")
             }
-            rule.contains("%%") -> {
+            sourceRule.elementsRule.contains("%%") -> {
                 elementsType = "%"
-                ruleStrS = rule.splitNotBlank("%%")
+                ruleStrS = sourceRule.elementsRule.splitNotBlank("%%")
             }
             else -> {
                 elementsType = "|"
-                ruleStrS = rule.splitNotBlank("||")
+                ruleStrS = sourceRule.elementsRule.splitNotBlank("||")
             }
         }
         val elementsList = ArrayList<Elements>()
-        for (ruleStr in ruleStrS) {
-            val tempS = getElementsSingle(temp, ruleStr)
-            elementsList.add(tempS)
-            if (tempS.size > 0 && elementsType == "|") {
-                break
+        if (sourceRule.isCss) {
+            for (ruleStr in ruleStrS) {
+                val tempS = temp.select(ruleStr)
+                elementsList.add(tempS)
+                if (tempS.size > 0 && elementsType == "|") {
+                    break
+                }
+            }
+        } else {
+            for (ruleStr in ruleStrS) {
+                val tempS = getElementsSingle(temp, ruleStr)
+                elementsList.add(tempS)
+                if (tempS.size > 0 && elementsType == "|") {
+                    break
+                }
             }
         }
         if (elementsList.size > 0) {
@@ -206,19 +229,21 @@ class AnalyzeByJSoup {
                 }
             } else {
                 val rulePcx = rule.splitNotBlank("!")
-                val rulePc = rulePcx[0].trim { it <= ' ' }.splitNotBlank(">")
-                val rules = rulePc[0].trim { it <= ' ' }.splitNotBlank(".")
+                val rulePc =
+                    rulePcx[0].trim { it <= ' ' }.splitNotBlank(">")
+                val rules =
+                    rulePc[0].trim { it <= ' ' }.splitNotBlank(".")
                 var filterRules: Array<String>? = null
                 var needFilterElements = rulePc.size > 1 && !isEmpty(rulePc[1].trim { it <= ' ' })
                 if (needFilterElements) {
                     filterRules = rulePc[1].trim { it <= ' ' }.splitNotBlank(".")
                     filterRules[0] = filterRules[0].trim { it <= ' ' }
+                    val validKeys = listOf("class", "id", "tag", "text")
                     if (filterRules.size < 2 || !validKeys.contains(filterRules[0]) || isEmpty(filterRules[1].trim { it <= ' ' })) {
                         needFilterElements = false
                     }
                     filterRules[1] = filterRules[1].trim { it <= ' ' }
                 }
-                var isCss = false
                 when (rules[0]) {
                     "children" -> {
                         var children = temp.children()
@@ -277,12 +302,9 @@ class AnalyzeByJSoup {
                             elementsByText = filterElements(elementsByText, filterRules)
                         elements.addAll(elementsByText)
                     }
-                    else -> {
-                        elements.addAll(temp.select(rule))
-                        isCss = true
-                    }
+                    else -> elements.addAll(temp.select(rulePcx[0]))
                 }
-                if (!isCss && rulePcx.size > 1) {
+                if (rulePcx.size > 1) {
                     val rulePcs = rulePcx[1].splitNotBlank(":")
                     for (pc in rulePcs) {
                         val pcInt = Integer.parseInt(pc)
@@ -362,6 +384,20 @@ class AnalyzeByJSoup {
         }
 
         return textS
+    }
+
+    internal inner class SourceRule(ruleStr: String) {
+        var isCss = false
+        var elementsRule: String
+
+        init {
+            if (ruleStr.startsWith("@CSS:", true)) {
+                isCss = true
+                elementsRule = ruleStr.substring(5).trim { it <= ' ' }
+            } else {
+                elementsRule = ruleStr
+            }
+        }
     }
 
 }
