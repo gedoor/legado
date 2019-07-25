@@ -123,7 +123,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                         if (rule.rule.isNotEmpty()) {
                             when (rule.mode) {
                                 Mode.Js -> result = evalJS(rule.rule, result)
-                                Mode.JSon -> result =
+                                Mode.Json -> result =
                                     getAnalyzeByJSonPath(it).getStringList(rule.rule)
                                 Mode.XPath -> result =
                                     getAnalyzeByXPath(it).getStringList(rule.rule)
@@ -190,7 +190,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     if (rule.rule.isNotBlank()) {
                         when (rule.mode) {
                             Mode.Js -> result = evalJS(rule.rule, it)
-                            Mode.JSon -> result = getAnalyzeByJSonPath(it).getString(rule.rule)
+                            Mode.Json -> result = getAnalyzeByJSonPath(it).getString(rule.rule)
                             Mode.XPath -> result = getAnalyzeByXPath(it).getString(rule.rule)
                             Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
                                 getAnalyzeByJSoup(it).getString0(rule.rule)
@@ -228,7 +228,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 result?.let {
                     when (rule.mode) {
                         Mode.Js -> result = evalJS(rule.rule, it)
-                        Mode.JSon -> result = getAnalyzeByJSonPath(it).getObject(rule.rule)
+                        Mode.Json -> result = getAnalyzeByJSonPath(it).getObject(rule.rule)
                         Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
                         else -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
                     }
@@ -258,7 +258,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                             if (result == null) result = content
                             result = evalJS(rule.rule, result)
                         }
-                        Mode.JSon -> result = getAnalyzeByJSonPath(it).getList(rule.rule)
+                        Mode.Json -> result = getAnalyzeByJSonPath(it).getList(rule.rule)
                         Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
                         else -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
                     }
@@ -381,12 +381,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 mode = Mode.XPath
                 vRuleStr = vRuleStr.substring(7)
             }
-            vRuleStr.startsWith("@JSon:", true) -> {
-                mode = Mode.JSon
+            vRuleStr.startsWith("@Json:", true) -> {
+                mode = Mode.Json
                 vRuleStr = vRuleStr.substring(6)
             }
             else -> mode = if (isJSON) {
-                Mode.JSon
+                Mode.Json
             } else {
                 Mode.Default
             }
@@ -448,12 +448,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                         mode = Mode.XPath
                         rule = ruleStr
                     }
-                    ruleStr.startsWith("@JSon:", true) -> {
-                        mode = Mode.JSon
+                    ruleStr.startsWith("@Json:", true) -> {
+                        mode = Mode.Json
                         rule = ruleStr.substring(6)
                     }
                     ruleStr.startsWith("$.") -> {
-                        mode = Mode.JSon
+                        mode = Mode.Json
                         rule = ruleStr
                     }
                     else -> rule = ruleStr
@@ -477,7 +477,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     enum class Mode {
-        XPath, JSon, Default, Js
+        XPath, Json, Default, Js
     }
 
     fun put(key: String, value: String): String {
