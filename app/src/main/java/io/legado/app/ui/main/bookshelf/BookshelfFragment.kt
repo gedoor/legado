@@ -19,6 +19,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.bookshelf.BookshelfActivity
+import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.disableAutoFill
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -110,6 +111,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), SearchView.
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
+        context?.startActivity<SearchActivity>(Pair("key", query))
         return false
     }
 
