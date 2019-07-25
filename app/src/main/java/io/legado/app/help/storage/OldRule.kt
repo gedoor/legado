@@ -7,9 +7,10 @@ object OldRule {
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
 
-    fun toNewUrl(oldUrl: String): String {
+    fun toNewUrl(oldUrl: String?): String? {
+        if (oldUrl == null) return null
         val map = HashMap<String, String>()
-        var url = oldUrl
+        var url: String = oldUrl
         var mather = headerPattern.matcher(url)
         if (mather.find()) {
             val header = mather.group()
