@@ -77,11 +77,11 @@ class RotateLoading : View {
         }
         speedOfArc = (speedOfDegree / 4).toFloat()
         mPaint = Paint()
-        mPaint!!.color = loadingColor
-        mPaint!!.isAntiAlias = true
-        mPaint!!.style = Paint.Style.STROKE
-        mPaint!!.strokeWidth = thisWidth.toFloat()
-        mPaint!!.strokeCap = Paint.Cap.ROUND
+        mPaint?.color = loadingColor
+        mPaint?.isAntiAlias = true
+        mPaint?.style = Paint.Style.STROKE
+        mPaint?.strokeWidth = thisWidth.toFloat()
+        mPaint?.strokeCap = Paint.Cap.ROUND
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -112,11 +112,11 @@ class RotateLoading : View {
             return
         }
 
-        mPaint!!.color = Color.parseColor("#1a000000")
+        mPaint?.color = Color.parseColor("#1a000000")
         canvas.drawArc(shadowRectF!!, topDegree.toFloat(), arc, false, mPaint!!)
         canvas.drawArc(shadowRectF!!, bottomDegree.toFloat(), arc, false, mPaint!!)
 
-        mPaint!!.color = loadingColor
+        mPaint?.color = loadingColor
         canvas.drawArc(loadingRectF!!, topDegree.toFloat(), arc, false, mPaint!!)
         canvas.drawArc(loadingRectF!!, bottomDegree.toFloat(), arc, false, mPaint!!)
 
