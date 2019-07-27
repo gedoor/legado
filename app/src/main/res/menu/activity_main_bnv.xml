@@ -12,9 +12,9 @@
             android:icon="@drawable/ic_explore_black_24dp"
             android:title="@string/find"/>
     <item
-            android:id="@+id/menu_book_source"
-            android:icon="@drawable/ic_storage_black_24dp"
-            android:title="@string/book_source"/>
+        android:id="@+id/menu_rss"
+        android:icon="@drawable/ic_rss_feed"
+        android:title="@string/rss" />
     <item
             android:id="@+id/menu_my_config"
             android:icon="@drawable/ic_person_black_24dp"
