@@ -48,12 +48,18 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                     }
                 }
             }
+            .onError {
+                printLog(debugSource, -1, it.localizedMessage)
+            }
     }
 
     fun infoDebug(book: Book) {
         webBook.getBookInfo(book)
             .onSuccess {
                 tocDebug(book)
+            }
+            .onError {
+                printLog(debugSource, -1, it.localizedMessage)
             }
     }
 
@@ -66,6 +72,9 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                     }
                 }
             }
+            .onError {
+                printLog(debugSource, -1, it.localizedMessage)
+            }
     }
 
     private fun contentDebug(book: Book, bookChapter: BookChapter) {
@@ -74,6 +83,9 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                 content?.let {
                     printLog(debugSource, 1000, it)
                 }
+            }
+            .onError {
+                printLog(debugSource, -1, it.localizedMessage)
             }
     }
 }
