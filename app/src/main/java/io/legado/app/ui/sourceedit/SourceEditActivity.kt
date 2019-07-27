@@ -15,11 +15,13 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.ui.sourcedebug.SourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_edit.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
@@ -70,6 +72,16 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
                     toast("书源名称和URL不能为空")
                 } else {
                     viewModel.save(bookSource) { finish() }
+                }
+            }
+            R.id.action_debug_source -> {
+                val bookSource = getSource()
+                if (bookSource == null) {
+                    toast("书源名称和URL不能为空")
+                } else {
+                    viewModel.save(bookSource) {
+                        startActivity<SourceDebugActivity>(Pair("key", bookSource.bookSourceUrl))
+                    }
                 }
             }
         }
