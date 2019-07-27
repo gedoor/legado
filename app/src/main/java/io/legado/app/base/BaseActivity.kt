@@ -11,10 +11,7 @@ import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.utils.disableAutoFill
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.setIconColor
+import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -96,5 +93,10 @@ abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = tr
 
     open fun observeLiveBus() {
 
+    }
+
+    override fun finish() {
+        currentFocus?.hideSoftInput()
+        super.finish()
     }
 }

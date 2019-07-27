@@ -69,6 +69,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
         adapter.logList.clear()
         adapter.notifyDataSetChanged()
         bookSource?.let {
+            SourceDebug.debugSource = it.bookSourceUrl
             rotate_loading.visibility = View.VISIBLE
             if (key.isAbsUrl()) {
                 val book = Book()
@@ -88,5 +89,10 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
         if (state == -1 || state == 1000) {
             rotate_loading.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        SourceDebug.debugSource = null
+        super.onDestroy()
     }
 }
