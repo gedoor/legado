@@ -123,10 +123,10 @@ class RotateLoading : View {
         topDegree += speedOfDegree
         bottomDegree += speedOfDegree
         if (topDegree > 360) {
-            topDegree = topDegree - 360
+            topDegree -= 360
         }
         if (bottomDegree > 360) {
-            bottomDegree = bottomDegree - 360
+            bottomDegree -= 360
         }
 
         if (changeBigger) {
@@ -176,10 +176,10 @@ class RotateLoading : View {
     private fun startAnimator() {
         val scaleXAnimator = ObjectAnimator.ofFloat(this, "scaleX", 0.0f, 1f)
         val scaleYAnimator = ObjectAnimator.ofFloat(this, "scaleY", 0.0f, 1f)
-        scaleXAnimator.setDuration(300)
-        scaleXAnimator.setInterpolator(LinearInterpolator())
-        scaleYAnimator.setDuration(300)
-        scaleYAnimator.setInterpolator(LinearInterpolator())
+        scaleXAnimator.duration = 300
+        scaleXAnimator.interpolator = LinearInterpolator()
+        scaleYAnimator.duration = 300
+        scaleYAnimator.interpolator = LinearInterpolator()
         val animatorSet = AnimatorSet()
         animatorSet.playTogether(scaleXAnimator, scaleYAnimator)
         animatorSet.start()
@@ -188,10 +188,10 @@ class RotateLoading : View {
     private fun stopAnimator() {
         val scaleXAnimator = ObjectAnimator.ofFloat(this, "scaleX", 1f, 0f)
         val scaleYAnimator = ObjectAnimator.ofFloat(this, "scaleY", 1f, 0f)
-        scaleXAnimator.setDuration(300)
-        scaleXAnimator.setInterpolator(LinearInterpolator())
-        scaleYAnimator.setDuration(300)
-        scaleYAnimator.setInterpolator(LinearInterpolator())
+        scaleXAnimator.duration = 300
+        scaleXAnimator.interpolator = LinearInterpolator()
+        scaleYAnimator.duration = 300
+        scaleYAnimator.interpolator = LinearInterpolator()
         val animatorSet = AnimatorSet()
         animatorSet.playTogether(scaleXAnimator, scaleYAnimator)
         animatorSet.addListener(object : Animator.AnimatorListener {
