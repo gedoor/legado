@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.myconfig
+package io.legado.app.ui.main.my
 
 import android.os.Bundle
 import android.view.Menu
@@ -10,7 +10,7 @@ import io.legado.app.ui.search.SearchActivity
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
-class MyConfigFragment : BaseFragment(R.layout.fragment_my_config) {
+class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)

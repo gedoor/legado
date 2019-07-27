@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.myconfig
+package io.legado.app.ui.main.my
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -8,6 +8,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
+import io.legado.app.ui.booksource.BookSourceActivity
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import org.jetbrains.anko.startActivity
@@ -40,6 +41,7 @@ class PreferenceFragment : PreferenceFragmentCompat(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         preference?.let {
             when (preference.key) {
+                "bookSourceManage" -> context?.startActivity<BookSourceActivity>()
                 "setting" -> context?.startActivity<ConfigActivity>(
                         Pair("configType", ConfigViewModel.TYPE_CONFIG)
                 )

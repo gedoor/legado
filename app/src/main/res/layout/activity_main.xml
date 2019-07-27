@@ -11,7 +11,7 @@
         android:elevation="6dp"
         android:background="@color/background"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/activity_main_bnv"
+        app:menu="@menu/main_bnv"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.viewpager.widget.ViewPager
