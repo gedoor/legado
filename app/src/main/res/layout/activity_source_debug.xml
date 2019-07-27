@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ll_content"
     android:layout_width="match_parent"
@@ -16,6 +16,17 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
-</LinearLayout>
+    <io.legado.app.ui.widget.anima.RotateLoading
+        android:id="@+id/rotate_loading"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="6dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:loading_width="2dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

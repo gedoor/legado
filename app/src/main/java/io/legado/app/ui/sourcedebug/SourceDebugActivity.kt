@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.WebBook
 import io.legado.app.model.webbook.SourceDebug
 import io.legado.app.utils.getViewModel
@@ -43,6 +44,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
         adapter = SourceDebugAdapter()
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
+        rotate_loading.loadingColor = ThemeStore.accentColor(this)
     }
 
     private fun initSearchView() {
