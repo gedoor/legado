@@ -1,16 +1,15 @@
 package io.legado.app.model.webbook
 
 import android.annotation.SuppressLint
-import io.legado.app.App
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.utils.htmlFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Debug(sourceUrl: String) {
+class SourceDebug(val webBook: WebBook) {
 
     companion object {
         var debugSource: String? = null
@@ -36,32 +35,41 @@ class Debug(sourceUrl: String) {
         fun printLog(state: Int, msg: String)
     }
 
-    private var bookSource: BookSource? = null
-
-    init {
-        debugSource = sourceUrl
-        bookSource = App.db.bookSourceDao().findByKey(sourceUrl)
-    }
-
     fun searchDebug(key: String) {
-        bookSource?.let {
-            WebBook(it).searchBook(key, 1)
-                .onSuccess { searchBooks ->
-                    searchBooks?.let {
-                        if (searchBooks.isNotEmpty()) {
-                            infoDebug(BookHelp.toBook(searchBooks[0]))
-                        }
+        webBook.searchBook(key, 1)
+            .onSuccess { searchBooks ->
+                searchBooks?.let {
+                    if (searchBooks.isNotEmpty()) {
+                        infoDebug(BookHelp.toBook(searchBooks[0]))
                     }
                 }
-
-        } ?: printLog(debugSource, -1, "未找到书源")
+            }
     }
 
     fun infoDebug(book: Book) {
-        bookSource?.let {
-            WebBook(it).getBookInfo(book)
-        } ?: printLog(debugSource, -1, "未找到书源")
+        webBook.getBookInfo(book)
+            .onSuccess {
+                tocDebug(book)
+            }
     }
 
+    private fun tocDebug(book: Book) {
+        webBook.getChapterList(book)
+            .onSuccess { chapterList ->
+                chapterList?.let {
+                    if (it.isNotEmpty()) {
+                        contentDebug(book, it[0])
+                    }
+                }
+            }
+    }
 
+    private fun contentDebug(book: Book, bookChapter: BookChapter) {
+        webBook.getContent(book, bookChapter)
+            .onSuccess { content ->
+                content?.let {
+                    printLog(debugSource, 1000, it)
+                }
+            }
+    }
 }
