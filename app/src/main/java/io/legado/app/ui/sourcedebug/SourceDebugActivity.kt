@@ -19,7 +19,8 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
-class SourceDebugActivity : BaseActivity<AndroidViewModel>() {
+class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callback {
+
     override val viewModel: AndroidViewModel
         get() = getViewModel(AndroidViewModel::class.java)
     override val layoutID: Int
@@ -70,13 +71,16 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>() {
                 val book = Book()
                 book.origin = it.bookSourceUrl
                 book.bookUrl = key
-                SourceDebug(WebBook(it))
+                SourceDebug(WebBook(it), this)
                     .infoDebug(book)
             } else {
-                SourceDebug(WebBook(it))
+                SourceDebug(WebBook(it), this)
                     .searchDebug(key)
             }
         }
     }
 
+    override fun printLog(state: Int, msg: String) {
+        adapter.logList.add(msg)
+    }
 }

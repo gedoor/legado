@@ -9,7 +9,7 @@ import io.legado.app.utils.htmlFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SourceDebug(val webBook: WebBook) {
+class SourceDebug(private val webBook: WebBook, callback: Callback) {
 
     companion object {
         var debugSource: String? = null
@@ -33,6 +33,10 @@ class SourceDebug(val webBook: WebBook) {
 
     interface Callback {
         fun printLog(state: Int, msg: String)
+    }
+
+    init {
+        SourceDebug.callback = callback
     }
 
     fun searchDebug(key: String) {
