@@ -2,6 +2,11 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <androidx.preference.Preference
+        android:key="bookSourceManage"
+        android:title="书源管理"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="isNightTheme"
@@ -12,11 +17,6 @@
         android:defaultValue="false"
         android:key="webService"
         android:title="Web服务"
-        app:iconSpaceReserved="false" />
-
-    <androidx.preference.Preference
-        android:key="bookSourceManage"
-        android:title="书源管理"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
