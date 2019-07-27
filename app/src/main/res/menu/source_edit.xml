@@ -9,6 +9,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_debug_source"
+        android:icon="@drawable/ic_bug_report"
+        android:title="@string/debug_source"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_login"
         android:title="@string/login"
         app:showAsAction="never" />
@@ -36,11 +42,6 @@
     <item
         android:id="@+id/action_share_wifi"
         android:title="@string/wifi_share"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_debug_source"
-        android:title="@string/debug_source"
         app:showAsAction="never" />
 
     <item
