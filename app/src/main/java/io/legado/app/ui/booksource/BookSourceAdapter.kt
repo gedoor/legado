@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.booksource
+package io.legado.app.ui.booksource
 
 import android.view.LayoutInflater
 import android.view.View

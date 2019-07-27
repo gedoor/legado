@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.booksource
+package io.legado.app.ui.booksource
 
 import android.os.Bundle
 import android.view.Menu
@@ -14,41 +14,48 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseFragment
+import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.ui.bookshelf.BookshelfViewModel
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
-import kotlinx.android.synthetic.main.fragment_book_source.*
+import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
-class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSourceAdapter.CallBack,
+class BookSourceActivity : BaseActivity<BookshelfViewModel>(), BookSourceAdapter.CallBack,
     SearchView.OnQueryTextListener {
+    override val viewModel: BookshelfViewModel
+        get() = getViewModel(BookshelfViewModel::class.java)
+    override val layoutID: Int
+        get() = R.layout.activity_book_source
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setSupportToolbar(toolbar)
+    override fun onViewModelCreated(viewModel: BookshelfViewModel, savedInstanceState: Bundle?) {
+        setSupportActionBar(toolbar)
         initRecyclerView()
         initDataObserve()
         initSearchView()
     }
 
-    override fun onCompatCreateOptionsMenu(menu: Menu) {
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_source, menu)
+        return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onCompatOptionsItemSelected(item: MenuItem) {
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_add_book_source -> {
-                context?.startActivity<SourceEditActivity>()
+                this.startActivity<SourceEditActivity>()
             }
             R.id.action_import_book_source_qr -> {
-                context?.startActivity<QrCodeActivity>()
+                this.startActivity<QrCodeActivity>()
             }
             R.id.action_select_all -> {
                 launch(IO) {
@@ -62,13 +69,14 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
                 }
             }
         }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initRecyclerView() {
-        recycler_view.layoutManager = LinearLayoutManager(context)
+        recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(
             DividerItemDecoration(
-                context,
+                this,
                 LinearLayoutManager.VERTICAL
             )
         )
@@ -90,10 +98,10 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     private fun initDataObserve(searchKey: String = "") {
-        bookSourceLiveDate?.removeObservers(viewLifecycleOwner)
+        bookSourceLiveDate?.removeObservers(this)
         val dataFactory = App.db.bookSourceDao().observeSearch("%$searchKey%")
         bookSourceLiveDate = LivePagedListBuilder(dataFactory, 2000).build()
-        bookSourceLiveDate?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+        bookSourceLiveDate?.observe(this, Observer { adapter.submitList(it) })
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
@@ -124,6 +132,6 @@ class BookSourceFragment : BaseFragment(R.layout.fragment_book_source), BookSour
     }
 
     override fun edit(bookSource: BookSource) {
-        context?.startActivity<SourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
+        startActivity<SourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
     }
 }

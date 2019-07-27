@@ -53,6 +53,7 @@
         <activity android:name=".ui.bookinfo.BookInfoActivity" />
         <activity android:name=".ui.bookinfo.BookInfoEditActivity" />
         <activity android:name=".ui.sourcedebug.SourceDebugActivity" />
+        <activity android:name=".ui.booksource.BookSourceActivity" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />

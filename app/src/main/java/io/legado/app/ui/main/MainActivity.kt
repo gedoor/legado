@@ -18,9 +18,9 @@ import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
-import io.legado.app.ui.main.booksource.BookSourceFragment
 import io.legado.app.ui.main.findbook.FindBookFragment
 import io.legado.app.ui.main.myconfig.MyConfigFragment
+import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
@@ -103,7 +103,7 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
             return when (position) {
                 0 -> BookshelfFragment()
                 1 -> FindBookFragment()
-                2 -> BookSourceFragment()
+                2 -> RssFragment()
                 else -> MyConfigFragment()
             }
         }
