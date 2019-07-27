@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:fitStatusBar="false"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="书源编辑" />
+        app:title="@string/edit_book_source" />
 
     <LinearLayout
         android:layout_width="wrap_content"
