@@ -16,7 +16,6 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
-import java.util.*
 
 @Suppress("DEPRECATION")
 class App : Application() {
@@ -125,7 +124,7 @@ class App : Application() {
             webChannel.setSound(null, null)
 
             //向notification manager 提交channel
-            it.createNotificationChannels(Arrays.asList(downloadChannel, readAloudChannel, webChannel))
+            it.createNotificationChannels(listOf(downloadChannel, readAloudChannel, webChannel))
         }
     }
 }
