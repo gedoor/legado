@@ -20,8 +20,9 @@ import javax.script.SimpleBindings
 @Keep
 class AnalyzeRule(private var book: BaseBook? = null) {
     private var content: Any? = null
-    private var isJSON: Boolean = false
     private var baseUrl: String? = null
+    private var isJSON: Boolean = false
+    private var isRegex: Boolean = false
 
     private var analyzeByXPath: AnalyzeByXPath? = null
     private var analyzeByJSoup: AnalyzeByJSoup? = null
@@ -161,6 +162,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 return urlList
             }
         }
+        @Suppress("UNCHECKED_CAST")
         return result as? List<String>
     }
 

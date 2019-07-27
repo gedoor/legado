@@ -4,7 +4,6 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
@@ -28,11 +27,11 @@ object BookList {
                 baseUrl
             )
         )
-        val analyzer = AnalyzeRule(null)
-        analyzer.setContent(body, baseUrl)
+        val analyzeRule = AnalyzeRule(null)
+        analyzeRule.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
             if (baseUrl.matches(it.toRegex())) {
-                getInfoItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
+                getInfoItem(analyzeRule, bookSource, baseUrl)?.let { searchBook ->
                     searchBook.bookInfoHtml = body
                     bookList.add(searchBook)
                 }
@@ -47,15 +46,34 @@ object BookList {
             reverse = true
             ruleList = ruleList.substring(1)
         }
-        collections = analyzer.getElements(ruleList)
+        collections = analyzeRule.getElements(ruleList)
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
-            getInfoItem(analyzer, bookSource, baseUrl)?.let { searchBook ->
+            getInfoItem(analyzeRule, bookSource, baseUrl)?.let { searchBook ->
                 searchBook.bookInfoHtml = body
                 bookList.add(searchBook)
             }
         } else {
+            val ruleName = analyzeRule.splitSourceRule(bookListRule.name ?: "")
+            val ruleAuthor = analyzeRule.splitSourceRule(bookListRule.author ?: "")
+            val ruleCoverUrl = analyzeRule.splitSourceRule(bookListRule.coverUrl ?: "")
+            val ruleIntro = analyzeRule.splitSourceRule(bookListRule.intro ?: "")
+            val ruleKind = analyzeRule.splitSourceRule(bookListRule.kind ?: "")
+            val ruleLastChapter = analyzeRule.splitSourceRule(bookListRule.lastChapter ?: "")
+            val ruleWordCount = analyzeRule.splitSourceRule(bookListRule.wordCount ?: "")
             for (item in collections) {
-                getSearchItem(item, analyzer, bookListRule, bookSource, baseUrl)?.let { searchBook ->
+                getSearchItem(
+                    item,
+                    analyzeRule,
+                    bookSource,
+                    baseUrl,
+                    ruleName = ruleName,
+                    ruleAuthor = ruleAuthor,
+                    ruleCoverUrl = ruleCoverUrl,
+                    ruleIntro = ruleIntro,
+                    ruleKind = ruleKind,
+                    ruleLastChapter = ruleLastChapter,
+                    ruleWordCount = ruleWordCount
+                )?.let { searchBook ->
                     if (baseUrl == searchBook.bookUrl) {
                         searchBook.bookInfoHtml = body
                     }
@@ -97,22 +115,29 @@ object BookList {
     private fun getSearchItem(
         item: Any,
         analyzeRule: AnalyzeRule,
-        bookListRule: BookListRule,
         bookSource: BookSource,
-        baseUrl: String
+        baseUrl: String,
+        ruleName: List<AnalyzeRule.SourceRule>,
+        ruleAuthor: List<AnalyzeRule.SourceRule>,
+        ruleKind: List<AnalyzeRule.SourceRule>,
+        ruleCoverUrl: List<AnalyzeRule.SourceRule>,
+        ruleWordCount: List<AnalyzeRule.SourceRule>,
+        ruleIntro: List<AnalyzeRule.SourceRule>,
+        ruleLastChapter: List<AnalyzeRule.SourceRule>
     ): SearchBook? {
         val searchBook = SearchBook()
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
         analyzeRule.setBook(searchBook)
         analyzeRule.setContent(item)
-        searchBook.name = analyzeRule.getString(bookListRule.name ?: "")
+        searchBook.name = analyzeRule.getString(ruleName)
         searchBook.name?.let {
-            searchBook.author = analyzeRule.getString(bookListRule.author ?: "")
-            searchBook.kind = analyzeRule.getString(bookListRule.kind ?: "")
-            searchBook.intro = analyzeRule.getString(bookListRule.intro ?: "")
-            searchBook.wordCount = analyzeRule.getString(bookListRule.wordCount ?: "")
-
+            searchBook.author = analyzeRule.getString(ruleAuthor)
+            searchBook.kind = analyzeRule.getString(ruleKind)
+            searchBook.intro = analyzeRule.getString(ruleIntro)
+            searchBook.wordCount = analyzeRule.getString(ruleWordCount)
+            searchBook.coverUrl = analyzeRule.getString(ruleCoverUrl)
+            searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
             return searchBook
         }
         return null
