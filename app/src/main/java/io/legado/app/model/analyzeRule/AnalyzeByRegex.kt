@@ -138,7 +138,7 @@ object AnalyzeByRegex {
     }
 
     // String数字转int数字的高效方法(利用ASCII值判断)
-    fun string2Int(s: String): Int {
+    private fun string2Int(s: String): Int {
         var r = 0
         var n: Char
         var i = 0
