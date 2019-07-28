@@ -18,7 +18,7 @@ class WebBook(private val bookSource: BookSource) {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(searchUrl, key, page)
                 val response = analyzeUrl.getResponseAsync().await()
-                return@async BookList.analyzeBookList(response, bookSource, analyzeUrl)
+                return@let BookList.analyzeBookList(response, bookSource, analyzeUrl)
             }
             return@async arrayListOf<SearchBook>()
         }

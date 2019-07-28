@@ -41,8 +41,7 @@ class AnalyzeUrl(
         private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
 
-    lateinit var baseUrl: String
-        private set
+    private var baseUrl: String = ""
     lateinit var url: String
         private set
     var path: String? = null
@@ -101,14 +100,11 @@ class AnalyzeUrl(
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
             var jsEval: Any
             val sb = StringBuffer(ruleUrl.length)
-            val simpleBindings = object : SimpleBindings() {
-                init {
-                    this["baseUrl"] = baseUrl
-                    this["page"] = page
-                    this["key"] = key
-                    this["book"] = book
-                }
-            }
+            val simpleBindings = SimpleBindings()
+            simpleBindings["baseUrl"] = baseUrl
+            simpleBindings["page"] = page
+            simpleBindings["key"] = key
+            simpleBindings["book"] = book
             val expMatcher = EXP_PATTERN.matcher(ruleUrl)
             while (expMatcher.find()) {
                 jsEval = SCRIPT_ENGINE.eval(expMatcher.group(1), simpleBindings)
