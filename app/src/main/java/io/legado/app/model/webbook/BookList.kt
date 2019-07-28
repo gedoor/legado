@@ -31,6 +31,7 @@ object BookList {
         analyzeRule.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
             if (baseUrl.matches(it.toRegex())) {
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "url为详情页")
                 getInfoItem(analyzeRule, bookSource, baseUrl)?.let { searchBook ->
                     searchBook.bookInfoHtml = body
                     bookList.add(searchBook)
@@ -48,6 +49,7 @@ object BookList {
         }
         collections = analyzeRule.getElements(ruleList)
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "列表为空,按详情页解析")
             getInfoItem(analyzeRule, bookSource, baseUrl)?.let { searchBook ->
                 searchBook.bookInfoHtml = body
                 bookList.add(searchBook)
@@ -60,12 +62,14 @@ object BookList {
             val ruleKind = analyzeRule.splitSourceRule(bookListRule.kind ?: "")
             val ruleLastChapter = analyzeRule.splitSourceRule(bookListRule.lastChapter ?: "")
             val ruleWordCount = analyzeRule.splitSourceRule(bookListRule.wordCount ?: "")
-            for (item in collections) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "列表书为${collections.size}")
+            for ((index, item) in collections.withIndex()) {
                 getSearchItem(
                     item,
                     analyzeRule,
                     bookSource,
                     baseUrl,
+                    index == 0,
                     ruleName = ruleName,
                     ruleAuthor = ruleAuthor,
                     ruleCoverUrl = ruleCoverUrl,
@@ -95,9 +99,12 @@ object BookList {
         analyzeRule.setBook(searchBook)
         with(bookSource.getBookInfoRule()) {
             init?.let {
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "执行详情页初始化规则")
                 analyzeRule.setContent(analyzeRule.getElement(it))
             }
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名")
             searchBook.name = analyzeRule.getString(name ?: "")
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "")
             if (!searchBook.name.isNullOrEmpty()) {
                 searchBook.author = analyzeRule.getString(author ?: "")
                 searchBook.coverUrl = analyzeRule.getString(coverUrl ?: "")
@@ -117,6 +124,7 @@ object BookList {
         analyzeRule: AnalyzeRule,
         bookSource: BookSource,
         baseUrl: String,
+        printLog: Boolean,
         ruleName: List<AnalyzeRule.SourceRule>,
         ruleAuthor: List<AnalyzeRule.SourceRule>,
         ruleKind: List<AnalyzeRule.SourceRule>,
@@ -130,7 +138,9 @@ object BookList {
         searchBook.originName = bookSource.bookSourceName
         analyzeRule.setBook(searchBook)
         analyzeRule.setContent(item)
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名", printLog)
         searchBook.name = analyzeRule.getString(ruleName)
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "", printLog)
         searchBook.name?.let {
             searchBook.author = analyzeRule.getString(ruleAuthor)
             searchBook.kind = analyzeRule.getString(ruleKind)
