@@ -48,14 +48,12 @@ class AnalyzeUrl(
         private set
     var queryStr: String? = null
         private set
-    val fieldMap = LinkedHashMap<String, String>()
-    val headerMap = HashMap<String, String>()
+    private val fieldMap = LinkedHashMap<String, String>()
+    private val headerMap = HashMap<String, String>()
     private var charset: String? = null
     private var bodyTxt: String? = null
-    lateinit var body: RequestBody
-        private set
-    var method = Method.GET
-        private set
+    private lateinit var body: RequestBody
+    private var method = Method.GET
 
     val postData: ByteArray
         get() {
