@@ -224,11 +224,11 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
             with(entity) {
                 when (key) {
                     "searchUrl" -> searchRule.searchUrl = value
-                    "searchList" -> searchRule.bookList = value
-                    "searchName" -> searchRule.name = value
-                    "searchAuthor" -> searchRule.author = value
-                    "searchKind" -> searchRule.kind = value
-                    "searchIntro" -> searchRule.intro = value
+                    "bookList" -> searchRule.bookList = value
+                    "name" -> searchRule.name = value
+                    "author" -> searchRule.author = value
+                    "kind" -> searchRule.kind = value
+                    "intro" -> searchRule.intro = value
                     "updateTime" -> searchRule.updateTime = value
                     "wordCount" -> searchRule.wordCount = value
                     "lastChapter" -> searchRule.lastChapter = value
@@ -241,11 +241,11 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
             with(entity) {
                 when (key) {
                     "exploreUrl" -> exploreRule.exploreUrl = value
-                    "searchList" -> exploreRule.bookList = value
-                    "searchName" -> exploreRule.name = value
-                    "searchAuthor" -> exploreRule.author = value
-                    "searchKind" -> exploreRule.kind = value
-                    "searchIntro" -> exploreRule.intro = value
+                    "bookList" -> exploreRule.bookList = value
+                    "name" -> exploreRule.name = value
+                    "author" -> exploreRule.author = value
+                    "kind" -> exploreRule.kind = value
+                    "intro" -> exploreRule.intro = value
                     "updateTime" -> exploreRule.updateTime = value
                     "wordCount" -> exploreRule.wordCount = value
                     "lastChapter" -> exploreRule.lastChapter = value
@@ -258,10 +258,10 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
             with(entity) {
                 when (key) {
                     "init" -> bookInfoRule.init = value
-                    "searchName" -> bookInfoRule.name = value
-                    "searchAuthor" -> bookInfoRule.author = value
-                    "searchKind" -> bookInfoRule.kind = value
-                    "searchIntro" -> bookInfoRule.intro = value
+                    "name" -> bookInfoRule.name = value
+                    "author" -> bookInfoRule.author = value
+                    "kind" -> bookInfoRule.kind = value
+                    "intro" -> bookInfoRule.intro = value
                     "updateTime" -> bookInfoRule.updateTime = value
                     "wordCount" -> bookInfoRule.wordCount = value
                     "lastChapter" -> bookInfoRule.lastChapter = value
