@@ -36,6 +36,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         this.book = book
     }
 
+    @Throws(Exception::class)
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = this.baseUrl): AnalyzeRule {
         if (content == null) throw AssertionError("Content cannot be null")
