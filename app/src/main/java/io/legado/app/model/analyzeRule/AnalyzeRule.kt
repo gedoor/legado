@@ -483,9 +483,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     fun put(key: String, value: String): String {
-        if (book != null) {
-            book!!.putVariable(key, value)
-        }
+        book?.putVariable(key, value)
         return value
     }
 
