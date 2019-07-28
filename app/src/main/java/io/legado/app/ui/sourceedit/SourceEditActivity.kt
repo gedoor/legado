@@ -196,7 +196,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
     }
 
     private fun getSource(): BookSource? {
-        val source = BookSource()
+        val source = viewModel.sourceLiveData.value?.copy() ?: BookSource()
         source.enabled = cb_is_enable.isChecked
         source.enabledExplore = cb_is_enable_find.isChecked
         viewModel.sourceLiveData.value?.let {
@@ -293,7 +293,6 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
         source.ruleBookInfo = GSON.toJson(bookInfoRule)
         source.ruleToc = GSON.toJson(tocRule)
         source.ruleContent = GSON.toJson(contentRule)
-        setEditEntities(tab_layout.selectedTabPosition)
         return source
     }
 
