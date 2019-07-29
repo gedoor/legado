@@ -1,8 +1,7 @@
 package io.legado.app.ui.widget.anima
 
 import android.animation.Animator
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,8 +9,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.LinearInterpolator
-import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.utils.dp
 
@@ -37,14 +34,22 @@ class RotateLoading : View {
 
     private var shadowPosition: Int = 0
 
-    var isStart = false
+    var isStarted = false
         private set
 
     var loadingColor: Int = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     private var speedOfDegree: Int = 0
 
     private var speedOfArc: Float = 0.toFloat()
+
+    private val shown = Runnable { this.startInternal() }
+
+    private val hidden = Runnable { this.stopInternal() }
 
     constructor(context: Context) : super(context) {
         initView(context, null)
@@ -108,7 +113,7 @@ class RotateLoading : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        if (!isStart) {
+        if (!isStarted) {
             return
         }
 
@@ -152,74 +157,69 @@ class RotateLoading : View {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (isVisible) {
-            start()
-        }
-    }
-
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        super.onVisibilityChanged(changedView, visibility)
         if (visibility == VISIBLE) {
-            start()
-        } else {
-            stop()
+            startInternal()
         }
     }
 
-    private fun start() {
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        isStarted = false
+        animate().cancel()
+        removeCallbacks(shown)
+        removeCallbacks(hidden)
+    }
+
+    fun show() {
+        removeCallbacks(shown)
+        removeCallbacks(hidden)
+        post(shown)
+    }
+
+    fun hide() {
+        removeCallbacks(shown)
+        removeCallbacks(hidden)
+        post(hidden)
+    }
+
+    private fun startInternal() {
         startAnimator()
-        isStart = true
+
+        isStarted = true
         invalidate()
     }
 
-    private fun stop() {
+    private fun stopInternal() {
         stopAnimator()
         invalidate()
     }
 
     private fun startAnimator() {
-        val scaleXAnimator = ObjectAnimator.ofFloat(this, "scaleX", 0.0f, 1f)
-        val scaleYAnimator = ObjectAnimator.ofFloat(this, "scaleY", 0.0f, 1f)
-        scaleXAnimator.duration = 300
-        scaleXAnimator.interpolator = LinearInterpolator()
-        scaleYAnimator.duration = 300
-        scaleYAnimator.interpolator = LinearInterpolator()
-        val animatorSet = AnimatorSet()
-        animatorSet.playTogether(scaleXAnimator, scaleYAnimator)
-        animatorSet.start()
+        animate().cancel()
+        animate().scaleX(1.0f)
+            .scaleY(1.0f)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    visibility = VISIBLE
+                }
+            })
+            .start()
     }
 
     private fun stopAnimator() {
-        val scaleXAnimator = ObjectAnimator.ofFloat(this, "scaleX", 1f, 0f)
-        val scaleYAnimator = ObjectAnimator.ofFloat(this, "scaleY", 1f, 0f)
-        scaleXAnimator.duration = 300
-        scaleXAnimator.interpolator = LinearInterpolator()
-        scaleYAnimator.duration = 300
-        scaleYAnimator.interpolator = LinearInterpolator()
-        val animatorSet = AnimatorSet()
-        animatorSet.playTogether(scaleXAnimator, scaleYAnimator)
-        animatorSet.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                isStart = false
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        animatorSet.start()
+        animate().cancel()
+        animate().scaleX(0.0f)
+            .scaleY(0.0f)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    isStarted = false
+                    visibility = GONE
+                }
+            })
+            .start()
     }
 
     companion object {
-
         private const val DEFAULT_WIDTH = 6
         private const val DEFAULT_SHADOW_POSITION = 2
         private const val DEFAULT_SPEED_OF_DEGREE = 10

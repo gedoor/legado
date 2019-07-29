@@ -18,9 +18,8 @@ class WebBook(private val bookSource: BookSource) {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(searchUrl, key, page, baseUrl = bookSource.bookSourceUrl)
                 val response = analyzeUrl.getResponseAsync().await()
-                return@let BookList.analyzeBookList(response, bookSource, analyzeUrl, isSearch)
-            }
-            return@async arrayListOf<SearchBook>()
+                BookList.analyzeBookList(response, bookSource, analyzeUrl, isSearch)
+            } ?: arrayListOf()
         }
     }
 
@@ -29,7 +28,7 @@ class WebBook(private val bookSource: BookSource) {
             val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = book.bookUrl)
             val response = analyzeUrl.getResponseAsync().await()
             BookInfo.analyzeBookInfo(book, response.body(), bookSource, analyzeUrl)
-            return@async book
+            book
         }
     }
 
