@@ -87,10 +87,12 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
     }
 
     override fun printLog(state: Int, msg: String) {
-        adapter.logList.add(msg)
-        adapter.notifyItemChanged(adapter.logList.size - 1)
-        if (state == -1 || state == 1000) {
-            rotate_loading.visibility = View.GONE
+        launch {
+            adapter.logList.add(msg)
+            adapter.notifyItemChanged(adapter.logList.size - 1)
+            if (state == -1 || state == 1000) {
+                rotate_loading.visibility = View.GONE
+            }
         }
     }
 
