@@ -14,14 +14,15 @@ class SourceEditViewModel(application: Application) : BaseViewModel(application)
 
     fun setBookSource(key: String) {
         launch(IO) {
-            App.db.bookSourceDao().findByKey(key)?.let {  sourceLiveData.postValue(it) }
+            App.db.bookSourceDao().findByKey(key)?.let {
+                sourceLiveData.postValue(it)
+            } ?: sourceLiveData.postValue(BookSource())
         }
     }
 
     fun save(bookSource: BookSource, finally: (() -> Unit)? = null) {
         launch(IO) {
-            val source = App.db.bookSourceDao().findByKey(bookSource.bookSourceUrl)
-            if (source == null) {
+            if (bookSource.customOrder == 0) {
                 bookSource.customOrder = App.db.bookSourceDao().allCount()
             }
             App.db.bookSourceDao().insert(bookSource)
