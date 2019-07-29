@@ -75,9 +75,11 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
                 val book = Book()
                 book.origin = it.bookSourceUrl
                 book.bookUrl = key
+                SourceDebug.printLog(it.bookSourceUrl, 1, "开始访问$key")
                 SourceDebug(WebBook(it), this)
                     .infoDebug(book)
             } else {
+                SourceDebug.printLog(it.bookSourceUrl, 1, "开始搜索关键字$key")
                 SourceDebug(WebBook(it), this)
                     .searchDebug(key)
             }
