@@ -191,8 +191,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
             findEditList.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
             findEditList.add(EditEntity("bookUrl", this?.bookUrl, R.string.rule_book_url))
         }
-        adapter.editEntities = sourceEditList
-        adapter.notifyDataSetChanged()
+        setEditEntities(0)
     }
 
     private fun getSource(): BookSource? {
