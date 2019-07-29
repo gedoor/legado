@@ -196,7 +196,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
     }
 
     private fun getSource(): BookSource? {
-        val source = viewModel.sourceLiveData.value?.copy() ?: BookSource()
+        val source = viewModel.sourceLiveData.value ?: BookSource()
         source.enabled = cb_is_enable.isChecked
         source.enabledExplore = cb_is_enable_find.isChecked
         viewModel.sourceLiveData.value?.let {
