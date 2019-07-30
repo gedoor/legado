@@ -19,8 +19,8 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         private val startTime: Long = System.currentTimeMillis()
 
         fun printLog(source: String?, state: Int, msg: String, print: Boolean = true, isHtml: Boolean = false) {
-            if (!print) return
             if (debugSource != source) return
+            if (!print) return
             var printMsg = msg
             if (isHtml) {
                 printMsg = printMsg.htmlFormat()

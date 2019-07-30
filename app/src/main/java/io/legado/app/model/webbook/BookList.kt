@@ -62,7 +62,7 @@ object BookList {
             val ruleKind = analyzeRule.splitSourceRule(bookListRule.kind ?: "")
             val ruleLastChapter = analyzeRule.splitSourceRule(bookListRule.lastChapter ?: "")
             val ruleWordCount = analyzeRule.splitSourceRule(bookListRule.wordCount ?: "")
-            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "列表书为${collections.size}")
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "列表数为${collections.size}")
             for ((index, item) in collections.withIndex()) {
                 getSearchItem(
                     item,
