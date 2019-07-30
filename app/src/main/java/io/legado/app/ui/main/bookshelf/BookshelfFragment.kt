@@ -23,7 +23,6 @@ import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.disableAutoFill
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
-import kotlinx.android.synthetic.main.fragment_find_book.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch

@@ -117,6 +117,9 @@ object ATH {
         if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(colorStateList)
         }
+        if (dialog.getButton(AlertDialog.BUTTON_NEUTRAL) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(colorStateList)
+        }
         return dialog
     }
 

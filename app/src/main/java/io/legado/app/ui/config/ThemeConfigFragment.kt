@@ -6,6 +6,7 @@ import android.os.Handler
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.jaredrummler.android.colorpicker.ColorPreferenceCompat
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.App
 import io.legado.app.R
