@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.toast
 
 class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callback {
 
@@ -85,7 +86,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
                 SourceDebug(WebBook(it), this)
                     .searchDebug(key)
             }
-        }
+        } ?: toast("未获取到书源")
     }
 
     override fun printLog(state: Int, msg: String) {
