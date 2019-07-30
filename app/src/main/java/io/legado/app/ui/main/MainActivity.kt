@@ -5,7 +5,6 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.App
@@ -112,8 +111,8 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     }
 
     override fun observeLiveBus() {
-        observeEvent<String>(Bus.RECREATE, Observer {
+        observeEvent<String>(Bus.RECREATE) {
             recreate()
-        })
+        }
     }
 }

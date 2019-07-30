@@ -51,7 +51,7 @@ class App : Application() {
             .autoClear(false)
     }
 
-    fun initNightTheme() {
+    fun initNightTheme() {//对整个应用生效，不要手动调用recreate
         if (getPrefBoolean("isNightTheme")) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {

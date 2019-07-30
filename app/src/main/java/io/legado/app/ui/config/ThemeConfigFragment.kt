@@ -7,8 +7,6 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.jaredrummler.android.colorpicker.ColorPreferenceCompat
-import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
@@ -106,8 +104,6 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                                 .putInt("colorBackgroundNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
                                 .apply()
                             App.INSTANCE.upThemeStore()
-                            LiveEventBus.get().with(Bus.RECREATE).post("")
-                            Handler().postDelayed({ activity?.recreate() }, 100)
                         }
                         .setNegativeButton(R.string.cancel, null)
                         .show().upTint()
@@ -138,8 +134,6 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     private fun upTheme(isNightTheme: Boolean) {
         if (App.INSTANCE.getPrefBoolean("isNightTheme") == isNightTheme) {
             App.INSTANCE.upThemeStore()
-            LiveEventBus.get().with(Bus.RECREATE).post("")
-            Handler().postDelayed({ activity?.recreate() }, 100)
         }
     }
 
