@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -21,10 +20,7 @@ import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.findbook.FindBookFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -114,9 +110,8 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     }
 
     override fun observeLiveBus() {
-        LiveEventBus.get().with(Bus.recreate, String::class.java)
-            .observe(this, Observer {
-                recreate()
-            })
+        observeEvent<String>(Bus.RECREATE, Observer {
+            recreate()
+        })
     }
 }

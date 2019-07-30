@@ -11,10 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.lib.theme.ColorUtils
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.putPrefInt
-import io.legado.app.utils.upTint
+import io.legado.app.utils.*
 
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -37,7 +34,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         sharedPreferences ?: return
         when (key) {
             "transparentStatusBar" -> {
-                LiveEventBus.get().with(Bus.recreate).post("")
+                postEvent(Bus.RECREATE, "")
                 Handler().postDelayed({ activity?.recreate() }, 100)
             }
             "colorPrimary", "colorAccent", "colorBackground" -> {
@@ -101,7 +98,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                                 .putInt("colorBackgroundNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
                                 .apply()
                             App.INSTANCE.upThemeStore()
-                            LiveEventBus.get().with(Bus.recreate).post("")
+                            LiveEventBus.get().with(Bus.RECREATE).post("")
                             Handler().postDelayed({ activity?.recreate() }, 100)
                         }
                         .setNegativeButton(R.string.cancel, null)
@@ -133,7 +130,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     private fun upTheme(isNightTheme: Boolean) {
         if (App.INSTANCE.getPrefBoolean("isNightTheme") == isNightTheme) {
             App.INSTANCE.upThemeStore()
-            LiveEventBus.get().with(Bus.recreate).post("")
+            LiveEventBus.get().with(Bus.RECREATE).post("")
             Handler().postDelayed({ activity?.recreate() }, 100)
         }
     }

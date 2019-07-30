@@ -17,7 +17,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = true) : AppCompatActivity(), CoroutineScope by MainScope() {
+abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = true) : AppCompatActivity(),
+    CoroutineScope by MainScope() {
 
     protected abstract val viewModel: VM
 
@@ -79,7 +80,8 @@ abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = tr
     private fun setupSystemBar() {
         if (fullScreen) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             if (getPrefBoolean("transparentStatusBar")) {
                 window.statusBarColor = Color.TRANSPARENT
@@ -92,7 +94,6 @@ abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = tr
     }
 
     open fun observeLiveBus() {
-
     }
 
     override fun finish() {
