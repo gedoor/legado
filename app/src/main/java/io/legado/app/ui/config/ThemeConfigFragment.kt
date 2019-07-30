@@ -40,8 +40,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         sharedPreferences ?: return
         when (key) {
             "transparentStatusBar" -> {
-                postEvent(Bus.RECREATE, "")
-                Handler().postDelayed({ activity?.recreate() }, 100)
+                recreateActivities()
             }
             "colorPrimary", "colorAccent", "colorBackground" -> {
                 if (backgroundIsDark(sharedPreferences)) {
@@ -104,6 +103,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                                 .putInt("colorBackgroundNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
                                 .apply()
                             App.INSTANCE.upThemeStore()
+                            recreateActivities()
                         }
                         .setNegativeButton(R.string.cancel, null)
                         .show().upTint()
@@ -134,7 +134,12 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     private fun upTheme(isNightTheme: Boolean) {
         if (App.INSTANCE.getPrefBoolean("isNightTheme") == isNightTheme) {
             App.INSTANCE.upThemeStore()
+            recreateActivities()
         }
     }
 
+    private fun recreateActivities() {
+        postEvent(Bus.RECREATE, "")
+        Handler().postDelayed({ activity?.recreate() }, 100L)
+    }
 }
