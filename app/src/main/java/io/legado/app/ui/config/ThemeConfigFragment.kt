@@ -3,6 +3,7 @@ package io.legado.app.ui.config
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -11,6 +12,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.utils.*
 
@@ -19,6 +21,11 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ATH.applyEdgeEffectColor(listView)
     }
 
     override fun onResume() {

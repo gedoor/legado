@@ -8,6 +8,7 @@ import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.widget.EdgeEffect
+import android.widget.ScrollView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
@@ -146,10 +147,24 @@ object ATH {
         }
     }
 
+    fun setEdgeEffectColor(scrollView: ScrollView?, @ColorInt color: Int) {
+        try {
+            val clazz = ScrollView::class.java
+            for (name in arrayOf("mEdgeGlowTop", "mEdgeGlowBottom")) {
+                val field = clazz.getDeclaredField(name)
+                field.isAccessible = true
+                val edge = field.get(scrollView)
+                (edge as EdgeEffect).color = color
+            }
+        } catch (ignored: Exception) {
+        }
+    }
+
     fun applyEdgeEffectColor(view: View?) {
         when (view) {
             is RecyclerView -> view.edgeEffectFactory = DEFAULT_EFFECT_FACTORY
             is ViewPager -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
+            is ScrollView -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
         }
     }
 

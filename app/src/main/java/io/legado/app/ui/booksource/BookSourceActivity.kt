@@ -17,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.bookshelf.BookshelfViewModel
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
@@ -73,6 +74,7 @@ class BookSourceActivity : BaseActivity<BookshelfViewModel>(), BookSourceAdapter
     }
 
     private fun initRecyclerView() {
+        ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(
             DividerItemDecoration(

@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.sourcedebug.SourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
@@ -89,6 +90,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
     }
 
     private fun initView() {
+        ATH.applyEdgeEffectColor(recycler_view)
         mSoftKeyboardTool = KeyboardToolPop(this, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         recycler_view.layoutManager = LinearLayoutManager(this)

@@ -1,10 +1,12 @@
 package io.legado.app.ui.config
 
 import android.os.Bundle
+import android.view.View
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
+import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getPrefString
 
 class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
@@ -13,6 +15,11 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
         addPreferencesFromResource(R.xml.pref_config_web_dav)
         bindPreferenceSummaryToValue(findPreference("web_dav_url"))
         bindPreferenceSummaryToValue(findPreference("web_dav_account"))
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ATH.applyEdgeEffectColor(listView)
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {

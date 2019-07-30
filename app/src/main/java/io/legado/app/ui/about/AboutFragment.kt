@@ -3,6 +3,7 @@ package io.legado.app.ui.about
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
@@ -20,6 +21,11 @@ class AboutFragment : PreferenceFragmentCompat() {
 
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        listView.overScrollMode = View.OVER_SCROLL_NEVER
     }
 
     private fun openIntent(intentName: String, address: String) {

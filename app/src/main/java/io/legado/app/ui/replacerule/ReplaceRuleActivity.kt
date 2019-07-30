@@ -16,6 +16,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppConst.APP_TAG
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import org.jetbrains.anko.doAsync
@@ -38,6 +39,7 @@ class ReplaceRuleActivity : BaseActivity<ReplaceRuleViewModel>() {
     }
 
     private fun initRecyclerView() {
+        ATH.applyEdgeEffectColor(rv_replace_rule)
         rv_replace_rule.layoutManager = LinearLayoutManager(this)
         adapter = ReplaceRuleAdapter(this)
         adapter.onClickListener = object : ReplaceRuleAdapter.OnClickListener {

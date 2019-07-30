@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.WebBook
 import io.legado.app.model.webbook.SourceDebug
@@ -41,6 +42,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
     }
 
     private fun initRecyclerView() {
+        ATH.applyEdgeEffectColor(recycler_view)
         adapter = SourceDebugAdapter()
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter

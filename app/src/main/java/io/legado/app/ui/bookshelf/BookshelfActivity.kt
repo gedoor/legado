@@ -12,6 +12,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_bookshelf.*
 
@@ -36,6 +37,7 @@ class BookshelfActivity : BaseActivity<BookshelfViewModel>() {
     }
 
     private fun initRecyclerView() {
+        ATH.applyEdgeEffectColor(rv_bookshelf)
         rv_bookshelf.layoutManager = LinearLayoutManager(this)
         rv_bookshelf.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
         bookshelfAdapter = BookshelfAdapter()

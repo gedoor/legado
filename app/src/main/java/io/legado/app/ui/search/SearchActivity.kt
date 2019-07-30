@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
 class SearchActivity : BaseActivity<SearchViewModel>() {
@@ -17,6 +19,7 @@ class SearchActivity : BaseActivity<SearchViewModel>() {
 
     override fun onActivityCreated(viewModel: SearchViewModel, savedInstanceState: Bundle?) {
         initSearchView()
+        initRecyclerView()
         viewModel.search()
     }
 
@@ -29,6 +32,10 @@ class SearchActivity : BaseActivity<SearchViewModel>() {
         intent.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
         }
+    }
+
+    private fun initRecyclerView() {
+        ATH.applyEdgeEffectColor(rv_search_list)
     }
 
 }

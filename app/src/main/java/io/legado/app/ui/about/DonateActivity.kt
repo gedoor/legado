@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_donate.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -32,6 +33,7 @@ class DonateActivity : BaseActivity<AndroidViewModel>() {
 
     override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
+        ATH.applyEdgeEffectColor(scroll_view)
         vw_zfb_tz.setOnClickListener { aliDonate(this) }
         cv_wx_gzh.setOnClickListener {
             val clipboard = this.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
