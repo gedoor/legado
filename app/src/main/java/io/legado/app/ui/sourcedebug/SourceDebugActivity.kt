@@ -73,7 +73,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
         adapter.notifyDataSetChanged()
         bookSource?.let {
             SourceDebug.debugSource = it.bookSourceUrl
-            rotate_loading.visibility = View.VISIBLE
+            rotate_loading.show()
             if (key.isAbsUrl()) {
                 val book = Book()
                 book.origin = it.bookSourceUrl
@@ -95,7 +95,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
                 adapter.logList.add(msg)
                 adapter.notifyItemChanged(adapter.logList.size - 1)
                 if (state == -1 || state == 1000) {
-                    rotate_loading.visibility = View.GONE
+                    rotate_loading.hide()
                 }
             }
         }
