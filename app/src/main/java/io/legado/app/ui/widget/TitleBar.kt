@@ -86,6 +86,37 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
                 this.setSubtitleTextColor(a.getColor(R.styleable.TitleBar_subtitleTextColor, -0x1))
             }
 
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetLeft)
+                || a.hasValue(R.styleable.TitleBar_contentInsetRight)
+            ) {
+                this.setContentInsetsAbsolute(
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetLeft, 0),
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetRight, 0)
+                )
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetStart)
+                || a.hasValue(R.styleable.TitleBar_contentInsetEnd)
+            ) {
+                this.setContentInsetsRelative(
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetStart, 0),
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetEnd, 0)
+                )
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetStartWithNavigation)) {
+                this.contentInsetStartWithNavigation = a.getDimensionPixelOffset(
+                    R.styleable.TitleBar_contentInsetStartWithNavigation, 0
+                )
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetEndWithActions)) {
+                this.contentInsetEndWithActions = a.getDimensionPixelOffset(
+                    R.styleable.TitleBar_contentInsetEndWithActions, 0
+                )
+            }
+
             if (!titleText.isNullOrBlank()) {
                 this.title = titleText
             }
