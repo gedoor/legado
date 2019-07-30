@@ -11,7 +11,7 @@ class BookInfoActivity : BaseActivity<BookInfoViewModel>() {
     override val layoutID: Int
         get() = R.layout.activity_book_info
 
-    override fun onViewModelCreated(viewModel: BookInfoViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: BookInfoViewModel, savedInstanceState: Bundle?) {
 
     }
 

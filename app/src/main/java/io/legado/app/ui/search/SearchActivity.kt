@@ -15,7 +15,7 @@ class SearchActivity : BaseActivity<SearchViewModel>() {
     override val layoutID: Int
         get() = R.layout.activity_search
 
-    override fun onViewModelCreated(viewModel: SearchViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: SearchViewModel, savedInstanceState: Bundle?) {
         initSearchView()
         viewModel.search()
     }

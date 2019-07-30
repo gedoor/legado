@@ -13,7 +13,7 @@ class ConfigActivity : BaseActivity<ConfigViewModel>() {
     override val layoutID: Int
         get() = R.layout.activity_config
 
-    override fun onViewModelCreated(viewModel: ConfigViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: ConfigViewModel, savedInstanceState: Bundle?) {
         intent.getIntExtra("configType", -1).let {
             if (it != -1) viewModel.configType = it
         }

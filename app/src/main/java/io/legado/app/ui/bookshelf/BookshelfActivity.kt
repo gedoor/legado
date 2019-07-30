@@ -24,7 +24,7 @@ class BookshelfActivity : BaseActivity<BookshelfViewModel>() {
     private lateinit var bookshelfAdapter: BookshelfAdapter
     private var bookshelfLiveData: LiveData<PagedList<Book>>? = null
 
-    override fun onViewModelCreated(viewModel: BookshelfViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: BookshelfViewModel, savedInstanceState: Bundle?) {
         if (viewModel.bookGroup == null) {
             viewModel.bookGroup = intent.getParcelableExtra("data")
         }

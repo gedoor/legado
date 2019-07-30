@@ -33,7 +33,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
     }
 
     private fun initRecyclerView() {
-        ATH.setEdgeEffectColor(rv_find, ThemeStore.primaryColor(rv_find.context))
+        ATH.applyEdgeEffectColor(rv_find)
         rv_find.layoutManager = FlexboxLayoutManager(context)
         adapter = FindBookAdapter()
         rv_find.adapter = adapter

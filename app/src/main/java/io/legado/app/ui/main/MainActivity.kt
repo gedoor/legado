@@ -14,6 +14,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
@@ -35,10 +36,11 @@ class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavig
     override val layoutID: Int
         get() = R.layout.activity_main
 
-    override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
+        ATH.applyEdgeEffectColor(view_pager_main)
         bottom_navigation_view.setBackgroundColor(ThemeStore.backgroundColor(this))
         val colorStateList = Selector.colorBuild()
-            .setDefaultColor(bottom_navigation_view.context.getCompatColor(R.color.btn_bg_press_tp))
+            .setDefaultColor(getCompatColor(R.color.btn_bg_press_tp))
             .setSelectedColor(ThemeStore.primaryColor(bottom_navigation_view.context)).create()
         bottom_navigation_view.itemIconTintList = colorStateList
         bottom_navigation_view.itemTextColor = colorStateList

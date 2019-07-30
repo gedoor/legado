@@ -17,11 +17,13 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.disableAutoFill
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
+import kotlinx.android.synthetic.main.fragment_find_book.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -58,6 +60,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), SearchView.
     }
 
     private fun initRecyclerView() {
+        ATH.applyEdgeEffectColor(rv_bookshelf)
         refresh_layout.setColorSchemeColors(ThemeStore.accentColor(refresh_layout.context))
         refresh_layout.setOnRefreshListener {
             refresh_layout.isRefreshing = false

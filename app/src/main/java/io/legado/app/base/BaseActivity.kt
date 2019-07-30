@@ -30,7 +30,7 @@ abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = tr
         setupSystemBar()
         super.onCreate(savedInstanceState)
         setContentView(layoutID)
-        onViewModelCreated(viewModel, savedInstanceState)
+        onActivityCreated(viewModel, savedInstanceState)
         observeLiveBus()
     }
 
@@ -39,7 +39,7 @@ abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = tr
         cancel()
     }
 
-    abstract fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?)
+    abstract fun onActivityCreated(viewModel: VM, savedInstanceState: Bundle?)
 
     final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {

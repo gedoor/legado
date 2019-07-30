@@ -2,10 +2,13 @@ package io.legado.app.ui.main.my
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.booksource.BookSourceActivity
@@ -18,6 +21,11 @@ class PreferenceFragment : PreferenceFragmentCompat(),
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_main)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ATH.applyEdgeEffectColor(listView)
     }
 
     override fun onResume() {

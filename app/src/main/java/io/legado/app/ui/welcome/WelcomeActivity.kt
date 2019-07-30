@@ -18,7 +18,7 @@ class WelcomeActivity : BaseActivity<AndroidViewModel>() {
     override val layoutID: Int
         get() = R.layout.activity_welcome
 
-    override fun onViewModelCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
         iv_bg.setColorFilter(ThemeStore.accentColor(this))
         val welAnimator = ValueAnimator.ofFloat(1f, 0f).setDuration(800)
         welAnimator.startDelay = 100

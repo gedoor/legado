@@ -17,7 +17,7 @@ class AboutActivity : BaseActivity<AndroidViewModel>() {
     override val layoutID: Int
         get() = R.layout.activity_about
 
-    override fun onViewModelCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
         val fTag = "aboutFragment"
         var aboutFragment = supportFragmentManager.findFragmentByTag(fTag)
         if (aboutFragment == null) aboutFragment = AboutFragment()

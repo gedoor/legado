@@ -42,7 +42,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
 
-    override fun onViewModelCreated(viewModel: SourceEditViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: SourceEditViewModel, savedInstanceState: Bundle?) {
         initView()
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)

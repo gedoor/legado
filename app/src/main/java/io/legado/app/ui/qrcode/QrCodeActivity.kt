@@ -26,7 +26,7 @@ class QrCodeActivity : BaseActivity<AndroidViewModel>(), QRCodeView.Delegate {
     private val requestQrImage = 202
     private var flashlightIsOpen: Boolean = false
 
-    override fun onViewModelCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         zxingview.setDelegate(this)
         fab_flashlight.setOnClickListener {

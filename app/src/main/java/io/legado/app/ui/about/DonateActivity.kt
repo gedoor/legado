@@ -30,7 +30,7 @@ class DonateActivity : BaseActivity<AndroidViewModel>() {
     override val layoutID: Int
         get() = R.layout.activity_donate
 
-    override fun onViewModelCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         vw_zfb_tz.setOnClickListener { aliDonate(this) }
         cv_wx_gzh.setOnClickListener {

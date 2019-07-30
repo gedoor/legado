@@ -11,6 +11,7 @@ import android.widget.EdgeEffect
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import io.legado.app.utils.getPrefBoolean
 
 
@@ -28,7 +29,10 @@ object ATH {
     }
 
     fun setStatusbarColorAuto(activity: Activity) {
-        setStatusbarColor(activity, ThemeStore.statusBarColor(activity, activity.getPrefBoolean("transparentStatusBar")))
+        setStatusbarColor(
+            activity,
+            ThemeStore.statusBarColor(activity, activity.getPrefBoolean("transparentStatusBar"))
+        )
     }
 
     fun setStatusbarColor(activity: Activity, color: Int) {
@@ -116,13 +120,41 @@ object ATH {
         return dialog
     }
 
-    fun setEdgeEffectColor(view: RecyclerView, color: Int) {
-        view.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+    fun setEdgeEffectColor(view: RecyclerView?, @ColorInt color: Int) {
+        view?.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
             override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
                 val edgeEffect = super.createEdgeEffect(view, direction)
                 edgeEffect.color = color
                 return edgeEffect
             }
+        }
+    }
+
+    fun setEdgeEffectColor(viewPager: ViewPager?, @ColorInt color: Int) {
+        try {
+            val clazz = ViewPager::class.java
+            for (name in arrayOf("mLeftEdge", "mRightEdge")) {
+                val field = clazz.getDeclaredField(name)
+                field.isAccessible = true
+                val edge = field.get(viewPager)
+                (edge as EdgeEffect).color = color
+            }
+        } catch (ignored: Exception) {
+        }
+    }
+
+    fun applyEdgeEffectColor(view: View?) {
+        when (view) {
+            is RecyclerView -> view.edgeEffectFactory = DEFAULT_EFFECT_FACTORY
+            is ViewPager -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
+        }
+    }
+
+    private val DEFAULT_EFFECT_FACTORY = object : RecyclerView.EdgeEffectFactory() {
+        override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+            val edgeEffect = super.createEdgeEffect(view, direction)
+            edgeEffect.color = ThemeStore.primaryColor(view.context)
+            return edgeEffect
         }
     }
 }

@@ -31,7 +31,7 @@ class ReplaceRuleActivity : BaseActivity<ReplaceRuleViewModel>() {
     private var rulesLiveData: LiveData<PagedList<ReplaceRule>>? = null
     private var allEnabled = false
 
-    override fun onViewModelCreated(viewModel: ReplaceRuleViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: ReplaceRuleViewModel, savedInstanceState: Bundle?) {
         initRecyclerView()
         initDataObservers()
         initSwipeToDelete()

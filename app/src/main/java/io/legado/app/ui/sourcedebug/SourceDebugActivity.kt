@@ -30,7 +30,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
     private lateinit var adapter: SourceDebugAdapter
     private var bookSource: BookSource? = null
 
-    override fun onViewModelCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
         launch(IO) {
             intent.getStringExtra("key")?.let {
                 bookSource = App.db.bookSourceDao().findByKey(it)

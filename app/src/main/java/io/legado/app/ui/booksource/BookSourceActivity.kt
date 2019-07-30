@@ -37,7 +37,7 @@ class BookSourceActivity : BaseActivity<BookshelfViewModel>(), BookSourceAdapter
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
 
-    override fun onViewModelCreated(viewModel: BookshelfViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(viewModel: BookshelfViewModel, savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         initRecyclerView()
         initDataObserve()
