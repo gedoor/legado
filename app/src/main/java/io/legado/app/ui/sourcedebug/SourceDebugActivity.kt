@@ -7,10 +7,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.model.webbook.SourceDebug
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -70,10 +68,5 @@ class SourceDebugActivity : BaseActivity<SourceDebugModel>() {
         }, {
             toast("未获取到书源")
         })
-    }
-
-    override fun onDestroy() {
-        SourceDebug.debugSource = null
-        super.onDestroy()
     }
 }

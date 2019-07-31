@@ -13,6 +13,9 @@ import io.legado.app.model.webbook.BookList
 
 class WebBook(private val bookSource: BookSource) {
 
+    val sourceUrl: String
+        get() = bookSource.bookSourceUrl
+
     fun searchBook(key: String, page: Int?, isSearch: Boolean = true): Coroutine<List<SearchBook>> {
         return Coroutine.async {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
