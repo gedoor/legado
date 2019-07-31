@@ -27,12 +27,12 @@ class SourceDebugActivity : BaseActivity<SourceDebugModel>() {
         viewModel.init(intent.getStringExtra("key"))
         initRecyclerView()
         initSearchView()
-        viewModel.logs.observe(this, Observer {
+        viewModel.observeLogs(this){
             adapter.addItem(it.obj as String)
             if (it.what == -1 || it.what == 1000) {
                 rotate_loading.hide()
             }
-        })
+        }
     }
 
     private fun initRecyclerView() {

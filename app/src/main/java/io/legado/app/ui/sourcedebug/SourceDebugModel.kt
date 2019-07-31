@@ -1,7 +1,9 @@
 package io.legado.app.ui.sourcedebug
 
 import android.app.Application
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.help.EventMessage
@@ -10,9 +12,15 @@ import io.legado.app.model.webbook.SourceDebug
 
 class SourceDebugModel(application: Application) : BaseViewModel(application), SourceDebug.Callback {
 
-    val logs: MutableLiveData<EventMessage> = MutableLiveData()
+    private val logs: MutableLiveData<EventMessage> = MutableLiveData()
 
     private var webBook: WebBook? = null
+
+    fun observeLogs(owner: LifecycleOwner, observer: (EventMessage) -> Unit) {
+        logs.observe(owner, Observer {
+            observer(it)
+        })
+    }
 
     fun init(sourceUrl: String?) {
         sourceUrl?.let {
