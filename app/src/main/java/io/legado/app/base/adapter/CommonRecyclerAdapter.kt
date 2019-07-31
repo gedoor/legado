@@ -53,11 +53,11 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
     }
 
     fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegate(viewType: Int, delegate: DELEGATE) {
-        itemDelegates.put(viewType, delegate)
+        itemDelegates[viewType] = delegate
     }
 
     fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegate(delegate: DELEGATE) {
-        itemDelegates.put(itemDelegates.size, delegate)
+        itemDelegates[itemDelegates.size] = delegate
     }
 
     fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegates(vararg delegates: DELEGATE) {
@@ -148,26 +148,15 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val oldSize = getActualItemCount()
             if (this.items.add(item)) {
-                if (oldSize == 0) {
-                    notifyDataSetChanged()
-                } else {
-                    notifyItemInserted(oldSize + getHeaderCount())
-                }
+                notifyItemInserted(oldSize + getHeaderCount())
             }
         }
     }
 
     fun addItems(position: Int, newItems: List<ITEM>) {
         synchronized(lock) {
-            val oldSize = getActualItemCount()
-            if (position in 0 until oldSize) {
-                if (if (oldSize == 0) this.items.addAll(newItems) else this.items.addAll(position, newItems)) {
-                    if (oldSize == 0) {
-                        notifyDataSetChanged()
-                    } else {
-                        notifyItemRangeChanged(position + getHeaderCount(), newItems.size)
-                    }
-                }
+            if (this.items.addAll(position, newItems)) {
+                notifyItemRangeInserted(position + getHeaderCount(), newItems.size)
             }
         }
     }
@@ -176,33 +165,32 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val oldSize = getActualItemCount()
             if (this.items.addAll(newItems)) {
-                if (oldSize == 0) {
-                    notifyDataSetChanged()
-                } else {
-                    notifyItemRangeChanged(oldSize + getHeaderCount(), newItems.size)
-                }
+                notifyItemRangeInserted(oldSize + getHeaderCount(), newItems.size)
             }
         }
     }
 
     fun removeItem(position: Int) {
         synchronized(lock) {
-            if (this.items.removeAt(position) != null)
+            if (this.items.removeAt(position) != null) {
                 notifyItemRemoved(position + getHeaderCount())
+            }
         }
     }
 
     fun removeItem(item: ITEM) {
         synchronized(lock) {
-            if (this.items.remove(item))
+            if (this.items.remove(item)) {
                 notifyItemRemoved(this.items.indexOf(item) + getHeaderCount())
+            }
         }
     }
 
     fun removeItems(items: List<ITEM>) {
         synchronized(lock) {
-            if (this.items.removeAll(items))
+            if (this.items.removeAll(items)) {
                 notifyDataSetChanged()
+            }
         }
     }
 
@@ -231,6 +219,13 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
             if (fromPosition in 0 until size && toPosition in 0 until size) {
                 notifyItemRangeChanged(fromPosition + getHeaderCount(), toPosition - fromPosition + 1, payloads)
             }
+        }
+    }
+
+    fun clearItems() {
+        synchronized(lock) {
+            this.items.clear()
+            notifyDataSetChanged()
         }
     }
 
