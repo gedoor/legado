@@ -34,12 +34,12 @@ class SourceDebugModel(application: Application) : BaseViewModel(application), S
                 val book = Book()
                 book.origin = it.bookSourceUrl
                 book.bookUrl = key
-                SourceDebug.printLog(it.bookSourceUrl, 1, "开始访问$key")
                 SourceDebug(WebBook(it), this)
+                    .printLog(it.bookSourceUrl, 1, "开始访问$key")
                     .infoDebug(book)
             } else {
-                SourceDebug.printLog(it.bookSourceUrl, 1, "开始搜索关键字$key")
                 SourceDebug(WebBook(it), this)
+                    .printLog(it.bookSourceUrl, 1, "开始搜索关键字$key")
                     .searchDebug(key)
             }
         } ?: error?.let { it() }
