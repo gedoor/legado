@@ -57,6 +57,7 @@ object BookList {
             }
         } else {
             val ruleName = analyzeRule.splitSourceRule(bookListRule.name ?: "")
+            val ruleBookUrl = analyzeRule.splitSourceRule(bookListRule.bookUrl ?: "")
             val ruleAuthor = analyzeRule.splitSourceRule(bookListRule.author ?: "")
             val ruleCoverUrl = analyzeRule.splitSourceRule(bookListRule.coverUrl ?: "")
             val ruleIntro = analyzeRule.splitSourceRule(bookListRule.intro ?: "")
@@ -72,6 +73,7 @@ object BookList {
                     baseUrl,
                     index == 0,
                     ruleName = ruleName,
+                    ruleBookUrl = ruleBookUrl,
                     ruleAuthor = ruleAuthor,
                     ruleCoverUrl = ruleCoverUrl,
                     ruleIntro = ruleIntro,
@@ -127,6 +129,7 @@ object BookList {
         baseUrl: String,
         printLog: Boolean,
         ruleName: List<AnalyzeRule.SourceRule>,
+        ruleBookUrl: List<AnalyzeRule.SourceRule>,
         ruleAuthor: List<AnalyzeRule.SourceRule>,
         ruleKind: List<AnalyzeRule.SourceRule>,
         ruleCoverUrl: List<AnalyzeRule.SourceRule>,
@@ -142,13 +145,28 @@ object BookList {
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名", printLog)
         searchBook.name = analyzeRule.getString(ruleName)
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "", printLog)
-        searchBook.name?.let {
+        if (!searchBook.name.isNullOrEmpty()) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书籍Url", printLog)
+            searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.bookUrl, printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取作者", printLog)
             searchBook.author = analyzeRule.getString(ruleAuthor)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.author ?: "", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取分类", printLog)
             searchBook.kind = analyzeRule.getString(ruleKind)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.kind ?: "", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取简介", printLog)
             searchBook.intro = analyzeRule.getString(ruleIntro)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.intro ?: "", printLog, true)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取字数", printLog)
             searchBook.wordCount = analyzeRule.getString(ruleWordCount)
-            searchBook.coverUrl = analyzeRule.getString(ruleCoverUrl)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.wordCount ?: "", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取封面Url", printLog)
+            searchBook.coverUrl = analyzeRule.getString(ruleCoverUrl, true)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.coverUrl ?: "", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取最新章节", printLog)
             searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.latestChapterTitle ?: "", printLog)
             return searchBook
         }
         return null
