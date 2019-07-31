@@ -81,7 +81,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
                     toast("书源名称和URL不能为空")
                 } else {
                     viewModel.save(bookSource) {
-                        startActivity<SourceDebugActivity>(Pair("key", bookSource.bookSourceUrl))
+                        startActivity<SourceDebugActivity>("key" to bookSource.bookSourceUrl)
                     }
                 }
             }
