@@ -78,12 +78,12 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
                 val book = Book()
                 book.origin = it.bookSourceUrl
                 book.bookUrl = key
-                SourceDebug.printLog(it.bookSourceUrl, 1, "开始访问$key")
                 SourceDebug(WebBook(it), this)
+                    .printLog(it.bookSourceUrl, 1, "开始访问$key")
                     .infoDebug(book)
             } else {
-                SourceDebug.printLog(it.bookSourceUrl, 1, "开始搜索关键字$key")
                 SourceDebug(WebBook(it), this)
+                    .printLog(it.bookSourceUrl, 1, "开始搜索关键字$key")
                     .searchDebug(key)
             }
         } ?: toast("未获取到书源")
@@ -93,7 +93,7 @@ class SourceDebugActivity : BaseActivity<AndroidViewModel>(), SourceDebug.Callba
         launch {
             synchronized(this) {
                 adapter.logList.add(msg)
-                adapter.notifyItemChanged(adapter.logList.size - 1)
+                adapter.notifyItemInserted(adapter.logList.size - 1)
                 if (state == -1 || state == 1000) {
                     rotate_loading.hide()
                 }
