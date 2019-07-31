@@ -32,6 +32,7 @@ object BookContent {
                 baseUrl
             )
         )
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()

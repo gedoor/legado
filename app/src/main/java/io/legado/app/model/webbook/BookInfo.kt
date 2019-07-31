@@ -23,6 +23,7 @@ object BookInfo {
                 baseUrl
             )
         )
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val infoRule = bookSource.getBookInfoRule()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body)

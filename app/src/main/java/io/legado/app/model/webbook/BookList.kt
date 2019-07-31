@@ -27,6 +27,7 @@ object BookList {
                 baseUrl
             )
         )
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val analyzeRule = AnalyzeRule(null)
         analyzeRule.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {

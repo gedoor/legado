@@ -31,6 +31,7 @@ object BookChapterList {
                 baseUrl
             )
         )
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
         var reverse = false
