@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
+import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.htmlFormat
@@ -16,7 +17,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     companion object {
         private var debugSource: String? = null
         private var callback: Callback? = null
-        private val tasks: MutableList<Coroutine<*>> = mutableListOf()
+        private val tasks: CompositeCoroutine = CompositeCoroutine()
 
         @SuppressLint("ConstantLocale")
         private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
@@ -34,11 +35,6 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         }
 
         fun cancelDebug(destroy: Boolean = false) {
-            tasks.forEach {
-                if (!it.isCancelled) {
-                    it.cancel()
-                }
-            }
             tasks.clear()
 
             if (destroy) {
