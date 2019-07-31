@@ -37,6 +37,6 @@ class SourceDebugModel(application: Application) : BaseViewModel(application), S
 
     override fun onCleared() {
         super.onCleared()
-        SourceDebug.stopDebug()
+        SourceDebug.cancelDebug(true)
     }
 }

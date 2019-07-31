@@ -23,8 +23,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         private val startTime: Long = System.currentTimeMillis()
 
         fun printLog(sourceUrl: String?, state: Int, msg: String, print: Boolean = true, isHtml: Boolean = false) {
-            if (debugSource != sourceUrl) return
-            if (!print) return
+            if (debugSource != sourceUrl || callback == null || !print) return
             var printMsg = msg
             if (isHtml) {
                 printMsg = printMsg.htmlFormat()
@@ -34,20 +33,20 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             callback?.printLog(state, printMsg)
         }
 
-        fun cancelDebug() {
+        fun cancelDebug(destroy: Boolean = false) {
             tasks.forEach {
                 if (!it.isCancelled) {
                     it.cancel()
                 }
             }
             tasks.clear()
+
+            if (destroy) {
+                debugSource = null
+                callback = null
+            }
         }
 
-        fun stopDebug(){
-            cancelDebug()
-            debugSource = null
-            callback = null
-        }
     }
 
     init {
