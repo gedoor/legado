@@ -198,8 +198,21 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val size = getActualItemCount()
             if (oldPosition in 0 until size && newPosition in 0 until size) {
-                Collections.swap(this.items, oldPosition + getHeaderCount(), newPosition + getHeaderCount())
-                notifyDataSetChanged()
+                val srcPosition = oldPosition + getHeaderCount()
+                val targetPosition = newPosition + getHeaderCount()
+                Collections.swap(this.items, srcPosition, targetPosition)
+                notifyItemChanged(srcPosition)
+                notifyItemChanged(targetPosition)
+            }
+        }
+    }
+
+    fun updateItem(item: ITEM) {
+        synchronized(lock) {
+            val index = this.items.indexOf(item)
+            if (index >= 0) {
+                this.items[index] = item
+                notifyItemChanged(index)
             }
         }
     }

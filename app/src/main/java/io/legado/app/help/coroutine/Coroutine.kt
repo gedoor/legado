@@ -30,6 +30,15 @@ class Coroutine<T>() {
 
     private var errorReturn: Result<T>? = null
 
+    val isCancelled: Boolean
+        get() = job?.isCancelled ?: false
+
+    val isActive: Boolean
+        get() = job?.isActive ?: false
+
+    val isCompleted: Boolean
+        get() = job?.isCompleted ?: false
+
     private constructor(
         scope: CoroutineScope,
         block: suspend CoroutineScope.() -> T
@@ -106,24 +115,24 @@ class Coroutine<T>() {
     private suspend fun executeInternal(block: suspend CoroutineScope.() -> T) {
         tryCatch(
             {
-                start?.let { it() }
+                start?.invoke(this)
 
                 val result = executeBlock(block, timeMillis ?: 0L)
 
-                success?.let { it(result) }
+                success?.invoke(this, result)
             },
             { e ->
                 val consume: Boolean = errorReturn?.value?.let { value ->
-                    success?.let { it(value) }
+                    success?.invoke(this, value)
                     true
                 } ?: false
 
                 if (!consume) {
-                    error?.let { it(e) }
+                    error?.invoke(this, e)
                 }
             },
             {
-                finally?.let { it() }
+                finally?.invoke(this)
             })
     }
 
@@ -142,9 +151,9 @@ class Coroutine<T>() {
         try {
             coroutineScope { tryBlock() }
         } catch (e: Throwable) {
-            coroutineScope { errorBlock?.let { it(e) } }
+            coroutineScope { errorBlock?.invoke(this, e) }
         } finally {
-            coroutineScope { finallyBlock?.let { it() } }
+            coroutineScope { finallyBlock?.invoke(this) }
         }
     }
 
