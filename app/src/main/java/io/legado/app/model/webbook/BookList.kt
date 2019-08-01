@@ -110,13 +110,24 @@ object BookList {
             searchBook.name = analyzeRule.getString(name ?: "")
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "")
             if (!searchBook.name.isNullOrEmpty()) {
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取作者")
                 searchBook.author = analyzeRule.getString(author ?: "")
-                searchBook.coverUrl = analyzeRule.getString(coverUrl ?: "")
-                searchBook.intro = analyzeRule.getString(intro ?: "")
-                searchBook.latestChapterTitle = analyzeRule.getString(lastChapter ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.author ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取分类")
                 searchBook.kind = analyzeRule.getString(kind ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.kind ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取简介")
+                searchBook.intro = analyzeRule.getString(intro ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.intro ?: "", isHtml = true)
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取字数")
                 searchBook.wordCount = analyzeRule.getString(wordCount ?: "")
-
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.wordCount ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取封面Url")
+                searchBook.coverUrl = analyzeRule.getString(coverUrl ?: "", true)
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.coverUrl ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取最新章节")
+                searchBook.latestChapterTitle = analyzeRule.getString(lastChapter ?: "")
+                SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.latestChapterTitle ?: "")
                 return searchBook
             }
         }
