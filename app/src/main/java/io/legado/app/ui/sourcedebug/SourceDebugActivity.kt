@@ -10,6 +10,7 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.EventMessage
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_source_debug.*
@@ -34,7 +35,7 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         adapter = SourceDebugAdapter(this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
-        rotate_loading.loadingColor = ThemeStore.accentColor(this)
+        rotate_loading.loadingColor = accentColor
     }
 
     private fun initSearchView() {

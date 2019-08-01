@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.EditText
@@ -22,11 +23,13 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -58,7 +61,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     private fun initSearchView() {
-        search_view.visibility = View.VISIBLE
+        search_view.visible()
         search_view.onActionViewExpanded()
         search_view.isSubmitButtonEnabled = true
         search_view.queryHint = getString(R.string.search_book_key)
@@ -68,11 +71,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_bookshelf)
-        refresh_layout.setColorSchemeColors(ThemeStore.accentColor(refresh_layout.context))
+        refresh_layout.setColorSchemeColors(accentColor)
         refresh_layout.setOnRefreshListener {
             refresh_layout.isRefreshing = false
         }
-        tv_recent_reading.textColor = ThemeStore.accentColor(tv_recent_reading.context)
+        tv_recent_reading.textColor = accentColor
         rv_book_group.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter()
         rv_book_group.adapter = bookGroupAdapter
@@ -118,7 +121,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             customView {
                 layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
                     editText = edit_view.apply {
-                        ATH.setTint(this, ThemeStore.accentColor(ctx))
+                        ATH.applyTint(this)
                         hint = "分组名称"
                     }
                 }

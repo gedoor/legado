@@ -49,9 +49,9 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                             .setTitle("白天背景太暗")
                             .setMessage("将会恢复默认背景？")
                             .setPositiveButton(R.string.ok) { _, _ ->
-                                App.INSTANCE.putPrefInt(
+                                putPrefInt(
                                     "colorBackground",
-                                    App.INSTANCE.getCompatColor(R.color.md_grey_100)
+                                    getCompatColor(R.color.md_grey_100)
                                 )
                                 upTheme(false)
                             }
@@ -69,9 +69,9 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                             .setTitle("夜间背景太亮")
                             .setMessage("将会恢复默认背景？")
                             .setPositiveButton(R.string.ok) { _, _ ->
-                                App.INSTANCE.putPrefInt(
+                                putPrefInt(
                                     "colorBackgroundNight",
-                                    App.INSTANCE.getCompatColor(R.color.md_grey_800)
+                                    getCompatColor(R.color.md_grey_800)
                                 )
                                 upTheme(true)
                             }
@@ -95,14 +95,14 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                         .setMessage("是否确认恢复？")
                         .setPositiveButton(R.string.ok) { _, _ ->
                             preferenceManager.sharedPreferences.edit()
-                                .putInt("colorPrimary", App.INSTANCE.getCompatColor(R.color.colorPrimary))
-                                .putInt("colorAccent", App.INSTANCE.getCompatColor(R.color.colorAccent))
-                                .putInt("colorBackground", App.INSTANCE.getCompatColor(R.color.md_grey_100))
-                                .putInt("colorPrimaryNight", App.INSTANCE.getCompatColor(R.color.colorPrimary))
-                                .putInt("colorAccentNight", App.INSTANCE.getCompatColor(R.color.colorAccent))
-                                .putInt("colorBackgroundNight", App.INSTANCE.getCompatColor(R.color.md_grey_800))
+                                .putInt("colorPrimary", getCompatColor(R.color.colorPrimary))
+                                .putInt("colorAccent", getCompatColor(R.color.colorAccent))
+                                .putInt("colorBackground", getCompatColor(R.color.md_grey_100))
+                                .putInt("colorPrimaryNight", getCompatColor(R.color.colorPrimary))
+                                .putInt("colorAccentNight", getCompatColor(R.color.colorAccent))
+                                .putInt("colorBackgroundNight", getCompatColor(R.color.md_grey_800))
                                 .apply()
-                            App.INSTANCE.upThemeStore()
+                            App.INSTANCE.applyTheme()
                             recreateActivities()
                         }
                         .setNegativeButton(R.string.cancel, null)
@@ -117,7 +117,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         return !ColorUtils.isColorLight(
             sharedPreferences.getInt(
                 "colorBackground",
-                App.INSTANCE.getCompatColor(R.color.md_grey_100)
+                getCompatColor(R.color.md_grey_100)
             )
         )
     }
@@ -126,14 +126,14 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         return ColorUtils.isColorLight(
             sharedPreferences.getInt(
                 "colorBackgroundNight",
-                App.INSTANCE.getCompatColor(R.color.md_grey_800)
+                getCompatColor(R.color.md_grey_800)
             )
         )
     }
 
     private fun upTheme(isNightTheme: Boolean) {
-        if (App.INSTANCE.getPrefBoolean("isNightTheme") == isNightTheme) {
-            App.INSTANCE.upThemeStore()
+        if (this.isNightTheme == isNightTheme) {
+            App.INSTANCE.applyTheme()
             recreateActivities()
         }
     }

@@ -13,7 +13,12 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import io.legado.app.utils.getPrefBoolean
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.legado.app.R
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.isTransparentStatusBar
+import kotlinx.android.synthetic.main.activity_main.view.*
+import org.jetbrains.anko.backgroundColor
 
 
 /**
@@ -32,7 +37,7 @@ object ATH {
     fun setStatusbarColorAuto(activity: Activity) {
         setStatusbarColor(
             activity,
-            ThemeStore.statusBarColor(activity, activity.getPrefBoolean("transparentStatusBar"))
+            ThemeStore.statusBarColor(activity, activity.isTransparentStatusBar)
         )
     }
 
@@ -157,6 +162,35 @@ object ATH {
                 (edge as EdgeEffect).color = color
             }
         } catch (ignored: Exception) {
+        }
+    }
+
+    //**************************************************************Directly*************************************************************//
+
+    fun applyBottomNavigationColor(bottomBar: BottomNavigationView?) {
+        bottomBar?.apply {
+            setBackgroundColor(ThemeStore.backgroundColor(context))
+            val colorStateList = Selector.colorBuild()
+                .setDefaultColor(context.getCompatColor(R.color.btn_bg_press_tp))
+                .setSelectedColor(ThemeStore.primaryColor(bottom_navigation_view.context)).create()
+            itemIconTintList = colorStateList
+            itemTextColor = colorStateList
+        }
+    }
+
+    fun applyTint(view: View?) {
+        view?.apply {
+            setTint(this, context.accentColor)
+        }
+    }
+
+    fun applyBackgroundTint(view: View?) {
+        view?.apply {
+            if (background == null) {
+                backgroundColor = context.backgroundColor
+            } else {
+                setBackgroundTint(this, context.backgroundColor)
+            }
         }
     }
 

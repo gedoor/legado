@@ -8,12 +8,13 @@ import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.primaryTextColor
 
 fun Menu.setIconColor(context: Context): Menu = this.let { menu ->
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)
     }
-    val primaryTextColor = context.getPrimaryTextColor()
+    val primaryTextColor = context.primaryTextColor
     val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->

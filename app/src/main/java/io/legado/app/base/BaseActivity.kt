@@ -8,8 +8,10 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -64,8 +66,8 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
     }
 
     private fun initTheme() {
-        window.decorView.setBackgroundColor(ThemeStore.backgroundColor(this))
-        if (ColorUtils.isColorLight(ThemeStore.primaryColor(this))) {
+        ATH.applyBackgroundTint(window.decorView)
+        if (ColorUtils.isColorLight(primaryColor)) {
             setTheme(R.style.AppTheme_Light)
         } else {
             setTheme(R.style.AppTheme_Dark)

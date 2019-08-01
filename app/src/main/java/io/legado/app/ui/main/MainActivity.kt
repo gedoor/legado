@@ -35,12 +35,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(view_pager_main)
-        bottom_navigation_view.setBackgroundColor(ThemeStore.backgroundColor(this))
-        val colorStateList = Selector.colorBuild()
-            .setDefaultColor(getCompatColor(R.color.btn_bg_press_tp))
-            .setSelectedColor(ThemeStore.primaryColor(bottom_navigation_view.context)).create()
-        bottom_navigation_view.itemIconTintList = colorStateList
-        bottom_navigation_view.itemTextColor = colorStateList
+        ATH.applyBottomNavigationColor(bottom_navigation_view)
         view_pager_main.offscreenPageLimit = 3
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)

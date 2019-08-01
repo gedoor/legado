@@ -16,10 +16,11 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
 import io.legado.app.lib.theme.DrawableUtils
-import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.getNavigationBarHeight
 import io.legado.app.utils.getStatusBarHeight
+import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
 
@@ -48,7 +49,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
 
     init {
         inflate(context, R.layout.view_title_bar, this)
-        setBackgroundColor(ThemeStore.primaryColor(context))
         toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.TitleBar,
@@ -124,6 +124,8 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             if (!subtitleText.isNullOrBlank()) {
                 this.subtitle = subtitleText
             }
+
+            backgroundColor = context.primaryColor
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
@@ -174,7 +176,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     }
 
     private fun wrapAppTheme() {
-        val primaryTextColor = if (isInEditMode) Color.BLACK else context.getPrimaryTextColor()
+        val primaryTextColor = if (isInEditMode) Color.BLACK else context.primaryTextColor
         DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
         toolbar.setTitleTextColor(primaryTextColor)
 

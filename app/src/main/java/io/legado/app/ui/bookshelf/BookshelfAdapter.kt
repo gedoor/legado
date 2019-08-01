@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
@@ -49,7 +50,7 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         init {
-            itemView.setBackgroundColor(ThemeStore.backgroundColor(itemView.context))
+            ATH.applyBackgroundTint(itemView)
         }
 
         fun bind(book: Book, callBack: CallBack?) = with(itemView) {

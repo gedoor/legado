@@ -8,6 +8,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.fragment.app.Fragment
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.R
 import org.jetbrains.anko.connectivityManager
@@ -65,3 +66,9 @@ fun Context.getNavigationBarHeight(): Int {
     val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
     return resources.getDimensionPixelSize(resourceId)
 }
+
+val Context.isNightTheme: Boolean
+    get() = getPrefBoolean("isNightTheme")
+
+val Context.isTransparentStatusBar: Boolean
+    get() = getPrefBoolean("transparentStatusBar")

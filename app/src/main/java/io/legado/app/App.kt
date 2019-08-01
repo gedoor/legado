@@ -14,8 +14,8 @@ import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.data.AppDatabase
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.isNightTheme
 
 @Suppress("DEPRECATION")
 class App : Application() {
@@ -36,14 +36,18 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
+
         db = AppDatabase.createDatabase(INSTANCE)
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode
             versionName = it.versionName
         }
-        if (!ThemeStore.isConfigured(this, versionCode)) upThemeStore()
+
+        if (!ThemeStore.isConfigured(this, versionCode)) applyTheme()
         initNightTheme()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
+
         LiveEventBus.get()
             .config()
             .supportBroadcast(this)
@@ -51,20 +55,11 @@ class App : Application() {
             .autoClear(false)
     }
 
-    fun initNightTheme() {
-        val targetMode = if (getPrefBoolean("isNightTheme")) {
-            AppCompatDelegate.MODE_NIGHT_YES
-        } else {
-            AppCompatDelegate.MODE_NIGHT_NO
-        }
-        AppCompatDelegate.setDefaultNightMode(targetMode)
-    }
-
     /**
      * 更新主题
      */
-    fun upThemeStore() {
-        if (getPrefBoolean("isNightTheme")) {
+    fun applyTheme() {
+        if (isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(getPrefInt("colorPrimaryNight", getCompatColor(R.color.colorPrimary)))
                 .accentColor(getPrefInt("colorAccentNight", getCompatColor(R.color.colorAccent)))
@@ -80,9 +75,20 @@ class App : Application() {
     }
 
     fun applyDayNight() {
-        upThemeStore()
+        applyTheme()
         initNightTheme()
     }
+
+
+    private fun initNightTheme() {
+        val targetMode = if (isNightTheme) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            AppCompatDelegate.MODE_NIGHT_NO
+        }
+        AppCompatDelegate.setDefaultNightMode(targetMode)
+    }
+
 
     /**
      * 创建通知ID

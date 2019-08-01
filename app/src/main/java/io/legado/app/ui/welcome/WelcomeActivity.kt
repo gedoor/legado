@@ -6,6 +6,7 @@ import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.main.MainActivity
 import kotlinx.android.synthetic.main.activity_welcome.*
 import org.jetbrains.anko.startActivity
@@ -13,7 +14,7 @@ import org.jetbrains.anko.startActivity
 class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        iv_bg.setColorFilter(ThemeStore.accentColor(this))
+        iv_bg.setColorFilter(accentColor)
         val welAnimator = ValueAnimator.ofFloat(1f, 0f).setDuration(800)
         welAnimator.startDelay = 100
         welAnimator.addUpdateListener { animation ->

@@ -7,7 +7,6 @@ import io.legado.app.data.entities.BookGroup
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
 
-
     fun saveBookGroup(group: String?) {
         if (!group.isNullOrBlank()) {
             execute {
