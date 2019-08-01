@@ -48,6 +48,7 @@ object BookList {
             reverse = true
             ruleList = ruleList.substring(1)
         }
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "解析书籍列表")
         collections = analyzeRule.getElements(ruleList)
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "列表为空,按详情页解析")

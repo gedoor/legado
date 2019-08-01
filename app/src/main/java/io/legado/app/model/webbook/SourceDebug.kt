@@ -5,7 +5,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.htmlFormat
 import io.legado.app.utils.isAbsUrl
@@ -66,11 +65,12 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         }
     }
 
-    fun searchDebug(key: String) {
+    private fun searchDebug(key: String) {
         val search = webBook.searchBook(key, 1)
             .onSuccess { searchBooks ->
                 searchBooks?.let {
                     if (searchBooks.isNotEmpty()) {
+                        callback?.printLog(1, "")
                         infoDebug(BookHelp.toBook(searchBooks[0]))
                     }
                 }
@@ -81,9 +81,11 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         tasks.add(search)
     }
 
-    fun infoDebug(book: Book) {
+    private fun infoDebug(book: Book) {
+        printLog(debugSource, 1, "开始获取详情页")
         val info = webBook.getBookInfo(book)
             .onSuccess {
+                callback?.printLog(1, "")
                 tocDebug(book)
             }
             .onError {
@@ -93,10 +95,12 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     }
 
     private fun tocDebug(book: Book) {
+        printLog(debugSource, 1, "开始获取目录页")
         val chapterList = webBook.getChapterList(book)
             .onSuccess { chapterList ->
                 chapterList?.let {
                     if (it.isNotEmpty()) {
+                        callback?.printLog(1, "")
                         contentDebug(book, it[0])
                     }
                 }
@@ -108,6 +112,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     }
 
     private fun contentDebug(book: Book, bookChapter: BookChapter) {
+        printLog(debugSource, 1, "开始获取内容")
         val content = webBook.getContent(book, bookChapter)
             .onSuccess { content ->
                 content?.let {
