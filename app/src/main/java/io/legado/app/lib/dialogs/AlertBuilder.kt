@@ -15,6 +15,7 @@
  */
 
 @file:Suppress("NOTHING_TO_INLINE", "unused")
+
 package io.legado.app.lib.dialogs
 
 import android.annotation.SuppressLint
@@ -66,7 +67,7 @@ interface AlertBuilder<out D : DialogInterface> {
     fun positiveButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
 
     fun negativeButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
-    fun negativeButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?=null)
+    fun negativeButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
 
     fun neutralButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
     fun neutralButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
