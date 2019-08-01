@@ -1,26 +1,17 @@
 package io.legado.app.ui.sourcedebug
 
 import android.app.Application
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.Bus
 import io.legado.app.help.EventMessage
 import io.legado.app.model.WebBook
 import io.legado.app.model.webbook.SourceDebug
+import io.legado.app.utils.postEvent
 
 class SourceDebugModel(application: Application) : BaseViewModel(application), SourceDebug.Callback {
 
-    private val logs: MutableLiveData<EventMessage> = MutableLiveData()
-
     private var webBook: WebBook? = null
-
-    fun observeLogs(owner: LifecycleOwner, observer: (EventMessage) -> Unit) {
-        logs.observe(owner, Observer {
-            observer(it)
-        })
-    }
 
     fun init(sourceUrl: String?) {
         sourceUrl?.let {
@@ -40,7 +31,7 @@ class SourceDebugModel(application: Application) : BaseViewModel(application), S
     }
 
     override fun printLog(state: Int, msg: String) {
-        logs.postValue(EventMessage.obtain(state, msg))
+        postEvent(Bus.SOURCE_DEBUG_LOG, EventMessage.obtain(state, msg))
     }
 
     override fun onCleared() {

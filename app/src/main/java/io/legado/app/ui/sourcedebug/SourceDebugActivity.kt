@@ -3,13 +3,15 @@ package io.legado.app.ui.sourcedebug
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.constant.Bus
+import io.legado.app.help.EventMessage
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.toast
@@ -27,12 +29,6 @@ class SourceDebugActivity : BaseActivity<SourceDebugModel>() {
         viewModel.init(intent.getStringExtra("key"))
         initRecyclerView()
         initSearchView()
-        viewModel.observeLogs(this){
-            adapter.addItem(it.obj as String)
-            if (it.what == -1 || it.what == 1000) {
-                rotate_loading.hide()
-            }
-        }
     }
 
     private fun initRecyclerView() {
@@ -68,5 +64,14 @@ class SourceDebugActivity : BaseActivity<SourceDebugModel>() {
         }, {
             toast("未获取到书源")
         })
+    }
+
+    override fun observeLiveBus() {
+        observeEvent<EventMessage>(Bus.SOURCE_DEBUG_LOG) {
+            adapter.addItem(it.obj as String)
+            if (it.what == -1 || it.what == 1000) {
+                rotate_loading.hide()
+            }
+        }
     }
 }
