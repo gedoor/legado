@@ -9,7 +9,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -26,16 +26,14 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : BaseActivity<MainViewModel>(), BottomNavigationView.OnNavigationItemSelectedListener,
+class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
+    BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener {
 
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
-    override val layoutID: Int
-        get() = R.layout.activity_main
-
-    override fun onActivityCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(view_pager_main)
         bottom_navigation_view.setBackgroundColor(ThemeStore.backgroundColor(this))
         val colorStateList = Selector.colorBuild()

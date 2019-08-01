@@ -18,7 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.EditTextPreference
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.utils.upTint
+import io.legado.app.utils.applyTint
 
 class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) : EditTextPreference(
     context,
@@ -72,7 +72,7 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) : EditTextP
         requestInputMethod(dialog)
         dialog.setOnDismissListener(this)
         dialog.show()
-        dialog.upTint()
+        dialog.applyTint()
     }
 
     protected fun onCreateDialogView(): View? {

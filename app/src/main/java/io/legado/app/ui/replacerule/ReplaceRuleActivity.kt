@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst.APP_TAG
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.lib.theme.ATH
@@ -23,16 +23,14 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
 
-class ReplaceRuleActivity : BaseActivity<ReplaceRuleViewModel>() {
+class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule) {
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_replace_rule
     private lateinit var adapter: ReplaceRuleAdapter
     private var rulesLiveData: LiveData<PagedList<ReplaceRule>>? = null
     private var allEnabled = false
 
-    override fun onActivityCreated(viewModel: ReplaceRuleViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initDataObservers()
         initSwipeToDelete()

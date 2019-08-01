@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.lib.theme.ATH
@@ -26,11 +26,10 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
-class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToolPop.OnClickListener {
+class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity_source_edit, false),
+    KeyboardToolPop.OnClickListener {
     override val viewModel: SourceEditViewModel
         get() = getViewModel(SourceEditViewModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_source_edit
 
     private val adapter = SourceEditAdapter()
     private val sourceEditList: ArrayList<EditEntity> = ArrayList()
@@ -43,7 +42,7 @@ class SourceEditActivity : BaseActivity<SourceEditViewModel>(false), KeyboardToo
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
 
-    override fun onActivityCreated(viewModel: SourceEditViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)

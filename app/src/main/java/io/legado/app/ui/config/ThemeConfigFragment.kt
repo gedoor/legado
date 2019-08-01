@@ -56,7 +56,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                                 upTheme(false)
                             }
                             .setNegativeButton(R.string.cancel) { _, _ -> upTheme(false) }
-                            .show().upTint()
+                            .show().applyTint()
                     }
                 } else {
                     upTheme(false)
@@ -76,7 +76,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                                 upTheme(true)
                             }
                             .setNegativeButton(R.string.cancel) { _, _ -> upTheme(true) }
-                            .show().upTint()
+                            .show().applyTint()
                     }
                 } else {
                     upTheme(true)
@@ -106,7 +106,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                             recreateActivities()
                         }
                         .setNegativeButton(R.string.cancel, null)
-                        .show().upTint()
+                        .show().applyTint()
                 }
             }
         }

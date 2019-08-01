@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.ThemeStore
@@ -17,12 +16,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = true) : AppCompatActivity(),
+abstract class BaseActivity(private val layoutID: Int, private val fullScreen: Boolean = true) : AppCompatActivity(),
     CoroutineScope by MainScope() {
-
-    protected abstract val viewModel: VM
-
-    protected abstract val layoutID: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.disableAutoFill()
@@ -30,7 +25,7 @@ abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = tr
         setupSystemBar()
         super.onCreate(savedInstanceState)
         setContentView(layoutID)
-        onActivityCreated(viewModel, savedInstanceState)
+        onActivityCreated(savedInstanceState)
         observeLiveBus()
     }
 
@@ -39,7 +34,7 @@ abstract class BaseActivity<VM : ViewModel>(private val fullScreen: Boolean = tr
         cancel()
     }
 
-    abstract fun onActivityCreated(viewModel: VM, savedInstanceState: Bundle?)
+    abstract fun onActivityCreated(savedInstanceState: Bundle?)
 
     final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {

@@ -98,12 +98,12 @@ class AnalyzeByJSonPath {
         if (rules.size == 1) {
             if (!rule.contains("{$.")) {
                 try {
-                    val `object` = ctx!!.read<Any>(rule) ?: return result
-                    if (`object` is List<*>) {
-                        for (o in `object`)
+                    val obj = ctx!!.read<Any>(rule) ?: return result
+                    if (obj is List<*>) {
+                        for (o in obj)
                             result.add(o.toString())
                     } else {
-                        result.add(`object`.toString())
+                        result.add(obj.toString())
                     }
                 } catch (ignored: Exception) {
                 }

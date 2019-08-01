@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
@@ -28,17 +28,16 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
-class BookSourceActivity : BaseActivity<BookshelfViewModel>(), BookSourceAdapter.CallBack,
+class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_book_source),
+    BookSourceAdapter.CallBack,
     SearchView.OnQueryTextListener {
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_book_source
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
 
-    override fun onActivityCreated(viewModel: BookshelfViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         initRecyclerView()
         initDataObserve()

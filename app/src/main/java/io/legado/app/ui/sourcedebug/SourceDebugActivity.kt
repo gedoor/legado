@@ -3,10 +3,9 @@ package io.legado.app.ui.sourcedebug
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getViewModel
@@ -14,20 +13,18 @@ import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.toast
 
-class SourceDebugActivity : BaseActivity<SourceDebugModel>() {
+class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_source_debug) {
 
     override val viewModel: SourceDebugModel
         get() = getViewModel(SourceDebugModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_source_debug
 
     private lateinit var adapter: SourceDebugAdapter
 
-    override fun onActivityCreated(viewModel: SourceDebugModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.init(intent.getStringExtra("key"))
         initRecyclerView()
         initSearchView()
-        viewModel.observeLogs(this){
+        viewModel.observeLogs(this) {
             adapter.addItem(it.obj as String)
             if (it.what == -1 || it.what == 1000) {
                 rotate_loading.hide()

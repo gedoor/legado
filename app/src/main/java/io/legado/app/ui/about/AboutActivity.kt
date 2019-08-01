@@ -8,16 +8,13 @@ import android.view.MenuItem
 import androidx.lifecycle.AndroidViewModel
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.utils.getViewModel
 import org.jetbrains.anko.toast
 
-class AboutActivity : BaseActivity<AndroidViewModel>() {
-    override val viewModel: AndroidViewModel
-        get() = getViewModel(AndroidViewModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_about
+class AboutActivity : BaseActivity(R.layout.activity_about) {
 
-    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         val fTag = "aboutFragment"
         var aboutFragment = supportFragmentManager.findFragmentByTag(fTag)
         if (aboutFragment == null) aboutFragment = AboutFragment()

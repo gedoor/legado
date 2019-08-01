@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -10,27 +11,31 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseFragment
+import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.ui.search.SearchActivity
-import io.legado.app.utils.disableAutoFill
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.requestInputMethod
+import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
 
-class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), SearchView.OnQueryTextListener,
+class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
+    SearchView.OnQueryTextListener,
     BookGroupAdapter.CallBack {
+
+    override val viewModel: BookshelfViewModel
+        get() = getViewModel(BookshelfViewModel::class.java)
 
     private lateinit var bookshelfAdapter: BookshelfAdapter
     private lateinit var bookGroupAdapter: BookGroupAdapter
@@ -89,25 +94,7 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), SearchView.
 
     override fun open(bookGroup: BookGroup) {
         when (bookGroup.groupId) {
-            -10 -> context?.let {
-                MaterialDialog(it).show {
-                    window?.decorView?.disableAutoFill()
-                    title(text = "新建分组")
-                    input(hint = "分组名称") { _, charSequence ->
-                        run {
-                            launch(IO) {
-                                App.db.bookGroupDao().insert(
-                                    BookGroup(
-                                        App.db.bookGroupDao().maxId + 1,
-                                        charSequence.toString()
-                                    )
-                                )
-                            }
-                        }
-                    }
-                    positiveButton(R.string.ok)
-                }
-            }
+            -10 -> showGroupInputDialog()
             else -> context?.startActivity<BookshelfActivity>(Pair("data", bookGroup))
         }
     }
@@ -119,6 +106,28 @@ class BookshelfFragment : BaseFragment(R.layout.fragment_bookshelf), SearchView.
 
     override fun onQueryTextChange(newText: String?): Boolean {
         return false
+    }
+
+    private fun showGroupInputDialog() {
+        alert(title = "新建分组") {
+            var editText: EditText? = null
+
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
+                    editText = edit_view.apply {
+                        ATH.setTint(this, ThemeStore.accentColor(ctx))
+                        hint = "分组名称"
+                    }
+                }
+            }
+
+            yesButton {
+                viewModel.saveBookGroup(editText?.text?.toString())
+            }
+
+            noButton { }
+
+        }.show().applyTint().requestInputMethod()
     }
 
 }

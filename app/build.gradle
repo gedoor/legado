@@ -135,9 +135,4 @@ dependencies {
 
     //颜色选择
     implementation 'com.jaredrummler:colorpicker:1.1.0'
-
-    //对话框
-    implementation 'com.afollestad.material-dialogs:core:3.0.0-rc3'
-    implementation 'com.afollestad.material-dialogs:input:3.0.0-rc3'
-    implementation 'com.afollestad.material-dialogs:files:3.0.0-rc3'
 }

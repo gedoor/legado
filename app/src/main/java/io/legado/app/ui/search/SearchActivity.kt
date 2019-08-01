@@ -3,21 +3,18 @@ package io.legado.app.ui.search
 import android.os.Bundle
 import android.view.View
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
-class SearchActivity : BaseActivity<SearchViewModel>() {
+class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search) {
 
     override val viewModel: SearchViewModel
         get() = getViewModel(SearchViewModel::class.java)
 
-    override val layoutID: Int
-        get() = R.layout.activity_search
-
-    override fun onActivityCreated(viewModel: SearchViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         initSearchView()
         initRecyclerView()
         viewModel.search()

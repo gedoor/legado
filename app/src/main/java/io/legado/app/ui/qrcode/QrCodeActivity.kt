@@ -6,27 +6,21 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.AndroidViewModel
 import cn.bingoogolapple.qrcode.core.QRCodeView
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_qrcode_capture.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
-class QrCodeActivity : BaseActivity<AndroidViewModel>(), QRCodeView.Delegate {
-    override val viewModel: AndroidViewModel
-        get() = getViewModel(AndroidViewModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_qrcode_capture
+class QrCodeActivity : BaseActivity(R.layout.activity_qrcode_capture), QRCodeView.Delegate {
 
     private val requestQrImage = 202
     private var flashlightIsOpen: Boolean = false
 
-    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         zxingview.setDelegate(this)
         fab_flashlight.setOnClickListener {

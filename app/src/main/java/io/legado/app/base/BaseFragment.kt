@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
-abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId),
+abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
     CoroutineScope by MainScope() {
 
     var supportToolbar: Toolbar? = null
@@ -19,6 +19,7 @@ abstract class BaseFragment(contentLayoutId: Int = 0) : Fragment(contentLayoutId
 
     val menuInflater: MenuInflater
         get() = SupportMenuInflater(requireContext())
+
 
     override fun onDestroy() {
         super.onDestroy()

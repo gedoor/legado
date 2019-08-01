@@ -10,22 +10,20 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_bookshelf.*
 
-class BookshelfActivity : BaseActivity<BookshelfViewModel>() {
+class BookshelfActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_bookshelf) {
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_bookshelf
 
     private lateinit var bookshelfAdapter: BookshelfAdapter
     private var bookshelfLiveData: LiveData<PagedList<Book>>? = null
 
-    override fun onActivityCreated(viewModel: BookshelfViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         if (viewModel.bookGroup == null) {
             viewModel.bookGroup = intent.getParcelableExtra("data")
         }

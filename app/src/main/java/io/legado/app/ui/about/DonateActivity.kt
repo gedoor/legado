@@ -23,15 +23,9 @@ import java.net.URLEncoder
  * 捐赠页面
  */
 
-class DonateActivity : BaseActivity<AndroidViewModel>() {
+class DonateActivity : BaseActivity(R.layout.activity_donate) {
 
-    override val viewModel: AndroidViewModel
-        get() = getViewModel(AndroidViewModel::class.java)
-
-    override val layoutID: Int
-        get() = R.layout.activity_donate
-
-    override fun onActivityCreated(viewModel: AndroidViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         ATH.applyEdgeEffectColor(scroll_view)
         vw_zfb_tz.setOnClickListener { aliDonate(this) }

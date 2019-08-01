@@ -2,18 +2,16 @@ package io.legado.app.ui.config
 
 import android.os.Bundle
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_config.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
-class ConfigActivity : BaseActivity<ConfigViewModel>() {
+class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config) {
     override val viewModel: ConfigViewModel
         get() = getViewModel(ConfigViewModel::class.java)
-    override val layoutID: Int
-        get() = R.layout.activity_config
 
-    override fun onActivityCreated(viewModel: ConfigViewModel, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.getIntExtra("configType", -1).let {
             if (it != -1) viewModel.configType = it
         }

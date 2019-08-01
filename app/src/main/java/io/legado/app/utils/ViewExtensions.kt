@@ -3,6 +3,7 @@ package io.legado.app.utils
 import android.content.Context
 import android.os.Build
 import android.view.View
+import android.view.View.*
 import android.view.inputmethod.InputMethodManager
 import io.legado.app.App
 
@@ -15,6 +16,18 @@ fun View.hideSoftInput() = run {
 
 fun View.disableAutoFill() = run {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        this.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
+        this.importantForAutofill = IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
     }
+}
+
+fun View.gone() {
+    visibility = GONE
+}
+
+fun View.invisible() {
+    visibility = INVISIBLE
+}
+
+fun View.visible() {
+    visibility = VISIBLE
 }
