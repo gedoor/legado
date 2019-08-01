@@ -10,29 +10,71 @@ inline fun <reified EVENT> eventObservable(tag: String): LiveEventBus.Observable
 }
 
 inline fun <reified EVENT> postEvent(tag: String, event: EVENT) {
-    return LiveEventBus.get().with(tag, EVENT::class.java).post(event)
+    LiveEventBus.get().with(tag, EVENT::class.java).post(event)
 }
 
 inline fun <reified EVENT> AppCompatActivity.observeEvent(tag: String, crossinline observer: (EVENT) -> Unit) {
-    return eventObservable<EVENT>(tag).observe(this, Observer {
+    eventObservable<EVENT>(tag).observe(this, Observer {
         observer(it)
     })
+}
+
+/**
+ * 只能观察相同类型的事件，可用EventMessage
+ */
+inline fun <reified EVENT> AppCompatActivity.observeEvents(vararg tags: String, crossinline observer: (EVENT) -> Unit) {
+    val o = Observer<EVENT> {
+        observer(it)
+    }
+    tags.forEach {
+        eventObservable<EVENT>(it).observe(this, o)
+    }
 }
 
 inline fun <reified EVENT> AppCompatActivity.observeEventSticky(tag: String, crossinline observer: (EVENT) -> Unit) {
-    return eventObservable<EVENT>(tag).observeSticky(this, Observer {
+    eventObservable<EVENT>(tag).observeSticky(this, Observer {
         observer(it)
     })
+}
+
+inline fun <reified EVENT> AppCompatActivity.observeEventsSticky(
+    vararg tags: String,
+    crossinline observer: (EVENT) -> Unit
+) {
+    val o = Observer<EVENT> {
+        observer(it)
+    }
+    tags.forEach {
+        eventObservable<EVENT>(it).observeSticky(this, o)
+    }
 }
 
 inline fun <reified EVENT> Fragment.observeEvent(tag: String, crossinline observer: (EVENT) -> Unit) {
-    return eventObservable<EVENT>(tag).observe(this, Observer {
+    eventObservable<EVENT>(tag).observe(this, Observer {
         observer(it)
     })
 }
 
+inline fun <reified EVENT> Fragment.observeEvents(vararg tags: String, crossinline observer: (EVENT) -> Unit) {
+    val o = Observer<EVENT> {
+        observer(it)
+    }
+    tags.forEach {
+        eventObservable<EVENT>(it).observe(this, o)
+    }
+}
+
 inline fun <reified EVENT> Fragment.observeEventSticky(tag: String, crossinline observer: (EVENT) -> Unit) {
-    return eventObservable<EVENT>(tag).observeSticky(this, Observer {
+    eventObservable<EVENT>(tag).observeSticky(this, Observer {
         observer(it)
     })
+}
+
+inline fun <reified EVENT> Fragment.observeEventsSticky(vararg tags: String, crossinline observer: (EVENT) -> Unit) {
+    val o = Observer<EVENT> {
+        observer(it)
+    }
+    tags.forEach {
+        eventObservable<EVENT>(it).observeSticky(this, o)
+    }
 }

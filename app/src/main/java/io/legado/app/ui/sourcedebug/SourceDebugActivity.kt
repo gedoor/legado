@@ -65,7 +65,7 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
     }
 
     override fun observeLiveBus() {
-        observeEvent<EventMessage>(Bus.SOURCE_DEBUG_LOG){
+        observeEvent<EventMessage>(Bus.SOURCE_DEBUG_LOG) {
             adapter.addItem(it.obj as String)
             if (it.what == -1 || it.what == 1000) {
                 rotate_loading.hide()
