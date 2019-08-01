@@ -25,12 +25,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import org.jetbrains.anko.AnkoContext
 
-inline fun AnkoContext<*>.alert(
-    title: CharSequence? = null,
-    message: CharSequence? = null,
-    noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-) = ctx.alert(title, message, init)
-
 inline fun Fragment.alert(
     title: CharSequence? = null,
     message: CharSequence? = null,
@@ -52,12 +46,6 @@ fun Context.alert(
         if (init != null) init()
     }
 }
-
-inline fun AnkoContext<*>.alert(
-    titleResource: Int? = null,
-    messageResource: Int? = null,
-    noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-) = ctx.alert(titleResource, messageResource, init)
 
 inline fun Fragment.alert(
     title: Int? = null,
@@ -83,16 +71,10 @@ fun Context.alert(
 
 
 inline fun AnkoContext<*>.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = ctx.alert(init)
-inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = activity?.alert(init)
+inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = requireContext().alert(init)
 
-fun Context.alert(init: AlertBuilder<DialogInterface>.() -> Unit): AlertBuilder<DialogInterface> =
+fun Context.alert(init: AlertBuilder<AlertDialog>.() -> Unit): AlertBuilder<AlertDialog> =
     AndroidAlertBuilder(this).apply { init() }
-
-inline fun AnkoContext<*>.progressDialog(
-    title: Int? = null,
-    message: Int? = null,
-    noinline init: (ProgressDialog.() -> Unit)? = null
-) = ctx.progressDialog(title, message, init)
 
 inline fun Fragment.progressDialog(
     title: Int? = null,
@@ -107,12 +89,6 @@ fun Context.progressDialog(
 ) = progressDialog(title?.let { getString(it) }, message?.let { getString(it) }, false, init)
 
 
-inline fun AnkoContext<*>.indeterminateProgressDialog(
-    title: Int? = null,
-    message: Int? = null,
-    noinline init: (ProgressDialog.() -> Unit)? = null
-) = ctx.indeterminateProgressDialog(title, message, init)
-
 inline fun Fragment.indeterminateProgressDialog(
     title: Int? = null,
     message: Int? = null,
@@ -124,13 +100,6 @@ fun Context.indeterminateProgressDialog(
     message: Int? = null,
     init: (ProgressDialog.() -> Unit)? = null
 ) = progressDialog(title?.let { getString(it) }, message?.let { getString(it) }, true, init)
-
-
-inline fun AnkoContext<*>.progressDialog(
-    title: CharSequence? = null,
-    message: CharSequence? = null,
-    noinline init: (ProgressDialog.() -> Unit)? = null
-) = ctx.progressDialog(title, message, init)
 
 inline fun Fragment.progressDialog(
     title: CharSequence? = null,
@@ -144,12 +113,6 @@ fun Context.progressDialog(
     init: (ProgressDialog.() -> Unit)? = null
 ) = progressDialog(title, message, false, init)
 
-
-inline fun AnkoContext<*>.indeterminateProgressDialog(
-    title: CharSequence? = null,
-    message: CharSequence? = null,
-    noinline init: (ProgressDialog.() -> Unit)? = null
-) = ctx.indeterminateProgressDialog(title, message, init)
 
 inline fun Fragment.indeterminateProgressDialog(
     title: CharSequence? = null,

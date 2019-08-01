@@ -15,19 +15,12 @@
  */
 
 @file:Suppress("NOTHING_TO_INLINE", "unused")
+
 package io.legado.app.lib.dialogs
 
 import android.content.Context
 import android.content.DialogInterface
 import androidx.fragment.app.Fragment
-import org.jetbrains.anko.AnkoContext
-
-inline fun <D : DialogInterface> AnkoContext<*>.selector(
-    noinline factory: AlertBuilderFactory<D>,
-    title: CharSequence? = null,
-    items: List<CharSequence>,
-    noinline onClick: (DialogInterface, CharSequence, Int) -> Unit
-) = ctx.selector(factory, title, items, onClick)
 
 inline fun <D : DialogInterface> Fragment.selector(
     noinline factory: AlertBuilderFactory<D>,

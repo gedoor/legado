@@ -10,11 +10,12 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.utils.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -46,40 +47,42 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             }
             "colorPrimary", "colorAccent", "colorBackground" -> {
                 if (backgroundIsDark(sharedPreferences)) {
-                    activity?.let {
-                        AlertDialog.Builder(it)
-                            .setTitle("白天背景太暗")
-                            .setMessage("将会恢复默认背景？")
-                            .setPositiveButton(R.string.ok) { _, _ ->
-                                putPrefInt(
-                                    "colorBackground",
-                                    getCompatColor(R.color.md_grey_100)
-                                )
-                                upTheme(false)
-                            }
-                            .setNegativeButton(R.string.cancel) { _, _ -> upTheme(false) }
-                            .show().applyTint()
-                    }
+                    alert {
+                        title = "白天背景太暗"
+                        message = "将会恢复默认背景？"
+                        yesButton {
+                            putPrefInt(
+                                "colorBackground",
+                                getCompatColor(R.color.md_grey_100)
+                            )
+                            upTheme(false)
+                        }
+
+                        noButton {
+                            upTheme(false)
+                        }
+                    }.show().applyTint()
                 } else {
                     upTheme(false)
                 }
             }
             "colorPrimaryNight", "colorAccentNight", "colorBackgroundNight" -> {
                 if (backgroundIsLight(sharedPreferences)) {
-                    activity?.let {
-                        AlertDialog.Builder(it)
-                            .setTitle("夜间背景太亮")
-                            .setMessage("将会恢复默认背景？")
-                            .setPositiveButton(R.string.ok) { _, _ ->
-                                putPrefInt(
-                                    "colorBackgroundNight",
-                                    getCompatColor(R.color.md_grey_800)
-                                )
-                                upTheme(true)
-                            }
-                            .setNegativeButton(R.string.cancel) { _, _ -> upTheme(true) }
-                            .show().applyTint()
-                    }
+                    alert {
+                        title = "夜间背景太亮"
+                        message = "将会恢复默认背景？"
+                        yesButton {
+                            putPrefInt(
+                                "colorBackgroundNight",
+                                getCompatColor(R.color.md_grey_800)
+                            )
+                            upTheme(true)
+                        }
+
+                        noButton {
+                            upTheme(true)
+                        }
+                    }.show().applyTint()
                 } else {
                     upTheme(true)
                 }
@@ -142,10 +145,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     private fun recreateActivities() {
         postEvent(Bus.RECREATE, "")
-        runBlocking {
-            delay(100L)
-            activity?.recreate()
-        }
+        Handler().postDelayed({ activity?.recreate() }, 100L)
     }
 
 }

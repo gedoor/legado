@@ -21,24 +21,17 @@ package io.legado.app.lib.dialogs
 import android.content.Context
 import android.content.DialogInterface
 import androidx.fragment.app.Fragment
-import org.jetbrains.anko.AnkoContext
-
-inline fun AnkoContext<*>.selector(
-        title: CharSequence? = null,
-        items: List<CharSequence>,
-        noinline onClick: (DialogInterface, Int) -> Unit
-) = ctx.selector(title, items, onClick)
 
 inline fun Fragment.selector(
-        title: CharSequence? = null,
-        items: List<CharSequence>,
-        noinline onClick: (DialogInterface, Int) -> Unit
+    title: CharSequence? = null,
+    items: List<CharSequence>,
+    noinline onClick: (DialogInterface, Int) -> Unit
 ) = activity?.selector(title, items, onClick)
 
 fun Context.selector(
-        title: CharSequence? = null,
-        items: List<CharSequence>,
-        onClick: (DialogInterface, Int) -> Unit
+    title: CharSequence? = null,
+    items: List<CharSequence>,
+    onClick: (DialogInterface, Int) -> Unit
 ) {
     with(AndroidAlertBuilder(this)) {
         if (title != null) {

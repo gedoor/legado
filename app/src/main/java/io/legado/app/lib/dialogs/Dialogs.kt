@@ -21,16 +21,8 @@ package io.legado.app.lib.dialogs
 import android.content.Context
 import android.content.DialogInterface
 import androidx.fragment.app.Fragment
-import org.jetbrains.anko.AnkoContext
 
 typealias AlertBuilderFactory<D> = (Context) -> AlertBuilder<D>
-
-inline fun <D : DialogInterface> AnkoContext<*>.alert(
-    noinline factory: AlertBuilderFactory<D>,
-    title: String? = null,
-    message: String? = null,
-    noinline init: (AlertBuilder<D>.() -> Unit)? = null
-) = ctx.alert(factory, title, message, init)
 
 inline fun <D : DialogInterface> Fragment.alert(
     noinline factory: AlertBuilderFactory<D>,
@@ -56,13 +48,6 @@ fun <D : DialogInterface> Context.alert(
     }
 }
 
-inline fun <D : DialogInterface> AnkoContext<*>.alert(
-    noinline factory: AlertBuilderFactory<D>,
-    titleResource: Int? = null,
-    messageResource: Int? = null,
-    noinline init: (AlertBuilder<D>.() -> Unit)? = null
-) = ctx.alert(factory, titleResource, messageResource, init)
-
 inline fun <D : DialogInterface> Fragment.alert(
     noinline factory: AlertBuilderFactory<D>,
     titleResource: Int? = null,
@@ -86,11 +71,6 @@ fun <D : DialogInterface> Context.alert(
         if (init != null) init()
     }
 }
-
-inline fun <D : DialogInterface> AnkoContext<*>.alert(
-    noinline factory: AlertBuilderFactory<D>,
-    noinline init: AlertBuilder<D>.() -> Unit
-) = ctx.alert(factory, init)
 
 inline fun <D : DialogInterface> Fragment.alert(
     noinline factory: AlertBuilderFactory<D>,

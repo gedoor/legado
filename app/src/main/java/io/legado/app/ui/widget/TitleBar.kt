@@ -18,6 +18,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.utils.activity
 import io.legado.app.utils.getNavigationBarHeight
 import io.legado.app.utils.getStatusBarHeight
 import org.jetbrains.anko.backgroundColor
@@ -143,7 +144,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (attachToActivity) {
-            attachToActivity(context)
+            attachToActivity()
         }
         wrapAppTheme()
     }
@@ -188,21 +189,10 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
     }
 
-    private fun attachToActivity(context: Context) {
-        val activity = getCompatActivity(context)
+    private fun attachToActivity() {
         activity?.let {
             it.setSupportActionBar(toolbar)
             it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
-        }
-    }
-
-    private fun getCompatActivity(context: Context?): AppCompatActivity? {
-        if (context == null) return null
-        return when (context) {
-            is AppCompatActivity -> context
-            is androidx.appcompat.view.ContextThemeWrapper -> getCompatActivity(context.baseContext)
-            is android.view.ContextThemeWrapper -> getCompatActivity(context.baseContext)
-            else -> null
         }
     }
 
