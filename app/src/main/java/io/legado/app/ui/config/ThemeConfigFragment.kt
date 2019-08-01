@@ -13,6 +13,8 @@ import io.legado.app.constant.Bus
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.utils.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -140,6 +142,10 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     private fun recreateActivities() {
         postEvent(Bus.RECREATE, "")
-        Handler().postDelayed({ activity?.recreate() }, 100L)
+        runBlocking {
+            delay(100L)
+            activity?.recreate()
+        }
     }
+
 }

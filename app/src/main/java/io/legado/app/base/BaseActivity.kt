@@ -80,13 +80,13 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            if (getPrefBoolean("transparentStatusBar")) {
+            if (isTransparentStatusBar) {
                 window.statusBarColor = Color.TRANSPARENT
             } else {
                 window.statusBarColor = getCompatColor(R.color.status_bar_bag)
             }
         } else {
-            window.statusBarColor = ThemeStore.statusBarColor(this, getPrefBoolean("transparentStatusBar"))
+            window.statusBarColor = ThemeStore.statusBarColor(this, isTransparentStatusBar)
         }
     }
 

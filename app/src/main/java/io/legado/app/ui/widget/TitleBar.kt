@@ -125,7 +125,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
                 this.subtitle = subtitleText
             }
 
-            backgroundColor = context.primaryColor
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
@@ -135,6 +134,8 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
             bottomPadding = context.getNavigationBarHeight()
         }
+
+        backgroundColor = context.primaryColor
 
         a.recycle()
     }
