@@ -15,6 +15,7 @@
  */
 
 @file:Suppress("NOTHING_TO_INLINE", "unused")
+
 package io.legado.app.lib.dialogs
 
 import android.annotation.SuppressLint
@@ -52,7 +53,7 @@ interface AlertBuilder<out D : DialogInterface> {
     @setparam:DrawableRes
     var iconResource: Int
         @Deprecated(NO_GETTER, level = ERROR) get
-    
+
     var customTitle: View
         @Deprecated(NO_GETTER, level = ERROR) get
 
@@ -62,18 +63,18 @@ interface AlertBuilder<out D : DialogInterface> {
     var isCancelable: Boolean
         @Deprecated(NO_GETTER, level = ERROR) get
 
+    fun positiveButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+    fun positiveButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+
+    fun negativeButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+    fun negativeButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?=null)
+
+    fun neutralButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+    fun neutralButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+
     fun onCancelled(handler: (dialog: DialogInterface) -> Unit)
 
     fun onKeyPressed(handler: (dialog: DialogInterface, keyCode: Int, e: KeyEvent) -> Boolean)
-
-    fun positiveButton(buttonText: String, onClicked: (dialog: DialogInterface) -> Unit)
-    fun positiveButton(@StringRes buttonTextResource: Int, onClicked: (dialog: DialogInterface) -> Unit)
-
-    fun negativeButton(buttonText: String, onClicked: (dialog: DialogInterface) -> Unit)
-    fun negativeButton(@StringRes buttonTextResource: Int, onClicked: (dialog: DialogInterface) -> Unit)
-
-    fun neutralPressed(buttonText: String, onClicked: (dialog: DialogInterface) -> Unit)
-    fun neutralPressed(@StringRes buttonTextResource: Int, onClicked: (dialog: DialogInterface) -> Unit)
 
     fun items(items: List<CharSequence>, onItemSelected: (dialog: DialogInterface, index: Int) -> Unit)
     fun <T> items(items: List<T>, onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit)
@@ -90,14 +91,14 @@ fun AlertBuilder<*>.customView(view: () -> View) {
     customView = view()
 }
 
-inline fun AlertBuilder<*>.okButton(noinline handler: (dialog: DialogInterface) -> Unit) =
+inline fun AlertBuilder<*>.okButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
     positiveButton(android.R.string.ok, handler)
 
-inline fun AlertBuilder<*>.cancelButton(noinline handler: (dialog: DialogInterface) -> Unit) =
+inline fun AlertBuilder<*>.cancelButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
     negativeButton(android.R.string.cancel, handler)
 
-inline fun AlertBuilder<*>.yesButton(noinline handler: (dialog: DialogInterface) -> Unit) =
+inline fun AlertBuilder<*>.yesButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
     positiveButton(android.R.string.yes, handler)
 
-inline fun AlertBuilder<*>.noButton(noinline handler: (dialog: DialogInterface) -> Unit) =
+inline fun AlertBuilder<*>.noButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
     negativeButton(android.R.string.no, handler)

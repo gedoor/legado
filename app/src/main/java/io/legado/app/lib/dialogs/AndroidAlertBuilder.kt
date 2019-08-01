@@ -75,28 +75,28 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
         builder.setOnKeyListener(handler)
     }
 
-    override fun positiveButton(buttonText: String, onClicked: (dialog: DialogInterface) -> Unit) {
-        builder.setPositiveButton(buttonText) { dialog, _ -> onClicked(dialog) }
+    override fun positiveButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+        builder.setPositiveButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun positiveButton(buttonTextResource: Int, onClicked: (dialog: DialogInterface) -> Unit) {
-        builder.setPositiveButton(buttonTextResource) { dialog, _ -> onClicked(dialog) }
+    override fun positiveButton(buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+        builder.setPositiveButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun negativeButton(buttonText: String, onClicked: (dialog: DialogInterface) -> Unit) {
-        builder.setNegativeButton(buttonText) { dialog, _ -> onClicked(dialog) }
+    override fun negativeButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+        builder.setNegativeButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun negativeButton(buttonTextResource: Int, onClicked: (dialog: DialogInterface) -> Unit) {
-        builder.setNegativeButton(buttonTextResource) { dialog, _ -> onClicked(dialog) }
+    override fun negativeButton(buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+        builder.setNegativeButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun neutralPressed(buttonText: String, onClicked: (dialog: DialogInterface) -> Unit) {
-        builder.setNeutralButton(buttonText) { dialog, _ -> onClicked(dialog) }
+    override fun neutralButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+        builder.setNeutralButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun neutralPressed(buttonTextResource: Int, onClicked: (dialog: DialogInterface) -> Unit) {
-        builder.setNeutralButton(buttonTextResource) { dialog, _ -> onClicked(dialog) }
+    override fun neutralButton(buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+        builder.setNeutralButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
     override fun items(items: List<CharSequence>, onItemSelected: (dialog: DialogInterface, index: Int) -> Unit) {

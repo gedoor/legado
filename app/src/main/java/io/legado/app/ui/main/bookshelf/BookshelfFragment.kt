@@ -128,7 +128,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 viewModel.saveBookGroup(editText?.text?.toString())
             }
 
-            noButton { }
+            noButton()
 
         }.show().applyTint().requestInputMethod()
     }
