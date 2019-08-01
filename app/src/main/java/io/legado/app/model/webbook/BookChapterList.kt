@@ -1,5 +1,6 @@
 package io.legado.app.model.webbook
 
+import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.Book
@@ -40,7 +41,7 @@ object BookChapterList {
             reverse = true
             listRule = listRule.substring(1)
         }
-        var chapterData = analyzeChapterList(body, baseUrl, tocRule, listRule, book)
+        var chapterData = analyzeChapterList(body, baseUrl, tocRule, listRule, book, bookSource, printLog = true)
         chapterData.chapterList?.let {
             chapterList.addAll(it)
         }
@@ -50,7 +51,7 @@ object BookChapterList {
                 nextUrlList.add(nextUrl)
                 AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
                     .body()?.let { nextBody ->
-                        chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, listRule, book)
+                        chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, listRule, book, bookSource)
                         nextUrl = if (chapterData.nextUrl.isNotEmpty()) chapterData.nextUrl[0] else ""
                         chapterData.chapterList?.let {
                             chapterList.addAll(it)
@@ -72,7 +73,9 @@ object BookChapterList {
                         item.nextUrl,
                         tocRule,
                         listRule,
-                        book
+                        book,
+                        bookSource,
+                        getNextUrl = false
                     )
                     item.chapterList = nextChapterData.chapterList
                 }
@@ -93,14 +96,25 @@ object BookChapterList {
         baseUrl: String,
         tocRule: TocRule,
         listRule: String,
-        book: Book
+        book: Book,
+        bookSource: BookSource,
+        getNextUrl: Boolean = true,
+        printLog: Boolean = false
     ): ChapterData<List<String>> {
         val chapterList = arrayListOf<BookChapter>()
         val nextUrlList = arrayListOf<String>()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body, baseUrl)
-        analyzeRule.getStringList(tocRule.nextTocUrl ?: "", true)?.let {
-            nextUrlList.addAll(it)
+        if (getNextUrl) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取目录下一页列表", printLog)
+            analyzeRule.getStringList(tocRule.nextTocUrl ?: "", true)?.let {
+                for (item in it) {
+                    if (item != baseUrl) {
+                        nextUrlList.add(item)
+                    }
+                }
+            }
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, TextUtils.join(",", nextUrlList), printLog)
         }
         val elements = analyzeRule.getElements(listRule)
         if (elements.isNotEmpty()) {
