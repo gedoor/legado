@@ -15,7 +15,6 @@
  */
 
 @file:Suppress("NOTHING_TO_INLINE", "unused")
-
 package io.legado.app.lib.dialogs
 
 import android.annotation.SuppressLint
