@@ -22,6 +22,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
         private val startTime: Long = System.currentTimeMillis()
 
+        @Synchronized
         fun printLog(
             sourceUrl: String?,
             state: Int,
