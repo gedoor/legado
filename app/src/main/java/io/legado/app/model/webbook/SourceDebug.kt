@@ -20,7 +20,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
 
         @SuppressLint("ConstantLocale")
         private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
-        private val startTime: Long = System.currentTimeMillis()
+        private var startTime: Long = System.currentTimeMillis()
 
         @Synchronized
         fun printLog(
@@ -60,6 +60,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
 
     fun startDebug(key: String) {
         cancelDebug()
+        startTime = System.currentTimeMillis()
         with(webBook) {
             if (key.isAbsUrl()) {
                 val book = Book()
