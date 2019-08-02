@@ -16,6 +16,7 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.hideSoftInput
 import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
@@ -32,9 +33,11 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         initRecyclerView()
         initSearchView()
         viewModel.observe{state, msg->
-            adapter.addItem(msg)
-            if (state == -1 || state == 1000) {
-                rotate_loading.hide()
+            launch {
+                adapter.addItem(msg)
+                if (state == -1 || state == 1000) {
+                    rotate_loading.hide()
+                }
             }
         }
     }
