@@ -70,7 +70,9 @@ object AnalyzeByRegex {
         val len = str.length
         while (index < len) {
             if (str[index] == '$') {
-                if (str[index + 1] == '{') {
+                if (index + 1 >= len) {
+                    break
+                } else if (str[index + 1] == '{') {
                     if (index > start) {
                         ruleParam.add(str.substring(start, index))
                         ruleType.add(0)
@@ -106,35 +108,35 @@ object AnalyzeByRegex {
                         start = index
                     }
                 } else {
-                    ++index
+                    index++
+                }
+            } else if (str[index] == '{') {
+                if (index + 1 >= len) {
+                    break
+                } else if (str[index + 1] == '{') {
+                    if (index > start) {
+                        ruleParam.add(str.substring(start, index))
+                        ruleType.add(0)
+                        start = index
+                    }
+                    while (index + 1 < len) {
+                        if (str[index] == '}' && str[index + 1] == '}') {
+                            ruleParam.add(str.substring(start + 2, index))
+                            ruleType.add(-11)
+                            start = index + 2
+                            break
+                        }
+                        index++
+                    }
                 }
             } else {
-                ++index
+                index++
             }
         }
         if (index > start) {
             ruleParam.add(str.substring(start, index))
             ruleType.add(0)
         }
-    }
-
-    // 存取字符串中的put&get参数
-    fun checkKeys(ruleStr: String, analyzer: AnalyzeRule): String {
-        var str = ruleStr
-        if (str.contains("@put:{")) {
-            val putMatcher = Pattern.compile("@put:\\{([^,]*):([^\\}]*)\\}").matcher(str)
-            while (putMatcher.find()) {
-                str = str.replace(putMatcher.group(0), "")
-                analyzer.put(putMatcher.group(1), putMatcher.group(2))
-            }
-        }
-        if (str.contains("@get:{")) {
-            val getMatcher = Pattern.compile("@get:\\{([^\\}]*)\\}").matcher(str)
-            while (getMatcher.find()) {
-                str = str.replace(getMatcher.group(), analyzer[getMatcher.group(1)] ?: "")
-            }
-        }
-        return str
     }
 
     // String数字转int数字的高效方法(利用ASCII值判断)

@@ -1,16 +1,15 @@
 package io.legado.app.model.analyzeRule
 
-import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
-import io.legado.app.constant.Pattern.EXP_PATTERN
 import io.legado.app.constant.Pattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.utils.*
 import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
+import kotlin.collections.HashMap
 
 
 /**
@@ -18,6 +17,7 @@ import javax.script.SimpleBindings
  * 统一解析接口
  */
 @Keep
+@Suppress("unused")
 class AnalyzeRule(private var book: BaseBook? = null) {
     private var content: Any? = null
     private var baseUrl: String? = null
@@ -121,6 +121,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             if (ruleList.isNotEmpty()) {
                 if (ruleList.isNotEmpty()) result = o
                 for (rule in ruleList) {
+                    putRule(rule.putMap)
+                    rule.makeUpRule(result)
                     result?.let {
                         if (rule.rule.isNotEmpty()) {
                             when (rule.mode) {
@@ -129,7 +131,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                                     getAnalyzeByJSonPath(it).getStringList(rule.rule)
                                 Mode.XPath -> result =
                                     getAnalyzeByXPath(it).getStringList(rule.rule)
-                                else -> result = getAnalyzeByJSoup(it).getStringList(rule.rule)
+                                Mode.Default -> result = getAnalyzeByJSoup(it).getStringList(rule.rule)
+                                else -> {
+                                }
                             }
                         }
                         if (rule.replaceRegex.isNotEmpty() && result is List<*>) {
@@ -189,6 +193,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (rule in ruleList) {
+                putRule(rule.putMap)
+                rule.makeUpRule(result)
                 result?.let {
                     if (rule.rule.isNotBlank()) {
                         when (rule.mode) {
@@ -199,6 +205,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                                 getAnalyzeByJSoup(it).getString0(rule.rule)
                             } else {
                                 getAnalyzeByJSoup(it).getString(rule.rule)
+                            }
+                            else -> {
                             }
                         }
                     }
@@ -228,8 +236,11 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (rule in ruleList) {
+                putRule(rule.putMap)
                 result?.let {
                     when (rule.mode) {
+                        Mode.Regex -> result =
+                            AnalyzeByRegex.getElement(result.toString(), rule.rule.splitNotBlank("&&"))
                         Mode.Js -> result = evalJS(rule.rule, it)
                         Mode.Json -> result = getAnalyzeByJSonPath(it).getObject(rule.rule)
                         Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
@@ -255,12 +266,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (rule in ruleList) {
+                putRule(rule.putMap)
                 result?.let {
                     when (rule.mode) {
-                        Mode.Js -> {
-                            if (result == null) result = content
-                            result = evalJS(rule.rule, result)
-                        }
+                        Mode.Regex -> result =
+                            AnalyzeByRegex.getElements(result.toString(), rule.rule.splitNotBlank("&&"))
+                        Mode.Js -> result = evalJS(rule.rule, result)
                         Mode.Json -> result = getAnalyzeByJSonPath(it).getList(rule.rule)
                         Mode.XPath -> result = getAnalyzeByXPath(it).getElements(rule.rule)
                         else -> result = getAnalyzeByJSoup(it).getElements(rule.rule)
@@ -291,16 +302,16 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     /**
-     * 分离并执行put规则
+     * 分离put规则
      */
     @Throws(Exception::class)
-    private fun splitPutRule(ruleStr: String): String {
+    private fun splitPutRule(ruleStr: String, putMap: HashMap<String, String>): String {
         var vRuleStr = ruleStr
         val putMatcher = putPattern.matcher(vRuleStr)
         while (putMatcher.find()) {
             vRuleStr = vRuleStr.replace(putMatcher.group(), "")
             val map = GSON.fromJsonObject<Map<String, String>>(putMatcher.group(1))
-            map?.let { putRule(map) }
+            map?.let { putMap.putAll(map) }
         }
         return vRuleStr
     }
@@ -308,7 +319,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     /**
      * 替换@get
      */
-    fun replaceGet(ruleStr: String): String {
+    private fun replaceGet(ruleStr: String): String {
         var vRuleStr = ruleStr
         val getMatcher = getPattern.matcher(vRuleStr)
         while (getMatcher.find()) {
@@ -341,33 +352,33 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         }
         return vResult
     }
-
-    /**
-     * 替换JS
-     */
-    @SuppressLint("DefaultLocale")
-    @Throws(Exception::class)
-    private fun replaceJs(ruleStr: String): String {
-        var vRuleStr = ruleStr
-        if (vRuleStr.contains("{{") && vRuleStr.contains("}}")) {
-            var jsEval: Any
-            val sb = StringBuffer(vRuleStr.length)
-            val expMatcher = EXP_PATTERN.matcher(vRuleStr)
-            while (expMatcher.find()) {
-                jsEval = evalJS(expMatcher.group(1), content)
-                if (jsEval is String) {
-                    expMatcher.appendReplacement(sb, jsEval)
-                } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-                    expMatcher.appendReplacement(sb, String.format("%.0f", jsEval))
-                } else {
-                    expMatcher.appendReplacement(sb, jsEval.toString())
-                }
-            }
-            expMatcher.appendTail(sb)
-            vRuleStr = sb.toString()
-        }
-        return vRuleStr
-    }
+//
+//    /**
+//     * 替换JS
+//     */
+//    @SuppressLint("DefaultLocale")
+//    @Throws(Exception::class)
+//    private fun replaceJs(ruleStr: String): String {
+//        var vRuleStr = ruleStr
+//        if (vRuleStr.contains("{{") && vRuleStr.contains("}}")) {
+//            var jsEval: Any
+//            val sb = StringBuffer(vRuleStr.length)
+//            val expMatcher = EXP_PATTERN.matcher(vRuleStr)
+//            while (expMatcher.find()) {
+//                jsEval = evalJS(expMatcher.group(1), content)
+//                if (jsEval is String) {
+//                    expMatcher.appendReplacement(sb, jsEval)
+//                } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
+//                    expMatcher.appendReplacement(sb, String.format("%.0f", jsEval))
+//                } else {
+//                    expMatcher.appendReplacement(sb, jsEval.toString())
+//                }
+//            }
+//            expMatcher.appendTail(sb)
+//            vRuleStr = sb.toString()
+//        }
+//        return vRuleStr
+//    }
 
     /**
      * 分解规则生成规则列表
@@ -386,27 +397,27 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             }
             vRuleStr.startsWith("@Json:", true) -> {
                 mode = Mode.Json
+                isRegex = true
                 vRuleStr = vRuleStr.substring(6)
             }
-            else -> mode = if (isJSON) {
-                Mode.Json
-            } else {
-                Mode.Default
+            vRuleStr.startsWith(":") -> {
+                mode = Mode.Regex
+                vRuleStr = vRuleStr.substring(1)
             }
+            else -> mode =
+                when {
+                    isRegex -> Mode.Regex
+                    isJSON -> Mode.Json
+                    else -> Mode.Default
+                }
         }
-        //分离put规则
-        vRuleStr = splitPutRule(vRuleStr)
-        //替换get值
-        vRuleStr = replaceGet(vRuleStr)
-        //替换js
-        vRuleStr = replaceJs(vRuleStr)
-        //拆分为列表
+        //拆分为规则列表
         var start = 0
         var tmp: String
         val jsMatcher = JS_PATTERN.matcher(vRuleStr)
         while (jsMatcher.find()) {
             if (jsMatcher.start() > start) {
-                tmp = vRuleStr.substring(start, jsMatcher.start()).replace("\n".toRegex(), "").trim { it <= ' ' }
+                tmp = vRuleStr.substring(start, jsMatcher.start()).replace("\n", "").trim { it <= ' ' }
                 if (!TextUtils.isEmpty(tmp)) {
                     ruleList.add(SourceRule(tmp, mode))
                 }
@@ -415,7 +426,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             start = jsMatcher.end()
         }
         if (vRuleStr.length > start) {
-            tmp = vRuleStr.substring(start).replace("\n".toRegex(), "").trim { it <= ' ' }
+            tmp = vRuleStr.substring(start).replace("\n", "").trim { it <= ' ' }
             if (!TextUtils.isEmpty(tmp)) {
                 ruleList.add(SourceRule(tmp, mode))
             }
@@ -432,6 +443,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         internal var replaceRegex = ""
         internal var replacement = ""
         internal var replaceFirst = false
+        internal val putMap = HashMap<String, String>()
+        private val ruleParam = ArrayList<String>()
+        private val ruleType = ArrayList<Int>()
 
         init {
             this.mode = mainMode
@@ -475,12 +489,41 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             if (ruleStrS.size > 3) {
                 replaceFirst = true
             }
+            //分离put
+            rule = splitPutRule(rule, putMap)
+            rule = replaceGet(rule)
+            // 拆分表达式替换规则
+            AnalyzeByRegex.splitRegexRule(rule, ruleParam, ruleType)
+        }
+
+        fun makeUpRule(result: Any?) {
+            val infoVal = StringBuilder()
+            var j = ruleParam.size
+            while (j-- > 0) {
+                val regType = ruleType[j]
+                if (regType > 0) {
+                    @Suppress("UNCHECKED_CAST")
+                    infoVal.insert(0, (result as List<String>)[regType])
+                } else if (regType < 0) {
+                    val jsEval: Any = evalJS(ruleParam[j], result)
+                    if (jsEval is String) {
+                        infoVal.insert(0, jsEval)
+                    } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
+                        infoVal.insert(0, String.format("%.0f", jsEval))
+                    } else {
+                        infoVal.insert(0, jsEval.toString())
+                    }
+                } else {
+                    infoVal.insert(0, ruleParam[j])
+                }
+            }
+            rule = infoVal.toString()
         }
 
     }
 
     enum class Mode {
-        XPath, Json, Default, Js
+        XPath, Json, Default, Js, Regex
     }
 
     fun put(key: String, value: String): String {

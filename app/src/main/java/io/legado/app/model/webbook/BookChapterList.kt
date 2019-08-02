@@ -41,6 +41,9 @@ object BookChapterList {
             reverse = true
             listRule = listRule.substring(1)
         }
+        if (listRule.startsWith("+")) {
+            listRule = listRule.substring(1)
+        }
         var chapterData = analyzeChapterList(body, baseUrl, tocRule, listRule, book, bookSource, printLog = true)
         chapterData.chapterList?.let {
             chapterList.addAll(it)
