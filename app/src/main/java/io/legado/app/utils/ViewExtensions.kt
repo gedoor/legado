@@ -55,7 +55,7 @@ fun View.visible() {
 
 fun View.screenshot(): Bitmap? {
     return runCatching {
-        val screenshot = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+        val screenshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val c = Canvas(screenshot)
         c.translate(-scrollX.toFloat(), -scrollY.toFloat())
         draw(c)

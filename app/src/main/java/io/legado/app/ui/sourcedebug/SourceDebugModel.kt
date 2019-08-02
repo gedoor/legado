@@ -8,11 +8,12 @@ import io.legado.app.help.EventMessage
 import io.legado.app.model.WebBook
 import io.legado.app.model.webbook.SourceDebug
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.launch
 
 class SourceDebugModel(application: Application) : BaseViewModel(application), SourceDebug.Callback {
 
     private var webBook: WebBook? = null
+
+    private var callback: ((Int, String)-> Unit)? = null
 
     fun init(sourceUrl: String?) {
         sourceUrl?.let {
@@ -24,6 +25,10 @@ class SourceDebugModel(application: Application) : BaseViewModel(application), S
         }
     }
 
+    fun observe(callback: (Int, String)-> Unit){
+        this.callback = callback
+    }
+
     fun startDebug(key: String, start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
         webBook?.let {
             start?.invoke()
@@ -32,9 +37,7 @@ class SourceDebugModel(application: Application) : BaseViewModel(application), S
     }
 
     override fun printLog(state: Int, msg: String) {
-        launch {
-            postEvent(Bus.SOURCE_DEBUG_LOG, EventMessage.obtain(state, msg))
-        }
+        callback?.invoke(state, msg)
     }
 
     override fun onCleared() {
