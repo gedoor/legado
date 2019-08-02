@@ -116,8 +116,11 @@ object BookChapterList {
             }
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, TextUtils.join(",", nextUrlList), printLog)
         }
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "解析目录列表", printLog)
         val elements = analyzeRule.getElements(listRule)
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "目录数${elements.size}", printLog)
         if (elements.isNotEmpty()) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取目录", printLog)
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName ?: "")
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl ?: "")
             for (item in elements) {
@@ -131,6 +134,7 @@ object BookChapterList {
                     chapterList.add(bookChapter)
                 }
             }
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "${chapterList[0].title}${chapterList[0].url}", printLog)
         }
         return ChapterData(chapterList, nextUrlList)
     }
