@@ -142,14 +142,4 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         fun printLog(state: Int, msg: String)
     }
 
-    private fun printLog(
-        sourceUrl: String?,
-        state: Int,
-        msg: String,
-        print: Boolean = true,
-        isHtml: Boolean = false
-    ): SourceDebug {
-        SourceDebug.printLog(sourceUrl, state, msg, print, isHtml)
-        return this
-    }
 }
