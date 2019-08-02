@@ -79,7 +79,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             .onSuccess { searchBooks ->
                 searchBooks?.let {
                     if (searchBooks.isNotEmpty()) {
-                        printLog(debugSource, -1, "搜索完成")
+                        printLog(debugSource, 1, "搜索完成")
                         printLog(debugSource, 1, "", showTime = false)
                         infoDebug(BookHelp.toBook(searchBooks[0]))
                     } else {
@@ -97,7 +97,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         printLog(debugSource, 1, "开始获取详情页")
         val info = webBook.getBookInfo(book)
             .onSuccess {
-                printLog(debugSource, -1, "详情页完成")
+                printLog(debugSource, 1, "详情页完成")
                 printLog(debugSource, 1, "", showTime = false)
                 tocDebug(book)
             }
@@ -113,7 +113,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             .onSuccess { chapterList ->
                 chapterList?.let {
                     if (it.isNotEmpty()) {
-                        printLog(debugSource, -1, "目录完成")
+                        printLog(debugSource, 1, "目录完成")
                         printLog(debugSource, 1, "", showTime = false)
                         contentDebug(book, it[0])
                     } else {
