@@ -80,6 +80,8 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                     if (searchBooks.isNotEmpty()) {
                         printLog(debugSource, 1, "", showTime = false)
                         infoDebug(BookHelp.toBook(searchBooks[0]))
+                    } else {
+                        printLog(debugSource, -1, "未获取到书籍")
                     }
                 }
             }
@@ -110,6 +112,8 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                     if (it.isNotEmpty()) {
                         printLog(debugSource, 1, "", showTime = false)
                         contentDebug(book, it[0])
+                    } else {
+                        printLog(debugSource, -1, "目录列表为空")
                     }
                 }
             }
