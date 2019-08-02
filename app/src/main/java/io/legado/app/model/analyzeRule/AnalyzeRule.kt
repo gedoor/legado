@@ -195,7 +195,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                             Mode.Js -> result = evalJS(rule.rule, it)
                             Mode.Json -> result = getAnalyzeByJSonPath(it).getString(rule.rule)
                             Mode.XPath -> result = getAnalyzeByXPath(it).getString(rule.rule)
-                            Mode.Default -> result = if (isUrl && !TextUtils.isEmpty(baseUrl)) {
+                            Mode.Default -> result = if (isUrl) {
                                 getAnalyzeByJSoup(it).getString0(rule.rule)
                             } else {
                                 getAnalyzeByJSoup(it).getString(rule.rule)

@@ -26,7 +26,7 @@ object BookInfo {
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val infoRule = bookSource.getBookInfoRule()
         val analyzeRule = AnalyzeRule(book)
-        analyzeRule.setContent(body)
+        analyzeRule.setContent(body, baseUrl)
         infoRule.init?.let {
             if (it.isNotEmpty()) {
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, "执行详情页初始化规则")
