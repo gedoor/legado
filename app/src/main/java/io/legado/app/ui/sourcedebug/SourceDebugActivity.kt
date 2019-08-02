@@ -15,6 +15,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -27,7 +28,7 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         get() = getViewModel(SourceDebugModel::class.java)
 
     private lateinit var adapter: SourceDebugAdapter
-    val qrRequestCode = 101
+    private val qrRequestCode = 101
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.init(intent.getStringExtra("key"))
@@ -51,6 +52,7 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         search_view.clearFocus()
         search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                search_view.hideSoftInput()
                 startSearch(query ?: "我的")
                 return true
             }

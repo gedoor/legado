@@ -38,7 +38,7 @@ class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
-    val qrRequestCode = 101
+    private val qrRequestCode = 101
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
