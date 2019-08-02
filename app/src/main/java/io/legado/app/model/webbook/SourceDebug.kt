@@ -1,7 +1,6 @@
 package io.legado.app.model.webbook
 
 import android.annotation.SuppressLint
-import android.util.Log
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -40,7 +39,6 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             if (showTime) {
                 printMsg = "${DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))} $printMsg"
             }
-            Log.e("sourceDebugLog", printMsg)
             callback?.printLog(state, printMsg)
         }
 
