@@ -352,33 +352,6 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         }
         return vResult
     }
-//
-//    /**
-//     * 替换JS
-//     */
-//    @SuppressLint("DefaultLocale")
-//    @Throws(Exception::class)
-//    private fun replaceJs(ruleStr: String): String {
-//        var vRuleStr = ruleStr
-//        if (vRuleStr.contains("{{") && vRuleStr.contains("}}")) {
-//            var jsEval: Any
-//            val sb = StringBuffer(vRuleStr.length)
-//            val expMatcher = EXP_PATTERN.matcher(vRuleStr)
-//            while (expMatcher.find()) {
-//                jsEval = evalJS(expMatcher.group(1), content)
-//                if (jsEval is String) {
-//                    expMatcher.appendReplacement(sb, jsEval)
-//                } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-//                    expMatcher.appendReplacement(sb, String.format("%.0f", jsEval))
-//                } else {
-//                    expMatcher.appendReplacement(sb, jsEval.toString())
-//                }
-//            }
-//            expMatcher.appendTail(sb)
-//            vRuleStr = sb.toString()
-//        }
-//        return vRuleStr
-//    }
 
     /**
      * 分解规则生成规则列表
@@ -491,6 +464,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             }
             //分离put
             rule = splitPutRule(rule, putMap)
+            //get替换
             rule = replaceGet(rule)
             // 拆分表达式替换规则
             AnalyzeByRegex.splitRegexRule(rule, ruleParam, ruleType)
