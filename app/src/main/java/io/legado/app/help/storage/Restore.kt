@@ -143,7 +143,7 @@ object Restore {
                     )
                     source.ruleBookInfo = GSON.toJson(bookInfoRule)
                     val chapterRule = TocRule(
-                        chapterList = jsonItem.readString("ruleChapterUrlNext"),
+                        chapterList = jsonItem.readString("ruleChapterList"),
                         chapterName = jsonItem.readString("ruleChapterName"),
                         chapterUrl = jsonItem.readString("ruleContentUrl"),
                         nextTocUrl = jsonItem.readString("ruleChapterUrlNext")
