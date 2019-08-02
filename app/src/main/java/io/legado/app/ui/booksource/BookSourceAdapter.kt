@@ -83,7 +83,7 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
                 callBack?.update(bookSource)
             }
             iv_edit_source.onClick { callBack?.edit(bookSource) }
-            iv_top_source.onClick { }
+            iv_top_source.onClick { callBack?.topSource(bookSource) }
             iv_del_source.onClick { callBack?.del(bookSource) }
         }
     }
@@ -94,5 +94,6 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         fun edit(bookSource: BookSource)
         fun update(bookSource: BookSource)
         fun update(vararg bookSource: BookSource)
+        fun topSource(bookSource: BookSource)
     }
 }

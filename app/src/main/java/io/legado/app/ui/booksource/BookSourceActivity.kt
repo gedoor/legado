@@ -19,7 +19,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.bookshelf.BookshelfViewModel
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
@@ -30,11 +29,11 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 
-class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_book_source),
+class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     BookSourceAdapter.CallBack,
     SearchView.OnQueryTextListener {
-    override val viewModel: BookshelfViewModel
-        get() = getViewModel(BookshelfViewModel::class.java)
+    override val viewModel: BookSourceViewModel
+        get() = getViewModel(BookSourceViewModel::class.java)
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
@@ -137,6 +136,10 @@ class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_
 
     override fun edit(bookSource: BookSource) {
         startActivity<SourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
+    }
+
+    override fun topSource(bookSource: BookSource) {
+        viewModel.topSource(bookSource)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
