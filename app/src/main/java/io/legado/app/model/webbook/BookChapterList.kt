@@ -23,7 +23,7 @@ object BookChapterList {
         bookSource: BookSource,
         analyzeUrl: AnalyzeUrl
     ): List<BookChapter> {
-        val chapterList = arrayListOf<BookChapter>()
+        var chapterList = arrayListOf<BookChapter>()
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
         body ?: throw Exception(
@@ -58,7 +58,6 @@ object BookChapterList {
                         }
                     }
             }
-            if (reverse) chapterList.reverse()
         } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
@@ -85,8 +84,14 @@ object BookChapterList {
                     chapterList.addAll(it)
                 }
             }
-            if (reverse) chapterList.reverse()
         }
+        //去重
+        if (!reverse) {
+            chapterList.reverse()
+        }
+        val lh = LinkedHashSet(chapterList)
+        chapterList = ArrayList(lh)
+        chapterList.reverse()
         return chapterList
     }
 
@@ -116,8 +121,11 @@ object BookChapterList {
             }
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, TextUtils.join(",", nextUrlList), printLog)
         }
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "解析目录列表", printLog)
         val elements = analyzeRule.getElements(listRule)
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "目录数${elements.size}", printLog)
         if (elements.isNotEmpty()) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取目录", printLog)
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName ?: "")
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl ?: "")
             for (item in elements) {
@@ -131,6 +139,7 @@ object BookChapterList {
                     chapterList.add(bookChapter)
                 }
             }
+            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "${chapterList[0].title}${chapterList[0].url}", printLog)
         }
         return ChapterData(chapterList, nextUrlList)
     }

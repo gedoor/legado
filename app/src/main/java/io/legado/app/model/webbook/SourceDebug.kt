@@ -20,16 +20,25 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
 
         @SuppressLint("ConstantLocale")
         private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
-        private val startTime: Long = System.currentTimeMillis()
+        private var startTime: Long = System.currentTimeMillis()
 
-        fun printLog(sourceUrl: String?, state: Int, msg: String, print: Boolean = true, isHtml: Boolean = false) {
+        @Synchronized
+        fun printLog(
+            sourceUrl: String?,
+            state: Int,
+            msg: String,
+            print: Boolean = true,
+            isHtml: Boolean = false,
+            showTime: Boolean = true
+        ) {
             if (debugSource != sourceUrl || callback == null || !print) return
             var printMsg = msg
             if (isHtml) {
                 printMsg = printMsg.htmlFormat()
             }
-            printMsg =
-                String.format("%s %s", DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime)), printMsg)
+            if (showTime) {
+                printMsg = "${DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))} $printMsg"
+            }
             callback?.printLog(state, printMsg)
         }
 
@@ -51,6 +60,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
 
     fun startDebug(key: String) {
         cancelDebug()
+        startTime = System.currentTimeMillis()
         with(webBook) {
             if (key.isAbsUrl()) {
                 val book = Book()
@@ -70,8 +80,11 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             .onSuccess { searchBooks ->
                 searchBooks?.let {
                     if (searchBooks.isNotEmpty()) {
-                        callback?.printLog(1, "")
+                        printLog(debugSource, 1, "搜索完成")
+                        printLog(debugSource, 1, "", showTime = false)
                         infoDebug(BookHelp.toBook(searchBooks[0]))
+                    } else {
+                        printLog(debugSource, -1, "未获取到书籍")
                     }
                 }
             }
@@ -85,7 +98,8 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         printLog(debugSource, 1, "开始获取详情页")
         val info = webBook.getBookInfo(book)
             .onSuccess {
-                callback?.printLog(1, "")
+                printLog(debugSource, 1, "详情页完成")
+                printLog(debugSource, 1, "", showTime = false)
                 tocDebug(book)
             }
             .onError {
@@ -100,8 +114,11 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             .onSuccess { chapterList ->
                 chapterList?.let {
                     if (it.isNotEmpty()) {
-                        callback?.printLog(1, "")
+                        printLog(debugSource, 1, "目录完成")
+                        printLog(debugSource, 1, "", showTime = false)
                         contentDebug(book, it[0])
+                    } else {
+                        printLog(debugSource, -1, "目录列表为空")
                     }
                 }
             }
@@ -129,14 +146,4 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         fun printLog(state: Int, msg: String)
     }
 
-    fun printLog(
-        sourceUrl: String?,
-        state: Int,
-        msg: String,
-        print: Boolean = true,
-        isHtml: Boolean = false
-    ): SourceDebug {
-        SourceDebug.printLog(sourceUrl, state, msg, print, isHtml)
-        return this
-    }
 }
