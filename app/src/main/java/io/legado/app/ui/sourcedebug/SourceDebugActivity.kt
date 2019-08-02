@@ -31,6 +31,12 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         viewModel.init(intent.getStringExtra("key"))
         initRecyclerView()
         initSearchView()
+        viewModel.observe{state, msg->
+            adapter.addItem(msg)
+            if (state == -1 || state == 1000) {
+                rotate_loading.hide()
+            }
+        }
     }
 
     private fun initRecyclerView() {
