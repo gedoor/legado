@@ -28,6 +28,12 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         viewModel.init(intent.getStringExtra("key"))
         initRecyclerView()
         initSearchView()
+        viewModel.observe{state, msg->
+            adapter.addItem(msg)
+            if (state == -1 || state == 1000) {
+                rotate_loading.hide()
+            }
+        }
     }
 
     private fun initRecyclerView() {
@@ -63,14 +69,5 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         }, {
             toast("未获取到书源")
         })
-    }
-
-    override fun observeLiveBus() {
-        observeEvent<EventMessage>(Bus.SOURCE_DEBUG_LOG) {
-            adapter.addItem(it.obj as String)
-            if (it.what == -1 || it.what == 1000) {
-                rotate_loading.hide()
-            }
-        }
     }
 }
