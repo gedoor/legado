@@ -23,7 +23,7 @@ object BookChapterList {
         bookSource: BookSource,
         analyzeUrl: AnalyzeUrl
     ): List<BookChapter> {
-        val chapterList = arrayListOf<BookChapter>()
+        var chapterList = arrayListOf<BookChapter>()
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
         body ?: throw Exception(
@@ -58,7 +58,6 @@ object BookChapterList {
                         }
                     }
             }
-            if (reverse) chapterList.reverse()
         } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
@@ -85,8 +84,14 @@ object BookChapterList {
                     chapterList.addAll(it)
                 }
             }
-            if (reverse) chapterList.reverse()
         }
+        //去重
+        if (!reverse) {
+            chapterList.reverse()
+        }
+        val lh = LinkedHashSet(chapterList)
+        chapterList = ArrayList(lh)
+        chapterList.reverse()
         return chapterList
     }
 
