@@ -36,12 +36,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                 printMsg = printMsg.htmlFormat()
             }
             if (showTime) {
-                printMsg =
-                    String.format(
-                        "%s %s",
-                        DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime)),
-                        printMsg
-                    )
+                printMsg = "${DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))} $printMsg"
             }
             callback?.printLog(state, printMsg)
         }
