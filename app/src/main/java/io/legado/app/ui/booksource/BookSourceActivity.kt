@@ -1,5 +1,6 @@
 package io.legado.app.ui.booksource
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 
 class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_book_source),
     BookSourceAdapter.CallBack,
@@ -36,6 +38,7 @@ class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_
 
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
+    val qrRequestCode = 101
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
@@ -55,7 +58,7 @@ class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_
                 this.startActivity<SourceEditActivity>()
             }
             R.id.action_import_book_source_qr -> {
-                this.startActivity<QrCodeActivity>()
+                this.startActivityForResult<QrCodeActivity>(qrRequestCode)
             }
             R.id.action_select_all -> {
                 launch(IO) {
@@ -134,5 +137,18 @@ class BookSourceActivity : VMBaseActivity<BookshelfViewModel>(R.layout.activity_
 
     override fun edit(bookSource: BookSource) {
         startActivity<SourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            qrRequestCode -> {
+                if (resultCode == RESULT_OK) {
+                    data?.getStringExtra("result")?.let {
+
+                    }
+                }
+            }
+        }
     }
 }

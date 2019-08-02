@@ -1,6 +1,9 @@
 package io.legado.app.ui.sourcedebug
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,12 +12,13 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.help.EventMessage
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
 class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_source_debug) {
@@ -23,6 +27,7 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         get() = getViewModel(SourceDebugModel::class.java)
 
     private lateinit var adapter: SourceDebugAdapter
+    val qrRequestCode = 101
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.init(intent.getStringExtra("key"))
@@ -63,6 +68,33 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         }, {
             toast("未获取到书源")
         })
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.source_debug, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_scan -> {
+                startActivityForResult<QrCodeActivity>(qrRequestCode)
+            }
+        }
+        return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            qrRequestCode -> {
+                if (resultCode == RESULT_OK) {
+                    data?.getStringExtra("result")?.let {
+                        startSearch(it)
+                    }
+                }
+            }
+        }
     }
 
     override fun observeLiveBus() {
