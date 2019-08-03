@@ -1,18 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <io.legado.app.ui.widget.image.CoverImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="60dp"
+        android:layout_height="80dp"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/img_cover"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_cover_default"
+        android:transitionName="img_cover"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute" />
 
     <TextView
-        android:id="@+id/bookName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="测试" />
+        android:layout_margin="8dp"
+        android:text="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_cover"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/iv_cover"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintRight_toRightOf="@id/tv_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name">
+
+        <LinearLayout
+            android:id="@+id/ll_kind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+                android:id="@+id/tv_kind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name" />
+
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+                android:id="@+id/tv_kind_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name" />
+
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+                android:id="@+id/tv_kind_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_lasted"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="最新章节"
+            android:textColor="@color/tv_text_default"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_introduce"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="简介"
+            android:textColor="@color/tv_text_default"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
