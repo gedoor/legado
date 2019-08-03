@@ -4,5 +4,6 @@ import androidx.room.Entity
 
 @Entity(tableName = "rssSources")
 data class RssSource(
-    var sourceName: String
+    var sourceName: String,
+    var enabled: Boolean = true
 )
