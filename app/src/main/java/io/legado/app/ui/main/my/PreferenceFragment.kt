@@ -8,12 +8,12 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.booksource.BookSourceActivity
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
+import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import org.jetbrains.anko.startActivity
 
 class PreferenceFragment : PreferenceFragmentCompat(),
@@ -50,6 +50,7 @@ class PreferenceFragment : PreferenceFragmentCompat(),
         preference?.let {
             when (preference.key) {
                 "bookSourceManage" -> context?.startActivity<BookSourceActivity>()
+                "replaceManage" -> context?.startActivity<ReplaceRuleActivity>()
                 "setting" -> context?.startActivity<ConfigActivity>(
                         Pair("configType", ConfigViewModel.TYPE_CONFIG)
                 )
