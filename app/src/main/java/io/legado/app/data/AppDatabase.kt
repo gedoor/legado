@@ -12,7 +12,7 @@ import io.legado.app.data.entities.*
 
 @Database(
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class, ReplaceRule::class, SearchBook::class,
-        SearchKeyword::class, SourceCookie::class, RssSourceDao::class],
+        SearchKeyword::class, SourceCookie::class, RssSource::class],
     version = 1,
     exportSchema = true
 )
