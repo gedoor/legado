@@ -49,7 +49,7 @@ class AnalyzeByXPath {
             }
         }
         if (rules.size == 1) {
-            return jxDocument!!.selN(rules[0])
+            return jxDocument?.selN(rules[0])
         } else {
             val results = ArrayList<List<JXNode>>()
             for (rl in rules) {
