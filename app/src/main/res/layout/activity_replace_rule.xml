@@ -16,7 +16,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_replace_rule"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:layout_marginBottom="8dp"
