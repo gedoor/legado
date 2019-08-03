@@ -8,6 +8,7 @@ import io.legado.app.data.entities.rule.ContentRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -83,7 +84,7 @@ object BookContent {
         analyzeRule.getStringList(contentRule.nextContentUrl ?: "", true)?.let {
             nextUrlList.addAll(it)
         }
-        val content = analyzeRule.getString(contentRule.content ?: "") ?: ""
+        val content = analyzeRule.getString(contentRule.content ?: "")?.htmlFormat() ?: ""
         return ContentData(content, nextUrlList)
     }
 }

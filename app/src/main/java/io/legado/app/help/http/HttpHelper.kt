@@ -41,6 +41,7 @@ object HttpHelper {
             .connectTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory, SSLHelper.unsafeTrustManager)
             .retryOnConnectionFailure(true)
             .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
             .connectionSpecs(specs)
@@ -49,9 +50,6 @@ object HttpHelper {
             .protocols(listOf(Protocol.HTTP_1_1))
             .addInterceptor(getHeaderInterceptor())
 
-        SSLHelper.getSslSocketFactory()?.let {
-            builder.sslSocketFactory(it.sSLSocketFactory, it.trustManager)
-        }
         return builder.build()
     }
 

@@ -5,6 +5,7 @@ import java.io.InputStream
 import java.security.KeyManagementException
 import java.security.KeyStore
 import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
@@ -32,6 +33,17 @@ object SSLHelper {
             return arrayOf()
         }
     }
+
+    val unsafeSSLSocketFactory: SSLSocketFactory
+        get() {
+            try {
+                val sslContext = SSLContext.getInstance("SSL")
+                sslContext.init(null, arrayOf(unsafeTrustManager), SecureRandom())
+                return sslContext.socketFactory
+            } catch (e: Exception) {
+                throw RuntimeException(e)
+            }
+        }
 
     /**
      * 此类是用于主机名验证的基接口。 在握手期间，如果 URL 的主机名和服务器的标识主机名不匹配，
