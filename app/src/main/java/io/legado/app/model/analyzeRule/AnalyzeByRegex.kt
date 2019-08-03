@@ -16,7 +16,7 @@ object AnalyzeByRegex {
         return if (vIndex + 1 == regs.size) {
             // 新建容器
             val info = arrayListOf<String>()
-            for (groupIndex in 0 until resM.groupCount()) {
+            for (groupIndex in 0..resM.groupCount()) {
                 info.add(resM.group(groupIndex))
             }
             info
@@ -43,7 +43,7 @@ object AnalyzeByRegex {
             do {
                 // 新建容器
                 val info = arrayListOf<String>()
-                for (groupIndex in 0 until resM.groupCount()) {
+                for (groupIndex in 0..resM.groupCount()) {
                     info.add(resM.group(groupIndex))
                 }
                 books.add(info)
