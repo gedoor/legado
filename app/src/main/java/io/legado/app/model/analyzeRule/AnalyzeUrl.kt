@@ -46,8 +46,7 @@ class AnalyzeUrl(
         private set
     var path: String? = null
         private set
-    var queryStr: String? = null
-        private set
+    private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
     private val headerMap = HashMap<String, String>()
     private var charset: String? = null
@@ -153,10 +152,6 @@ class AnalyzeUrl(
                         body = RequestBody.create(jsonType, it)
                     } else {
                         analyzeFields(it)
-                        val builder = FormBody.Builder()
-                        for (item in fieldMap)
-                            builder.add(item.key, item.value)
-                        body = builder.build()
                     }
                 } ?: let {
                     body = FormBody.Builder().build()
@@ -206,13 +201,21 @@ class AnalyzeUrl(
 
     fun getResponseAsync(): Deferred<Response<String>> {
         return when {
-            method == Method.POST -> HttpHelper.getApiService<IHttpPostApi>(
-                baseUrl
-            ).postBodyAsync(
-                url,
-                body,
-                headerMap
-            )
+            method == Method.POST -> {
+                if (fieldMap.isNotEmpty()) {
+                    HttpHelper.getApiService<IHttpPostApi>(
+                        baseUrl
+                    ).postMapAsync(url, fieldMap, headerMap)
+                } else {
+                    HttpHelper.getApiService<IHttpPostApi>(
+                        baseUrl
+                    ).postBodyAsync(
+                        url,
+                        body,
+                        headerMap
+                    )
+                }
+            }
             fieldMap.isEmpty() -> HttpHelper.getApiService<IHttpGetApi>(
                 baseUrl
             ).getAsync(url, headerMap)
