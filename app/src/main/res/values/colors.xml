@@ -3,9 +3,7 @@
     <color name="colorPrimary">@color/md_light_blue_500</color>
     <color name="colorPrimaryDark">@color/md_light_blue_600</color>
     <color name="colorAccent">@color/md_pink_A400</color>
-    <color name="text_default">#222222</color>
     <color name="divider">#66666666</color>
-
 
     <color name="error">#eb4333</color>
     <color name="success">#439b53</color>

@@ -13,7 +13,7 @@
         android:contentDescription="@string/edit"
         android:src="@drawable/ic_edit"
         android:visibility="gone"
-        app:tint="@color/text_default"
+        app:tint="@color/tv_text_default"
         app:layout_constraintEnd_toStartOf="@id/iv_delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,7 +27,7 @@
         android:contentDescription="@string/delete"
         android:src="@drawable/ic_clear_all"
         android:visibility="gone"
-        app:tint="@color/text_default"
+        app:tint="@color/tv_text_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +54,7 @@
         android:paddingBottom="16dp"
         android:textSize="16sp"
         android:text="Item Name"
-        android:textColor="@color/text_default"
+        android:textColor="@color/tv_text_default"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/cb_selected"
