@@ -105,8 +105,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 toast("You swiped the item!")
-                // TODO()
-                // remove((viewHolder as TodoViewHolder).todo)
             }
         }).attachToRecyclerView(rv_replace_rule)
 
