@@ -154,4 +154,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
         }
     }
+
+    override fun finish() {
+        if (search_view.query.isNullOrEmpty()) {
+            super.finish()
+        } else {
+            search_view.setQuery("", true)
+        }
+    }
 }
