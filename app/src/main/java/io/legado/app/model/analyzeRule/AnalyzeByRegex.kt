@@ -128,6 +128,8 @@ object AnalyzeByRegex {
                         }
                         index++
                     }
+                } else {
+                    index++
                 }
             } else {
                 index++
