@@ -2,6 +2,7 @@ package io.legado.app.ui.search
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
@@ -17,7 +18,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initSearchView()
         initRecyclerView()
-        viewModel.search()
     }
 
     private fun initSearchView() {
@@ -26,6 +26,23 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         search_view.isSubmitButtonEnabled = true
         search_view.queryHint = getString(R.string.search_book_key)
         search_view.clearFocus()
+        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    viewModel.search(it, {
+                        content_view.showProgressView()
+                    }, {
+
+                    })
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
         intent.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
         }

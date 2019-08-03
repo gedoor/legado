@@ -25,6 +25,9 @@ interface BookSourceDao {
     @get:Query("select * from book_sources order by customOrder asc")
     val all: List<BookSource>
 
+    @get:Query("select * from book_sources where enabled = 1 order by customOrder asc")
+    val allEnabled: List<BookSource>
+
     @Query("select * from book_sources where bookSourceUrl = :key")
     fun findByKey(key: String): BookSource?
 
