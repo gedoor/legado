@@ -3,6 +3,7 @@ package io.legado.app.ui.search
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
@@ -15,9 +16,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     override val viewModel: SearchViewModel
         get() = getViewModel(SearchViewModel::class.java)
 
+    private lateinit var adapter: SearchAdapter
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        initSearchView()
         initRecyclerView()
+        initSearchView()
     }
 
     private fun initSearchView() {
@@ -50,6 +53,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_search_list)
+        adapter = SearchAdapter(this)
+        rv_search_list.layoutManager = LinearLayoutManager(this)
+        rv_search_list.adapter = adapter
     }
 
 }
