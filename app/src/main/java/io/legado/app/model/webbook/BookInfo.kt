@@ -57,6 +57,7 @@ object BookInfo {
         analyzeRule.getString(infoRule.wordCount ?: "")?.let {
             if (it.isNotEmpty()) book.wordCount = it
         }
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, book.wordCount ?: "")
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取最新章节")
         analyzeRule.getString(infoRule.lastChapter ?: "")?.let {
             if (it.isNotEmpty()) book.latestChapterTitle = it
