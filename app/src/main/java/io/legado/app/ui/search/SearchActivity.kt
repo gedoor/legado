@@ -40,7 +40,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     viewModel.search(it, { startTime ->
-                        content_view.showProgressView()
+                        content_view.showContentView()
                         initData(startTime)
                     }, {
 
