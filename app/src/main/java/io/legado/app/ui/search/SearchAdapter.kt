@@ -1,26 +1,52 @@
 package io.legado.app.ui.search
 
-import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.base.adapter.ItemViewDelegate
-import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SearchBook
 
-class SearchAdapter(context: Context) : SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_search) {
+class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
-    init {
-        addItemViewDelegate(TestItemDelegate(context))
-    }
+    companion object {
 
-    override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
-    }
+        @JvmField
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SearchBook>() {
+            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean =
+                oldItem.name == newItem.name
+                        && oldItem.author == newItem.author
 
-    internal class TestItemDelegate(context: Context) : ItemViewDelegate<SearchBook>(context, R.layout.item_search) {
-
-        override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
+            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean =
+                oldItem.name == newItem.name
+                        && oldItem.author == newItem.author
+                        && oldItem.originCount == newItem.originCount
         }
-
     }
 
+    var callBack: CallBack? = null
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false))
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        getItem(position)?.let {
+            holder.bind(it, callBack)
+        }
+    }
+
+
+    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        fun bind(searchBook: SearchBook, callBack: CallBack?) {
+
+        }
+    }
+
+    interface CallBack {
+        fun showBookInfo()
+    }
 }
