@@ -32,8 +32,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    viewModel.search(it, {
+                    viewModel.search(it, { startTime ->
                         content_view.showProgressView()
+                        initData(startTime)
                     }, {
 
                     })
@@ -56,6 +57,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         adapter = SearchAdapter(this)
         rv_search_list.layoutManager = LinearLayoutManager(this)
         rv_search_list.adapter = adapter
+    }
+
+    private fun initData(startTime: Long) {
+
     }
 
 }

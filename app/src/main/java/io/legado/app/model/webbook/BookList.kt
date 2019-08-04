@@ -131,6 +131,7 @@ object BookList {
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取最新章节")
                 searchBook.latestChapterTitle = analyzeRule.getString(lastChapter ?: "")
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.latestChapterTitle ?: "")
+                searchBook.time = System.currentTimeMillis()
                 return searchBook
             }
         }
@@ -182,6 +183,7 @@ object BookList {
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取最新章节", printLog)
             searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.latestChapterTitle ?: "", printLog)
+            searchBook.time = System.currentTimeMillis()
             return searchBook
         }
         return null

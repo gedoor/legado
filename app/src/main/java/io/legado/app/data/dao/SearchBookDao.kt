@@ -2,6 +2,8 @@ package io.legado.app.data.dao
 
 import androidx.paging.DataSource
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.SearchBook
 
@@ -11,8 +13,10 @@ interface SearchBookDao {
     @Query("SELECT * FROM searchBooks")
     fun observeAll(): DataSource.Factory<Int, SearchBook>
 
-    @Query("SELECT * FROM searchBooks where time >= :time")
+    @Query("SELECT name, author, '' bookUrl, '' origin, '' originName, min(time) time, max(intro) intro, max(kind) kind, max(coverUrl) coverUrl, max(latestChapterTitle) latestChapterTitle FROM searchBooks where time >= :time group by name and author")
     fun observeNew(time: Long): DataSource.Factory<Int, SearchBook>
 
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg searchBook: SearchBook)
 }
