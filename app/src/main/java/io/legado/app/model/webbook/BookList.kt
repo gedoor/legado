@@ -132,6 +132,7 @@ object BookList {
                 searchBook.latestChapterTitle = analyzeRule.getString(lastChapter ?: "")
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.latestChapterTitle ?: "")
                 searchBook.time = System.currentTimeMillis()
+                searchBook.originOrder = bookSource.customOrder
                 return searchBook
             }
         }
@@ -184,6 +185,7 @@ object BookList {
             searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.latestChapterTitle ?: "", printLog)
             searchBook.time = System.currentTimeMillis()
+            searchBook.originOrder = bookSource.customOrder
             return searchBook
         }
         return null

@@ -13,7 +13,7 @@ interface SearchBookDao {
     @Query("SELECT * FROM searchBooks")
     fun observeAll(): DataSource.Factory<Int, SearchBook>
 
-    @Query("SELECT name, author, '' bookUrl, '' origin, '' originName, min(time) time, max(intro) intro, max(kind) kind, max(coverUrl) coverUrl, max(latestChapterTitle) latestChapterTitle FROM searchBooks where time >= :time group by name and author")
+    @Query("SELECT name, author, '' bookUrl, '' origin, '' originName, count(origin) originCount, min(time) time, max(intro) intro, max(kind) kind, max(coverUrl) coverUrl, max(latestChapterTitle) latestChapterTitle FROM searchBooks where time >= :time group by name and author order by bookOrder and originOrder and time")
     fun observeNew(time: Long): DataSource.Factory<Int, SearchBook>
 
 

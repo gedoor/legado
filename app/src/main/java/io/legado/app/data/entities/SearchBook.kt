@@ -27,8 +27,13 @@ data class SearchBook(
     var latestChapterTitle: String? = null,
     var time: Long = 0L,
     var variable: String? = null,
-    var bookInfoHtml: String? = null
+    var bookInfoHtml: String? = null,
+    var originOrder: Int = 0,
+    var bookOrder: Int = 0
 ) : Parcelable, BaseBook {
+
+    @Ignore
+    var originCount: Int = 0
 
     @IgnoredOnParcel
     @Ignore
