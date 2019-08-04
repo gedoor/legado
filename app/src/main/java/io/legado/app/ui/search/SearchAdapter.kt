@@ -8,6 +8,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.ImageLoader
+import kotlinx.android.synthetic.main.item_bookshelf_list.view.iv_cover
+import kotlinx.android.synthetic.main.item_bookshelf_list.view.tv_name
+import kotlinx.android.synthetic.main.item_search.view.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
@@ -41,12 +46,24 @@ class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(D
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(searchBook: SearchBook, callBack: CallBack?) {
-
+        fun bind(searchBook: SearchBook, callBack: CallBack?) = with(itemView) {
+            tv_name.text = String.format("%s(%s)", searchBook.name, searchBook.author)
+            tv_lasted.text = context.getString(R.string.book_search_last, searchBook.latestChapterTitle)
+            tv_introduce.text = searchBook.intro
+            searchBook.coverUrl.let {
+                ImageLoader.load(context, it)//Glide自动识别http://和file://
+                    .placeholder(R.drawable.img_cover_default)
+                    .error(R.drawable.img_cover_default)
+                    .centerCrop()
+                    .setAsDrawable(iv_cover)
+            }
+            onClick {
+                callBack?.showBookInfo(searchBook)
+            }
         }
     }
 
     interface CallBack {
-        fun showBookInfo()
+        fun showBookInfo(searchBook: SearchBook)
     }
 }
