@@ -3,9 +3,15 @@ package io.legado.app.ui.search
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_search.*
@@ -17,6 +23,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         get() = getViewModel(SearchViewModel::class.java)
 
     private lateinit var adapter: SearchAdapter
+    private var searchBookData: LiveData<PagedList<SearchBook>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -60,7 +67,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     }
 
     private fun initData(startTime: Long) {
-
+        searchBookData?.removeObservers(this)
+        searchBookData = LivePagedListBuilder(App.db.searchBookDao().observeNew(startTime), 30).build()
+        searchBookData?.observe(this, Observer { adapter.submitList(it) })
     }
 
 }
