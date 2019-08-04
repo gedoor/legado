@@ -29,11 +29,9 @@ data class SearchBook(
     var variable: String? = null,
     var bookInfoHtml: String? = null,
     var originOrder: Int = 0,
-    var searchOrder: Int = 0
-) : Parcelable, BaseBook {
-
-    @Ignore
+    var searchOrder: Int = 0,
     var originCount: Int = 0
+) : Parcelable, BaseBook {
 
     @IgnoredOnParcel
     @Ignore
