@@ -26,8 +26,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                                     searchBook.author -> searchBook.searchOrder = 1
                                     else -> searchBook.searchOrder = 1000
                                 }
+                                App.db.searchBookDao().insert(searchBook)
                             }
-                            App.db.searchBookDao().insert(*it.toTypedArray())
                         }
                     }
                 tasks.add(search)
