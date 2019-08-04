@@ -20,4 +20,7 @@ interface SearchBookDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg searchBook: SearchBook)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(searchBook: SearchBook)
 }

@@ -42,11 +42,11 @@ data class SearchBook(
         }
 
     private fun initVariableMap() {
-        if (variableMap == null) {
+        variableMap?.let {
             variableMap = if (TextUtils.isEmpty(variable)) {
                 HashMap()
             } else {
-                GSON.fromJsonObject<HashMap<String, String>>(variable!!)
+                GSON.fromJsonObject(variable)
             }
         }
     }
