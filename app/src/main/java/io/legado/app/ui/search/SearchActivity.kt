@@ -28,7 +28,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
-        initData(0L)
     }
 
     private fun initSearchView() {
@@ -70,7 +69,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
 
     private fun initData(startTime: Long) {
         searchBookData?.removeObservers(this)
-        searchBookData = LivePagedListBuilder(App.db.searchBookDao().observeAll(), 30).build()
+        searchBookData = LivePagedListBuilder(App.db.searchBookDao().observeNew(startTime), 30).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
     }
 
