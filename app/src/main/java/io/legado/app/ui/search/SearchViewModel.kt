@@ -21,14 +21,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     .onSuccess { searchBookS ->
                         searchBookS?.let {
                             execute {
-                                for (searchBook in searchBookS) {
-                                    when (key) {
-                                        searchBook.name -> searchBook.searchOrder = 0
-                                        searchBook.author -> searchBook.searchOrder = 1
-                                        else -> searchBook.searchOrder = 1000
-                                    }
-                                    App.db.searchBookDao().insert(searchBook)
-                                }
+                                App.db.searchBookDao().insert(*it.toTypedArray())
                             }
                         }
                     }
