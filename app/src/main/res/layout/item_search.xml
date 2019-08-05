@@ -26,6 +26,7 @@
         android:layout_margin="8dp"
         android:singleLine="true"
         android:text="@string/app_name"
+        android:textColor="@color/tv_text_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_cover"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,6 +46,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
+            android:drawableLeft="@drawable/ic_author"
             android:text="@string/author"
             android:textColor="@color/tv_text_default"
             android:textSize="12sp" />
