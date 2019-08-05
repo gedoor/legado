@@ -29,7 +29,6 @@ class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(D
             override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean =
                 oldItem.name == newItem.name
                         && oldItem.author == newItem.author
-                        && oldItem.originCount == newItem.originCount
         }
     }
 
