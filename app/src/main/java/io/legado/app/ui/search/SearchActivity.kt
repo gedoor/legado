@@ -14,7 +14,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.hideSoftInput
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
@@ -40,7 +39,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         search_view.clearFocus()
         search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                search_view.hideSoftInput()
+                search_view.clearFocus()
                 query?.let {
                     viewModel.search(it, { startTime ->
                         content_view.showContentView()

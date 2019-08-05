@@ -13,7 +13,6 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.hideSoftInput
 import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.launch
@@ -58,7 +57,7 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
         search_view.clearFocus()
         search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                search_view.hideSoftInput()
+                search_view.clearFocus()
                 startSearch(query ?: "我的")
                 return true
             }
