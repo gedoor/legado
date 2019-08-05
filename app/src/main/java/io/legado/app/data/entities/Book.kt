@@ -55,9 +55,9 @@ data class Book(
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 
-    fun getDisplayCover() = customCoverUrl ?: coverUrl
+    fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
 
-    fun getDisplayIntro() = customIntro ?: intro
+    fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
     private fun initVariableMap() {
         if (variableMap == null) {
