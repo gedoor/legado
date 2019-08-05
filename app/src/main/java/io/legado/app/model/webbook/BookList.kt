@@ -4,6 +4,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.BookHelp
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
@@ -114,7 +115,7 @@ object BookList {
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "")
             if (!searchBook.name.isNullOrEmpty()) {
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取作者")
-                searchBook.author = analyzeRule.getString(author ?: "")
+                searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(author ?: ""))
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.author ?: "")
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取分类")
                 searchBook.kind = analyzeRule.getString(kind ?: "")
@@ -167,7 +168,7 @@ object BookList {
             searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.bookUrl, printLog)
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取作者", printLog)
-            searchBook.author = analyzeRule.getString(ruleAuthor)
+            searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(ruleAuthor))
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.author ?: "", printLog)
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取分类", printLog)
             searchBook.kind = analyzeRule.getString(ruleKind)
