@@ -23,8 +23,8 @@ fun String?.htmlFormat(): String = if (this.isNullOrBlank()) "" else
         .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
         .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
 
-fun String.splitNotBlank(delimiter: String): Array<String> = run {
-    this.split(delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
+fun String.splitNotBlank(vararg delimiter: String): Array<String> = run {
+    this.split(*delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
 fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {

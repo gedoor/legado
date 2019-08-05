@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.ImageLoader
+import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.iv_cover
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.tv_name
 import kotlinx.android.synthetic.main.item_search.view.*
@@ -50,6 +52,36 @@ class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(D
             tv_name.text = String.format("%s(%s)", searchBook.name, searchBook.author)
             tv_lasted.text = context.getString(R.string.book_search_last, searchBook.latestChapterTitle)
             tv_introduce.text = searchBook.intro
+            val kinds = searchBook.getKindList()
+            if (kinds.isEmpty()) {
+                ll_kind.gone()
+            } else {
+                ll_kind.visible()
+                for (index in 0..2) {
+                    if (kinds.size > index) {
+                        when (index) {
+                            0 -> {
+                                tv_kind.text = kinds[index]
+                                tv_kind.visible()
+                            }
+                            1 -> {
+                                tv_kind_1.text = kinds[index]
+                                tv_kind_1.visible()
+                            }
+                            2 -> {
+                                tv_kind_2.text = kinds[index]
+                                tv_kind_2.visible()
+                            }
+                        }
+                    } else {
+                        when (index) {
+                            0 -> tv_kind.gone()
+                            1 -> tv_kind_1.gone()
+                            2 -> tv_kind_2.gone()
+                        }
+                    }
+                }
+            }
             searchBook.coverUrl.let {
                 ImageLoader.load(context, it)//Glide自动识别http://和file://
                     .placeholder(R.drawable.img_cover_default)

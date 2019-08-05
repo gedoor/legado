@@ -7,8 +7,8 @@
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
-        android:layout_width="60dp"
-        android:layout_height="80dp"
+        android:layout_width="70dp"
+        android:layout_height="100dp"
         android:layout_margin="8dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
@@ -50,6 +50,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name" />
 
@@ -58,6 +60,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name" />
 
@@ -66,6 +70,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name" />
 
@@ -85,10 +91,8 @@
         <TextView
             android:id="@+id/tv_introduce"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:lines="1"
             android:text="简介"
             android:textColor="@color/tv_text_default"
             android:textSize="12sp" />
