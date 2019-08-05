@@ -1,7 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/book_info" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <com.kunfei.bookshelf.widget.CoverImageView
+                    android:id="@+id/iv_cover"
+                    android:layout_width="90dp"
+                    android:layout_height="126dp"
+                    android:contentDescription="@string/img_cover"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_cover_default" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+
+                    <com.kunfei.bookshelf.widget.views.ATETextInputLayout
+                        android:id="@+id/til_book_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/book_name">
+
+                        <com.kunfei.bookshelf.widget.views.ATEEditText
+                            android:id="@+id/tie_book_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true" />
+                    </com.kunfei.bookshelf.widget.views.ATETextInputLayout>
+
+                    <com.kunfei.bookshelf.widget.views.ATETextInputLayout
+                        android:id="@+id/til_book_author"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/author">
+
+                        <com.kunfei.bookshelf.widget.views.ATEEditText
+                            android:id="@+id/tie_book_author"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true" />
+                    </com.kunfei.bookshelf.widget.views.ATETextInputLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.kunfei.bookshelf.widget.views.ATETextInputLayout
+                android:id="@+id/til_cover_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="@string/cover_path">
+
+                <com.kunfei.bookshelf.widget.views.ATEEditText
+                    android:id="@+id/tie_cover_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.kunfei.bookshelf.widget.views.ATETextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp">
+
+                <com.kunfei.bookshelf.widget.views.ATEStrokeTextView
+                    android:id="@+id/tv_select_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="选择本地图片" />
+
+                <com.kunfei.bookshelf.widget.views.ATEStrokeTextView
+                    android:id="@+id/tv_change_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:padding="5dp"
+                    android:text="封面换源"
+                    tools:ignore="RtlHardcoded" />
+
+                <com.kunfei.bookshelf.widget.views.ATEStrokeTextView
+                    android:id="@+id/tv_refresh_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:padding="5dp"
+                    android:text="刷新封面"
+                    tools:ignore="RtlHardcoded" />
+
+            </LinearLayout>
+
+            <com.kunfei.bookshelf.widget.views.ATETextInputLayout
+                android:id="@+id/til_book_jj"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/book_intro">
+
+                <com.kunfei.bookshelf.widget.views.ATEEditText
+                    android:id="@+id/tie_book_jj"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.kunfei.bookshelf.widget.views.ATETextInputLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
