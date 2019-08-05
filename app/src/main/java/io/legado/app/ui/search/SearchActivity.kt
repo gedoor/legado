@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.SearchShow
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_search.*
@@ -23,7 +23,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         get() = getViewModel(SearchViewModel::class.java)
 
     private lateinit var adapter: SearchAdapter
-    private var searchBookData: LiveData<PagedList<SearchBook>>? = null
+    private var searchBookData: LiveData<PagedList<SearchShow>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -70,7 +70,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
 
     private fun initData(startTime: Long) {
         searchBookData?.removeObservers(this)
-        searchBookData = LivePagedListBuilder(App.db.searchBookDao().observeNew(startTime), 30).build()
+        searchBookData = LivePagedListBuilder(App.db.searchBookDao().observeShow(startTime), 30).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
     }
 

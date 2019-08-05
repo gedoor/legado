@@ -7,7 +7,7 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.SearchShow
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -16,17 +16,17 @@ import kotlinx.android.synthetic.main.item_bookshelf_list.view.tv_name
 import kotlinx.android.synthetic.main.item_search.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
 
         @JvmField
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SearchBook>() {
-            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean =
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SearchShow>() {
+            override fun areItemsTheSame(oldItem: SearchShow, newItem: SearchShow): Boolean =
                 oldItem.name == newItem.name
                         && oldItem.author == newItem.author
 
-            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean =
+            override fun areContentsTheSame(oldItem: SearchShow, newItem: SearchShow): Boolean =
                 oldItem.name == newItem.name
                         && oldItem.author == newItem.author
         }
@@ -47,7 +47,7 @@ class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(D
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(searchBook: SearchBook, callBack: CallBack?) = with(itemView) {
+        fun bind(searchBook: SearchShow, callBack: CallBack?) = with(itemView) {
             tv_name.text = searchBook.name
             tv_author.text = searchBook.author
             tv_lasted.text = context.getString(R.string.book_search_last, searchBook.latestChapterTitle)
@@ -90,12 +90,12 @@ class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(D
                     .setAsDrawable(iv_cover)
             }
             onClick {
-                callBack?.showBookInfo(searchBook)
+                callBack?.showBookInfo(searchBook.name, searchBook.author)
             }
         }
     }
 
     interface CallBack {
-        fun showBookInfo(searchBook: SearchBook)
+        fun showBookInfo(name: String?, author: String?)
     }
 }

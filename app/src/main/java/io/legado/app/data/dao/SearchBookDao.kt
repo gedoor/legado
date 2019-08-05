@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.SearchShow
 
 @Dao
 interface SearchBookDao {
@@ -16,6 +17,8 @@ interface SearchBookDao {
     @Query("SELECT * FROM searchBooks where time >= :time")
     fun observeNew(time: Long): DataSource.Factory<Int, SearchBook>
 
+    @Query("SELECT name, author, min(time) time, max(kind) kind, max(coverUrl) coverUrl, max(intro) intro, max(wordCount) wordCount, max(latestChapterTitle) latestChapterTitle, count(origin) originCount FROM searchBooks where time >= :time group by name, author")
+    fun observeShow(time: Long): DataSource.Factory<Int, SearchShow>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg searchBook: SearchBook): List<Long>
