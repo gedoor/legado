@@ -49,7 +49,8 @@ class SearchAdapter : PagedListAdapter<SearchBook, SearchAdapter.MyViewHolder>(D
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(searchBook: SearchBook, callBack: CallBack?) = with(itemView) {
-            tv_name.text = String.format("%s(%s)", searchBook.name, searchBook.author)
+            tv_name.text = searchBook.name
+            tv_author.text = searchBook.author
             tv_lasted.text = context.getString(R.string.book_search_last, searchBook.latestChapterTitle)
             tv_introduce.text = searchBook.intro
             val kinds = searchBook.getKindList()

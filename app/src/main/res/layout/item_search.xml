@@ -39,6 +39,16 @@
         app:layout_constraintRight_toRightOf="@id/tv_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_name">
 
+        <TextView
+            android:id="@+id/tv_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@string/author"
+            android:textColor="@color/tv_text_default"
+            android:textSize="12sp" />
+
         <LinearLayout
             android:id="@+id/ll_kind"
             android:layout_width="match_parent"
@@ -53,7 +63,8 @@
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:singleLine="true"
-                android:text="@string/app_name" />
+                android:text="@string/app_name"
+                android:textSize="12sp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_kind_1"
@@ -63,7 +74,8 @@
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:singleLine="true"
-                android:text="@string/app_name" />
+                android:text="@string/app_name"
+                android:textSize="12sp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_kind_2"
@@ -73,18 +85,18 @@
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:singleLine="true"
-                android:text="@string/app_name" />
+                android:text="@string/app_name"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_lasted"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
-            android:text="最新章节"
+            android:text="@string/last_read"
             android:textColor="@color/tv_text_default"
             android:textSize="12sp" />
 
@@ -93,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:text="简介"
+            android:text="@string/book_intro"
             android:textColor="@color/tv_text_default"
             android:textSize="12sp" />
 
