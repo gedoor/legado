@@ -28,6 +28,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
+        initData(0L)
     }
 
     private fun initSearchView() {
