@@ -1,8 +1,8 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.widget.SearchView
@@ -22,14 +22,10 @@ import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.ui.search.SearchActivity
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.requestInputMethod
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -50,14 +46,21 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
-        initSearchView()
+//        initSearchView()
         initRecyclerView()
         initBookGroupData()
         initBookshelfData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
-        menuInflater.inflate(R.menu.bookshelf, menu)
+        menuInflater.inflate(R.menu.main_bookshelf, menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem) {
+        super.onCompatOptionsItemSelected(item)
+        when (item.itemId) {
+            R.id.action_search -> startActivity<SearchActivity>()
+        }
     }
 
     private fun initSearchView() {
