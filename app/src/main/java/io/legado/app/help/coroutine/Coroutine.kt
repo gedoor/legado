@@ -7,7 +7,7 @@ class Coroutine<T>() {
 
     companion object {
 
-        private val DEFAULT = MainScope()
+        val DEFAULT = MainScope()
 
         fun <T> async(scope: CoroutineScope = DEFAULT, block: suspend CoroutineScope.() -> T): Coroutine<T> {
             return Coroutine(scope, block)
@@ -22,6 +22,7 @@ class Coroutine<T>() {
     private var job: Job? = null
 
     private var start: (suspend CoroutineScope.() -> Unit)? = null
+    private var execute: (suspend CoroutineScope.(T?) -> Unit)? = null
     private var success: (suspend CoroutineScope.(T?) -> Unit)? = null
     private var error: (suspend CoroutineScope.(Throwable) -> Unit)? = null
     private var finally: (suspend CoroutineScope.() -> Unit)? = null
@@ -80,6 +81,15 @@ class Coroutine<T>() {
         return this@Coroutine
     }
 
+    fun onExecute(execute: suspend CoroutineScope.(T?) -> Unit): Coroutine<T> {
+        if (this.interceptor != null) {
+            this.interceptor!!.execute = execute
+        } else {
+            this.execute = execute
+        }
+        return this@Coroutine
+    }
+
     fun onSuccess(success: suspend CoroutineScope.(T?) -> Unit): Coroutine<T> {
         if (this.interceptor != null) {
             this.interceptor!!.success = success
@@ -117,7 +127,7 @@ class Coroutine<T>() {
             {
                 start?.invoke(this)
 
-                val result = executeBlock(block, timeMillis ?: 0L)
+                val result = executeBlockIO(block, timeMillis ?: 0L)
 
                 success?.invoke(this, result)
             },
@@ -136,11 +146,15 @@ class Coroutine<T>() {
             })
     }
 
-    private suspend fun executeBlock(block: suspend CoroutineScope.() -> T, timeMillis: Long): T? {
-        val asyncBlock = withContext(Dispatchers.IO) {
-            block()
+    private suspend fun executeBlockIO(block: suspend CoroutineScope.() -> T, timeMillis: Long): T? {
+        val result: T = withContext(Dispatchers.IO) {
+            val b = block()
+
+            execute?.invoke(this, b)
+
+            b
         }
-        return if (timeMillis > 0L) withTimeout(timeMillis) { asyncBlock } else asyncBlock
+        return if (timeMillis > 0L) withTimeout(timeMillis) { result } else result
     }
 
     private suspend fun tryCatch(

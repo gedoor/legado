@@ -4,37 +4,32 @@ import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
-    private val tasks: CompositeCoroutine = CompositeCoroutine()
+    private var task: Coroutine<*>? = null
+
     var searchPage = 0
 
     fun search(key: String, start: ((startTime: Long) -> Unit)? = null, finally: (() -> Unit)? = null) {
         if (key.isEmpty()) return
-        tasks.clear()
+        task?.cancel()
         start?.invoke(System.currentTimeMillis())
-        execute {
+        task = execute {//onCleared时自动取消
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
-                val search = WebBook(item).searchBook(key, searchPage)
-                    .onSuccess { searchBookS ->
+                //task取消时自动取消 by （scope = this@execute）
+                WebBook(item).searchBook(key, searchPage, scope = this)
+                    .onExecute { searchBookS ->
                         searchBookS?.let {
-                            execute {
-                                App.db.searchBookDao().insert(*it.toTypedArray())
-                            }
+                            App.db.searchBookDao().insert(*it.toTypedArray())
                         }
                     }
-                tasks.add(search)
             }
 
         }.onError {
             it.printStackTrace()
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        tasks.clear()
     }
 }

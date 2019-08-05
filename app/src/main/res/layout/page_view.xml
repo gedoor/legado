@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/page_panel"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:showDividers="middle"
+        app:divider="@drawable/ic_divider">
+
+    <View
+            android:id="@+id/top_status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"/>
+
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+    </FrameLayout>
+
+    <View
+            android:id="@+id/bottom_status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -10,14 +10,15 @@ import io.legado.app.model.webbook.BookChapterList
 import io.legado.app.model.webbook.BookContent
 import io.legado.app.model.webbook.BookInfo
 import io.legado.app.model.webbook.BookList
+import kotlinx.coroutines.CoroutineScope
 
 class WebBook(private val bookSource: BookSource) {
 
     val sourceUrl: String
         get() = bookSource.bookSourceUrl
 
-    fun searchBook(key: String, page: Int?, isSearch: Boolean = true): Coroutine<List<SearchBook>> {
-        return Coroutine.async {
+    fun searchBook(key: String, page: Int?, isSearch: Boolean = true, scope: CoroutineScope = Coroutine.DEFAULT): Coroutine<List<SearchBook>> {
+        return Coroutine.async(scope) {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(searchUrl, key, page, baseUrl = sourceUrl)
                 val response = analyzeUrl.getResponseAsync().await()

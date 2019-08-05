@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <io.legado.app.ui.widget.PageView
+    <io.legado.app.ui.widget.page.PageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="30dp"

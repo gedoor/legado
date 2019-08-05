@@ -102,58 +102,61 @@ object Restore {
                     source.bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
                     if (source.bookSourceUrl.isBlank()) continue
                     if (source.bookSourceUrl in existingSources) continue
-                    source.bookSourceName = jsonItem.readString("bookSourceName") ?: ""
-                    source.bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
-                    source.loginUrl = jsonItem.readString("loginUrl")
-                    source.bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
-                    source.customOrder = jsonItem.readInt("serialNumber") ?: 0
-                    val searchRule = SearchRule(
-                        searchUrl = OldRule.toNewUrl(jsonItem.readString("ruleSearchUrl")),
-                        bookList = jsonItem.readString("ruleSearchList"),
-                        name = jsonItem.readString("ruleSearchName"),
-                        author = jsonItem.readString("ruleSearchAuthor"),
-                        intro = jsonItem.readString("ruleSearchIntroduce"),
-                        kind = jsonItem.readString("ruleSearchKind"),
-                        bookUrl = jsonItem.readString("ruleSearchNoteUrl"),
-                        coverUrl = jsonItem.readString("ruleSearchCoverUrl"),
-                        lastChapter = jsonItem.readString("ruleSearchLastChapter")
-                    )
-                    source.ruleSearch = GSON.toJson(searchRule)
-                    val exploreRule = ExploreRule(
-                        exploreUrl = OldRule.toNewUrl(jsonItem.readString("ruleFindUrl")),
-                        bookList = jsonItem.readString("ruleFindList"),
-                        name = jsonItem.readString("ruleFindName"),
-                        author = jsonItem.readString("ruleFindAuthor"),
-                        intro = jsonItem.readString("ruleFindIntroduce"),
-                        kind = jsonItem.readString("ruleFindKind"),
-                        bookUrl = jsonItem.readString("ruleFindNoteUrl"),
-                        coverUrl = jsonItem.readString("ruleFindCoverUrl"),
-                        lastChapter = jsonItem.readString("ruleFindLastChapter")
-                    )
-                    source.ruleExplore = GSON.toJson(exploreRule)
-                    val bookInfoRule = BookInfoRule(
-                        init = jsonItem.readString("ruleBookInfoInit"),
-                        name = jsonItem.readString("ruleBookName"),
-                        author = jsonItem.readString("ruleBookAuthor"),
-                        intro = jsonItem.readString("ruleIntroduce"),
-                        kind = jsonItem.readString("ruleBookKind"),
-                        coverUrl = jsonItem.readString("ruleCoverUrl"),
-                        lastChapter = jsonItem.readString("ruleBookLastChapter"),
-                        tocUrl = jsonItem.readString("ruleChapterUrl")
-                    )
-                    source.ruleBookInfo = GSON.toJson(bookInfoRule)
-                    val chapterRule = TocRule(
-                        chapterList = jsonItem.readString("ruleChapterList"),
-                        chapterName = jsonItem.readString("ruleChapterName"),
-                        chapterUrl = jsonItem.readString("ruleContentUrl"),
-                        nextTocUrl = jsonItem.readString("ruleChapterUrlNext")
-                    )
-                    source.ruleToc = GSON.toJson(chapterRule)
-                    val contentRule = ContentRule(
-                        content = jsonItem.readString("ruleBookContent"),
-                        nextContentUrl = jsonItem.readString("ruleContentUrlNext")
-                    )
-                    source.ruleContent = GSON.toJson(contentRule)
+                    runCatching {
+                        source.bookSourceName = jsonItem.readString("bookSourceName") ?: ""
+                        source.bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
+                        source.loginUrl = jsonItem.readString("loginUrl")
+                        source.bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
+                        source.customOrder = jsonItem.readInt("serialNumber") ?: 0
+                        val searchRule = SearchRule(
+                            searchUrl = OldRule.toNewUrl(jsonItem.readString("ruleSearchUrl")),
+                            bookList = jsonItem.readString("ruleSearchList"),
+                            name = jsonItem.readString("ruleSearchName"),
+                            author = jsonItem.readString("ruleSearchAuthor"),
+                            intro = jsonItem.readString("ruleSearchIntroduce"),
+                            kind = jsonItem.readString("ruleSearchKind"),
+                            bookUrl = jsonItem.readString("ruleSearchNoteUrl"),
+                            coverUrl = jsonItem.readString("ruleSearchCoverUrl"),
+                            lastChapter = jsonItem.readString("ruleSearchLastChapter")
+                        )
+                        source.ruleSearch = GSON.toJson(searchRule)
+                        val exploreRule = ExploreRule(
+                            exploreUrl = OldRule.toNewUrl(jsonItem.readString("ruleFindUrl")),
+                            bookList = jsonItem.readString("ruleFindList"),
+                            name = jsonItem.readString("ruleFindName"),
+                            author = jsonItem.readString("ruleFindAuthor"),
+                            intro = jsonItem.readString("ruleFindIntroduce"),
+                            kind = jsonItem.readString("ruleFindKind"),
+                            bookUrl = jsonItem.readString("ruleFindNoteUrl"),
+                            coverUrl = jsonItem.readString("ruleFindCoverUrl"),
+                            lastChapter = jsonItem.readString("ruleFindLastChapter")
+                        )
+                        source.ruleExplore = GSON.toJson(exploreRule)
+                        val bookInfoRule = BookInfoRule(
+                            init = jsonItem.readString("ruleBookInfoInit"),
+                            name = jsonItem.readString("ruleBookName"),
+                            author = jsonItem.readString("ruleBookAuthor"),
+                            intro = jsonItem.readString("ruleIntroduce"),
+                            kind = jsonItem.readString("ruleBookKind"),
+                            coverUrl = jsonItem.readString("ruleCoverUrl"),
+                            lastChapter = jsonItem.readString("ruleBookLastChapter"),
+                            tocUrl = jsonItem.readString("ruleChapterUrl")
+                        )
+                        source.ruleBookInfo = GSON.toJson(bookInfoRule)
+                        val chapterRule = TocRule(
+                            chapterList = jsonItem.readString("ruleChapterList"),
+                            chapterName = jsonItem.readString("ruleChapterName"),
+                            chapterUrl = jsonItem.readString("ruleContentUrl"),
+                            nextTocUrl = jsonItem.readString("ruleChapterUrlNext")
+                        )
+                        source.ruleToc = GSON.toJson(chapterRule)
+                        val contentRule = ContentRule(
+                            content = jsonItem.readString("ruleBookContent"),
+                            nextContentUrl = jsonItem.readString("ruleContentUrlNext")
+                        )
+                        source.ruleContent = GSON.toJson(contentRule)
+                    }
+
                     bookSources.add(source)
                 }
                 App.db.bookSourceDao().insert(*bookSources.toTypedArray())

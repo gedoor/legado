@@ -12,12 +12,12 @@ import org.jetbrains.anko.AnkoLogger
 open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope by MainScope(),
     AnkoLogger {
 
-    fun <T> execute(block: suspend CoroutineScope.() -> T): Coroutine<T> {
-        return Coroutine.async(this) { block() }
+    fun <T> execute(scope: CoroutineScope = this, block: suspend CoroutineScope.() -> T): Coroutine<T> {
+        return Coroutine.async(scope) { block() }
     }
 
-    fun <T> submit(block: suspend CoroutineScope.() -> Deferred<T>): Coroutine<T> {
-        return Coroutine.async(this) { block().await() }
+    fun <R> submit(scope: CoroutineScope = this, block: suspend CoroutineScope.() -> Deferred<R>): Coroutine<R> {
+        return Coroutine.async(scope) { block().await() }
     }
 
     fun <T> plus(coroutine: Coroutine<T>): Coroutine<T> {

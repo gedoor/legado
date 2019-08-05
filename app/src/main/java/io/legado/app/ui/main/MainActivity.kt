@@ -14,13 +14,14 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.Selector
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.findbook.FindBookFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.putPrefInt
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch

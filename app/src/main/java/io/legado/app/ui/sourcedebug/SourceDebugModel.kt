@@ -44,4 +44,5 @@ class SourceDebugModel(application: Application) : BaseViewModel(application), S
         super.onCleared()
         SourceDebug.cancelDebug(true)
     }
+
 }
