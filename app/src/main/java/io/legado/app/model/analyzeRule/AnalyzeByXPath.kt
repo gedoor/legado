@@ -154,17 +154,17 @@ class AnalyzeByXPath {
             }
             return null
         } else {
-            val sb = StringBuilder()
+            val textList = arrayListOf<String>()
             for (rl in rules) {
                 val temp = getString(rl)
-                if (!TextUtils.isEmpty(temp)) {
-                    sb.append(temp)
+                if (!temp.isNullOrEmpty()) {
+                    textList.add(temp)
                     if (elementsType == "|") {
                         break
                     }
                 }
             }
-            return sb.toString()
+            return TextUtils.join(",", textList)
         }
     }
 }

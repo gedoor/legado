@@ -51,7 +51,7 @@ class AnalyzeByJSoup {
         val textS = getStringList(ruleStr)
         return if (textS.isEmpty()) {
             null
-        } else join("\n", textS).trim { it <= ' ' }
+        } else join(",", textS).trim { it <= ' ' }
     }
 
     /**
@@ -75,7 +75,7 @@ class AnalyzeByJSoup {
         //拆分规则
         val sourceRule = SourceRule(ruleStr)
         if (isEmpty(sourceRule.elementsRule)) {
-            textS.add(element!!.data())
+            textS.add(element?.data() ?: "")
         } else {
             val elementsType: String
             val ruleStrS: Array<String>
@@ -105,7 +105,7 @@ class AnalyzeByJSoup {
                 } else {
                     getResultList(ruleStrX)
                 }
-                if (temp != null && temp.isNotEmpty()) {
+                if (!temp.isNullOrEmpty()) {
                     results.add(temp)
                     if (results.isNotEmpty() && elementsType == "|") {
                         break
@@ -360,13 +360,15 @@ class AnalyzeByJSoup {
                     textS.add(text)
                 }
                 "textNodes" -> for (element in elements) {
+                    val tn = arrayListOf<String>()
                     val contentEs = element.textNodes()
-                    for (i in contentEs.indices) {
-                        val temp = contentEs[i].text().trim { it <= ' ' }
+                    for (item in contentEs) {
+                        val temp = item.text().trim { it <= ' ' }
                         if (!isEmpty(temp)) {
-                            textS.add(temp)
+                            tn.add(temp)
                         }
                     }
+                    textS.add(join("\n", tn))
                 }
                 "ownText", "html" -> {
                     elements.select("script").remove()
