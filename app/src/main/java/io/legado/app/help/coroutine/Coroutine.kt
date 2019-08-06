@@ -44,8 +44,8 @@ class Coroutine<T>() {
         scope: CoroutineScope,
         block: suspend CoroutineScope.() -> T
     ) : this() {
-        this.job = scope.launch {
-            executeInternal(block)
+        this.job = scope.plus(Dispatchers.Main).launch {
+            executeInternal(this@launch, block)
         }
     }
 
@@ -119,55 +119,51 @@ class Coroutine<T>() {
 
     //取消当前任务
     fun cancel(cause: CancellationException? = null) {
+        job?.cancelChildren(cause)
         job?.cancel(cause)
     }
 
-    private suspend fun executeInternal(block: suspend CoroutineScope.() -> T) {
+    private suspend fun executeInternal(scope: CoroutineScope, block: suspend CoroutineScope.() -> T) {
         tryCatch(
             {
-                start?.invoke(this)
-
+                start?.invoke(scope)
                 val result = executeBlockIO(block, timeMillis ?: 0L)
-
-                success?.invoke(this, result)
+                success?.invoke(scope, result)
             },
             { e ->
                 val consume: Boolean = errorReturn?.value?.let { value ->
-                    success?.invoke(this, value)
+                    success?.invoke(scope, value)
                     true
                 } ?: false
-
                 if (!consume) {
-                    error?.invoke(this, e)
+                    error?.invoke(scope, e)
                 }
             },
             {
-                finally?.invoke(this)
+                finally?.invoke(scope)
             })
     }
 
     private suspend fun executeBlockIO(block: suspend CoroutineScope.() -> T, timeMillis: Long): T? {
-        val result: T = withContext(Dispatchers.IO) {
-            val b = block()
-
-            execute?.invoke(this, b)
-
-            b
+        val execution = withContext(Dispatchers.IO) {
+            val result = block()
+            execute?.invoke(this, result)
+            result
         }
-        return if (timeMillis > 0L) withTimeout(timeMillis) { result } else result
+        return if (timeMillis > 0L) withTimeout(timeMillis) { execution } else execution
     }
 
     private suspend fun tryCatch(
-        tryBlock: suspend CoroutineScope.() -> Unit,
-        errorBlock: (suspend CoroutineScope.(Throwable) -> Unit)? = null,
-        finallyBlock: (suspend CoroutineScope.() -> Unit)? = null
+        tryBlock: suspend () -> Unit,
+        errorBlock: (suspend (Throwable) -> Unit)? = null,
+        finallyBlock: (suspend () -> Unit)? = null
     ) {
         try {
-            coroutineScope { tryBlock() }
+            tryBlock()
         } catch (e: Throwable) {
-            coroutineScope { errorBlock?.invoke(this, e) }
+            errorBlock?.invoke(e)
         } finally {
-            coroutineScope { finallyBlock?.invoke(this) }
+            finallyBlock?.invoke()
         }
     }
 

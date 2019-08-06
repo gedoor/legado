@@ -1,6 +1,6 @@
 package io.legado.app.help.coroutine
 
-interface CoroutineContainer {
+internal interface CoroutineContainer {
 
     fun add(coroutine: Coroutine<*>): Boolean
 
