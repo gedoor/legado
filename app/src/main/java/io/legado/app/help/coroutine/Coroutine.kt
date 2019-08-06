@@ -35,7 +35,7 @@ class Coroutine<T>() {
         get() = job?.isCancelled ?: false
 
     val isActive: Boolean
-        get() = job?.isActive ?: false
+        get() = job?.isActive ?: true
 
     val isCompleted: Boolean
         get() = job?.isCompleted ?: false
@@ -119,7 +119,6 @@ class Coroutine<T>() {
 
     //取消当前任务
     fun cancel(cause: CancellationException? = null) {
-        job?.cancelChildren(cause)
         job?.cancel(cause)
     }
 
