@@ -44,11 +44,11 @@ class WebBook(private val bookSource: BookSource) {
         }
     }
 
-    fun getContent(book: Book, bookChapter: BookChapter): Coroutine<String> {
+    fun getContent(book: Book, bookChapter: BookChapter, nextChapterUrl: String? = null): Coroutine<String> {
         return Coroutine.async {
             val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = bookChapter.url, baseUrl = book.tocUrl)
             val response = analyzeUrl.getResponseAsync().await()
-            BookContent.analyzeContent(this, response, book, bookSource)
+            BookContent.analyzeContent(this, response, book, bookChapter, bookSource, nextChapterUrl)
         }
     }
 }

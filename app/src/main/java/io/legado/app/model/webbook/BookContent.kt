@@ -3,6 +3,7 @@ package io.legado.app.model.webbook
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ContentRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
@@ -20,7 +21,9 @@ object BookContent {
         coroutineScope: CoroutineScope,
         response: Response<String>,
         book: Book,
-        bookSource: BookSource
+        bookChapter: BookChapter,
+        bookSource: BookSource,
+        nextChapterUrlF: String? = null
     ): String {
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
@@ -38,7 +41,15 @@ object BookContent {
         content.append(contentData.content)
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
+            val nextChapterUrl = if (!nextChapterUrlF.isNullOrEmpty())
+                nextChapterUrlF
+            else
+                App.db.bookChapterDao().getChapter(book.bookUrl, bookChapter.index + 1)?.url
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
+                if (!nextChapterUrl.isNullOrEmpty()
+                    && NetworkUtils.getAbsoluteURL(baseUrl, nextUrl)
+                    == NetworkUtils.getAbsoluteURL(baseUrl, nextChapterUrl)
+                ) break
                 nextUrlList.add(nextUrl)
                 AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
                     .body()?.let { nextBody ->

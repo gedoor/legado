@@ -5,7 +5,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.htmlFormat
 import io.legado.app.utils.isAbsUrl
@@ -117,7 +116,8 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                     if (it.isNotEmpty()) {
                         printLog(debugSource, 1, "目录完成")
                         printLog(debugSource, 1, "", showTime = false)
-                        contentDebug(book, it[0])
+                        val nextChapterUrl = if (it.size > 1) it[1].url else null
+                        contentDebug(book, it[0], nextChapterUrl)
                     } else {
                         printLog(debugSource, -1, "目录列表为空")
                     }
@@ -129,9 +129,9 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         tasks.add(chapterList)
     }
 
-    private fun contentDebug(book: Book, bookChapter: BookChapter) {
+    private fun contentDebug(book: Book, bookChapter: BookChapter, nextChapterUrl: String?) {
         printLog(debugSource, 1, "开始获取内容")
-        val content = webBook.getContent(book, bookChapter)
+        val content = webBook.getContent(book, bookChapter, nextChapterUrl)
             .onSuccess { content ->
                 content?.let {
                     printLog(debugSource, 1000, it)
