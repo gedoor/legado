@@ -19,7 +19,7 @@ class Coroutine<T>() {
     }
 
     private var interceptor: Coroutine<T>? = null
-    private var job: Job? = null
+    private lateinit var job: Job
 
     private var start: (suspend CoroutineScope.() -> Unit)? = null
     private var execute: (suspend CoroutineScope.(T?) -> Unit)? = null
@@ -32,13 +32,13 @@ class Coroutine<T>() {
     private var errorReturn: Result<T>? = null
 
     val isCancelled: Boolean
-        get() = job?.isCancelled ?: false
+        get() = job.isCancelled
 
     val isActive: Boolean
-        get() = job?.isActive ?: true
+        get() = job.isActive
 
     val isCompleted: Boolean
-        get() = job?.isCompleted ?: false
+        get() = job.isCompleted
 
     private constructor(
         scope: CoroutineScope,
@@ -119,7 +119,11 @@ class Coroutine<T>() {
 
     //取消当前任务
     fun cancel(cause: CancellationException? = null) {
-        job?.cancel(cause)
+        job.cancel(cause)
+    }
+
+    fun invokeOnCompletion(handler: CompletionHandler): DisposableHandle{
+        return job.invokeOnCompletion(handler)
     }
 
     private suspend fun executeInternal(scope: CoroutineScope, block: suspend CoroutineScope.() -> T) {
@@ -134,6 +138,7 @@ class Coroutine<T>() {
                     success?.invoke(scope, value)
                     true
                 } ?: false
+
                 if (!consume) {
                     error?.invoke(scope, e)
                 }

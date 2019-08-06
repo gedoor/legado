@@ -1,6 +1,7 @@
 package io.legado.app.ui.search
 
 import android.app.Application
+import android.util.Log
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.help.coroutine.Coroutine
@@ -35,6 +36,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
         }.onError {
             it.printStackTrace()
+        }
+
+        task?.invokeOnCompletion {
+            Log.e("TAG", "complete")
         }
     }
 

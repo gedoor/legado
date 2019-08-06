@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchShow
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
@@ -45,13 +44,15 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
                     viewModel.search(it, { startTime ->
                         content_view.showContentView()
                         initData(startTime)
+                    }, {
+
                     })
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if(newText.isNullOrBlank())  viewModel.stop()
+                if (newText.isNullOrBlank()) viewModel.stop()
                 return false
             }
 
