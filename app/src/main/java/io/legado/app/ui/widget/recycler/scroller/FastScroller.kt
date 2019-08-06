@@ -100,7 +100,7 @@ class FastScroller : LinearLayout {
     }
 
     fun setLayoutParams(viewGroup: ViewGroup) {
-        @IdRes val recyclerViewId = if (mRecyclerView != null) mRecyclerView!!.id else View.NO_ID
+        @IdRes val recyclerViewId = mRecyclerView?.id ?: View.NO_ID
         val marginTop = resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_margin_top)
         val marginBottom = resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_margin_bottom)
         if (recyclerViewId == View.NO_ID) {
