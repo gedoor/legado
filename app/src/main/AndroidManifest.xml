@@ -55,6 +55,7 @@
         <activity android:name=".ui.sourcedebug.SourceDebugActivity" />
         <activity android:name=".ui.booksource.BookSourceActivity" />
         <activity android:name=".ui.read.ReadActivity" />
+        <activity android:name=".ui.chapterlist.ChapterListActivity" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
