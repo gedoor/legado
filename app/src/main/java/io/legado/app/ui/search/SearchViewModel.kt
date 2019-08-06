@@ -40,6 +40,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
         task?.invokeOnCompletion {
             Log.e("TAG", "complete")
+            finally?.invoke()
         }
     }
 
