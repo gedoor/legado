@@ -75,7 +75,7 @@ class AnalyzeByJSoup {
         //拆分规则
         val sourceRule = SourceRule(ruleStr)
         if (isEmpty(sourceRule.elementsRule)) {
-            textS.add(element!!.data())
+            textS.add(element?.data() ?: "")
         } else {
             val elementsType: String
             val ruleStrS: Array<String>
@@ -105,7 +105,7 @@ class AnalyzeByJSoup {
                 } else {
                     getResultList(ruleStrX)
                 }
-                if (temp != null && temp.isNotEmpty()) {
+                if (!temp.isNullOrEmpty()) {
                     results.add(temp)
                     if (results.isNotEmpty() && elementsType == "|") {
                         break
