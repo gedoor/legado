@@ -15,6 +15,9 @@ import android.widget.FrameLayout.LayoutParams
 import android.widget.TabWidget
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 
 
 /**
@@ -71,11 +74,6 @@ class BadgeView @JvmOverloads constructor(
         }
 
     init {
-
-        init()
-    }
-
-    private fun init() {
         if (layoutParams !is LayoutParams) {
             val layoutParams = LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -93,7 +91,7 @@ class BadgeView @JvmOverloads constructor(
         radius = 8f
 
         // set default background
-        setBackground(radius, Color.parseColor("#d3321b"))
+        setBackground(radius, context.accentColor)
 
         gravity = Gravity.CENTER
 
@@ -132,9 +130,9 @@ class BadgeView @JvmOverloads constructor(
      */
     override fun setText(text: CharSequence, type: BufferType) {
         if (isHideOnNull && TextUtils.isEmpty(text)) {
-            visibility = View.GONE
+            gone()
         } else {
-            visibility = View.VISIBLE
+            visible()
         }
         super.setText(text, type)
     }
@@ -142,7 +140,9 @@ class BadgeView @JvmOverloads constructor(
     fun setBadgeCount(count: Int) {
         text = count.toString()
         if (count == 0) {
-            visibility = View.GONE
+            gone()
+        } else {
+            visible()
         }
     }
 

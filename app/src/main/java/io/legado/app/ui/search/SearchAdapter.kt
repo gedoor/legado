@@ -49,8 +49,14 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
 
         fun bind(searchBook: SearchShow, callBack: CallBack?) = with(itemView) {
             tv_name.text = searchBook.name
+            bv_originCount.setBadgeCount(searchBook.originCount)
             tv_author.text = searchBook.author
-            tv_lasted.text = context.getString(R.string.book_search_last, searchBook.latestChapterTitle)
+            if (searchBook.latestChapterTitle.isNullOrEmpty()) {
+                tv_lasted.gone()
+            } else {
+                tv_lasted.text = context.getString(R.string.book_search_last, searchBook.latestChapterTitle)
+                tv_lasted.visible()
+            }
             tv_introduce.text = searchBook.intro
             val kinds = searchBook.getKindList()
             if (kinds.isEmpty()) {
