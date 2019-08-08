@@ -1,7 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
 
-</LinearLayout>
+    <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ll_chapter_base_info" />
+
+    <LinearLayout
+        android:id="@+id/ll_chapter_base_info"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/background"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:elevation="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tv_current_chapter_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            android:textColor="@color/tv_text_default"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_chapter_top"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_ib_pre_round"
+            android:contentDescription="@string/go_to_top"
+            android:src="@drawable/ic_arrow_drop_up"
+            app:tint="@color/tv_text_default" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_chapter_bottom"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_ib_pre_round"
+            android:contentDescription="@string/go_to_bottom"
+            android:src="@drawable/ic_arrow_drop_down"
+            app:tint="@color/tv_text_default" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
