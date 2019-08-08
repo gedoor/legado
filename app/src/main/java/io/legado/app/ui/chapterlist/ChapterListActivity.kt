@@ -8,16 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_chapter_list.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
-class ChapterListActivity : BaseActivity(R.layout.activity_chapter_list) {
+class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activity_chapter_list) {
+    override val viewModel: ChapterListViewModel
+        get() = getViewModel(ChapterListViewModel::class.java)
 
     private var searchView: SearchView? = null
 

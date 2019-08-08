@@ -1,8 +1,12 @@
 package io.legado.app.ui.chapterlist
 
 import io.legado.app.R
-import io.legado.app.base.BaseFragment
+import io.legado.app.base.VMBaseFragment
+import io.legado.app.utils.getViewModelOfActivity
 
-class BookmarkFragment : BaseFragment(R.layout.fragment_bookmark) {
+class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_bookmark) {
+    override val viewModel: ChapterListViewModel
+        get() = getViewModelOfActivity(ChapterListViewModel::class.java)
+
 
 }
