@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
@@ -126,6 +125,9 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
                 this.subtitle = subtitleText
             }
 
+            if (a.hasValue(R.styleable.TitleBar_contentLayout)) {
+                inflate(context, a.getResourceId(R.styleable.TitleBar_contentLayout, 0), this)
+            }
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
@@ -146,7 +148,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         if (attachToActivity) {
             attachToActivity()
         }
-        wrapAppTheme()
+        wrapTheme()
     }
 
     fun setNavigationOnClickListener(clickListener: ((View) -> Unit)) {
@@ -177,7 +179,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         toolbar.setSubtitleTextAppearance(context, resId)
     }
 
-    private fun wrapAppTheme() {
+    private fun wrapTheme() {
         val primaryTextColor = if (isInEditMode) Color.BLACK else context.primaryTextColor
         DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
         toolbar.setTitleTextColor(primaryTextColor)

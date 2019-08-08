@@ -29,6 +29,7 @@ import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
+import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
@@ -66,12 +67,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     private fun initSearchView() {
-        search_view.visible()
-        search_view.onActionViewExpanded()
-        search_view.isSubmitButtonEnabled = true
-        search_view.queryHint = getString(R.string.search_book_key)
-        search_view.clearFocus()
-        search_view.setOnQueryTextListener(this)
+//        search_view.onActionViewExpanded()
+//        search_view.isSubmitButtonEnabled = true
+//        search_view.queryHint = getString(R.string.search_book_key)
+//        search_view.clearFocus()
+//        search_view.setOnQueryTextListener(this)
     }
 
     private fun initRecyclerView() {

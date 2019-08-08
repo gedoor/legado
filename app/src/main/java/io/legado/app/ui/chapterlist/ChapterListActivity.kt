@@ -12,6 +12,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_chapter_list.*
+import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
 class ChapterListActivity : BaseActivity(R.layout.activity_chapter_list) {

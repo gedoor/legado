@@ -14,6 +14,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_source_debug.*
+import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
@@ -50,7 +51,6 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_s
     }
 
     private fun initSearchView() {
-        search_view.visibility = View.VISIBLE
         search_view.onActionViewExpanded()
         search_view.isSubmitButtonEnabled = true
         search_view.queryHint = getString(R.string.search_book_key)

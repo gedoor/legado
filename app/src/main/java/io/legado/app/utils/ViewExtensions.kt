@@ -28,7 +28,7 @@ private tailrec fun getCompatActivity(context: Context?): AppCompatActivity? {
 val View.activity: AppCompatActivity?
     get() = getCompatActivity(context)
 
-fun View.hideSoftInput() = run {
+inline fun View.hideSoftInput() = run {
     val imm = App.INSTANCE.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     imm?.let {
         imm.hideSoftInputFromWindow(this.windowToken, 0)

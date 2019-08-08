@@ -5,20 +5,4 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="?attr/actionBarStyle"
-    app:popupTheme="@style/AppTheme.PopupOverlay">
-
-    <androidx.appcompat.widget.SearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:imeOptions="actionSearch"
-            app:defaultQueryHint="搜索" />
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-</androidx.appcompat.widget.Toolbar>
+    app:popupTheme="@style/AppTheme.PopupOverlay"/>

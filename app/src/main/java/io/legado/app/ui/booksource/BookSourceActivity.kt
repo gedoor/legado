@@ -23,6 +23,7 @@ import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_source.*
+import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -93,7 +94,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun initSearchView() {
-        search_view.visibility = View.VISIBLE
         search_view.onActionViewExpanded()
         search_view.queryHint = getString(R.string.search_book_source)
         search_view.clearFocus()
