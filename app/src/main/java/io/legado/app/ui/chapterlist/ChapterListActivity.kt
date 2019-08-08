@@ -26,7 +26,6 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
-        tab_layout.visible()
         view_pager.adapter = TabFragmentPageAdapter(supportFragmentManager)
         tab_layout.setupWithViewPager(view_pager)
     }
