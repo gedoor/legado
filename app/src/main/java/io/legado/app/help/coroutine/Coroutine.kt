@@ -3,7 +3,7 @@ package io.legado.app.help.coroutine
 import kotlinx.coroutines.*
 
 
-class Coroutine<T>() {
+class Coroutine<T>(scope: CoroutineScope, block: suspend CoroutineScope.() -> T) {
 
     companion object {
 
@@ -13,13 +13,9 @@ class Coroutine<T>() {
             return Coroutine(scope, block)
         }
 
-        fun <T> plus(coroutine: Coroutine<T>): Coroutine<T> {
-            return Coroutine(coroutine)
-        }
     }
 
-    private var interceptor: Coroutine<T>? = null
-    private lateinit var job: Job
+    private val job: Job
 
     private var start: (suspend CoroutineScope.() -> Unit)? = null
     private var execute: (suspend CoroutineScope.(T?) -> Unit)? = null
@@ -40,80 +36,54 @@ class Coroutine<T>() {
     val isCompleted: Boolean
         get() = job.isCompleted
 
-    private constructor(
-        scope: CoroutineScope,
-        block: suspend CoroutineScope.() -> T
-    ) : this() {
+    init {
         this.job = scope.plus(Dispatchers.Main).launch {
             executeInternal(this@launch, block)
         }
     }
 
-    private constructor(coroutine: Coroutine<T>) : this() {
-        this.interceptor = coroutine
-        this.job = coroutine.job
+    fun timeout(timeMillis: () -> Long): Coroutine<T> {
+        this.timeMillis = timeMillis()
+        return this@Coroutine
     }
 
-    fun timeout(timeMillis: () -> Long): Coroutine<T> {
-        if (this.interceptor != null) {
-            this.interceptor!!.timeMillis = timeMillis()
-        } else {
-            this.timeMillis = timeMillis()
-        }
+    fun timeout(timeMillis: Long): Coroutine<T> {
+        this.timeMillis = timeMillis
         return this@Coroutine
     }
 
     fun onErrorReturn(value: () -> T?): Coroutine<T> {
-        if (this.interceptor != null) {
-            this.interceptor!!.errorReturn = Result(value())
-        } else {
-            errorReturn = Result(value())
-        }
+        this.errorReturn = Result(value())
+        return this@Coroutine
+    }
+
+    fun onErrorReturn(value: T?): Coroutine<T> {
+        this.errorReturn = Result(value)
         return this@Coroutine
     }
 
     fun onStart(start: (suspend CoroutineScope.() -> Unit)): Coroutine<T> {
-        if (this.interceptor != null) {
-            this.interceptor!!.start = start
-        } else {
-            this.start = start
-        }
+        this.start = start
         return this@Coroutine
     }
 
     fun onExecute(execute: suspend CoroutineScope.(T?) -> Unit): Coroutine<T> {
-        if (this.interceptor != null) {
-            this.interceptor!!.execute = execute
-        } else {
-            this.execute = execute
-        }
+        this.execute = execute
         return this@Coroutine
     }
 
     fun onSuccess(success: suspend CoroutineScope.(T?) -> Unit): Coroutine<T> {
-        if (this.interceptor != null) {
-            this.interceptor!!.success = success
-        } else {
-            this.success = success
-        }
+        this.success = success
         return this@Coroutine
     }
 
     fun onError(error: suspend CoroutineScope.(Throwable) -> Unit): Coroutine<T> {
-        if (this.interceptor != null) {
-            this.interceptor!!.error = error
-        } else {
-            this.error = error
-        }
+        this.error = error
         return this@Coroutine
     }
 
     fun onFinally(finally: suspend CoroutineScope.() -> Unit): Coroutine<T> {
-        if (this.interceptor != null) {
-            this.interceptor!!.finally = finally
-        } else {
-            this.finally = finally
-        }
+        this.finally = finally
         return this@Coroutine
     }
 
@@ -122,7 +92,7 @@ class Coroutine<T>() {
         job.cancel(cause)
     }
 
-    fun invokeOnCompletion(handler: CompletionHandler): DisposableHandle{
+    fun invokeOnCompletion(handler: CompletionHandler): DisposableHandle {
         return job.invokeOnCompletion(handler)
     }
 
