@@ -24,6 +24,7 @@ import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.bookshelf.BookshelfActivity
+import io.legado.app.ui.read.ReadActivity
 import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
@@ -34,7 +35,8 @@ import org.jetbrains.anko.textColor
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     SearchView.OnQueryTextListener,
-    BookGroupAdapter.CallBack {
+    BookGroupAdapter.CallBack,
+    BookshelfAdapter.CallBack {
 
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
@@ -87,6 +89,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         rv_bookshelf.addItemDecoration(DividerItemDecoration(rv_bookshelf.context, LinearLayoutManager.VERTICAL))
         bookshelfAdapter = BookshelfAdapter()
         rv_bookshelf.adapter = bookshelfAdapter
+        bookshelfAdapter.callBack = this
     }
 
     private fun initBookGroupData() {
@@ -106,6 +109,14 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             -10 -> showGroupInputDialog()
             else -> context?.startActivity<BookshelfActivity>(Pair("data", bookGroup))
         }
+    }
+
+    override fun open(book: Book) {
+        context?.startActivity<ReadActivity>()
+    }
+
+    override fun search() {
+
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

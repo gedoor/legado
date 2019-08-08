@@ -6,7 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.ui.read.ReadActivity
+import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.view_title_bar.*
 
@@ -26,7 +26,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
-            R.id.action_settings -> startActivity<ReadActivity>()
+            R.id.action_settings -> startActivity<ChapterListActivity>()
         }
     }
 }
