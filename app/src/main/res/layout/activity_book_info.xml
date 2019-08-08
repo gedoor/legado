@@ -4,4 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
 </LinearLayout>
