@@ -57,4 +57,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun searchKeywordDao(): SearchKeywordDao
     abstract fun sourceCookieDao(): SourceCookieDao
     abstract fun rssSourceDao(): RssSourceDao
+    abstract fun bookmarkDao(): BookmarkDao
 }
