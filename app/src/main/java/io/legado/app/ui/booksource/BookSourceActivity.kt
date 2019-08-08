@@ -19,6 +19,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
@@ -94,6 +95,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun initSearchView() {
+        ATH.setTint(search_view, primaryTextColor)
         search_view.onActionViewExpanded()
         search_view.queryHint = getString(R.string.search_book_source)
         search_view.clearFocus()

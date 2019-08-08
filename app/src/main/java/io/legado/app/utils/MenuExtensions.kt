@@ -10,7 +10,7 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.primaryTextColor
 
-fun Menu.setIconColor(context: Context): Menu = this.let { menu ->
+fun Menu.applyTint(context: Context): Menu = this.let { menu ->
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)
     }

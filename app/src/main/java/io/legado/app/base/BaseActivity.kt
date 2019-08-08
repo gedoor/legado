@@ -41,7 +41,7 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
     final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {
             val bool = onCompatCreateOptionsMenu(it)
-            it.setIconColor(this)
+            it.applyTint(this)
             bool
         } ?: super.onCreateOptionsMenu(menu)
     }

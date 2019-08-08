@@ -178,7 +178,7 @@ object ATH {
         }
     }
 
-    fun applyTint(view: View?) {
+    fun applyAccentTint(view: View?) {
         view?.apply {
             setTint(this, context.accentColor)
         }

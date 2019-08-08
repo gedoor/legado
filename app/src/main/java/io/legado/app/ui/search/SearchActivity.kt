@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.SearchShow
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.view_search.*
@@ -32,6 +33,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     }
 
     private fun initSearchView() {
+        ATH.setTint(search_view, primaryTextColor)
         search_view.onActionViewExpanded()
         search_view.isSubmitButtonEnabled = true
         search_view.queryHint = getString(R.string.search_book_key)

@@ -147,7 +147,13 @@ object TintHelper {
                 is SwitchCompat -> setTint(view, color, isDark)
                 is SearchView -> {
                     val iconIdS =
-                        intArrayOf(androidx.appcompat.R.id.search_button, androidx.appcompat.R.id.search_close_btn)
+                        intArrayOf(
+                            androidx.appcompat.R.id.search_button,
+                            androidx.appcompat.R.id.search_close_btn,
+                            androidx.appcompat.R.id.search_go_btn,
+                            androidx.appcompat.R.id.search_voice_btn,
+                            androidx.appcompat.R.id.search_mag_icon
+                        )
                     for (iconId in iconIdS) {
                         val icon = view.findViewById<ImageView>(iconId)
                         if (icon != null) {

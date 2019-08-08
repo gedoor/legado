@@ -145,10 +145,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (attachToActivity) {
-            attachToActivity()
-        }
-        wrapTheme()
+        attachToActivity()
     }
 
     fun setNavigationOnClickListener(clickListener: ((View) -> Unit)) {
@@ -179,7 +176,14 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         toolbar.setSubtitleTextAppearance(context, resId)
     }
 
-    private fun wrapTheme() {
+    private fun attachToActivity() {
+        if(attachToActivity) {
+            activity?.let {
+                it.setSupportActionBar(toolbar)
+                it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
+            }
+        }
+
         val primaryTextColor = if (isInEditMode) Color.BLACK else context.primaryTextColor
         DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
         toolbar.setTitleTextColor(primaryTextColor)
@@ -188,13 +192,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             wrapDrawableTint(toolbar.navigationIcon, navigationIconTint, navigationIconTintMode)
         } else {
             wrapDrawableTint(toolbar.navigationIcon, ColorStateList.valueOf(primaryTextColor), navigationIconTintMode)
-        }
-    }
-
-    private fun attachToActivity() {
-        activity?.let {
-            it.setSupportActionBar(toolbar)
-            it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
         }
     }
 

@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import io.legado.app.utils.setIconColor
+import io.legado.app.utils.applyTint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -31,7 +31,7 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
         supportToolbar?.let {
             it.menu.apply {
                 onCompatCreateOptionsMenu(this)
-                setIconColor(requireContext())
+                applyTint(requireContext())
             }
 
             it.setOnMenuItemClickListener { item ->

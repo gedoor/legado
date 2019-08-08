@@ -29,7 +29,6 @@ import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
-import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
@@ -135,7 +134,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             customView {
                 layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
                     editText = edit_view.apply {
-                        ATH.applyTint(this)
+                        ATH.applyAccentTint(this)
                         hint = "分组名称"
                     }
                 }

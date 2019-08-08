@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_chapter_list.*
@@ -30,6 +32,7 @@ class ChapterListActivity : BaseActivity(R.layout.activity_chapter_list) {
         menuInflater.inflate(R.menu.search_view, menu)
         val search = menu.findItem(R.id.action_search)
         searchView = search.actionView as SearchView
+        ATH.setTint(searchView!!, primaryTextColor)
         searchView?.maxWidth = resources.displayMetrics.widthPixels
         searchView?.onActionViewCollapsed()
         searchView?.setOnCloseListener {
