@@ -52,7 +52,7 @@ object BookChapterList {
             var nextUrl = chapterData.nextUrl[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 nextUrlList.add(nextUrl)
-                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
+                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponseAsync().await()
                     .body()?.let { nextBody ->
                         chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, listRule, book, bookSource)
                         nextUrl = if (chapterData.nextUrl.isNotEmpty()) chapterData.nextUrl[0] else ""

@@ -223,21 +223,4 @@ class AnalyzeUrl(
                 .getMapAsync(url, fieldMap, headerMap)
         }
     }
-
-    fun getResponse(): Call<String> {
-        return when {
-            method == Method.POST -> HttpHelper.getApiService<IHttpPostApi>(
-                baseUrl
-            ).postBody(
-                url,
-                body,
-                headerMap
-            )
-            fieldMap.isEmpty() -> HttpHelper.getApiService<IHttpGetApi>(
-                baseUrl
-            ).get(url, headerMap)
-            else -> HttpHelper.getApiService<IHttpGetApi>(baseUrl)
-                .getMap(url, fieldMap, headerMap)
-        }
-    }
 }

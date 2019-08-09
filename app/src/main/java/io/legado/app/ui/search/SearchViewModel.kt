@@ -4,10 +4,14 @@ import android.app.Application
 import android.util.Log
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.util.concurrent.CancellationException
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     private var task: Coroutine<*>? = null
@@ -29,7 +33,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(key, searchPage, scope = this@execute)
                     .timeout(30000L)
-                    .onExecute{
+                    .onSuccess(Dispatchers.IO) {
                         it?.let { list ->
                             App.db.searchBookDao().insert(*list.toTypedArray())
                         }
@@ -43,14 +47,12 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         task?.invokeOnCompletion {
             finally?.invoke()
         }
+
+
     }
 
     fun stop() {
         task?.cancel()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        task?.cancel()
-    }
 }

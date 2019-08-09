@@ -51,7 +51,7 @@ object BookContent {
                     == NetworkUtils.getAbsoluteURL(baseUrl, nextChapterUrl)
                 ) break
                 nextUrlList.add(nextUrl)
-                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponse().execute()
+                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponseAsync().await()
                     .body()?.let { nextBody ->
                         contentData = analyzeContent(nextBody, contentRule, book, baseUrl)
                         nextUrl = if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
