@@ -20,12 +20,20 @@
             android:id="@+id/tv_chapter_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/chapter"
             android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_chapter_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/chapter"
             android:textSize="12sp" />
 
     </io.legado.app.ui.widget.TitleBar>
