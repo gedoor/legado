@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.Bookmark
+import kotlinx.android.synthetic.main.item_bookmark.view.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class BookmarkAdapter : PagedListAdapter<Bookmark, BookmarkAdapter.MyViewHolder>(DIFF_CALLBACK) {
@@ -27,20 +29,30 @@ class BookmarkAdapter : PagedListAdapter<Bookmark, BookmarkAdapter.MyViewHolder>
         }
     }
 
+    var callback: Callback? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bookmark, parent, false))
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         getItem(position)?.let {
-            holder.bind(it)
+            holder.bind(it, callback)
         }
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(bookmark: Bookmark) {
-
+        fun bind(bookmark: Bookmark, callback: Callback?) = with(itemView) {
+            tv_chapter_name.text = bookmark.chapterName
+            tv_content.text = bookmark.content
+            itemView.onClick {
+                callback?.open(bookmark)
+            }
         }
+    }
+
+    interface Callback {
+        fun open(bookmark: Bookmark)
     }
 }

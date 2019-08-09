@@ -5,4 +5,6 @@ import io.legado.app.base.BaseViewModel
 
 class ChapterListViewModel : BaseViewModel(App.INSTANCE) {
 
+    var bookUrl: String? = null
+
 }
