@@ -12,6 +12,8 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
+import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
@@ -58,12 +60,17 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
                     .centerCrop()
                     .setAsDrawable(iv_cover)
             }
-            itemView.setOnClickListener { callBack?.open(book) }
+            itemView.onClick { callBack?.open(book) }
+            itemView.onLongClick {
+                callBack?.openBookInfo(book)
+                true
+            }
         }
     }
 
     interface CallBack {
         fun open(book: Book)
+        fun openBookInfo(book: Book)
         fun search()
     }
 }
