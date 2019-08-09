@@ -28,10 +28,10 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(rv_list)
+        ATH.applyEdgeEffectColor(recycler_view)
         adapter = BookmarkAdapter()
-        rv_list.layoutManager = LinearLayoutManager(requireContext())
-        rv_list.adapter = adapter
+        recycler_view.layoutManager = LinearLayoutManager(requireContext())
+        recycler_view.adapter = adapter
     }
 
     private fun initData() {

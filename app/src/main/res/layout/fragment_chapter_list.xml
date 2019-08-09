@@ -6,7 +6,7 @@
     android:descendantFocusability="blocksDescendants">
 
     <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
-        android:id="@+id/rv_list"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:overScrollMode="never"
