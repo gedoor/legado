@@ -19,7 +19,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
     lateinit var adapter: ChapterListAdapter
-    var liveData: LiveData<PagedList<BookChapter>>? = null
+    private var liveData: LiveData<PagedList<BookChapter>>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +35,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     private fun initData() {
         liveData?.removeObservers(viewLifecycleOwner)
-        liveData = LivePagedListBuilder(App.db.bookChapterDao().observeByBook(""), 30).build()
+        liveData = LivePagedListBuilder(App.db.bookChapterDao().observeByBook(viewModel.bookUrl ?: ""), 30).build()
         liveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }
 }

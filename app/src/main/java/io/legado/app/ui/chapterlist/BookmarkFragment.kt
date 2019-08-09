@@ -25,6 +25,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        initData()
     }
 
     private fun initRecyclerView() {
@@ -36,7 +37,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
 
     private fun initData() {
         bookmarkLiveData?.removeObservers(viewLifecycleOwner)
-        bookmarkLiveData = LivePagedListBuilder(App.db.bookmarkDao().observeByBook(""), 20).build()
+        bookmarkLiveData = LivePagedListBuilder(App.db.bookmarkDao().observeByBook(viewModel.bookUrl ?: ""), 20).build()
         bookmarkLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }
 }
