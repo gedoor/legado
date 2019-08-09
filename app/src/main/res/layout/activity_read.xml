@@ -14,13 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:theme="?attr/actionBarStyle"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tv_chapter_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="@string/chapter"
@@ -30,7 +30,6 @@
             android:id="@+id/tv_chapter_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="@string/chapter"
