@@ -26,7 +26,10 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.ui.read.ReadActivity
 import io.legado.app.ui.search.SearchActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.requestInputMethod
+import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -48,7 +51,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
-//        initSearchView()
         initRecyclerView()
         initBookGroupData()
         initBookshelfData()
@@ -63,14 +65,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         when (item.itemId) {
             R.id.action_search -> startActivity<SearchActivity>()
         }
-    }
-
-    private fun initSearchView() {
-//        search_view.onActionViewExpanded()
-//        search_view.isSubmitButtonEnabled = true
-//        search_view.queryHint = getString(R.string.search_book_key)
-//        search_view.clearFocus()
-//        search_view.setOnQueryTextListener(this)
     }
 
     private fun initRecyclerView() {
