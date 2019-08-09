@@ -1,9 +1,10 @@
 package io.legado.app.ui.chapterlist
 
-import io.legado.app.App
+
+import android.app.Application
 import io.legado.app.base.BaseViewModel
 
-class ChapterListViewModel : BaseViewModel(App.INSTANCE) {
+class ChapterListViewModel(application: Application) : BaseViewModel(application) {
 
     var bookUrl: String? = null
 
