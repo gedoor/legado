@@ -3,16 +3,19 @@ package io.legado.app.ui.bookinfo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.entities.Book
 import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_book_info_edit.*
 
 class BookInfoEditActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info_edit) {
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-
+        viewModel.bookData.observe(this, Observer { upView(it) })
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -27,4 +30,13 @@ class BookInfoEditActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity
         }
         return super.onCompatOptionsItemSelected(item)
     }
+
+    private fun upView(book: Book) {
+        tie_book_name.setText(book.name)
+        tie_book_author.setText(book.author)
+        tie_cover_url.setText(book.getDisplayCover())
+        tie_book_intro.setText(book.getDisplayIntro())
+    }
+
+
 }
