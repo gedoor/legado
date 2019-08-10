@@ -30,6 +30,9 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE `name` in (:names)")
     fun findByName(vararg names: String): List<Book>
 
+    @Query("select * from books where bookUrl = :bookUrl")
+    fun getBook(bookUrl: String): Book?
+
     @get:Query("SELECT bookUrl FROM books")
     val allBookUrls: List<String>
 

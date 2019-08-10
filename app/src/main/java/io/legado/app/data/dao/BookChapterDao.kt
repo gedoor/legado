@@ -16,6 +16,8 @@ interface BookChapterDao {
     @Query("select * from chapters where bookUrl = :bookUrl and `index` = :index")
     fun getChapter(bookUrl: String, index: Int): BookChapter?
 
+    @Query("select count(url) from chapters where bookUrl = :bookUrl")
+    fun getChapterCount(bookUrl: String): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookChapter: BookChapter)
