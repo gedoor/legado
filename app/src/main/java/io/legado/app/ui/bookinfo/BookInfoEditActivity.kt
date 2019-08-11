@@ -11,14 +11,16 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
 
-class BookInfoEditActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info_edit) {
-    override val viewModel: BookInfoViewModel
-        get() = getViewModel(BookInfoViewModel::class.java)
+class BookInfoEditActivity : VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit) {
+    override val viewModel: BookInfoEditViewModel
+        get() = getViewModel(BookInfoEditViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.bookData.observe(this, Observer { upView(it) })
-        intent.getStringExtra("bookUrl")?.let {
-            viewModel.loadBook(it)
+        if (viewModel.bookData.value == null) {
+            intent.getStringExtra("bookUrl")?.let {
+                viewModel.loadBook(it)
+            }
         }
     }
 

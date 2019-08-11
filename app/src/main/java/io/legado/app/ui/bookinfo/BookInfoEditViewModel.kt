@@ -6,7 +6,7 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 
-class BookInfoViewModel(application: Application) : BaseViewModel(application) {
+class BookInfoEditViewModel(application: Application) : BaseViewModel(application) {
 
     val bookData = MutableLiveData<Book>()
 
