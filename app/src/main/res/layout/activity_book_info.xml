@@ -17,6 +17,7 @@
         android:layout_width="76dp"
         android:layout_height="110dp"
         android:layout_margin="10dp"
+        android:src="@drawable/img_cover_default"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 

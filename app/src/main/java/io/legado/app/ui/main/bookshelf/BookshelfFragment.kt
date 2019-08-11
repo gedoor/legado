@@ -23,8 +23,8 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.bookinfo.BookInfoActivity
 import io.legado.app.ui.bookshelf.BookshelfActivity
-import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.read.ReadActivity
 import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.applyTint
@@ -106,11 +106,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override fun open(book: Book) {
-        context?.startActivity<ReadActivity>()
+        context?.startActivity<ReadActivity>(Pair("bookUrl", book.bookUrl))
     }
 
     override fun openBookInfo(book: Book) {
-        context?.startActivity<ChapterListActivity>(Pair("bookUrl", book.bookUrl))
+        context?.startActivity<BookInfoActivity>(Pair("bookUrl", book.bookUrl))
     }
 
     override fun search() {

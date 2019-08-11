@@ -52,6 +52,7 @@ object Restore {
                         Log.d(AppConst.APP_TAG, "Found existing book: ${book.name}")
                         continue
                     }
+                    book.origin = jsonItem.readString("$.bookInfoBean.tag") ?: ""
                     book.author = jsonItem.readString("$.bookInfoBean.author")
                     book.type = if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
                     book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl

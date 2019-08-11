@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import io.legado.app.constant.BookType
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
@@ -18,7 +19,7 @@ data class Book(
     @PrimaryKey
     var bookUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
-    var origin: String = "",                    // 书源URL(默认BookType.local)
+    var origin: String = BookType.local,        // 书源URL(默认BookType.local)
     var name: String? = null,                   // 书籍名称(书源获取)
     var author: String? = null,                 // 作者名称(书源获取)
     var kind: String? = null,                    // 分类信息(书源获取)
