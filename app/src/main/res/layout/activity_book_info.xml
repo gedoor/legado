@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,7 +8,177 @@
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:title="@string/book_info"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <io.legado.app.ui.widget.image.CoverImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="76dp"
+        android:layout_height="110dp"
+        android:layout_margin="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:singleLine="true"
+        app:layout_constraintTop_toTopOf="@+id/iv_cover"
+        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_author"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintRight_toRightOf="@id/tv_name"
+        app:layout_constraintBottom_toTopOf="@id/tv_origin" />
+
+    <TextView
+        android:id="@+id/tv_origin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@+id/tv_author"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintRight_toRightOf="@id/tv_name"
+        app:layout_constraintBottom_toTopOf="@id/tv_lasted" />
+
+    <TextView
+        android:id="@+id/tv_lasted"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintRight_toRightOf="@id/tv_name"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_cover" />
+
+    <TextView
+        android:id="@+id/tv_intro"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/iv_cover" />
+
+    <LinearLayout
+        android:id="@+id/ll_chapter_base_info"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/background"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:elevation="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/tv_intro">
+
+        <TextView
+            android:id="@+id/tv_current_chapter_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            android:textColor="@color/tv_text_default"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_chapter_top"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_ib_pre_round"
+            android:contentDescription="@string/go_to_top"
+            android:src="@drawable/ic_arrow_drop_up"
+            app:tint="@color/tv_text_default" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_chapter_bottom"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_ib_pre_round"
+            android:contentDescription="@string/go_to_bottom"
+            android:src="@drawable/ic_arrow_drop_down"
+            app:tint="@color/tv_text_default" />
+    </LinearLayout>
+
+    <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
+        android:id="@+id/rv_chapter_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_chapter_base_info"
+        app:layout_constraintBottom_toTopOf="@id/fl_action" />
+
+    <FrameLayout
+        android:id="@+id/fl_action"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/background"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_menu"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <TextView
+                android:id="@+id/tv_shelf"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_fillet_btn_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/remove_from_bookshelf"
+                android:textColor="@color/tv_text_default"
+                android:textSize="15sp" />
+
+            <Space
+                android:layout_width="3dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tv_read"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_fillet_btn_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/start_read"
+                android:textColor="@color/tv_text_default"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/tv_text_button_nor"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/data_loading"
+            android:textColor="#767676"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
