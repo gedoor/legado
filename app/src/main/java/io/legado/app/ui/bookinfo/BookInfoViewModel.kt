@@ -2,6 +2,7 @@ package io.legado.app.ui.bookinfo
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 
@@ -9,4 +10,22 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     val bookData = MutableLiveData<Book>()
 
+
+    fun loadBook(bookUrl: String) {
+        execute {
+            App.db.bookDao().getBook(bookUrl)?.let {
+                bookData.postValue(it)
+            }
+        }
+    }
+
+    fun saveBook(book: Book, success: (() -> Unit)?, error: ((msg: String) -> Unit)?) {
+        execute {
+            App.db.bookDao().insert(book)
+        }.onSuccess {
+            success?.invoke()
+        }.onError {
+            error?.invoke(it.localizedMessage)
+        }
+    }
 }

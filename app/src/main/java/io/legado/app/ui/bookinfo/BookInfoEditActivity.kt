@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
 
 class BookInfoEditActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info_edit) {
@@ -16,6 +17,9 @@ class BookInfoEditActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.bookData.observe(this, Observer { upView(it) })
+        intent.getStringExtra("bookUrl")?.let {
+            viewModel.loadBook(it)
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -25,8 +29,7 @@ class BookInfoEditActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_save -> {
-            }
+            R.id.action_save -> saveData()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -38,5 +41,14 @@ class BookInfoEditActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity
         tie_book_intro.setText(book.getDisplayIntro())
     }
 
-
+    private fun saveData() {
+        viewModel.bookData.value?.let { book ->
+            book.name = tie_book_name.text?.toString()
+            book.author = tie_book_author.text?.toString()
+            val customCoverUrl = tie_cover_url.text?.toString()
+            book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
+            book.customIntro = tie_book_intro.text?.toString()
+            viewModel.saveBook(book, success = { finish() }, error = { toast(it) })
+        }
+    }
 }
