@@ -57,7 +57,7 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
                 tv_lasted.text = context.getString(R.string.lasted_show, searchBook.latestChapterTitle)
                 tv_lasted.visible()
             }
-            tv_introduce.text = searchBook.intro
+            tv_introduce.text = context.getString(R.string.intro_show, searchBook.intro)
             val kinds = searchBook.getKindList()
             if (kinds.isEmpty()) {
                 ll_kind.gone()
