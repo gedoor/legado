@@ -27,4 +27,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun loadBookInfo() {
+
+    }
+
 }

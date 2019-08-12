@@ -26,6 +26,7 @@ data class SearchBook(
     var intro: String? = null,
     var wordCount: String? = null,
     var latestChapterTitle: String? = null,
+    var tocUrl: String? = null,                    // 目录页Url (toc=table of Contents)
     var time: Long = 0L,
     var variable: String? = null,
     var bookInfoHtml: String? = null,
@@ -80,7 +81,7 @@ data class SearchBook(
         book.latestChapterTitle = latestChapterTitle
         book.coverUrl = coverUrl
         book.intro = intro
-
+        book.tocUrl = tocUrl
         return book
     }
 }
