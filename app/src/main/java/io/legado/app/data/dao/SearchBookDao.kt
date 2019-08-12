@@ -20,6 +20,12 @@ interface SearchBookDao {
     @Query("SELECT name, author, min(time) time, max(kind) kind, max(coverUrl) coverUrl, max(intro) intro, max(wordCount) wordCount, max(latestChapterTitle) latestChapterTitle, count(origin) originCount FROM searchBooks where time >= :time group by name, author")
     fun observeShow(time: Long): DataSource.Factory<Int, SearchShow>
 
+    @Query("select * from searchBooks where bookUrl = :bookUrl")
+    fun getSearchBook(bookUrl: String): SearchBook?
+
+    @Query("select * from searchBooks where name = :name and author = :author order by originOrder limit 1")
+    fun getByNameAuthor(name: String, author: String?): SearchBook?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg searchBook: SearchBook): List<Long>
 

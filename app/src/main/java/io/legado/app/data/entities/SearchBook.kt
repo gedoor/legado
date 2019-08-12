@@ -67,4 +67,20 @@ data class SearchBook(
         }
         return kindList
     }
+
+    fun toBook(): Book {
+        val book = Book()
+        book.name = name
+        book.author = author
+        book.kind = kind
+        book.bookUrl = bookUrl
+        book.origin = origin
+        book.originName = originName
+        book.wordCount = wordCount
+        book.latestChapterTitle = latestChapterTitle
+        book.coverUrl = coverUrl
+        book.intro = intro
+
+        return book
+    }
 }

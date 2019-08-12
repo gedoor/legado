@@ -17,6 +17,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 App.db.bookDao().getBook(it)?.let { book ->
                     bookData.postValue(book)
                 }
+            } ?: intent.getStringExtra("searchBookUrl")?.let {
+                App.db.searchBookDao().getSearchBook(it)?.let { searchBook ->
+                    bookData.postValue(searchBook.toBook())
+                }
             }
         }
     }

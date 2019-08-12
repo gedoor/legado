@@ -3,7 +3,6 @@ package io.legado.app.model.webbook
 import android.annotation.SuppressLint
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.htmlFormat
@@ -82,7 +81,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
                     if (searchBooks.isNotEmpty()) {
                         printLog(debugSource, 1, "搜索完成")
                         printLog(debugSource, 1, "", showTime = false)
-                        infoDebug(BookHelp.toBook(searchBooks[0]))
+                        infoDebug(searchBooks[0].toBook())
                     } else {
                         printLog(debugSource, -1, "未获取到书籍")
                     }

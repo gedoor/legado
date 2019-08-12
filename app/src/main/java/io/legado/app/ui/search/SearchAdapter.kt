@@ -50,7 +50,7 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
         fun bind(searchBook: SearchShow, callBack: CallBack?) = with(itemView) {
             tv_name.text = searchBook.name
             bv_originCount.setBadgeCount(searchBook.originCount)
-            tv_author.text = searchBook.author
+            tv_author.text = context.getString(R.string.author_show, searchBook.author)
             if (searchBook.latestChapterTitle.isNullOrEmpty()) {
                 tv_lasted.gone()
             } else {
@@ -96,12 +96,12 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
                     .setAsDrawable(iv_cover)
             }
             onClick {
-                callBack?.showBookInfo(searchBook.name, searchBook.author)
+                callBack?.showBookInfo(searchBook.name!!, searchBook.author)
             }
         }
     }
 
     interface CallBack {
-        fun showBookInfo(name: String?, author: String?)
+        fun showBookInfo(name: String, author: String?)
     }
 }

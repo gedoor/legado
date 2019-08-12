@@ -54,7 +54,6 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
-            android:drawableStart="@drawable/ic_author"
             android:text="@string/author"
             android:textColor="@color/tv_text_default"
             android:textSize="12sp" />

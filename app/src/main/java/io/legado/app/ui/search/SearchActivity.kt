@@ -1,7 +1,6 @@
 package io.legado.app.ui.search
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -14,11 +13,13 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.SearchShow
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.bookinfo.BookInfoActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.view_search.*
+import org.jetbrains.anko.startActivity
 
-class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search) {
+class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search), SearchAdapter.CallBack {
 
     override val viewModel: SearchViewModel
         get() = getViewModel(SearchViewModel::class.java)
@@ -66,6 +67,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_search_list)
         adapter = SearchAdapter()
+        adapter.callBack = this
         rv_search_list.layoutManager = LinearLayoutManager(this)
         rv_search_list.adapter = adapter
     }
@@ -76,4 +78,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
     }
 
+    override fun showBookInfo(name: String, author: String?) {
+        viewModel.getSearchBook(name, author) { searchBook ->
+            searchBook?.let {
+                startActivity<BookInfoActivity>(Pair("searchBookUrl", it.bookUrl))
+            }
+        }
+    }
 }
