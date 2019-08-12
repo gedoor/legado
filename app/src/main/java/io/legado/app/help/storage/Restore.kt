@@ -52,7 +52,8 @@ object Restore {
                         Log.d(AppConst.APP_TAG, "Found existing book: ${book.name}")
                         continue
                     }
-                    book.origin = jsonItem.readString("$.bookInfoBean.tag") ?: ""
+                    book.origin = jsonItem.readString("$.tag") ?: ""
+                    book.originName = jsonItem.readString("$.bookInfoBean.origin") ?: ""
                     book.author = jsonItem.readString("$.bookInfoBean.author")
                     book.type = if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
                     book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl
@@ -66,8 +67,7 @@ object Restore {
                     book.durChapterPos = jsonItem.readInt("$.durChapterPage") ?: 0
                     book.durChapterTime = jsonItem.readLong("$.finalDate") ?: 0
                     book.group = jsonItem.readInt("$.group") ?: 0
-                    // book. = jsonItem.readString("$.hasUpdate")
-                    // book. = jsonItem.readString("$.isLoading")
+                    book.intro = jsonItem.readString("$.bookInfoBean.introduce")
                     book.latestChapterTitle = jsonItem.readString("$.lastChapterName")
                     book.lastCheckCount = jsonItem.readInt("$.newChapters") ?: 0
                     book.order = jsonItem.readInt("$.serialNumber") ?: 0

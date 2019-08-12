@@ -66,13 +66,22 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_margin="10dp"
+        android:scrollbars="vertical"
+        android:textIsSelectable="true"
+        app:layout_constraintTop_toBottomOf="@+id/iv_cover" />
+
+    <View
+        android:id="@+id/view_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_shadow_top"
         app:layout_constraintTop_toBottomOf="@+id/iv_cover" />
 
     <LinearLayout
         android:id="@+id/ll_chapter_base_info"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:layout_marginTop="10dp"
         android:background="@color/background"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -80,6 +89,11 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/tv_intro">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chapter_list" />
 
         <TextView
             android:id="@+id/tv_current_chapter_info"

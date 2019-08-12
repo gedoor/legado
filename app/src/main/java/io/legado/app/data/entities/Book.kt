@@ -20,6 +20,7 @@ data class Book(
     var bookUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
     var origin: String = BookType.local,        // 书源URL(默认BookType.local)
+    var originName: String = "",                //书源名称
     var name: String? = null,                   // 书籍名称(书源获取)
     var author: String? = null,                 // 作者名称(书源获取)
     var kind: String? = null,                    // 分类信息(书源获取)

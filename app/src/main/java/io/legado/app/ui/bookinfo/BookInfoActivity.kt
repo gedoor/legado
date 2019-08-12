@@ -21,7 +21,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     private fun showBook(book: Book) {
         tv_name.text = book.name
         tv_author.text = book.author
-        tv_origin.text = book.origin
+        tv_origin.text = book.originName
         tv_lasted.text = book.latestChapterTitle
         tv_intro.text = book.getDisplayIntro()
         book.getDisplayCover()?.let {
