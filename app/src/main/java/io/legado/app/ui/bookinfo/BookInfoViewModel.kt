@@ -12,7 +12,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     var inBookshelf = false
 
-    fun loadData(intent: Intent) {
+    fun loadBook(intent: Intent) {
         execute {
             intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->

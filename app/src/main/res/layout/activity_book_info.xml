@@ -38,7 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_author"
@@ -111,7 +112,7 @@
     <TextView
         android:id="@+id/tv_intro"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="106dp"
         android:layout_margin="10dp"
         android:scrollbars="vertical"
         android:textIsSelectable="true"
