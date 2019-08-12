@@ -21,45 +21,90 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
-    <TextView
-        android:id="@+id/tv_name"
+    <LinearLayout
+        android:id="@+id/ll_book_info"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
-        android:singleLine="true"
+        android:orientation="vertical"
         app:layout_constraintTop_toTopOf="@+id/iv_cover"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_cover">
 
-    <TextView
-        android:id="@+id/tv_author"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
-        app:layout_constraintRight_toRightOf="@id/tv_name"
-        app:layout_constraintBottom_toTopOf="@id/tv_origin" />
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true" />
 
-    <TextView
-        android:id="@+id/tv_origin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        app:layout_constraintTop_toBottomOf="@+id/tv_author"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
-        app:layout_constraintRight_toRightOf="@id/tv_name"
-        app:layout_constraintBottom_toTopOf="@id/tv_lasted" />
+        <TextView
+            android:id="@+id/tv_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true" />
 
-    <TextView
-        android:id="@+id/tv_lasted"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:maxLines="2"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
-        app:layout_constraintRight_toRightOf="@id/tv_name"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_cover" />
+        <TextView
+            android:id="@+id/tv_origin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            app:layout_constraintTop_toBottomOf="@+id/tv_author"
+            app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+            app:layout_constraintRight_toRightOf="@id/tv_name"
+            app:layout_constraintBottom_toTopOf="@id/tv_lasted" />
+
+        <LinearLayout
+            android:id="@+id/ll_kind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+                android:id="@+id/tv_kind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="12sp" />
+
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+                android:id="@+id/tv_kind_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="12sp" />
+
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+                android:id="@+id/tv_kind_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_lasted"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+            app:layout_constraintRight_toRightOf="@id/tv_name"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_cover" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_intro"

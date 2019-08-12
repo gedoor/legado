@@ -7,6 +7,8 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_info.*
 
 class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info) {
@@ -30,6 +32,36 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 .error(R.drawable.img_cover_default)
                 .centerCrop()
                 .setAsDrawable(iv_cover)
+        }
+        val kinds = book.getKindList()
+        if (kinds.isEmpty()) {
+            ll_kind.gone()
+        } else {
+            ll_kind.visible()
+            for (index in 0..2) {
+                if (kinds.size > index) {
+                    when (index) {
+                        0 -> {
+                            tv_kind.text = kinds[index]
+                            tv_kind.visible()
+                        }
+                        1 -> {
+                            tv_kind_1.text = kinds[index]
+                            tv_kind_1.visible()
+                        }
+                        2 -> {
+                            tv_kind_2.text = kinds[index]
+                            tv_kind_2.visible()
+                        }
+                    }
+                } else {
+                    when (index) {
+                        0 -> tv_kind.gone()
+                        1 -> tv_kind_1.gone()
+                        2 -> tv_kind_2.gone()
+                    }
+                }
+            }
         }
     }
 
