@@ -10,6 +10,7 @@ import io.legado.app.data.entities.Book
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     val bookData = MutableLiveData<Book>()
+    val isLoadingData = MutableLiveData<Boolean>()
     var inBookshelf = false
 
     fun loadBook(intent: Intent) {
@@ -20,14 +21,23 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     bookData.postValue(book)
                 }
             } ?: intent.getStringExtra("searchBookUrl")?.let {
-                App.db.searchBookDao().getSearchBook(it)?.let { searchBook ->
-                    bookData.postValue(searchBook.toBook())
+                App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
+                    bookData.postValue(book)
+                    if (book.tocUrl.isNullOrEmpty()) {
+                        loadBookInfo()
+                    } else {
+                        loadChapter()
+                    }
                 }
             }
         }
     }
 
     fun loadBookInfo() {
+
+    }
+
+    fun loadChapter() {
 
     }
 

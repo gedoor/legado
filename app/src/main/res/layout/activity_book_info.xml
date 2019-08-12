@@ -240,8 +240,7 @@
             android:gravity="center"
             android:text="@string/data_loading"
             android:textColor="#767676"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            android:textSize="16sp" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

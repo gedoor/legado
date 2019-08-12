@@ -17,6 +17,13 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.bookData.observe(this, Observer { showBook(it) })
+        viewModel.isLoadingData.observe(this, Observer {
+            if (it) {
+                tv_loading.visible()
+            } else {
+                tv_loading.gone()
+            }
+        })
         viewModel.loadBook(intent)
     }
 
