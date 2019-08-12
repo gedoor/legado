@@ -10,11 +10,13 @@ import io.legado.app.data.entities.Book
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     val bookData = MutableLiveData<Book>()
+    var inBookshelf = false
 
     fun loadData(intent: Intent) {
         execute {
             intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
+                    inBookshelf = true
                     bookData.postValue(book)
                 }
             } ?: intent.getStringExtra("searchBookUrl")?.let {

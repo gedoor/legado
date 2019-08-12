@@ -36,29 +36,29 @@
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:singleLine="true" />
 
         <TextView
             android:id="@+id/tv_author"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:singleLine="true" />
 
         <TextView
             android:id="@+id/tv_origin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            app:layout_constraintTop_toBottomOf="@+id/tv_author"
-            app:layout_constraintLeft_toLeftOf="@+id/tv_name"
-            app:layout_constraintRight_toRightOf="@id/tv_name"
-            app:layout_constraintBottom_toTopOf="@id/tv_lasted" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:singleLine="true" />
 
         <LinearLayout
             android:id="@+id/ll_kind"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -99,7 +99,9 @@
         <TextView
             android:id="@+id/tv_lasted"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:singleLine="true"
             app:layout_constraintLeft_toLeftOf="@+id/tv_name"
             app:layout_constraintRight_toRightOf="@id/tv_name"
             app:layout_constraintBottom_toBottomOf="@+id/iv_cover" />

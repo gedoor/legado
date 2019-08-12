@@ -65,7 +65,7 @@
     <string name="origin_format">来源: %s</string>
     <string name="read_dur_progress">最近: %s</string>
     <string name="book_name">书名</string>
-    <string name="book_search_last">最新: %s</string>
+    <string name="lasted_show">最新: %s</string>
     <string name="check_add_bookshelf">是否将《%s》放入书架？</string>
     <string name="import_books_count">共%s个Text文件</string>
     <string name="is_loading">加载中…</string>
@@ -197,8 +197,9 @@
     <string name="data_loading">加载数据中…</string>
     <string name="load_error_retry">加载失败,点击重试</string>
     <string name="book_intro">内容简介</string>
+    <string name="intro_show">简介:%s</string>
     <string name="open_from_other">打开外部书籍</string>
-    <string name="origin">来源</string>
+    <string name="origin_show">来源:%s</string>
     <string name="import_replace_rule">本地导入</string>
     <string name="import_replace_rule_on_line">网络导入</string>
     <string name="bookshelf_px">书架排序</string>

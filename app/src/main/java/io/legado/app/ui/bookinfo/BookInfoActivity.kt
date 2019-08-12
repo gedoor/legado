@@ -22,10 +22,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     private fun showBook(book: Book) {
         tv_name.text = book.name
-        tv_author.text = book.author
-        tv_origin.text = book.originName
-        tv_lasted.text = book.latestChapterTitle
-        tv_intro.text = book.getDisplayIntro()
+        tv_author.text = getString(R.string.author_show, book.author)
+        tv_origin.text = getString(R.string.origin_show, book.originName)
+        tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
+        tv_intro.text = getString(R.string.intro_show, book.getDisplayIntro())
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
                 .placeholder(R.drawable.img_cover_default)

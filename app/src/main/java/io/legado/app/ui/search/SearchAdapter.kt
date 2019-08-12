@@ -54,7 +54,7 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
             if (searchBook.latestChapterTitle.isNullOrEmpty()) {
                 tv_lasted.gone()
             } else {
-                tv_lasted.text = context.getString(R.string.book_search_last, searchBook.latestChapterTitle)
+                tv_lasted.text = context.getString(R.string.lasted_show, searchBook.latestChapterTitle)
                 tv_lasted.visible()
             }
             tv_introduce.text = searchBook.intro
