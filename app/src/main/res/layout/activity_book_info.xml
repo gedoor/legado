@@ -224,7 +224,7 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:text="@string/start_read"
+                android:text="@string/reading"
                 android:textColor="@color/tv_text_default"
                 android:textSize="15sp" />
 

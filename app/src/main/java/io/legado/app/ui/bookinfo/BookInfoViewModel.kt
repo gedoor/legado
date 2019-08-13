@@ -6,10 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     val bookData = MutableLiveData<Book>()
+    val chapterListData = MutableLiveData<List<BookChapter>>()
     val isLoadingData = MutableLiveData<Boolean>()
     var inBookshelf = false
 
@@ -23,7 +25,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             } ?: intent.getStringExtra("searchBookUrl")?.let {
                 App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
                     bookData.postValue(book)
-                    if (book.tocUrl.isNullOrEmpty()) {
+                    if (book.tocUrl.isEmpty()) {
                         loadBookInfo()
                     } else {
                         loadChapter()
@@ -34,11 +36,23 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun loadBookInfo() {
-
+        isLoadingData.postValue(false)
     }
 
     fun loadChapter() {
-
+        isLoadingData.postValue(false)
     }
 
+    fun saveBook(success: (() -> Unit)?) {
+        execute {
+            bookData.value?.let { book ->
+                App.db.bookDao().insert(book)
+            }
+            chapterListData.value?.let {
+                App.db.bookChapterDao().insert(*it.toTypedArray())
+            }
+        }.onSuccess {
+            success?.invoke()
+        }
+    }
 }

@@ -10,6 +10,7 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_info.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info) {
     override val viewModel: BookInfoViewModel
@@ -17,14 +18,9 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.bookData.observe(this, Observer { showBook(it) })
-        viewModel.isLoadingData.observe(this, Observer {
-            if (it) {
-                tv_loading.visible()
-            } else {
-                tv_loading.gone()
-            }
-        })
+        viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.loadBook(intent)
+        initView()
     }
 
     private fun showBook(book: Book) {
@@ -72,5 +68,28 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
     }
 
+    private fun upLoading(isLoading: Boolean) {
+        if (isLoading) {
+            tv_loading.visible()
+        } else {
+            if (viewModel.inBookshelf) {
+                tv_shelf.text = getString(R.string.remove_from_bookshelf)
+            } else {
+                tv_shelf.text = getString(R.string.add_to_shelf)
+            }
+            tv_loading.gone()
+        }
+    }
 
+    private fun initView() {
+        tv_read.onClick {
+
+        }
+        tv_shelf.onClick {
+            viewModel.saveBook {
+                tv_shelf.text = getString(R.string.remove_from_bookshelf)
+            }
+        }
+        tv_loading.onClick { }
+    }
 }

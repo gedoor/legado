@@ -473,4 +473,5 @@
     <string name="my">我的</string>
     <string name="dsm_start"><![CDATA[<]]></string>
     <string name="dsm_end"><![CDATA[>]]></string>
+    <string name="reading">阅读</string>
 </resources>
