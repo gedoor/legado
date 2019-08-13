@@ -29,7 +29,7 @@ interface BookSourceDao {
     val allEnabled: List<BookSource>
 
     @Query("select * from book_sources where bookSourceUrl = :key")
-    fun findByKey(key: String): BookSource?
+    fun getBookSource(key: String): BookSource?
 
     @Query("select count(*) from book_sources")
     fun allCount(): Int

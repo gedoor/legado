@@ -14,7 +14,7 @@ class SourceEditViewModel(application: Application) : BaseViewModel(application)
 
     fun setBookSource(key: String) {
         launch(IO) {
-            App.db.bookSourceDao().findByKey(key)?.let {
+            App.db.bookSourceDao().getBookSource(key)?.let {
                 sourceLiveData.postValue(it)
             } ?: sourceLiveData.postValue(BookSource())
         }

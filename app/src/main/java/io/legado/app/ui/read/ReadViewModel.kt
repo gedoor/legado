@@ -19,7 +19,7 @@ class ReadViewModel(application: Application) : BaseViewModel(application) {
                 book = App.db.bookDao().getBook(bookUrl)
                 book?.let { book ->
                     if (App.db.bookChapterDao().getChapterCount(bookUrl) == 0) {
-                        bookSource = App.db.bookSourceDao().findByKey(book.origin)
+                        bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                         if (bookSource == null) {
 
                         }

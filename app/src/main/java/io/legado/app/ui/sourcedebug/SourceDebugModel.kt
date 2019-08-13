@@ -3,11 +3,8 @@ package io.legado.app.ui.sourcedebug
 import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.constant.Bus
-import io.legado.app.help.EventMessage
 import io.legado.app.model.WebBook
 import io.legado.app.model.webbook.SourceDebug
-import io.legado.app.utils.postEvent
 
 class SourceDebugModel(application: Application) : BaseViewModel(application), SourceDebug.Callback {
 
@@ -19,7 +16,7 @@ class SourceDebugModel(application: Application) : BaseViewModel(application), S
         sourceUrl?.let {
             //优先使用这个，不会抛出异常
             execute {
-                val bookSource = App.db.bookSourceDao().findByKey(sourceUrl)
+                val bookSource = App.db.bookSourceDao().getBookSource(sourceUrl)
                 bookSource?.let { webBook = WebBook(it) }
             }
         }
