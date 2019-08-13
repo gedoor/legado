@@ -8,7 +8,6 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.splitNotBlank
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -55,18 +54,6 @@ data class SearchBook(
         initVariableMap()
         variableMap?.put(key, value)
         variable = GSON.toJson(variableMap)
-    }
-
-    fun getKindList(): List<String> {
-        val kindList = arrayListOf<String>()
-        wordCount?.let {
-            if (it.isNotBlank()) kindList.add(it)
-        }
-        kind?.let {
-            val kinds = it.splitNotBlank(",", "\n")
-            kindList.addAll(kinds)
-        }
-        return kindList
     }
 
     fun toBook(): Book {
