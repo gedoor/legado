@@ -7,14 +7,16 @@ import android.view.MenuItem
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.invisible
-import io.legado.app.utils.visible
+import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.startActivity
 
 class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
     override val viewModel: ReadViewModel
@@ -78,6 +80,63 @@ class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
         tv_chapter_url.onClick {
 
         }
+        bottom_menu.setListener(object : ReadBottomMenu.Callback {
+            override fun skipToPage(page: Int) {
+
+            }
+
+            override fun onMediaButton() {
+
+            }
+
+            override fun autoPage() {
+
+            }
+
+            override fun setNightTheme() {
+                putPrefBoolean("isNightTheme", !isNightTheme)
+                App.INSTANCE.applyDayNight()
+            }
+
+            override fun skipPreChapter() {
+
+            }
+
+            override fun skipNextChapter() {
+
+            }
+
+            override fun openReplaceRule() {
+                startActivity<ReplaceRuleActivity>()
+            }
+
+            override fun openChapterList() {
+                viewModel.book?.let {
+                    startActivity<ChapterListActivity>(Pair("bookUrl", it.bookUrl))
+                }
+            }
+
+            override fun openAdjust() {
+
+            }
+
+            override fun openReadInterface() {
+
+            }
+
+            override fun openMoreSetting() {
+
+            }
+
+            override fun toast(id: Int) {
+                toast(id)
+            }
+
+            override fun dismiss() {
+                runMenuOut()
+            }
+
+        })
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -108,13 +167,6 @@ class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
             }
         }
         return super.dispatchKeyEvent(event)
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-
-        }
-        return super.onKeyDown(keyCode, event)
     }
 
     private fun runMenuIn() {
