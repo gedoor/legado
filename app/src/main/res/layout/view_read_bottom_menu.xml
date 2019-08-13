@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_read_aloud_timer"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:visibility="gone">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_read_aloud_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/set_timer"
+            android:src="@drawable/ic_timer_black_24dp"
+            android:tint="@color/tv_text_default"
+            app:backgroundTint="@color/background_menu"
+            app:elevation="2dp"
+            app:fabSize="mini"
+            app:pressedTranslationZ="2dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:cardBackgroundColor="@color/background_card">
+
+            <TextView
+                android:id="@+id/tv_read_aloud_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="10dp"
+                android:text="@string/read_aloud_timer" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_floating_button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_read_aloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/read_aloud"
+            android:src="@drawable/ic_read_aloud"
+            android:tint="@color/tv_text_default"
+            app:backgroundTint="@color/background_menu"
+            app:elevation="2dp"
+            app:fabSize="mini"
+            app:pressedTranslationZ="2dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAutoPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/auto_next_page"
+            android:src="@drawable/ic_auto_page"
+            android:tint="@color/tv_text_default"
+            app:backgroundTint="@color/background_menu"
+            app:elevation="2dp"
+            app:fabSize="mini"
+            app:pressedTranslationZ="2dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabReplaceRule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/replace_rule_title"
+            android:src="@drawable/ic_find_replace"
+            android:tint="@color/tv_text_default"
+            app:backgroundTint="@color/background_menu"
+            app:elevation="2dp"
+            app:fabSize="mini"
+            app:pressedTranslationZ="2dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabNightTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/night_theme"
+            android:src="@drawable/ic_brightness"
+            android:tint="@color/tv_text_default"
+            app:backgroundTint="@color/background_menu"
+            app:elevation="2dp"
+            app:fabSize="mini"
+            app:pressedTranslationZ="2dp" />
+
+    </LinearLayout>
+
+    <View style="@style/Style.Shadow.Bottom" />
+
+    <!--底部设置栏-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <View
+            android:id="@+id/vw_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_menu" />
+
+        <LinearLayout
+            android:id="@+id/llNavigationBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--章节设置-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:enabled="false"
+                    android:focusable="true"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/previous_chapter"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="14sp" />
+
+                <io.legado.app.lib.theme.view.ATESeekBar
+                    android:id="@+id/hpb_read_progress"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:enabled="false"
+                    android:focusable="true"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/next_chapter"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <!--目录按钮-->
+                <LinearLayout
+                    android:id="@+id/ll_catalog"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:contentDescription="@string/chapter_list"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:paddingBottom="7dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/chapter_list"
+                        android:src="@drawable/ic_chapter_list"
+                        app:tint="@color/tv_text_default"
+                        tools:ignore="NestedWeights" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="3dp"
+                        android:text="@string/chapter_list"
+                        android:textColor="@color/tv_text_default"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2" />
+                <!--调节按钮-->
+                <LinearLayout
+                    android:id="@+id/ll_adjust"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:contentDescription="@string/adjust"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:paddingBottom="7dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/adjust"
+                        android:src="@drawable/ic_tune"
+                        app:tint="@color/tv_text_default"
+                        tools:ignore="NestedWeights" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="3dp"
+                        android:text="@string/adjust"
+                        android:textColor="@color/tv_text_default"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2" />
+                <!--界面按钮-->
+                <LinearLayout
+                    android:id="@+id/ll_font"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:contentDescription="@string/interface_setting"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:paddingBottom="7dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/interface_setting"
+                        android:src="@drawable/ic_interface_setting"
+                        app:tint="@color/tv_text_default"
+                        tools:ignore="NestedWeights" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="3dp"
+                        android:text="@string/interface_setting"
+                        android:textColor="@color/tv_text_default"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2" />
+                <!--设置按钮-->
+                <LinearLayout
+                    android:id="@+id/ll_setting"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:contentDescription="@string/setting"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:paddingBottom="7dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/setting"
+                        android:src="@drawable/ic_settings"
+                        app:tint="@color/tv_text_default"
+                        tools:ignore="NestedWeights" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="3dp"
+                        android:text="@string/setting"
+                        android:textColor="@color/tv_text_default"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <View
+        android:id="@+id/vwNavigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/background_menu" />
+</LinearLayout>

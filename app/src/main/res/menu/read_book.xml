@@ -1,0 +1,93 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.activity.MainActivity">
+
+    <group android:id="@+id/menuOnLine">
+        <item
+            android:id="@+id/action_change_source"
+            android:icon="@drawable/ic_exchange"
+            android:title="@string/change_origin"
+            app:showAsAction="always" />
+
+        <item
+            android:id="@+id/action_refresh"
+            android:icon="@drawable/ic_refresh_black_24dp"
+            android:title="@string/refresh"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/action_download"
+            android:icon="@drawable/ic_download_line"
+            android:title="@string/download_offline"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/disable_book_source"
+            android:icon="@drawable/ic_cancel"
+            android:title="@string/disable_book_source"
+            app:showAsAction="never" />
+
+    </group>
+
+    <group android:id="@+id/menu_text">
+        <item
+            android:id="@+id/action_set_regex"
+            android:icon="@drawable/ic_exchange"
+            android:title="@string/txt_chapter_regex"
+            app:showAsAction="always" />
+    </group>
+
+    <group android:id="@+id/menuLocal">
+
+        <item
+            android:id="@+id/action_set_charset"
+            android:icon="@drawable/ic_translate"
+            android:title="@string/set_charset"
+            app:showAsAction="ifRoom" />
+
+    </group>
+
+    <group android:id="@+id/menuShow">
+        <item
+            android:id="@+id/add_bookmark"
+            android:icon="@drawable/ic_bookmark"
+            android:title="@string/bookmark_add"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/action_copy_text"
+            android:icon="@drawable/ic_copy"
+            android:title="@string/copy_text"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/enable_replace"
+            android:icon="@drawable/ic_find_replace"
+            android:title="@string/replace_rule_title"
+            android:checkable="true"
+            android:checked="true"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/update_chapter_list"
+            android:icon="@drawable/ic_update"
+            android:title="@string/update_chapter"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_book_info"
+            android:icon="@drawable/ic_toc"
+            android:title="@string/book_info"
+            app:showAsAction="never" />
+    </group>
+
+    <group android:id="@+id/menu_login">
+        <item
+            android:id="@+id/action_login"
+            android:icon="@drawable/ic_toc"
+            android:title="@string/login"
+            app:showAsAction="never" />
+    </group>
+
+</menu>
