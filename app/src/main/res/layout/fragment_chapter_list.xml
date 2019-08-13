@@ -42,7 +42,7 @@
             android:id="@+id/iv_chapter_top"
             android:layout_width="36dp"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_ib_pre_round"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/go_to_top"
             android:src="@drawable/ic_arrow_drop_up"
             app:tint="@color/tv_text_default" />
@@ -51,7 +51,7 @@
             android:id="@+id/iv_chapter_bottom"
             android:layout_width="36dp"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_ib_pre_round"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/go_to_bottom"
             android:src="@drawable/ic_arrow_drop_down"
             app:tint="@color/tv_text_default" />

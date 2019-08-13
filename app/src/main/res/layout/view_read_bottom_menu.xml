@@ -133,13 +133,13 @@
         <View
             android:id="@+id/vw_bg"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/background_menu" />
+            android:layout_height="match_parent" />
 
         <LinearLayout
             android:id="@+id/llNavigationBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/background_menu"
             android:orientation="vertical">
             <!--章节设置-->
             <LinearLayout
@@ -157,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/bg_ib_pre_round"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:enabled="false"
                     android:focusable="true"
@@ -180,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/bg_ib_pre_round"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:enabled="false"
                     android:focusable="true"
@@ -207,7 +207,7 @@
                     android:id="@+id/ll_catalog"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/bg_ib_pre_round"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@string/chapter_list"
                     android:focusable="true"
@@ -242,7 +242,7 @@
                     android:id="@+id/ll_adjust"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/bg_ib_pre_round"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@string/adjust"
                     android:focusable="true"
@@ -277,7 +277,7 @@
                     android:id="@+id/ll_font"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/bg_ib_pre_round"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@string/interface_setting"
                     android:focusable="true"
@@ -312,7 +312,7 @@
                     android:id="@+id/ll_setting"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/bg_ib_pre_round"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@string/setting"
                     android:focusable="true"
