@@ -20,4 +20,12 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+
+    fun upChapterList() {
+        execute {
+            App.db.bookDao().getRecentRead().map {
+
+            }
+        }
+    }
 }
