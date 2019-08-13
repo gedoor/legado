@@ -2,10 +2,7 @@ package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 
@@ -46,6 +43,8 @@ interface BookDao {
     fun getRecentRead(): DataSource.Factory<Int, Book>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg books: Book)
+    fun insert(vararg book: Book)
 
+    @Update
+    fun update(vararg books: Book)
 }

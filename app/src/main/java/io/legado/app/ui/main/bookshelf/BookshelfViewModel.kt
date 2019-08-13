@@ -5,6 +5,8 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.model.WebBook
+import kotlinx.coroutines.Dispatchers.IO
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
 
@@ -27,6 +29,15 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             App.db.bookDao().getRecentRead().map { book ->
                 if (book.origin != BookType.local) {
                     val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
+                    bookSource?.let {
+                        WebBook(bookSource).getChapterList(book).onSuccess(IO) {
+                            it?.let {
+                                if (it.size > App.db.bookChapterDao().getChapterCount(book.bookUrl)) {
+
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
