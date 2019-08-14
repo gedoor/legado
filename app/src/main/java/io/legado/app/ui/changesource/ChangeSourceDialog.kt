@@ -26,6 +26,11 @@ class ChangeSourceDialog(val name: String, val author: String) : DialogFragment(
         initSearchView()
     }
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    }
+
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(context)
     }
