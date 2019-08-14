@@ -73,6 +73,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         refresh_layout.setColorSchemeColors(accentColor)
         refresh_layout.setOnRefreshListener {
             refresh_layout.isRefreshing = false
+            viewModel.upChapterList()
         }
         tv_recent_reading.textColor = accentColor
         rv_book_group.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -115,6 +116,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun search() {
 
+    }
+
+    override fun updateList(): List<String> {
+        return viewModel.updateList
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

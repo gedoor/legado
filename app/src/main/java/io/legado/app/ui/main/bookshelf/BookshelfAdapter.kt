@@ -65,6 +65,13 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
                 callBack?.openBookInfo(book)
                 true
             }
+            callBack?.let {
+                if (book.bookUrl in it.updateList()) {
+                    rl_loading.show()
+                } else {
+                    rl_loading.hide()
+                }
+            } ?: rl_loading.hide()
         }
     }
 
@@ -72,5 +79,6 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
         fun open(book: Book)
         fun openBookInfo(book: Book)
         fun search()
+        fun updateList(): List<String>
     }
 }

@@ -10,6 +10,9 @@ import kotlinx.coroutines.Dispatchers.IO
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
 
+    val updateList = arrayListOf<String>()
+
+
     fun saveBookGroup(group: String?) {
         if (!group.isNullOrBlank()) {
             execute {
@@ -30,13 +33,14 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 if (book.origin != BookType.local) {
                     val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
+                        updateList.add(book.bookUrl)
                         WebBook(bookSource).getChapterList(book).onSuccess(IO) {
                             it?.let {
                                 if (it.size > App.db.bookChapterDao().getChapterCount(book.bookUrl)) {
-
+                                    App.db.bookChapterDao().insert(*it.toTypedArray())
                                 }
                             }
-                        }
+                        }.onFinally { updateList.remove(book.bookUrl) }
                     }
                 }
             }
