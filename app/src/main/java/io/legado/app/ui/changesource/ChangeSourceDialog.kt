@@ -20,8 +20,7 @@ class ChangeSourceDialog(val name: String, val author: String) : DialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tool_bar.inflateMenu(R.menu.search_view)
-        tool_bar.title = name
-        tool_bar.subtitle = getString(R.string.author_show, author)
+        showTitle()
         initRecyclerView()
         initSearchView()
     }
@@ -31,12 +30,25 @@ class ChangeSourceDialog(val name: String, val author: String) : DialogFragment(
         dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
+    private fun showTitle() {
+        tool_bar.title = name
+        tool_bar.subtitle = getString(R.string.author_show, author)
+    }
+
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(context)
     }
 
     private fun initSearchView() {
         val searchView = tool_bar.menu.findItem(R.id.menu_search).actionView as SearchView
+        searchView.setOnCloseListener {
+            showTitle()
+            false
+        }
+        searchView.setOnSearchClickListener {
+            tool_bar.title = ""
+            tool_bar.subtitle = ""
+        }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
