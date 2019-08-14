@@ -111,7 +111,7 @@ object BookList {
                 analyzeRule.setContent(analyzeRule.getElement(it))
             }
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名")
-            searchBook.name = analyzeRule.getString(name ?: "")
+            searchBook.name = analyzeRule.getString(name ?: "") ?: ""
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "")
             if (!searchBook.name.isNullOrEmpty()) {
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取作者")
@@ -162,7 +162,7 @@ object BookList {
         analyzeRule.setContent(item)
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名", printLog)
         searchBook.name = analyzeRule.getString(ruleName)
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "", printLog)
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name, printLog)
         if (!searchBook.name.isNullOrEmpty()) {
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书籍Url", printLog)
             searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)

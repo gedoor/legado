@@ -18,8 +18,8 @@ data class SearchBook(
     var bookUrl: String = "",
     var origin: String = "",                     // 书源规则
     var originName: String = "",
-    var name: String? = null,
-    var author: String? = null,
+    var name: String = "",
+    var author: String = "",
     var kind: String? = null,
     var coverUrl: String? = null,
     var intro: String? = null,

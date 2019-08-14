@@ -47,14 +47,14 @@ object Restore {
                     val book = Book()
                     book.bookUrl = jsonItem.readString("$.noteUrl") ?: ""
                     if (book.bookUrl.isBlank()) continue
-                    book.name = jsonItem.readString("$.bookInfoBean.name")
+                    book.name = jsonItem.readString("$.bookInfoBean.name") ?: ""
                     if (book.bookUrl in existingBooks) {
                         Log.d(AppConst.APP_TAG, "Found existing book: ${book.name}")
                         continue
                     }
                     book.origin = jsonItem.readString("$.tag") ?: ""
                     book.originName = jsonItem.readString("$.bookInfoBean.origin") ?: ""
-                    book.author = jsonItem.readString("$.bookInfoBean.author")
+                    book.author = jsonItem.readString("$.bookInfoBean.author") ?: ""
                     book.type = if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
                     book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl
                     book.coverUrl = jsonItem.readString("$.bookInfoBean.coverUrl")

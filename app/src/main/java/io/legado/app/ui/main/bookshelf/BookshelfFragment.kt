@@ -62,7 +62,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
-            R.id.action_search -> startActivity<SearchActivity>()
+            R.id.menu_search -> startActivity<SearchActivity>()
         }
     }
 

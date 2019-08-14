@@ -34,7 +34,7 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search_view, menu)
-        val search = menu.findItem(R.id.action_search)
+        val search = menu.findItem(R.id.menu_search)
         searchView = search.actionView as SearchView
         ATH.setTint(searchView!!, primaryTextColor)
         searchView?.maxWidth = resources.displayMetrics.widthPixels
