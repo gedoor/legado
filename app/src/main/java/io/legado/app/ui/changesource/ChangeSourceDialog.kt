@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
@@ -20,8 +21,13 @@ class ChangeSourceDialog(val name: String, val author: String) : DialogFragment(
         super.onViewCreated(view, savedInstanceState)
         tool_bar.inflateMenu(R.menu.search_view)
         tool_bar.title = name
-        tool_bar.subtitle = author
+        tool_bar.subtitle = getString(R.string.author_show, author)
+        initRecyclerView()
         initSearchView()
+    }
+
+    private fun initRecyclerView() {
+        recycler_view.layoutManager = LinearLayoutManager(context)
     }
 
     private fun initSearchView() {
@@ -37,4 +43,6 @@ class ChangeSourceDialog(val name: String, val author: String) : DialogFragment(
 
         })
     }
+
+
 }
