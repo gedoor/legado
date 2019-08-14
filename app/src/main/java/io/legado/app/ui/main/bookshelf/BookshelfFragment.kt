@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
@@ -27,10 +28,7 @@ import io.legado.app.ui.bookinfo.BookInfoActivity
 import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.ui.read.ReadActivity
 import io.legado.app.ui.search.SearchActivity
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.requestInputMethod
-import io.legado.app.utils.startActivity
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -85,7 +83,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookshelfAdapter = BookshelfAdapter()
         rv_bookshelf.adapter = bookshelfAdapter
         bookshelfAdapter.callBack = this
-        viewModel.adapterNotification.observe(viewLifecycleOwner, Observer { bookshelfAdapter.notification(it) })
+        observeEvent<String>(Bus.UP_BOOK) { bookshelfAdapter.notification(it) }
     }
 
     private fun initBookGroupData() {
