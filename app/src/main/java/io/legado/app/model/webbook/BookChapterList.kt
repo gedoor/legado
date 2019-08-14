@@ -95,6 +95,9 @@ object BookChapterList {
         val lh = LinkedHashSet(chapterList)
         chapterList = ArrayList(lh)
         chapterList.reverse()
+        for ((index, item) in chapterList.withIndex()) {
+            item.index = index
+        }
         return chapterList
     }
 
