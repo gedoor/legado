@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/menu_edit"
-        android:icon="@drawable/ic_save"
+        android:icon="@drawable/ic_edit"
         android:title="@string/edit"
         app:showAsAction="ifRoom" />
 
@@ -12,7 +12,7 @@
         android:id="@+id/menu_refresh"
         android:icon="@drawable/ic_refresh_black_24dp"
         android:title="@string/refresh"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
 
 </menu>
