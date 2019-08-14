@@ -13,6 +13,7 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list) {
     override val viewModel: ChapterListViewModel
@@ -24,6 +25,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        initView()
         initData()
     }
 
@@ -37,5 +39,24 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         liveData?.removeObservers(viewLifecycleOwner)
         liveData = LivePagedListBuilder(App.db.bookChapterDao().observeByBook(viewModel.bookUrl ?: ""), 30).build()
         liveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+    }
+
+    private fun initView() {
+        viewModel.bookDate.value?.let {
+            tv_current_chapter_info.text = it.durChapterTitle
+        } ?: viewModel.bookDate.observe(viewLifecycleOwner, Observer {
+            tv_current_chapter_info.text = it.durChapterTitle
+        })
+        iv_chapter_top.onClick { recycler_view.scrollToPosition(0) }
+        iv_chapter_bottom.onClick {
+            if (adapter.itemCount > 0) {
+                recycler_view.scrollToPosition(adapter.itemCount - 1)
+            }
+        }
+        tv_current_chapter_info.onClick {
+            viewModel.bookDate.value?.let {
+                recycler_view.scrollToPosition(it.durChapterIndex)
+            }
+        }
     }
 }
