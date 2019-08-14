@@ -118,8 +118,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     }
 
-    override fun updateList(): List<String> {
-        return viewModel.updateList
+    override fun isUpdate(bookUrl: String): Boolean {
+        return bookUrl in viewModel.updateList
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

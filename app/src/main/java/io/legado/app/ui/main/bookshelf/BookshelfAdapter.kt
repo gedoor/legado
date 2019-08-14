@@ -7,6 +7,7 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ThemeStore
@@ -66,7 +67,7 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
                 true
             }
             callBack?.let {
-                if (book.bookUrl in it.updateList()) {
+                if (book.origin != BookType.local && it.isUpdate(book.bookUrl)) {
                     rl_loading.show()
                 } else {
                     rl_loading.hide()
@@ -79,6 +80,6 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
         fun open(book: Book)
         fun openBookInfo(book: Book)
         fun search()
-        fun updateList(): List<String>
+        fun isUpdate(bookUrl: String): Boolean
     }
 }
