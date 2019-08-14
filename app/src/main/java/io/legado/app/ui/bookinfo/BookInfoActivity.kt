@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
+import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -19,6 +20,8 @@ import org.jetbrains.anko.startActivity
 class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info) {
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
+
+    var changeSourceDialog: ChangeSourceDialog? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
@@ -114,5 +117,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         tv_loading.onClick { }
+        tv_change_source.onClick {
+            if (changeSourceDialog == null) {
+                changeSourceDialog = ChangeSourceDialog()
+            }
+            changeSourceDialog?.show(supportFragmentManager, "changeSource")
+        }
     }
 }
