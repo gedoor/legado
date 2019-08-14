@@ -9,7 +9,6 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_read_bottom_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadBottomMenu : FrameLayout {
 
@@ -76,24 +75,12 @@ class ReadBottomMenu : FrameLayout {
 
         //自动翻页
         fabAutoPage.onClick { callback?.autoPage() }
-        fabAutoPage.onLongClick {
-            callback?.toast(R.string.auto_next_page)
-            true
-        }
 
         //替换
         fabReplaceRule.onClick { callback?.openReplaceRule() }
-        fabReplaceRule.onLongClick {
-            callback?.toast(R.string.replace_rule_title)
-            true
-        }
 
         //夜间模式
         fabNightTheme.onClick { callback?.setNightTheme() }
-        fabNightTheme.onLongClick {
-            callback?.toast(R.string.night_theme)
-            true
-        }
 
         //上一章
         tv_pre.onClick { callback?.skipPreChapter() }

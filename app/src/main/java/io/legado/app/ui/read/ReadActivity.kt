@@ -129,7 +129,7 @@ class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
             }
 
             override fun toast(id: Int) {
-                toast(id)
+                this@ReadActivity.toast(id)
             }
 
             override fun dismiss() {

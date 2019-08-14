@@ -23,10 +23,12 @@
             android:contentDescription="@string/set_timer"
             android:src="@drawable/ic_timer_black_24dp"
             android:tint="@color/tv_text_default"
+            android:tooltipText="@string/set_timer"
             app:backgroundTint="@color/background_menu"
             app:elevation="2dp"
             app:fabSize="mini"
-            app:pressedTranslationZ="2dp" />
+            app:pressedTranslationZ="2dp"
+            tools:ignore="UnusedAttribute" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -62,10 +64,12 @@
             android:contentDescription="@string/read_aloud"
             android:src="@drawable/ic_read_aloud"
             android:tint="@color/tv_text_default"
+            android:tooltipText="@string/read_aloud"
             app:backgroundTint="@color/background_menu"
             app:elevation="2dp"
             app:fabSize="mini"
-            app:pressedTranslationZ="2dp" />
+            app:pressedTranslationZ="2dp"
+            tools:ignore="UnusedAttribute" />
 
         <Space
             android:layout_width="0dp"
@@ -80,10 +84,12 @@
             android:contentDescription="@string/auto_next_page"
             android:src="@drawable/ic_auto_page"
             android:tint="@color/tv_text_default"
+            android:tooltipText="@string/auto_next_page"
             app:backgroundTint="@color/background_menu"
             app:elevation="2dp"
             app:fabSize="mini"
-            app:pressedTranslationZ="2dp" />
+            app:pressedTranslationZ="2dp"
+            tools:ignore="UnusedAttribute" />
 
         <Space
             android:layout_width="0dp"
@@ -98,10 +104,12 @@
             android:contentDescription="@string/replace_rule_title"
             android:src="@drawable/ic_find_replace"
             android:tint="@color/tv_text_default"
+            android:tooltipText="@string/replace_rule_title"
             app:backgroundTint="@color/background_menu"
             app:elevation="2dp"
             app:fabSize="mini"
-            app:pressedTranslationZ="2dp" />
+            app:pressedTranslationZ="2dp"
+            tools:ignore="UnusedAttribute" />
 
         <Space
             android:layout_width="0dp"
@@ -116,10 +124,12 @@
             android:contentDescription="@string/night_theme"
             android:src="@drawable/ic_brightness"
             android:tint="@color/tv_text_default"
+            android:tooltipText="@string/night_theme"
             app:backgroundTint="@color/background_menu"
             app:elevation="2dp"
             app:fabSize="mini"
-            app:pressedTranslationZ="2dp" />
+            app:pressedTranslationZ="2dp"
+            tools:ignore="UnusedAttribute" />
 
     </LinearLayout>
 
