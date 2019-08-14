@@ -5,10 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.legado.app.ui.widget.TitleBar
-        android:id="@+id/title_bar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:displayHomeAsUp="false"
         app:fitStatusBar="false"
         app:layout_constraintTop_toTopOf="parent" />
 

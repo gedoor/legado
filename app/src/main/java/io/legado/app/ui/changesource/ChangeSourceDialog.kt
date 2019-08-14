@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
 class ChangeSourceDialog : DialogFragment() {
@@ -17,6 +18,7 @@ class ChangeSourceDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        tool_bar.inflateMenu(R.menu.search_view)
     }
 
 
