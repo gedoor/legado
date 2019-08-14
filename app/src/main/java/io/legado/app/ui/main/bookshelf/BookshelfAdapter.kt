@@ -33,6 +33,17 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
 
     var callBack: CallBack? = null
 
+    fun notification(bookUrl: String) {
+        for (i in 0..itemCount) {
+            getItem(i)?.let {
+                if (it.bookUrl == bookUrl) {
+                    notifyItemChanged(i)
+                    return
+                }
+            }
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bookshelf_list, parent, false))
     }

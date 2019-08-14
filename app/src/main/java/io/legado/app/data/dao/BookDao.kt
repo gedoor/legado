@@ -40,7 +40,7 @@ interface BookDao {
     fun recentRead(): DataSource.Factory<Int, Book>
 
     @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,10")
-    fun getRecentRead(): DataSource.Factory<Int, Book>
+    fun getRecentRead(): List<Book>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg book: Book)

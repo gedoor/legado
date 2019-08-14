@@ -85,6 +85,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookshelfAdapter = BookshelfAdapter()
         rv_bookshelf.adapter = bookshelfAdapter
         bookshelfAdapter.callBack = this
+        viewModel.adapterNotification.observe(viewLifecycleOwner, Observer { bookshelfAdapter.notification(it) })
     }
 
     private fun initBookGroupData() {
