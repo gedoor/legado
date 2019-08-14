@@ -60,7 +60,7 @@ class ReadBottomMenu : FrameLayout {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                callback!!.skipToPage(seekBar.progress)
+                callback?.skipToPage(seekBar.progress)
             }
         })
 
@@ -84,7 +84,7 @@ class ReadBottomMenu : FrameLayout {
         //替换
         fabReplaceRule.onClick { callback?.openReplaceRule() }
         fabReplaceRule.onLongClick {
-            callback!!.toast(R.string.replace_rule_title)
+            callback?.toast(R.string.replace_rule_title)
             true
         }
 
