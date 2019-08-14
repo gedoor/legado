@@ -63,7 +63,7 @@
                 android:singleLine="true"
                 tools:ignore="NestedWeights" />
 
-            <TextView
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_change_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -166,6 +166,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:ellipsize="middle"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -181,7 +182,9 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/go_to_top"
             android:src="@drawable/ic_arrow_drop_up"
-            app:tint="@color/tv_text_default" />
+            android:tooltipText="@string/go_to_top"
+            app:tint="@color/tv_text_default"
+            tools:ignore="UnusedAttribute" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_chapter_bottom"
@@ -190,7 +193,9 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/go_to_bottom"
             android:src="@drawable/ic_arrow_drop_down"
-            app:tint="@color/tv_text_default" />
+            android:tooltipText="@string/go_to_bottom"
+            app:tint="@color/tv_text_default"
+            tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
     <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
