@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
-    ViewPager.OnPageChangeListener {
+    ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
 
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
@@ -72,16 +72,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             putPrefInt("versionCode", App.INSTANCE.versionCode)
         }
     }
-
-    override fun onPageScrollStateChanged(state: Int) {
-
-    }
-
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
-    }
-
 
     override fun onPageSelected(position: Int) {
         bottom_navigation_view.menu.getItem(position).isChecked = true
