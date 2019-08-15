@@ -202,6 +202,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     override fun changeTo(book: Book) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 }
