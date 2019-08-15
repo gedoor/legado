@@ -1,12 +1,19 @@
 package io.legado.app.service
 
+import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.support.v4.media.session.MediaSessionCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
+import io.legado.app.receiver.MediaButtonIntentReceiver
 import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
 import java.util.*
@@ -14,6 +21,7 @@ import java.util.*
 class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
 
     companion object {
+        val tag = ReadAloudService::class.java.simpleName
         var isRun = false
         fun paly(context: Context, title: String, body: String) {
 
@@ -46,11 +54,17 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
 
     private var textToSpeech: TextToSpeech? = null
     private var ttsIsSuccess: Boolean = false
+    private lateinit var audioManager: AudioManager
+    private lateinit var mFocusRequest: AudioFocusRequest
+    private var mediaSessionCompat: MediaSessionCompat? = null
 
     override fun onCreate() {
         super.onCreate()
         isRun = true
         textToSpeech = TextToSpeech(this, this)
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        initFocusRequest()
+        initMediaSession()
 
     }
 
@@ -96,12 +110,63 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
+    /**
+     * 初始化MediaSession
+     */
+    private fun initMediaSession() {
+        val mComponent = ComponentName(packageName, MediaButtonIntentReceiver::class.java.name)
+        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+        mediaButtonIntent.component = mComponent
+        val mediaButtonReceiverPendingIntent = PendingIntent.getBroadcast(
+            this, 0,
+            mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT
+        )
+
+        mediaSessionCompat = MediaSessionCompat(this, tag, mComponent, mediaButtonReceiverPendingIntent)
+        mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
+                return MediaButtonIntentReceiver.handleIntent(this@ReadAloudService, mediaButtonEvent)
+            }
+        })
+        mediaSessionCompat?.setMediaButtonReceiver(mediaButtonReceiverPendingIntent)
+    }
+
+    private fun initFocusRequest() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val mPlaybackAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            mFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(mPlaybackAttributes)
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener(this)
+                .build()
+        }
+    }
+
+    /**
+     * @return 音频焦点
+     */
+    private fun requestFocus(): Boolean {
+        val request: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManager.requestAudioFocus(mFocusRequest)
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.requestAudioFocus(
+                this,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+        }
+        return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    }
+
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
             }
-
             AudioManager.AUDIOFOCUS_LOSS -> {
                 // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
             }
