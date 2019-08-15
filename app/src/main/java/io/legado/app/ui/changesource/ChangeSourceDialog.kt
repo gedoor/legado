@@ -52,6 +52,7 @@ class ChangeSourceDialog : DialogFragment() {
         showTitle()
         initRecyclerView()
         initSearchView()
+        viewModel.startSearch()
     }
 
     override fun onStart() {

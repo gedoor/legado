@@ -8,4 +8,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     var name: String = ""
     var author: String = ""
 
+
+    fun startSearch() {
+
+    }
 }
