@@ -7,7 +7,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.SearchBook
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
-
+    var curBookUrl = ""
     var name: String = ""
     var author: String = ""
     val searchBookData = MutableLiveData<List<SearchBook>>()

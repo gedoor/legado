@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
@@ -22,11 +23,12 @@ class ChangeSourceDialog : DialogFragment() {
     companion object {
         const val tag = "changeSourceDialog"
 
-        fun newInstance(name: String, author: String): ChangeSourceDialog {
+        fun newInstance(name: String, author: String, bookUrl: String? = null): ChangeSourceDialog {
             val changeSourceDialog = ChangeSourceDialog()
             val bundle = Bundle()
             bundle.putString("name", name)
             bundle.putString("author", author)
+            bundle.putString("bookUrl", bookUrl)
             changeSourceDialog.arguments = bundle
             return changeSourceDialog
         }
@@ -50,6 +52,9 @@ class ChangeSourceDialog : DialogFragment() {
             bundle.getString("author")?.let {
                 viewModel.author = it
             }
+            bundle.getString("bookUrl")?.let {
+                viewModel.curBookUrl = it
+            }
         }
         tool_bar.inflateMenu(R.menu.search_view)
         showTitle()
@@ -72,6 +77,17 @@ class ChangeSourceDialog : DialogFragment() {
 
     private fun initRecyclerView() {
         changeSourceAdapter = ChangeSourceAdapter(requireContext())
+        changeSourceAdapter.callBack = object : ChangeSourceAdapter.CallBack {
+            override fun changeTo(searchBook: SearchBook) {
+                callBack?.changeTo(searchBook.toBook())
+                dismiss()
+            }
+
+            override fun curBookUrl(): String {
+                return viewModel.curBookUrl
+            }
+
+        }
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
         recycler_view.adapter = changeSourceAdapter
