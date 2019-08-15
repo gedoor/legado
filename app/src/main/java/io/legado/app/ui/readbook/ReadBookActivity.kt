@@ -15,12 +15,12 @@ import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_read.*
+import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
-class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read), ChangeSourceDialog.CallBack {
+class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book), ChangeSourceDialog.CallBack {
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
