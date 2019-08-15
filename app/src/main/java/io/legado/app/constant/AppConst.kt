@@ -1,5 +1,7 @@
 package io.legado.app.constant
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import io.legado.app.App
 import io.legado.app.R
 import javax.script.ScriptEngine
@@ -19,4 +21,9 @@ object AppConst {
 
     val NOT_AVAILABLE = App.INSTANCE.getString(R.string.not_available)
 
+    val GSON_CONVERTER: Gson = GsonBuilder()
+        .disableHtmlEscaping()
+        .setPrettyPrinting()
+        .setDateFormat("yyyy-MM-dd HH:mm:ssZ")
+        .create()
 }
