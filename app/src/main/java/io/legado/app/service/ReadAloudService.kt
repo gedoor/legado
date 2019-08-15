@@ -18,7 +18,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.help.PendingIntentHelp
-import io.legado.app.receiver.MediaButtonIntentReceiver
+import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
@@ -140,7 +140,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
      * 初始化MediaSession
      */
     private fun initMediaSession() {
-        val mComponent = ComponentName(packageName, MediaButtonIntentReceiver::class.java.name)
+        val mComponent = ComponentName(packageName, MediaButtonReceiver::class.java.name)
         val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
         mediaButtonIntent.component = mComponent
         val mediaButtonReceiverPendingIntent = PendingIntent.getBroadcast(
@@ -151,7 +151,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         mediaSessionCompat = MediaSessionCompat(this, tag, mComponent, mediaButtonReceiverPendingIntent)
         mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-                return MediaButtonIntentReceiver.handleIntent(this@ReadAloudService, mediaButtonEvent)
+                return MediaButtonReceiver.handleIntent(this@ReadAloudService, mediaButtonEvent)
             }
         })
         mediaSessionCompat?.setMediaButtonReceiver(mediaButtonReceiverPendingIntent)

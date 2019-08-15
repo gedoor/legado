@@ -11,10 +11,10 @@ import android.view.KeyEvent
  * 监听耳机键
  */
 
-class MediaButtonIntentReceiver : BroadcastReceiver() {
+class MediaButtonReceiver : BroadcastReceiver() {
 
     companion object {
-        val TAG = MediaButtonIntentReceiver::class.java.simpleName
+        val TAG = MediaButtonReceiver::class.java.simpleName
 
         fun handleIntent(context: Context, intent: Intent): Boolean {
             val intentAction = intent.action
