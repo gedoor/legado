@@ -5,10 +5,12 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import io.legado.app.R
+import io.legado.app.service.ReadAloudService
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_read_bottom_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadBottomMenu : FrameLayout {
 
@@ -69,7 +71,8 @@ class ReadBottomMenu : FrameLayout {
         //朗读
         fab_read_aloud.onClick { callback?.onMediaButton() }
         //长按停止朗读
-        fab_read_aloud.onClick {
+        fab_read_aloud.onLongClick {
+            ReadAloudService.stop(context)
             true
         }
 
