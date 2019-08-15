@@ -16,6 +16,8 @@ import kotlinx.android.synthetic.main.dialog_change_source.*
 class ChangeSourceDialog : DialogFragment() {
 
     companion object {
+        const val tag = "changeSourceDialog"
+
         fun newInstance(name: String, author: String): ChangeSourceDialog {
             val changeSourceDialog = ChangeSourceDialog()
             val bundle = Bundle()

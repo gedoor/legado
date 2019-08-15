@@ -30,7 +30,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.loadBook(intent)
         initView()
         savedInstanceState?.let {
-            changeSourceDialog = supportFragmentManager.findFragmentByTag("changeSourceDialog") as? ChangeSourceDialog
+            changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
             changeSourceDialog?.callBack = this
         }
     }
@@ -128,7 +128,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                     changeSourceDialog?.callBack = this
                 }
             }
-            changeSourceDialog?.show(supportFragmentManager, "changeSource")
+            changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
         }
     }
 }
