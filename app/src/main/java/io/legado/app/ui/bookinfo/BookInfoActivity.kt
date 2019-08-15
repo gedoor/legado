@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
-class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info) {
+class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info), ChangeSourceDialog.CallBack {
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
@@ -29,6 +29,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.loadBook(intent)
         initView()
+        savedInstanceState?.let {
+            changeSourceDialog = supportFragmentManager.findFragmentByTag("changeSourceDialog") as? ChangeSourceDialog
+            changeSourceDialog?.callBack = this
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -121,6 +125,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             if (changeSourceDialog == null) {
                 viewModel.bookData.value?.let {
                     changeSourceDialog = ChangeSourceDialog.newInstance(it.name, it.author)
+                    changeSourceDialog?.callBack = this
                 }
             }
             changeSourceDialog?.show(supportFragmentManager, "changeSource")

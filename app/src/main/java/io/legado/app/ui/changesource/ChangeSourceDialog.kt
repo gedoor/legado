@@ -27,6 +27,7 @@ class ChangeSourceDialog : DialogFragment() {
     }
 
     private lateinit var viewModel: ChangeSourceViewModel
+    var callBack: CallBack? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         viewModel = getViewModel(ChangeSourceViewModel::class.java)
@@ -87,5 +88,9 @@ class ChangeSourceDialog : DialogFragment() {
         })
     }
 
+
+    public interface CallBack {
+
+    }
 
 }
