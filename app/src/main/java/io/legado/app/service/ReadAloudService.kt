@@ -1,9 +1,8 @@
 package io.legado.app.service
 
 import android.app.PendingIntent
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
+import android.content.*
+import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
@@ -11,9 +10,16 @@ import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.Bus
+import io.legado.app.constant.Status
+import io.legado.app.help.PendingIntentHelp
 import io.legado.app.receiver.MediaButtonIntentReceiver
+import io.legado.app.utils.postEvent
 import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
 import java.util.*
@@ -21,8 +27,16 @@ import java.util.*
 class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
 
     companion object {
-        val tag = ReadAloudService::class.java.simpleName
+        val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
+        const val MEDIA_SESSION_ACTIONS = (PlaybackStateCompat.ACTION_PLAY
+                or PlaybackStateCompat.ACTION_PAUSE
+                or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                or PlaybackStateCompat.ACTION_STOP
+                or PlaybackStateCompat.ACTION_SEEK_TO)
+
         fun paly(context: Context, title: String, body: String) {
 
         }
@@ -52,11 +66,20 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
+    private val notificationId = 112201
     private var textToSpeech: TextToSpeech? = null
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
     private var mediaSessionCompat: MediaSessionCompat? = null
+    private var broadcastReceiver: BroadcastReceiver? = null
+    private var speak: Boolean = true
+    private var nowSpeak: Int = 0
+    private val contentList = arrayListOf<String>()
+    private var pause = false
+    private var title: String = ""
+    private var subtitle: String = ""
+    private var timeMinute: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -65,12 +88,15 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         initFocusRequest()
         initMediaSession()
-
+        initBroadcastReceiver()
+        upMediaSessionPlaybackState()
+        upNotification()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
+        unregisterReceiver(broadcastReceiver)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -145,6 +171,37 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
+    private fun initBroadcastReceiver() {
+        broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                val action = intent.action
+                if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == action) {
+                    pauseReadAloud(true)
+                }
+            }
+        }
+        val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+        registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    private fun pauseReadAloud(pause: Boolean) {
+        textToSpeech?.stop()
+    }
+
+    private fun resumeReadAloud() {
+
+    }
+
+    private fun playTTS() {
+        if (contentList.size < 1) {
+            postEvent(Bus.ALOUD_STATE, Status.NEXT)
+            return
+        }
+        if (ttsIsSuccess && !speak && requestFocus()) {
+
+        }
+    }
+
     /**
      * @return 音频焦点
      */
@@ -160,6 +217,18 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             )
         }
         return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    }
+
+    private fun upMediaSessionPlaybackState() {
+        mediaSessionCompat?.setPlaybackState(
+            PlaybackStateCompat.Builder()
+                .setActions(MEDIA_SESSION_ACTIONS)
+                .setState(
+                    if (speak) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
+                    nowSpeak.toLong(), 1f
+                )
+                .build()
+        )
     }
 
     override fun onAudioFocusChange(focusChange: Int) {
@@ -192,6 +261,58 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     }
 
     /**
+     * 更新通知
+     */
+    private fun upNotification() {
+        var nTitle: String = when {
+            pause -> getString(R.string.read_aloud_pause)
+            timeMinute in 1..60 -> getString(R.string.read_aloud_timer, timeMinute)
+            else -> getString(R.string.read_aloud_t)
+        }
+        nTitle += ": $title"
+        if (subtitle.isEmpty())
+            subtitle = getString(R.string.read_aloud_s)
+        val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
+            .setSmallIcon(R.drawable.ic_volume_up)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.icon_read_book))
+            .setOngoing(true)
+            .setContentTitle(nTitle)
+            .setContentText(subtitle)
+            .setContentIntent(PendingIntentHelp.readBookActivityPendingIntent(this))
+        if (pause) {
+            builder.addAction(
+                R.drawable.ic_play_24dp,
+                getString(R.string.resume),
+                PendingIntentHelp.aloudServicePendingIntent(this, "resume")
+            )
+        } else {
+            builder.addAction(
+                R.drawable.ic_pause_24dp,
+                getString(R.string.pause),
+                PendingIntentHelp.aloudServicePendingIntent(this, "pause")
+            )
+        }
+        builder.addAction(
+            R.drawable.ic_stop_black_24dp,
+            getString(R.string.stop),
+            PendingIntentHelp.aloudServicePendingIntent(this, "stop")
+        )
+        builder.addAction(
+            R.drawable.ic_time_add_24dp,
+            getString(R.string.set_timer),
+            PendingIntentHelp.aloudServicePendingIntent(this, "setTimer")
+        )
+        builder.setStyle(
+            androidx.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSessionCompat?.sessionToken)
+                .setShowActionsInCompactView(0, 1, 2)
+        )
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        val notification = builder.build()
+        startForeground(notificationId, notification)
+    }
+
+    /**
      * 朗读监听
      */
     private inner class TTSUtteranceListener : UtteranceProgressListener() {
@@ -208,10 +329,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
 
         }
 
-        override fun onRangeStart(utteranceId: String, start: Int, end: Int, frame: Int) {
-            super.onRangeStart(utteranceId, start, end, frame)
-
-        }
     }
 
 }
