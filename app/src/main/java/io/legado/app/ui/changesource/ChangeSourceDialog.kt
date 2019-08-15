@@ -30,6 +30,7 @@ class ChangeSourceDialog : DialogFragment() {
     }
 
     private lateinit var viewModel: ChangeSourceViewModel
+    private lateinit var changeSourceAdapter: ChangeSourceAdapter
     var callBack: CallBack? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -66,7 +67,9 @@ class ChangeSourceDialog : DialogFragment() {
     }
 
     private fun initRecyclerView() {
+        changeSourceAdapter = ChangeSourceAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(context)
+        recycler_view.adapter = changeSourceAdapter
     }
 
     private fun initSearchView() {
