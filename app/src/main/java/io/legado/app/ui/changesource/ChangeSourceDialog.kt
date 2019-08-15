@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
+import io.legado.app.data.entities.Book
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
@@ -91,8 +92,8 @@ class ChangeSourceDialog : DialogFragment() {
     }
 
 
-    public interface CallBack {
-
+    interface CallBack {
+        fun changeTo(book: Book)
     }
 
 }
