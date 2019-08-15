@@ -120,7 +120,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         tv_change_source.onClick {
             if (changeSourceDialog == null) {
                 viewModel.bookData.value?.let {
-                    changeSourceDialog = ChangeSourceDialog(it.name, it.author)
+                    changeSourceDialog = ChangeSourceDialog.newInstance(it.name, it.author)
                 }
             }
             changeSourceDialog?.show(supportFragmentManager, "changeSource")
