@@ -48,9 +48,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         task?.cancel()
     }
 
-    fun getSearchBook(name: String, author: String?, success: ((searchBook: SearchBook?) -> Unit)?) {
+    fun getSearchBook(name: String, author: String, success: ((searchBook: SearchBook?) -> Unit)?) {
         execute {
-            val searchBook = App.db.searchBookDao().getByNameAuthor(name, author)
+            val searchBook = App.db.searchBookDao().getFirstByNameAuthor(name, author)
             success?.invoke(searchBook)
         }
     }

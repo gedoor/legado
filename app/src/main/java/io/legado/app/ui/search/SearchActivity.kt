@@ -78,7 +78,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
     }
 
-    override fun showBookInfo(name: String, author: String?) {
+    override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
                 startActivity<BookInfoActivity>(Pair("searchBookUrl", it.bookUrl))

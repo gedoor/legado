@@ -96,12 +96,12 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
                     .setAsDrawable(iv_cover)
             }
             onClick {
-                callBack?.showBookInfo(searchBook.name!!, searchBook.author)
+                callBack?.showBookInfo(searchBook.name, searchBook.author)
             }
         }
     }
 
     interface CallBack {
-        fun showBookInfo(name: String, author: String?)
+        fun showBookInfo(name: String, author: String)
     }
 }

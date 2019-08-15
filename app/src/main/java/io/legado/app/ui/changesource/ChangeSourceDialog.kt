@@ -5,8 +5,11 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.data.entities.Book
@@ -70,7 +73,11 @@ class ChangeSourceDialog : DialogFragment() {
     private fun initRecyclerView() {
         changeSourceAdapter = ChangeSourceAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(context)
+        recycler_view.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
         recycler_view.adapter = changeSourceAdapter
+        viewModel.searchBookData.observe(viewLifecycleOwner, Observer {
+            changeSourceAdapter.addItems(it)
+        })
     }
 
     private fun initSearchView() {

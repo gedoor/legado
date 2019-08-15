@@ -3,8 +3,8 @@ package io.legado.app.data.entities
 import io.legado.app.utils.splitNotBlank
 
 data class SearchShow(
-    var name: String? = null,
-    var author: String? = null,
+    var name: String = "",
+    var author: String = "",
     var kind: String? = null,
     var coverUrl: String? = null,
     var intro: String? = null,
