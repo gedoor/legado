@@ -15,7 +15,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_login"
+        android:id="@+id/menu_login"
         android:title="@string/login"
         app:showAsAction="never" />
 

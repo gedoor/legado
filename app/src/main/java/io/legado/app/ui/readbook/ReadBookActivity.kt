@@ -1,4 +1,4 @@
-package io.legado.app.ui.read
+package io.legado.app.ui.readbook
 
 import android.os.Bundle
 import android.view.KeyEvent
@@ -10,6 +10,8 @@ import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.entities.Book
+import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.utils.*
@@ -18,10 +20,11 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
-class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
-    override val viewModel: ReadViewModel
-        get() = getViewModel(ReadViewModel::class.java)
+class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read), ChangeSourceDialog.CallBack {
+    override val viewModel: ReadBookViewModel
+        get() = getViewModel(ReadBookViewModel::class.java)
 
+    private var changeSourceDialog: ChangeSourceDialog? = null
     private var menuBarShow: Boolean = false
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
@@ -33,6 +36,10 @@ class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
         initAnimation()
         initView()
         viewModel.initData(intent)
+        savedInstanceState?.let {
+            changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
+            changeSourceDialog?.callBack = this
+        }
     }
 
     private fun initAnimation() {
@@ -129,7 +136,7 @@ class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
             }
 
             override fun toast(id: Int) {
-                this@ReadActivity.toast(id)
+                this@ReadBookActivity.toast(id)
             }
 
             override fun dismiss() {
@@ -146,7 +153,15 @@ class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-
+            R.id.menu_change_source -> {
+                if (changeSourceDialog == null) {
+                    viewModel.book?.let {
+                        changeSourceDialog = ChangeSourceDialog.newInstance(it.name, it.author)
+                        changeSourceDialog?.callBack = this
+                    }
+                }
+                changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -184,5 +199,9 @@ class ReadActivity : VMBaseActivity<ReadViewModel>(R.layout.activity_read) {
                 bottom_menu.startAnimation(menuBottomOut)
             }
         }
+    }
+
+    override fun changeTo(book: Book) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

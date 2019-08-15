@@ -46,7 +46,7 @@
 
         </io.legado.app.ui.widget.TitleBar>
 
-        <io.legado.app.ui.read.ReadBottomMenu
+        <io.legado.app.ui.readbook.ReadBottomMenu
             android:id="@+id/bottom_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

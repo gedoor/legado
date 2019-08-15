@@ -21,7 +21,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
-    var changeSourceDialog: ChangeSourceDialog? = null
+    private var changeSourceDialog: ChangeSourceDialog? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)

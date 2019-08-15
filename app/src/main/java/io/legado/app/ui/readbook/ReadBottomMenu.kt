@@ -1,4 +1,4 @@
-package io.legado.app.ui.read
+package io.legado.app.ui.readbook
 
 import android.content.Context
 import android.util.AttributeSet

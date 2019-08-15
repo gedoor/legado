@@ -54,7 +54,7 @@
         <activity android:name=".ui.bookinfo.BookInfoEditActivity" />
         <activity android:name=".ui.sourcedebug.SourceDebugActivity" />
         <activity android:name=".ui.booksource.BookSourceActivity" />
-        <activity android:name=".ui.read.ReadActivity" />
+        <activity android:name=".ui.readbook.ReadBookActivity" />
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
 
         <service android:name=".service.CheckSourceService" />

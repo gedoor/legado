@@ -26,7 +26,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.bookinfo.BookInfoActivity
 import io.legado.app.ui.bookshelf.BookshelfActivity
-import io.legado.app.ui.read.ReadActivity
+import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
@@ -106,7 +106,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override fun open(book: Book) {
-        context?.startActivity<ReadActivity>(Pair("bookUrl", book.bookUrl))
+        context?.startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
     }
 
     override fun openBookInfo(book: Book) {

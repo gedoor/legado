@@ -1,4 +1,4 @@
-package io.legado.app.ui.read
+package io.legado.app.ui.readbook
 
 import android.app.Application
 import android.content.Intent
@@ -9,7 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.WebBook
 
-class ReadViewModel(application: Application) : BaseViewModel(application) {
+class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     var book: Book? = null
     var bookSource: BookSource? = null
