@@ -32,7 +32,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     val count = App.db.bookChapterDao().getChapterCount(bookUrl)
                     if (count == 0) {
                         webBook?.getChapterList(book)
-                            ?.onSuccess { cList ->
+                            ?.onSuccess(IO) { cList ->
                                 cList?.let {
                                     App.db.bookChapterDao().insert(*cList.toTypedArray())
                                     chapterMaxIndex.postValue(cList.size)
