@@ -246,6 +246,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEvent<Int>(Bus.TTS_RANGE_START) {}
         observeEvent<String>(Bus.TIME_CHANGED) {}
         observeEvent<Int>(Bus.BATTERY_CHANGED) {}
-        observeEvent<String>(Bus.READ_ALOUD) { onClickReadAloud() }
+        observeEventSticky<String>(Bus.READ_ALOUD) { onClickReadAloud() }
     }
 }

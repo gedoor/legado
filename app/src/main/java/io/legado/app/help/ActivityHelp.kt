@@ -94,7 +94,7 @@ class ActivityHelp private constructor() {
     /**
      * 判断指定Activity是否存在
      */
-    fun isExist(activityClass: Class<*>): Boolean? {
+    fun isExist(activityClass: Class<*>): Boolean {
         var result = false
         for (item in activities) {
             if (item.get()?.javaClass == activityClass) {

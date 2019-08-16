@@ -4,6 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
+import io.legado.app.constant.Bus
+import io.legado.app.help.ActivityHelp
+import io.legado.app.ui.readbook.ReadBookActivity
+import io.legado.app.utils.postEvent
+import org.jetbrains.anko.startActivity
 
 
 /**
@@ -41,7 +46,12 @@ class MediaButtonReceiver : BroadcastReceiver() {
         }
 
         private fun readAloud(context: Context) {
-
+            ActivityHelp.getInstance()?.isExist(ReadBookActivity::class.java)?.let {
+                if (!it) {
+                    context.startActivity<ReadBookActivity>()
+                }
+            }
+            postEvent(Bus.READ_ALOUD, "")
         }
     }
 
