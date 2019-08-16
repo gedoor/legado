@@ -12,7 +12,11 @@ import java.nio.charset.StandardCharsets
 
 object BookHelp {
 
-    var downloadPath = App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
+    private var downloadPath = App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
+
+    fun upDownloadPath() {
+        downloadPath = App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
+    }
 
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) {
