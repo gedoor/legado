@@ -237,7 +237,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override fun loadContentFinish(bookChapter: BookChapter, content: String) {
         launch {
             val textChapter = ChapterProvider().getTextChapter(content_text_view, bookChapter, content)
-            print(textChapter.pages.size)
         }
     }
 
