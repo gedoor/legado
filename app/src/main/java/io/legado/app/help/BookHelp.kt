@@ -8,6 +8,7 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.nio.charset.StandardCharsets
 
 object BookHelp {
 
@@ -34,14 +35,24 @@ object BookHelp {
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-
-
+        val filePath = getChapterPath(book, bookChapter)
+        runCatching {
+            val file = File(filePath)
+            if (file.exists()) {
+                return true
+            }
+        }
         return false
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-
-
+        val filePath = getChapterPath(book, bookChapter)
+        runCatching {
+            val file = File(filePath)
+            if (file.exists()) {
+                return String(file.readBytes(), StandardCharsets.UTF_8)
+            }
+        }
         return null
     }
 
