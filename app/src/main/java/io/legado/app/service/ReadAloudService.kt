@@ -11,13 +11,10 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.Bus
-import io.legado.app.constant.Status
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.notification.ReadAloudNotification
-import io.legado.app.utils.postEvent
 import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
 import java.util.*
@@ -66,15 +63,16 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
-    private var mediaSessionCompat: MediaSessionCompat? = null
+    var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private var speak: Boolean = true
     private var nowSpeak: Int = 0
     private val contentList = arrayListOf<String>()
-    private var pause = false
-    private var title: String = ""
-    private var subtitle: String = ""
-    private var timeMinute: Int = 0
+    var pause = false
+    var title: String = ""
+    var subtitle: String = ""
+    private var readAloudNumber: Int = 0
+    var timeMinute: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -87,13 +85,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState()
-        ReadAloudNotification.upNotification(
-            this,
-            mediaSessionCompat,
-            pause,
-            title,
-            subtitle
-        )
+        ReadAloudNotification.upNotification(this)
     }
 
     override fun onDestroy() {
@@ -106,9 +98,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         intent?.action?.let { action ->
             when (action) {
                 "play" -> {
-                    title = intent.getStringExtra("title")
-                    subtitle = intent.getStringExtra("subtitle")
-
+                    title = intent.getStringExtra("title") ?: ""
+                    subtitle = intent.getStringExtra("subtitle") ?: ""
+                    newReadAloud(intent.getStringExtra("body"))
                 }
                 "pause" -> {
                     pauseReadAloud(true)
@@ -134,10 +126,31 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 } else {
                     textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
                     ttsIsSuccess = true
+                    playTTS()
                 }
             } else {
                 toast(R.string.tts_init_failed)
             }
+        }
+    }
+
+    private fun newReadAloud(body: String?) {
+        if (body.isNullOrEmpty()) {
+            stopSelf()
+        } else {
+            nowSpeak = 0
+            readAloudNumber = 0
+            contentList.clear()
+            contentList.addAll(body.split("\n"))
+        }
+    }
+
+    private fun playTTS() {
+        if (contentList.size < 1 || !ttsIsSuccess) {
+            return
+        }
+        if (!pause && requestFocus()) {
+            ReadAloudNotification.upNotification(this)
         }
     }
 
@@ -181,16 +194,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
 
     private fun resumeReadAloud() {
         playTTS()
-    }
-
-    private fun playTTS() {
-        if (contentList.size < 1) {
-            postEvent(Bus.ALOUD_STATE, Status.NEXT)
-            return
-        }
-        if (ttsIsSuccess && !speak && requestFocus()) {
-
-        }
     }
 
     /**
