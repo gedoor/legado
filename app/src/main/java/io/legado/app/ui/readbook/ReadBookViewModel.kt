@@ -3,6 +3,7 @@ package io.legado.app.ui.readbook
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
@@ -14,7 +15,7 @@ import kotlinx.coroutines.Dispatchers.IO
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
-    var book: Book? = null
+    var bookData = MutableLiveData<Book>()
     var bookSource: BookSource? = null
     var chapterMaxIndex = MediatorLiveData<Int>()
     var webBook: WebBook? = null
@@ -24,8 +25,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         val bookUrl = intent.getStringExtra("bookUrl")
         if (!bookUrl.isNullOrEmpty()) {
             execute {
-                book = App.db.bookDao().getBook(bookUrl)
-                book?.let { book ->
+                App.db.bookDao().getBook(bookUrl).let {
+                    bookData.postValue(it)
+                }
+                bookData.value?.let { book ->
                     bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
                         webBook = WebBook(it)
@@ -34,11 +37,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     if (count == 0) {
                         webBook?.getChapterList(book)
                             ?.onSuccess(IO) { cList ->
-                                cList?.let {
+                                if (!cList.isNullOrEmpty()) {
                                     App.db.bookChapterDao().insert(*cList.toTypedArray())
                                     chapterMaxIndex.postValue(cList.size)
+                                } else {
+
                                 }
-                            }
+                            }?.onError {
+
+                            } ?: let {
+
+                        }
                     } else {
                         chapterMaxIndex.postValue(count)
                     }

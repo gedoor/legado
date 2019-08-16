@@ -49,6 +49,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         initView()
         viewModel.callBack = this
         viewModel.chapterMaxIndex.observe(this, Observer { bookLoadFinish() })
+        viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
         viewModel.initData(intent)
         savedInstanceState?.let {
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
@@ -145,7 +146,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun openChapterList() {
-                viewModel.book?.let {
+                viewModel.bookData.value?.let {
                     startActivity<ChapterListActivity>(Pair("bookUrl", it.bookUrl))
                 }
             }
@@ -182,7 +183,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         when (item.itemId) {
             R.id.menu_change_source -> {
                 if (changeSourceDialog == null) {
-                    viewModel.book?.let {
+                    viewModel.bookData.value?.let {
                         changeSourceDialog = ChangeSourceDialog.newInstance(it.name, it.author)
                         changeSourceDialog?.callBack = this
                     }
@@ -229,7 +230,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     private fun bookLoadFinish() {
-        viewModel.book?.let {
+        viewModel.bookData.value?.let {
             viewModel.loadContent(it, it.durChapterIndex)
         }
     }
@@ -252,7 +253,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
         when (readAloudStatus) {
             Status.STOP -> {
-                viewModel.book?.let {
+                viewModel.bookData.value?.let {
                     ReadAloudService.paly(this, it.name, "", "")
                 }
             }
