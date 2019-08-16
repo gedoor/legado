@@ -30,13 +30,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     companion object {
         val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
-        const val MEDIA_SESSION_ACTIONS = (PlaybackStateCompat.ACTION_PLAY
-                or PlaybackStateCompat.ACTION_PAUSE
-                or PlaybackStateCompat.ACTION_PLAY_PAUSE
-                or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-                or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
-                or PlaybackStateCompat.ACTION_STOP
-                or PlaybackStateCompat.ACTION_SEEK_TO)
 
         fun paly(context: Context, title: String, body: String) {
 
@@ -224,7 +217,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     private fun upMediaSessionPlaybackState() {
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
-                .setActions(MEDIA_SESSION_ACTIONS)
+                .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
                 .setState(
                     if (speak) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
                     nowSpeak.toLong(), 1f
