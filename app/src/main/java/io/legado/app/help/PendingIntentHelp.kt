@@ -9,7 +9,7 @@ object PendingIntentHelp {
 
     fun readBookActivityPendingIntent(context: Context): PendingIntent {
         val intent = Intent(context, ReadBookActivity::class.java)
-        intent.action = ""
+        intent.action = "readBookActivity"
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
