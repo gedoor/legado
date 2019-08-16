@@ -6,6 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
@@ -47,14 +48,20 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
 
-    fun download(book: Book, index: Int) {
+    fun getContent(book: Book, index: Int) {
         App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-            webBook?.getContent(book, chapter)
-                ?.onSuccess(IO) { content ->
-                    content?.let {
-                        BookHelp.saveContent(book, chapter, it)
-                    }
-                }
+            BookHelp.getContent(book, chapter)?.let {
+
+            } ?: download(book, chapter)
         }
+    }
+
+    private fun download(book: Book, chapter: BookChapter) {
+        webBook?.getContent(book, chapter)
+            ?.onSuccess(IO) { content ->
+                content?.let {
+                    BookHelp.saveContent(book, chapter, it)
+                }
+            }
     }
 }
