@@ -42,7 +42,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         setSupportActionBar(toolbar)
         initAnimation()
         initView()
-        viewModel.chapterMaxIndex.observe(this, Observer { })
+        viewModel.chapterMaxIndex.observe(this, Observer { bookLoadFinish() })
         viewModel.initData(intent)
         savedInstanceState?.let {
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
@@ -219,6 +219,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 title_bar.startAnimation(menuTopOut)
                 bottom_menu.startAnimation(menuBottomOut)
             }
+        }
+    }
+
+    private fun bookLoadFinish() {
+        viewModel.book?.let {
+            viewModel.loadContent(it, it.durChapterIndex)
         }
     }
 

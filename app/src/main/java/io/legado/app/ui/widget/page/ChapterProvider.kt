@@ -1,18 +1,22 @@
 package io.legado.app.ui.widget.page
 
-import android.widget.TextView
+import io.legado.app.data.entities.BookChapter
 
 
 class ChapterProvider {
 
 
-    fun getTextChapter(textView: TextView, content: String) {
-
-        textView.text = content
-        val layout = textView.layout
-        val topOfLastLine = textView.height - textView.paddingTop - textView.paddingBottom - textView.lineHeight
-        val lineNum = layout.getLineForVertical(topOfLastLine)
-        val lastCharNum = layout.getLineEnd(lineNum)
+    fun getTextChapter(textView: ContentTextView, bookChapter: BookChapter, content: String): TextChapter {
+        val textPages = arrayListOf<TextPage>()
+        var surplusText = content
+        var pageIndex = 0
+        while (surplusText.isNotEmpty()) {
+            textView.text = surplusText
+            textPages.add(TextPage(pageIndex, surplusText.substring(0, textView.getCharNum())))
+            surplusText = surplusText.substring(textView.getCharNum())
+            pageIndex++
+        }
+        return TextChapter(bookChapter.index, textPages)
     }
 
 
