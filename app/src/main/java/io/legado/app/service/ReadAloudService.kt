@@ -268,11 +268,21 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     private inner class TTSUtteranceListener : UtteranceProgressListener() {
 
         override fun onStart(s: String) {
-
+            postEvent(Bus.TTS_START, readAloudNumber + 1)
+            postEvent(Bus.TTS_RANGE_START, readAloudNumber + 1)
         }
 
         override fun onDone(s: String) {
+            readAloudNumber += contentList[nowSpeak].length + 1
+            nowSpeak += 1
+            if (nowSpeak >= contentList.size) {
+                postEvent(Bus.ALOUD_STATE, Status.NEXT)
+            }
+        }
 
+        override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
+            super.onRangeStart(utteranceId, start, end, frame)
+            postEvent(Bus.TTS_RANGE_START, readAloudNumber + start)
         }
 
         override fun onError(s: String) {
