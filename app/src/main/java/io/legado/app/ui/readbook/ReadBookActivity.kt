@@ -225,5 +225,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<Int>(Bus.ALOUD_STATE) { readAloudStatus = it }
+        observeEvent<Int>(Bus.TTS_START) {}
+        observeEvent<Int>(Bus.TTS_RANGE_START) {}
     }
 }
