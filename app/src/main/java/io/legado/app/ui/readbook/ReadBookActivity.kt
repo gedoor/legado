@@ -25,6 +25,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
@@ -234,8 +235,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     override fun loadContentFinish(bookChapter: BookChapter, content: String) {
-        val textChapter = ChapterProvider().getTextChapter(content_text_view, bookChapter, content)
-        print(textChapter.pages.size)
+        launch {
+            val textChapter = ChapterProvider().getTextChapter(content_text_view, bookChapter, content)
+            print(textChapter.pages.size)
+        }
     }
 
     override fun changeTo(book: Book) {
