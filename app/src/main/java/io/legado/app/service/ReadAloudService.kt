@@ -17,6 +17,7 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
+import io.legado.app.help.MediaHelp
 import io.legado.app.help.PendingIntentHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.utils.postEvent
@@ -206,6 +207,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
      * @return 音频焦点
      */
     private fun requestFocus(): Boolean {
+        MediaHelp.playSilentSound(this)
         val request: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioManager.requestAudioFocus(mFocusRequest)
         } else {
