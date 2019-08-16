@@ -14,6 +14,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
+import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
@@ -29,6 +30,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         get() = getViewModel(ReadBookViewModel::class.java)
 
     private var changeSourceDialog: ChangeSourceDialog? = null
+    private var timeElectricityReceiver: TimeElectricityReceiver? = null
     private var menuBarShow: Boolean = false
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
@@ -45,6 +47,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         savedInstanceState?.let {
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
             changeSourceDialog?.callBack = this
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        timeElectricityReceiver = TimeElectricityReceiver.register(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        timeElectricityReceiver?.let {
+            unregisterReceiver(it)
+            timeElectricityReceiver = null
         }
     }
 
