@@ -33,6 +33,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                                 ?.onSuccess { cList ->
                                     cList?.let {
                                         App.db.bookChapterDao().insert(*cList.toTypedArray())
+                                        chapterMaxIndex.postValue(cList.size)
                                     }
                                 }
                         } else {
