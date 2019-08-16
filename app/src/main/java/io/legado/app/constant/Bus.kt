@@ -6,4 +6,6 @@ object Bus {
     const val ALOUD_STATE = "aloud_state"
     const val TTS_START = "ttsStart"
     const val TTS_RANGE_START = "readAloudNumber"
+    const val BATTERY_CHANGED = "batteryChanged"
+    const val TIME_CHANGED = "timeChanged"
 }
