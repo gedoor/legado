@@ -10,7 +10,10 @@ import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.Bus
+import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
+import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
@@ -30,6 +33,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
     private lateinit var menuBottomOut: Animation
+    private var readAloudStatus = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
@@ -92,8 +96,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
             }
 
-            override fun onMediaButton() {
-
+            override fun clickReadAloud() {
+                onClickReadAloud()
             }
 
             override fun autoPage() {
@@ -203,5 +207,23 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun changeTo(book: Book) {
 
+    }
+
+    private fun onClickReadAloud() {
+        if (!ReadAloudService.isRun) {
+            readAloudStatus = Status.STOP
+            SystemUtils.ignoreBatteryOptimization(this)
+        }
+        when (readAloudStatus) {
+            Status.STOP -> {
+            }
+            Status.PLAY -> ReadAloudService.pause(this)
+            Status.PAUSE -> ReadAloudService.resume(this)
+        }
+    }
+
+    override fun observeLiveBus() {
+        super.observeLiveBus()
+        observeEvent<Int>(Bus.ALOUD_STATE) { readAloudStatus = it }
     }
 }

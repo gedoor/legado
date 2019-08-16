@@ -69,7 +69,7 @@ class ReadBottomMenu : FrameLayout {
         fab_read_aloud_timer.onClick { }
 
         //朗读
-        fab_read_aloud.onClick { callback?.onMediaButton() }
+        fab_read_aloud.onClick { callback?.clickReadAloud() }
         //长按停止朗读
         fab_read_aloud.onLongClick {
             ReadAloudService.stop(context)
@@ -155,7 +155,7 @@ class ReadBottomMenu : FrameLayout {
     interface Callback {
         fun skipToPage(page: Int)
 
-        fun onMediaButton()
+        fun clickReadAloud()
 
         fun autoPage()
 
