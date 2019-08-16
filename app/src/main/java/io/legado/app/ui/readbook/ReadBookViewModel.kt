@@ -48,21 +48,22 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
 
-    fun loadContent(book: Book, index: Int) {
+    fun loadContent(book: Book, index: Int, success: ((content: String) -> Unit)) {
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                 BookHelp.getContent(book, chapter)?.let {
-
-                } ?: download(book, chapter)
+                    success(it)
+                } ?: download(book, chapter, success)
             }
         }
     }
 
-    private fun download(book: Book, chapter: BookChapter) {
+    fun download(book: Book, chapter: BookChapter, success: ((content: String) -> Unit)? = null) {
         webBook?.getContent(book, chapter)
             ?.onSuccess(IO) { content ->
                 content?.let {
                     BookHelp.saveContent(book, chapter, it)
+                    success?.invoke(it)
                 }
             }
     }
