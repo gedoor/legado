@@ -24,16 +24,15 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 val keycode = event.keyCode
                 val action = event.action
 
-                val command: String? = null
+                var command = false
                 when (keycode) {
                     KeyEvent.KEYCODE_MEDIA_STOP, KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_HEADSETHOOK, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
+                        command = true
                     }
-                    else -> {
-                    }
-                }//                    command = ReadAloudService.ActionMediaButton;
-                if (command != null) {
+                }
+                if (command) {
                     if (action == KeyEvent.ACTION_DOWN) {
-                        readAloud(context, command)
+                        readAloud(context)
                         return true
                     }
                 }
@@ -41,7 +40,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
             return false
         }
 
-        private fun readAloud(context: Context, command: String?) {
+        private fun readAloud(context: Context) {
 
         }
     }
