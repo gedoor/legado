@@ -28,18 +28,18 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
                         webBook = WebBook(it)
-                        val count = App.db.bookChapterDao().getChapterCount(bookUrl)
-                        if (count == 0) {
-                            webBook?.getChapterList(book)
-                                ?.onSuccess { cList ->
-                                    cList?.let {
-                                        App.db.bookChapterDao().insert(*cList.toTypedArray())
-                                        chapterMaxIndex.postValue(cList.size)
-                                    }
+                    }
+                    val count = App.db.bookChapterDao().getChapterCount(bookUrl)
+                    if (count == 0) {
+                        webBook?.getChapterList(book)
+                            ?.onSuccess { cList ->
+                                cList?.let {
+                                    App.db.bookChapterDao().insert(*cList.toTypedArray())
+                                    chapterMaxIndex.postValue(cList.size)
                                 }
-                        } else {
-                            chapterMaxIndex.postValue(count)
-                        }
+                            }
+                    } else {
+                        chapterMaxIndex.postValue(count)
                     }
                 }
 
