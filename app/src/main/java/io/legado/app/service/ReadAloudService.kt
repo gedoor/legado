@@ -2,7 +2,6 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.content.*
-import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
@@ -10,15 +9,14 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
+import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
-import io.legado.app.help.PendingIntentHelp
 import io.legado.app.receiver.MediaButtonReceiver
+import io.legado.app.service.notification.ReadAloudNotification
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
@@ -30,8 +28,13 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
 
-        fun paly(context: Context, title: String, body: String) {
-
+        fun paly(context: Context, title: String, subtitle: String, body: String) {
+            val readAloudIntent = Intent(context, ReadAloudService::class.java)
+            readAloudIntent.action = "play"
+            readAloudIntent.putExtra("title", title)
+            readAloudIntent.putExtra("subtitle", subtitle)
+            readAloudIntent.putExtra("body", body)
+            context.startService(readAloudIntent)
         }
 
         fun pause(context: Context) {
@@ -59,7 +62,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
-    private val notificationId = 112201
     private var textToSpeech: TextToSpeech? = null
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
@@ -85,7 +87,13 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState()
-        upNotification()
+        ReadAloudNotification.upNotification(
+            this,
+            mediaSessionCompat,
+            pause,
+            title,
+            subtitle
+        )
     }
 
     override fun onDestroy() {
@@ -98,13 +106,15 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         intent?.action?.let { action ->
             when (action) {
                 "play" -> {
+                    title = intent.getStringExtra("title")
+                    subtitle = intent.getStringExtra("subtitle")
 
                 }
                 "pause" -> {
-
+                    pauseReadAloud(true)
                 }
                 "resume" -> {
-
+                    resumeReadAloud()
                 }
                 "stop" -> {
                     stopSelf()
@@ -120,7 +130,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 val result = textToSpeech?.setLanguage(Locale.CHINA)
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     toast(R.string.tts_fix)
-                    toTTSSetting()
+                    IntentHelp.toTTSSetting(this@ReadAloudService)
                 } else {
                     textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
                     ttsIsSuccess = true
@@ -170,7 +180,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     }
 
     private fun resumeReadAloud() {
-
+        playTTS()
     }
 
     private fun playTTS() {
@@ -228,70 +238,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
             }
         }
-    }
-
-    private fun toTTSSetting() {
-        //跳转到文字转语音设置界面
-        try {
-            val intent = Intent()
-            intent.action = "com.android.settings.TTS_SETTINGS"
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-        } catch (ignored: Exception) {
-            toast(R.string.tip_cannot_jump_setting_page)
-        }
-    }
-
-    /**
-     * 更新通知
-     */
-    private fun upNotification() {
-        var nTitle: String = when {
-            pause -> getString(R.string.read_aloud_pause)
-            timeMinute in 1..60 -> getString(R.string.read_aloud_timer, timeMinute)
-            else -> getString(R.string.read_aloud_t)
-        }
-        nTitle += ": $title"
-        if (subtitle.isEmpty())
-            subtitle = getString(R.string.read_aloud_s)
-        val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
-            .setSmallIcon(R.drawable.ic_volume_up)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.icon_read_book))
-            .setOngoing(true)
-            .setContentTitle(nTitle)
-            .setContentText(subtitle)
-            .setContentIntent(PendingIntentHelp.readBookActivityPendingIntent(this))
-        if (pause) {
-            builder.addAction(
-                R.drawable.ic_play_24dp,
-                getString(R.string.resume),
-                PendingIntentHelp.aloudServicePendingIntent(this, "resume")
-            )
-        } else {
-            builder.addAction(
-                R.drawable.ic_pause_24dp,
-                getString(R.string.pause),
-                PendingIntentHelp.aloudServicePendingIntent(this, "pause")
-            )
-        }
-        builder.addAction(
-            R.drawable.ic_stop_black_24dp,
-            getString(R.string.stop),
-            PendingIntentHelp.aloudServicePendingIntent(this, "stop")
-        )
-        builder.addAction(
-            R.drawable.ic_time_add_24dp,
-            getString(R.string.set_timer),
-            PendingIntentHelp.aloudServicePendingIntent(this, "setTimer")
-        )
-        builder.setStyle(
-            androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionCompat?.sessionToken)
-                .setShowActionsInCompactView(0, 1, 2)
-        )
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        val notification = builder.build()
-        startForeground(notificationId, notification)
     }
 
     /**
