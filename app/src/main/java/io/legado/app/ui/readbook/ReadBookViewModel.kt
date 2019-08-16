@@ -49,10 +49,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
 
     fun loadContent(book: Book, index: Int) {
-        App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-            BookHelp.getContent(book, chapter)?.let {
+        execute {
+            App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                BookHelp.getContent(book, chapter)?.let {
 
-            } ?: download(book, chapter)
+                } ?: download(book, chapter)
+            }
         }
     }
 
