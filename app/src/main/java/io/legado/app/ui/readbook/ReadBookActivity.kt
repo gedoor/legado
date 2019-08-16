@@ -233,6 +233,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
         when (readAloudStatus) {
             Status.STOP -> {
+                viewModel.book?.let {
+                    ReadAloudService.paly(this, it.name, "", "")
+                }
             }
             Status.PLAY -> ReadAloudService.pause(this)
             Status.PAUSE -> ReadAloudService.resume(this)
