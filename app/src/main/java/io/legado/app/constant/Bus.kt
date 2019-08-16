@@ -8,4 +8,5 @@ object Bus {
     const val TTS_RANGE_START = "readAloudNumber"
     const val BATTERY_CHANGED = "batteryChanged"
     const val TIME_CHANGED = "timeChanged"
+    const val READ_ALOUD = "readAloud"
 }
