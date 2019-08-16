@@ -1,8 +1,13 @@
 package io.legado.app.help
 
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.annotation.RequiresApi
 import io.legado.app.R
 
 object MediaHelp {
@@ -13,6 +18,20 @@ object MediaHelp {
             or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
             or PlaybackStateCompat.ACTION_STOP
             or PlaybackStateCompat.ACTION_SEEK_TO)
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequest {
+        val mPlaybackAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
+        return AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(mPlaybackAttributes)
+            .setAcceptsDelayedFocusGain(true)
+            .setOnAudioFocusChangeListener(audioFocusChangeListener)
+            .build()
+    }
 
     fun playSilentSound(mContext: Context) {
         try {

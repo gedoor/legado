@@ -3,7 +3,6 @@ package io.legado.app.service
 import android.app.PendingIntent
 import android.content.*
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
@@ -80,7 +79,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         isRun = true
         textToSpeech = TextToSpeech(this, this)
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        initFocusRequest()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mFocusRequest = MediaHelp.getFocusRequest(this)
+        }
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState()
@@ -149,20 +150,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             }
         })
         mediaSessionCompat?.setMediaButtonReceiver(mediaButtonReceiverPendingIntent)
-    }
-
-    private fun initFocusRequest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val mPlaybackAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-            mFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(mPlaybackAttributes)
-                .setAcceptsDelayedFocusGain(true)
-                .setOnAudioFocusChangeListener(this)
-                .build()
-        }
     }
 
     private fun initBroadcastReceiver() {
