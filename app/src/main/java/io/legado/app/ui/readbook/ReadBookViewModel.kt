@@ -18,6 +18,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var bookSource: BookSource? = null
     var chapterMaxIndex = MediatorLiveData<Int>()
     var webBook: WebBook? = null
+    var callBack: CallBack? = null
 
     fun initData(intent: Intent) {
         val bookUrl = intent.getStringExtra("bookUrl")
@@ -48,23 +49,28 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
 
-    fun loadContent(book: Book, index: Int, success: ((content: String) -> Unit)) {
+    fun loadContent(book: Book, index: Int) {
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                 BookHelp.getContent(book, chapter)?.let {
-                    success(it)
-                } ?: download(book, chapter, success)
+                    callBack?.loadContentFinish(chapter, it)
+                } ?: download(book, chapter)
             }
         }
     }
 
-    fun download(book: Book, chapter: BookChapter, success: ((content: String) -> Unit)? = null) {
+    fun download(book: Book, chapter: BookChapter) {
         webBook?.getContent(book, chapter)
             ?.onSuccess(IO) { content ->
                 content?.let {
                     BookHelp.saveContent(book, chapter, it)
-                    success?.invoke(it)
+                    callBack?.loadContentFinish(chapter, it)
                 }
             }
+    }
+
+
+    interface CallBack {
+        fun loadContentFinish(bookChapter: BookChapter, content: String)
     }
 }

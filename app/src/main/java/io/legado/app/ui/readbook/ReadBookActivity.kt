@@ -14,18 +14,22 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read_book.*
+import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
-class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book), ChangeSourceDialog.CallBack {
+class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book), ChangeSourceDialog.CallBack,
+    ReadBookViewModel.CallBack {
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
@@ -42,6 +46,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         setSupportActionBar(toolbar)
         initAnimation()
         initView()
+        viewModel.callBack = this
         viewModel.chapterMaxIndex.observe(this, Observer { bookLoadFinish() })
         viewModel.initData(intent)
         savedInstanceState?.let {
@@ -226,6 +231,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         viewModel.book?.let {
             viewModel.loadContent(it, it.durChapterIndex)
         }
+    }
+
+    override fun loadContentFinish(bookChapter: BookChapter, content: String) {
+        val textChapter = ChapterProvider().getTextChapter(content_text_view, bookChapter, content)
+        print(textChapter.pages.size)
     }
 
     override fun changeTo(book: Book) {
