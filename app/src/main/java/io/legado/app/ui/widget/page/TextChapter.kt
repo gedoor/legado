@@ -5,11 +5,15 @@ data class TextChapter(
     val title: String,
     val pages: List<TextPage>
 ) {
-    fun getPage(index: Int): TextPage? {
+    fun page(index: Int): TextPage? {
         if (index >= 0 && index < pages.size) {
             return pages[index]
         }
         return null
+    }
+
+    fun pageSize(): Int {
+        return pages.size
     }
 }
 
