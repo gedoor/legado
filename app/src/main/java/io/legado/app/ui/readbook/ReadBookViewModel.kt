@@ -24,6 +24,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var webBook: WebBook? = null
     var callBack: CallBack? = null
     var durChapterIndex = 0
+    var durPageIndex = 0
     var isLocalBook = true
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
@@ -38,6 +39,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 App.db.bookDao().getBook(bookUrl)?.let { book ->
                     bookData.postValue(book)
                     durChapterIndex = book.durChapterIndex
+                    durPageIndex = book.durChapterPos
                     isLocalBook = book.origin == BookType.local
                     bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
