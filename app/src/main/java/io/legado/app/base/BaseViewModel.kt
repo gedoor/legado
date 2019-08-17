@@ -2,12 +2,11 @@ package io.legado.app.base
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.toast
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope by MainScope(),
     AnkoLogger {
@@ -26,6 +25,26 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     open fun toast(message: Int) {
+        launch {
+            getApplication<App>().toast(message)
+        }
+    }
 
+    open fun toast(message: CharSequence) {
+        launch {
+            getApplication<App>().toast(message)
+        }
+    }
+
+    open fun longToast(message: Int) {
+        launch {
+            getApplication<App>().toast(message)
+        }
+    }
+
+    open fun longToast(message: CharSequence) {
+        launch {
+            getApplication<App>().toast(message)
+        }
     }
 }

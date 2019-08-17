@@ -12,7 +12,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
-import io.legado.app.utils.toast
 import kotlinx.coroutines.Dispatchers.IO
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
@@ -43,10 +42,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                                     App.db.bookChapterDao().insert(*cList.toTypedArray())
                                     chapterMaxIndex.postValue(cList.size)
                                 } else {
-
+                                    toast(R.string.load_toc_error)
                                 }
                             }?.onError {
-                                getApplication<App>().toast(R.string.load_toc_error)
+                                toast(R.string.load_toc_error)
                             } ?: autoChangeSource()
                     } else {
                         chapterMaxIndex.postValue(count)
