@@ -246,6 +246,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                         tv_chapter_url.visible()
                     }
                     viewModel.curTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                    content_text_view.text = viewModel.curTextChapter?.page(0)?.stringBuilder
                 }
                 viewModel.durChapterIndex - 1 -> {
                     viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
