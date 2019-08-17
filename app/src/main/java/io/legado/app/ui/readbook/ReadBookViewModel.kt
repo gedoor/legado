@@ -87,7 +87,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun downLoad(book: Book, index: Int) {
+    fun download(book: Book, index: Int) {
         synchronized(loadingLock) {
             if (loadingChapters.contains(index)) return
             loadingChapters.add(index)
