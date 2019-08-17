@@ -10,6 +10,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ImageLoader
+import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.bookinfo.edit.BookInfoEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.readbook.ReadBookActivity
@@ -131,6 +132,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     private fun initRecyclerView() {
+        ATH.applyEdgeEffectColor(rv_chapter_list)
         adapter = ChapterListAdapter(this)
         rv_chapter_list.layoutManager = LinearLayoutManager(this)
         rv_chapter_list.adapter = adapter
