@@ -150,7 +150,7 @@ class AnalyzeByXPath {
         if (rules.size == 1) {
             val jxNodes = jxDocument?.selN(rule)
             jxNodes?.let {
-                TextUtils.join(",", jxNodes)
+                return TextUtils.join(",", jxNodes)
             }
             return null
         } else {
