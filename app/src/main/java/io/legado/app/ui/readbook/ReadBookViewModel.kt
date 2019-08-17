@@ -80,6 +80,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     }
                 } ?: download(book, chapter)
             }
+        }.onError {
+            synchronized(loadingLock) {
+                loadingChapters.remove(index)
+            }
         }
     }
 
@@ -94,6 +98,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     download(book, chapter)
                 }
             }
+        }.onError {
+            synchronized(loadingLock) {
+                loadingChapters.remove(index)
+            }
         }
     }
 
@@ -106,6 +114,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     synchronized(loadingLock) {
                         loadingChapters.remove(chapter.index)
                     }
+                }
+            }?.onError {
+                synchronized(loadingLock) {
+                    loadingChapters.remove(chapter.index)
                 }
             }
     }
