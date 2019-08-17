@@ -28,6 +28,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
+    private val loadingChapters = arrayListOf<Int>()
+    private val loadingLock = "loadingLock"
 
     fun initData(intent: Intent) {
         val bookUrl = intent.getStringExtra("bookUrl")
@@ -65,21 +67,45 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
 
     fun loadContent(book: Book, index: Int) {
+        synchronized(loadingLock) {
+            if (loadingChapters.contains(index)) return
+            loadingChapters.add(index)
+        }
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                 BookHelp.getContent(book, chapter)?.let {
                     callBack?.loadContentFinish(chapter, it)
+                    synchronized(loadingLock) {
+                        loadingChapters.remove(index)
+                    }
                 } ?: download(book, chapter)
             }
         }
     }
 
-    fun download(book: Book, chapter: BookChapter) {
+    fun downLoad(book: Book, index: Int) {
+        synchronized(loadingLock) {
+            if (loadingChapters.contains(index)) return
+            loadingChapters.add(index)
+        }
+        execute {
+            App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                if (!BookHelp.hasContent(book, chapter)) {
+                    download(book, chapter)
+                }
+            }
+        }
+    }
+
+    private fun download(book: Book, chapter: BookChapter) {
         webBook?.getContent(book, chapter)
             ?.onSuccess(IO) { content ->
                 content?.let {
                     BookHelp.saveContent(book, chapter, it)
                     callBack?.loadContentFinish(chapter, it)
+                    synchronized(loadingLock) {
+                        loadingChapters.remove(chapter.index)
+                    }
                 }
             }
     }
