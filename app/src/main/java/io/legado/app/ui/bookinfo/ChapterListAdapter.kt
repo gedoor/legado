@@ -11,7 +11,7 @@ class ChapterListAdapter(context: Context) : SimpleRecyclerAdapter<BookChapter>(
 
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         holder.itemView.apply {
-            tv_chapter_name
+            tv_chapter_name.text = item.title
         }
     }
 

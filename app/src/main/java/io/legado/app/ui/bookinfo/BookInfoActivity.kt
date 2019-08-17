@@ -3,7 +3,9 @@ package io.legado.app.ui.bookinfo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.LinearLayout
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -132,9 +134,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(rv_chapter_list)
         adapter = ChapterListAdapter(this)
+        ATH.applyEdgeEffectColor(rv_chapter_list)
         rv_chapter_list.layoutManager = LinearLayoutManager(this)
+        rv_chapter_list.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
         rv_chapter_list.adapter = adapter
     }
 
