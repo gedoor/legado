@@ -1,5 +1,7 @@
 package io.legado.app.ui.widget.page
 
+import android.text.SpannableStringBuilder
+
 class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
 
     companion object{
@@ -15,11 +17,11 @@ class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<
     }
 
     override fun nextPage(): TextPage {
-        return TextPage(index.plus(1), "index：$index")
+        return TextPage(index.plus(1), SpannableStringBuilder("index：$index"))
     }
 
     override fun previousPage(): TextPage {
-        return TextPage(index.minus(1), "index：$index")
+        return TextPage(index.minus(1), SpannableStringBuilder("index：$index"))
     }
 
 
