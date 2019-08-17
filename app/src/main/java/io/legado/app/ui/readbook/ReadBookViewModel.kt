@@ -26,10 +26,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         val bookUrl = intent.getStringExtra("bookUrl")
         if (!bookUrl.isNullOrEmpty()) {
             execute {
-                App.db.bookDao().getBook(bookUrl).let {
-                    bookData.postValue(it)
-                }
-                bookData.value?.let { book ->
+                App.db.bookDao().getBook(bookUrl)?.let { book ->
+                    bookData.postValue(book)
                     bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
                         webBook = WebBook(it)
