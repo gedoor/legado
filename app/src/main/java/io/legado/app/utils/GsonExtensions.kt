@@ -2,11 +2,15 @@ package io.legado.app.utils
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import org.jetbrains.anko.attempt
 
-val GSON: Gson by lazy { GsonBuilder().create() }
+val GSON: Gson by lazy {
+    GsonBuilder()
+        .disableHtmlEscaping()
+        .setPrettyPrinting()
+        .create()
+}
 
 inline fun <reified T> genericType() = object : TypeToken<T>() {}.type
 
