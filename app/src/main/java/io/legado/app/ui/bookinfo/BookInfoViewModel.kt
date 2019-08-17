@@ -21,6 +21,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 App.db.bookDao().getBook(it)?.let { book ->
                     inBookshelf = true
                     bookData.postValue(book)
+                    val chapterList = App.db.bookChapterDao().getChapterList(it)
+                    if (chapterList.isNotEmpty()) {
+                        chapterListData.postValue(chapterList)
+                    } else {
+                        loadChapter(book)
+                    }
                 }
             } ?: intent.getStringExtra("searchBookUrl")?.let {
                 App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
@@ -28,7 +34,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     if (book.tocUrl.isEmpty()) {
                         loadBookInfo()
                     } else {
-                        loadChapter()
+                        loadChapter(book)
                     }
                 }
             }
@@ -39,8 +45,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         isLoadingData.postValue(false)
     }
 
-    fun loadChapter() {
+    fun loadChapter(book: Book) {
         isLoadingData.postValue(false)
+        App.db.bookSourceDao().getBookSource(book.origin)?.let {
+
+        }
     }
 
     fun saveBook(success: (() -> Unit)?) {

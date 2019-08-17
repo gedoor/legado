@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ImageLoader
+import io.legado.app.ui.bookinfo.edit.BookInfoEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
@@ -22,13 +25,16 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         get() = getViewModel(BookInfoViewModel::class.java)
 
     private var changeSourceDialog: ChangeSourceDialog? = null
+    private lateinit var adapter: ChapterListAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
+        initRecyclerView()
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
+        viewModel.chapterListData.observe(this, Observer { showChapter(it) })
         viewModel.loadBook(intent)
-        initView()
+        initOnClick()
         savedInstanceState?.let {
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
             changeSourceDialog?.callBack = this
@@ -98,6 +104,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
     }
 
+    private fun showChapter(chapterList: List<BookChapter>) {
+        adapter.clearItems()
+        adapter.addItems(chapterList)
+    }
+
     private fun upLoading(isLoading: Boolean) {
         if (isLoading) {
             tv_loading.visible()
@@ -111,7 +122,13 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
     }
 
-    private fun initView() {
+    private fun initRecyclerView() {
+        adapter = ChapterListAdapter(this)
+        rv_chapter_list.layoutManager = LinearLayoutManager(this)
+        rv_chapter_list.adapter = adapter
+    }
+
+    private fun initOnClick() {
         tv_read.onClick {
 
         }

@@ -13,6 +13,9 @@ interface BookChapterDao {
     @Query("select * from chapters where bookUrl = :bookUrl")
     fun observeByBook(bookUrl: String): DataSource.Factory<Int, BookChapter>
 
+    @Query("select * from chapters where bookUrl = :bookUrl")
+    fun getChapterList(bookUrl: String): List<BookChapter>
+
     @Query("select * from chapters where bookUrl = :bookUrl and `index` = :index")
     fun getChapter(bookUrl: String, index: Int): BookChapter?
 

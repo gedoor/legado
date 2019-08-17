@@ -1,4 +1,4 @@
-package io.legado.app.ui.bookinfo
+package io.legado.app.ui.bookinfo.edit
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
