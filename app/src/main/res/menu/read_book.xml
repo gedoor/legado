@@ -35,6 +35,7 @@
             android:id="@+id/menu_set_regex"
             android:icon="@drawable/ic_exchange"
             android:title="@string/txt_chapter_regex"
+            android:visible="false"
             app:showAsAction="always" />
     </group>
 
