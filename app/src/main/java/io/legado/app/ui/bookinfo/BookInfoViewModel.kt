@@ -61,10 +61,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
             WebBook(bookSource).getChapterList(book)
                 .onSuccess(IO) {
-                    if (inBookshelf) {
-
+                    it?.let {
+                        if (inBookshelf) {
+                            App.db.bookChapterDao().insert(*it.toTypedArray())
+                        }
+                        chapterListData.postValue(it)
                     }
-                    chapterListData.postValue(it)
                 }.onError {
                     toast(R.string.error_get_chapter_list)
                 }
