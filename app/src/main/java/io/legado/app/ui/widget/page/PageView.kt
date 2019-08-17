@@ -17,7 +17,7 @@ import org.jetbrains.anko.horizontalPadding
 
 class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs), PageDelegate.PageInterface {
 
-
+    var callBack: CallBack? = null
     private var pageDelegate: PageDelegate? = null
 
     private var prevPage: ContentView? = null
@@ -59,6 +59,12 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
     }
 
+    fun chapterLoadFinish() {
+        callBack?.textChapter()?.let {
+            content_text_view.text = it.page(0)?.stringBuilder
+        }
+    }
+
     fun setPageFactory(factory: PageFactory<*>) {
 
     }
@@ -69,5 +75,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
     override fun hasPrev(): Boolean {
         return true
+    }
+
+    interface CallBack {
+        fun durChapterIndex(): Int
+        fun textChapter(chapterOnDur: Int = 0): TextChapter?
     }
 }

@@ -21,6 +21,8 @@ import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.widget.page.ChapterProvider
+import io.legado.app.ui.widget.page.PageView
+import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.view_book_page.*
@@ -29,7 +31,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
-class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book), ChangeSourceDialog.CallBack,
+class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
+    PageView.CallBack,
+    ChangeSourceDialog.CallBack,
     ReadBookViewModel.CallBack {
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
@@ -47,6 +51,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         setSupportActionBar(toolbar)
         initAnimation()
         initView()
+        page_view.callBack = this
         viewModel.callBack = this
         viewModel.chapterMaxIndex.observe(this, Observer { bookLoadFinish() })
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
@@ -248,7 +253,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                         tv_chapter_url.visible()
                     }
                     viewModel.curTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    content_text_view.text = viewModel.curTextChapter?.page(0)?.stringBuilder
+                    page_view.chapterLoadFinish()
                 }
                 viewModel.durChapterIndex - 1 -> {
                     viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
@@ -262,6 +267,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun changeTo(book: Book) {
 
+    }
+
+    override fun durChapterIndex(): Int {
+        return viewModel.durChapterIndex
+    }
+
+    override fun textChapter(chapterOnDur: Int): TextChapter? {
+        return when (chapterOnDur) {
+            0 -> viewModel.curTextChapter
+            1 -> viewModel.nextTextChapter
+            -1 -> viewModel.prevTextChapter
+            else -> null
+        }
     }
 
     private fun onClickReadAloud() {
