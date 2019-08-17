@@ -13,17 +13,6 @@ class ContentTextView : AppCompatTextView {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     /**
-     * 去除当前页无法显示的字
-     * @return 去掉的字数
-     */
-    fun resize(): Int {
-        val oldContent = text
-        val newContent = oldContent.subSequence(0, getCharNum())
-        text = newContent
-        return oldContent.length - newContent.length
-    }
-
-    /**
      * 获取当前页总字数
      */
     fun getCharNum(): Int {
