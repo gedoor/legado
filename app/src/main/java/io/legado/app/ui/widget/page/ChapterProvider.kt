@@ -3,9 +3,9 @@ package io.legado.app.ui.widget.page
 import io.legado.app.data.entities.BookChapter
 
 
-class ChapterProvider {
+object ChapterProvider {
 
-
+    @Synchronized
     fun getTextChapter(textView: ContentTextView, bookChapter: BookChapter, content: String): TextChapter {
         val textPages = arrayListOf<TextPage>()
         var surplusText = content
