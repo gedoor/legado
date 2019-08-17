@@ -27,6 +27,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     val chapterList = App.db.bookChapterDao().getChapterList(it)
                     if (chapterList.isNotEmpty()) {
                         chapterListData.postValue(chapterList)
+                        isLoadingData.postValue(false)
                     } else {
                         loadChapter(book)
                     }
@@ -45,7 +46,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun loadBookInfo(book: Book) {
-        isLoadingData.postValue(false)
+        isLoadingData.postValue(true)
         App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
             WebBook(bookSource).getBookInfo(book)
                 .onSuccess {
@@ -57,7 +58,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun loadChapter(book: Book) {
-        isLoadingData.postValue(false)
+        isLoadingData.postValue(true)
         App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
             WebBook(bookSource).getChapterList(book)
                 .onSuccess(IO) {
@@ -67,6 +68,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 App.db.bookChapterDao().insert(*it.toTypedArray())
                             }
                             chapterListData.postValue(it)
+                            isLoadingData.postValue(false)
                         }
                     }
                 }.onError {
