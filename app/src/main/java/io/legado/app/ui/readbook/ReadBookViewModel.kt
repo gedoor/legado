@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
@@ -17,10 +18,12 @@ import kotlinx.coroutines.Dispatchers.IO
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     var bookData = MutableLiveData<Book>()
-    var bookSource: BookSource? = null
     var chapterMaxIndex = MediatorLiveData<Int>()
+    var bookSource: BookSource? = null
     var webBook: WebBook? = null
     var callBack: CallBack? = null
+    var durChapterIndex = 0
+    var isLocalBook = true
 
     fun initData(intent: Intent) {
         val bookUrl = intent.getStringExtra("bookUrl")
@@ -28,6 +31,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             execute {
                 App.db.bookDao().getBook(bookUrl)?.let { book ->
                     bookData.postValue(book)
+                    durChapterIndex = book.durChapterIndex
+                    isLocalBook = book.origin == BookType.local
                     bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
                         webBook = WebBook(it)

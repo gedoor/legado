@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <io.legado.app.ui.widget.page.PageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <FrameLayout
         android:id="@+id/fl_menu"
@@ -23,8 +23,8 @@
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:theme="?attr/actionBarStyle">
+            android:theme="?attr/actionBarStyle"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_chapter_name"
@@ -33,7 +33,8 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="@string/chapter"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_chapter_url"
@@ -42,7 +43,8 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="@string/chapter"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone" />
 
         </io.legado.app.ui.widget.TitleBar>
 
