@@ -106,7 +106,13 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     private fun showChapter(chapterList: List<BookChapter>) {
-
+        viewModel.bookData.value?.let {
+            if (it.durChapterIndex < chapterList.size) {
+                tv_current_chapter_info.text = chapterList[it.durChapterIndex].title
+            } else {
+                tv_current_chapter_info.text = chapterList.last().title
+            }
+        }
         adapter.clearItems()
         adapter.addItems(chapterList)
     }
@@ -156,6 +162,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 }
             }
             changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
+        }
+        tv_current_chapter_info.onClick {
+            viewModel.bookData.value?.let {
+                rv_chapter_list.scrollToPosition(it.durChapterIndex)
+            }
         }
     }
 
