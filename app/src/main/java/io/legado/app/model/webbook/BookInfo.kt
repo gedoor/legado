@@ -19,7 +19,7 @@ object BookInfo {
         val baseUrl = analyzeUrl.url
         body ?: throw Exception(
             App.INSTANCE.getString(
-                R.string.get_web_content_error,
+                R.string.error_get_web_content,
                 baseUrl
             )
         )

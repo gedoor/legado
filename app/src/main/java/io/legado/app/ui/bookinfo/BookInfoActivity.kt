@@ -12,6 +12,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ImageLoader
 import io.legado.app.ui.bookinfo.edit.BookInfoEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
+import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -105,6 +106,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     private fun showChapter(chapterList: List<BookChapter>) {
+
         adapter.clearItems()
         adapter.addItems(chapterList)
     }
@@ -130,7 +132,15 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     private fun initOnClick() {
         tv_read.onClick {
-
+            viewModel.bookData.value?.let {
+                if (!viewModel.inBookshelf) {
+                    viewModel.saveBook {
+                        startActivity<ReadBookActivity>(Pair("bookUrl", it.bookUrl))
+                    }
+                } else {
+                    startActivity<ReadBookActivity>(Pair("bookUrl", it.bookUrl))
+                }
+            }
         }
         tv_shelf.onClick {
             viewModel.saveBook {

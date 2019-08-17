@@ -53,10 +53,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                                     App.db.bookChapterDao().insert(*cList.toTypedArray())
                                     chapterMaxIndex.postValue(cList.size)
                                 } else {
-                                    toast(R.string.load_toc_error)
+                                    toast(R.string.error_load_toc)
                                 }
                             }?.onError {
-                                toast(R.string.load_toc_error)
+                                toast(R.string.error_load_toc)
                             } ?: autoChangeSource()
                     } else {
                         chapterMaxIndex.postValue(count)

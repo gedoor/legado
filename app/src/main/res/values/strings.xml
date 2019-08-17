@@ -59,9 +59,6 @@
     <string name="version">版本</string>
     <string name="local">本地</string>
     <string name="search">搜索</string>
-    <string name="net_error_10001">没有网络</string>
-    <string name="net_error_10002">网络连接超时</string>
-    <string name="net_error_10003">数据解析失败</string>
     <string name="origin_format">来源: %s</string>
     <string name="read_dur_progress">最近: %s</string>
     <string name="book_name">书名</string>
@@ -69,7 +66,6 @@
     <string name="check_add_bookshelf">是否将《%s》放入书架？</string>
     <string name="import_books_count">共%s个Text文件</string>
     <string name="is_loading">加载中…</string>
-    <string name="get_data_error">获取数据失败！</string>
     <string name="retry">重试</string>
     <string name="web_service">web服务</string>
     <string name="web_edit_source">web编辑书源</string>
@@ -142,7 +138,6 @@
     <string name="background">背景</string>
     <string name="author">作者</string>
     <string name="author_show">作者:%s</string>
-    <string name="analyze_error">站点暂时不支持解析，请反馈</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_cache">清除缓存</string>
     <string name="action_save">保存</string>
@@ -347,6 +342,7 @@
     <string name="success">成功</string>
     <string name="source_no_login">当前源没有配置登陆地址</string>
 
+    <!-- book source start-->
     <string name="book_source_name">书源名称(bookSourceName)</string>
     <string name="book_source_url">书源URL(bookSourceUrl)</string>
     <string name="book_source_group">书源分组(bookSourceGroup)</string>
@@ -371,6 +367,23 @@
     <string name="rule_chapter_url">章节URL规则(chapterUrl)</string>
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_content_url_next">正文下一页URL规则(nextContentUrl)</string>
+    <!--book source end-->
+
+    <!--error string start-->
+    <string name="error_no_source">没有书源</string>
+    <string name="error_get_book_info">书籍信息获取失败</string>
+    <string name="error_get_content">内容获取失败</string>
+    <string name="error_get_chapter_list">目录获取失败</string>
+    <string name="error_get_web_content">访问网站失败:%s</string>
+    <string name="error_read_file">文件读取失败</string>
+    <string name="error_load_toc">加载目录失败</string>
+    <string name="error_get_data">获取数据失败！</string>
+    <string name="error_load_msg">加载失败\n%s</string>
+    <string name="net_error_10001">没有网络</string>
+    <string name="net_error_10002">网络连接超时</string>
+    <string name="net_error_10003">数据解析失败</string>
+    <!--error string end-->
+
     <string name="source_http_header">header</string>
     <string name="debug_source">调试书源</string>
     <string name="import_by_qr_code">二维码导入</string>
@@ -382,7 +395,6 @@
     <string name="default_theme">默认主题</string>
     <string name="restore_default_theme">恢复主题为默认配色</string>
     <string name="join_qq_group">加入QQ群</string>
-    <string name="read_file_error">文件读取失败</string>
     <string name="bg_image_per">获取背景图片需存储权限</string>
     <string name="input_book_source_url">输入书源网址</string>
     <string name="del_file">删除文件</string>
@@ -408,10 +420,6 @@
     <string name="input_charset">输入编码</string>
     <string name="text_chapter_list_rule">TXT目录规则</string>
     <string name="open_local_book_per">打开外部书籍需获取存储权限</string>
-    <string name="get_book_info_error">书籍信息获取失败</string>
-    <string name="get_content_error">内容获取失败</string>
-    <string name="get_chapter_list_error">目录获取失败</string>
-    <string name="get_web_content_error">访问网站失败:%s</string>
     <string name="no_book_name">未获取到书名</string>
     <string name="input_replace_url">输入替换规则网址</string>
     <string name="get_book_list_success">搜索列表获取成功%d</string>
@@ -439,7 +447,6 @@
     <string name="content_empty">文章内容为空</string>
     <string name="on_change_source">正在换源请等待…</string>
     <string name="chapter_list_empty">目录列表为空</string>
-    <string name="load_error_msg">加载失败\n%s</string>
     <string name="content_padding">正文边距</string>
     <string name="tip_padding">Tip边距</string>
     <string name="text_letter_spacing">字距</string>
@@ -474,5 +481,6 @@
     <string name="dsm_start"><![CDATA[<]]></string>
     <string name="dsm_end"><![CDATA[>]]></string>
     <string name="reading">阅读</string>
-    <string name="load_toc_error">加载目录失败</string>
+
+
 </resources>
