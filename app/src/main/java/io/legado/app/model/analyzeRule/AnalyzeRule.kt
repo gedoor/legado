@@ -465,7 +465,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             //get替换
             rule = replaceGet(rule)
             // 拆分表达式替换规则
-            AnalyzeByRegex.splitRegexRule(rule, ruleParam, ruleType)
+            if (mode != Mode.Js) {
+                AnalyzeByRegex.splitRegexRule(rule, ruleParam, ruleType)
+            }
         }
 
         fun makeUpRule(result: Any?) {
