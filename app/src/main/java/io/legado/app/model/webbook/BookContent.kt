@@ -82,7 +82,9 @@ object BookContent {
         }
         if (content.isNotEmpty()) {
             if (!content[0].toString().startsWith(bookChapter.title)) {
-                content.insert(0, bookChapter.title)
+                content
+                    .insert(0, "\n")
+                    .insert(0, bookChapter.title)
             }
         }
         return content.toString()
