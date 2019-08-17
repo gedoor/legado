@@ -12,6 +12,14 @@ class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<
 
     private var index: Int = 0
 
+    override fun hasPrev(): Boolean {
+        return true
+    }
+
+    override fun hasNext(): Boolean {
+        return true
+    }
+
     override fun pageAt(index: Int): TextPage {
         TODO("todo...")
     }

@@ -16,7 +16,7 @@ class ActivityHelp private constructor() {
         @Volatile
         private var instance: ActivityHelp? = null
 
-        fun getInstance(): ActivityHelp? {
+        fun getInstance(): ActivityHelp {
             if (null == instance) {
                 synchronized(ActivityHelp::class.java) {
                     if (null == instance) {
@@ -24,7 +24,7 @@ class ActivityHelp private constructor() {
                     }
                 }
             }
-            return instance
+            return instance!!
         }
     }
 
@@ -69,7 +69,7 @@ class ActivityHelp private constructor() {
      */
     fun finishActivity(vararg activities: Activity) {
         for (activity in activities) {
-            activity?.finish()
+            activity.finish()
         }
     }
 

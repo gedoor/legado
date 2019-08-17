@@ -8,7 +8,6 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
-import io.legado.app.help.ActivityHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.ThemeStore
@@ -27,7 +26,6 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
         initTheme()
         setupSystemBar()
         super.onCreate(savedInstanceState)
-        ActivityHelp.getInstance()?.add(this)
         setContentView(layoutID)
         onActivityCreated(savedInstanceState)
         observeLiveBus()
@@ -36,7 +34,6 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
     override fun onDestroy() {
         super.onDestroy()
         cancel()
-        ActivityHelp.getInstance()?.remove(this)
     }
 
     abstract fun onActivityCreated(savedInstanceState: Bundle?)

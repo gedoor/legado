@@ -1,10 +1,12 @@
 package io.legado.app
 
+import android.app.Activity
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -12,6 +14,7 @@ import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.data.AppDatabase
+import io.legado.app.help.ActivityHelp
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
@@ -53,6 +56,8 @@ class App : Application() {
             .supportBroadcast(this)
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
+
+        registerActivityLife()
     }
 
     /**
@@ -133,5 +138,33 @@ class App : Application() {
             //向notification manager 提交channel
             it.createNotificationChannels(listOf(downloadChannel, readAloudChannel, webChannel))
         }
+    }
+
+    private fun registerActivityLife(){
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks{
+            override fun onActivityPaused(activity: Activity) {
+                ActivityHelp.getInstance().add(activity)
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+                ActivityHelp.getInstance().remove(activity)
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+            }
+
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            }
+
+        })
     }
 }
