@@ -11,6 +11,7 @@ object ChapterProvider {
     @Synchronized
     fun getTextChapter(textView: ContentTextView, bookChapter: BookChapter, content: String): TextChapter {
         val textPages = arrayListOf<TextPage>()
+        val pageLengths = arrayListOf<Int>()
         var surplusText = content
         var pageIndex = 0
         while (surplusText.isNotEmpty()) {
@@ -20,16 +21,18 @@ object ChapterProvider {
                 spannableStringBuilder.setSpan(span, 0, surplusText.indexOf("\n"), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
             }
             textView.text = spannableStringBuilder
+            pageLengths.add(textView.getCharNum())
             textPages.add(
                 TextPage(
                     pageIndex,
-                    spannableStringBuilder.delete(textView.getCharNum(), spannableStringBuilder.length)
+                    spannableStringBuilder.delete(pageLengths[pageIndex], spannableStringBuilder.length)
                 )
             )
-            surplusText = surplusText.substring(textView.getCharNum())
+            surplusText = surplusText.substring(pageLengths[pageIndex])
+
             pageIndex++
         }
-        return TextChapter(bookChapter.index, bookChapter.title, textPages)
+        return TextChapter(bookChapter.index, bookChapter.title, textPages, pageLengths)
     }
 
 
