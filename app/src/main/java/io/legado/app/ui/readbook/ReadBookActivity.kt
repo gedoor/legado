@@ -237,16 +237,23 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun loadContentFinish(bookChapter: BookChapter, content: String) {
         launch {
-            if (viewModel.durChapterIndex == bookChapter.index) {
-                tv_chapter_name.text = bookChapter.title
-                tv_chapter_name.visible()
-                if (!viewModel.isLocalBook) {
-                    tv_chapter_url.text = bookChapter.url
-                    tv_chapter_url.visible()
+            when (bookChapter.index) {
+                viewModel.durChapterIndex -> {
+                    tv_chapter_name.text = bookChapter.title
+                    tv_chapter_name.visible()
+                    if (!viewModel.isLocalBook) {
+                        tv_chapter_url.text = bookChapter.url
+                        tv_chapter_url.visible()
+                    }
+                    viewModel.curTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                }
+                viewModel.durChapterIndex - 1 -> {
+                    viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                }
+                viewModel.durChapterIndex + 1 -> {
+                    viewModel.nextTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
                 }
             }
-            val textChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-            content_text_view.text = textChapter.pages[0].stringBuilder
         }
     }
 

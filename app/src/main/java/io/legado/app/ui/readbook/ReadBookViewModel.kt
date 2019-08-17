@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
+import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.Dispatchers.IO
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
@@ -24,6 +25,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var callBack: CallBack? = null
     var durChapterIndex = 0
     var isLocalBook = true
+    var prevTextChapter: TextChapter? = null
+    var curTextChapter: TextChapter? = null
+    var nextTextChapter: TextChapter? = null
 
     fun initData(intent: Intent) {
         val bookUrl = intent.getStringExtra("bookUrl")

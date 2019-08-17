@@ -29,7 +29,7 @@ object ChapterProvider {
             surplusText = surplusText.substring(textView.getCharNum())
             pageIndex++
         }
-        return TextChapter(bookChapter.index, textPages)
+        return TextChapter(bookChapter.index, bookChapter.title, textPages)
     }
 
 
