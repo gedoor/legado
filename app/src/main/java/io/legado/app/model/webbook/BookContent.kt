@@ -80,9 +80,15 @@ object BookContent {
                 content.append(item.content)
             }
         }
+        if (content.isNotEmpty()) {
+            if (!content[0].toString().startsWith(bookChapter.title)) {
+                content.insert(0, bookChapter.title)
+            }
+        }
         return content.toString()
     }
 
+    @Throws(Exception::class)
     private fun analyzeContent(
         body: String,
         contentRule: ContentRule,
