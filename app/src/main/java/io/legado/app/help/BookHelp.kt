@@ -27,9 +27,7 @@ object BookHelp {
         //获取流并存储
         try {
             BufferedWriter(FileWriter(file)).use { writer ->
-                writer.write(bookChapter.title + "\n\n")
                 writer.write(content)
-                writer.write("\n\n")
                 writer.flush()
             }
         } catch (e: IOException) {
