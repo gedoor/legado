@@ -24,4 +24,8 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         super.onCleared()
         cancel()
     }
+
+    open fun toast(message: Int) {
+
+    }
 }

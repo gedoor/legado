@@ -5,12 +5,14 @@ import android.content.Intent
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
+import io.legado.app.utils.toast
 import kotlinx.coroutines.Dispatchers.IO
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
@@ -44,10 +46,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
                                 }
                             }?.onError {
-
-                            } ?: let {
-
-                        }
+                                getApplication<App>().toast(R.string.load_toc_error)
+                            } ?: autoChangeSource()
                     } else {
                         chapterMaxIndex.postValue(count)
                     }
@@ -78,6 +78,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
     }
 
+    private fun autoChangeSource() {
+
+    }
 
     interface CallBack {
         fun loadContentFinish(bookChapter: BookChapter, content: String)
