@@ -282,6 +282,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    fun upStyle() {
+        content_view.upStyle()
+        page_view.upStyle()
+    }
+
     private fun onClickReadAloud() {
         if (!ReadAloudService.isRun) {
             readAloudStatus = Status.STOP

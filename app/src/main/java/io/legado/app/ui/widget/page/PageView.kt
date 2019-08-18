@@ -22,6 +22,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     private var nextPage: ContentView? = null
 
     init {
+        prevPage = ContentView(context)
+        addView(prevPage)
+        nextPage = ContentView(context)
+        addView(nextPage)
         curPage = ContentView(context)
         addView(curPage)
 
@@ -71,6 +75,12 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
     override fun hasPrev(): Boolean {
         return true
+    }
+
+    fun upStyle() {
+        curPage?.upStyle()
+        prevPage?.upStyle()
+        nextPage?.upStyle()
     }
 
     interface CallBack {
