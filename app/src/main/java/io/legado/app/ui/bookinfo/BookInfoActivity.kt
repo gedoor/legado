@@ -24,7 +24,9 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
-class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info), ChangeSourceDialog.CallBack {
+class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info),
+    ChapterListAdapter.CallBack,
+    ChangeSourceDialog.CallBack {
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
@@ -134,7 +136,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     private fun initRecyclerView() {
-        adapter = ChapterListAdapter(this)
+        adapter = ChapterListAdapter(this, this)
         ATH.applyEdgeEffectColor(rv_chapter_list)
         rv_chapter_list.layoutManager = LinearLayoutManager(this)
         rv_chapter_list.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
@@ -176,6 +178,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     override fun changeTo(book: Book) {
+
+    }
+
+    override fun skipToChapter(index: Int) {
 
     }
 }
