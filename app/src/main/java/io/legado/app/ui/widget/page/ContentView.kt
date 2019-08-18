@@ -20,9 +20,12 @@ class ContentView : FrameLayout {
     init {
         inflate(context, R.layout.view_book_page, this)
 
-        page_panel.horizontalPadding = 16.dp
+        upStyle()
     }
 
+    fun upStyle() {
+        page_panel.horizontalPadding = 16.dp
+    }
 
     fun setContent(text: CharSequence?) {
         content_text_view.text = text
