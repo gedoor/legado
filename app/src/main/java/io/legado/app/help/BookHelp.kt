@@ -65,9 +65,7 @@ object BookHelp {
     }
 
     private fun formatFolderName(folderName: String): String {
-        return folderName.replace("/", "")
-            .replace(":", "")
-            .replace(".", "")
+        return folderName.replace("[\\\\/:*?\"<>|.]".toRegex(), "")
     }
 
     fun formatAuthor(author: String?): String {
