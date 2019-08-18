@@ -57,18 +57,18 @@ data class SearchBook(
     }
 
     fun toBook(): Book {
-        val book = Book()
-        book.name = name
-        book.author = author
-        book.kind = kind
-        book.bookUrl = bookUrl
-        book.origin = origin
-        book.originName = originName
-        book.wordCount = wordCount
-        book.latestChapterTitle = latestChapterTitle
-        book.coverUrl = coverUrl
-        book.intro = intro
-        book.tocUrl = tocUrl
-        return book
+        return Book(
+            name = name,
+            author = author,
+            kind = kind,
+            bookUrl = bookUrl,
+            origin = origin,
+            originName = originName,
+            wordCount = wordCount,
+            latestChapterTitle = latestChapterTitle,
+            coverUrl = coverUrl,
+            intro = intro,
+            tocUrl = tocUrl
+        )
     }
 }

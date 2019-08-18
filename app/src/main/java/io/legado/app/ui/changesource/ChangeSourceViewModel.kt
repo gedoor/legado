@@ -67,7 +67,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 .onSuccess(Dispatchers.IO) {
                     it?.let {
                         if (it.isNotEmpty()) {
-
+                            book.latestChapterTitle = it.last().title
+                            searchBooks.add(book.toSearchBook())
                         }
                     }
                 }.onError {

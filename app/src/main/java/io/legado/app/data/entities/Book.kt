@@ -89,4 +89,20 @@ data class Book(
         }
         return kindList
     }
+
+    fun toSearchBook(): SearchBook {
+        return SearchBook(
+            name = name,
+            author = author,
+            kind = kind,
+            bookUrl = bookUrl,
+            origin = origin,
+            originName = originName,
+            wordCount = wordCount,
+            latestChapterTitle = latestChapterTitle,
+            coverUrl = coverUrl,
+            intro = intro,
+            tocUrl = tocUrl
+        )
+    }
 }
