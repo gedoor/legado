@@ -16,6 +16,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.bookinfo.edit.BookInfoEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.readbook.ReadBookActivity
+import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -161,6 +162,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         tv_loading.onClick { }
+        tv_origin.onClick {
+            viewModel.bookData.value?.let {
+                startActivity<SourceEditActivity>(Pair("data", it.origin))
+            }
+        }
         tv_change_source.onClick {
             if (changeSourceDialog == null) {
                 viewModel.bookData.value?.let {
