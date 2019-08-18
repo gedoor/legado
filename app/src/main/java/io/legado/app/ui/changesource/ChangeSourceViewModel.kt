@@ -14,7 +14,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun startSearch() {
         execute {
-            App.db.searchBookDao().getByNameAuthor(name, author).let {
+            App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
                 searchBookData.postValue(it)
             }
         }
