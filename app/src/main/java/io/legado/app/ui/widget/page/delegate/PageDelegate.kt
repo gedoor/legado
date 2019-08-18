@@ -198,8 +198,8 @@ abstract class PageDelegate(private val pageView: PageView) {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             if (!isMoved && abs(distanceX) > abs(distanceY)) {
                 //上一页或下一页截图，还未处理
-                bitmap = pageView.screenshot()
                 if (distanceX < 0) {
+                    bitmap = pageView.prevPage?.screenshot()
                     //上一页的参数配置
                     direction = Direction.PREV
                     //判断是否上一页存在
@@ -210,6 +210,7 @@ abstract class PageDelegate(private val pageView: PageView) {
                         return true
                     }
                 } else {
+                    bitmap = pageView.nextPage?.screenshot()
                     //进行下一页的配置
                     direction = Direction.NEXT
                     //判断是否下一页存在

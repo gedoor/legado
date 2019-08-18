@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/page_panel"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:showDividers="middle"
-        app:divider="@drawable/ic_divider">
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/page_panel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    app:divider="@drawable/ic_divider"
+    app:showDividers="middle">
 
     <View
-            android:id="@+id/top_status_bar"
-            android:layout_width="match_parent"
-            android:layout_height="25dp"/>
+        android:id="@+id/top_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
 
     <FrameLayout
-            android:id="@+id/content_panel"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+        android:id="@+id/content_panel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <io.legado.app.ui.widget.page.ContentTextView
             android:id="@+id/content_text_view"
@@ -28,8 +28,8 @@
     </FrameLayout>
 
     <View
-            android:id="@+id/bottom_status_bar"
-            android:layout_width="match_parent"
-            android:layout_height="25dp"/>
+        android:id="@+id/bottom_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -17,9 +17,9 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     var callBack: CallBack? = null
     private var pageDelegate: PageDelegate? = null
 
-    private var prevPage: ContentView? = null
-    private var curPage: ContentView? = null
-    private var nextPage: ContentView? = null
+    var prevPage: ContentView? = null
+    var curPage: ContentView? = null
+    var nextPage: ContentView? = null
 
     init {
         prevPage = ContentView(context)
@@ -59,9 +59,29 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
     }
 
-    fun chapterLoadFinish() {
-        callBack?.textChapter()?.let {
-            curPage?.setContent(it.page(0)?.stringBuilder)
+    fun chapterLoadFinish(chapterOnDur: Int = 0) {
+        callBack?.let { cb ->
+            when (chapterOnDur) {
+                0 -> {
+                    cb.textChapter()?.let {
+                        curPage?.setContent(it.page(cb.durChapterPos(it.pageSize()))?.text)
+                        if (cb.durChapterPos(it.pageSize()) > 0) {
+                            prevPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) - 1)?.text)
+                        }
+                        if (cb.durChapterPos(it.pageSize()) < it.pageSize() - 1) {
+                            nextPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) + 1)?.text)
+                        }
+                    }
+                }
+                1 -> {
+
+                }
+                -1 -> {
+
+                }
+                else -> {
+                }
+            }
         }
     }
 
@@ -85,6 +105,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
     interface CallBack {
         fun durChapterIndex(): Int
+        fun durChapterPos(pageSize: Int): Int
         fun textChapter(chapterOnDur: Int = 0): TextChapter?
     }
 }
