@@ -236,9 +236,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     private fun bookLoadFinish() {
         viewModel.bookData.value?.let {
-            viewModel.loadContent(it, it.durChapterIndex)
-            viewModel.loadContent(it, it.durChapterIndex + 1)
-            viewModel.loadContent(it, it.durChapterIndex - 1)
+            viewModel.loadContent(it, viewModel.durChapterIndex)
+            viewModel.loadContent(it, viewModel.durChapterIndex + 1)
+            viewModel.loadContent(it, viewModel.durChapterIndex - 1)
         }
     }
 

@@ -59,6 +59,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                                 toast(R.string.error_load_toc)
                             } ?: autoChangeSource()
                     } else {
+                        if (durChapterIndex > count - 1) {
+                            durChapterIndex = count - 1
+                        }
                         chapterMaxIndex.postValue(count)
                     }
                 }
@@ -81,6 +84,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         loadingChapters.remove(index)
                     }
                 } ?: download(book, chapter)
+            } ?: synchronized(loadingLock) {
+                loadingChapters.remove(index)
             }
         }.onError {
             synchronized(loadingLock) {
