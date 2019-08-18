@@ -47,7 +47,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     }
                     val count = App.db.bookChapterDao().getChapterCount(bookUrl)
                     if (count == 0) {
-                        webBook?.getChapterList(book)
+                        webBook?.getChapterList(book, this)
                             ?.onSuccess(IO) { cList ->
                                 if (!cList.isNullOrEmpty()) {
                                     App.db.bookChapterDao().insert(*cList.toTypedArray())
@@ -108,7 +108,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun download(book: Book, chapter: BookChapter) {
-        webBook?.getContent(book, chapter)
+        webBook?.getContent(book, chapter, scope = this)
             ?.onSuccess(IO) { content ->
                 content?.let {
                     BookHelp.saveContent(book, chapter, it)
