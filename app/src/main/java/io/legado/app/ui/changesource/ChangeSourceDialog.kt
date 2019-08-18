@@ -60,7 +60,7 @@ class ChangeSourceDialog : DialogFragment() {
         showTitle()
         initRecyclerView()
         initSearchView()
-        viewModel.startSearch()
+        viewModel.initData()
     }
 
     override fun onStart() {
@@ -112,6 +112,7 @@ class ChangeSourceDialog : DialogFragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.screen(newText)
                 return false
             }
 

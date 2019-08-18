@@ -48,7 +48,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun loadBookInfo(book: Book) {
         isLoadingData.postValue(true)
         App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-            WebBook(bookSource).getBookInfo(book)
+            WebBook(bookSource).getBookInfo(book, this)
                 .onSuccess {
                     it?.let { loadChapter(it) }
                 }.onError {
@@ -60,7 +60,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun loadChapter(book: Book) {
         isLoadingData.postValue(true)
         App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-            WebBook(bookSource).getChapterList(book)
+            WebBook(bookSource).getChapterList(book, this)
                 .onSuccess(IO) {
                     it?.let {
                         if (it.isNotEmpty()) {
