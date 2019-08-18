@@ -7,13 +7,10 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import io.legado.app.R
 import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
-import io.legado.app.utils.dp
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.horizontalPadding
 
 class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs), PageDelegate.PageInterface {
 
@@ -25,13 +22,12 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     private var nextPage: ContentView? = null
 
     init {
-        inflate(context, R.layout.view_book_page, this)
+        curPage = ContentView(context)
+        addView(curPage)
 
         setWillNotDraw(false)
 
         page_panel.backgroundColor = Color.WHITE
-
-        page_panel.horizontalPadding = 16.dp
 
         pageDelegate = CoverPageDelegate(this)
     }
@@ -61,7 +57,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
     fun chapterLoadFinish() {
         callBack?.textChapter()?.let {
-            content_text_view.text = it.page(0)?.stringBuilder
+            curPage?.setContent(it.page(0)?.stringBuilder)
         }
     }
 

@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import io.legado.app.R
+import io.legado.app.utils.dp
+import kotlinx.android.synthetic.main.view_book_page.view.*
+import org.jetbrains.anko.horizontalPadding
 
 
 class ContentView : FrameLayout {
@@ -16,5 +19,12 @@ class ContentView : FrameLayout {
 
     init {
         inflate(context, R.layout.view_book_page, this)
+
+        page_panel.horizontalPadding = 16.dp
+    }
+
+
+    fun setContent(text: CharSequence?) {
+        content_text_view.text = text
     }
 }
