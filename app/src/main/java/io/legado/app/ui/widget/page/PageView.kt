@@ -111,6 +111,18 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         nextPage?.upStyle()
     }
 
+    fun upTime() {
+        curPage?.upTime()
+        prevPage?.upTime()
+        nextPage?.upTime()
+    }
+
+    fun upBattery(battery: Int) {
+        curPage?.upBattery(battery)
+        prevPage?.upBattery(battery)
+        nextPage?.upBattery(battery)
+    }
+
     interface CallBack {
         fun durChapterIndex(): Int
         fun durChapterPos(pageSize: Int): Int

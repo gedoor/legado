@@ -27,6 +27,14 @@ class ContentView : FrameLayout {
         page_panel.horizontalPadding = 16.dp
     }
 
+    fun upTime() {
+
+    }
+
+    fun upBattery(battery: Int) {
+
+    }
+
     fun setContent(text: CharSequence?) {
         content_text_view.text = text
     }
