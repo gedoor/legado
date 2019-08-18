@@ -113,7 +113,7 @@ object BookList {
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名")
             searchBook.name = analyzeRule.getString(name ?: "") ?: ""
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name ?: "")
-            if (!searchBook.name.isNullOrEmpty()) {
+            if (searchBook.name.isNotEmpty()) {
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取作者")
                 searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(author ?: ""))
                 SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.author ?: "")
@@ -163,7 +163,7 @@ object BookList {
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名", printLog)
         searchBook.name = analyzeRule.getString(ruleName)
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.name, printLog)
-        if (!searchBook.name.isNullOrEmpty()) {
+        if (searchBook.name.isNotEmpty()) {
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书籍Url", printLog)
             searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, searchBook.bookUrl, printLog)
