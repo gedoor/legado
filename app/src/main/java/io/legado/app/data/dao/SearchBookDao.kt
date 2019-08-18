@@ -29,6 +29,9 @@ interface SearchBookDao {
     @Query("select * from searchBooks where name = :name and author = :author order by originOrder")
     fun getByNameAuthor(name: String, author: String): List<SearchBook>
 
+    @Query("select * from searchBooks where name = :name and author = :author order by originOrder")
+    fun getByNameAuthorEnable(name: String, author: String): List<SearchBook>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg searchBook: SearchBook): List<Long>
 
