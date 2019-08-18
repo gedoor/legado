@@ -65,11 +65,11 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
             WebBook(bookSource).getChapterList(book, this)
                 .onSuccess(Dispatchers.IO) {
-                    it?.let {
-                        if (it.isNotEmpty()) {
-                            book.latestChapterTitle = it.last().title
-                            searchBooks.add(book.toSearchBook())
-                        }
+                    it?.map { chapter ->
+                        book.latestChapterTitle = chapter.title
+                        val searchBook = book.toSearchBook()
+                        searchBooks.add(searchBook)
+                        App.db.searchBookDao().insert(searchBook)
                     }
                 }.onError {
                     toast(R.string.error_get_chapter_list)

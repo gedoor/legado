@@ -35,6 +35,4 @@ interface SearchBookDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg searchBook: SearchBook): List<Long>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(searchBook: SearchBook): Long
 }
