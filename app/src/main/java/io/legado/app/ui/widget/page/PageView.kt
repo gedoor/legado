@@ -74,10 +74,18 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
                     }
                 }
                 1 -> {
-
+                    cb.textChapter()?.let {
+                        if (cb.durChapterPos(it.pageSize()) == it.pageSize() - 1) {
+                            nextPage?.setContent(cb.textChapter(1)?.page(0)?.text)
+                        }
+                    }
                 }
                 -1 -> {
-
+                    cb.textChapter()?.let {
+                        if (cb.durChapterPos(it.pageSize()) == 0) {
+                            prevPage?.setContent(cb.textChapter(-1)?.lastPage()?.text)
+                        }
+                    }
                 }
                 else -> {
                 }

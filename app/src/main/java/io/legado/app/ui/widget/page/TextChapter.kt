@@ -13,6 +13,13 @@ data class TextChapter(
         return null
     }
 
+    fun lastPage(): TextPage? {
+        if (pages.isNotEmpty()) {
+            return pages[pages.lastIndex]
+        }
+        return null
+    }
+
     fun pageSize(): Int {
         return pages.size
     }

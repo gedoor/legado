@@ -237,8 +237,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     private fun bookLoadFinish() {
         viewModel.bookData.value?.let {
             viewModel.loadContent(it, it.durChapterIndex)
-//            viewModel.loadContent(it, it.durChapterIndex + 1)
-//            viewModel.loadContent(it, it.durChapterIndex - 1)
+            viewModel.loadContent(it, it.durChapterIndex + 1)
+            viewModel.loadContent(it, it.durChapterIndex - 1)
         }
     }
 
@@ -257,9 +257,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 }
                 viewModel.durChapterIndex - 1 -> {
                     viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                    page_view.chapterLoadFinish(-1)
                 }
                 viewModel.durChapterIndex + 1 -> {
                     viewModel.nextTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                    page_view.chapterLoadFinish(1)
                 }
             }
         }
