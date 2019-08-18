@@ -472,31 +472,32 @@ class AnalyzeRule(private var book: BaseBook? = null) {
 
         fun makeUpRule(result: Any?) {
             val infoVal = StringBuilder()
-            var j = ruleParam.size
-            while (j-- > 0) {
-                val regType = ruleType[j]
-                if (regType > 0) {
-                    @Suppress("UNCHECKED_CAST")
-                    val resultList = result as List<String>
-                    if (resultList.size > regType) {
-                        infoVal.insert(0, resultList[regType])
-                    }
-                } else if (regType < 0) {
-                    val jsEval: Any = evalJS(ruleParam[j], result)
-                    if (jsEval is String) {
-                        infoVal.insert(0, jsEval)
-                    } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-                        infoVal.insert(0, String.format("%.0f", jsEval))
+            if (ruleParam.isNotEmpty()) {
+                var j = ruleParam.size
+                while (j-- > 0) {
+                    val regType = ruleType[j]
+                    if (regType > 0) {
+                        @Suppress("UNCHECKED_CAST")
+                        val resultList = result as List<String>
+                        if (resultList.size > regType) {
+                            infoVal.insert(0, resultList[regType])
+                        }
+                    } else if (regType < 0) {
+                        val jsEval: Any = evalJS(ruleParam[j], result)
+                        if (jsEval is String) {
+                            infoVal.insert(0, jsEval)
+                        } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
+                            infoVal.insert(0, String.format("%.0f", jsEval))
+                        } else {
+                            infoVal.insert(0, jsEval.toString())
+                        }
                     } else {
-                        infoVal.insert(0, jsEval.toString())
+                        infoVal.insert(0, ruleParam[j])
                     }
-                } else {
-                    infoVal.insert(0, ruleParam[j])
                 }
+                rule = infoVal.toString()
             }
-            rule = infoVal.toString()
         }
-
     }
 
     enum class Mode {
