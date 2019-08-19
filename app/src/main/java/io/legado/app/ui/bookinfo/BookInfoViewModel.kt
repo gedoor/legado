@@ -81,6 +81,23 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun changeTo(book: Book) {
+        execute {
+            if (inBookshelf) {
+                bookData.value?.let {
+                    App.db.bookDao().delete(it.bookUrl)
+                }
+                App.db.bookDao().insert(book)
+            }
+            bookData.postValue(book)
+            if (book.tocUrl.isEmpty()) {
+                loadBookInfo(book)
+            } else {
+                loadChapter(book)
+            }
+        }
+    }
+
     fun saveBook(success: (() -> Unit)?) {
         execute {
             bookData.value?.let { book ->

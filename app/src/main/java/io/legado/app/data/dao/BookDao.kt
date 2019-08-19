@@ -47,4 +47,7 @@ interface BookDao {
 
     @Update
     fun update(vararg books: Book)
+
+    @Query("delete from books where bookUrl = :bookUrl")
+    fun delete(bookUrl: String)
 }

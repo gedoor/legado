@@ -190,12 +190,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     override fun changeTo(book: Book) {
-        viewModel.bookData.postValue(book)
-        if (book.tocUrl.isEmpty()) {
-            viewModel.loadBookInfo(book)
-        } else {
-            viewModel.loadChapter(book)
-        }
+        viewModel.changeTo(book)
     }
 
     override fun skipToChapter(index: Int) {
