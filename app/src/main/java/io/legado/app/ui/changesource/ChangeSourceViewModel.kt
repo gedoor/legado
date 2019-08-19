@@ -1,7 +1,7 @@
 package io.legado.app.ui.changesource
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
@@ -12,24 +12,27 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.anko.debug
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
+    var callBack: CallBack? = null
     var curBookUrl = ""
     var name: String = ""
     var author: String = ""
-    val searchBookData = MutableLiveData<List<SearchBook>>()
     private val searchBooks = linkedSetOf<SearchBook>()
 
     fun initData() {
         execute {
             App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
                 searchBooks.addAll(it)
-                searchBookData.postValue(it)
+                upAdapter()
                 search()
             }
         }
     }
 
     fun upAdapter() {
-
+        val diffResult = DiffUtil.calculateDiff(DiffCallBack(arrayListOf(), searchBooks.toList()))
+        callBack?.adapter()?.let {
+            diffResult.dispatchUpdatesTo(it)
+        }
     }
 
     fun search() {
@@ -75,6 +78,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         book.latestChapterTitle = chapter.title
                         val searchBook = book.toSearchBook()
                         searchBooks.add(searchBook)
+                        upAdapter()
                         App.db.searchBookDao().insert(searchBook)
                     }
                 }.onError {
@@ -85,9 +89,13 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun screen(key: String?) {
         if (key.isNullOrEmpty()) {
-            searchBookData.postValue(searchBooks.toList())
+
         } else {
 
         }
+    }
+
+    interface CallBack {
+        fun adapter(): ChangeSourceAdapter
     }
 }

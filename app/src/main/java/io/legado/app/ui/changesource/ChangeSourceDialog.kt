@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -18,7 +17,7 @@ import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeSourceDialog : DialogFragment() {
+class ChangeSourceDialog : DialogFragment(), ChangeSourceViewModel.CallBack {
 
     companion object {
         const val tag = "changeSourceDialog"
@@ -91,9 +90,7 @@ class ChangeSourceDialog : DialogFragment() {
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
         recycler_view.adapter = changeSourceAdapter
-        viewModel.searchBookData.observe(viewLifecycleOwner, Observer {
-            changeSourceAdapter.addItems(it)
-        })
+        viewModel.callBack = this
     }
 
     private fun initSearchView() {
@@ -119,6 +116,9 @@ class ChangeSourceDialog : DialogFragment() {
         })
     }
 
+    override fun adapter(): ChangeSourceAdapter {
+        return changeSourceAdapter
+    }
 
     interface CallBack {
         fun changeTo(book: Book)
