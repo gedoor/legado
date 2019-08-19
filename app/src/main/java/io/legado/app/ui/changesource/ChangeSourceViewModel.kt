@@ -8,7 +8,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.WebBook
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.debug
@@ -48,7 +47,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(name, scope = this@execute)
                     .timeout(30000L)
-                    .onSuccess(Dispatchers.IO) {
+                    .onSuccess(IO) {
                         it?.let { list ->
                             for (searchBook in list) {
                                 if (searchBook.name == name && searchBook.author == author) {
