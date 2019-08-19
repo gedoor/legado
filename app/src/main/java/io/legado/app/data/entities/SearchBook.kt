@@ -26,7 +26,7 @@ data class SearchBook(
     var wordCount: String? = null,
     var latestChapterTitle: String? = null,
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
-    var time: Long = 0L,
+    var time: Long = System.currentTimeMillis(),
     var variable: String? = null,
     var bookInfoHtml: String? = null,
     var originOrder: Int = 0
