@@ -11,6 +11,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.getCompatColor
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -61,6 +62,7 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
         }
 
         fun bind(book: Book, callBack: CallBack?) = with(itemView) {
+            this.setBackgroundColor(context.getCompatColor(R.color.background))
             tv_name.text = book.name
             tv_author.text = book.author
             tv_read.text = book.durChapterTitle
