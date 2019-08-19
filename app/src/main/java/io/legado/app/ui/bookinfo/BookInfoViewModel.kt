@@ -83,9 +83,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeTo(book: Book) {
         bookData.value?.let {
-            book.customCoverUrl = it.customCoverUrl
             book.durChapterIndex = it.durChapterIndex
             book.durChapterPos = it.durChapterPos
+            book.customCoverUrl = it.customCoverUrl
             book.customIntro = it.customIntro
         }
         execute {
