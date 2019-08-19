@@ -40,7 +40,13 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.chapterListData.observe(this, Observer { showChapter(it) })
-        viewModel.loadBook(intent)
+        viewModel.bookData.value?.let {
+            showBook(it)
+            upLoading(false)
+            viewModel.chapterListData.value?.let { chapters ->
+                showChapter(chapters)
+            }
+        } ?: viewModel.loadBook(intent)
         initOnClick()
         savedInstanceState?.let {
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
@@ -184,7 +190,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     override fun changeTo(book: Book) {
-
+        viewModel.bookData.postValue(book)
     }
 
     override fun skipToChapter(index: Int) {
