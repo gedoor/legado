@@ -117,6 +117,9 @@ class ChangeSourceDialog : DialogFragment(),
                 book.customCoverUrl = oldBook.customCoverUrl
                 book.customIntro = oldBook.customIntro
                 book.order = oldBook.order
+                if (book.coverUrl.isNullOrEmpty()) {
+                    book.coverUrl = oldBook.getDisplayCover()
+                }
             }
             it.changeTo(book)
         }
