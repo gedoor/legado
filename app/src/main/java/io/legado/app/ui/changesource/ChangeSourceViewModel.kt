@@ -28,7 +28,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
-    fun upAdapter() {
+    private fun upAdapter() {
         callBack?.adapter()?.let {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), searchBooks.toList()))
             diffResult.dispatchUpdatesTo(it)
