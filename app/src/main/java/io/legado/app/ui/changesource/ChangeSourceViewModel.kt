@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.debug
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
@@ -30,8 +31,12 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     private fun upAdapter() {
         callBack?.adapter()?.let {
+            val books = searchBooks.toList()
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), searchBooks.toList()))
-            diffResult.dispatchUpdatesTo(it)
+            launch {
+                it.setItemsNoNotify(books)
+                diffResult.dispatchUpdatesTo(it)
+            }
         }
     }
 
