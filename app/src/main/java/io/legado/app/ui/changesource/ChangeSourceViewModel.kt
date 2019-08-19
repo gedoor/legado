@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.anko.debug
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     var curBookUrl = ""
@@ -56,9 +57,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 .onSuccess {
                     it?.let { loadChapter(it) }
                 }.onError {
-                    toast(R.string.error_get_book_info)
+                    debug { context.getString(R.string.error_get_book_info) }
                 }
-        } ?: toast(R.string.error_no_source)
+        } ?: debug { context.getString(R.string.error_no_source) }
     }
 
     private fun loadChapter(book: Book) {
@@ -72,9 +73,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         App.db.searchBookDao().insert(searchBook)
                     }
                 }.onError {
-                    toast(R.string.error_get_chapter_list)
+                    debug { context.getString(R.string.error_get_chapter_list) }
                 }
-        } ?: toast(R.string.error_no_source)
+        } ?: debug { R.string.error_no_source }
     }
 
     fun screen(key: String?) {

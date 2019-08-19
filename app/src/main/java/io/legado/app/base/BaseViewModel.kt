@@ -1,6 +1,7 @@
 package io.legado.app.base
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
@@ -10,6 +11,8 @@ import org.jetbrains.anko.toast
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope by MainScope(),
     AnkoLogger {
+
+    val context: Context = this.getApplication<App>()
 
     fun <T> execute(scope: CoroutineScope = this, block: suspend CoroutineScope.() -> T): Coroutine<T> {
         return Coroutine.async(scope) { block() }
