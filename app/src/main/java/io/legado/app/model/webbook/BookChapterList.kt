@@ -98,6 +98,7 @@ object BookChapterList {
         for ((index, item) in chapterList.withIndex()) {
             item.index = index
         }
+        book.latestChapterTitle = chapterList.last().title
         return chapterList
     }
 

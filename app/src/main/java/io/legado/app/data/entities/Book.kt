@@ -34,14 +34,14 @@ data class Book(
     var type: Int = 0,                          // @BookType
     var group: Int = 0,                         // 自定义分组索引号
     var latestChapterTitle: String? = null,     // 最新章节标题
-    var latestChapterTime: Long = 0,            // 最新章节标题更新时间
-    var lastCheckTime: Long = 0,                // 最近一次更新书籍信息的时间
+    var latestChapterTime: Long = System.currentTimeMillis(),            // 最新章节标题更新时间
+    var lastCheckTime: Long = System.currentTimeMillis(),                // 最近一次更新书籍信息的时间
     var lastCheckCount: Int = 0,                // 最近一次发现新章节的数量
     var totalChapterNum: Int = 0,               // 书籍目录总数
     var durChapterTitle: String? = null,        // 当前章节名称
     var durChapterIndex: Int = 0,               // 当前章节索引
     var durChapterPos: Int = 0,                 // 当前阅读的进度(首行字符的索引位置)
-    var durChapterTime: Long = 0,               // 最近一次阅读书籍的时间(打开正文的时间)
+    var durChapterTime: Long = System.currentTimeMillis(),               // 最近一次阅读书籍的时间(打开正文的时间)
     var wordCount: String? = null,
     var canUpdate: Boolean = true,              // 刷新书架时更新书籍信息
     var order: Int = 0,                         // 手动排序
