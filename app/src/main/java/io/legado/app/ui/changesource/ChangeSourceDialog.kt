@@ -78,17 +78,7 @@ class ChangeSourceDialog : DialogFragment(),
 
     private fun initRecyclerView() {
         changeSourceAdapter = ChangeSourceAdapter(requireContext())
-        changeSourceAdapter.callBack = object : ChangeSourceAdapter.CallBack {
-            override fun changeTo(searchBook: SearchBook) {
-                callBack?.changeTo(searchBook.toBook())
-                dismiss()
-            }
-
-            override fun curBookUrl(): String {
-                return viewModel.curBookUrl
-            }
-
-        }
+        changeSourceAdapter.callBack = this
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
         recycler_view.adapter = changeSourceAdapter
@@ -120,6 +110,7 @@ class ChangeSourceDialog : DialogFragment(),
 
     override fun changeTo(searchBook: SearchBook) {
         callBack?.changeTo(searchBook.toBook())
+        dismiss()
     }
 
     override fun curBookUrl(): String {
