@@ -16,15 +16,20 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     var name: String = ""
     var author: String = ""
     val searchBookData = MutableLiveData<List<SearchBook>>()
-    private val searchBooks = arrayListOf<SearchBook>()
+    private val searchBooks = linkedSetOf<SearchBook>()
 
     fun initData() {
         execute {
             App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
                 searchBooks.addAll(it)
-                searchBookData.postValue(searchBooks)
+                searchBookData.postValue(it)
+                search()
             }
         }
+    }
+
+    fun upAdapter() {
+
     }
 
     fun search() {
@@ -80,7 +85,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun screen(key: String?) {
         if (key.isNullOrEmpty()) {
-            searchBookData.postValue(searchBooks)
+            searchBookData.postValue(searchBooks.toList())
         } else {
 
         }
