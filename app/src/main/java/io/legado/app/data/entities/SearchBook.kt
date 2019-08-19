@@ -81,7 +81,8 @@ data class SearchBook(
             latestChapterTitle = latestChapterTitle,
             coverUrl = coverUrl,
             intro = intro,
-            tocUrl = tocUrl
+            tocUrl = tocUrl,
+            originOrder = originOrder
         )
     }
 }
