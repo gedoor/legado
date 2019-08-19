@@ -46,35 +46,39 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun loadBookInfo(book: Book) {
-        isLoadingData.postValue(true)
-        App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-            WebBook(bookSource).getBookInfo(book, this)
-                .onSuccess {
-                    it?.let { loadChapter(it) }
-                }.onError {
-                    toast(R.string.error_get_book_info)
-                }
-        } ?: toast(R.string.error_no_source)
+        execute {
+            isLoadingData.postValue(true)
+            App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                WebBook(bookSource).getBookInfo(book, this)
+                    .onSuccess {
+                        it?.let { loadChapter(it) }
+                    }.onError {
+                        toast(R.string.error_get_book_info)
+                    }
+            } ?: toast(R.string.error_no_source)
+        }
     }
 
     fun loadChapter(book: Book) {
-        isLoadingData.postValue(true)
-        App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-            WebBook(bookSource).getChapterList(book, this)
-                .onSuccess(IO) {
-                    it?.let {
-                        if (it.isNotEmpty()) {
-                            if (inBookshelf) {
-                                App.db.bookChapterDao().insert(*it.toTypedArray())
+        execute {
+            isLoadingData.postValue(true)
+            App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                WebBook(bookSource).getChapterList(book, this)
+                    .onSuccess(IO) {
+                        it?.let {
+                            if (it.isNotEmpty()) {
+                                if (inBookshelf) {
+                                    App.db.bookChapterDao().insert(*it.toTypedArray())
+                                }
+                                chapterListData.postValue(it)
+                                isLoadingData.postValue(false)
                             }
-                            chapterListData.postValue(it)
-                            isLoadingData.postValue(false)
                         }
+                    }.onError {
+                        toast(R.string.error_get_chapter_list)
                     }
-                }.onError {
-                    toast(R.string.error_get_chapter_list)
-                }
-        } ?: toast(R.string.error_no_source)
+            } ?: toast(R.string.error_no_source)
+        }
     }
 
     fun saveBook(success: (() -> Unit)?) {
