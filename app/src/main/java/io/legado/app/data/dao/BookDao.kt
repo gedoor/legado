@@ -36,10 +36,10 @@ interface BookDao {
     @get:Query("SELECT COUNT(*) FROM books")
     val allBookCount: Int
 
-    @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,10")
+    @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,20")
     fun recentRead(): DataSource.Factory<Int, Book>
 
-    @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,10")
+    @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,20")
     fun getRecentRead(): List<Book>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
