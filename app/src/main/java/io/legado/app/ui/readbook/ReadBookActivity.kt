@@ -267,6 +267,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    override fun oldBook(): Book? {
+        return viewModel.bookData.value
+    }
+
     override fun changeTo(book: Book) {
 
     }

@@ -109,7 +109,16 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        callBack?.changeTo(searchBook.toBook())
+        callBack?.let {
+            val book = searchBook.toBook()
+            it.oldBook()?.let { oldBook ->
+                book.durChapterIndex = oldBook.durChapterIndex
+                book.durChapterPos = oldBook.durChapterPos
+                book.customCoverUrl = oldBook.customCoverUrl
+                book.customIntro = oldBook.customIntro
+            }
+            it.changeTo(book)
+        }
         dismiss()
     }
 
@@ -122,6 +131,7 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     interface CallBack {
+        fun oldBook(): Book?
         fun changeTo(book: Book)
     }
 
