@@ -68,7 +68,7 @@ data class Book(
             variableMap = if (isEmpty(variable)) {
                 HashMap()
             } else {
-                GSON.fromJsonObject<HashMap<String, String>>(variable)
+                GSON.fromJsonObject(variable)
             }
         }
     }
