@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.debug
 
@@ -66,31 +67,37 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun loadBookInfo(book: Book) {
-        App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-            WebBook(bookSource).getBookInfo(book, this)
-                .onSuccess {
-                    it?.let { loadChapter(it) }
-                }.onError {
-                    debug { context.getString(R.string.error_get_book_info) }
-                }
-        } ?: debug { context.getString(R.string.error_no_source) }
+        execute {
+            App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                WebBook(bookSource).getBookInfo(book, this)
+                    .onSuccess {
+                        it?.let { loadChapter(it) }
+                    }.onError {
+                        debug { context.getString(R.string.error_get_book_info) }
+                    }
+            } ?: debug { context.getString(R.string.error_no_source) }
+        }
     }
 
     private fun loadChapter(book: Book) {
-        App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-            WebBook(bookSource).getChapterList(book, this)
-                .onSuccess(Dispatchers.IO) {
-                    it?.map { chapter ->
-                        book.latestChapterTitle = chapter.title
-                        val searchBook = book.toSearchBook()
-                        searchBooks.add(searchBook)
-                        upAdapter()
-                        App.db.searchBookDao().insert(searchBook)
+        execute {
+            App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                WebBook(bookSource).getChapterList(book, this)
+                    .onSuccess(IO) {
+                        it?.let { chapters ->
+                            if (chapters.isNotEmpty()) {
+                                book.latestChapterTitle = chapters.last().title
+                                val searchBook = book.toSearchBook()
+                                searchBooks.add(searchBook)
+                                upAdapter()
+                                App.db.searchBookDao().insert(searchBook)
+                            }
+                        }
+                    }.onError {
+                        debug { context.getString(R.string.error_get_chapter_list) }
                     }
-                }.onError {
-                    debug { context.getString(R.string.error_get_chapter_list) }
-                }
-        } ?: debug { R.string.error_no_source }
+            } ?: debug { R.string.error_no_source }
+        }
     }
 
     fun screen(key: String?) {
