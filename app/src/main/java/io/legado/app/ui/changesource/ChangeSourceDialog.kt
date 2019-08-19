@@ -17,7 +17,9 @@ import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeSourceDialog : DialogFragment(), ChangeSourceViewModel.CallBack {
+class ChangeSourceDialog : DialogFragment(),
+    ChangeSourceViewModel.CallBack,
+    ChangeSourceAdapter.CallBack {
 
     companion object {
         const val tag = "changeSourceDialog"
@@ -114,6 +116,14 @@ class ChangeSourceDialog : DialogFragment(), ChangeSourceViewModel.CallBack {
             }
 
         })
+    }
+
+    override fun changeTo(searchBook: SearchBook) {
+        callBack?.changeTo(searchBook.toBook())
+    }
+
+    override fun curBookUrl(): String {
+        return viewModel.curBookUrl
     }
 
     override fun adapter(): ChangeSourceAdapter {
