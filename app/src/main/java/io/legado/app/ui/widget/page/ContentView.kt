@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget.page
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import io.legado.app.R
@@ -19,12 +20,13 @@ class ContentView : FrameLayout {
 
     init {
         inflate(context, R.layout.view_book_page, this)
-
+        setBackgroundColor(Color.WHITE)
         upStyle()
     }
 
     fun upStyle() {
         page_panel.horizontalPadding = 16.dp
+        page_panel.setBackgroundResource(R.drawable.bg1)
     }
 
     fun upTime() {
