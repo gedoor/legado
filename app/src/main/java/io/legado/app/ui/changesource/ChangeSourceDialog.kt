@@ -116,6 +116,7 @@ class ChangeSourceDialog : DialogFragment(),
                 book.durChapterPos = oldBook.durChapterPos
                 book.customCoverUrl = oldBook.customCoverUrl
                 book.customIntro = oldBook.customIntro
+                book.order = oldBook.order
             }
             it.changeTo(book)
         }
