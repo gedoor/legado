@@ -49,13 +49,14 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                     .timeout(30000L)
                     .onSuccess(Dispatchers.IO) {
                         it?.let { list ->
-                            list.map { searchBook ->
+                            for (searchBook in list) {
                                 if (searchBook.name == name && searchBook.author == author) {
                                     if (searchBook.tocUrl.isEmpty()) {
                                         loadBookInfo(searchBook.toBook())
                                     } else {
                                         loadChapter(searchBook.toBook())
                                     }
+                                    break
                                 }
                             }
                         }
