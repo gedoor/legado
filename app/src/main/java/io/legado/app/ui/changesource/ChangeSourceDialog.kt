@@ -114,6 +114,7 @@ class ChangeSourceDialog : DialogFragment(),
             it.oldBook()?.let { oldBook ->
                 book.durChapterIndex = oldBook.durChapterIndex
                 book.durChapterPos = oldBook.durChapterPos
+                book.durChapterTitle = oldBook.durChapterTitle
                 book.customCoverUrl = oldBook.customCoverUrl
                 book.customIntro = oldBook.customIntro
                 book.order = oldBook.order
