@@ -32,6 +32,19 @@ data class SearchBook(
     var originOrder: Int = 0
 ) : Parcelable, BaseBook {
 
+    override fun equals(other: Any?): Boolean {
+        if (other is SearchBook) {
+            if (other.bookUrl == bookUrl) {
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return bookUrl.hashCode()
+    }
+
     @IgnoredOnParcel
     @Ignore
     override var variableMap: HashMap<String, String>? = null
