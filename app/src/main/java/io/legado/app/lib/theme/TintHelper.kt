@@ -326,7 +326,8 @@ object TintHelper {
 
     private fun modifySwitchDrawable(
         context: Context,
-        from: Drawable, @ColorInt tint: Int,
+        from: Drawable,
+        @ColorInt tint: Int,
         thumb: Boolean,
         compatSwitch: Boolean,
         useDarker: Boolean

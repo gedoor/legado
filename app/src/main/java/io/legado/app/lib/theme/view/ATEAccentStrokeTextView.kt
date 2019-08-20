@@ -10,18 +10,19 @@ import io.legado.app.utils.dp
 
 class ATEAccentStrokeTextView : AppCompatTextView {
     constructor(context: Context) : super(context) {
-        init(context, null)
+        init(context)
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context, attrs)
+        init(context)
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context, attrs)
+        init(context)
     }
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    @Suppress("DEPRECATION")
+    private fun init(context: Context) {
         background = Selector.shapeBuild()
             .setCornerRadius(3.dp)
             .setStrokeWidth(1.dp)

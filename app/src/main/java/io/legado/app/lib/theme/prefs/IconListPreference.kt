@@ -36,6 +36,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         for (drawable in drawables) {
             val resId = context.resources.getIdentifier(drawable.toString(), "mipmap", context.packageName)
 
+            @Suppress("DEPRECATION")
             val d = context.resources.getDrawable(resId)
 
             mEntryDrawables.add(d)
