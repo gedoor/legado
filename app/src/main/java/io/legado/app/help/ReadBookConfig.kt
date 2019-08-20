@@ -1,9 +1,9 @@
 package io.legado.app.help
 
 import android.graphics.drawable.Drawable
-import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.putPrefInt
 import java.io.BufferedWriter
@@ -25,14 +25,22 @@ object ReadBookConfig {
         } else {
             String(App.INSTANCE.assets.open("readConfig.json").readBytes())
         }
-        JsonPath.parse(json).let {
+        GSON.fromJsonArray<Config>(json)?.let {
             configList.clear()
-            configList.addAll(it.read<Array<Config>>("$"))
-        }
+            configList.addAll(it)
+        } ?: reset()
     }
 
     fun getConfig(): Config {
         return configList[styleSelect]
+    }
+
+    fun upBg() {
+        getConfig().apply {
+            when (bgType) {
+
+            }
+        }
     }
 
     fun save() {
@@ -50,7 +58,11 @@ object ReadBookConfig {
     }
 
     fun reset() {
-
+        val json = String(App.INSTANCE.assets.open("readConfig.json").readBytes())
+        GSON.fromJsonArray<Config>(json)?.let {
+            configList.clear()
+            configList.addAll(it)
+        }
     }
 
     data class Config(
