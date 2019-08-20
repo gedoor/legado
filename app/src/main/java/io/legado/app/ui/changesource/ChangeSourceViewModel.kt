@@ -36,8 +36,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 val books = searchBooks.toList()
                 val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), searchBooks.toList()))
                 withContext(Main) {
-                    it.setItemsNoNotify(books)
-                    diffResult.dispatchUpdatesTo(it)
+                    synchronized(this) {
+                        it.setItemsNoNotify(books)
+                        diffResult.dispatchUpdatesTo(it)
+                    }
                 }
             }
         }

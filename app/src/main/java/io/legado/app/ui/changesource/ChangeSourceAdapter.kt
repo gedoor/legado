@@ -17,18 +17,23 @@ class ChangeSourceAdapter(context: Context) : SimpleRecyclerAdapter<SearchBook>(
 
     override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
         holder.itemView.apply {
-            this.onClick {
-                callBack?.changeTo(item)
-            }
-            tv_origin.text = item.originName
-            tv_last.text = item.latestChapterTitle
-            callBack?.let {
-                if (it.curBookUrl() == item.bookUrl) {
-                    iv_checked.visible()
-                } else {
-                    iv_checked.invisible()
+            if (payloads.isEmpty()) {
+                this.onClick {
+                    callBack?.changeTo(item)
                 }
-            } ?: iv_checked.invisible()
+                tv_origin.text = item.originName
+                tv_last.text = item.latestChapterTitle
+                callBack?.let {
+                    if (it.curBookUrl() == item.bookUrl) {
+                        iv_checked.visible()
+                    } else {
+                        iv_checked.invisible()
+                    }
+                } ?: iv_checked.invisible()
+            } else {
+                tv_origin.text = item.originName
+                tv_last.text = item.latestChapterTitle
+            }
         }
     }
 
