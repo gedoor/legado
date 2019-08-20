@@ -14,6 +14,7 @@ import kotlinx.coroutines.Deferred
 import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.net.URLEncoder
 import java.util.*
@@ -148,7 +149,7 @@ class AnalyzeUrl(
             Method.POST -> {
                 bodyTxt?.let {
                     if (it.isJson()) {
-                        body = RequestBody.create(jsonType, it)
+                        body = it.toRequestBody(jsonType)
                     } else {
                         analyzeFields(it)
                     }

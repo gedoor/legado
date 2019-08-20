@@ -332,11 +332,11 @@ object TintHelper {
         compatSwitch: Boolean,
         useDarker: Boolean
     ): Drawable? {
-        var tint = tint
+        var tint1 = tint
         if (useDarker) {
-            tint = ColorUtils.shiftColor(tint, 1.1f)
+            tint1 = ColorUtils.shiftColor(tint1, 1.1f)
         }
-        tint = ColorUtils.adjustAlpha(tint, if (compatSwitch && !thumb) 0.5f else 1.0f)
+        tint1 = ColorUtils.adjustAlpha(tint1, if (compatSwitch && !thumb) 0.5f else 1.0f)
         val disabled: Int
         var normal: Int
         if (thumb) {
@@ -375,7 +375,7 @@ object TintHelper {
                 intArrayOf(android.R.attr.state_enabled, android.R.attr.state_activated),
                 intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
             ),
-            intArrayOf(disabled, normal, tint, tint)
+            intArrayOf(disabled, normal, tint1, tint1)
         )
         return createTintedDrawable(from, sl)
     }
@@ -414,20 +414,20 @@ object TintHelper {
     // This returns a NEW Drawable because of the mutate() call. The mutate() call is necessary because Drawables with the same resource have shared states otherwise.
     @CheckResult
     fun createTintedDrawable(drawable: Drawable?, @ColorInt color: Int): Drawable? {
-        var drawable: Drawable? = drawable ?: return null
-        drawable = DrawableCompat.wrap(drawable!!.mutate())
-        DrawableCompat.setTintMode(drawable!!, PorterDuff.Mode.SRC_IN)
-        DrawableCompat.setTint(drawable, color)
-        return drawable
+        var drawable1: Drawable? = drawable ?: return null
+        drawable1 = DrawableCompat.wrap(drawable1!!.mutate())
+        DrawableCompat.setTintMode(drawable1!!, PorterDuff.Mode.SRC_IN)
+        DrawableCompat.setTint(drawable1, color)
+        return drawable1
     }
 
     // This returns a NEW Drawable because of the mutate() call. The mutate() call is necessary because Drawables with the same resource have shared states otherwise.
     @CheckResult
     fun createTintedDrawable(drawable: Drawable?, sl: ColorStateList): Drawable? {
-        var drawable: Drawable? = drawable ?: return null
-        drawable = DrawableCompat.wrap(drawable!!.mutate())
-        DrawableCompat.setTintList(drawable!!, sl)
-        return drawable
+        var drawable1: Drawable? = drawable ?: return null
+        drawable1 = DrawableCompat.wrap(drawable1!!.mutate())
+        DrawableCompat.setTintList(drawable1!!, sl)
+        return drawable1
     }
 
     fun setCursorTint(editText: EditText, @ColorInt color: Int) {
