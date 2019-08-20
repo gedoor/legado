@@ -8,7 +8,6 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.nio.charset.StandardCharsets
 
 object BookHelp {
 
@@ -52,7 +51,7 @@ object BookHelp {
         runCatching {
             val file = File(filePath)
             if (file.exists()) {
-                return String(file.readBytes(), StandardCharsets.UTF_8)
+                return String(file.readBytes())
             }
         }
         return null

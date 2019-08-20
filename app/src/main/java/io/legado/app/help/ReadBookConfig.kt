@@ -1,6 +1,10 @@
 package io.legado.app.help
 
 import android.graphics.drawable.Drawable
+import com.jayway.jsonpath.JsonPath
+import io.legado.app.App
+import io.legado.app.utils.readInt
+import java.io.File
 
 object ReadBookConfig {
     private val configList = arrayListOf<Config>()
@@ -8,7 +12,17 @@ object ReadBookConfig {
     var bg: Drawable? = null
 
     init {
-
+        val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + "config")
+        val json = if (configFile.exists()) {
+            String(configFile.readBytes())
+        } else {
+            String(App.INSTANCE.assets.open("defaultConfig.json").readBytes())
+        }
+        JsonPath.parse(json).let {
+            styleSelect = it.readInt("$.readBookSelect") ?: 0
+            configList.clear()
+            configList.addAll(it.read<Array<Config>>("$.readBook"))
+        }
     }
 
     fun getConfig(): Config {
