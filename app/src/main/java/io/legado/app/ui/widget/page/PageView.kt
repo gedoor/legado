@@ -3,15 +3,12 @@ package io.legado.app.ui.widget.page
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.R
 import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
-import kotlinx.android.synthetic.main.view_book_page.view.*
-import org.jetbrains.anko.backgroundColor
 
 class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs), PageDelegate.PageInterface {
 
@@ -31,8 +28,6 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         addView(curPage)
         upBg()
         setWillNotDraw(false)
-
-        page_panel.backgroundColor = Color.WHITE
 
         pageDelegate = CoverPageDelegate(this)
     }

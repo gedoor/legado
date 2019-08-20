@@ -7,26 +7,9 @@ import java.util.*
 /**
  * Activity管理器,管理项目中Activity的状态
  */
-class ActivityHelp private constructor() {
+object ActivityHelp {
 
-    companion object {
-
-        private var activities: MutableList<WeakReference<Activity>> = arrayListOf()
-
-        @Volatile
-        private var instance: ActivityHelp? = null
-
-        fun getInstance(): ActivityHelp {
-            if (null == instance) {
-                synchronized(ActivityHelp::class.java) {
-                    if (null == instance) {
-                        instance = ActivityHelp()
-                    }
-                }
-            }
-            return instance!!
-        }
-    }
+    private var activities: MutableList<WeakReference<Activity>> = arrayListOf()
 
     fun getActivities(): List<WeakReference<Activity>> {
         return activities

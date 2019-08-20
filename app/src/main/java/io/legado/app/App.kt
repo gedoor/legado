@@ -143,7 +143,7 @@ class App : Application() {
     private fun registerActivityLife(){
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks{
             override fun onActivityPaused(activity: Activity) {
-                ActivityHelp.getInstance().add(activity)
+                ActivityHelp.add(activity)
             }
 
             override fun onActivityResumed(activity: Activity) {
@@ -153,7 +153,7 @@ class App : Application() {
             }
 
             override fun onActivityDestroyed(activity: Activity) {
-                ActivityHelp.getInstance().remove(activity)
+                ActivityHelp.remove(activity)
             }
 
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
