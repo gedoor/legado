@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget.page
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
@@ -30,9 +31,16 @@ class ContentView : FrameLayout {
 
     fun upStyle() {
         page_panel.horizontalPadding = 16.dp
-        ImageLoader.load(context, R.drawable.bg1)
+    }
+
+    fun setBg(bg: Drawable?) {
+        ImageLoader.load(context, bg)
             .centerCrop()
             .setAsDrawable(bgImage)
+    }
+
+    fun setBgColor(color: Int) {
+        page_panel.setBackgroundColor(color)
     }
 
     fun upTime() {
