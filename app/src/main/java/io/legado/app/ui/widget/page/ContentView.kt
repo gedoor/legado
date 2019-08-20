@@ -2,6 +2,7 @@ package io.legado.app.ui.widget.page
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import io.legado.app.R
@@ -26,7 +27,15 @@ class ContentView : FrameLayout {
 
     fun upStyle() {
         page_panel.horizontalPadding = 16.dp
-        page_panel.setBackgroundResource(R.drawable.bg1)
+
+    }
+
+    fun setBg(bg: Drawable?) {
+        page_panel.background = bg
+    }
+
+    fun setBgColor(color: Int) {
+        page_panel.setBackgroundColor(color)
     }
 
     fun upTime() {

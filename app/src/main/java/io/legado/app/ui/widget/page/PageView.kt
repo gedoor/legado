@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import io.legado.app.R
 import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import kotlinx.android.synthetic.main.view_book_page.view.*
@@ -28,7 +29,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         addView(nextPage)
         curPage = ContentView(context)
         addView(curPage)
-
+        upBg()
         setWillNotDraw(false)
 
         page_panel.backgroundColor = Color.WHITE
@@ -109,6 +110,13 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         curPage?.upStyle()
         prevPage?.upStyle()
         nextPage?.upStyle()
+    }
+
+    fun upBg() {
+        val bg = context.getDrawable(R.drawable.bg1)
+        curPage?.setBg(bg)
+        prevPage?.setBg(bg)
+        nextPage?.setBg(bg)
     }
 
     fun upTime() {
