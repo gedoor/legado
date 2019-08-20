@@ -3,11 +3,16 @@ package io.legado.app.help
 import android.graphics.drawable.Drawable
 
 object ReadBookConfig {
-    val configList = arrayListOf<Config>()
+    private val configList = arrayListOf<Config>()
+    var styleSelect = 0
     var bg: Drawable? = null
 
     init {
 
+    }
+
+    fun getConfig(): Config {
+        return configList[styleSelect]
     }
 
     data class Config(
