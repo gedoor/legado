@@ -1,5 +1,7 @@
 package io.legado.app.help
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import io.legado.app.App
 import io.legado.app.utils.GSON
@@ -13,7 +15,7 @@ import java.io.IOException
 
 object ReadBookConfig {
     private val configList = arrayListOf<Config>()
-    var styleSelect
+    private var styleSelect
         get() = App.INSTANCE.getPrefInt("readStyleSelect")
         set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
     var bg: Drawable? = null
@@ -38,6 +40,7 @@ object ReadBookConfig {
     fun upBg() {
         getConfig().apply {
             when (bgType) {
+                0 -> bg = ColorDrawable(Color.parseColor(bgStr))
 
             }
         }
@@ -66,7 +69,7 @@ object ReadBookConfig {
     }
 
     data class Config(
-        var bg: String = "#F3F3F3",
+        var bgStr: String = "#F3F3F3",
         var bgInt: Int = 0,
         var bgType: Int = 0,
         var darkStatusIcon: Boolean = true,

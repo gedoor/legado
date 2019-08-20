@@ -1,6 +1,6 @@
 [
   {
-    "bg": "#F3F3F3",
+    "bgStr": "#F3F3F3",
     "bgInt": 0,
     "bgType": 0,
     "darkStatusIcon": true,
@@ -11,7 +11,7 @@
     "lineSpacingMultiplier": 3
   },
   {
-    "bg": "#C6BAA1",
+    "bgStr": "#C6BAA1",
     "bgInt": 0,
     "bgType": 0,
     "darkStatusIcon": true,
@@ -26,7 +26,7 @@
     "paddingBottom": 0
   },
   {
-    "bg": "#E1F1DA",
+    "bgStr": "#E1F1DA",
     "bgInt": 0,
     "bgType": 0,
     "darkStatusIcon": true,
@@ -41,7 +41,7 @@
     "paddingBottom": 0
   },
   {
-    "bg": "#015A86",
+    "bgStr": "#015A86",
     "bgInt": 0,
     "bgType": 0,
     "darkStatusIcon": false,
@@ -56,7 +56,7 @@
     "paddingBottom": 0
   },
   {
-    "bg": "#808080",
+    "bgStr": "#808080",
     "bgInt": 0,
     "bgType": 0,
     "darkStatusIcon": false,
