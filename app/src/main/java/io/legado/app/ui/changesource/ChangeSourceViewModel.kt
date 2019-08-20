@@ -34,6 +34,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             callBack?.adapter()?.let {
                 val books = searchBooks.toList()
+                books.sorted()
                 val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), searchBooks.toList()))
                 withContext(Main) {
                     synchronized(this) {

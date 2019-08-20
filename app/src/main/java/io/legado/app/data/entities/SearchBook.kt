@@ -30,7 +30,7 @@ data class SearchBook(
     var variable: String? = null,
     var bookInfoHtml: String? = null,
     var originOrder: Int = 0
-) : Parcelable, BaseBook {
+) : Parcelable, BaseBook, Comparable<SearchBook> {
 
     override fun equals(other: Any?): Boolean {
         if (other is SearchBook) {
@@ -43,6 +43,10 @@ data class SearchBook(
 
     override fun hashCode(): Int {
         return bookUrl.hashCode()
+    }
+
+    override fun compareTo(other: SearchBook): Int {
+        return other.originOrder - this.originOrder
     }
 
     @IgnoredOnParcel
