@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
+import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -131,6 +132,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun autoChangeSource() {
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        ReadAloudService.stop(context)
     }
 
     interface CallBack {
