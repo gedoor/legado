@@ -12,7 +12,7 @@ import org.jetbrains.anko.toast
 open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope by MainScope(),
     AnkoLogger {
 
-    val context: Context = this.getApplication<App>()
+    val context: Context by lazy { this.getApplication<App>() }
 
     fun <T> execute(scope: CoroutineScope = this, block: suspend CoroutineScope.() -> T): Coroutine<T> {
         return Coroutine.async(scope) { block() }
@@ -29,25 +29,25 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     open fun toast(message: Int) {
         launch {
-            getApplication<App>().toast(message)
+            context.toast(message)
         }
     }
 
     open fun toast(message: CharSequence) {
         launch {
-            getApplication<App>().toast(message)
+            context.toast(message)
         }
     }
 
     open fun longToast(message: Int) {
         launch {
-            getApplication<App>().toast(message)
+            context.toast(message)
         }
     }
 
     open fun longToast(message: CharSequence) {
         launch {
-            getApplication<App>().toast(message)
+            context.toast(message)
         }
     }
 }

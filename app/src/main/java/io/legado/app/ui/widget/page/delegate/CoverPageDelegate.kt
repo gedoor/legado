@@ -24,7 +24,7 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         shadowDrawableL.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
-    override fun onStart() {
+    override fun onScrollStart() {
         val distanceX: Float
         when (direction) {
             Direction.NEXT -> if (isCancel) {
@@ -47,10 +47,18 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         start()
     }
 
-    override fun onPerform(canvas: Canvas) {
+    override fun onScrollStop() {
+        if (!isCancel) {
+            pageView.fillPage(direction)
+        }
+    }
+
+    override fun onDraw(canvas: Canvas) {
         val offsetX = touchX - startX
 
-        if(offsetX == 0.toFloat()) return
+        if ((direction == Direction.NEXT && offsetX > 0)
+            || (direction == Direction.PREV && offsetX < 0)
+        ) return
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         bitmap?.let {
@@ -64,7 +72,7 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     private fun addShadow(left: Int, canvas: Canvas?) {
         canvas?.let {
             if (left < 0) {
-                shadowDrawableR.setBounds(left + viewWidth, 0, left+ viewWidth + 30, viewHeight)
+                shadowDrawableR.setBounds(left + viewWidth, 0, left + viewWidth + 30, viewHeight)
                 shadowDrawableR.draw(it)
             } else {
                 shadowDrawableL.setBounds(left - 30, 0, left, viewHeight)

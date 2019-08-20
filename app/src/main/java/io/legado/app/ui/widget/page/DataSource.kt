@@ -1,10 +1,16 @@
 package io.legado.app.ui.widget.page
 
+import io.legado.app.data.entities.BookChapter
+
 interface DataSource {
+
+    fun isPrepared(): Boolean
 
     fun getChapterPosition()
 
     fun getChapter(position: Int): TextChapter?
+
+    fun getCurrentChapter(): TextChapter?
 
     fun getNextChapter(): TextChapter?
 
@@ -13,4 +19,8 @@ interface DataSource {
     fun hasNextChapter(): Boolean
 
     fun hasPrevChapter(): Boolean
+
+    interface CallBack {
+        fun onLoadFinish(bookChapter: BookChapter, content: String)
+    }
 }

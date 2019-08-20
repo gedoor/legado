@@ -1,17 +1,20 @@
 package io.legado.app.ui.widget.page
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
+import io.legado.app.help.ImageLoader
 import io.legado.app.utils.dp
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import org.jetbrains.anko.horizontalPadding
+import org.jetbrains.anko.matchParent
 
 
 class ContentView : FrameLayout {
+
+    private val bgImage: AppCompatImageView = AppCompatImageView(context)
 
     constructor(context: Context) : super(context)
 
@@ -20,22 +23,16 @@ class ContentView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
+        addView(bgImage, LayoutParams(matchParent, matchParent))
         inflate(context, R.layout.view_book_page, this)
-        setBackgroundColor(Color.WHITE)
         upStyle()
     }
 
     fun upStyle() {
         page_panel.horizontalPadding = 16.dp
-
-    }
-
-    fun setBg(bg: Drawable?) {
-        page_panel.background = bg
-    }
-
-    fun setBgColor(color: Int) {
-        page_panel.setBackgroundColor(color)
+        ImageLoader.load(context, R.drawable.bg1)
+            .centerCrop()
+            .setAsDrawable(bgImage)
     }
 
     fun upTime() {

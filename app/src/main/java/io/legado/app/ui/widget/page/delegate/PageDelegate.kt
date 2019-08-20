@@ -4,15 +4,14 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View
 import android.widget.Scroller
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import io.legado.app.ui.widget.page.ContentView
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.utils.screenshot
-import kotlinx.android.synthetic.main.view_book_page.view.*
 import kotlin.math.abs
 
-abstract class PageDelegate(private val pageView: PageView) {
+abstract class PageDelegate(protected val pageView: PageView) {
 
     //起始点
     protected var startX: Float = 0.toFloat()
@@ -21,8 +20,14 @@ abstract class PageDelegate(private val pageView: PageView) {
     protected var touchX: Float = 0.toFloat()
     protected var touchY: Float = 0.toFloat()
 
-    protected val view: View
-        get() = pageView.page_panel
+    protected val nextPage: ContentView?
+        get() = pageView.nextPage
+
+    protected val curPage: ContentView?
+        get() = pageView.curPage
+
+    protected val prevPage: ContentView?
+        get() = pageView.prevPage
 
     protected var bitmap: Bitmap? = null
 
@@ -58,6 +63,8 @@ abstract class PageDelegate(private val pageView: PageView) {
         if (invalidate) {
             invalidate()
         }
+
+        onScroll()
     }
 
     fun setViewSize(width: Int, height: Int) {
@@ -86,9 +93,10 @@ abstract class PageDelegate(private val pageView: PageView) {
     fun scroll() {
         if (scroller.computeScrollOffset()) {
             setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
-        } else if(isStarted){
+        } else if (isStarted) {
             setTouchPoint(scroller.finalX.toFloat(), scroller.finalY.toFloat(), false)
             stop()
+            onScrollStop()
         }
     }
 
@@ -126,14 +134,16 @@ abstract class PageDelegate(private val pageView: PageView) {
                 return
             }
         }
-        onStart()
+        onScrollStart()
     }
 
     fun onTouch(event: MotionEvent): Boolean {
+        if (isStarted) return false
+
         if (isMoved && event.action == MotionEvent.ACTION_UP) {
             // 开启翻页效果
             if (!noNext) {
-                onStart()
+                onScrollStart()
             }
             return true
         }
@@ -145,9 +155,15 @@ abstract class PageDelegate(private val pageView: PageView) {
         return duration.toInt()
     }
 
-    abstract fun onStart()
+    abstract fun onScrollStart()//scroller start
 
-    abstract fun onPerform(canvas: Canvas)
+    abstract fun onDraw(canvas: Canvas)//绘制
+
+    abstract fun onScrollStop()//scroller finish
+
+    open fun onScroll() {//移动contentView， slidePage
+
+    }
 
     enum class Direction {
         NONE, PREV, NEXT
@@ -156,7 +172,7 @@ abstract class PageDelegate(private val pageView: PageView) {
     private inner class GestureListener : GestureDetector.OnGestureListener {
 
         override fun onDown(e: MotionEvent): Boolean {
-            abort()
+//            abort()
             //是否移动
             isMoved = false
             //是否存在下一章
@@ -185,21 +201,24 @@ abstract class PageDelegate(private val pageView: PageView) {
                 if (!hasNext) {
                     return true
                 }
+                //下一页截图
+                bitmap = nextPage?.screenshot()
             } else {
                 val hasPrev = pageView.hasPrev()
                 if (!hasPrev) {
                     return true
                 }
+                //上一页截图
+                bitmap = prevPage?.screenshot()
             }
             setTouchPoint(x, y)
+            onScrollStart()
             return true
         }
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             if (!isMoved && abs(distanceX) > abs(distanceY)) {
-                //上一页或下一页截图，还未处理
                 if (distanceX < 0) {
-                    bitmap = pageView.prevPage?.screenshot()
                     //上一页的参数配置
                     direction = Direction.PREV
                     //判断是否上一页存在
@@ -209,8 +228,9 @@ abstract class PageDelegate(private val pageView: PageView) {
                         noNext = true
                         return true
                     }
+                    //上一页截图
+                    bitmap = prevPage?.screenshot()
                 } else {
-                    bitmap = pageView.nextPage?.screenshot()
                     //进行下一页的配置
                     direction = Direction.NEXT
                     //判断是否下一页存在
@@ -220,6 +240,8 @@ abstract class PageDelegate(private val pageView: PageView) {
                         noNext = true
                         return true
                     }
+                    //下一页截图
+                    bitmap = nextPage?.screenshot()
                 }
                 isMoved = true
             }

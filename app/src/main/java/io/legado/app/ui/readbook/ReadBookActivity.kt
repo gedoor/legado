@@ -51,7 +51,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         setSupportActionBar(toolbar)
         initAnimation()
         initView()
-        page_view.callBack = this
         viewModel.callBack = this
         viewModel.chapterMaxIndex.observe(this, Observer { bookLoadFinish() })
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
@@ -242,7 +241,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    override fun loadContentFinish(bookChapter: BookChapter, content: String) {
+    override fun onLoadFinish(bookChapter: BookChapter, content: String) {
         launch {
             when (bookChapter.index) {
                 viewModel.durChapterIndex -> {

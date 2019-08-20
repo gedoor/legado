@@ -12,8 +12,9 @@ import io.legado.app.ui.widget.page.delegate.PageDelegate
 
 class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs), PageDelegate.PageInterface {
 
-    var callBack: CallBack? = null
+    var callback: CallBack? = null
     private var pageDelegate: PageDelegate? = null
+    private var pageFactory: TextPageFactory? = null
 
     var prevPage: ContentView? = null
     var curPage: ContentView? = null
@@ -30,6 +31,40 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         setWillNotDraw(false)
 
         pageDelegate = CoverPageDelegate(this)
+
+        setPageFactory(TextPageFactory.create(object : DataSource {
+            override fun isPrepared(): Boolean {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun getChapterPosition() {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun getChapter(position: Int): TextChapter? {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun getCurrentChapter(): TextChapter? {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun getNextChapter(): TextChapter? {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun getPreviousChapter(): TextChapter? {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun hasNextChapter(): Boolean {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun hasPrevChapter(): Boolean {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        }))
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -41,9 +76,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
-//        bringChildToFront(prevPage)
-
-        pageDelegate?.onPerform(canvas)
+        pageDelegate?.onDraw(canvas)
     }
 
     override fun computeScroll() {
@@ -56,7 +89,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     }
 
     fun chapterLoadFinish(chapterOnDur: Int = 0) {
-        callBack?.let { cb ->
+        callback?.let { cb ->
             when (chapterOnDur) {
                 0 -> {
                     cb.textChapter()?.let {
@@ -89,8 +122,36 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         }
     }
 
-    fun setPageFactory(factory: PageFactory<*>) {
+    fun fillPage(direction: PageDelegate.Direction) {
+        pageFactory?.let {
+            when (direction) {
+                PageDelegate.Direction.PREV -> {
+                    it.moveToPrevious()
+                }
 
+                PageDelegate.Direction.NEXT -> {
+                    it.moveToNext()
+                }
+                else -> {
+
+                }
+            }
+
+            prevPage?.setContent(it.previousPage()?.text)
+            curPage?.setContent(it.currentPage()?.text)
+            nextPage?.setContent(it.nextPage()?.text)
+        }
+    }
+
+    fun setPageFactory(factory: TextPageFactory) {
+        this.pageFactory = factory
+
+        //可做成异步回调
+        pageFactory?.let {
+            prevPage?.setContent(it.previousPage()?.text)
+            curPage?.setContent(it.currentPage()?.text)
+            nextPage?.setContent(it.nextPage()?.text)
+        }
     }
 
     override fun hasNext(): Boolean {

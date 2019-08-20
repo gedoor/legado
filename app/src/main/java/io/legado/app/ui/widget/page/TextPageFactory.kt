@@ -22,12 +22,36 @@ class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<
         TODO("todo...")
     }
 
-    override fun nextPage(): TextPage {
-        return TextPage(index.plus(1), "index：$index")
+    override fun moveToFirst() {
+        index = 0
     }
 
-    override fun previousPage(): TextPage {
-        return TextPage(index.minus(1), "index：$index")
+    override fun moveToNext(): Boolean {
+        return if(hasNext()){
+            index = index.plus(1)
+            true
+        }else
+            false
+    }
+
+    override fun moveToPrevious(): Boolean {
+        return if(hasPrev()){
+            index = index.minus(1)
+            true
+        }else
+            false
+    }
+
+    override fun currentPage(): TextPage? {
+        return TextPage(index, "index：$index")
+    }
+
+    override fun nextPage(): TextPage? {
+        return TextPage(index + 1, "index：${index + 1}")
+    }
+
+    override fun previousPage(): TextPage? {
+        return TextPage(index - 1, "index：${index - 1}")
     }
 
 

@@ -80,7 +80,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                 BookHelp.getContent(book, chapter)?.let {
-                    callBack?.loadContentFinish(chapter, it)
+                    callBack?.onLoadFinish(chapter, it)
                     synchronized(loadingLock) {
                         loadingChapters.remove(index)
                     }
@@ -118,7 +118,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ?.onSuccess(IO) { content ->
                 content?.let {
                     BookHelp.saveContent(book, chapter, it)
-                    callBack?.loadContentFinish(chapter, it)
+                    callBack?.onLoadFinish(chapter, it)
                     synchronized(loadingLock) {
                         loadingChapters.remove(chapter.index)
                     }
@@ -140,6 +140,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     interface CallBack {
-        fun loadContentFinish(bookChapter: BookChapter, content: String)
+        fun onLoadFinish(bookChapter: BookChapter, content: String)
     }
 }
