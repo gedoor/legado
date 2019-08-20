@@ -12,9 +12,8 @@ import io.legado.app.help.http.HttpHelper
 import io.legado.app.utils.*
 import kotlinx.coroutines.Deferred
 import okhttp3.FormBody
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.Response
 import java.net.URLEncoder
 import java.util.*
@@ -38,7 +37,7 @@ class AnalyzeUrl(
 ) {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
-        private val jsonType = MediaType.parse("application/json; charset=utf-8")
+        private val jsonType = "application/json; charset=utf-8".toMediaTypeOrNull()
     }
 
     private var baseUrl: String = ""

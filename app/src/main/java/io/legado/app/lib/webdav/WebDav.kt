@@ -4,6 +4,7 @@ import io.legado.app.lib.webdav.http.Handler
 import io.legado.app.lib.webdav.http.HttpAuth
 import io.legado.app.lib.webdav.http.OkHttp
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.jsoup.Jsoup
 import java.io.File
 import java.io.IOException
@@ -42,7 +43,7 @@ constructor(url: String) {
             HttpAuth.auth?.let { request.header("Authorization", Credentials.basic(it.user, it.pass)) }
 
             try {
-                return okHttpClient.newCall(request.build()).execute().body()?.byteStream()
+                return okHttpClient.newCall(request.build()).execute().body?.byteStream()
             } catch (e: IOException) {
                 e.printStackTrace()
             } catch (e: IllegalArgumentException) {
@@ -82,7 +83,7 @@ constructor(url: String) {
                 this.exists = false
                 return false
             }
-            response.body()?.let {
+            response.body?.let {
                 if (it.string().isNotEmpty()) {
                     return true
                 }
@@ -102,7 +103,7 @@ constructor(url: String) {
     fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
         propFindResponse(propsList)?.let { response ->
             if (response.isSuccessful) {
-                response.body()?.let { body ->
+                response.body?.let { body ->
                     return parseDir(body.string())
                 }
             }
@@ -128,7 +129,7 @@ constructor(url: String) {
                 .url(url)
                 // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
                 // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-                .method("PROPFIND", RequestBody.create(MediaType.parse("text/plain"), requestPropsStr))
+                .method("PROPFIND", RequestBody.create("text/plain".toMediaTypeOrNull(), requestPropsStr))
 
             HttpAuth.auth?.let { request.header("Authorization", Credentials.basic(it.user, it.pass)) }
 
@@ -206,7 +207,7 @@ constructor(url: String) {
     fun upload(localPath: String, contentType: String? = null): Boolean {
         val file = File(localPath)
         if (!file.exists()) return false
-        val mediaType = if (contentType == null) null else MediaType.parse(contentType)
+        val mediaType = if (contentType == null) null else contentType.toMediaTypeOrNull()
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = RequestBody.create(mediaType, file)
         getUrl()?.let {
