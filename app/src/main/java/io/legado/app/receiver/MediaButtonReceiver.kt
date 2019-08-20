@@ -46,7 +46,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
         }
 
         private fun readAloud(context: Context) {
-            ActivityHelp.getInstance()?.isExist(ReadBookActivity::class.java)?.let {
+            ActivityHelp.getInstance().isExist(ReadBookActivity::class.java).let {
                 if (!it) {
                     context.startActivity<ReadBookActivity>()
                 }

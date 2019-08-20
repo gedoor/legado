@@ -100,6 +100,7 @@ object ATH {
         val color1: Int
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             color1 = ColorUtils.stripAlpha(color)
+            @Suppress("DEPRECATION")
             activity.setTaskDescription(ActivityManager.TaskDescription(activity.title as String, null, color1))
         }
     }

@@ -37,12 +37,12 @@ object BookInfo {
         analyzeRule.getString(infoRule.name ?: "")?.let {
             if (it.isNotEmpty()) book.name = it
         }
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, book.name ?: "")
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, book.name)
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取作者")
         analyzeRule.getString(infoRule.author ?: "")?.let {
             if (it.isNotEmpty()) book.author = it
         }
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, book.author ?: "")
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, book.author)
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取分类")
         analyzeRule.getString(infoRule.kind ?: "")?.let {
             if (it.isNotEmpty()) book.kind = it
