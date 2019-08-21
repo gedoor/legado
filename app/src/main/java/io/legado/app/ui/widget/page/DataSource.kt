@@ -6,7 +6,7 @@ interface DataSource {
 
     fun isPrepared(): Boolean
 
-    fun getChapterPosition()
+    fun getChapterPosition(): Int
 
     fun getChapter(position: Int): TextChapter?
 

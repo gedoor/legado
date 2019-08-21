@@ -37,8 +37,8 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun getChapterPosition() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            override fun getChapterPosition(): Int {
+                return callback?.durChapterIndex() ?: 0
             }
 
             override fun getChapter(position: Int): TextChapter? {
@@ -46,23 +46,29 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
             }
 
             override fun getCurrentChapter(): TextChapter? {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return callback?.textChapter(0)
             }
 
             override fun getNextChapter(): TextChapter? {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return callback?.textChapter(1)
             }
 
             override fun getPreviousChapter(): TextChapter? {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return callback?.textChapter(-1)
             }
 
             override fun hasNextChapter(): Boolean {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                callback?.let {
+                    return it.durChapterIndex() < it.chapterSize() - 1
+                }
+                return false
             }
 
             override fun hasPrevChapter(): Boolean {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                callback?.let {
+                    return it.durChapterIndex() > 0
+                }
+                return false
             }
         }))
     }
@@ -190,8 +196,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     }
 
     interface CallBack {
+        fun chapterSize(): Int
         fun durChapterIndex(): Int
         fun durChapterPos(pageSize: Int): Int
         fun textChapter(chapterOnDur: Int = 0): TextChapter?
+        fun loadChapter(index: Int)
     }
 }

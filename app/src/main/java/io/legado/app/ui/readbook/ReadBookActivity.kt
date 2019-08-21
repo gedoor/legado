@@ -53,7 +53,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         initAnimation()
         initView()
         viewModel.callBack = this
-        viewModel.chapterMaxIndex.observe(this, Observer { bookLoadFinish() })
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
         viewModel.initData(intent)
         savedInstanceState?.let {
@@ -235,7 +234,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    private fun bookLoadFinish() {
+    override fun bookLoadFinish() {
         viewModel.bookData.value?.let {
             viewModel.loadContent(it, viewModel.durChapterIndex)
             viewModel.loadContent(it, viewModel.durChapterIndex + 1)
@@ -243,7 +242,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    override fun onLoadFinish(bookChapter: BookChapter, content: String) {
+    override fun loadChapter(index: Int) {
+        viewModel.bookData.value?.let {
+            viewModel.loadContent(it, index)
+        }
+    }
+
+    override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
         launch {
             when (bookChapter.index) {
                 viewModel.durChapterIndex -> {
@@ -268,12 +273,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    override fun chapterSize(): Int {
+        return viewModel.chapterSize
+    }
+
     override fun oldBook(): Book? {
         return viewModel.bookData.value
     }
 
     override fun changeTo(book: Book) {
-
+        viewModel.changeTo(book)
     }
 
     override fun durChapterIndex(): Int {
@@ -294,15 +303,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             -1 -> viewModel.prevTextChapter
             else -> null
         }
-    }
-
-    fun upStyle() {
-        content_view.upStyle()
-        page_view.upStyle()
-    }
-
-    fun upBg() {
-        page_view.upBg()
     }
 
     private fun onClickReadAloud() {
@@ -332,10 +332,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEventSticky<Int>(Bus.UP_CONFIG) {
             when (it) {
                 0 -> {
-                    upBg()
-                    upStyle()
+                    page_view.upBg()
+                    content_view.upStyle()
+                    page_view.upStyle()
                 }
-                1 -> upStyle()
+                1 -> {
+                    content_view.upStyle()
+                    page_view.upStyle()
+                }
             }
         }
     }

@@ -2,7 +2,6 @@ package io.legado.app.ui.readbook
 
 import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
@@ -20,7 +19,7 @@ import kotlinx.coroutines.Dispatchers.IO
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     var bookData = MutableLiveData<Book>()
-    var chapterMaxIndex = MediatorLiveData<Int>()
+    var chapterSize = 0
     var bookSource: BookSource? = null
     var webBook: WebBook? = null
     var callBack: CallBack? = null
@@ -52,7 +51,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                             ?.onSuccess(IO) { cList ->
                                 if (!cList.isNullOrEmpty()) {
                                     App.db.bookChapterDao().insert(*cList.toTypedArray())
-                                    chapterMaxIndex.postValue(cList.size)
+                                    chapterSize = cList.size
+                                    callBack?.bookLoadFinish()
                                 } else {
                                     toast(R.string.error_load_toc)
                                 }
@@ -63,7 +63,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         if (durChapterIndex > count - 1) {
                             durChapterIndex = count - 1
                         }
-                        chapterMaxIndex.postValue(count)
+                        chapterSize = count
+                        callBack?.bookLoadFinish()
                     }
                 }
 
@@ -80,7 +81,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                 BookHelp.getContent(book, chapter)?.let {
-                    callBack?.onLoadFinish(chapter, it)
+                    callBack?.contentLoadFinish(chapter, it)
                     synchronized(loadingLock) {
                         loadingChapters.remove(index)
                     }
@@ -118,7 +119,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ?.onSuccess(IO) { content ->
                 content?.let {
                     BookHelp.saveContent(book, chapter, it)
-                    callBack?.onLoadFinish(chapter, it)
+                    callBack?.contentLoadFinish(chapter, it)
                     synchronized(loadingLock) {
                         loadingChapters.remove(chapter.index)
                     }
@@ -128,6 +129,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     loadingChapters.remove(chapter.index)
                 }
             }
+    }
+
+    fun changeTo(book: Book) {
+
     }
 
     private fun autoChangeSource() {
@@ -140,6 +145,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     interface CallBack {
-        fun onLoadFinish(bookChapter: BookChapter, content: String)
+        fun bookLoadFinish()
+        fun contentLoadFinish(bookChapter: BookChapter, content: String)
     }
 }
