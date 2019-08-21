@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import com.google.gson.reflect.TypeToken
 import io.legado.app.App
 import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.putPrefInt
 import java.io.BufferedWriter
@@ -23,8 +24,8 @@ object ReadBookConfig {
             String(App.INSTANCE.assets.open("readConfig.json").readBytes())
         }
         try {
-            val listType = object : TypeToken<List<Config>>() {}.type
-            GSON.fromJson<List<Config>>(json, listType)?.let {
+//            val listType = object : TypeToken<List<Config>>() {}.type
+            GSON.fromJsonArray<Config>(json)?.let {
                 list.addAll(it)
             }
         } catch (e: Exception) {
