@@ -114,4 +114,11 @@
         <attr name="shadow_position" format="integer"/>
         <attr name="loading_speed" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_circle_background_color" format="color" />
+    </declare-styleable>
 </resources>
