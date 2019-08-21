@@ -6,7 +6,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import io.legado.app.R
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 
@@ -169,10 +169,12 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     }
 
     fun upBg() {
-        val bg = context.getDrawable(R.drawable.bg1)
-        curPage?.setBg(bg)
-        prevPage?.setBg(bg)
-        nextPage?.setBg(bg)
+        ReadBookConfig.bg ?: let {
+            ReadBookConfig.upBg()
+        }
+        curPage?.setBg(ReadBookConfig.bg)
+        prevPage?.setBg(ReadBookConfig.bg)
+        nextPage?.setBg(ReadBookConfig.bg)
     }
 
     fun upTime() {

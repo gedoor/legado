@@ -3,9 +3,9 @@ package io.legado.app.help
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import com.google.gson.reflect.TypeToken
 import io.legado.app.App
 import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.putPrefInt
 import java.io.BufferedWriter
@@ -14,24 +14,29 @@ import java.io.FileWriter
 import java.io.IOException
 
 object ReadBookConfig {
-    private val configList = arrayListOf<Config>()
-    private var styleSelect
-        get() = App.INSTANCE.getPrefInt("readStyleSelect")
-        set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
-    var bg: Drawable? = null
-
-    init {
+    private val configList: ArrayList<Config> by lazy {
+        val list: ArrayList<Config> = arrayListOf()
         val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + "config")
         val json = if (configFile.exists()) {
             String(configFile.readBytes())
         } else {
             String(App.INSTANCE.assets.open("readConfig.json").readBytes())
         }
-        GSON.fromJsonArray<Config>(json)?.let {
-            configList.clear()
-            configList.addAll(it)
-        } ?: reset()
+        try {
+            val listType = object : TypeToken<List<Config>>() {}.type
+            GSON.fromJson<List<Config>>(json, listType)?.let {
+                list.addAll(it)
+            }
+        } catch (e: Exception) {
+            list.addAll(getOnError())
+        }
+        list
     }
+
+    private var styleSelect
+        get() = App.INSTANCE.getPrefInt("readStyleSelect")
+        set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
+    var bg: Drawable? = null
 
     fun getConfig(): Config {
         return configList[styleSelect]
@@ -41,7 +46,8 @@ object ReadBookConfig {
         getConfig().apply {
             when (bgType) {
                 0 -> bg = ColorDrawable(Color.parseColor(bgStr))
-
+                1 -> bg = Drawable.createFromStream(App.INSTANCE.assets.open("bg" + File.separator + bgStr), "bg")
+                2 -> bg = Drawable.createFromPath(bgStr)
             }
         }
     }
@@ -61,23 +67,40 @@ object ReadBookConfig {
     }
 
     fun reset() {
-        val json = String(App.INSTANCE.assets.open("readConfig.json").readBytes())
-        GSON.fromJsonArray<Config>(json)?.let {
+        try {
+            val json = String(App.INSTANCE.assets.open("readConfig.json").readBytes())
+            val listType = object : TypeToken<List<Config>>() {}.type
+            GSON.fromJson<List<Config>>(json, listType)?.let {
+                configList.clear()
+                configList.addAll(it)
+            }
+        } catch (e: Exception) {
             configList.clear()
-            configList.addAll(it)
+            configList.addAll(getOnError())
         }
     }
 
+    private fun getOnError(): ArrayList<Config> {
+        val list = arrayListOf<Config>()
+        list.add(Config())
+        list.add(Config())
+        list.add(Config())
+        list.add(Config())
+        return list
+    }
+
     data class Config(
-        var bgStr: String = "#F3F3F3",
-        var bgInt: Int = 0,
+        var bgStr: String = "#015A86",
         var bgType: Int = 0,
         var darkStatusIcon: Boolean = true,
-        var textColor: String = "#3E3D3B",
-        var textSize: Int = 16,
         var letterSpacing: Int = 1,
         var lineSpacingExtra: Int = 15,
-        var lineSpacingMultiplier: Int = 3
+        var lineSpacingMultiplier: Int = 3,
+        var paddingBottom: Int = 0,
+        var paddingLeft: Int = 16,
+        var paddingRight: Int = 16,
+        var paddingTop: Int = 0,
+        var textColor: String = "#3E3D3B",
+        var textSize: Int = 15
     )
-
 }
