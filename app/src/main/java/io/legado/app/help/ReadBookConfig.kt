@@ -42,21 +42,7 @@ object ReadBookConfig {
     }
 
     fun upBg() {
-        getConfig().apply {
-            when (bgType) {
-                0 -> bg = ColorDrawable(Color.parseColor(bgStr))
-                1 -> bg = Drawable.createFromStream(App.INSTANCE.assets.open("bg" + File.separator + bgStr), "bg")
-                else -> {
-                    try {
-                        bg = Drawable.createFromPath(bgStr)
-                    } finally {
-                        bg ?: let {
-                            bg = ColorDrawable(Color.parseColor("#015A86"))
-                        }
-                    }
-                }
-            }
-        }
+        bg = getConfig().bgDrawable()
     }
 
     fun save() {
@@ -112,6 +98,19 @@ object ReadBookConfig {
     ) {
         fun textColor(): Int {
             return Color.parseColor(textColor)
+        }
+
+        fun bgDrawable(): Drawable {
+            var bgDrawable: Drawable? = null
+            when (bgType) {
+                0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr))
+                1 -> bgDrawable =
+                    Drawable.createFromStream(App.INSTANCE.assets.open("bg" + File.separator + bgStr), "bg")
+                else -> runCatching {
+                    bgDrawable = Drawable.createFromPath(bgStr)
+                }
+            }
+            return bgDrawable ?: ColorDrawable(Color.parseColor("#015A86"))
         }
     }
 }

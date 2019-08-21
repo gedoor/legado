@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
@@ -79,7 +80,25 @@ class ReadStyleDialog : DialogFragment() {
         tv_bg2.setTextColor(ReadBookConfig.getConfig(2).textColor())
         tv_bg3.setTextColor(ReadBookConfig.getConfig(3).textColor())
         tv_bg4.setTextColor(ReadBookConfig.getConfig(4).textColor())
-
+        for (i in 0..4) {
+            val iv = when (i) {
+                1 -> bg1
+                2 -> bg2
+                3 -> bg3
+                4 -> bg4
+                else -> bg0
+            }
+            ReadBookConfig.getConfig(i).apply {
+                when (bgType) {
+                    2 -> {
+                        ImageLoader.load(requireContext(), bgStr)
+                            .centerCrop()
+                            .setAsFile(iv)
+                    }
+                    else -> iv.setImageDrawable(bgDrawable())
+                }
+            }
+        }
     }
 
     private fun upBg() {
