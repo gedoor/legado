@@ -43,7 +43,7 @@ class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<
     }
 
     override fun currentPage(): TextPage? {
-        return TextPage(index, "index：$index")
+        return dataSource.getCurrentChapter()?.page(index)
     }
 
     override fun nextPage(): TextPage? {
