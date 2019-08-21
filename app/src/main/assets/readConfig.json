@@ -1,7 +1,7 @@
 [
   {
-    "bgStr": "#F3F3F3",
-    "bgType": 0,
+    "bgStr": "bg1.jpg",
+    "bgType": 1,
     "darkStatusIcon": true,
     "textColor": "#3E3D3B",
     "textSize": 16,
