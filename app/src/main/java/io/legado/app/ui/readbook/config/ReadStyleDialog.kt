@@ -12,7 +12,7 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -111,11 +111,11 @@ class ReadStyleDialog : DialogFragment() {
     }
 
     private fun upBg() {
-        bg0.borderColor = requireContext().primaryTextColor
-        bg1.borderColor = requireContext().primaryTextColor
-        bg2.borderColor = requireContext().primaryTextColor
-        bg3.borderColor = requireContext().primaryTextColor
-        bg4.borderColor = requireContext().primaryTextColor
+        bg0.borderColor = requireContext().primaryColor
+        bg1.borderColor = requireContext().primaryColor
+        bg2.borderColor = requireContext().primaryColor
+        bg3.borderColor = requireContext().primaryColor
+        bg4.borderColor = requireContext().primaryColor
         when (ReadBookConfig.styleSelect) {
             1 -> {
                 bg1.borderColor = requireContext().accentColor
