@@ -41,8 +41,8 @@ class ContentView : FrameLayout {
 
     fun setBg(bg: Drawable?) {
         if (bg is ColorDrawable) {
+            bgImage.setImageDrawable(null)
             bgImage.background = bg
-            bgImage
         } else {
             ImageLoader.load(context, bg)
                 .centerCrop()

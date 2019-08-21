@@ -7,8 +7,8 @@
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg0"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -17,8 +17,8 @@
 
     <TextView
         android:id="@+id/tv_bg0"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
         android:text="@string/text"
         app:layout_constraintTop_toTopOf="@+id/bg0"
@@ -26,8 +26,8 @@
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg1"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
         app:layout_constraintLeft_toRightOf="@+id/bg0"
@@ -36,8 +36,8 @@
 
     <TextView
         android:id="@+id/tv_bg1"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
         android:text="@string/text"
         app:layout_constraintTop_toTopOf="@+id/bg1"
@@ -45,8 +45,8 @@
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
         app:layout_constraintLeft_toRightOf="@+id/bg1"
@@ -55,8 +55,8 @@
 
     <TextView
         android:id="@+id/tv_bg2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
         android:text="@string/text"
         app:layout_constraintTop_toTopOf="@+id/bg2"
@@ -64,8 +64,8 @@
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg3"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
         app:layout_constraintLeft_toRightOf="@+id/bg2"
@@ -74,8 +74,8 @@
 
     <TextView
         android:id="@+id/tv_bg3"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
         android:text="@string/text"
         app:layout_constraintTop_toTopOf="@+id/bg3"
@@ -83,8 +83,8 @@
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg4"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
         app:layout_constraintLeft_toRightOf="@+id/bg3"
@@ -93,8 +93,8 @@
 
     <TextView
         android:id="@+id/tv_bg4"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
         android:text="@string/text"
         app:layout_constraintTop_toTopOf="@+id/bg4"

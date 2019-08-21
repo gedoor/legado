@@ -37,8 +37,8 @@ object ReadBookConfig {
         set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
     var bg: Drawable? = null
 
-    fun getConfig(): Config {
-        return configList[styleSelect]
+    fun getConfig(index: Int = styleSelect): Config {
+        return configList[index]
     }
 
     fun upBg() {
@@ -109,5 +109,9 @@ object ReadBookConfig {
         var paddingTop: Int = 0,
         var textColor: String = "#3E3D3B",
         var textSize: Int = 15
-    )
+    ) {
+        fun textColor(): Int {
+            return Color.parseColor(textColor)
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package io.legado.app.ui.readbook.config
 
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,15 @@ class ReadStyleDialog : DialogFragment() {
         initOnClick()
     }
 
+    override fun onStart() {
+        super.onStart()
+        val dm = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
     private fun initData() {
+        setBg()
         upBg()
     }
 
@@ -62,6 +71,15 @@ class ReadStyleDialog : DialogFragment() {
             upBg()
             postEvent(Bus.UP_CONFIG, 0)
         }
+    }
+
+    private fun setBg() {
+        tv_bg0.setTextColor(ReadBookConfig.getConfig(0).textColor())
+        tv_bg1.setTextColor(ReadBookConfig.getConfig(1).textColor())
+        tv_bg2.setTextColor(ReadBookConfig.getConfig(2).textColor())
+        tv_bg3.setTextColor(ReadBookConfig.getConfig(3).textColor())
+        tv_bg4.setTextColor(ReadBookConfig.getConfig(4).textColor())
+
     }
 
     private fun upBg() {
