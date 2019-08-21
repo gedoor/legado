@@ -3,7 +3,6 @@ package io.legado.app.help
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import com.google.gson.reflect.TypeToken
 import io.legado.app.App
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
@@ -24,7 +23,6 @@ object ReadBookConfig {
             String(App.INSTANCE.assets.open("readConfig.json").readBytes())
         }
         try {
-//            val listType = object : TypeToken<List<Config>>() {}.type
             GSON.fromJsonArray<Config>(json)?.let {
                 list.addAll(it)
             }
@@ -70,8 +68,7 @@ object ReadBookConfig {
     fun reset() {
         try {
             val json = String(App.INSTANCE.assets.open("readConfig.json").readBytes())
-            val listType = object : TypeToken<List<Config>>() {}.type
-            GSON.fromJson<List<Config>>(json, listType)?.let {
+            GSON.fromJsonArray<Config>(json)?.let {
                 configList.clear()
                 configList.addAll(it)
             }
