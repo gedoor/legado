@@ -159,11 +159,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
             }
 
-            override fun openReadInterface() {
+            override fun showReadStyle() {
 
             }
 
-            override fun openMoreSetting() {
+            override fun showMoreSetting() {
 
             }
 

@@ -98,10 +98,10 @@ class ReadBottomMenu : FrameLayout {
         ll_adjust.onClick { callback?.openAdjust() }
 
         //界面
-        ll_font.onClick { callback?.openReadInterface() }
+        ll_font.onClick { callback?.showReadStyle() }
 
         //设置
-        ll_setting.onClick { callback?.openMoreSetting() }
+        ll_setting.onClick { callback?.showMoreSetting() }
 
         tv_read_aloud_timer.onClick { }
     }
@@ -171,9 +171,9 @@ class ReadBottomMenu : FrameLayout {
 
         fun openAdjust()
 
-        fun openReadInterface()
+        fun showReadStyle()
 
-        fun openMoreSetting()
+        fun showMoreSetting()
 
         fun toast(id: Int)
 
