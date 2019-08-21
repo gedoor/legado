@@ -84,6 +84,7 @@ object ReadBookConfig {
         list.add(Config())
         list.add(Config())
         list.add(Config())
+        list.add(Config())
         return list
     }
 
