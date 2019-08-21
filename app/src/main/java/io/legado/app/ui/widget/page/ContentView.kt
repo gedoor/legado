@@ -8,9 +8,9 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.help.ImageLoader
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.dp
 import kotlinx.android.synthetic.main.view_book_page.view.*
-import org.jetbrains.anko.horizontalPadding
 import org.jetbrains.anko.matchParent
 
 
@@ -31,7 +31,12 @@ class ContentView : FrameLayout {
     }
 
     fun upStyle() {
-        page_panel.horizontalPadding = 16.dp
+        ReadBookConfig.getConfig().apply {
+            page_panel.setPadding(paddingLeft.dp, paddingTop.dp, paddingRight.dp, paddingBottom.dp)
+            content_text_view.textSize = textSize.toFloat()
+            content_text_view.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier)
+            content_text_view.letterSpacing = letterSpacing
+        }
     }
 
     fun setBg(bg: Drawable?) {
