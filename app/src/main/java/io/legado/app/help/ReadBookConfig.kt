@@ -46,7 +46,15 @@ object ReadBookConfig {
             when (bgType) {
                 0 -> bg = ColorDrawable(Color.parseColor(bgStr))
                 1 -> bg = Drawable.createFromStream(App.INSTANCE.assets.open("bg" + File.separator + bgStr), "bg")
-                2 -> bg = Drawable.createFromPath(bgStr)
+                else -> {
+                    try {
+                        bg = Drawable.createFromPath(bgStr)
+                    } finally {
+                        bg ?: let {
+                            bg = ColorDrawable(Color.parseColor("#015A86"))
+                        }
+                    }
+                }
             }
         }
     }
