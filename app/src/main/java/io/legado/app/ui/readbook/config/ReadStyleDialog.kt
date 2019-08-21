@@ -32,7 +32,12 @@ class ReadStyleDialog : DialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(dm)
-        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.let {
+            val attr = it.attributes
+            attr.dimAmount = 0.0f
+            it.attributes = attr
+            it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
     }
 
     private fun initData() {
