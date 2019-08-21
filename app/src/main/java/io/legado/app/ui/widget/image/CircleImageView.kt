@@ -240,22 +240,20 @@ class CircleImageView : AppCompatImageView {
             return drawable.bitmap
         }
 
-        try {
-            val bitmap: Bitmap
-
-            if (drawable is ColorDrawable) {
-                bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG)
+        return try {
+            val bitmap: Bitmap = if (drawable is ColorDrawable) {
+                Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG)
             } else {
-                bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, BITMAP_CONFIG)
+                Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, BITMAP_CONFIG)
             }
 
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.draw(canvas)
-            return bitmap
+            bitmap
         } catch (e: Exception) {
             e.printStackTrace()
-            return null
+            null
         }
 
     }
