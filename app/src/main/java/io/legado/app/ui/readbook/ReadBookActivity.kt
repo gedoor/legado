@@ -327,5 +327,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEventSticky<String>(Bus.READ_ALOUD) { onClickReadAloud() }
+        observeEventSticky<Int>(Bus.UP_CONFIG) {
+            when (it) {
+                0 -> {
+                    upBg()
+                    upStyle()
+                }
+                1 -> upStyle()
+            }
+        }
     }
 }

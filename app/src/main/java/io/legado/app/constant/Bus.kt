@@ -9,4 +9,5 @@ object Bus {
     const val BATTERY_CHANGED = "batteryChanged"
     const val TIME_CHANGED = "timeChanged"
     const val READ_ALOUD = "readAloud"
+    const val UP_CONFIG = "upConfig"
 }

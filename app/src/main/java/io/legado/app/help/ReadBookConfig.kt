@@ -32,7 +32,7 @@ object ReadBookConfig {
         list
     }
 
-    private var styleSelect
+    var styleSelect
         get() = App.INSTANCE.getPrefInt("readStyleSelect")
         set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
     var bg: Drawable? = null
