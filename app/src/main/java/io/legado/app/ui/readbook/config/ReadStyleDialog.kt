@@ -2,6 +2,7 @@ package io.legado.app.ui.readbook.config
 
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,10 +34,13 @@ class ReadStyleDialog : DialogFragment() {
         val dm = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(dm)
         dialog?.window?.let {
+            it.setBackgroundDrawableResource(R.color.transparent)
+            it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
+            attr.gravity = Gravity.BOTTOM
             it.attributes = attr
-            it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 
