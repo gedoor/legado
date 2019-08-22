@@ -17,4 +17,11 @@
         app:iconSpaceReserved="false" />
 
 
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="true"
+        android:key="process_text"
+        android:summary="长按文字在操作菜单中显示阅读·搜索"
+        android:title="文字操作显示搜索"
+        app:iconSpaceReserved="false" />
+
 </androidx.preference.PreferenceScreen>

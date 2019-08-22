@@ -8,5 +8,10 @@
         android:key="hideStatusBar"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
+        android:title="@string/pt_hide_navigation_bar"
+        android:key="hideNavigationBar"
+        app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>
