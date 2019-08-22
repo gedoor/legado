@@ -51,13 +51,13 @@ class ChapterListAdapter(val callback: Callback) :
                 }
             }
             itemView.onClick {
-                callback?.openChapter()
+                callback?.openChapter(bookChapter)
             }
         }
     }
 
     interface Callback {
-        fun openChapter()
+        fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
     }
 }

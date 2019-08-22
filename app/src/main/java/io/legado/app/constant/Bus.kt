@@ -10,4 +10,5 @@ object Bus {
     const val TIME_CHANGED = "timeChanged"
     const val READ_ALOUD = "readAloud"
     const val UP_CONFIG = "upConfig"
+    const val OPEN_CHAPTER = "openChapter"
 }
