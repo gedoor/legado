@@ -67,26 +67,31 @@ abstract class PageDelegate(protected val pageView: PageView) {
         onScroll()
     }
 
-    fun setViewSize(width: Int, height: Int) {
-        viewWidth = width
-        viewHeight = height
-        invalidate()
-    }
-
-    fun invalidate() {
+    protected fun invalidate() {
         pageView.invalidate()
     }
 
-    fun start() {
+    protected fun start() {
         isRunning = true
         isStarted = true
         invalidate()
     }
 
-    fun stop() {
+    protected fun stop() {
         isRunning = false
         isStarted = false
         bitmap = null
+        invalidate()
+    }
+
+    protected fun getDuration(distance: Float): Int {
+        val duration = 300 * abs(distance) / viewWidth
+        return duration.toInt()
+    }
+
+    fun setViewSize(width: Int, height: Int) {
+        viewWidth = width
+        viewHeight = height
         invalidate()
     }
 
@@ -95,8 +100,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
             setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
             setTouchPoint(scroller.finalX.toFloat(), scroller.finalY.toFloat(), false)
-            stop()
             onScrollStop()
+            stop()
         }
     }
 
@@ -148,11 +153,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
             return true
         }
         return detector.onTouchEvent(event)
-    }
-
-    fun getDuration(distance: Float): Int {
-        val duration = 300 * abs(distance) / viewWidth
-        return duration.toInt()
     }
 
     abstract fun onScrollStart()//scroller start

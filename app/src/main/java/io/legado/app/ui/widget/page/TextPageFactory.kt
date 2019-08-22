@@ -26,6 +26,10 @@ class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<
         index = 0
     }
 
+    override fun moveToLast() {
+
+    }
+
     override fun moveToNext(): Boolean {
         return if(hasNext()){
             index = index.plus(1)
@@ -43,7 +47,8 @@ class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<
     }
 
     override fun currentPage(): TextPage? {
-        return dataSource.getCurrentChapter()?.page(index)
+//        return dataSource.getCurrentChapter()?.page(index)
+        return TextPage(index, "index：$index")
     }
 
     override fun nextPage(): TextPage? {

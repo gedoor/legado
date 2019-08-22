@@ -18,10 +18,7 @@ import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.findbook.FindBookFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.observeEvent
-import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch

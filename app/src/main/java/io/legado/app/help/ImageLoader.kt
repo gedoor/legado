@@ -10,7 +10,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.*
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestOptions
@@ -74,27 +76,27 @@ object ImageLoader {
         }
 
         fun toCropRound(corner: Int): ImageLoadBuilder<S> {
-            requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(corner))
+            requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(corner))
             return this
         }
 
         fun toCircle(): ImageLoadBuilder<S> {
-            requestOptions = requestOptions.transform(CircleCrop())
+            requestOptions = requestOptions.circleCrop()
             return this
         }
 
         fun centerInside(): ImageLoadBuilder<S> {
-            requestOptions = requestOptions.transform(CenterInside())
+            requestOptions = requestOptions.centerInside()
             return this
         }
 
         fun fitCenter(): ImageLoadBuilder<S> {
-            requestOptions = requestOptions.transform(FitCenter())
+            requestOptions = requestOptions.fitCenter()
             return this
         }
 
         fun centerCrop(): ImageLoadBuilder<S> {
-            requestOptions = requestOptions.transform(CenterCrop())
+            requestOptions = requestOptions.centerCrop()
             return this
         }
 
@@ -213,7 +215,7 @@ object ImageLoader {
         }
 
         private fun <ResourceType> ensureOptions(builder: RequestBuilder<ResourceType>): RequestBuilder<ResourceType> {
-            return builder.apply(requestOptions.diskCacheStrategy(if (noCache) DiskCacheStrategy.NONE else DiskCacheStrategy.RESOURCE))
+            return builder.apply(requestOptions.diskCacheStrategy(if (noCache) DiskCacheStrategy.NONE else DiskCacheStrategy.AUTOMATIC))
         }
 
         private inner class Target<R> constructor(private val target: ImageViewTarget<R>) :

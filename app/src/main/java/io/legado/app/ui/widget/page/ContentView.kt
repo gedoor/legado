@@ -1,7 +1,6 @@
 package io.legado.app.ui.widget.page
 
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
@@ -41,14 +40,10 @@ class ContentView : FrameLayout {
     }
 
     fun setBg(bg: Drawable?) {
-        if (bg is ColorDrawable) {
-            bgImage.setImageDrawable(null)
-            bgImage.background = bg
-        } else {
-            ImageLoader.load(context, bg)
-                .centerCrop()
-                .setAsDrawable(bgImage)
-        }
+        //all supported
+        ImageLoader.load(context, bg)
+            .centerCrop()
+            .setAsDrawable(bgImage)
     }
 
     fun upTime() {

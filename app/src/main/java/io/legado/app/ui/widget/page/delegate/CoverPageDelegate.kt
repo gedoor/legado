@@ -69,15 +69,13 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         }
     }
 
-    private fun addShadow(left: Int, canvas: Canvas?) {
-        canvas?.let {
-            if (left < 0) {
-                shadowDrawableR.setBounds(left + viewWidth, 0, left + viewWidth + 30, viewHeight)
-                shadowDrawableR.draw(it)
-            } else {
-                shadowDrawableL.setBounds(left - 30, 0, left, viewHeight)
-                shadowDrawableL.draw(it)
-            }
+    private fun addShadow(left: Int, canvas: Canvas) {
+        if (left < 0) {
+            shadowDrawableR.setBounds(left + viewWidth, 0, left + viewWidth + 30, viewHeight)
+            shadowDrawableR.draw(canvas)
+        } else {
+            shadowDrawableL.setBounds(left - 30, 0, left, viewHeight)
+            shadowDrawableL.draw(canvas)
         }
     }
 }
