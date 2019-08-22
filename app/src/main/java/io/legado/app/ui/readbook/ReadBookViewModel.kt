@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers.IO
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookData = MutableLiveData<Book>()
+    val chapterListFinish = MutableLiveData<Boolean>()
     var chapterSize = 0
     var bookSource: BookSource? = null
     var webBook: WebBook? = null
@@ -58,7 +59,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                             durChapterIndex = count - 1
                         }
                         chapterSize = count
-                        callBack?.bookLoadFinish()
+                        chapterListFinish.postValue(true)
                     }
                 }
 
@@ -82,7 +83,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     if (!cList.isNullOrEmpty()) {
                         App.db.bookChapterDao().insert(*cList.toTypedArray())
                         chapterSize = cList.size
-                        callBack?.bookLoadFinish()
+                        chapterListFinish.postValue(true)
                     } else {
                         toast(R.string.error_load_toc)
                     }
@@ -175,7 +176,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             durPageIndex = 0
         }
         saveRead()
-        callBack?.bookLoadFinish()
+        chapterListFinish.postValue(true)
     }
 
     fun saveRead() {
@@ -194,7 +195,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     interface CallBack {
-        fun bookLoadFinish()
         fun contentLoadFinish(bookChapter: BookChapter, content: String)
     }
 }

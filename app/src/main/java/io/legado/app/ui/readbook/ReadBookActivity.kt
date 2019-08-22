@@ -55,6 +55,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         initView()
         viewModel.callBack = this
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
+        viewModel.chapterListFinish.observe(this, Observer { bookLoadFinish() })
         viewModel.initData(intent)
         savedInstanceState?.let {
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
@@ -235,7 +236,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    override fun bookLoadFinish() {
+    fun bookLoadFinish() {
         viewModel.bookData.value?.let {
             viewModel.loadContent(it, viewModel.durChapterIndex)
             viewModel.loadContent(it, viewModel.durChapterIndex + 1)
