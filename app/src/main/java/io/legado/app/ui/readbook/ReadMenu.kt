@@ -7,11 +7,11 @@ import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.service.ReadAloudService
 import io.legado.app.utils.isNightTheme
-import kotlinx.android.synthetic.main.view_read_bottom_menu.view.*
+import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadBottomMenu : FrameLayout {
+class ReadMenu : FrameLayout {
 
     private var callback: Callback? = null
 
@@ -26,7 +26,7 @@ class ReadBottomMenu : FrameLayout {
     )
 
     init {
-        inflate(context, R.layout.view_read_bottom_menu, this)
+        inflate(context, R.layout.view_read_menu, this)
         if (context.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
         } else {

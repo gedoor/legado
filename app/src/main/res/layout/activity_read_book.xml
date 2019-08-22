@@ -15,52 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <FrameLayout
+
+    <io.legado.app.ui.readbook.ReadMenu
         android:id="@+id/fl_menu"
-        android:layout_width="match_parent"
+            android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <View
-            android:id="@+id/vw_menu_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <io.legado.app.ui.widget.TitleBar
-            android:id="@+id/title_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="?attr/actionBarStyle"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_chapter_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="@string/chapter"
-                android:textSize="12sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_chapter_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="@string/chapter"
-                android:textSize="12sp"
-                android:visibility="gone" />
-
-        </io.legado.app.ui.widget.TitleBar>
-
-        <io.legado.app.ui.readbook.ReadBottomMenu
-            android:id="@+id/bottom_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
             android:visibility="gone" />
-    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

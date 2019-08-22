@@ -27,6 +27,7 @@ import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.view_book_page.*
+import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -119,7 +120,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         tv_chapter_url.onClick {
 
         }
-        bottom_menu.setListener(object : ReadBottomMenu.Callback {
+        fl_menu.setListener(object : ReadMenu.Callback {
             override fun skipToPage(page: Int) {
 
             }
@@ -260,6 +261,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     }
                     viewModel.curTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
                     page_view.chapterLoadFinish()
+
                 }
                 viewModel.durChapterIndex - 1 -> {
                     viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
