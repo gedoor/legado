@@ -199,6 +199,14 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 rv_chapter_list.scrollToPosition(it.durChapterIndex)
             }
         }
+        iv_chapter_top.onClick {
+            rv_chapter_list.scrollToPosition(0)
+        }
+        iv_chapter_bottom.onClick {
+            viewModel.chapterListData.value?.let {
+                rv_chapter_list.scrollToPosition(it.size - 1)
+            }
+        }
     }
 
     override fun oldBook(): Book? {
