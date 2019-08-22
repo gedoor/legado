@@ -16,6 +16,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
     val isLoadingData = MutableLiveData<Boolean>()
+    var durChapterIndex = 0
     var inBookshelf = false
 
     fun loadBook(intent: Intent) {
@@ -23,6 +24,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
                     inBookshelf = true
+                    durChapterIndex = book.durChapterIndex
                     bookData.postValue(book)
                     val chapterList = App.db.bookChapterDao().getChapterList(it)
                     if (chapterList.isNotEmpty()) {
@@ -34,6 +36,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 }
             } ?: intent.getStringExtra("searchBookUrl")?.let {
                 App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
+                    durChapterIndex = book.durChapterIndex
                     bookData.postValue(book)
                     if (book.tocUrl.isEmpty()) {
                         loadBookInfo(book)

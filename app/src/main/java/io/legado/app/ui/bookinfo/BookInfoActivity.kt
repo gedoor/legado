@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ImageLoader
@@ -19,6 +20,7 @@ import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
+import io.legado.app.utils.postEvent
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_info.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -127,6 +129,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
         adapter.clearItems()
         adapter.addItems(chapterList)
+        rv_chapter_list.scrollToPosition(viewModel.durChapterIndex)
     }
 
     private fun upLoading(isLoading: Boolean) {
@@ -206,7 +209,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.changeTo(book)
     }
 
-    override fun skipToChapter(index: Int) {
+    override fun openChapter(chapter: BookChapter) {
+        postEvent(Bus.OPEN_CHAPTER, chapter)
+    }
 
+    override fun durChapterIndex(): Int {
+        return viewModel.durChapterIndex
     }
 }
