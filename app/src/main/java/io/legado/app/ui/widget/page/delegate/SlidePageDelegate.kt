@@ -27,8 +27,7 @@ class SlidePageDelegate(pageView: PageView) : PageDelegate(pageView) {
             }
         }
 
-        scroller.startScroll(touchX.toInt(), 0, distanceX.toInt(), 0, getDuration(distanceX))
-        start()
+        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
     }
 
     override fun onDraw(canvas: Canvas) {
