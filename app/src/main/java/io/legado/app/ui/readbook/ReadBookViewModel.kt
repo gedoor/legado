@@ -39,10 +39,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!bookUrl.isNullOrEmpty()) {
             execute {
                 App.db.bookDao().getBook(bookUrl)?.let { book ->
-                    bookData.postValue(book)
                     durChapterIndex = book.durChapterIndex
                     durPageIndex = book.durChapterPos
                     isLocalBook = book.origin == BookType.local
+                    bookData.postValue(book)
                     bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
                         webBook = WebBook(it)

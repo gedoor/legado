@@ -1,14 +1,15 @@
 package io.legado.app.ui.widget.page
 
-class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
+class TextPageFactory private constructor(dataSource: DataSource) :
+    PageFactory<TextPage>(dataSource) {
 
-    companion object{
-        fun create(dataSource: DataSource): TextPageFactory{
+    companion object {
+        fun create(dataSource: DataSource): TextPageFactory {
             return TextPageFactory(dataSource)
         }
     }
 
-    private var index: Int = 0
+    var index: Int = 0
 
     override fun hasPrev(): Boolean {
         return true
@@ -27,22 +28,28 @@ class TextPageFactory private constructor(dataSource: DataSource) : PageFactory<
     }
 
     override fun moveToLast() {
-
+        index = dataSource.getCurrentChapter()?.let {
+            if (it.pageSize() == 0) {
+                0
+            } else {
+                it.pageSize() - 1
+            }
+        } ?: 0
     }
 
     override fun moveToNext(): Boolean {
-        return if(hasNext()){
+        return if (hasNext()) {
             index = index.plus(1)
             true
-        }else
+        } else
             false
     }
 
     override fun moveToPrevious(): Boolean {
-        return if(hasPrev()){
+        return if (hasPrev()) {
             index = index.minus(1)
             true
-        }else
+        } else
             false
     }
 
