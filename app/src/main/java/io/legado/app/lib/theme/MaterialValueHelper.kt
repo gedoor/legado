@@ -123,6 +123,13 @@ val Fragment.primaryDisabledTextColor: Int
 val Fragment.secondaryDisabledTextColor: Int
     get() = getSecondaryDisabledTextColor(isDarkTheme)
 
+val Context.buttonDisabledColor: Int
+    get() = if (isDarkTheme) {
+        ContextCompat.getColor(this, R.color.ate_button_disabled_dark)
+    } else {
+        ContextCompat.getColor(this, R.color.ate_button_disabled_light)
+    }
+
 val Context.isDarkTheme: Boolean
     get() = ColorUtils.isColorLight(ThemeStore.primaryColor(this))
 

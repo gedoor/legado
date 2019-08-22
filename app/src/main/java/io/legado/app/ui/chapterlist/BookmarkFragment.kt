@@ -2,10 +2,12 @@ package io.legado.app.ui.chapterlist
 
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -32,6 +34,12 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
         ATH.applyEdgeEffectColor(recycler_view)
         adapter = BookmarkAdapter()
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
+        recycler_view.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                LinearLayout.VERTICAL
+            )
+        )
         recycler_view.adapter = adapter
     }
 

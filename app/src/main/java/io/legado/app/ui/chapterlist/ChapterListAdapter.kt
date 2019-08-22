@@ -8,10 +8,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.getCompatColor
 import kotlinx.android.synthetic.main.item_bookmark.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class ChapterListAdapter : PagedListAdapter<BookChapter, ChapterListAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class ChapterListAdapter(val callback: Callback) :
+    PagedListAdapter<BookChapter, ChapterListAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
 
@@ -25,8 +28,6 @@ class ChapterListAdapter : PagedListAdapter<BookChapter, ChapterListAdapter.MyVi
                 oldItem.title == newItem.title
         }
     }
-
-    var callback: Callback? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_chapter_list, parent, false))
@@ -42,7 +43,13 @@ class ChapterListAdapter : PagedListAdapter<BookChapter, ChapterListAdapter.MyVi
 
         fun bind(bookChapter: BookChapter, callback: Callback?) = with(itemView) {
             tv_chapter_name.text = bookChapter.title
-
+            callback?.let {
+                if (it.durChapterIndex() == bookChapter.index) {
+                    tv_chapter_name.setTextColor(context.accentColor)
+                } else {
+                    tv_chapter_name.setTextColor(context.getCompatColor(R.color.tv_text_default))
+                }
+            }
             itemView.onClick {
                 callback?.openChapter()
             }
@@ -51,5 +58,6 @@ class ChapterListAdapter : PagedListAdapter<BookChapter, ChapterListAdapter.MyVi
 
     interface Callback {
         fun openChapter()
+        fun durChapterIndex(): Int
     }
 }
