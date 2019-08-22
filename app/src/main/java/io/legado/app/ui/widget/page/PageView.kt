@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
+import io.legado.app.ui.widget.page.delegate.SlidePageDelegate
 
 class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs), PageDelegate.PageInterface {
 
@@ -30,7 +30,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         upBg()
         setWillNotDraw(false)
 
-        pageDelegate = CoverPageDelegate(this)
+        pageDelegate = SlidePageDelegate(this)
 
         setPageFactory(TextPageFactory.create(object : DataSource {
             override fun isPrepared(): Boolean {

@@ -6,6 +6,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.Scroller
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import io.legado.app.service.ReadAloudService.Companion.stop
 import io.legado.app.ui.widget.page.ContentView
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.utils.screenshot
@@ -34,7 +35,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
 
-    protected val scroller: Scroller by lazy { Scroller(pageView.context, FastOutLinearInInterpolator()) }
+    private val scroller: Scroller by lazy { Scroller(pageView.context, FastOutLinearInInterpolator()) }
 
     private val detector: GestureDetector by lazy { GestureDetector(pageView.context, GestureListener()) }
 
@@ -67,26 +68,32 @@ abstract class PageDelegate(protected val pageView: PageView) {
         onScroll()
     }
 
-    fun setViewSize(width: Int, height: Int) {
-        viewWidth = width
-        viewHeight = height
-        invalidate()
-    }
-
-    fun invalidate() {
+    protected fun invalidate() {
         pageView.invalidate()
     }
 
-    fun start() {
+    protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int) {
+        scroller.startScroll(startX, startY, dx, dy, getDuration((if(dx !=0) dx else dy).toFloat()))
         isRunning = true
         isStarted = true
         invalidate()
     }
 
-    fun stop() {
+    protected fun stopScroll() {
         isRunning = false
         isStarted = false
         bitmap = null
+        invalidate()
+    }
+
+    protected fun getDuration(distance: Float): Int {
+        val duration = 300 * abs(distance) / viewWidth
+        return duration.toInt()
+    }
+
+    fun setViewSize(width: Int, height: Int) {
+        viewWidth = width
+        viewHeight = height
         invalidate()
     }
 
@@ -95,8 +102,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
             setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
             setTouchPoint(scroller.finalX.toFloat(), scroller.finalY.toFloat(), false)
-            stop()
             onScrollStop()
+            stopScroll()
         }
     }
 
@@ -150,11 +157,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
         return detector.onTouchEvent(event)
     }
 
-    fun getDuration(distance: Float): Int {
-        val duration = 300 * abs(distance) / viewWidth
-        return duration.toInt()
-    }
-
     abstract fun onScrollStart()//scroller start
 
     abstract fun onDraw(canvas: Canvas)//绘制
@@ -162,14 +164,14 @@ abstract class PageDelegate(protected val pageView: PageView) {
     abstract fun onScrollStop()//scroller finish
 
     open fun onScroll() {//移动contentView， slidePage
-
     }
 
     enum class Direction {
         NONE, PREV, NEXT
     }
 
-    private inner class GestureListener : GestureDetector.OnGestureListener {
+
+    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
         override fun onDown(e: MotionEvent): Boolean {
 //            abort()
@@ -187,8 +189,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
             setStartPoint(e.x, e.y)
             return true
         }
-
-        override fun onShowPress(e: MotionEvent) {}
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
             val x = e.x
@@ -252,14 +252,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 setTouchPoint(e2.x, e2.y)
             }
             return isMoved
-        }
-
-        override fun onLongPress(e: MotionEvent) {
-
-        }
-
-        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-            return false
         }
     }
 
