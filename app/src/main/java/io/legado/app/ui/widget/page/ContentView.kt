@@ -9,6 +9,8 @@ import io.legado.app.R
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.dp
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getStatusBarHeight
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import org.jetbrains.anko.matchParent
 
@@ -31,7 +33,12 @@ class ContentView : FrameLayout {
 
     fun upStyle() {
         ReadBookConfig.getConfig().apply {
-            page_panel.setPadding(paddingLeft.dp, paddingTop.dp, paddingRight.dp, paddingBottom.dp)
+            val pt = if (context.getPrefBoolean("hideStatusBar", false)) {
+                paddingTop.dp
+            } else {
+                paddingTop.dp + context.getStatusBarHeight()
+            }
+            page_panel.setPadding(paddingLeft.dp, pt, paddingRight.dp, paddingBottom.dp)
             content_text_view.textSize = textSize.toFloat()
             content_text_view.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier)
             content_text_view.letterSpacing = letterSpacing
