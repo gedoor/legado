@@ -87,4 +87,8 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         postEvent(Bus.OPEN_CHAPTER, bookChapter)
         activity?.finish()
     }
+
+    override fun book(): Book? {
+        return viewModel.bookDate.value
+    }
 }
