@@ -48,18 +48,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     }
                     val count = App.db.bookChapterDao().getChapterCount(bookUrl)
                     if (count == 0) {
-                        webBook?.getChapterList(book, this)
-                            ?.onSuccess(IO) { cList ->
-                                if (!cList.isNullOrEmpty()) {
-                                    App.db.bookChapterDao().insert(*cList.toTypedArray())
-                                    chapterSize = cList.size
-                                    callBack?.bookLoadFinish()
-                                } else {
-                                    toast(R.string.error_load_toc)
-                                }
-                            }?.onError {
-                                toast(R.string.error_load_toc)
-                            } ?: autoChangeSource()
+                        if (book.tocUrl.isEmpty()) {
+                            loadBookInfo(book)
+                        } else {
+                            loadChapterList(book)
+                        }
                     } else {
                         if (durChapterIndex > count - 1) {
                             durChapterIndex = count - 1
@@ -73,6 +66,31 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    private fun loadBookInfo(book: Book) {
+        execute {
+            webBook?.getBookInfo(book, this)
+                ?.onSuccess {
+                    loadChapterList(book)
+                }
+        }
+    }
+
+    private fun loadChapterList(book: Book) {
+        execute {
+            webBook?.getChapterList(book, this)
+                ?.onSuccess(IO) { cList ->
+                    if (!cList.isNullOrEmpty()) {
+                        App.db.bookChapterDao().insert(*cList.toTypedArray())
+                        chapterSize = cList.size
+                        callBack?.bookLoadFinish()
+                    } else {
+                        toast(R.string.error_load_toc)
+                    }
+                }?.onError {
+                    toast(R.string.error_load_toc)
+                } ?: autoChangeSource()
+        }
+    }
 
     fun loadContent(book: Book, index: Int) {
         synchronized(loadingLock) {
@@ -133,7 +151,18 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun changeTo(book: Book) {
-
+        execute {
+            bookData.value?.let {
+                App.db.bookDao().delete(it.bookUrl)
+            }
+            bookData.postValue(book)
+            bookSource = App.db.bookSourceDao().getBookSource(book.origin)
+            if (book.tocUrl.isEmpty()) {
+                loadBookInfo(book)
+            } else {
+                loadChapterList(book)
+            }
+        }
     }
 
     private fun autoChangeSource() {
