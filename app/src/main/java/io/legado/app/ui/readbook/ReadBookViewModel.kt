@@ -182,6 +182,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let { book ->
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durPageIndex
+                App.db.bookDao().update(book)
             }
         }
     }
