@@ -9,7 +9,9 @@
     <View
         android:id="@+id/vw_menu_bg"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
