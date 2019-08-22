@@ -169,6 +169,23 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     }
 
+    fun openChapter(chapter: BookChapter) {
+        if (chapter.index != durChapterIndex) {
+            durChapterIndex = chapter.index
+            durPageIndex = 0
+        }
+        callBack?.bookLoadFinish()
+    }
+
+    fun saveRead() {
+        execute {
+            bookData.value?.let { book ->
+                book.durChapterIndex = durChapterIndex
+                book.durChapterPos = durPageIndex
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         ReadAloudService.stop(context)
