@@ -166,8 +166,14 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         tv_shelf.onClick {
-            viewModel.saveBook {
-                tv_shelf.text = getString(R.string.remove_from_bookshelf)
+            if (viewModel.inBookshelf) {
+                viewModel.delBook {
+                    tv_shelf.text = getString(R.string.add_to_shelf)
+                }
+            } else {
+                viewModel.saveBook {
+                    tv_shelf.text = getString(R.string.remove_from_bookshelf)
+                }
             }
         }
         tv_loading.onClick { }

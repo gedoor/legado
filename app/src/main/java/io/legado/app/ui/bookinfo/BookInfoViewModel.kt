@@ -106,6 +106,17 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             chapterListData.value?.let {
                 App.db.bookChapterDao().insert(*it.toTypedArray())
             }
+            inBookshelf = true
+        }.onSuccess {
+            success?.invoke()
+        }
+    }
+
+    fun delBook(success: (() -> Unit)?) {
+        execute {
+            bookData.value?.let {
+                App.db.bookDao().delete(it.bookUrl)
+            }
         }.onSuccess {
             success?.invoke()
         }
