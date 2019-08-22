@@ -155,7 +155,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             viewModel.bookData.value?.let {
                 if (!viewModel.inBookshelf) {
                     viewModel.saveBook {
-                        startActivity<ReadBookActivity>(Pair("bookUrl", it.bookUrl))
+                        startActivity<ReadBookActivity>(
+                            Pair("bookUrl", it.bookUrl),
+                            Pair("inBookshelf", false)
+                        )
                     }
                 } else {
                     startActivity<ReadBookActivity>(Pair("bookUrl", it.bookUrl))

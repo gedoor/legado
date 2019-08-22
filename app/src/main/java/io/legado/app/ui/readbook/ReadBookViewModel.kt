@@ -17,7 +17,7 @@ import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.Dispatchers.IO
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
-
+    var inBookshelf = false
     var bookData = MutableLiveData<Book>()
     var chapterSize = 0
     var bookSource: BookSource? = null
@@ -33,6 +33,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private val loadingLock = "loadingLock"
 
     fun initData(intent: Intent) {
+        inBookshelf = intent.getBooleanExtra("inBookshelf", true)
         val bookUrl = intent.getStringExtra("bookUrl")
         if (!bookUrl.isNullOrEmpty()) {
             execute {
