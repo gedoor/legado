@@ -106,6 +106,26 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let { book ->
                 App.db.bookDao().insert(book)
             }
+        }.onSuccess {
+            success?.invoke()
+        }
+    }
+
+    fun saveChapterList(success: (() -> Unit)?) {
+        execute {
+            chapterListData.value?.let {
+                App.db.bookChapterDao().insert(*it.toTypedArray())
+            }
+        }.onSuccess {
+            success?.invoke()
+        }
+    }
+
+    fun addToBookshelf(success: (() -> Unit)?) {
+        execute {
+            bookData.value?.let { book ->
+                App.db.bookDao().insert(book)
+            }
             chapterListData.value?.let {
                 App.db.bookChapterDao().insert(*it.toTypedArray())
             }
@@ -120,6 +140,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
+            inBookshelf = false
         }.onSuccess {
             success?.invoke()
         }

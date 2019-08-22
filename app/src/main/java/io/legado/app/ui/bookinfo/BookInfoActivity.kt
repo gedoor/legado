@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ImageLoader
@@ -20,7 +19,6 @@ import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
-import io.legado.app.utils.postEvent
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_info.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -156,16 +154,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     private fun initOnClick() {
         tv_read.onClick {
             viewModel.bookData.value?.let {
-                if (!viewModel.inBookshelf) {
-                    viewModel.saveBook {
-                        startActivity<ReadBookActivity>(
-                            Pair("bookUrl", it.bookUrl),
-                            Pair("inBookshelf", false)
-                        )
-                    }
-                } else {
-                    startActivity<ReadBookActivity>(Pair("bookUrl", it.bookUrl))
-                }
+                readBook(it)
             }
         }
         tv_shelf.onClick {
@@ -174,7 +163,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                     tv_shelf.text = getString(R.string.add_to_shelf)
                 }
             } else {
-                viewModel.saveBook {
+                viewModel.addToBookshelf {
                     tv_shelf.text = getString(R.string.remove_from_bookshelf)
                 }
             }
@@ -209,6 +198,23 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
     }
 
+    private fun readBook(book: Book) {
+        if (!viewModel.inBookshelf) {
+            viewModel.saveBook {
+                viewModel.saveChapterList {
+                    startActivity<ReadBookActivity>(
+                        Pair("bookUrl", book.bookUrl),
+                        Pair("inBookshelf", false)
+                    )
+                }
+            }
+        } else {
+            viewModel.saveBook {
+                startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
+            }
+        }
+    }
+
     override fun oldBook(): Book? {
         return viewModel.bookData.value
     }
@@ -218,7 +224,13 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     override fun openChapter(chapter: BookChapter) {
-        postEvent(Bus.OPEN_CHAPTER, chapter)
+        if (chapter.index != viewModel.durChapterIndex) {
+            viewModel.bookData.value?.let {
+                it.durChapterIndex = chapter.index
+                it.durChapterPos = 0
+                readBook(it)
+            }
+        }
     }
 
     override fun durChapterIndex(): Int {
