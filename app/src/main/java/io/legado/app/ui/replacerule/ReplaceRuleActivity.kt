@@ -1,7 +1,6 @@
 package io.legado.app.ui.replacerule
 
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst.APP_TAG
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
@@ -68,7 +66,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         rv_replace_rule.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
                 ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
-                    Log.e(APP_TAG, it.toString())
                     this.setDrawable(it)
                 }
             })
