@@ -174,6 +174,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             durChapterIndex = chapter.index
             durPageIndex = 0
         }
+        saveRead()
         callBack?.bookLoadFinish()
     }
 
