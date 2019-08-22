@@ -57,6 +57,6 @@ class ContentView : FrameLayout {
     fun setContent(page: TextPage?) {
         content_text_view.text = page?.text
 
-        //bottom_status_bar draw index
+        tv_bottom_right.text = page?.index?.toString()
     }
 }

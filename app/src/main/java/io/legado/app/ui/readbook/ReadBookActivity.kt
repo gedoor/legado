@@ -53,6 +53,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         setSupportActionBar(toolbar)
         initAnimation()
         initView()
+        page_view.callback = this
         viewModel.callBack = this
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
         viewModel.chapterListFinish.observe(this, Observer { bookLoadFinish() })
