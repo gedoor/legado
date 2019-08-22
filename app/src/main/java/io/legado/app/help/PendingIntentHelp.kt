@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.readbook.ReadBookActivity
 
 object PendingIntentHelp {
@@ -14,7 +15,7 @@ object PendingIntentHelp {
     }
 
     fun aloudServicePendingIntent(context: Context, actionStr: String): PendingIntent {
-        val intent = Intent(context, this.javaClass)
+        val intent = Intent(context, ReadAloudService::class.java)
         intent.action = actionStr
         return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
