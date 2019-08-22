@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</PreferenceScreen>
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
+        android:title="@string/pt_hide_status_bar"
+        android:key="hideStatusBar"
+        app:iconSpaceReserved="false" />
+
+
+</androidx.preference.PreferenceScreen>
