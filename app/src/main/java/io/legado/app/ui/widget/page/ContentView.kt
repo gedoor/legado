@@ -6,13 +6,13 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
+import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.utils.dp
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getStatusBarHeight
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import org.jetbrains.anko.matchParent
+import java.util.*
 
 
 class ContentView : FrameLayout {
@@ -34,8 +34,10 @@ class ContentView : FrameLayout {
     fun upStyle() {
         ReadBookConfig.getConfig().apply {
             val pt = if (context.getPrefBoolean("hideStatusBar", false)) {
+                top_bar.visible()
                 paddingTop.dp
             } else {
+                top_bar.gone()
                 paddingTop.dp + context.getStatusBarHeight()
             }
             page_panel.setPadding(paddingLeft.dp, pt, paddingRight.dp, paddingBottom.dp)
@@ -54,11 +56,15 @@ class ContentView : FrameLayout {
     }
 
     fun upTime() {
-
+        tv_top_left.text = TIME_FORMAT.format(Date(System.currentTimeMillis()))
     }
 
     fun upBattery(battery: Int) {
+        tv_top_right.text = context.getString(R.string.battery_show, battery)
+    }
 
+    fun setChapterTile(tile: String) {
+        tv_bottom_left.text = tile
     }
 
     fun setContent(page: TextPage?) {

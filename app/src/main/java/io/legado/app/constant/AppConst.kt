@@ -1,12 +1,15 @@
 package io.legado.app.constant
 
+import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.legado.app.App
 import io.legado.app.R
+import java.text.SimpleDateFormat
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 
+@SuppressLint("SimpleDateFormat")
 object AppConst {
     const val channelIdDownload = "channel_download"
     const val channelIdReadAloud = "channel_read_aloud"
@@ -21,9 +24,15 @@ object AppConst {
 
     val NOT_AVAILABLE = App.INSTANCE.getString(R.string.not_available)
 
-    val GSON_CONVERTER: Gson = GsonBuilder()
-        .disableHtmlEscaping()
-        .setPrettyPrinting()
-        .setDateFormat("yyyy-MM-dd HH:mm:ssZ")
-        .create()
+    val TIME_FORMAT: SimpleDateFormat by lazy {
+        SimpleDateFormat("HH:mm")
+    }
+
+    val GSON_CONVERTER: Gson by lazy {
+        GsonBuilder()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .setDateFormat("yyyy-MM-dd HH:mm:ssZ")
+            .create()
+    }
 }
