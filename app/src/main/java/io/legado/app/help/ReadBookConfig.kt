@@ -13,6 +13,9 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
+/**
+ * 阅读界面配置
+ */
 object ReadBookConfig {
     private val configList: ArrayList<Config> by lazy {
         val list: ArrayList<Config> = arrayListOf()

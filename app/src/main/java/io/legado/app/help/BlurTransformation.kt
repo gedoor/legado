@@ -14,6 +14,9 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 
 import java.security.MessageDigest
 
+/**
+ * 模糊
+ */
 class BlurTransformation(context: Context, private val radius: Int) : BitmapTransformation() {
     private val rs: RenderScript = RenderScript.create(context)
 
