@@ -99,26 +99,26 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
             when (chapterOnDur) {
                 0 -> {
                     cb.textChapter()?.let {
-                        curPage?.setContent(it.page(cb.durChapterPos(it.pageSize()))?.text)
+                        curPage?.setContent(it.page(cb.durChapterPos(it.pageSize())))
                         if (cb.durChapterPos(it.pageSize()) > 0) {
-                            prevPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) - 1)?.text)
+                            prevPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) - 1))
                         }
                         if (cb.durChapterPos(it.pageSize()) < it.pageSize() - 1) {
-                            nextPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) + 1)?.text)
+                            nextPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) + 1))
                         }
                     }
                 }
                 1 -> {
                     cb.textChapter()?.let {
                         if (cb.durChapterPos(it.pageSize()) == it.pageSize() - 1) {
-                            nextPage?.setContent(cb.textChapter(1)?.page(0)?.text)
+                            nextPage?.setContent(cb.textChapter(1)?.page(0))
                         }
                     }
                 }
                 -1 -> {
                     cb.textChapter()?.let {
                         if (cb.durChapterPos(it.pageSize()) == 0) {
-                            prevPage?.setContent(cb.textChapter(-1)?.lastPage()?.text)
+                            prevPage?.setContent(cb.textChapter(-1)?.lastPage())
                         }
                     }
                 }
@@ -143,9 +143,9 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
                 }
             }
 
-            prevPage?.setContent(it.previousPage()?.text)
-            curPage?.setContent(it.currentPage()?.text)
-            nextPage?.setContent(it.nextPage()?.text)
+            prevPage?.setContent(it.previousPage())
+            curPage?.setContent(it.currentPage())
+            nextPage?.setContent(it.nextPage())
         }
     }
 
@@ -154,9 +154,9 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
         //可做成异步回调
         pageFactory?.let {
-            prevPage?.setContent(it.previousPage()?.text)
-            curPage?.setContent(it.currentPage()?.text)
-            nextPage?.setContent(it.nextPage()?.text)
+            prevPage?.setContent(it.previousPage())
+            curPage?.setContent(it.currentPage())
+            nextPage?.setContent(it.nextPage())
         }
     }
 

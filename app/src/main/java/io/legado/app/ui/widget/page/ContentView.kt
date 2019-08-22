@@ -54,7 +54,9 @@ class ContentView : FrameLayout {
 
     }
 
-    fun setContent(text: CharSequence?) {
-        content_text_view.text = text
+    fun setContent(page: TextPage?) {
+        content_text_view.text = page?.text
+
+        //bottom_status_bar draw index
     }
 }
