@@ -7,48 +7,6 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/ll_read_aloud_timer"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
-        android:visibility="gone">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_read_aloud_timer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/set_timer"
-            android:src="@drawable/ic_timer_black_24dp"
-            android:tint="@color/tv_text_default"
-            android:tooltipText="@string/set_timer"
-            app:backgroundTint="@color/background_menu"
-            app:elevation="2dp"
-            app:fabSize="mini"
-            app:pressedTranslationZ="2dp"
-            tools:ignore="UnusedAttribute" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            app:cardBackgroundColor="@color/background_card">
-
-            <TextView
-                android:id="@+id/tv_read_aloud_timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="10dp"
-                android:text="@string/read_aloud_timer" />
-        </androidx.cardview.widget.CardView>
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/ll_floating_button"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -178,7 +136,7 @@
                     android:textSize="14sp" />
 
                 <io.legado.app.lib.theme.view.ATESeekBar
-                    android:id="@+id/hpb_read_progress"
+                    android:id="@+id/seek_bar_read_page"
                     android:layout_width="0dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_vertical"

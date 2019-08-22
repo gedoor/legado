@@ -6,8 +6,7 @@ import android.widget.FrameLayout
 import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.service.ReadAloudService
-import io.legado.app.utils.gone
-import io.legado.app.utils.visible
+import io.legado.app.utils.isNightTheme
 import kotlinx.android.synthetic.main.view_read_bottom_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -16,29 +15,25 @@ class ReadBottomMenu : FrameLayout {
 
     private var callback: Callback? = null
 
-    val readProgress: SeekBar
-        get() = hpb_read_progress
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context) : super(context) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context)
-    }
-
-    private fun init(context: Context) {
+    init {
         inflate(context, R.layout.view_read_bottom_menu, this)
+        if (context.isNightTheme) {
+            fabNightTheme.setImageResource(R.drawable.ic_daytime)
+        } else {
+            fabNightTheme.setImageResource(R.drawable.ic_brightness)
+        }
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
-    }
-
-    fun setNavigationBarHeight(height: Int) {
-        vwNavigationBar.layoutParams.height = height
     }
 
     fun setListener(callback: Callback) {
@@ -47,11 +42,10 @@ class ReadBottomMenu : FrameLayout {
     }
 
     private fun bindEvent() {
-        ll_read_aloud_timer.onClick { callback?.dismiss() }
         ll_floating_button.onClick { callback?.dismiss() }
 
         //阅读进度
-        hpb_read_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seek_bar_read_page.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
 
             }
@@ -64,9 +58,6 @@ class ReadBottomMenu : FrameLayout {
                 callback?.skipToPage(seekBar.progress)
             }
         })
-
-        //朗读定时
-        fab_read_aloud_timer.onClick { }
 
         //朗读
         fab_read_aloud.onClick { callback?.clickReadAloud() }
@@ -102,36 +93,6 @@ class ReadBottomMenu : FrameLayout {
 
         //设置
         ll_setting.onClick { callback?.showMoreSetting() }
-
-        tv_read_aloud_timer.onClick { }
-    }
-
-    fun setFabReadAloudImage(id: Int) {
-        fab_read_aloud.setImageResource(id)
-    }
-
-    fun setReadAloudTimer(visibility: Boolean) {
-        if (visibility) {
-            ll_read_aloud_timer.visible()
-        } else {
-            ll_read_aloud_timer.gone()
-        }
-    }
-
-    fun setReadAloudTimer(text: String) {
-        tv_read_aloud_timer.text = text
-    }
-
-    fun setFabReadAloudText(text: String) {
-        fab_read_aloud.contentDescription = text
-    }
-
-    fun setTvPre(enable: Boolean) {
-        tv_pre.isEnabled = enable
-    }
-
-    fun setTvNext(enable: Boolean) {
-        tv_next.isEnabled = enable
     }
 
     fun setAutoPage(autoPage: Boolean) {
@@ -141,14 +102,6 @@ class ReadBottomMenu : FrameLayout {
         } else {
             fabAutoPage.setImageResource(R.drawable.ic_auto_page)
             fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
-        }
-    }
-
-    fun setFabNightTheme(isNightTheme: Boolean) {
-        if (isNightTheme) {
-            fabNightTheme.setImageResource(R.drawable.ic_daytime)
-        } else {
-            fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
     }
 
