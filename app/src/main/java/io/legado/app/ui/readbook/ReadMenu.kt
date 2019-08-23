@@ -10,6 +10,8 @@ import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -44,50 +46,24 @@ class ReadMenu : FrameLayout {
         initAnimation()
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
+        seek_brightness.progress = context.getPrefInt("brightness", 100)
+        upBrightness()
+    }
+
+    private fun upBrightness() {
+        if (context.getPrefBoolean("brightnessAuto", true)) {
+            iv_brightness_auto.setColorFilter(context.accentColor)
+            seek_brightness.isEnabled = false
+        } else {
+            iv_brightness_auto.setColorFilter(context.buttonDisabledColor)
+            seek_brightness.isEnabled = true
+        }
+        callback?.setScreenBrightness(context.getPrefInt("brightness", 100))
     }
 
     fun setListener(callback: Callback) {
         this.callback = callback
         bindEvent()
-    }
-
-    private fun initAnimation() {
-        menuTopIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_in)
-        menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
-        menuBottomIn.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                vw_menu_bg.onClick { runMenuOut() }
-            }
-
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
-        })
-
-        //隐藏菜单
-        menuTopOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_out)
-        menuBottomOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_out)
-        menuBottomOut.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                vw_menu_bg.setOnClickListener(null)
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                this@ReadMenu.invisible()
-                title_bar.invisible()
-                bottom_menu.invisible()
-                menuBarShow = false
-                onMenuOutEnd?.invoke()
-            }
-
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
-        })
     }
 
     fun runMenuIn() {
@@ -114,7 +90,27 @@ class ReadMenu : FrameLayout {
     }
 
     private fun bindEvent() {
-        ll_floating_button.onClick { runMenuOut() }
+        iv_brightness_auto.onClick {
+            context.putPrefBoolean(
+                "brightnessAuto",
+                !context.getPrefBoolean("brightnessAuto", true)
+            )
+            upBrightness()
+        }
+        seek_brightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                callback?.setScreenBrightness(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                context.putPrefInt("brightness", seek_brightness.progress)
+            }
+
+        })
 
         //阅读进度
         seek_read_page.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -177,6 +173,45 @@ class ReadMenu : FrameLayout {
         }
     }
 
+    private fun initAnimation() {
+        menuTopIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_in)
+        menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
+        menuBottomIn.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animation) {
+                vw_menu_bg.onClick { runMenuOut() }
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {
+
+            }
+        })
+
+        //隐藏菜单
+        menuTopOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_out)
+        menuBottomOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_out)
+        menuBottomOut.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {
+                vw_menu_bg.setOnClickListener(null)
+            }
+
+            override fun onAnimationEnd(animation: Animation) {
+                this@ReadMenu.invisible()
+                title_bar.invisible()
+                bottom_menu.invisible()
+                menuBarShow = false
+                onMenuOutEnd?.invoke()
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {
+
+            }
+        })
+    }
+
     fun setAutoPage(autoPage: Boolean) {
         if (autoPage) {
             fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop)
@@ -188,21 +223,14 @@ class ReadMenu : FrameLayout {
     }
 
     interface Callback {
-
+        fun setScreenBrightness(value: Int)
         fun autoPage()
-
         fun skipToPage(page: Int)
-
         fun skipPreChapter()
-
         fun skipNextChapter()
-
         fun openReplaceRule()
-
         fun openChapterList()
-
         fun showReadStyle()
-
         fun showMoreSetting()
     }
 

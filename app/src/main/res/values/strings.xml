@@ -483,5 +483,6 @@
     <string name="reading">阅读</string>
     <string name="battery_show">%d%%</string>
     <string name="timer_m">%d分钟</string>
+    <string name="brightness_auto">自动亮度%s</string>
 
 </resources>

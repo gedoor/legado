@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -92,6 +93,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
         }
         read_menu.setListener(object : ReadMenu.Callback {
+            override fun setScreenBrightness(value: Int) {
+                var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                if (this@ReadBookActivity.getPrefBoolean("brightnessAuto").not()) {
+                    brightness = value.toFloat()
+                    if (brightness < 1f) brightness = 1f
+                    brightness = brightness * 1.0f / 255f
+                }
+                val params = window.attributes
+                params.screenBrightness = brightness
+                window.attributes = params
+            }
+
             override fun autoPage() {
 
             }
@@ -286,7 +299,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-
+                requestCodeEditSource -> {
+                }
             }
         }
     }
