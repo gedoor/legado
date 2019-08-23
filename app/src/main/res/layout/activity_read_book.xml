@@ -17,7 +17,7 @@
 
 
     <io.legado.app.ui.readbook.ReadMenu
-        android:id="@+id/fl_menu"
+        android:id="@+id/read_menu"
             android:layout_width="match_parent"
         android:layout_height="match_parent"
             android:visibility="gone" />

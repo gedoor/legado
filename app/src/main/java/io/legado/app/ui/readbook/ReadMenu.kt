@@ -108,11 +108,16 @@ class ReadMenu : FrameLayout {
         }
     }
 
+    fun upReadProgress(max: Int, dur: Int) {
+        seek_read_page.max = max
+        seek_read_page.progress = dur
+    }
+
     private fun bindEvent() {
         ll_floating_button.onClick { runMenuOut() }
 
         //阅读进度
-        seek_bar_read_page.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seek_read_page.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
 
             }
@@ -125,12 +130,6 @@ class ReadMenu : FrameLayout {
                 callback?.skipToPage(seekBar.progress)
             }
         })
-
-        //朗读
-        fab_read_aloud.onClick {
-            postEvent(Bus.READ_ALOUD, true)
-            runMenuOut()
-        }
 
         //自动翻页
         fabAutoPage.onClick { callback?.autoPage() }
@@ -157,8 +156,11 @@ class ReadMenu : FrameLayout {
             }
         }
 
-        //调节
-        ll_adjust.onClick { callback?.openAdjust() }
+        //朗读
+        ll_read_aloud.onClick {
+            postEvent(Bus.READ_ALOUD, true)
+            runMenuOut()
+        }
 
         //界面
         ll_font.onClick {
@@ -197,8 +199,6 @@ class ReadMenu : FrameLayout {
         fun openReplaceRule()
 
         fun openChapterList()
-
-        fun openAdjust()
 
         fun showReadStyle()
 

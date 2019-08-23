@@ -58,26 +58,6 @@
             android:paddingEnd="32dp">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_read_aloud"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:contentDescription="@string/read_aloud"
-                android:src="@drawable/ic_read_aloud"
-                android:tint="@color/tv_text_default"
-                android:tooltipText="@string/read_aloud"
-                app:backgroundTint="@color/background_menu"
-                app:elevation="2dp"
-                app:fabSize="mini"
-                app:pressedTranslationZ="2dp"
-                tools:ignore="UnusedAttribute" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabAutoPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,7 +159,7 @@
                         android:textSize="14sp" />
 
                     <io.legado.app.lib.theme.view.ATESeekBar
-                        android:id="@+id/seek_bar_read_page"
+                        android:id="@+id/seek_read_page"
                         android:layout_width="0dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center_vertical"
@@ -250,12 +230,12 @@
                         android:layout_weight="2" />
                     <!--调节按钮-->
                     <LinearLayout
-                        android:id="@+id/ll_adjust"
+                        android:id="@+id/ll_read_aloud"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
-                        android:contentDescription="@string/adjust"
+                        android:contentDescription="@string/read_aloud"
                         android:focusable="true"
                         android:orientation="vertical"
                         android:paddingBottom="7dp">
@@ -264,8 +244,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
-                            android:contentDescription="@string/adjust"
-                            android:src="@drawable/ic_tune"
+                            android:contentDescription="@string/read_aloud"
+                            android:src="@drawable/ic_read_aloud"
                             app:tint="@color/tv_text_default"
                             tools:ignore="NestedWeights" />
 
@@ -274,7 +254,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:text="@string/adjust"
+                            android:text="@string/read_aloud"
                             android:textColor="@color/tv_text_default"
                             android:textSize="12sp" />
                     </LinearLayout>

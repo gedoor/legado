@@ -75,7 +75,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         tv_chapter_url.onClick {
 
         }
-        fl_menu.setListener(object : ReadMenu.Callback {
+        read_menu.setListener(object : ReadMenu.Callback {
             override fun skipToPage(page: Int) {
 
             }
@@ -100,10 +100,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 viewModel.bookData.value?.let {
                     startActivity<ChapterListActivity>(Pair("bookUrl", it.bookUrl))
                 }
-            }
-
-            override fun openAdjust() {
-
             }
 
             override fun showReadStyle() {
@@ -142,12 +138,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         val isDown = action == 0
 
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (isDown && !fl_menu.menuBarShow) {
-                fl_menu.runMenuIn()
+            if (isDown && !read_menu.menuBarShow) {
+                read_menu.runMenuIn()
                 return true
             }
-            if (!isDown && !fl_menu.menuBarShow) {
-                fl_menu.menuBarShow = true
+            if (!isDown && !read_menu.menuBarShow) {
+                read_menu.menuBarShow = true
                 return true
             }
         }
@@ -180,9 +176,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                         tv_chapter_url.text = bookChapter.url
                         tv_chapter_url.visible()
                     }
-                    viewModel.curTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    page_view.chapterLoadFinish()
-
+                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content).let {
+                        viewModel.curTextChapter = it
+                        page_view.chapterLoadFinish()
+                        read_menu.upReadProgress(it.pageSize(), viewModel.durPageIndex)
+                    }
                 }
                 viewModel.durChapterIndex - 1 -> {
                     viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
