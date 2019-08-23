@@ -94,15 +94,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
         read_menu.setListener(object : ReadMenu.Callback {
             override fun setScreenBrightness(value: Int) {
-                var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-                if (this@ReadBookActivity.getPrefBoolean("brightnessAuto").not()) {
-                    brightness = value.toFloat()
-                    if (brightness < 1f) brightness = 1f
-                    brightness = brightness * 1.0f / 255f
-                }
-                val params = window.attributes
-                params.screenBrightness = brightness
-                window.attributes = params
+                this@ReadBookActivity.setScreenBrightness(value)
             }
 
             override fun autoPage() {
@@ -293,6 +285,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 }
             }
         }
+    }
+
+    fun setScreenBrightness(value: Int) {
+        var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        if (this.getPrefBoolean("brightnessAuto").not()) {
+            brightness = value.toFloat()
+            if (brightness < 1f) brightness = 1f
+            brightness = brightness * 1.0f / 255f
+        }
+        val params = window.attributes
+        params.screenBrightness = brightness
+        window.attributes = params
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
