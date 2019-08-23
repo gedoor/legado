@@ -19,6 +19,7 @@ import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.readbook.config.MoreConfigDialog
 import io.legado.app.ui.readbook.config.ReadStyleDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.widget.page.ChapterProvider
@@ -168,7 +169,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun showMoreSetting() {
-
+                runMenuOut()
+                MoreConfigDialog().show(supportFragmentManager, "moreConfig")
             }
 
             override fun toast(id: Int) {
