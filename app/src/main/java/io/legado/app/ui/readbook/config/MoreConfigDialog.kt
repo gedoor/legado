@@ -35,7 +35,8 @@ class MoreConfigDialog : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         var preferenceFragment = childFragmentManager.findFragmentByTag(readPreferTag)
         if (preferenceFragment == null) preferenceFragment = ReadPreferenceFragment()
-        childFragmentManager.beginTransaction().replace(view.id, preferenceFragment, readPreferTag)
+        childFragmentManager.beginTransaction()
+            .replace(view.id, preferenceFragment, readPreferTag)
             .commit()
     }
 }
