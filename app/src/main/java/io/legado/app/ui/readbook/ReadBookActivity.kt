@@ -107,12 +107,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun showReadStyle() {
-                fl_menu.runMenuOut()
                 ReadStyleDialog().show(supportFragmentManager, "readStyle")
             }
 
             override fun showMoreSetting() {
-                fl_menu.runMenuOut()
                 MoreConfigDialog().show(supportFragmentManager, "moreConfig")
             }
         })

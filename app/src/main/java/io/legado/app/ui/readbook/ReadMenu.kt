@@ -22,6 +22,7 @@ class ReadMenu : FrameLayout {
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
     private lateinit var menuBottomOut: Animation
+    private var onMenuOutEnd: (() -> Unit)? = null
 
     constructor(context: Context) : super(context)
 
@@ -80,6 +81,7 @@ class ReadMenu : FrameLayout {
                 title_bar.invisible()
                 bottom_menu.invisible()
                 menuBarShow = false
+                onMenuOutEnd?.invoke()
             }
 
             override fun onAnimationRepeat(animation: Animation) {
@@ -96,7 +98,8 @@ class ReadMenu : FrameLayout {
         bottom_menu.startAnimation(menuBottomIn)
     }
 
-    fun runMenuOut() {
+    fun runMenuOut(onMenuOutEnd: (() -> Unit)? = null) {
+        this.onMenuOutEnd = onMenuOutEnd
         if (this.isVisible) {
             if (bottom_menu.isVisible) {
                 title_bar.startAnimation(menuTopOut)
@@ -154,10 +157,18 @@ class ReadMenu : FrameLayout {
         ll_adjust.onClick { callback?.openAdjust() }
 
         //界面
-        ll_font.onClick { callback?.showReadStyle() }
+        ll_font.onClick {
+            runMenuOut {
+                callback?.showReadStyle()
+            }
+        }
 
         //设置
-        ll_setting.onClick { callback?.showMoreSetting() }
+        ll_setting.onClick {
+            runMenuOut {
+                callback?.showMoreSetting()
+            }
+        }
     }
 
     fun setAutoPage(autoPage: Boolean) {
