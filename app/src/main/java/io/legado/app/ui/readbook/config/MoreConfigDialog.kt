@@ -2,6 +2,7 @@ package io.legado.app.ui.readbook.config
 
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ class MoreConfigDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = LinearLayout(context)
+        view.setBackgroundResource(R.color.background)
         view.id = R.id.tag1
         container?.addView(view)
         return view
@@ -28,7 +30,15 @@ class MoreConfigDialog : DialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(dm)
-        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
+        dialog?.window?.let {
+            it.setBackgroundDrawableResource(R.color.transparent)
+            it.decorView.setPadding(0, 0, 0, 0)
+            val attr = it.attributes
+            attr.dimAmount = 0.0f
+            attr.gravity = Gravity.BOTTOM
+            it.attributes = attr
+            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
