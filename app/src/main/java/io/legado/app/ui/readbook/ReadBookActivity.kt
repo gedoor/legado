@@ -60,6 +60,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
             changeSourceDialog?.callBack = this
         }
+        setScreenBrightness(getPrefInt("brightness", 100))
     }
 
     override fun onResume() {
