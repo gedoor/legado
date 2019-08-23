@@ -5,7 +5,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
@@ -69,8 +68,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-
-
     private fun initView() {
         tv_chapter_name.onClick {
 
@@ -85,11 +82,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
             override fun autoPage() {
 
-            }
-
-            override fun setNightTheme() {
-                putPrefBoolean("isNightTheme", !isNightTheme)
-                App.INSTANCE.applyDayNight()
             }
 
             override fun skipPreChapter() {

@@ -7,12 +7,10 @@ import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.core.view.isVisible
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
-import io.legado.app.utils.invisible
-import io.legado.app.utils.isNightTheme
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -138,7 +136,10 @@ class ReadMenu : FrameLayout {
         fabReplaceRule.onClick { callback?.openReplaceRule() }
 
         //夜间模式
-        fabNightTheme.onClick { callback?.setNightTheme() }
+        fabNightTheme.onClick {
+            context.putPrefBoolean("isNightTheme", !context.isNightTheme)
+            App.INSTANCE.applyDayNight()
+        }
 
         //上一章
         tv_pre.onClick { callback?.skipPreChapter() }
@@ -173,8 +174,6 @@ class ReadMenu : FrameLayout {
         fun skipToPage(page: Int)
 
         fun autoPage()
-
-        fun setNightTheme()
 
         fun skipPreChapter()
 
