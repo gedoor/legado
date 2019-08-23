@@ -189,6 +189,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun upBookSource() {
+        execute {
+            bookData.value?.let {
+                bookSource = App.db.bookSourceDao().getBookSource(it.origin)
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         ReadAloudService.stop(context)

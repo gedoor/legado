@@ -65,6 +65,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun onResume() {
         super.onResume()
+        upBar()
         timeElectricityReceiver = TimeElectricityReceiver.register(this)
     }
 
@@ -74,6 +75,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             unregisterReceiver(it)
             timeElectricityReceiver = null
         }
+        upBar()
     }
 
     private fun initView() {
@@ -264,6 +266,30 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    private fun setScreenBrightness(value: Int) {
+        var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        if (this.getPrefBoolean("brightnessAuto").not()) {
+            brightness = value.toFloat()
+            if (brightness < 1f) brightness = 1f
+            brightness = brightness * 1.0f / 255f
+        }
+        val params = window.attributes
+        params.screenBrightness = brightness
+        window.attributes = params
+    }
+
+    private fun upBar() {
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                requestCodeEditSource -> viewModel.upBookSource()
+            }
+        }
+    }
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<Int>(Bus.ALOUD_STATE) { readAloudStatus = it }
@@ -288,25 +314,4 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    private fun setScreenBrightness(value: Int) {
-        var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        if (this.getPrefBoolean("brightnessAuto").not()) {
-            brightness = value.toFloat()
-            if (brightness < 1f) brightness = 1f
-            brightness = brightness * 1.0f / 255f
-        }
-        val params = window.attributes
-        params.screenBrightness = brightness
-        window.attributes = params
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                requestCodeEditSource -> {
-                }
-            }
-        }
-    }
 }
