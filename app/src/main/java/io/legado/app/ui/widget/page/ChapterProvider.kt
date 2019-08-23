@@ -8,6 +8,8 @@ import io.legado.app.data.entities.BookChapter
 
 object ChapterProvider {
 
+    private val titleSpan = RelativeSizeSpan(1.3f)
+
     @Synchronized
     fun getTextChapter(textView: ContentTextView, bookChapter: BookChapter, content: String): TextChapter {
         val textPages = arrayListOf<TextPage>()
@@ -17,8 +19,12 @@ object ChapterProvider {
         while (surplusText.isNotEmpty()) {
             val spannableStringBuilder = SpannableStringBuilder(surplusText)
             if (pageIndex == 0) {
-                val span = RelativeSizeSpan(1.5f)
-                spannableStringBuilder.setSpan(span, 0, surplusText.indexOf("\n"), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+                spannableStringBuilder.setSpan(
+                    titleSpan,
+                    0,
+                    surplusText.indexOf("\n"),
+                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+                )
             }
             textView.text = spannableStringBuilder
             pageLengths.add(textView.getCharNum())
