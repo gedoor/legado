@@ -2,16 +2,28 @@ package io.legado.app.ui.readbook
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
+import androidx.core.view.isVisible
 import io.legado.app.R
+import io.legado.app.constant.Bus
+import io.legado.app.utils.invisible
 import io.legado.app.utils.isNightTheme
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ReadMenu : FrameLayout {
 
     private var callback: Callback? = null
+    var menuBarShow: Boolean = false
+    private lateinit var menuTopIn: Animation
+    private lateinit var menuTopOut: Animation
+    private lateinit var menuBottomIn: Animation
+    private lateinit var menuBottomOut: Animation
 
     constructor(context: Context) : super(context)
 
@@ -30,6 +42,7 @@ class ReadMenu : FrameLayout {
         } else {
             fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
+        initAnimation()
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
     }
@@ -37,6 +50,61 @@ class ReadMenu : FrameLayout {
     fun setListener(callback: Callback) {
         this.callback = callback
         bindEvent()
+    }
+
+    private fun initAnimation() {
+        menuTopIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_in)
+        menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
+        menuBottomIn.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animation) {
+                vw_menu_bg.onClick { runMenuOut() }
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {
+
+            }
+        })
+
+        //隐藏菜单
+        menuTopOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_out)
+        menuBottomOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_out)
+        menuBottomOut.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {
+                vw_menu_bg.setOnClickListener(null)
+            }
+
+            override fun onAnimationEnd(animation: Animation) {
+                this@ReadMenu.invisible()
+                title_bar.invisible()
+                bottom_menu.invisible()
+                menuBarShow = false
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {
+
+            }
+        })
+    }
+
+    fun runMenuIn() {
+        this.visible()
+        title_bar.visible()
+        bottom_menu.visible()
+        title_bar.startAnimation(menuTopIn)
+        bottom_menu.startAnimation(menuBottomIn)
+    }
+
+    fun runMenuOut() {
+        if (this.isVisible) {
+            if (bottom_menu.isVisible) {
+                title_bar.startAnimation(menuTopOut)
+                bottom_menu.startAnimation(menuBottomOut)
+            }
+        }
     }
 
     private fun bindEvent() {
@@ -58,7 +126,10 @@ class ReadMenu : FrameLayout {
         })
 
         //朗读
-        fab_read_aloud.onClick { callback?.clickReadAloud() }
+        fab_read_aloud.onClick {
+            postEvent(Bus.READ_ALOUD, true)
+            callback?.dismiss()
+        }
 
         //自动翻页
         fabAutoPage.onClick { callback?.autoPage() }
@@ -100,8 +171,6 @@ class ReadMenu : FrameLayout {
 
     interface Callback {
         fun skipToPage(page: Int)
-
-        fun clickReadAloud()
 
         fun autoPage()
 

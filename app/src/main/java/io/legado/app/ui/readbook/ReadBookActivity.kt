@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import io.legado.app.App
 import io.legado.app.R
@@ -43,16 +40,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     private var changeSourceDialog: ChangeSourceDialog? = null
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
-    private var menuBarShow: Boolean = false
-    private lateinit var menuTopIn: Animation
-    private lateinit var menuTopOut: Animation
-    private lateinit var menuBottomIn: Animation
-    private lateinit var menuBottomOut: Animation
     private var readAloudStatus = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
-        initAnimation()
         initView()
         page_view.callback = this
         viewModel.callBack = this
@@ -78,43 +69,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    private fun initAnimation() {
-        menuTopIn = AnimationUtils.loadAnimation(this, R.anim.anim_readbook_top_in)
-        menuBottomIn = AnimationUtils.loadAnimation(this, R.anim.anim_readbook_bottom_in)
-        menuBottomIn.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
 
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                vw_menu_bg.onClick { runMenuOut() }
-            }
-
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
-        })
-
-        //隐藏菜单
-        menuTopOut = AnimationUtils.loadAnimation(this, R.anim.anim_readbook_top_out)
-        menuBottomOut = AnimationUtils.loadAnimation(this, R.anim.anim_readbook_bottom_out)
-        menuBottomOut.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                vw_menu_bg.setOnClickListener(null)
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                fl_menu.invisible()
-                title_bar.invisible()
-                bottom_menu.invisible()
-                menuBarShow = false
-            }
-
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
-        })
-    }
 
     private fun initView() {
         tv_chapter_name.onClick {
@@ -126,10 +81,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         fl_menu.setListener(object : ReadMenu.Callback {
             override fun skipToPage(page: Int) {
 
-            }
-
-            override fun clickReadAloud() {
-                onClickReadAloud()
             }
 
             override fun autoPage() {
@@ -164,12 +115,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun showReadStyle() {
-                runMenuOut()
+                fl_menu.runMenuOut()
                 ReadStyleDialog().show(supportFragmentManager, "readStyle")
             }
 
             override fun showMoreSetting() {
-                runMenuOut()
+                fl_menu.runMenuOut()
                 MoreConfigDialog().show(supportFragmentManager, "moreConfig")
             }
 
@@ -178,7 +129,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun dismiss() {
-                runMenuOut()
+                fl_menu.runMenuOut()
             }
 
         })
@@ -210,34 +161,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         val isDown = action == 0
 
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (isDown && !menuBarShow) {
-                runMenuIn()
+            if (isDown && !fl_menu.menuBarShow) {
+                fl_menu.runMenuIn()
                 return true
             }
-            if (!isDown && !menuBarShow) {
-                menuBarShow = true
+            if (!isDown && !fl_menu.menuBarShow) {
+                fl_menu.menuBarShow = true
                 return true
             }
         }
         return super.dispatchKeyEvent(event)
     }
 
-    private fun runMenuIn() {
-        fl_menu.visible()
-        title_bar.visible()
-        bottom_menu.visible()
-        title_bar.startAnimation(menuTopIn)
-        bottom_menu.startAnimation(menuBottomIn)
-    }
 
-    private fun runMenuOut() {
-        if (fl_menu.isVisible) {
-            if (bottom_menu.isVisible) {
-                title_bar.startAnimation(menuTopOut)
-                bottom_menu.startAnimation(menuBottomOut)
-            }
-        }
-    }
 
     private fun bookLoadFinish() {
         viewModel.bookData.value?.let {
@@ -335,7 +271,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEvent<BookChapter>(Bus.OPEN_CHAPTER) { viewModel.openChapter(it) }
-        observeEventSticky<String>(Bus.READ_ALOUD) { onClickReadAloud() }
+        observeEventSticky<Boolean>(Bus.READ_ALOUD) { onClickReadAloud() }
         observeEventSticky<Int>(Bus.UP_CONFIG) {
             when (it) {
                 0 -> {

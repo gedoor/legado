@@ -51,7 +51,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     context.startActivity<ReadBookActivity>()
                 }
             }
-            postEvent(Bus.READ_ALOUD, "")
+            postEvent(Bus.READ_ALOUD, true)
         }
     }
 
