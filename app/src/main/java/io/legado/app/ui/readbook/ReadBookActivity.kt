@@ -4,10 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.WindowManager
+import android.view.*
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -279,7 +276,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     private fun upBar() {
-
+        var flag = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        if (getPrefBoolean("hideNavigationBar")) {
+            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        }
+        if (!read_menu.menuBarShow) {
+            if (getPrefBoolean("hideStatusBar")) {
+                flag = flag or View.SYSTEM_UI_FLAG_FULLSCREEN
+            }
+            if (getPrefBoolean("hideNavigationBar")) {
+                flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            }
+        }
+        window.decorView.systemUiVisibility = flag
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
