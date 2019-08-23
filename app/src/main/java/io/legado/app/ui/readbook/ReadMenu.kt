@@ -106,7 +106,7 @@ class ReadMenu : FrameLayout {
     }
 
     private fun bindEvent() {
-        ll_floating_button.onClick { callback?.dismiss() }
+        ll_floating_button.onClick { runMenuOut() }
 
         //阅读进度
         seek_bar_read_page.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -126,7 +126,7 @@ class ReadMenu : FrameLayout {
         //朗读
         fab_read_aloud.onClick {
             postEvent(Bus.READ_ALOUD, true)
-            callback?.dismiss()
+            runMenuOut()
         }
 
         //自动翻页
@@ -188,10 +188,6 @@ class ReadMenu : FrameLayout {
         fun showReadStyle()
 
         fun showMoreSetting()
-
-        fun toast(id: Int)
-
-        fun dismiss()
     }
 
 }

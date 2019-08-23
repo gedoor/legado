@@ -115,15 +115,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 fl_menu.runMenuOut()
                 MoreConfigDialog().show(supportFragmentManager, "moreConfig")
             }
-
-            override fun toast(id: Int) {
-                this@ReadBookActivity.toast(id)
-            }
-
-            override fun dismiss() {
-                fl_menu.runMenuOut()
-            }
-
         })
     }
 
