@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import kotlinx.android.synthetic.main.dialog_read_aloud.*
 
 class ReadAloudDialog : DialogFragment() {
 
@@ -19,6 +20,12 @@ class ReadAloudDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initData()
+    }
+
+    private fun initData() {
+
+        seek_tts_SpeechRate.setProgress(0)
     }
 
 }

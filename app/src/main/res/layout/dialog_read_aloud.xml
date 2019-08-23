@@ -5,23 +5,39 @@
     android:layout_height="match_parent"
     android:padding="10dp">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal"
         android:padding="8dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:src="@drawable/ic_play_24dp"
             android:tint="@color/tv_text_default" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:src="@drawable/ic_stop_black_24dp"
             android:tint="@color/tv_text_default" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center">
+
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="30dp"
@@ -29,10 +45,18 @@
             android:src="@drawable/ic_time_add_24dp"
             android:tint="@color/tv_text_default" />
 
-        <TextView
-            android:layout_width="match_parent"
+        <io.legado.app.lib.theme.view.ATESeekBar
+            android:id="@+id/seek_timer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:singleLine="true" />
+            android:layout_weight="1"
+            android:max="60" />
+
+        <TextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/timer_m" />
 
     </LinearLayout>
 
@@ -84,7 +108,7 @@
         </LinearLayout>
 
         <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/hpb_tts_SpeechRate"
+            android:id="@+id/seek_tts_SpeechRate"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginStart="15dp"
