@@ -1,5 +1,8 @@
 package io.legado.app.ui.readbook
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -18,6 +21,7 @@ import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.readbook.config.MoreConfigDialog
 import io.legado.app.ui.readbook.config.ReadStyleDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.TextChapter
@@ -29,6 +33,7 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
     PageView.CallBack,
@@ -37,6 +42,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
+    private val requestCodeEditSource = 111
     private var changeSourceDialog: ChangeSourceDialog? = null
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
     private var readAloudStatus = Status.STOP
@@ -70,18 +76,28 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     private fun initView() {
         tv_chapter_name.onClick {
-
+            viewModel.bookSource?.let {
+                startActivityForResult<SourceEditActivity>(
+                    requestCodeEditSource,
+                    Pair("data", it.bookSourceUrl)
+                )
+            }
         }
         tv_chapter_url.onClick {
-
+            runCatching {
+                val url = tv_chapter_url.text.toString()
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(url)
+                startActivity(intent)
+            }
         }
         read_menu.setListener(object : ReadMenu.Callback {
-            override fun skipToPage(page: Int) {
+            override fun autoPage() {
 
             }
 
-            override fun autoPage() {
-
+            override fun skipToPage(page: Int) {
+                viewModel.durPageIndex = page
             }
 
             override fun skipPreChapter() {
@@ -262,6 +278,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     content_view.upStyle()
                     page_view.upStyle()
                 }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+
             }
         }
     }

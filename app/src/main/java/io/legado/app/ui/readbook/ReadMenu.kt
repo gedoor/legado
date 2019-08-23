@@ -188,9 +188,10 @@ class ReadMenu : FrameLayout {
     }
 
     interface Callback {
-        fun skipToPage(page: Int)
 
         fun autoPage()
+
+        fun skipToPage(page: Int)
 
         fun skipPreChapter()
 
