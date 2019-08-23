@@ -151,7 +151,11 @@ class ReadMenu : FrameLayout {
         tv_next.onClick { callback?.skipNextChapter() }
 
         //目录
-        ll_catalog.onClick { callback?.openChapterList() }
+        ll_catalog.onClick {
+            runMenuOut {
+                callback?.openChapterList()
+            }
+        }
 
         //调节
         ll_adjust.onClick { callback?.openAdjust() }
