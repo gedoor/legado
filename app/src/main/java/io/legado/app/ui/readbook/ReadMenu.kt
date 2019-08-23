@@ -5,11 +5,9 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import io.legado.app.R
-import io.legado.app.service.ReadAloudService
 import io.legado.app.utils.isNightTheme
 import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadMenu : FrameLayout {
 
@@ -61,11 +59,6 @@ class ReadMenu : FrameLayout {
 
         //朗读
         fab_read_aloud.onClick { callback?.clickReadAloud() }
-        //长按停止朗读
-        fab_read_aloud.onLongClick {
-            ReadAloudService.stop(context)
-            true
-        }
 
         //自动翻页
         fabAutoPage.onClick { callback?.autoPage() }

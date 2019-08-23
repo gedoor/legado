@@ -2,6 +2,95 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_play_24dp"
+            android:tint="@color/tv_text_default" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_stop_black_24dp"
+            android:tint="@color/tv_text_default" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_time_add_24dp"
+            android:tint="@color/tv_text_default" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_menu"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_tts_SpeechRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/read_aloud_speed"
+                android:textColor="@color/tv_text_default"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:text="@string/flow_sys"
+                android:textColor="@color/tv_text_default"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/scb_tts_follow_sys"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="false"
+                android:contentDescription="@string/flow_sys" />
+        </LinearLayout>
+
+        <io.legado.app.lib.theme.view.ATESeekBar
+            android:id="@+id/hpb_tts_SpeechRate"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:max="20" />
+
+    </LinearLayout>
 
 </LinearLayout>
