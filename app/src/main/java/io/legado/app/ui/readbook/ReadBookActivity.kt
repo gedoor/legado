@@ -4,7 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import io.legado.app.R
@@ -61,9 +64,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         setScreenBrightness(getPrefInt("brightness", 100))
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        Help.upSystemUiVisibility(window, !read_menu.isVisible)
+    }
+
     override fun onResume() {
         super.onResume()
-        upBar()
+        Help.upSystemUiVisibility(window, !read_menu.isVisible)
         timeElectricityReceiver = TimeElectricityReceiver.register(this)
     }
 
@@ -73,7 +81,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             unregisterReceiver(it)
             timeElectricityReceiver = null
         }
-        upBar()
+        Help.upSystemUiVisibility(window, !read_menu.isVisible)
     }
 
     private fun initView() {
@@ -135,11 +143,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun menuShow() {
-                upBar()
+                Help.upSystemUiVisibility(window, !read_menu.isVisible)
             }
 
             override fun menuHide() {
-                upBar()
+                Help.upSystemUiVisibility(window, !read_menu.isVisible)
             }
         })
     }
@@ -294,26 +302,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         window.attributes = params
     }
 
-    private fun upBar() {
-        var flag = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_IMMERSIVE
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        if (getPrefBoolean("hideNavigationBar")) {
-            flag =
-                flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        }
-        if (!read_menu.isVisible) {
-            if (getPrefBoolean("hideStatusBar")) {
-                flag = flag or View.SYSTEM_UI_FLAG_FULLSCREEN
-            }
-            if (getPrefBoolean("hideNavigationBar")) {
-                flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            }
-        }
-        window.decorView.systemUiVisibility = flag
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -322,6 +310,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
         }
     }
+
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<Int>(Bus.ALOUD_STATE) { readAloudStatus = it }
@@ -332,7 +321,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEvent<BookChapter>(Bus.OPEN_CHAPTER) { viewModel.openChapter(it) }
         observeEventSticky<Boolean>(Bus.READ_ALOUD) { onClickReadAloud() }
         observeEvent<Boolean>(Bus.UP_CONFIG) {
-            upBar()
+            Help.upSystemUiVisibility(window, !read_menu.isVisible)
             page_view.upBg()
             content_view.upStyle()
             page_view.upStyle()

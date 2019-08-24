@@ -13,6 +13,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.readbook.Help
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -41,6 +42,7 @@ class ReadStyleDialog : DialogFragment() {
             attr.gravity = Gravity.BOTTOM
             it.attributes = attr
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            Help.upSystemUiVisibility(it)
         }
     }
 

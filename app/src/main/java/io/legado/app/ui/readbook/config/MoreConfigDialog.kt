@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.ui.readbook.Help
 
 class MoreConfigDialog : DialogFragment() {
 
@@ -38,6 +39,7 @@ class MoreConfigDialog : DialogFragment() {
             attr.gravity = Gravity.BOTTOM
             it.attributes = attr
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            Help.upSystemUiVisibility(it)
         }
     }
 
