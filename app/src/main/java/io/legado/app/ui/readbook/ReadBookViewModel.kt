@@ -189,6 +189,16 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun removeFromBookshelf(success: (() -> Unit)?) {
+        execute {
+            bookData.value?.let {
+                App.db.bookDao().delete(it.bookUrl)
+            }
+        }.onSuccess {
+            success?.invoke()
+        }
+    }
+
     fun upBookSource() {
         execute {
             bookData.value?.let {

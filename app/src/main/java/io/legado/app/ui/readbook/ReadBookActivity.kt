@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
@@ -309,6 +310,27 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 requestCodeEditSource -> viewModel.upBookSource()
             }
         }
+    }
+
+    override fun finish() {
+        viewModel.bookData.value?.let {
+            if (!viewModel.inBookshelf) {
+                alert {
+                    title = getString(R.string.add_to_shelf)
+                    message = getString(R.string.check_add_bookshelf, it.name)
+                    positiveButton(R.string.yes) {
+                        viewModel.inBookshelf = true
+                    }
+                    negativeButton(R.string.no) {
+                        viewModel.removeFromBookshelf {
+                            super.finish()
+                        }
+                    }
+                }.show()
+            } else {
+                super.finish()
+            }
+        } ?: super.finish()
     }
 
     override fun observeLiveBus() {
