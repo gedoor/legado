@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
@@ -17,7 +18,11 @@ import java.util.*
 
 class ContentView : FrameLayout {
 
-    private val bgImage: AppCompatImageView = AppCompatImageView(context)
+    private val bgImage: AppCompatImageView by lazy {
+        val iv = AppCompatImageView(context)
+        iv.scaleType = ImageView.ScaleType.CENTER_CROP
+        iv
+    }
 
     constructor(context: Context) : super(context)
 
