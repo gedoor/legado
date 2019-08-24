@@ -169,7 +169,7 @@
     <string name="volume_key_page">音量键翻页</string>
     <string name="click_open_page">点击翻页</string>
     <string name="click_all_next_page">点击总是翻下一页</string>
-    <string name="open_page_anim">翻页动画</string>
+    <string name="page_anim">翻页动画</string>
     <string name="keep_light">屏幕超时</string>
     <string name="back">返回</string>
     <string name="menu">菜单</string>

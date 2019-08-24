@@ -17,23 +17,11 @@ import java.io.IOException
  * 阅读界面配置
  */
 object ReadBookConfig {
-    private val configList: ArrayList<Config> by lazy {
-        val list: ArrayList<Config> = arrayListOf()
-        val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + "config")
-        val json = if (configFile.exists()) {
-            String(configFile.readBytes())
-        } else {
-            String(App.INSTANCE.assets.open("readConfig.json").readBytes())
+    const val fileName = "readConfig.json"
+    private val configList: ArrayList<Config> = arrayListOf<Config>()
+        .apply {
+            upConfig(this)
         }
-        try {
-            GSON.fromJsonArray<Config>(json)?.let {
-                list.addAll(it)
-            }
-        } catch (e: Exception) {
-            list.addAll(getOnError())
-        }
-        list
-    }
 
     var styleSelect
         get() = App.INSTANCE.getPrefInt("readStyleSelect")
@@ -44,13 +32,31 @@ object ReadBookConfig {
         return configList[index]
     }
 
+    fun upConfig(list: ArrayList<Config> = configList) {
+        val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + fileName)
+        val json = if (configFile.exists()) {
+            String(configFile.readBytes())
+        } else {
+            String(App.INSTANCE.assets.open(fileName).readBytes())
+        }
+        try {
+            GSON.fromJsonArray<Config>(json)?.let {
+                list.clear()
+                list.addAll(it)
+            }
+        } catch (e: Exception) {
+            list.clear()
+            list.addAll(getOnError())
+        }
+    }
+
     fun upBg() {
         bg = getConfig().bgDrawable()
     }
 
     fun save() {
         val json = GSON.toJson(configList)
-        val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + "config")
+        val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + fileName)
         //获取流并存储
         try {
             BufferedWriter(FileWriter(configFile)).use { writer ->
@@ -64,7 +70,7 @@ object ReadBookConfig {
 
     fun reset() {
         try {
-            val json = String(App.INSTANCE.assets.open("readConfig.json").readBytes())
+            val json = String(App.INSTANCE.assets.open(fileName).readBytes())
             GSON.fromJsonArray<Config>(json)?.let {
                 configList.clear()
                 configList.addAll(it)
@@ -109,7 +115,10 @@ object ReadBookConfig {
             when (bgType) {
                 0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr))
                 1 -> bgDrawable =
-                    Drawable.createFromStream(App.INSTANCE.assets.open("bg" + File.separator + bgStr), "bg")
+                    Drawable.createFromStream(
+                        App.INSTANCE.assets.open("bg" + File.separator + bgStr),
+                        "bg"
+                    )
                 else -> runCatching {
                     bgDrawable = Drawable.createFromPath(bgStr)
                 }

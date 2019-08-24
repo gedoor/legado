@@ -15,13 +15,29 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_anim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/page_anim"
+        app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg" />
+
+    <View
+        android:id="@+id/vw_bg_fg1"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/btn_bg_press"
+        app:layout_constraintTop_toBottomOf="@+id/tv_anim" />
+
+    <TextView
         android:id="@+id/tv_bg_ts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:text="@string/text_bg_style"
-        app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg" />
+        app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg1" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg0"

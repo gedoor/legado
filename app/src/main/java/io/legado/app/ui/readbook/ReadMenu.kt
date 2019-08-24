@@ -182,7 +182,11 @@ class ReadMenu : FrameLayout {
             override fun onAnimationEnd(animation: Animation) {
                 vw_menu_bg.onClick { runMenuOut() }
                 val lp = vwNavigationBar.layoutParams
-                lp.height = if (context.getPrefBoolean("hideNavigationBar"))
+                lp.height =
+                    if (context.getPrefBoolean("hideNavigationBar") and Help.isNavigationBarExist(
+                            activity
+                        )
+                    )
                     context.getNavigationBarHeight() else 0
                 vwNavigationBar.layoutParams = lp
             }
