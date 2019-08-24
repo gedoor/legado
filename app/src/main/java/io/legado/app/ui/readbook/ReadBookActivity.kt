@@ -287,7 +287,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     private fun upBar() {
         var flag = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         if (getPrefBoolean("hideNavigationBar")) {
-            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            flag =
+                flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
         }
         if (!read_menu.isVisible) {
             if (getPrefBoolean("hideStatusBar")) {
