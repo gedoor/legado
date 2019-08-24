@@ -17,7 +17,7 @@ import java.io.IOException
  * 阅读界面配置
  */
 object ReadBookConfig {
-    const val fileName = "readConfig.json"
+    private const val fileName = "readConfig.json"
     private val configList: ArrayList<Config> = arrayListOf<Config>()
         .apply {
             upConfig(this)
