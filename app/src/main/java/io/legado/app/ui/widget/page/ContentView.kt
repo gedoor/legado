@@ -37,6 +37,7 @@ class ContentView : FrameLayout {
         addView(bgImage, LayoutParams(matchParent, matchParent))
         inflate(context, R.layout.view_book_page, this)
         upStyle()
+        upTime()
     }
 
     fun upStyle() {
