@@ -96,6 +96,7 @@ object ReadBookConfig {
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
         var paddingTop: Int = 0,
+        var textBold: Boolean = false,
         var textColor: String = "#3E3D3B",
         var textSize: Int = 15
     ) {

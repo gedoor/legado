@@ -49,6 +49,7 @@ class ContentView : FrameLayout {
             content_text_view.textSize = textSize.toFloat()
             content_text_view.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier)
             content_text_view.letterSpacing = letterSpacing
+            content_text_view.paint.isFakeBoldText = textBold
             textColor().let {
                 content_text_view.setTextColor(it)
                 tv_top_left.setTextColor(it)
