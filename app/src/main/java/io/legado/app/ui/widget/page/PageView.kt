@@ -149,7 +149,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         }
     }
 
-    fun setPageFactory(factory: TextPageFactory) {
+    private fun setPageFactory(factory: TextPageFactory) {
         this.pageFactory = factory
 
         //可做成异步回调
