@@ -77,10 +77,8 @@ class ReadMenu : FrameLayout {
     fun runMenuOut(onMenuOutEnd: (() -> Unit)? = null) {
         this.onMenuOutEnd = onMenuOutEnd
         if (this.isVisible) {
-            if (bottom_menu.isVisible) {
-                title_bar.startAnimation(menuTopOut)
-                bottom_menu.startAnimation(menuBottomOut)
-            }
+            title_bar.startAnimation(menuTopOut)
+            bottom_menu.startAnimation(menuBottomOut)
         }
     }
 
@@ -176,13 +174,18 @@ class ReadMenu : FrameLayout {
     private fun initAnimation() {
         menuTopIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_in)
         menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
-        menuBottomIn.setAnimationListener(object : Animation.AnimationListener {
+        menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-
+                callback?.menuShow()
             }
 
             override fun onAnimationEnd(animation: Animation) {
                 vw_menu_bg.onClick { runMenuOut() }
+                if (context.getPrefBoolean("hideNavigationBar")) {
+                    vwNavigationBar.layoutParams.height = context.getNavigationBarHeight()
+                } else {
+                    vwNavigationBar.layoutParams.height = 0
+                }
             }
 
             override fun onAnimationRepeat(animation: Animation) {
@@ -193,7 +196,7 @@ class ReadMenu : FrameLayout {
         //隐藏菜单
         menuTopOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_out)
         menuBottomOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_out)
-        menuBottomOut.setAnimationListener(object : Animation.AnimationListener {
+        menuTopOut.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 vw_menu_bg.setOnClickListener(null)
             }
@@ -204,6 +207,7 @@ class ReadMenu : FrameLayout {
                 bottom_menu.invisible()
                 menuBarShow = false
                 onMenuOutEnd?.invoke()
+                callback?.menuHide()
             }
 
             override fun onAnimationRepeat(animation: Animation) {
@@ -232,6 +236,8 @@ class ReadMenu : FrameLayout {
         fun openChapterList()
         fun showReadStyle()
         fun showMoreSetting()
+        fun menuShow()
+        fun menuHide()
     }
 
 }

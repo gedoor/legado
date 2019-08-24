@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -129,6 +130,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
             override fun showMoreSetting() {
                 MoreConfigDialog().show(supportFragmentManager, "moreConfig")
+            }
+
+            override fun menuShow() {
+                upBar()
+            }
+
+            override fun menuHide() {
+                upBar()
             }
         })
     }
@@ -280,7 +289,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         if (getPrefBoolean("hideNavigationBar")) {
             flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         }
-        if (!read_menu.menuBarShow) {
+        if (!read_menu.isVisible) {
             if (getPrefBoolean("hideStatusBar")) {
                 flag = flag or View.SYSTEM_UI_FLAG_FULLSCREEN
             }
@@ -308,18 +317,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEvent<BookChapter>(Bus.OPEN_CHAPTER) { viewModel.openChapter(it) }
         observeEventSticky<Boolean>(Bus.READ_ALOUD) { onClickReadAloud() }
-        observeEventSticky<Int>(Bus.UP_CONFIG) {
-            when (it) {
-                0 -> {
-                    page_view.upBg()
-                    content_view.upStyle()
-                    page_view.upStyle()
-                }
-                1 -> {
-                    content_view.upStyle()
-                    page_view.upStyle()
-                }
-            }
+        observeEvent<Boolean>(Bus.UP_CONFIG) {
+            upBar()
+            page_view.upBg()
+            content_view.upStyle()
+            page_view.upStyle()
         }
     }
 

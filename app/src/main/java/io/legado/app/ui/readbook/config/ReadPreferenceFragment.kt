@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
+import io.legado.app.constant.Bus
 import io.legado.app.lib.theme.ATH
+import io.legado.app.utils.postEvent
 
 class ReadPreferenceFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -31,8 +33,8 @@ class ReadPreferenceFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            "hideStatusBar" -> {
-            }
+            "hideStatusBar" -> postEvent(Bus.UP_CONFIG, true)
+            "hideNavigationBar" -> postEvent(Bus.UP_CONFIG, true)
         }
     }
 

@@ -55,31 +55,31 @@ class ReadStyleDialog : DialogFragment() {
             ReadBookConfig.styleSelect = 0
             ReadBookConfig.upBg()
             upBg()
-            postEvent(Bus.UP_CONFIG, 0)
+            postEvent(Bus.UP_CONFIG, true)
         }
         tv_bg1.onClick {
             ReadBookConfig.styleSelect = 1
             ReadBookConfig.upBg()
             upBg()
-            postEvent(Bus.UP_CONFIG, 0)
+            postEvent(Bus.UP_CONFIG, true)
         }
         tv_bg2.onClick {
             ReadBookConfig.styleSelect = 2
             ReadBookConfig.upBg()
             upBg()
-            postEvent(Bus.UP_CONFIG, 0)
+            postEvent(Bus.UP_CONFIG, true)
         }
         tv_bg3.onClick {
             ReadBookConfig.styleSelect = 3
             ReadBookConfig.upBg()
             upBg()
-            postEvent(Bus.UP_CONFIG, 0)
+            postEvent(Bus.UP_CONFIG, true)
         }
         tv_bg4.onClick {
             ReadBookConfig.styleSelect = 4
             ReadBookConfig.upBg()
             upBg()
-            postEvent(Bus.UP_CONFIG, 0)
+            postEvent(Bus.UP_CONFIG, true)
         }
     }
 
