@@ -39,7 +39,12 @@ class TextPageFactory private constructor(dataSource: DataSource) :
 
     override fun moveToNext(): Boolean {
         return if (hasNext()) {
-            index = index.plus(1)
+            index = if (dataSource.getCurrentChapter()?.isLastIndex(index) == true) {
+                dataSource.moveToNextChapter()
+                0
+            } else {
+                index.plus(1)
+            }
             true
         } else
             false
@@ -47,7 +52,12 @@ class TextPageFactory private constructor(dataSource: DataSource) :
 
     override fun moveToPrevious(): Boolean {
         return if (hasPrev()) {
-            index = index.minus(1)
+            index = if (index > 0) {
+                index.minus(1)
+            } else {
+                dataSource.moveToPrevChapter()
+                dataSource.getPreviousChapter()?.lastIndex() ?: 0
+            }
             true
         } else
             false
@@ -59,12 +69,23 @@ class TextPageFactory private constructor(dataSource: DataSource) :
     }
 
     override fun nextPage(): TextPage? {
-        return dataSource.getCurrentChapter()?.page(index + 1)
+        dataSource.getCurrentChapter()?.let {
+            if (index < it.pageSize() - 1) {
+                return dataSource.getCurrentChapter()?.page(index + 1)
+                    ?: TextPage(index + 1, "index：${index + 1}", "index：${index + 1}")
+            }
+        }
+        return dataSource.getNextChapter()?.page(0)
             ?: TextPage(index + 1, "index：${index + 1}", "index：${index + 1}")
     }
 
     override fun previousPage(): TextPage? {
-        return dataSource.getCurrentChapter()?.page(index - 1)
+        if (index > 0) {
+            return dataSource.getCurrentChapter()?.page(index - 1)
+                ?: TextPage(index - 1, "index：${index - 1}", "index：${index - 1}")
+        }
+
+        return dataSource.getPreviousChapter()?.lastPage()
             ?: TextPage(index - 1, "index：${index - 1}", "index：${index - 1}")
     }
 

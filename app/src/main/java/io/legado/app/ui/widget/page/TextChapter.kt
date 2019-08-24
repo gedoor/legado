@@ -20,6 +20,14 @@ data class TextChapter(
         return null
     }
 
+    fun lastIndex(): Int {
+        return pages.size - 1
+    }
+
+    fun isLastIndex(index: Int): Boolean {
+        return index == pages.size - 1
+    }
+
     fun pageSize(): Int {
         return pages.size
     }

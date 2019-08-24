@@ -197,6 +197,24 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun moveToNextChapter() {
+        durChapterIndex++
+        prevTextChapter = curTextChapter
+        curTextChapter = nextTextChapter
+        bookData.value?.let {
+            loadContent(it, durChapterIndex.plus(1))
+        }
+    }
+
+    fun moveToPrevChapter() {
+        durChapterIndex--
+        nextTextChapter = curTextChapter
+        curTextChapter = prevTextChapter
+        bookData.value?.let {
+            loadContent(it, durChapterIndex.minus(1))
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         ReadAloudService.stop(context)

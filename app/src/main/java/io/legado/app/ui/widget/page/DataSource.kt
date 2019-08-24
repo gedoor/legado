@@ -20,6 +20,10 @@ interface DataSource {
 
     fun hasPrevChapter(): Boolean
 
+    fun moveToNextChapter()
+
+    fun moveToPrevChapter()
+
     interface CallBack {
         fun onLoadFinish(bookChapter: BookChapter, content: String)
     }

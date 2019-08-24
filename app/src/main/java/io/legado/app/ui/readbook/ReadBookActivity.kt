@@ -256,6 +256,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    override fun moveToNextChapter() {
+        viewModel.moveToNextChapter()
+    }
+
+    override fun moveToPrevChapter() {
+        viewModel.moveToPrevChapter()
+    }
+
     private fun onClickReadAloud() {
         if (!ReadAloudService.isRun) {
             readAloudStatus = Status.STOP

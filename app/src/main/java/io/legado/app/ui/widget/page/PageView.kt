@@ -70,6 +70,14 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
                 }
                 return false
             }
+
+            override fun moveToNextChapter() {
+                callback?.moveToNextChapter()
+            }
+
+            override fun moveToPrevChapter() {
+                callback?.moveToPrevChapter()
+            }
         }))
     }
 
@@ -201,5 +209,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         fun durChapterPos(pageSize: Int): Int
         fun textChapter(chapterOnDur: Int = 0): TextChapter?
         fun loadChapter(index: Int)
+        fun moveToNextChapter()
+        fun moveToPrevChapter()
     }
 }
