@@ -18,17 +18,20 @@ import java.util.*
 
 class ContentView : FrameLayout {
 
-    private val bgImage: AppCompatImageView by lazy {
-        val iv = AppCompatImageView(context)
-        iv.scaleType = ImageView.ScaleType.CENTER_CROP
-        iv
-    }
+    private val bgImage: AppCompatImageView = AppCompatImageView(context)
+        .apply {
+            scaleType = ImageView.ScaleType.CENTER_CROP
+        }
 
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     init {
         addView(bgImage, LayoutParams(matchParent, matchParent))
