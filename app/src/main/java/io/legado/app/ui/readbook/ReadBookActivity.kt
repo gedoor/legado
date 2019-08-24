@@ -33,10 +33,8 @@ import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.alert
+import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
     PageView.CallBack,
@@ -318,10 +316,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 alert {
                     title = getString(R.string.add_to_shelf)
                     message = getString(R.string.check_add_bookshelf, it.name)
-                    positiveButton(R.string.yes) {
+                    okButton {
                         viewModel.inBookshelf = true
                     }
-                    negativeButton(R.string.no) {
+                    noButton {
                         viewModel.removeFromBookshelf {
                             super.finish()
                         }
