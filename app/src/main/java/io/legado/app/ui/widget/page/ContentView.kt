@@ -82,6 +82,6 @@ class ContentView : FrameLayout {
     fun setContent(page: TextPage?) {
         content_text_view.text = page?.text
         tv_bottom_left.text = page?.title
-        tv_bottom_right.text = page?.index?.toString()
+        tv_bottom_right.text = page?.index?.plus(1)?.toString()
     }
 }
