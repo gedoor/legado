@@ -79,13 +79,9 @@ class ContentView : FrameLayout {
         tv_top_right.text = context.getString(R.string.battery_show, battery)
     }
 
-    fun setChapterTile(tile: String) {
-        tv_bottom_left.text = tile
-    }
-
     fun setContent(page: TextPage?) {
         content_text_view.text = page?.text
-
+        tv_bottom_left.text = page?.title
         tv_bottom_right.text = page?.index?.toString()
     }
 }

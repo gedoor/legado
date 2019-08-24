@@ -55,17 +55,17 @@ class TextPageFactory private constructor(dataSource: DataSource) :
 
     override fun currentPage(): TextPage? {
         return dataSource.getCurrentChapter()?.page(index)
-            ?: TextPage(index, "index：$index")
+            ?: TextPage(index, "index：$index", "index：$index")
     }
 
     override fun nextPage(): TextPage? {
         return dataSource.getCurrentChapter()?.page(index + 1)
-            ?: TextPage(index + 1, "index：${index + 1}")
+            ?: TextPage(index + 1, "index：${index + 1}", "index：${index + 1}")
     }
 
     override fun previousPage(): TextPage? {
         return dataSource.getCurrentChapter()?.page(index - 1)
-            ?: TextPage(index - 1, "index：${index - 1}")
+            ?: TextPage(index - 1, "index：${index - 1}", "index：${index - 1}")
     }
 
 

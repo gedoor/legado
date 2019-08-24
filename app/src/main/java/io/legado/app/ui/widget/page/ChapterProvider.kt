@@ -31,7 +31,11 @@ object ChapterProvider {
             textPages.add(
                 TextPage(
                     pageIndex,
-                    spannableStringBuilder.delete(pageLengths[pageIndex], spannableStringBuilder.length)
+                    spannableStringBuilder.delete(
+                        pageLengths[pageIndex],
+                        spannableStringBuilder.length
+                    ),
+                    bookChapter.title
                 )
             )
             surplusText = surplusText.substring(pageLengths[pageIndex])
