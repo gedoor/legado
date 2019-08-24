@@ -327,11 +327,11 @@
     <string name="add_to_shelf">放入书架</string>
     <string name="continue_read">继续阅读</string>
     <string name="cover_path">封面地址</string>
-    <string name="page_mode_COVER">覆盖</string>
-    <string name="page_mode_SIMULATION">仿真</string>
-    <string name="page_mode_SLIDE">滑动</string>
-    <string name="page_mode_SCROLL">滚动</string>
-    <string name="page_mode_NONE">无动画</string>
+    <string name="page_anim_cover">覆盖</string>
+    <string name="page_anim_slide">滑动</string>
+    <string name="page_anim_simulation">仿真</string>
+    <string name="page_anim_scroll">滚动</string>
+    <string name="page_anim_none">无动画</string>
     <string name="donate_s">此书源使用了高级功能，请到捐赠里点击支付宝红包搜索码领取红包开启。</string>
     <string name="up_change_source_last_chapter_t">后台更新换源最新章节</string>
     <string name="up_change_source_last_chapter_s">开启则会在软件打开1分钟后开始更新</string>

@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_anim"
+        android:id="@+id/tv_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
@@ -23,12 +23,46 @@
         android:text="@string/page_anim"
         app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg" />
 
+    <RadioGroup
+        android:id="@+id/rg_page_anim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tv_page_anim">
+
+        <io.legado.app.lib.theme.view.ATERadioNoButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:button="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/page_anim_cover" />
+
+        <io.legado.app.lib.theme.view.ATERadioNoButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:button="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/page_anim_slide" />
+
+    </RadioGroup>
+
     <View
         android:id="@+id/vw_bg_fg1"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
         android:background="@color/btn_bg_press"
-        app:layout_constraintTop_toBottomOf="@+id/tv_anim" />
+        app:layout_constraintTop_toBottomOf="@+id/rg_page_anim" />
 
     <TextView
         android:id="@+id/tv_bg_ts"
