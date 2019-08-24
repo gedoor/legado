@@ -35,9 +35,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.MainActivity" />
-        <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
-        <activity android:name=".ui.search.SearchActivity" />
-        <activity android:name=".ui.about.AboutActivity" />
+        <activity
+            android:name=".ui.readbook.ReadBookActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask" />
         <activity
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
@@ -47,6 +48,9 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
+        <activity android:name=".ui.search.SearchActivity" />
+        <activity android:name=".ui.about.AboutActivity" />
         <activity android:name=".ui.bookshelf.BookshelfActivity" />
         <activity android:name=".ui.qrcode.QrCodeActivity" />
         <activity android:name=".ui.about.DonateActivity" />
@@ -54,7 +58,6 @@
         <activity android:name=".ui.bookinfo.edit.BookInfoEditActivity" />
         <activity android:name=".ui.sourcedebug.SourceDebugActivity" />
         <activity android:name=".ui.booksource.BookSourceActivity" />
-        <activity android:name=".ui.readbook.ReadBookActivity" />
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
         <activity android:name=".ui.readrss.ReadRssActivity" />
 
