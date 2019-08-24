@@ -33,6 +33,14 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         pageDelegate = SlidePageDelegate(this)
 
         setPageFactory(TextPageFactory.create(object : DataSource {
+            override fun pageIndex(): Int {
+                return callback?.durChapterPos() ?: 0
+            }
+
+            override fun setPageIndex(pageIndex: Int) {
+                callback?.setPageIndex(pageIndex)
+            }
+
             override fun isPrepared(): Boolean {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
@@ -107,25 +115,25 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
             when (chapterOnDur) {
                 0 -> {
                     cb.textChapter()?.let {
-                        curPage?.setContent(it.page(cb.durChapterPos(it.pageSize())))
-                        if (cb.durChapterPos(it.pageSize()) > 0) {
-                            prevPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) - 1))
+                        curPage?.setContent(it.page(cb.durChapterPos()))
+                        if (cb.durChapterPos() > 0) {
+                            prevPage?.setContent(it.page(cb.durChapterPos().minus(1)))
                         }
-                        if (cb.durChapterPos(it.pageSize()) < it.pageSize() - 1) {
-                            nextPage?.setContent(it.page(cb.durChapterPos(it.pageSize()) + 1))
+                        if (cb.durChapterPos() < it.pageSize().minus(1)) {
+                            nextPage?.setContent(it.page(cb.durChapterPos().plus(1)))
                         }
                     }
                 }
                 1 -> {
                     cb.textChapter()?.let {
-                        if (cb.durChapterPos(it.pageSize()) == it.pageSize() - 1) {
+                        if (cb.durChapterPos() == it.pageSize().minus(1)) {
                             nextPage?.setContent(cb.textChapter(1)?.page(0))
                         }
                     }
                 }
                 -1 -> {
                     cb.textChapter()?.let {
-                        if (cb.durChapterPos(it.pageSize()) == 0) {
+                        if (cb.durChapterPos() == 0) {
                             prevPage?.setContent(cb.textChapter(-1)?.lastPage())
                         }
                     }
@@ -206,10 +214,11 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     interface CallBack {
         fun chapterSize(): Int
         fun durChapterIndex(): Int
-        fun durChapterPos(pageSize: Int): Int
+        fun durChapterPos(): Int
         fun textChapter(chapterOnDur: Int = 0): TextChapter?
         fun loadChapter(index: Int)
         fun moveToNextChapter()
         fun moveToPrevChapter()
+        fun setPageIndex(pageIndex: Int)
     }
 }

@@ -9,8 +9,6 @@ class TextPageFactory private constructor(dataSource: DataSource) :
         }
     }
 
-    var index: Int = 0
-
     override fun hasPrev(): Boolean {
         return true
     }
@@ -24,51 +22,51 @@ class TextPageFactory private constructor(dataSource: DataSource) :
     }
 
     override fun moveToFirst() {
-        index = 0
+        dataSource.setPageIndex(0)
     }
 
     override fun moveToLast() {
-        index = dataSource.getCurrentChapter()?.let {
+        dataSource.getCurrentChapter()?.let {
             if (it.pageSize() == 0) {
-                0
+                dataSource.setPageIndex(0)
             } else {
-                it.pageSize() - 1
+                dataSource.setPageIndex(it.pageSize().minus(1))
             }
-        } ?: 0
+        } ?: dataSource.setPageIndex(0)
     }
 
-    override fun moveToNext(): Boolean {
+    override fun moveToNext(): Boolean = dataSource.pageIndex().let { index ->
         return if (hasNext()) {
-            index = if (dataSource.getCurrentChapter()?.isLastIndex(index) == true) {
+            if (dataSource.getCurrentChapter()?.isLastIndex(index) == true) {
                 dataSource.moveToNextChapter()
-                0
+                dataSource.setPageIndex(0)
             } else {
-                index.plus(1)
+                dataSource.setPageIndex(index.plus(1))
             }
             true
         } else
             false
     }
 
-    override fun moveToPrevious(): Boolean {
+    override fun moveToPrevious(): Boolean = dataSource.pageIndex().let { index ->
         return if (hasPrev()) {
-            index = if (index > 0) {
-                index.minus(1)
+            if (index > 0) {
+                dataSource.setPageIndex(index.minus(1))
             } else {
                 dataSource.moveToPrevChapter()
-                dataSource.getPreviousChapter()?.lastIndex() ?: 0
+                dataSource.setPageIndex(dataSource.getPreviousChapter()?.lastIndex() ?: 0)
             }
             true
         } else
             false
     }
 
-    override fun currentPage(): TextPage? {
+    override fun currentPage(): TextPage? = dataSource.pageIndex().let { index ->
         return dataSource.getCurrentChapter()?.page(index)
             ?: TextPage(index, "index：$index", "index：$index")
     }
 
-    override fun nextPage(): TextPage? {
+    override fun nextPage(): TextPage? = dataSource.pageIndex().let { index ->
         dataSource.getCurrentChapter()?.let {
             if (index < it.pageSize() - 1) {
                 return dataSource.getCurrentChapter()?.page(index + 1)
@@ -79,7 +77,7 @@ class TextPageFactory private constructor(dataSource: DataSource) :
             ?: TextPage(index + 1, "index：${index + 1}", "index：${index + 1}")
     }
 
-    override fun previousPage(): TextPage? {
+    override fun previousPage(): TextPage? = dataSource.pageIndex().let { index ->
         if (index > 0) {
             return dataSource.getCurrentChapter()?.page(index - 1)
                 ?: TextPage(index - 1, "index：${index - 1}", "index：${index - 1}")

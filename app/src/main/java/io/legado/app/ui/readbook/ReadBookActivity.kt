@@ -249,11 +249,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         return viewModel.durChapterIndex
     }
 
-    override fun durChapterPos(pageSize: Int): Int {
-        if (viewModel.durPageIndex < pageSize) {
-            return viewModel.durPageIndex
+    override fun durChapterPos(): Int {
+        viewModel.curTextChapter?.let {
+            if (viewModel.durPageIndex < it.pageSize()) {
+                return viewModel.durPageIndex
+            }
+            return it.pageSize() - 1
         }
-        return pageSize - 1
+        return viewModel.durPageIndex
+    }
+
+    override fun setPageIndex(pageIndex: Int) {
+        viewModel.durPageIndex = pageIndex
+        viewModel.saveRead()
     }
 
     override fun textChapter(chapterOnDur: Int): TextChapter? {

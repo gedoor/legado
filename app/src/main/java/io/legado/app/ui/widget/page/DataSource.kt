@@ -4,6 +4,10 @@ import io.legado.app.data.entities.BookChapter
 
 interface DataSource {
 
+    fun pageIndex(): Int
+
+    fun setPageIndex(pageIndex: Int)
+
     fun isPrepared(): Boolean
 
     fun getChapterPosition(): Int
