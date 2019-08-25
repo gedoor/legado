@@ -287,13 +287,22 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             SystemUtils.ignoreBatteryOptimization(this)
         }
         when (readAloudStatus) {
-            Status.STOP -> {
-                viewModel.bookData.value?.let {
-                    ReadAloudService.paly(this, it.name, "", "")
-                }
-            }
+            Status.STOP -> readAloud()
             Status.PLAY -> ReadAloudService.pause(this)
             Status.PAUSE -> ReadAloudService.resume(this)
+        }
+    }
+
+    private fun readAloud() {
+        val book = viewModel.bookData.value
+        val textChapter = viewModel.curTextChapter
+        if (book != null && textChapter != null) {
+            ReadAloudService.play(
+                this,
+                book.name,
+                textChapter.title,
+                ""
+            )
         }
     }
 

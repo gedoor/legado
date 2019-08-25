@@ -31,5 +31,23 @@ data class TextChapter(
     fun pageSize(): Int {
         return pages.size
     }
+
+    fun getReadLength(pageIndex: Int): Int {
+        var length = 0
+        for (index in 0 until pageIndex) {
+            length += pageLengths[index]
+        }
+        return length
+    }
+
+    fun getUnRead(pageIndex: Int): String {
+        val stringBuilder = StringBuilder()
+        if (pageIndex < pages.size) {
+            for (index in pageIndex..lastIndex()) {
+                stringBuilder.append(pages[index].text)
+            }
+        }
+        return stringBuilder.toString()
+    }
 }
 

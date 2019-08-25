@@ -28,7 +28,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
 
-        fun paly(context: Context, title: String, subtitle: String, body: String) {
+        fun play(context: Context, title: String, subtitle: String, body: String) {
             val readAloudIntent = Intent(context, ReadAloudService::class.java)
             readAloudIntent.action = "play"
             readAloudIntent.putExtra("title", title)
