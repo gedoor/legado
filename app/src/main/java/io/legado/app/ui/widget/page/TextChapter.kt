@@ -42,7 +42,7 @@ data class TextChapter(
 
     fun getUnRead(pageIndex: Int): String {
         val stringBuilder = StringBuilder()
-        if (pageIndex < pages.size) {
+        if (pageIndex < pages.size && pages.isNotEmpty()) {
             for (index in pageIndex..lastIndex()) {
                 stringBuilder.append(pages[index].text)
             }
