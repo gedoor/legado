@@ -304,11 +304,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     override fun moveToNextChapter() {
+        viewModel.durPageIndex = 0
         viewModel.moveToNextChapter()
         curChapterChange()
     }
 
     override fun moveToPrevChapter() {
+        viewModel.durPageIndex = viewModel.prevTextChapter?.lastIndex() ?: 0
         viewModel.moveToPrevChapter()
         curChapterChange()
     }

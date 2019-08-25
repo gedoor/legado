@@ -42,7 +42,6 @@ class TextPageFactory private constructor(dataSource: DataSource) :
         return if (hasNext()) {
             if (dataSource.getCurrentChapter()?.isLastIndex(index) == true) {
                 dataSource.moveToNextChapter()
-                dataSource.setPageIndex(0)
             } else {
                 dataSource.setPageIndex(index.plus(1))
             }
@@ -57,7 +56,6 @@ class TextPageFactory private constructor(dataSource: DataSource) :
                 dataSource.setPageIndex(index.minus(1))
             } else {
                 dataSource.moveToPrevChapter()
-                dataSource.setPageIndex(dataSource.getPreviousChapter()?.lastIndex() ?: 0)
             }
             true
         } else
