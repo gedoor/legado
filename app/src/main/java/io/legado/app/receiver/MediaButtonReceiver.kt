@@ -8,7 +8,6 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
 import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.utils.postEvent
-import org.jetbrains.anko.startActivity
 
 
 /**
@@ -48,7 +47,9 @@ class MediaButtonReceiver : BroadcastReceiver() {
         private fun readAloud(context: Context) {
             ActivityHelp.isExist(ReadBookActivity::class.java).let {
                 if (!it) {
-                    context.startActivity<ReadBookActivity>()
+                    val intent = Intent(context, ReadBookActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
                 }
             }
             postEvent(Bus.READ_ALOUD, true)
