@@ -161,6 +161,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 readAloudNumber = it.getReadLength(pageIndex)
                 contentList.clear()
                 contentList.addAll(it.getUnRead(pageIndex).split("\n"))
+                playTTS()
             } ?: stopSelf()
         } ?: stopSelf()
     }
