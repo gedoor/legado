@@ -219,6 +219,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     }
 
     private fun pauseReadAloud(pause: Boolean) {
+        if (pause) postEvent(Bus.ALOUD_STATE, Status.PAUSE)
         this.pause = pause
         textToSpeech?.stop()
         ReadAloudNotification.upNotification(this)
