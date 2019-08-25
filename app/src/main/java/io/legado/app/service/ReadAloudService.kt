@@ -225,6 +225,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     }
 
     private fun resumeReadAloud() {
+        pause = false
         playTTS()
     }
 
