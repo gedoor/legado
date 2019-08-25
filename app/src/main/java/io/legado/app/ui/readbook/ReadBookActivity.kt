@@ -224,17 +224,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         launch {
             when (bookChapter.index) {
                 viewModel.durChapterIndex -> {
-                    tv_chapter_name.text = bookChapter.title
-                    tv_chapter_name.visible()
-                    if (!viewModel.isLocalBook) {
-                        tv_chapter_url.text = bookChapter.url
-                        tv_chapter_url.visible()
-                    }
-                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content).let {
-                        viewModel.curTextChapter = it
-                        page_view.upContent()
-                        read_menu.upReadProgress(it.pageSize(), viewModel.durPageIndex)
-                    }
+                    viewModel.curTextChapter =
+                        ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                    page_view.upContent()
+                    curChapterChange()
                 }
                 viewModel.durChapterIndex - 1 -> {
                     viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
@@ -245,6 +238,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     page_view.upContent()
                 }
             }
+        }
+    }
+
+    private fun curChapterChange() {
+        viewModel.curTextChapter?.let {
+            tv_chapter_name.text = it.title
+            tv_chapter_name.visible()
+            if (!viewModel.isLocalBook) {
+                tv_chapter_url.text = it.url
+                tv_chapter_url.visible()
+            }
+            read_menu.upReadProgress(it.pageSize(), viewModel.durPageIndex)
         }
     }
 
@@ -293,10 +298,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun moveToNextChapter() {
         viewModel.moveToNextChapter()
+        curChapterChange()
     }
 
     override fun moveToPrevChapter() {
         viewModel.moveToPrevChapter()
+        curChapterChange()
     }
 
     override fun clickCenter() {

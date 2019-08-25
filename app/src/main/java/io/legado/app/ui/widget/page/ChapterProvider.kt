@@ -45,8 +45,13 @@ object ChapterProvider {
 
             pageIndex++
         }
-        return TextChapter(bookChapter.index, bookChapter.title, textPages, pageLengths)
+        return TextChapter(
+            bookChapter.index,
+            bookChapter.title,
+            bookChapter.url,
+            textPages,
+            pageLengths
+        )
     }
-
 
 }
