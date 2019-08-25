@@ -16,11 +16,13 @@ import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.readbook.config.MoreConfigDialog
+import io.legado.app.ui.readbook.config.ReadAloudDialog
 import io.legado.app.ui.readbook.config.ReadStyleDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
@@ -139,6 +141,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
             override fun showMoreSetting() {
                 MoreConfigDialog().show(supportFragmentManager, "moreConfig")
+            }
+
+            override fun showReadAloud(): Boolean {
+                if (readAloudStatus == Status.STOP) {
+                    return false
+                }
+                ReadAloudDialog().show(supportFragmentManager, "readAloud")
+                return true
             }
 
             override fun menuShow() {
@@ -297,12 +307,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         val book = viewModel.bookData.value
         val textChapter = viewModel.curTextChapter
         if (book != null && textChapter != null) {
+            val key = System.currentTimeMillis().toString()
+            IntentDataHelp.putData(key, textChapter)
             ReadAloudService.play(
                 this,
                 book.name,
                 textChapter.title,
                 textChapter.getReadLength(viewModel.durPageIndex),
-                System.currentTimeMillis().toString()
+                key
             )
         }
     }

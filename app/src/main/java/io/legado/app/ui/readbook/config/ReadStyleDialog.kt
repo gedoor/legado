@@ -20,7 +20,11 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ReadStyleDialog : DialogFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.dialog_read_book_style, container)
     }
 
