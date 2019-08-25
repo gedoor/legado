@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.ui.readbook.Help
-import kotlinx.android.synthetic.main.dialog_read_aloud.*
 
 class ReadAloudDialog : DialogFragment() {
 
@@ -19,11 +18,6 @@ class ReadAloudDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.dialog_read_aloud, container)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initData()
     }
 
     override fun onStart() {
@@ -42,9 +36,14 @@ class ReadAloudDialog : DialogFragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initData()
+    }
+
     private fun initData() {
 
-        seek_tts_SpeechRate.setProgress(0)
+
     }
 
 }
