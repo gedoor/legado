@@ -211,6 +211,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         nextPage?.upBattery(battery)
     }
 
+    override fun clickCenter() {
+        callback?.clickCenter()
+    }
+
     interface CallBack {
         fun chapterSize(): Int
         fun durChapterIndex(): Int
@@ -220,5 +224,6 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         fun moveToNextChapter()
         fun moveToPrevChapter()
         fun setPageIndex(pageIndex: Int)
+        fun clickCenter()
     }
 }

@@ -2,18 +2,18 @@ package io.legado.app.ui.widget.page.delegate
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.RectF
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.Scroller
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
-import io.legado.app.service.ReadAloudService.Companion.stop
 import io.legado.app.ui.widget.page.ContentView
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) {
-
+    val centerRectF = RectF()
     //起始点
     protected var startX: Float = 0.toFloat()
     protected var startY: Float = 0.toFloat()
@@ -95,6 +95,10 @@ abstract class PageDelegate(protected val pageView: PageView) {
         viewWidth = width
         viewHeight = height
         invalidate()
+        centerRectF.set(
+            width / 3f, height / 3f,
+            width * 2f / 3, height * 2f / 3
+        )
     }
 
     fun scroll() {
@@ -193,26 +197,31 @@ abstract class PageDelegate(protected val pageView: PageView) {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
             val x = e.x
             val y = e.y
-            direction = if (x > viewWidth / 2) Direction.NEXT else Direction.PREV
-            if (direction == Direction.NEXT) {
-                //判断是否下一页存在
-                val hasNext = pageView.hasNext()
-                //设置动画方向
-                if (!hasNext) {
-                    return true
-                }
-                //下一页截图
-                bitmap = nextPage?.screenshot()
+            if (centerRectF.contains(x, y)) {
+                pageView.clickCenter()
+                setTouchPoint(x, y)
             } else {
-                val hasPrev = pageView.hasPrev()
-                if (!hasPrev) {
-                    return true
+                direction = if (x > viewWidth / 2) Direction.NEXT else Direction.PREV
+                if (direction == Direction.NEXT) {
+                    //判断是否下一页存在
+                    val hasNext = pageView.hasNext()
+                    //设置动画方向
+                    if (!hasNext) {
+                        return true
+                    }
+                    //下一页截图
+                    bitmap = nextPage?.screenshot()
+                } else {
+                    val hasPrev = pageView.hasPrev()
+                    if (!hasPrev) {
+                        return true
+                    }
+                    //上一页截图
+                    bitmap = prevPage?.screenshot()
                 }
-                //上一页截图
-                bitmap = prevPage?.screenshot()
+                setTouchPoint(x, y)
+                onScrollStart()
             }
-            setTouchPoint(x, y)
-            onScrollStart()
             return true
         }
 
@@ -258,5 +267,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
     interface PageInterface {
         fun hasNext(): Boolean
         fun hasPrev(): Boolean
+        fun clickCenter()
     }
 }
