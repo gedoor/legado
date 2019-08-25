@@ -28,7 +28,7 @@ class RssFragment : BaseFragment(R.layout.fragment_rss) {
         ATH.applyEdgeEffectColor(recycler_view)
         adapter = RssAdapter()
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 4)
-
+        recycler_view.adapter = adapter
     }
 
     private fun initData() {
