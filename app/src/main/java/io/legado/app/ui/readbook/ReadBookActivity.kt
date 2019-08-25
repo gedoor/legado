@@ -277,6 +277,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override fun setPageIndex(pageIndex: Int) {
         viewModel.durPageIndex = pageIndex
         viewModel.saveRead()
+        if (readAloudStatus == Status.PLAY) {
+            readAloud()
+        }
     }
 
     override fun textChapter(chapterOnDur: Int): TextChapter? {
