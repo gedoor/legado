@@ -158,6 +158,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    /**
+     * 菜单
+     */
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> {
@@ -173,26 +176,30 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         return super.onCompatOptionsItemSelected(item)
     }
 
+    /**
+     * 按键拦截,显示菜单
+     */
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         val keyCode = event?.keyCode
         val action = event?.action
         val isDown = action == 0
 
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (isDown && !read_menu.menuBarShow) {
+            if (isDown && !read_menu.cnaShowMenu) {
                 read_menu.runMenuIn()
                 return true
             }
-            if (!isDown && !read_menu.menuBarShow) {
-                read_menu.menuBarShow = true
+            if (!isDown && !read_menu.cnaShowMenu) {
+                read_menu.cnaShowMenu = true
                 return true
             }
         }
         return super.dispatchKeyEvent(event)
     }
 
-
-
+    /**
+     * 书籍加载完成,开始加载章节内容
+     */
     private fun bookLoadFinish() {
         viewModel.bookData.value?.let {
             viewModel.loadContent(it, viewModel.durChapterIndex)
@@ -201,12 +208,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    override fun loadChapter(index: Int) {
+    /**
+     * 加载章节内容
+     */
+    override fun loadContent(index: Int) {
         viewModel.bookData.value?.let {
             viewModel.loadContent(it, index)
         }
     }
 
+    /**
+     * 内容加载完成
+     */
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
         launch {
             when (bookChapter.index) {
@@ -291,6 +304,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    /**
+     * 朗读按钮
+     */
     private fun onClickReadAloud() {
         if (!ReadAloudService.isRun) {
             readAloudStatus = Status.STOP
@@ -303,6 +319,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    /**
+     * 朗读
+     */
     private fun readAloud() {
         val book = viewModel.bookData.value
         val textChapter = viewModel.curTextChapter
@@ -319,6 +338,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    /**
+     * 设置屏幕亮度
+     */
     private fun setScreenBrightness(value: Int) {
         var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         if (this.getPrefBoolean("brightnessAuto").not()) {
@@ -364,8 +386,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<Int>(Bus.ALOUD_STATE) { readAloudStatus = it }
-        observeEvent<Int>(Bus.TTS_START) {}
-        observeEvent<Int>(Bus.TTS_RANGE_START) {}
         observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEvent<BookChapter>(Bus.OPEN_CHAPTER) { viewModel.openChapter(it) }
@@ -375,6 +395,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             page_view.upBg()
             content_view.upStyle()
             page_view.upStyle()
+        }
+        observeEvent<Int>(Bus.TTS_START) {
+
+        }
+        observeEvent<Boolean>(Bus.TTS_NEXT) {
+            if (it) {
+
+            } else {
+
+            }
         }
     }
 

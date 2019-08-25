@@ -19,7 +19,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ReadMenu : FrameLayout {
 
     private var callback: Callback? = null
-    var menuBarShow: Boolean = false
+    var cnaShowMenu: Boolean = false
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
@@ -209,7 +209,7 @@ class ReadMenu : FrameLayout {
                 this@ReadMenu.invisible()
                 title_bar.invisible()
                 bottom_menu.invisible()
-                menuBarShow = false
+                cnaShowMenu = false
                 onMenuOutEnd?.invoke()
                 callback?.menuHide()
             }
