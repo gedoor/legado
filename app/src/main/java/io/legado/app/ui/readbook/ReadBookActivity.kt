@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -34,7 +36,10 @@ import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -415,9 +420,28 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             content_view.upStyle()
             page_view.upStyle()
         }
-        observeEvent<Int>(Bus.TTS_START) {
-            viewModel.curTextChapter?.let {
-
+        observeEvent<Int>(Bus.TTS_START) { chapterStart ->
+            launch(IO) {
+                viewModel.curTextChapter?.let {
+                    val pageStart = chapterStart - it.getReadLength(viewModel.durPageIndex)
+                    val page = it.page(viewModel.durPageIndex)
+                    if (page != null && page.text is SpannableStringBuilder) {
+                        page.text.removeSpan(ChapterProvider.readAloudSpan)
+                        var end = page.text.indexOf("\n", pageStart)
+                        if (end == -1) end = page.text.length - 1
+                        var start = page.text.lastIndexOf("\n", pageStart)
+                        if (start == -1) start = 0
+                        page.text.setSpan(
+                            ChapterProvider.readAloudSpan,
+                            start,
+                            end,
+                            Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+                        )
+                        withContext(Main) {
+                            page_view.upContent()
+                        }
+                    }
+                }
             }
         }
         observeEvent<Boolean>(Bus.TTS_NEXT) {

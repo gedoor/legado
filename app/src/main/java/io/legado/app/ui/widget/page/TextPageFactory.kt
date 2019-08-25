@@ -1,7 +1,9 @@
 package io.legado.app.ui.widget.page
 
+import android.text.SpannableStringBuilder
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.ui.widget.page.ChapterProvider.readAloudSpan
 
 class TextPageFactory private constructor(dataSource: DataSource) :
     PageFactory<TextPage>(dataSource) {
@@ -70,16 +72,22 @@ class TextPageFactory private constructor(dataSource: DataSource) :
     override fun nextPage(): TextPage? = dataSource.pageIndex().let { index ->
         dataSource.getCurrentChapter()?.let {
             if (index < it.pageSize() - 1) {
-                return dataSource.getCurrentChapter()?.page(index + 1)
-                    ?: TextPage(
-                        index + 1,
-                        App.INSTANCE.getString(R.string.data_loading),
-                        "index：${index + 1}"
-                    )
+                return dataSource.getCurrentChapter()?.page(index + 1)?.apply {
+                    if (text is SpannableStringBuilder) {
+                        text.removeSpan(readAloudSpan)
+                    }
+                } ?: TextPage(
+                    index + 1,
+                    App.INSTANCE.getString(R.string.data_loading),
+                    "index：${index + 1}"
+                )
             }
         }
-        return dataSource.getNextChapter()?.page(0)
-            ?: TextPage(
+        return dataSource.getNextChapter()?.page(0)?.apply {
+            if (text is SpannableStringBuilder) {
+                text.removeSpan(readAloudSpan)
+            }
+        } ?: TextPage(
                 index + 1,
                 App.INSTANCE.getString(R.string.data_loading),
                 "index：${index + 1}"
@@ -88,19 +96,25 @@ class TextPageFactory private constructor(dataSource: DataSource) :
 
     override fun previousPage(): TextPage? = dataSource.pageIndex().let { index ->
         if (index > 0) {
-            return dataSource.getCurrentChapter()?.page(index - 1)
-                ?: TextPage(
-                    index - 1,
-                    App.INSTANCE.getString(R.string.data_loading),
-                    "index：${index - 1}"
-                )
-        }
-        return dataSource.getPreviousChapter()?.lastPage()
-            ?: TextPage(
+            return dataSource.getCurrentChapter()?.page(index - 1)?.apply {
+                if (text is SpannableStringBuilder) {
+                    text.removeSpan(readAloudSpan)
+                }
+            } ?: TextPage(
                 index - 1,
                 App.INSTANCE.getString(R.string.data_loading),
                 "index：${index - 1}"
             )
+        }
+        return dataSource.getPreviousChapter()?.lastPage()?.apply {
+            if (text is SpannableStringBuilder) {
+                text.removeSpan(readAloudSpan)
+            }
+        } ?: TextPage(
+            index - 1,
+            App.INSTANCE.getString(R.string.data_loading),
+            "index：${index - 1}"
+        )
     }
 
 
