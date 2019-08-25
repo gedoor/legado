@@ -34,6 +34,6 @@ class RssFragment : BaseFragment(R.layout.fragment_rss) {
     private fun initData() {
         rssLiveData?.removeObservers(viewLifecycleOwner)
         rssLiveData = LivePagedListBuilder(App.db.rssSourceDao().observeEnabled(), 50).build()
-        rssLiveData?.observe(viewLifecycleOwner, Observer { })
+        rssLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
     }
 }
