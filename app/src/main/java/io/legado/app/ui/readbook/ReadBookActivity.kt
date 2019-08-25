@@ -408,7 +408,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             if (it) {
                 moveToNextChapter()
             } else {
-                viewModel.durPageIndex += viewModel.durPageIndex + 1
+                viewModel.durPageIndex = viewModel.durPageIndex + 1
                 page_view.upContent()
                 viewModel.saveRead()
             }
