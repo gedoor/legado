@@ -67,13 +67,11 @@ class ReadMenu : FrameLayout {
     }
 
     fun runMenuIn() {
-        if (callback?.showReadAloud() != true) {
-            this.visible()
-            title_bar.visible()
-            bottom_menu.visible()
-            title_bar.startAnimation(menuTopIn)
-            bottom_menu.startAnimation(menuBottomIn)
-        }
+        this.visible()
+        title_bar.visible()
+        bottom_menu.visible()
+        title_bar.startAnimation(menuTopIn)
+        bottom_menu.startAnimation(menuBottomIn)
     }
 
     fun runMenuOut(onMenuOutEnd: (() -> Unit)? = null) {
@@ -241,7 +239,6 @@ class ReadMenu : FrameLayout {
         fun openChapterList()
         fun showReadStyle()
         fun showMoreSetting()
-        fun showReadAloud(): Boolean
         fun menuShow()
         fun menuHide()
     }

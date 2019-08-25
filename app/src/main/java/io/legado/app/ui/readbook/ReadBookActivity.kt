@@ -22,7 +22,6 @@ import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.readbook.config.MoreConfigDialog
-import io.legado.app.ui.readbook.config.ReadAloudDialog
 import io.legado.app.ui.readbook.config.ReadStyleDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
@@ -141,14 +140,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
             override fun showMoreSetting() {
                 MoreConfigDialog().show(supportFragmentManager, "moreConfig")
-            }
-
-            override fun showReadAloud(): Boolean {
-                if (readAloudStatus == Status.STOP) {
-                    return false
-                }
-                ReadAloudDialog().show(supportFragmentManager, "readAloud")
-                return true
             }
 
             override fun menuShow() {
