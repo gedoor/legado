@@ -2,12 +2,15 @@ package io.legado.app.ui.widget.page
 
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.lib.theme.accentColor
 
 
 object ChapterProvider {
-
+    val readAloudSpan = ForegroundColorSpan(App.INSTANCE.accentColor)
     private val titleSpan = RelativeSizeSpan(1.3f)
 
     @Synchronized
