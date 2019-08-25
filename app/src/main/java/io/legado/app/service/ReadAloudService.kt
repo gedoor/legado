@@ -106,6 +106,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         textToSpeech?.stop()
         isRun = false
         unregisterReceiver(broadcastReceiver)
+        postEvent(Bus.ALOUD_STATE, Status.STOP)
         super.onDestroy()
     }
 
