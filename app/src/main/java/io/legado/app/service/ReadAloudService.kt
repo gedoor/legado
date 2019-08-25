@@ -104,6 +104,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
 
     override fun onDestroy() {
         textToSpeech?.stop()
+        textToSpeech?.shutdown()
         isRun = false
         unregisterReceiver(broadcastReceiver)
         postEvent(Bus.ALOUD_STATE, Status.STOP)
@@ -214,6 +215,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     private fun pauseReadAloud(pause: Boolean) {
         this.pause = pause
         textToSpeech?.stop()
+        ReadAloudNotification.upNotification(this)
     }
 
     private fun resumeReadAloud() {
