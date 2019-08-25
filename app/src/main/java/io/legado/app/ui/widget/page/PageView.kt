@@ -184,6 +184,14 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         return true
     }
 
+    fun upContent() {
+        callback?.let {
+            it.textChapter()?.let { textChapter ->
+                curPage?.setContent(textChapter.page(it.durChapterIndex()))
+            }
+        }
+    }
+
     fun upStyle() {
         curPage?.upStyle()
         prevPage?.upStyle()

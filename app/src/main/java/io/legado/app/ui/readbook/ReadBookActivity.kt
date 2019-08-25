@@ -397,13 +397,17 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             page_view.upStyle()
         }
         observeEvent<Int>(Bus.TTS_START) {
+            viewModel.curTextChapter?.let {
 
+            }
         }
         observeEvent<Boolean>(Bus.TTS_NEXT) {
             if (it) {
-
+                moveToNextChapter()
             } else {
-
+                viewModel.durPageIndex += viewModel.durPageIndex + 1
+                page_view.upContent()
+                viewModel.saveRead()
             }
         }
     }
