@@ -103,9 +103,10 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        textToSpeech?.stop()
         isRun = false
         unregisterReceiver(broadcastReceiver)
+        super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -120,6 +121,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 "pause" -> pauseReadAloud(true)
                 "resume" -> resumeReadAloud()
                 "stop" -> stopSelf()
+                else -> stopSelf()
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -132,6 +134,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     toast(R.string.tts_fix)
                     IntentHelp.toTTSSetting(this@ReadAloudService)
+                    stopSelf()
                 } else {
                     textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
                     ttsIsSuccess = true
