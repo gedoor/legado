@@ -30,10 +30,10 @@ inline fun <reified T> Gson.fromJsonArray(json: String?): List<T>? {
     }.value
 }
 
-class ParameterizedTypeImpl(val clz: Class<*>) : ParameterizedType {
+class ParameterizedTypeImpl(private val clazz: Class<*>) : ParameterizedType {
     override fun getRawType(): Type = List::class.java
 
     override fun getOwnerType(): Type? = null
 
-    override fun getActualTypeArguments(): Array<Type> = arrayOf(clz)
+    override fun getActualTypeArguments(): Array<Type> = arrayOf(clazz)
 }

@@ -13,10 +13,12 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.notification.ReadAloudNotification
+import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
@@ -28,13 +30,19 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
 
-        fun play(context: Context, title: String, subtitle: String, readLength: Int, body: String) {
+        fun play(
+            context: Context,
+            title: String,
+            subtitle: String,
+            pageIndex: Int,
+            dataKey: String
+        ) {
             val readAloudIntent = Intent(context, ReadAloudService::class.java)
             readAloudIntent.action = "play"
             readAloudIntent.putExtra("title", title)
             readAloudIntent.putExtra("subtitle", subtitle)
-            readAloudIntent.putExtra("readLength", readLength)
-            readAloudIntent.putExtra("body", body)
+            readAloudIntent.putExtra("pageIndex", pageIndex)
+            readAloudIntent.putExtra("dataKey", dataKey)
             context.startService(readAloudIntent)
         }
 
@@ -67,16 +75,18 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
-    var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private var speak: Boolean = true
     private var nowSpeak: Int = 0
     private val contentList = arrayListOf<String>()
+    private var readAloudNumber: Int = 0
+    private var textChapter: TextChapter? = null
+    private var pageIndex = 0
+    var mediaSessionCompat: MediaSessionCompat? = null
     var pause = false
     var title: String = ""
     var subtitle: String = ""
     var timeMinute: Int = 0
-    private var readAloudNumber: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -104,18 +114,12 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 "play" -> {
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
-                    readAloudNumber = intent.getIntExtra("readLength", 0)
-                    newReadAloud(intent.getStringExtra("body"))
+                    pageIndex = intent.getIntExtra("pageIndex", 0)
+                    newReadAloud(intent.getStringExtra("dataKey"))
                 }
-                "pause" -> {
-                    pauseReadAloud(true)
-                }
-                "resume" -> {
-                    resumeReadAloud()
-                }
-                "stop" -> {
-                    stopSelf()
-                }
+                "pause" -> pauseReadAloud(true)
+                "resume" -> resumeReadAloud()
+                "stop" -> stopSelf()
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -139,15 +143,16 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
-    private fun newReadAloud(body: String?) {
-        if (body.isNullOrEmpty()) {
-            stopSelf()
-        } else {
-            nowSpeak = 0
-            readAloudNumber = 0
-            contentList.clear()
-            contentList.addAll(body.split("\n"))
-        }
+    private fun newReadAloud(dataKey: String?) {
+        dataKey?.let {
+            textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
+            textChapter?.let {
+                nowSpeak = 0
+                readAloudNumber = it.getReadLength(pageIndex)
+                contentList.clear()
+                contentList.addAll(it.getUnRead(pageIndex).split("\n"))
+            } ?: stopSelf()
+        } ?: stopSelf()
     }
 
     @Suppress("DEPRECATION")
@@ -288,7 +293,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
 
         override fun onError(s: String) {
-
+            launch {
+                toast(s)
+            }
         }
 
     }
