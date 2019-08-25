@@ -15,6 +15,7 @@ import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.data.AppDatabase
 import io.legado.app.help.ActivityHelp
+import io.legado.app.help.CrashHandler
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
@@ -39,7 +40,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
-
+        CrashHandler().init(this)
         db = AppDatabase.createDatabase(INSTANCE)
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode
