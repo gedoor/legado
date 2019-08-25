@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import io.legado.app.service.ReadAloudService
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintWriter
@@ -53,6 +54,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      * uncaughtException 回调函数
      */
     override fun uncaughtException(thread: Thread, ex: Throwable) {
+        ReadAloudService.clearTTS()
         handleException(ex)
         mDefaultHandler?.uncaughtException(thread, ex)
     }

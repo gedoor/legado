@@ -29,6 +29,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     companion object {
         val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
+        var textToSpeech: TextToSpeech? = null
 
         fun play(
             context: Context,
@@ -69,9 +70,14 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 context.startService(intent)
             }
         }
+
+        fun clearTTS() {
+            textToSpeech?.stop()
+            textToSpeech?.shutdown()
+            textToSpeech = null
+        }
     }
 
-    private var textToSpeech: TextToSpeech? = null
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
@@ -103,12 +109,11 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     }
 
     override fun onDestroy() {
-        textToSpeech?.stop()
-        textToSpeech?.shutdown()
-        isRun = false
+        super.onDestroy()
+        clearTTS()
         unregisterReceiver(broadcastReceiver)
         postEvent(Bus.ALOUD_STATE, Status.STOP)
-        super.onDestroy()
+        isRun = false
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
