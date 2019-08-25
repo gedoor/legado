@@ -18,6 +18,7 @@ import java.util.*
 /**
  * 异常管理类
  */
+@Suppress("DEPRECATION")
 class CrashHandler : Thread.UncaughtExceptionHandler {
     private val tag = this.javaClass.simpleName
     /**
