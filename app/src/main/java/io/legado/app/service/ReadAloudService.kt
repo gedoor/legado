@@ -28,11 +28,12 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
 
-        fun play(context: Context, title: String, subtitle: String, body: String) {
+        fun play(context: Context, title: String, subtitle: String, readLength: Int, body: String) {
             val readAloudIntent = Intent(context, ReadAloudService::class.java)
             readAloudIntent.action = "play"
             readAloudIntent.putExtra("title", title)
             readAloudIntent.putExtra("subtitle", subtitle)
+            readAloudIntent.putExtra("readLength", readLength)
             readAloudIntent.putExtra("body", body)
             context.startService(readAloudIntent)
         }
@@ -74,8 +75,8 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     var pause = false
     var title: String = ""
     var subtitle: String = ""
-    private var readAloudNumber: Int = 0
     var timeMinute: Int = 0
+    private var readAloudNumber: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -103,6 +104,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 "play" -> {
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
+                    readAloudNumber = intent.getIntExtra("readLength", 0)
                     newReadAloud(intent.getStringExtra("body"))
                 }
                 "pause" -> {

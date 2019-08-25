@@ -301,7 +301,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 this,
                 book.name,
                 textChapter.title,
-                ""
+                textChapter.getReadLength(viewModel.durPageIndex),
+                textChapter.getUnRead(viewModel.durPageIndex)
             )
         }
     }
