@@ -8,7 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.constant.Bus
+import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.readbook.Help
+import io.legado.app.utils.observeEvent
+import kotlinx.android.synthetic.main.dialog_read_aloud.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ReadAloudDialog : DialogFragment() {
 
@@ -39,11 +44,16 @@ class ReadAloudDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initData()
+        initOnClick()
     }
 
     private fun initData() {
+        observeEvent<Int>(Bus.ALOUD_STATE) {}
 
+    }
 
+    private fun initOnClick() {
+        iv_stop.onClick { ReadAloudService.stop(requireContext()) }
     }
 
 }

@@ -15,6 +15,7 @@
         android:padding="8dp">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_play_pause"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
@@ -23,6 +24,7 @@
             android:tint="@color/tv_text_default" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_stop"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
