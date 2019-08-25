@@ -19,7 +19,6 @@ object MediaHelp {
             or PlaybackStateCompat.ACTION_STOP
             or PlaybackStateCompat.ACTION_SEEK_TO)
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequest {
         val mPlaybackAttributes = AudioAttributes.Builder()
@@ -34,13 +33,11 @@ object MediaHelp {
     }
 
     fun playSilentSound(mContext: Context) {
-        try {
+        kotlin.runCatching {
             // Stupid Android 8 "Oreo" hack to make media buttons work
             val mMediaPlayer = MediaPlayer.create(mContext, R.raw.silent_sound)
-            mMediaPlayer.setOnCompletionListener { it.release() }
+            mMediaPlayer.setOnCompletionListener { mMediaPlayer.release() }
             mMediaPlayer.start()
-        } catch (ignored: Exception) {
         }
-
     }
 }

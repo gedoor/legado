@@ -169,11 +169,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         this.pageFactory = factory
 
         //可做成异步回调
-        pageFactory?.let {
-            prevPage?.setContent(it.previousPage())
-            curPage?.setContent(it.currentPage())
-            nextPage?.setContent(it.nextPage())
-        }
+        upContent()
     }
 
     override fun hasNext(): Boolean {
@@ -185,10 +181,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     }
 
     fun upContent() {
-        callback?.let {
-            it.textChapter()?.let { textChapter ->
-                curPage?.setContent(textChapter.page(it.durChapterIndex()))
-            }
+        pageFactory?.let {
+            prevPage?.setContent(it.previousPage())
+            curPage?.setContent(it.currentPage())
+            nextPage?.setContent(it.nextPage())
         }
     }
 
