@@ -59,7 +59,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         viewModel.chapterListFinish.observe(this, Observer { bookLoadFinish() })
         viewModel.initData(intent)
         savedInstanceState?.let {
-            changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
+            changeSourceDialog =
+                supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
             changeSourceDialog?.callBack = this
         }
         setScreenBrightness(getPrefInt("brightness", 100))
@@ -114,6 +115,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             override fun skipToPage(page: Int) {
                 viewModel.durPageIndex = page
                 page_view.upContent()
+                if (readAloudStatus == Status.PLAY) {
+                    readAloud()
+                }
             }
 
             override fun skipPreChapter() {
@@ -230,12 +234,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     curChapterChange()
                 }
                 viewModel.durChapterIndex - 1 -> {
-                    viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    page_view.upContent()
+                    viewModel.prevTextChapter =
+                        ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
                 }
                 viewModel.durChapterIndex + 1 -> {
-                    viewModel.nextTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    page_view.upContent()
+                    viewModel.nextTextChapter =
+                        ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
                 }
             }
         }
@@ -250,6 +254,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 tv_chapter_url.visible()
             }
             read_menu.upReadProgress(it.pageSize(), viewModel.durPageIndex)
+            if (readAloudStatus == Status.PLAY) {
+                readAloud()
+            }
         }
     }
 
