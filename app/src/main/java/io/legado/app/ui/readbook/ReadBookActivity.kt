@@ -113,7 +113,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
             override fun skipToPage(page: Int) {
                 viewModel.durPageIndex = page
-                page_view.chapterLoadFinish()
+                page_view.upContent()
             }
 
             override fun skipPreChapter() {
@@ -232,17 +232,17 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     }
                     ChapterProvider.getTextChapter(content_text_view, bookChapter, content).let {
                         viewModel.curTextChapter = it
-                        page_view.chapterLoadFinish()
+                        page_view.upContent()
                         read_menu.upReadProgress(it.pageSize(), viewModel.durPageIndex)
                     }
                 }
                 viewModel.durChapterIndex - 1 -> {
                     viewModel.prevTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    page_view.chapterLoadFinish(-1)
+                    page_view.upContent()
                 }
                 viewModel.durChapterIndex + 1 -> {
                     viewModel.nextTextChapter = ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    page_view.chapterLoadFinish(1)
+                    page_view.upContent()
                 }
             }
         }

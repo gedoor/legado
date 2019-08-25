@@ -110,40 +110,6 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
     }
 
-    fun chapterLoadFinish(chapterOnDur: Int = 0) {
-        callback?.let { cb ->
-            when (chapterOnDur) {
-                0 -> {
-                    cb.textChapter()?.let {
-                        curPage?.setContent(it.page(cb.durChapterPos()))
-                        if (cb.durChapterPos() > 0) {
-                            prevPage?.setContent(it.page(cb.durChapterPos().minus(1)))
-                        }
-                        if (cb.durChapterPos() < it.pageSize().minus(1)) {
-                            nextPage?.setContent(it.page(cb.durChapterPos().plus(1)))
-                        }
-                    }
-                }
-                1 -> {
-                    cb.textChapter()?.let {
-                        if (cb.durChapterPos() == it.pageSize().minus(1)) {
-                            nextPage?.setContent(cb.textChapter(1)?.page(0))
-                        }
-                    }
-                }
-                -1 -> {
-                    cb.textChapter()?.let {
-                        if (cb.durChapterPos() == 0) {
-                            prevPage?.setContent(cb.textChapter(-1)?.lastPage())
-                        }
-                    }
-                }
-                else -> {
-                }
-            }
-        }
-    }
-
     fun fillPage(direction: PageDelegate.Direction) {
         pageFactory?.let {
             when (direction) {
@@ -172,20 +138,20 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         upContent()
     }
 
-    override fun hasNext(): Boolean {
-        return true
-    }
-
-    override fun hasPrev(): Boolean {
-        return true
-    }
-
     fun upContent() {
         pageFactory?.let {
             prevPage?.setContent(it.previousPage())
             curPage?.setContent(it.currentPage())
             nextPage?.setContent(it.nextPage())
         }
+    }
+
+    override fun hasNext(): Boolean {
+        return true
+    }
+
+    override fun hasPrev(): Boolean {
+        return true
     }
 
     fun upStyle() {
