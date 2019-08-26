@@ -433,7 +433,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<Int>(Bus.ALOUD_STATE) { readAloudStatus = it }
+        observeEvent<Int>(Bus.ALOUD_STATE) {
+            readAloudStatus = it
+            if (it == Status.STOP) {
+                viewModel.curTextChapter?.let { textChapter ->
+                    val page = textChapter.page(viewModel.durPageIndex)
+                    if (page != null && page.text is SpannableStringBuilder) {
+                        page.text.removeSpan(ChapterProvider.readAloudSpan)
+                        page_view.upContent()
+                    }
+                }
+            }
+        }
         observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEvent<BookChapter>(Bus.OPEN_CHAPTER) {
