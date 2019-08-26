@@ -214,6 +214,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         durChapterIndex++
         prevTextChapter = curTextChapter
         curTextChapter = nextTextChapter
+        nextTextChapter = null
         bookData.value?.let {
             loadContent(it, durChapterIndex.plus(1))
         }
@@ -223,18 +224,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         durChapterIndex--
         nextTextChapter = curTextChapter
         curTextChapter = prevTextChapter
+        prevTextChapter = null
         bookData.value?.let {
             loadContent(it, durChapterIndex.minus(1))
         }
     }
 
-    fun refreshContent() {
+    fun refreshContent(book: Book) {
         execute {
-            bookData.value?.let { book ->
-                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
-                    BookHelp.delContent(book, chapter)
-                    loadContent(book, durChapterIndex)
-                }
+            App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                BookHelp.delContent(book, chapter)
+                loadContent(book, durChapterIndex)
             }
         }
     }
