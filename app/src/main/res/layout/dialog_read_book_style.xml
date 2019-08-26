@@ -34,6 +34,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_page_anim">
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
+            android:id="@+id/rb_anim0"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -45,6 +46,7 @@
             android:text="@string/page_anim_cover" />
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
+            android:id="@+id/rb_anim1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

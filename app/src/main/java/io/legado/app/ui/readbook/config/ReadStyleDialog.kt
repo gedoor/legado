@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
@@ -14,8 +15,11 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.readbook.Help
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.putPrefInt
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
+import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ReadStyleDialog : DialogFragment() {
@@ -51,12 +55,25 @@ class ReadStyleDialog : DialogFragment() {
     }
 
     private fun initData() {
+        requireContext().getPrefInt("pageAnim").let {
+            if (it >= 0 && it < rg_page_anim.childCount) {
+                rg_page_anim.check(rg_page_anim[it].id)
+            }
+        }
         setBg()
         upBg()
     }
 
 
     private fun initOnClick() {
+        rg_page_anim.onCheckedChange { _, checkedId ->
+            for (i in 0 until rg_page_anim.childCount) {
+                if (checkedId == rg_page_anim[i].id) {
+                    requireContext().putPrefInt("pageAnim", i)
+                    break
+                }
+            }
+        }
         tv_bg0.onClick {
             ReadBookConfig.styleSelect = 0
             ReadBookConfig.upBg()
