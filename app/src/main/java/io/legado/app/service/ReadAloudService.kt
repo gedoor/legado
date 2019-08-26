@@ -19,6 +19,7 @@ import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.notification.ReadAloudNotification
 import io.legado.app.ui.widget.page.TextChapter
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toast
@@ -142,7 +143,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 }
                 "pause" -> pauseReadAloud(true)
                 "resume" -> resumeReadAloud()
-                "upTtsSpeechRate" -> upSpeechRate()
+                "upTtsSpeechRate" -> upSpeechRate(true)
                 else -> stopSelf()
             }
         }
@@ -199,8 +200,15 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
-    private fun upSpeechRate() {
-        textToSpeech?.setSpeechRate((this.getPrefInt("ttsSpeechRate", 5) + 5) / 10f)
+    private fun upSpeechRate(reset: Boolean = false) {
+        if (this.getPrefBoolean("ttsFollowSys", true)) {
+            if (reset) {
+                clearTTS()
+                textToSpeech = TextToSpeech(this, this)
+            }
+        } else {
+            textToSpeech?.setSpeechRate((this.getPrefInt("ttsSpeechRate", 5) + 5) / 10f)
+        }
     }
 
     /**

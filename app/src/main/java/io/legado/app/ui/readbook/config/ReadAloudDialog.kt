@@ -127,6 +127,7 @@ class ReadAloudDialog : DialogFragment() {
 
     private fun upTtsSpeechRate() {
         val activity = activity
+        ReadAloudService.upTtsSpeechRate(requireContext())
         if (activity is ReadBookActivity) {
             if (activity.readAloudStatus == Status.PLAY) {
                 ReadAloudService.pause(requireContext())
