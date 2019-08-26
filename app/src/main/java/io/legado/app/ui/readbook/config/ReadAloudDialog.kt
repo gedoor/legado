@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
@@ -60,7 +61,7 @@ class ReadAloudDialog : DialogFragment() {
         cb_by_page.isChecked = requireContext().getPrefBoolean("readAloudByPage")
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
-        seek_tts_SpeechRate.progress = requireContext().getPrefInt("ttsSpeechRate", 10)
+        seek_tts_SpeechRate.progress = requireContext().getPrefInt("ttsSpeechRate", 5)
     }
 
     private fun initOnChange() {
@@ -73,8 +74,22 @@ class ReadAloudDialog : DialogFragment() {
             if (buttonView.isPressed) {
                 requireContext().putPrefBoolean("ttsFollowSys", isChecked)
                 seek_tts_SpeechRate.isEnabled = !isChecked
+                upTtsSpeechRate()
             }
         }
+        seek_tts_SpeechRate.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                requireContext().putPrefInt("ttsSpeechRate", seek_tts_SpeechRate.progress)
+                upTtsSpeechRate()
+            }
+
+        })
     }
 
     private fun initOnClick() {
@@ -97,4 +112,13 @@ class ReadAloudDialog : DialogFragment() {
         }
     }
 
+    private fun upTtsSpeechRate() {
+        val activity = activity
+        if (activity is ReadBookActivity) {
+            if (activity.readAloudStatus == Status.PLAY) {
+                ReadAloudService.pause(requireContext())
+                ReadAloudService.resume(requireContext())
+            }
+        }
+    }
 }

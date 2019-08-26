@@ -19,6 +19,7 @@ import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.notification.ReadAloudNotification
 import io.legado.app.ui.widget.page.TextChapter
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
@@ -73,6 +74,14 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             }
         }
 
+        fun upTtsSpeechRate(context: Context) {
+            if (isRun) {
+                val intent = Intent(context, ReadAloudService::class.java)
+                intent.action = "upTtsSpeechRate"
+                context.startService(intent)
+            }
+        }
+
         fun clearTTS() {
             textToSpeech?.stop()
             textToSpeech?.shutdown()
@@ -107,6 +116,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState()
+        upSpeechRate()
         ReadAloudNotification.upNotification(this)
     }
 
@@ -132,7 +142,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 }
                 "pause" -> pauseReadAloud(true)
                 "resume" -> resumeReadAloud()
-                "stop" -> stopSelf()
+                "upTtsSpeechRate" -> upSpeechRate()
                 else -> stopSelf()
             }
         }
@@ -187,6 +197,10 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 }
             }
         }
+    }
+
+    private fun upSpeechRate() {
+        textToSpeech?.setSpeechRate((this.getPrefInt("ttsSpeechRate", 5) + 5) / 10f)
     }
 
     /**
