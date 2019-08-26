@@ -16,16 +16,17 @@ class AboutFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("version")?.summary = App.INSTANCE.versionName
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
-
-        }
-        return super.onPreferenceTreeClick(preference)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listView.overScrollMode = View.OVER_SCROLL_NEVER
+    }
+
+    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        when (preference?.key) {
+            "mail" -> openIntent(Intent.ACTION_SENDTO, "mailto:kunfei.ge@gmail.com")
+            "gitHub" -> openIntent(Intent.ACTION_VIEW, getString(R.string.this_github_url))
+        }
+        return super.onPreferenceTreeClick(preference)
     }
 
     private fun openIntent(intentName: String, address: String) {

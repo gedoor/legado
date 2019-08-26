@@ -3,7 +3,7 @@ package io.legado.app.help
 import android.content.Context
 import android.content.Intent
 import io.legado.app.R
-import io.legado.app.utils.toast
+import org.jetbrains.anko.toast
 
 object IntentHelp {
 

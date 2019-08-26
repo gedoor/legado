@@ -22,8 +22,8 @@ import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.toast
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.toast
 import java.util.*
 
 class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {

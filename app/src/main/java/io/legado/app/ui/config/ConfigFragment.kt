@@ -60,7 +60,6 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
                 preference.context.getPrefString(preference.key, "")
             )
         }
-
     }
 
 }

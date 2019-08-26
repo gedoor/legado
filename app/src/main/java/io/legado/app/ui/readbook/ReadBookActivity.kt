@@ -205,6 +205,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         return super.dispatchKeyEvent(event)
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                if (readAloudStatus == Status.PLAY) {
+                    ReadAloudService.pause(this)
+                    toast(R.string.read_aloud_pause)
+                    return true
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
     /**
      * 书籍加载完成,开始加载章节内容
      */

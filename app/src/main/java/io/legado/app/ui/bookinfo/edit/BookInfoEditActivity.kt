@@ -8,8 +8,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
+import org.jetbrains.anko.toast
 
 class BookInfoEditActivity : VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit) {
     override val viewModel: BookInfoEditViewModel
