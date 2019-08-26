@@ -4,10 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import io.legado.app.App
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.*
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -24,8 +21,16 @@ object ReadBookConfig {
         }
 
     var styleSelect
-        get() = App.INSTANCE.getPrefInt("readStyleSelect")
-        set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
+        get() = if (App.INSTANCE.isNightTheme) {
+            App.INSTANCE.getPrefInt("readStyleSelectNight", 4)
+        } else {
+            App.INSTANCE.getPrefInt("readStyleSelect")
+        }
+        set(value) = if (App.INSTANCE.isNightTheme) {
+            App.INSTANCE.putPrefInt("readStyleSelectNight", value)
+        } else {
+            App.INSTANCE.putPrefInt("readStyleSelect", value)
+        }
     var bg: Drawable? = null
 
     fun getConfig(index: Int = styleSelect): Config {
