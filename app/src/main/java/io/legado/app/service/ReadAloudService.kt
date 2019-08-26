@@ -176,7 +176,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         if (contentList.size < 1 || !ttsIsSuccess) {
             return
         }
-        if (!pause && requestFocus()) {
+        if (requestFocus()) {
             postEvent(Bus.ALOUD_STATE, Status.PLAY)
             ReadAloudNotification.upNotification(this)
             for (i in nowSpeak until contentList.size) {
