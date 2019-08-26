@@ -22,7 +22,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     val chapterListFinish = MutableLiveData<Boolean>()
     var chapterSize = 0
     var bookSource: BookSource? = null
-    var webBook: WebBook? = null
     var callBack: CallBack? = null
     var durChapterIndex = 0
     var durPageIndex = 0
@@ -30,6 +29,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
+    private var webBook: WebBook? = null
     private val loadingChapters = arrayListOf<Int>()
     private val loadingLock = "loadingLock"
 
