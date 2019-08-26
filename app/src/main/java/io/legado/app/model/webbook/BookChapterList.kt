@@ -44,7 +44,8 @@ object BookChapterList {
         if (listRule.startsWith("+")) {
             listRule = listRule.substring(1)
         }
-        var chapterData = analyzeChapterList(body, baseUrl, tocRule, listRule, book, bookSource, printLog = true)
+        var chapterData =
+            analyzeChapterList(body, baseUrl, tocRule, listRule, book, bookSource, printLog = true)
         chapterData.chapterList?.let {
             chapterList.addAll(it)
         }
@@ -52,10 +53,22 @@ object BookChapterList {
             var nextUrl = chapterData.nextUrl[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 nextUrlList.add(nextUrl)
-                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponseAsync().await()
+                AnalyzeUrl(
+                    ruleUrl = nextUrl,
+                    book = book,
+                    headerMapF = bookSource.getHeaderMap()
+                ).getResponseAsync().await()
                     .body()?.let { nextBody ->
-                        chapterData = analyzeChapterList(nextBody, nextUrl, tocRule, listRule, book, bookSource)
-                        nextUrl = if (chapterData.nextUrl.isNotEmpty()) chapterData.nextUrl[0] else ""
+                        chapterData = analyzeChapterList(
+                            nextBody,
+                            nextUrl,
+                            tocRule,
+                            listRule,
+                            book,
+                            bookSource
+                        )
+                        nextUrl =
+                            if (chapterData.nextUrl.isNotEmpty()) chapterData.nextUrl[0] else ""
                         chapterData.chapterList?.let {
                             chapterList.addAll(it)
                         }
@@ -69,7 +82,11 @@ object BookChapterList {
             }
             for (item in chapterDataList) {
                 withContext(coroutineScope.coroutineContext) {
-                    val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
+                    val nextResponse = AnalyzeUrl(
+                        ruleUrl = item.nextUrl,
+                        book = book,
+                        headerMapF = bookSource.getHeaderMap()
+                    ).getResponseAsync().await()
                     val nextChapterData = analyzeChapterList(
                         nextResponse.body() ?: "",
                         item.nextUrl,
@@ -126,7 +143,12 @@ object BookChapterList {
                     }
                 }
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, 1, TextUtils.join(",", nextUrlList), printLog)
+            SourceDebug.printLog(
+                bookSource.bookSourceUrl,
+                1,
+                TextUtils.join(",", nextUrlList),
+                printLog
+            )
         }
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "解析目录列表", printLog)
         val elements = analyzeRule.getElements(listRule)
@@ -146,7 +168,12 @@ object BookChapterList {
                     chapterList.add(bookChapter)
                 }
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "${chapterList[0].title}${chapterList[0].url}", printLog)
+            SourceDebug.printLog(
+                bookSource.bookSourceUrl,
+                1,
+                "${chapterList[0].title}${chapterList[0].url}",
+                printLog
+            )
         }
         return ChapterData(chapterList, nextUrlList)
     }

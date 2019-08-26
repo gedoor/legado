@@ -25,7 +25,13 @@ class WebBook(private val bookSource: BookSource) {
     ): Coroutine<List<SearchBook>> {
         return Coroutine.async(scope) {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
-                val analyzeUrl = AnalyzeUrl(searchUrl, key, page, baseUrl = sourceUrl)
+                val analyzeUrl = AnalyzeUrl(
+                    ruleUrl = searchUrl,
+                    key = key,
+                    page = page,
+                    baseUrl = sourceUrl,
+                    headerMapF = bookSource.getHeaderMap()
+                )
                 val response = analyzeUrl.getResponseAsync().await()
                 BookList.analyzeBookList(response, bookSource, analyzeUrl, isSearch)
             } ?: arrayListOf()
@@ -34,16 +40,29 @@ class WebBook(private val bookSource: BookSource) {
 
     fun getBookInfo(book: Book, scope: CoroutineScope = Coroutine.DEFAULT): Coroutine<Book> {
         return Coroutine.async(scope) {
-            val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = book.bookUrl, baseUrl = sourceUrl)
+            val analyzeUrl = AnalyzeUrl(
+                book = book,
+                ruleUrl = book.bookUrl,
+                baseUrl = sourceUrl,
+                headerMapF = bookSource.getHeaderMap()
+            )
             val response = analyzeUrl.getResponseAsync().await()
             BookInfo.analyzeBookInfo(book, response.body(), bookSource, analyzeUrl)
             book
         }
     }
 
-    fun getChapterList(book: Book, scope: CoroutineScope = Coroutine.DEFAULT): Coroutine<List<BookChapter>> {
+    fun getChapterList(
+        book: Book,
+        scope: CoroutineScope = Coroutine.DEFAULT
+    ): Coroutine<List<BookChapter>> {
         return Coroutine.async(scope) {
-            val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = book.tocUrl, baseUrl = book.bookUrl)
+            val analyzeUrl = AnalyzeUrl(
+                book = book,
+                ruleUrl = book.tocUrl,
+                baseUrl = book.bookUrl,
+                headerMapF = bookSource.getHeaderMap()
+            )
             val response = analyzeUrl.getResponseAsync().await()
             BookChapterList.analyzeChapterList(this, book, response, bookSource, analyzeUrl)
         }
@@ -56,9 +75,22 @@ class WebBook(private val bookSource: BookSource) {
         scope: CoroutineScope = Coroutine.DEFAULT
     ): Coroutine<String> {
         return Coroutine.async(scope) {
-            val analyzeUrl = AnalyzeUrl(book = book, ruleUrl = bookChapter.url, baseUrl = book.tocUrl)
+            val analyzeUrl =
+                AnalyzeUrl(
+                    book = book,
+                    ruleUrl = bookChapter.url,
+                    baseUrl = book.tocUrl,
+                    headerMapF = bookSource.getHeaderMap()
+                )
             val response = analyzeUrl.getResponseAsync().await()
-            BookContent.analyzeContent(this, response, book, bookChapter, bookSource, nextChapterUrl)
+            BookContent.analyzeContent(
+                this,
+                response,
+                book,
+                bookChapter,
+                bookSource,
+                nextChapterUrl
+            )
         }
     }
 }

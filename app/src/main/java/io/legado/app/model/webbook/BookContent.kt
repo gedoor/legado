@@ -51,10 +51,15 @@ object BookContent {
                     == NetworkUtils.getAbsoluteURL(baseUrl, nextChapterUrl)
                 ) break
                 nextUrlList.add(nextUrl)
-                AnalyzeUrl(ruleUrl = nextUrl, book = book).getResponseAsync().await()
+                AnalyzeUrl(
+                    ruleUrl = nextUrl,
+                    book = book,
+                    headerMapF = bookSource.getHeaderMap()
+                ).getResponseAsync().await()
                     .body()?.let { nextBody ->
                         contentData = analyzeContent(nextBody, contentRule, book, baseUrl)
-                        nextUrl = if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
+                        nextUrl =
+                            if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
                         content.append(contentData.content)
                     }
             }
@@ -66,7 +71,11 @@ object BookContent {
             }
             for (item in contentDataList) {
                 withContext(coroutineScope.coroutineContext) {
-                    val nextResponse = AnalyzeUrl(ruleUrl = item.nextUrl, book = book).getResponseAsync().await()
+                    val nextResponse = AnalyzeUrl(
+                        ruleUrl = item.nextUrl,
+                        book = book,
+                        headerMapF = bookSource.getHeaderMap()
+                    ).getResponseAsync().await()
                     val nextContentData = analyzeContent(
                         nextResponse.body() ?: "",
                         contentRule,
