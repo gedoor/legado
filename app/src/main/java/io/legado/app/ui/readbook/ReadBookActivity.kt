@@ -126,10 +126,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             override fun skipPreChapter() {
                 viewModel.durPageIndex = 0
                 moveToPrevChapter()
+                page_view.upContent()
             }
 
             override fun skipNextChapter() {
                 moveToNextChapter()
+                page_view.upContent()
             }
 
             override fun openReplaceRule() {
