@@ -158,7 +158,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
-    private fun newReadAloud(dataKey: String?, paly: Boolean) {
+    private fun newReadAloud(dataKey: String?, play: Boolean) {
         dataKey?.let {
             textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
             textChapter?.let {
@@ -166,7 +166,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 readAloudNumber = it.getReadLength(pageIndex)
                 contentList.clear()
                 contentList.addAll(it.getUnRead(pageIndex).split("\n"))
-                if (paly) playTTS()
+                if (play) playTTS()
             } ?: stopSelf()
         } ?: stopSelf()
     }
