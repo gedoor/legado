@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_menu"
     android:padding="10dp">
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,11 +15,27 @@
         android:padding="8dp">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_menu"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_chapter_list"
+            android:tint="@color/tv_text_default" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_play_pause"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_play_24dp"
             android:tint="@color/tv_text_default" />
 
@@ -29,8 +45,23 @@
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_stop_black_24dp"
             android:tint="@color/tv_text_default" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+            android:text="@string/byPage"
+            tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
 
@@ -90,23 +121,18 @@
                 android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp"
-                android:text="@string/flow_sys"
-                android:textColor="@color/tv_text_default"
-                android:textSize="14sp" />
-
-            <CheckBox
+            <io.legado.app.lib.theme.view.ATECheckBox
                 android:id="@+id/scb_tts_follow_sys"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:button="@null"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                 android:clickable="false"
-                android:contentDescription="@string/flow_sys" />
+                android:text="@string/flow_sys"
+                android:contentDescription="@string/flow_sys"
+                tools:ignore="RtlHardcoded" />
         </LinearLayout>
 
         <io.legado.app.lib.theme.view.ATESeekBar
