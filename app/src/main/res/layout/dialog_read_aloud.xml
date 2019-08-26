@@ -149,7 +149,6 @@
                 android:button="@null"
                 android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
                 android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                android:clickable="false"
                 android:text="@string/flow_sys"
                 android:contentDescription="@string/flow_sys"
                 tools:ignore="RtlHardcoded" />

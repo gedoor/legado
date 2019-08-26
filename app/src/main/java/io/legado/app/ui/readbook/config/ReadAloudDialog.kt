@@ -11,7 +11,9 @@ import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.readbook.Help
+import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.utils.observeEvent
+import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -53,6 +55,13 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun initOnClick() {
+        iv_menu.onClick {
+            val activity = activity
+            if (activity is ReadBookActivity) {
+                activity.read_menu.runMenuIn()
+                dismiss()
+            }
+        }
         iv_stop.onClick { ReadAloudService.stop(requireContext()) }
     }
 
