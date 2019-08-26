@@ -153,7 +153,7 @@ class ReadMenu : FrameLayout {
         //朗读
         ll_read_aloud.onClick {
             runMenuOut {
-                postEvent(Bus.READ_ALOUD, true)
+                postEvent(Bus.READ_ALOUD_BUTTON, true)
             }
         }
 

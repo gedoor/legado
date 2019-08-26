@@ -8,7 +8,7 @@ object Bus {
     const val TTS_NEXT = "ttsNextPage"
     const val BATTERY_CHANGED = "batteryChanged"
     const val TIME_CHANGED = "timeChanged"
-    const val READ_ALOUD = "readAloud"
+    const val READ_ALOUD_BUTTON = "readAloudButton"
     const val UP_CONFIG = "upConfig"
     const val OPEN_CHAPTER = "openChapter"
 }

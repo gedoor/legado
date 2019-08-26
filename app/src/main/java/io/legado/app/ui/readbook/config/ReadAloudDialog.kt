@@ -9,10 +9,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.constant.Status
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.readbook.Help
 import io.legado.app.ui.readbook.ReadBookActivity
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -46,12 +50,33 @@ class ReadAloudDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initData()
+        initOnChange()
         initOnClick()
     }
 
     private fun initData() {
-        observeEvent<Int>(Bus.ALOUD_STATE) {}
+        observeEvent<Int>(Bus.ALOUD_STATE) { upPlayState(it) }
+        val activity = activity
+        if (activity is ReadBookActivity) {
+            upPlayState(activity.readAloudStatus)
+        }
+        cb_by_page.isChecked = requireContext().getPrefBoolean("readAloudByPage")
+        cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
+        seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
+    }
 
+    private fun initOnChange() {
+        cb_by_page.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (buttonView.isPressed) {
+                requireContext().putPrefBoolean("readAloudByPage", isChecked)
+            }
+        }
+        cb_tts_follow_sys.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (buttonView.isPressed) {
+                requireContext().putPrefBoolean("ttsFollowSys", isChecked)
+                seek_tts_SpeechRate.isEnabled = !isChecked
+            }
+        }
     }
 
     private fun initOnClick() {
@@ -63,6 +88,15 @@ class ReadAloudDialog : DialogFragment() {
             }
         }
         iv_stop.onClick { ReadAloudService.stop(requireContext()) }
+        iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
+    }
+
+    private fun upPlayState(state: Int) {
+        if (state == Status.PAUSE) {
+            iv_play_pause.setImageResource(R.drawable.ic_play_24dp)
+        } else {
+            iv_play_pause.setImageResource(R.drawable.ic_pause_24dp)
+        }
     }
 
 }

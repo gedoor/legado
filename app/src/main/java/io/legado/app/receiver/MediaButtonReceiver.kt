@@ -50,7 +50,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }
-            postEvent(Bus.READ_ALOUD, true)
+            postEvent(Bus.READ_ALOUD_BUTTON, true)
         }
     }
 

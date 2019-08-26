@@ -75,6 +75,7 @@
             android:layout_weight="1" />
 
         <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_by_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@null"
@@ -142,7 +143,7 @@
                 android:textSize="14sp" />
 
             <io.legado.app.lib.theme.view.ATECheckBox
-                android:id="@+id/scb_tts_follow_sys"
+                android:id="@+id/cb_tts_follow_sys"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
