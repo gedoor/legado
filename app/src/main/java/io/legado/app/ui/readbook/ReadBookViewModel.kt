@@ -171,6 +171,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun openChapter(chapter: BookChapter) {
+        prevTextChapter = null
+        curTextChapter = null
+        nextTextChapter = null
         if (chapter.index != durChapterIndex) {
             durChapterIndex = chapter.index
             durPageIndex = 0

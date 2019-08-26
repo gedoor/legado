@@ -412,7 +412,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEvent<Int>(Bus.ALOUD_STATE) { readAloudStatus = it }
         observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
-        observeEvent<BookChapter>(Bus.OPEN_CHAPTER) { viewModel.openChapter(it) }
+        observeEvent<BookChapter>(Bus.OPEN_CHAPTER) {
+            viewModel.openChapter(it)
+            page_view.upContent()
+        }
         observeEventSticky<Boolean>(Bus.READ_ALOUD) { onClickReadAloud() }
         observeEvent<Boolean>(Bus.UP_CONFIG) {
             Help.upSystemUiVisibility(window, !read_menu.isVisible)
@@ -428,7 +431,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     if (page != null && page.text is SpannableStringBuilder) {
                         page.text.removeSpan(ChapterProvider.readAloudSpan)
                         var end = page.text.indexOf("\n", pageStart)
-                        if (end == -1) end = page.text.length - 1
+                        if (end == -1) end = page.text.length
                         var start = page.text.lastIndexOf("\n", pageStart)
                         if (start == -1) start = 0
                         page.text.setSpan(
