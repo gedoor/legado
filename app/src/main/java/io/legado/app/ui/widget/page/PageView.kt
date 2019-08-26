@@ -7,8 +7,10 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.ui.widget.page.delegate.SlidePageDelegate
+import io.legado.app.utils.getPrefInt
 
 class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs), PageDelegate.PageInterface {
 
@@ -30,7 +32,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         upBg()
         setWillNotDraw(false)
 
-        pageDelegate = SlidePageDelegate(this)
+        upPageAnim()
 
         setPageFactory(TextPageFactory.create(object : DataSource {
             override fun pageIndex(): Int {
@@ -136,6 +138,13 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
         //可做成异步回调
         upContent()
+    }
+
+    fun upPageAnim() {
+        pageDelegate = when (context.getPrefInt("pageAnim")) {
+            1 -> SlidePageDelegate(this)
+            else -> CoverPageDelegate(this)
+        }
     }
 
     fun upContent() {

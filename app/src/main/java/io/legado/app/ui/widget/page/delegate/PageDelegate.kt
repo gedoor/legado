@@ -13,7 +13,10 @@ import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) {
-    val centerRectF = RectF()
+    val centerRectF = RectF(
+        pageView.width * 0.33f, pageView.height * 0.33f,
+        pageView.width * 0.66f, pageView.height * 0.66f
+    )
     //起始点
     protected var startX: Float = 0.toFloat()
     protected var startY: Float = 0.toFloat()
@@ -97,8 +100,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
         viewHeight = height
         invalidate()
         centerRectF.set(
-            width / 3f, height / 3f,
-            width * 2f / 3, height * 2f / 3
+            width * 0.33f, height * 0.33f,
+            width * 0.66f, height * 0.66f
         )
     }
 

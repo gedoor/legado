@@ -15,9 +15,11 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.readbook.Help
+import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.putPrefInt
+import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -70,6 +72,10 @@ class ReadStyleDialog : DialogFragment() {
             for (i in 0 until rg_page_anim.childCount) {
                 if (checkedId == rg_page_anim[i].id) {
                     requireContext().putPrefInt("pageAnim", i)
+                    val activity = activity
+                    if (activity is ReadBookActivity) {
+                        activity.page_view.upPageAnim()
+                    }
                     break
                 }
             }
