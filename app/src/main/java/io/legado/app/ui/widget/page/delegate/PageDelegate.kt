@@ -82,6 +82,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected fun stopScroll() {
         isRunning = false
         isStarted = false
+        bitmap?.recycle()
         bitmap = null
         invalidate()
     }
