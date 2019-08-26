@@ -36,7 +36,8 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             title: String,
             subtitle: String,
             pageIndex: Int,
-            dataKey: String
+            dataKey: String,
+            play: Boolean = true
         ) {
             val readAloudIntent = Intent(context, ReadAloudService::class.java)
             readAloudIntent.action = "play"
@@ -44,6 +45,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             readAloudIntent.putExtra("subtitle", subtitle)
             readAloudIntent.putExtra("pageIndex", pageIndex)
             readAloudIntent.putExtra("dataKey", dataKey)
+            readAloudIntent.putExtra("play", play)
             context.startService(readAloudIntent)
         }
 
@@ -123,7 +125,10 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
                     pageIndex = intent.getIntExtra("pageIndex", 0)
-                    newReadAloud(intent.getStringExtra("dataKey"))
+                    newReadAloud(
+                        intent.getStringExtra("dataKey"),
+                        intent.getBooleanExtra("play", true)
+                    )
                 }
                 "pause" -> pauseReadAloud(true)
                 "resume" -> resumeReadAloud()
@@ -153,7 +158,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
-    private fun newReadAloud(dataKey: String?) {
+    private fun newReadAloud(dataKey: String?, paly: Boolean) {
         dataKey?.let {
             textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
             textChapter?.let {
@@ -161,7 +166,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 readAloudNumber = it.getReadLength(pageIndex)
                 contentList.clear()
                 contentList.addAll(it.getUnRead(pageIndex).split("\n"))
-                playTTS()
+                if (paly) playTTS()
             } ?: stopSelf()
         } ?: stopSelf()
     }
