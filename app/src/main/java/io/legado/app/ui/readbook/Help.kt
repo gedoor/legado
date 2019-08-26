@@ -34,8 +34,11 @@ object Help {
         window.decorView.systemUiVisibility = flag
     }
 
-    //该方法需要在View完全被绘制出来之后调用，否则判断不了
-    //在比如 onWindowFocusChanged（）方法中可以得到正确的结果
+    /**
+     * 返回NavigationBar是否存在
+     * 该方法需要在View完全被绘制出来之后调用，否则判断不了
+     * 在比如 onWindowFocusChanged（）方法中可以得到正确的结果
+     */
     fun isNavigationBarExist(activity: Activity?): Boolean {
         activity?.let {
             val vp = it.window.decorView as? ViewGroup
