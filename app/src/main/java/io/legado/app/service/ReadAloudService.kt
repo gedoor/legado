@@ -230,17 +230,17 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     }
 
     private fun prevP() {
-        if (nowSpeak < contentList.size - 1) {
-            readAloudNumber += contentList[nowSpeak].length
-            nowSpeak++
+        if (nowSpeak > 0) {
+            nowSpeak--
+            readAloudNumber -= contentList[nowSpeak].length
             playTTS()
         }
     }
 
     private fun nextP() {
-        if (nowSpeak > 0) {
-            nowSpeak--
-            readAloudNumber -= contentList[nowSpeak].length
+        if (nowSpeak < contentList.size - 1) {
+            readAloudNumber += contentList[nowSpeak].length
+            nowSpeak++
             playTTS()
         }
     }
