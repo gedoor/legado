@@ -264,6 +264,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 viewModel.durChapterIndex + 1 -> {
                     viewModel.nextTextChapter =
                         ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                    viewModel.bookData.value?.let {
+                        for (i in viewModel.durChapterIndex.plus(2)
+                                ..viewModel.durChapterIndex.plus(8)) {
+                            viewModel.download(it, i)
+                        }
+                    }
                 }
             }
         }
