@@ -13,10 +13,7 @@ import io.legado.app.constant.Status
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.readbook.Help
 import io.legado.app.ui.readbook.ReadBookActivity
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.observeEvent
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -63,6 +60,7 @@ class ReadAloudDialog : DialogFragment() {
         cb_by_page.isChecked = requireContext().getPrefBoolean("readAloudByPage")
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
+        seek_tts_SpeechRate.progress = requireContext().getPrefInt("ttsSpeechRate", 10)
     }
 
     private fun initOnChange() {

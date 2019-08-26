@@ -161,7 +161,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:max="20" />
+            android:max="50" />
 
     </LinearLayout>
 
