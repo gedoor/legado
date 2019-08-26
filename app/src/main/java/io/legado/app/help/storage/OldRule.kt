@@ -45,4 +45,10 @@ object OldRule {
         }
         return url
     }
+
+    fun uaToHeader(ua: String?): String? {
+        if (ua.isNullOrEmpty()) return null
+        val map = mapOf(Pair("user_agent", ua))
+        return GSON.toJson(map)
+    }
 }

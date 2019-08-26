@@ -109,6 +109,7 @@ object Restore {
                         source.loginUrl = jsonItem.readString("loginUrl")
                         source.bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                         source.customOrder = jsonItem.readInt("serialNumber") ?: 0
+                        source.header = OldRule.uaToHeader(jsonItem.readString("httpUserAgent"))
                         val searchRule = SearchRule(
                             searchUrl = OldRule.toNewUrl(jsonItem.readString("ruleSearchUrl")),
                             bookList = jsonItem.readString("ruleSearchList"),
