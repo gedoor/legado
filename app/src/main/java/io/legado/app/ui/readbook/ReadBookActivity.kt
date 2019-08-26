@@ -124,8 +124,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun skipPreChapter() {
-                viewModel.durPageIndex = 0
                 moveToPrevChapter()
+                viewModel.durPageIndex = 0
                 page_view.upContent()
             }
 
