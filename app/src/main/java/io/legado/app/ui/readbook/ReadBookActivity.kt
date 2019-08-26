@@ -180,6 +180,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 }
                 changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
             }
+            R.id.menu_refresh -> viewModel.refreshContent()
         }
         return super.onCompatOptionsItemSelected(item)
     }

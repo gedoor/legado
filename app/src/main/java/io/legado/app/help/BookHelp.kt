@@ -57,6 +57,16 @@ object BookHelp {
         return null
     }
 
+    fun delContent(book: Book, bookChapter: BookChapter) {
+        val filePath = getChapterPath(book, bookChapter)
+        kotlin.runCatching {
+            val file = File(filePath)
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+    }
+
     private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
         val bookFolder = formatFolderName(book.name + book.bookUrl)
         val chapterFile = String.format("%05d-%s", bookChapter.index, formatFolderName(bookChapter.title))

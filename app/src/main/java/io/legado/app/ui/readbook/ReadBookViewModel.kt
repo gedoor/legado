@@ -228,6 +228,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun refreshContent() {
+        execute {
+            bookData.value?.let { book ->
+                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                    BookHelp.delContent(book, chapter)
+                    loadContent(book, durChapterIndex)
+                }
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         ReadAloudService.stop(context)
