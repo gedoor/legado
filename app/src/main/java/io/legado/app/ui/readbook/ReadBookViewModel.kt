@@ -137,14 +137,20 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun download(book: Book, chapter: BookChapter) {
         webBook?.getContent(book, chapter, scope = this)
             ?.onSuccess(IO) { content ->
-                content?.let {
-                    BookHelp.saveContent(book, chapter, it)
-                    callBack?.contentLoadFinish(chapter, it)
+                if (content.isNullOrEmpty()) {
+                    callBack?.contentLoadFinish(chapter, context.getString(R.string.content_empty))
+                    synchronized(loadingLock) {
+                        loadingChapters.remove(chapter.index)
+                    }
+                } else {
+                    BookHelp.saveContent(book, chapter, content)
+                    callBack?.contentLoadFinish(chapter, content)
                     synchronized(loadingLock) {
                         loadingChapters.remove(chapter.index)
                     }
                 }
             }?.onError {
+                callBack?.contentLoadFinish(chapter, it.localizedMessage)
                 synchronized(loadingLock) {
                     loadingChapters.remove(chapter.index)
                 }
