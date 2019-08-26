@@ -124,8 +124,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
 
             override fun skipPreChapter() {
-                moveToPrevChapter()
-                viewModel.durPageIndex = 0
+                moveToPrevChapter(false)
                 page_view.upContent()
             }
 
@@ -258,7 +257,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 tv_chapter_url.text = it.url
                 tv_chapter_url.visible()
             }
-            read_menu.upReadProgress(it.pageSize(), viewModel.durPageIndex)
+            read_menu.upReadProgress(it.pageSize().minus(1), viewModel.durPageIndex)
             curPageChanged()
             tv_pre.isEnabled = viewModel.durChapterIndex != 0
             tv_next.isEnabled = viewModel.durChapterIndex != viewModel.chapterSize - 1
@@ -321,8 +320,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         curChapterChanged()
     }
 
-    override fun moveToPrevChapter() {
-        viewModel.durPageIndex = viewModel.prevTextChapter?.lastIndex() ?: 0
+    override fun moveToPrevChapter(last: Boolean) {
+        viewModel.durPageIndex = if (last) {
+            viewModel.prevTextChapter?.lastIndex() ?: 0
+        } else {
+            0
+        }
         viewModel.moveToPrevChapter()
         curChapterChanged()
     }

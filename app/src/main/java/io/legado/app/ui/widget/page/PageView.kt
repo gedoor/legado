@@ -192,7 +192,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         fun textChapter(chapterOnDur: Int = 0): TextChapter?
         fun loadContent(index: Int)
         fun moveToNextChapter()
-        fun moveToPrevChapter()
+        fun moveToPrevChapter(last: Boolean = true)
         fun setPageIndex(pageIndex: Int)
         fun clickCenter()
     }
