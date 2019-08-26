@@ -75,6 +75,22 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             }
         }
 
+        fun prevParagraph(context: Context) {
+            if (isRun) {
+                val intent = Intent(context, ReadAloudService::class.java)
+                intent.action = "prevParagraph"
+                context.startService(intent)
+            }
+        }
+
+        fun nextParagraph(context: Context) {
+            if (isRun) {
+                val intent = Intent(context, ReadAloudService::class.java)
+                intent.action = "nextParagraph"
+                context.startService(intent)
+            }
+        }
+
         fun upTtsSpeechRate(context: Context) {
             if (isRun) {
                 val intent = Intent(context, ReadAloudService::class.java)
@@ -144,6 +160,8 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 "pause" -> pauseReadAloud(true)
                 "resume" -> resumeReadAloud()
                 "upTtsSpeechRate" -> upSpeechRate(true)
+                "prevParagraph" -> prevP()
+                "nextParagraph" -> nextP()
                 else -> stopSelf()
             }
         }
@@ -209,6 +227,16 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         } else {
             textToSpeech?.setSpeechRate((this.getPrefInt("ttsSpeechRate", 5) + 5) / 10f)
         }
+    }
+
+    private fun prevP() {
+        nowSpeak++
+        playTTS()
+    }
+
+    private fun nextP() {
+        nowSpeak--
+        playTTS()
     }
 
     /**
