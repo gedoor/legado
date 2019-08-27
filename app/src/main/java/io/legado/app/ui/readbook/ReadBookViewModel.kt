@@ -42,7 +42,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             val book = if (!bookUrl.isNullOrEmpty()) {
                 App.db.bookDao().getBook(bookUrl)
             } else {
-                App.db.bookDao().getLastReadBook()
+                App.db.bookDao().lastReadBook
             }
             book?.let {
                 durChapterIndex = book.durChapterIndex
