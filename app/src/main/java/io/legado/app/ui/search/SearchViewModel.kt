@@ -7,6 +7,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     private var task: Coroutine<*>? = null
@@ -25,6 +26,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             //onCleared时自动取消
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
+                delay(100)//每隔100毫秒搜索一个书源
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(key, searchPage, scope = this@execute)
                     .timeout(30000L)
