@@ -108,8 +108,10 @@ object BookList {
         analyzeRule.setBook(searchBook)
         with(bookSource.getBookInfoRule()) {
             init?.let {
-                SourceDebug.printLog(bookSource.bookSourceUrl, 1, "执行详情页初始化规则")
-                analyzeRule.setContent(analyzeRule.getElement(it))
+                if (it.isNotEmpty()) {
+                    SourceDebug.printLog(bookSource.bookSourceUrl, 1, "执行详情页初始化规则")
+                    analyzeRule.setContent(analyzeRule.getElement(it))
+                }
             }
             SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取书名")
             searchBook.name = analyzeRule.getString(name ?: "") ?: ""
