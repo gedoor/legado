@@ -1,5 +1,6 @@
 package io.legado.app.ui.sourceedit
 
+import android.app.Activity
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity
@@ -71,7 +72,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                 if (bookSource == null) {
                     toast("书源名称和URL不能为空")
                 } else {
-                    viewModel.save(bookSource) { finish() }
+                    viewModel.save(bookSource) { setResult(Activity.RESULT_OK); finish() }
                 }
             }
             R.id.action_debug_source -> {
