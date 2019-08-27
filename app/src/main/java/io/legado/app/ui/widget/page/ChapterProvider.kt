@@ -13,7 +13,6 @@ object ChapterProvider {
     val readAloudSpan = ForegroundColorSpan(App.INSTANCE.accentColor)
     private val titleSpan = RelativeSizeSpan(1.3f)
 
-    @Synchronized
     fun getTextChapter(textView: ContentTextView, bookChapter: BookChapter, content: String): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLengths = arrayListOf<Int>()
