@@ -17,6 +17,7 @@ import io.legado.app.ui.bookinfo.BookInfoActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.view_search.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
 class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search), SearchAdapter.CallBack {
@@ -31,6 +32,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         initRecyclerView()
         initSearchView()
         initData(0L)
+        intent.getStringExtra("key")?.let {
+            search_view.setQuery(it, true)
+        }
     }
 
     private fun initSearchView() {
@@ -59,9 +63,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
             }
 
         })
-        intent.getStringExtra("key")?.let {
-            search_view.setQuery(it, true)
-        }
+        fb_stop.onClick { viewModel.stop() }
     }
 
     private fun initRecyclerView() {
