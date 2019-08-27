@@ -61,7 +61,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         page_view.callback = this
         viewModel.callBack = this
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
-        viewModel.chapterListFinish.observe(this, Observer { bookLoadFinish() })
         viewModel.initData(intent)
         savedInstanceState?.let {
             changeSourceDialog =
@@ -226,17 +225,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     /**
-     * 书籍加载完成,开始加载章节内容
-     */
-    private fun bookLoadFinish() {
-        viewModel.bookData.value?.let {
-            viewModel.loadContent(it, viewModel.durChapterIndex)
-            viewModel.loadContent(it, viewModel.durChapterIndex + 1)
-            viewModel.loadContent(it, viewModel.durChapterIndex - 1)
-        }
-    }
-
-    /**
      * 加载章节内容
      */
     override fun loadContent(index: Int) {
@@ -251,19 +239,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
         when (bookChapter.index) {
             viewModel.durChapterIndex -> launch {
-                viewModel.curTextChapter =
-                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                viewModel.curTextChapter = ChapterProvider
+                    .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
                 page_view.upContent()
                 curChapterChanged()
             }
             viewModel.durChapterIndex - 1 -> launch {
-                viewModel.prevTextChapter =
-                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                viewModel.prevTextChapter = ChapterProvider
+                    .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
                 page_view.upContent()
             }
             viewModel.durChapterIndex + 1 -> launch {
-                viewModel.nextTextChapter =
-                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                viewModel.nextTextChapter = ChapterProvider
+                    .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
                 page_view.upContent()
             }
         }

@@ -1,5 +1,6 @@
 package io.legado.app.ui.widget.page
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -79,9 +80,10 @@ class ContentView : FrameLayout {
         tv_top_right.text = context.getString(R.string.battery_show, battery)
     }
 
+    @SuppressLint("SetTextI18n")
     fun setContent(page: TextPage?) {
         content_text_view.text = page?.text
         tv_bottom_left.text = page?.title
-        tv_bottom_right.text = page?.index?.plus(1)?.toString()
+        tv_bottom_right.text = "${page?.index?.plus(1)}/${page?.pageSize}"
     }
 }

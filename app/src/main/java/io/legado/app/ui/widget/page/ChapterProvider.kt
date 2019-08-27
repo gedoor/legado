@@ -13,7 +13,10 @@ object ChapterProvider {
     val readAloudSpan = ForegroundColorSpan(App.INSTANCE.accentColor)
     private val titleSpan = RelativeSizeSpan(1.3f)
 
-    fun getTextChapter(textView: ContentTextView, bookChapter: BookChapter, content: String): TextChapter {
+    fun getTextChapter(
+        textView: ContentTextView, bookChapter: BookChapter,
+        content: String, chapterSize: Int
+    ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLengths = arrayListOf<Int>()
         var surplusText = content
@@ -32,24 +35,26 @@ object ChapterProvider {
             pageLengths.add(textView.getCharNum())
             textPages.add(
                 TextPage(
-                    pageIndex,
-                    spannableStringBuilder.delete(
+                    index = pageIndex,
+                    text = spannableStringBuilder.delete(
                         pageLengths[pageIndex],
                         spannableStringBuilder.length
                     ),
-                    bookChapter.title
+                    title = bookChapter.title,
+                    chapterSize = chapterSize,
+                    chapterIndex = bookChapter.index
                 )
             )
             surplusText = surplusText.substring(pageLengths[pageIndex])
 
             pageIndex++
         }
+        for (item in textPages) {
+            item.pageSize = textPages.size
+        }
         return TextChapter(
-            bookChapter.index,
-            bookChapter.title,
-            bookChapter.url,
-            textPages,
-            pageLengths
+            bookChapter.index, bookChapter.title, bookChapter.url,
+            textPages, pageLengths
         )
     }
 
