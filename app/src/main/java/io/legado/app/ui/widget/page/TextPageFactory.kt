@@ -1,10 +1,5 @@
 package io.legado.app.ui.widget.page
 
-import android.text.SpannableStringBuilder
-import io.legado.app.App
-import io.legado.app.R
-import io.legado.app.ui.widget.page.ChapterProvider.readAloudSpan
-
 class TextPageFactory private constructor(dataSource: DataSource) :
     PageFactory<TextPage>(dataSource) {
 
@@ -66,55 +61,27 @@ class TextPageFactory private constructor(dataSource: DataSource) :
 
     override fun currentPage(): TextPage? = dataSource.pageIndex().let { index ->
         return dataSource.getCurrentChapter()?.page(index)
-            ?: TextPage(index, App.INSTANCE.getString(R.string.data_loading), "index：$index")
+            ?: TextPage(index = index, title = "index：$index")
     }
 
     override fun nextPage(): TextPage? = dataSource.pageIndex().let { index ->
         dataSource.getCurrentChapter()?.let {
             if (index < it.pageSize() - 1) {
-                return dataSource.getCurrentChapter()?.page(index + 1)?.apply {
-                    if (text is SpannableStringBuilder) {
-                        text.removeSpan(readAloudSpan)
-                    }
-                } ?: TextPage(
-                    index + 1,
-                    App.INSTANCE.getString(R.string.data_loading),
-                    "index：${index + 1}"
-                )
+                return dataSource.getCurrentChapter()?.page(index + 1)?.removePageAloudSpan()
+                    ?: TextPage(index = index + 1, title = "index：${index + 1}")
             }
         }
-        return dataSource.getNextChapter()?.page(0)?.apply {
-            if (text is SpannableStringBuilder) {
-                text.removeSpan(readAloudSpan)
-            }
-        } ?: TextPage(
-                index + 1,
-                App.INSTANCE.getString(R.string.data_loading),
-                "index：${index + 1}"
-            )
+        return dataSource.getNextChapter()?.page(0)?.removePageAloudSpan()
+            ?: TextPage(index = index + 1, title = "index：${index + 1}")
     }
 
     override fun previousPage(): TextPage? = dataSource.pageIndex().let { index ->
         if (index > 0) {
-            return dataSource.getCurrentChapter()?.page(index - 1)?.apply {
-                if (text is SpannableStringBuilder) {
-                    text.removeSpan(readAloudSpan)
-                }
-            } ?: TextPage(
-                index - 1,
-                App.INSTANCE.getString(R.string.data_loading),
-                "index：${index - 1}"
-            )
+            return dataSource.getCurrentChapter()?.page(index - 1)?.removePageAloudSpan()
+                ?: TextPage(index = index - 1, title = "index：${index - 1}")
         }
-        return dataSource.getPreviousChapter()?.lastPage()?.apply {
-            if (text is SpannableStringBuilder) {
-                text.removeSpan(readAloudSpan)
-            }
-        } ?: TextPage(
-            index - 1,
-            App.INSTANCE.getString(R.string.data_loading),
-            "index：${index - 1}"
-        )
+        return dataSource.getPreviousChapter()?.lastPage()?.removePageAloudSpan()
+            ?: TextPage(index = index - 1, title = "index：${index - 1}")
     }
 
 

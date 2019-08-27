@@ -2,15 +2,24 @@ package io.legado.app.ui.widget.page
 
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import io.legado.app.App
+import io.legado.app.R
 
 data class TextPage(
     val index: Int,
-    val text: CharSequence,
+    val text: CharSequence = App.INSTANCE.getString(R.string.data_loading),
     val title: String,
     var pageSize: Int = 0,
     var chapterSize: Int = 0,
     var chapterIndex: Int = 0
 ) {
+
+    fun removePageAloudSpan(): TextPage {
+        if (text is SpannableStringBuilder) {
+            text.removeSpan(ChapterProvider.readAloudSpan)
+        }
+        return this
+    }
 
     fun upPageAloudSpan(pageStart: Int) {
         if (text is SpannableStringBuilder) {
