@@ -78,8 +78,7 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     private fun initRecyclerView() {
-        changeSourceAdapter = ChangeSourceAdapter(requireContext())
-        changeSourceAdapter.callBack = this
+        changeSourceAdapter = ChangeSourceAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
         recycler_view.adapter = changeSourceAdapter

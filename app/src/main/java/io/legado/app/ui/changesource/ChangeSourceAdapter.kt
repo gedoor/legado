@@ -11,25 +11,22 @@ import kotlinx.android.synthetic.main.item_change_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class ChangeSourceAdapter(context: Context) : SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_change_source) {
-
-    var callBack: CallBack? = null
+class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
+    SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_change_source) {
 
     override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
         holder.itemView.apply {
             if (payloads.isEmpty()) {
                 this.onClick {
-                    callBack?.changeTo(item)
+                    callBack.changeTo(item)
                 }
                 tv_origin.text = item.originName
                 tv_last.text = item.latestChapterTitle
-                callBack?.let {
-                    if (it.curBookUrl() == item.bookUrl) {
-                        iv_checked.visible()
-                    } else {
-                        iv_checked.invisible()
-                    }
-                } ?: iv_checked.invisible()
+                if (callBack.curBookUrl() == item.bookUrl) {
+                    iv_checked.visible()
+                } else {
+                    iv_checked.invisible()
+                }
             } else {
                 tv_origin.text = item.originName
                 tv_last.text = item.latestChapterTitle
