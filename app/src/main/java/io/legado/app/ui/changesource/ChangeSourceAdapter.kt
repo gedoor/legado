@@ -17,9 +17,7 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
     override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
         holder.itemView.apply {
             if (payloads.isEmpty()) {
-                this.onClick {
-                    callBack.changeTo(item)
-                }
+                this.onClick { callBack.changeTo(item) }
                 tv_origin.text = item.originName
                 tv_last.text = item.latestChapterTitle
                 if (callBack.curBookUrl() == item.bookUrl) {
