@@ -167,7 +167,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                 if (!BookHelp.hasContent(book, chapter)) {
                     download(book, chapter)
+                } else {
+                    synchronized(loadingLock) {
+                        loadingChapters.remove(index)
+                    }
                 }
+            } ?: synchronized(loadingLock) {
+                loadingChapters.remove(index)
             }
         }.onError {
             synchronized(loadingLock) {
