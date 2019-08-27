@@ -3,26 +3,28 @@ package io.legado.app.ui.search
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.SearchShow
 
-class DiffCallBack(private val oldItems: List<SearchShow>, private val newItems: List<SearchShow>) :
-    DiffUtil.Callback() {
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldItems[oldItemPosition].name == newItems[newItemPosition].name
-                && oldItems[oldItemPosition].author == newItems[newItemPosition].author
+class DiffCallBack : DiffUtil.ItemCallback<SearchShow>() {
+    override fun areItemsTheSame(oldItem: SearchShow, newItem: SearchShow): Boolean {
+        return oldItem.name == newItem.name
+                && oldItem.author == newItem.author
     }
 
-    override fun getOldListSize(): Int {
-        return oldItems.size
+    override fun areContentsTheSame(oldItem: SearchShow, newItem: SearchShow): Boolean {
+        return oldItem.originCount == newItem.originCount
+                && (oldItem.coverUrl == newItem.coverUrl || !oldItem.coverUrl.isNullOrEmpty())
+                && (oldItem.kind == newItem.kind || !oldItem.kind.isNullOrEmpty())
+                && (oldItem.latestChapterTitle == newItem.latestChapterTitle || !oldItem.kind.isNullOrEmpty())
+                && oldItem.intro?.length ?: 0 > newItem.intro?.length ?: 0
     }
 
-    override fun getNewListSize(): Int {
-        return newItems.size
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldItems[oldItemPosition].originCount == newItems[newItemPosition].originCount
-    }
-
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        return super.getChangePayload(oldItemPosition, newItemPosition)
+    override fun getChangePayload(oldItem: SearchShow, newItem: SearchShow): Any? {
+        return when {
+            oldItem.originCount != newItem.originCount -> 1
+            oldItem.coverUrl != newItem.coverUrl -> 2
+            oldItem.kind != newItem.kind -> 3
+            oldItem.latestChapterTitle != newItem.latestChapterTitle -> 4
+            oldItem.intro != newItem.intro -> 5
+            else -> null
+        }
     }
 }
