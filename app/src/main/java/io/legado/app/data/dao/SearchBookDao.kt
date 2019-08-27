@@ -17,8 +17,16 @@ interface SearchBookDao {
     @Query("SELECT * FROM searchBooks where time >= :time")
     fun observeNew(time: Long): DataSource.Factory<Int, SearchBook>
 
-    @Query("SELECT name, author, min(time) time, max(kind) kind, max(coverUrl) coverUrl, max(intro) intro, max(wordCount) wordCount, max(latestChapterTitle) latestChapterTitle, count(origin) originCount FROM searchBooks where time >= :time group by name, author")
-    fun observeShow(time: Long): DataSource.Factory<Int, SearchShow>
+    @Query(
+        """
+                SELECT name, author, min(time) time, max(kind) kind, max(coverUrl) coverUrl,max(intro) intro, max(wordCount) wordCount, 
+                max(latestChapterTitle) latestChapterTitle, count(origin) originCount 
+                FROM searchBooks where time >= :time
+                group by name, author
+                order by case when name = :key then 1 when author = :key then 2 when name like '%'+:key+'%' then 3 when author like '%'+:key+'%' then 4 else 5 end, time
+            """
+    )
+    fun observeShow(key: String, time: Long): DataSource.Factory<Int, SearchShow>
 
     @Query("select * from searchBooks where bookUrl = :bookUrl")
     fun getSearchBook(bookUrl: String): SearchBook?

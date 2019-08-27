@@ -31,7 +31,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
-        initData(0L)
+        initData()
         intent.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
         }
@@ -47,9 +47,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
             override fun onQueryTextSubmit(query: String?): Boolean {
                 search_view.clearFocus()
                 query?.let {
-                    viewModel.search(it, { startTime ->
+                    viewModel.search(it, {
                         content_view.showContentView()
-                        initData(startTime)
+                        initData()
                     }, {
 
                     })
@@ -74,9 +74,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
         rv_search_list.adapter = adapter
     }
 
-    private fun initData(startTime: Long) {
+    private fun initData() {
         searchBookData?.removeObservers(this)
-        searchBookData = LivePagedListBuilder(App.db.searchBookDao().observeShow(startTime), 30).build()
+        searchBookData = LivePagedListBuilder(
+            App.db.searchBookDao().observeShow(
+                viewModel.searchKey,
+                viewModel.startTime
+            ), 30
+        ).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
     }
 

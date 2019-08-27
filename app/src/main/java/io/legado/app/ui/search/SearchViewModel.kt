@@ -11,17 +11,20 @@ import kotlinx.coroutines.delay
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     private var task: Coroutine<*>? = null
-
+    var searchKey: String = ""
+    var startTime: Long = 0
     var searchPage = 0
 
     fun search(
         key: String,
-        start: ((startTime: Long) -> Unit)? = null,
+        start: (() -> Unit)? = null,
         finally: (() -> Unit)? = null
     ) {
         if (key.isEmpty()) return
         task?.cancel()
-        start?.invoke(System.currentTimeMillis())
+        searchKey = key
+        startTime = System.currentTimeMillis()
+        start?.invoke()
         task = execute {
             //onCleared时自动取消
             val bookSourceList = App.db.bookSourceDao().allEnabled
