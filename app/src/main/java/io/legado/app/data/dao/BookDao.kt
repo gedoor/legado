@@ -27,10 +27,10 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE `name` in (:names)")
     fun findByName(vararg names: String): List<Book>
 
-    @Query("select * from books where bookUrl = :bookUrl")
+    @Query("SELECT * FROM books WHERE bookUrl = :bookUrl")
     fun getBook(bookUrl: String): Book?
 
-    @get:Query("select * from books order by durChapterTime desc limit 1")
+    @get:Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 1")
     val lastReadBook: Book?
 
     @get:Query("SELECT bookUrl FROM books")
