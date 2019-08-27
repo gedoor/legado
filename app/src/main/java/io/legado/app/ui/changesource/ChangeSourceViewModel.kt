@@ -10,6 +10,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.debug
 
@@ -18,6 +19,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     var curBookUrl = ""
     var name: String = ""
     var author: String = ""
+    var screenKey: String = ""
     private val searchBooks = linkedSetOf<SearchBook>()
 
     fun initData() {
@@ -25,7 +27,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
                 searchBooks.addAll(it)
                 upAdapter()
-                search()
             }
         }
     }
@@ -50,6 +51,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
+                delay(100)
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(name, scope = this@execute)
                     .timeout(30000L)
@@ -93,9 +95,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                             if (chapters.isNotEmpty()) {
                                 book.latestChapterTitle = chapters.last().title
                                 val searchBook = book.toSearchBook()
+                                App.db.searchBookDao().insert(searchBook)
                                 searchBooks.add(searchBook)
                                 upAdapter()
-                                App.db.searchBookDao().insert(searchBook)
                             }
                         }
                     }.onError {
@@ -105,9 +107,13 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
+    /**
+     * 筛选
+     */
     fun screen(key: String?) {
+        screenKey = key ?: ""
         if (key.isNullOrEmpty()) {
-
+            initData()
         } else {
 
         }
