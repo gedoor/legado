@@ -234,7 +234,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         durChapterIndex++
         prevTextChapter = curTextChapter
         curTextChapter = nextTextChapter
-        nextTextChapter = null
         bookData.value?.let {
             launch(IO) {
                 for (i in 0..10) {
@@ -251,7 +250,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         durChapterIndex--
         nextTextChapter = curTextChapter
         curTextChapter = prevTextChapter
-        prevTextChapter = null
         bookData.value?.let {
             launch(IO) {
                 for (i in -5..0) {
