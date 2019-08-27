@@ -36,35 +36,37 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private val loadingLock = "loadingLock"
 
     fun initData(intent: Intent) {
-        inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-        val bookUrl = intent.getStringExtra("bookUrl")
-        if (!bookUrl.isNullOrEmpty()) {
-            execute {
-                App.db.bookDao().getBook(bookUrl)?.let { book ->
-                    durChapterIndex = book.durChapterIndex
-                    durPageIndex = book.durChapterPos
-                    isLocalBook = book.origin == BookType.local
-                    bookData.postValue(book)
-                    bookSource = App.db.bookSourceDao().getBookSource(book.origin)
-                    bookSource?.let {
-                        webBook = WebBook(it)
-                    }
-                    val count = App.db.bookChapterDao().getChapterCount(bookUrl)
-                    if (count == 0) {
-                        if (book.tocUrl.isEmpty()) {
-                            loadBookInfo(book)
-                        } else {
-                            loadChapterList(book)
-                        }
-                    } else {
-                        if (durChapterIndex > count - 1) {
-                            durChapterIndex = count - 1
-                        }
-                        chapterSize = count
-                        chapterListFinish.postValue(true)
-                    }
+        execute {
+            inBookshelf = intent.getBooleanExtra("inBookshelf", true)
+            val bookUrl = intent.getStringExtra("bookUrl")
+            val book = if (!bookUrl.isNullOrEmpty()) {
+                App.db.bookDao().getBook(bookUrl)
+            } else {
+                App.db.bookDao().getLastReadBook()
+            }
+            book?.let {
+                durChapterIndex = book.durChapterIndex
+                durPageIndex = book.durChapterPos
+                isLocalBook = book.origin == BookType.local
+                bookData.postValue(book)
+                bookSource = App.db.bookSourceDao().getBookSource(book.origin)
+                bookSource?.let {
+                    webBook = WebBook(it)
                 }
-
+                val count = App.db.bookChapterDao().getChapterCount(bookUrl)
+                if (count == 0) {
+                    if (book.tocUrl.isEmpty()) {
+                        loadBookInfo(book)
+                    } else {
+                        loadChapterList(book)
+                    }
+                } else {
+                    if (durChapterIndex > count - 1) {
+                        durChapterIndex = count - 1
+                    }
+                    chapterSize = count
+                    chapterListFinish.postValue(true)
+                }
             }
         }
     }
