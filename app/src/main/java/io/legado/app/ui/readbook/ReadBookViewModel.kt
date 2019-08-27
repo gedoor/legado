@@ -15,6 +15,8 @@ import io.legado.app.model.WebBook
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
@@ -229,6 +231,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         nextTextChapter = null
         bookData.value?.let {
             loadContent(it, durChapterIndex.plus(1))
+            launch(IO) {
+                for (i in 2..10) {
+                    delay(5000L)
+                    bookData.value?.let { book ->
+                        download(book, durChapterIndex + i)
+                    }
+                }
+            }
         }
     }
 
