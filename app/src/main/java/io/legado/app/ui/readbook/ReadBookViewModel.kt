@@ -93,6 +93,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }?.onError {
                     toast(R.string.error_load_toc)
+                    it.printStackTrace()
                 } ?: autoChangeSource()
         }
     }
