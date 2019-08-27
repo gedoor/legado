@@ -176,7 +176,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             R.id.menu_change_source -> {
                 if (changeSourceDialog == null) {
                     viewModel.bookData.value?.let {
-                        changeSourceDialog = ChangeSourceDialog.newInstance(it.name, it.author)
+                        changeSourceDialog = ChangeSourceDialog
+                            .newInstance(it.name, it.author, it.origin)
                         changeSourceDialog?.callBack = this
                     }
                 }
