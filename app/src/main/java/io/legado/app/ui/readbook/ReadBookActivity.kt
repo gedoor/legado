@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
@@ -91,6 +90,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         Help.upSystemUiVisibility(window, !read_menu.isVisible)
     }
 
+    /**
+     * 初始化View
+     */
     private fun initView() {
         tv_chapter_name.onClick {
             viewModel.bookSource?.let {
@@ -461,22 +463,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             launch(IO) {
                 viewModel.curTextChapter?.let {
                     val pageStart = chapterStart - it.getReadLength(viewModel.durPageIndex)
-                    val page = it.page(viewModel.durPageIndex)
-                    if (page != null && page.text is SpannableStringBuilder) {
-                        page.text.removeSpan(ChapterProvider.readAloudSpan)
-                        var end = page.text.indexOf("\n", pageStart)
-                        if (end == -1) end = page.text.length
-                        var start = page.text.lastIndexOf("\n", pageStart)
-                        if (start == -1) start = 0
-                        page.text.setSpan(
-                            ChapterProvider.readAloudSpan,
-                            start,
-                            end,
-                            Spannable.SPAN_INCLUSIVE_EXCLUSIVE
-                        )
-                        withContext(Main) {
-                            page_view.upContent()
-                        }
+                    it.page(viewModel.durPageIndex)?.upPageAloudSpan(pageStart)
+                    withContext(Main) {
+                        page_view.upContent()
                     }
                 }
             }
