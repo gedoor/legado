@@ -136,48 +136,32 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun loadContent(book: Book, index: Int) {
-        synchronized(loadingLock) {
-            if (loadingChapters.contains(index)) return
-            loadingChapters.add(index)
-        }
-        execute {
-            App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-                BookHelp.getContent(book, chapter)?.let {
-                    contentLoadFinish(chapter, it)
-                    synchronized(loadingLock) {
-                        loadingChapters.remove(index)
-                    }
-                } ?: download(book, chapter)
-            } ?: synchronized(loadingLock) {
-                loadingChapters.remove(index)
-            }
-        }.onError {
-            synchronized(loadingLock) {
-                loadingChapters.remove(index)
+        if (addLoading(index)) {
+            execute {
+                App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                    BookHelp.getContent(book, chapter)?.let {
+                        contentLoadFinish(chapter, it)
+                        removeLoading(chapter.index)
+                    } ?: download(book, chapter)
+                } ?: removeLoading(index)
+            }.onError {
+                removeLoading(index)
             }
         }
     }
 
     private fun download(book: Book, index: Int) {
-        synchronized(loadingLock) {
-            if (loadingChapters.contains(index)) return
-            loadingChapters.add(index)
-        }
-        execute {
-            App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-                if (!BookHelp.hasContent(book, chapter)) {
-                    download(book, chapter)
-                } else {
-                    synchronized(loadingLock) {
-                        loadingChapters.remove(index)
+        if (addLoading(index)) {
+            execute {
+                App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                    if (BookHelp.hasContent(book, chapter)) {
+                        removeLoading(chapter.index)
+                    } else {
+                        download(book, chapter)
                     }
-                }
-            } ?: synchronized(loadingLock) {
-                loadingChapters.remove(index)
-            }
-        }.onError {
-            synchronized(loadingLock) {
-                loadingChapters.remove(index)
+                } ?: removeLoading(index)
+            }.onError {
+                removeLoading(index)
             }
         }
     }
@@ -187,22 +171,30 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ?.onSuccess(IO) { content ->
                 if (content.isNullOrEmpty()) {
                     contentLoadFinish(chapter, context.getString(R.string.content_empty))
-                    synchronized(loadingLock) {
-                        loadingChapters.remove(chapter.index)
-                    }
+                    removeLoading(chapter.index)
                 } else {
                     BookHelp.saveContent(book, chapter, content)
                     contentLoadFinish(chapter, content)
-                    synchronized(loadingLock) {
-                        loadingChapters.remove(chapter.index)
-                    }
+                    removeLoading(chapter.index)
                 }
             }?.onError {
                 contentLoadFinish(chapter, it.localizedMessage)
-                synchronized(loadingLock) {
-                    loadingChapters.remove(chapter.index)
-                }
+                removeLoading(chapter.index)
             }
+    }
+
+    private fun addLoading(index: Int): Boolean {
+        synchronized(loadingLock) {
+            if (loadingChapters.contains(index)) return false
+            loadingChapters.add(index)
+            return true
+        }
+    }
+
+    private fun removeLoading(index: Int) {
+        synchronized(loadingLock) {
+            loadingChapters.remove(index)
+        }
     }
 
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
