@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookData = MutableLiveData<Book>()
+    val chapterListFinish = MutableLiveData<Boolean>()
     var chapterSize = 0
     var bookSource: BookSource? = null
     var callBack: CallBack? = null
@@ -60,7 +61,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                             durChapterIndex = count - 1
                         }
                         chapterSize = count
-                        loadChapterListFinish()
+                        chapterListFinish.postValue(true)
                     }
                 }
 
@@ -84,21 +85,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     if (!cList.isNullOrEmpty()) {
                         App.db.bookChapterDao().insert(*cList.toTypedArray())
                         chapterSize = cList.size
-                        loadChapterListFinish()
+                        chapterListFinish.postValue(true)
                     } else {
                         toast(R.string.error_load_toc)
                     }
                 }?.onError {
                     toast(R.string.error_load_toc)
                 } ?: autoChangeSource()
-        }
-    }
-
-    private fun loadChapterListFinish() {
-        bookData.value?.let {
-            loadContent(it, durChapterIndex)
-            loadContent(it, durChapterIndex + 1)
-            loadContent(it, durChapterIndex - 1)
         }
     }
 
@@ -125,7 +118,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun download(book: Book, index: Int) {
+    private fun download(book: Book, index: Int) {
         synchronized(loadingLock) {
             if (loadingChapters.contains(index)) return
             loadingChapters.add(index)
@@ -200,19 +193,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             durPageIndex = 0
         }
         saveRead()
-        loadChapterListFinish()
+        chapterListFinish.postValue(true)
     }
 
     fun saveRead() {
         execute {
             bookData.value?.let { book ->
-                book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durPageIndex
-                curTextChapter?.let {
-                    book.durChapterTitle = it.title
-                    App.db.bookDao().update(book)
-                }
+                App.db.bookDao().update(book)
             }
         }
     }

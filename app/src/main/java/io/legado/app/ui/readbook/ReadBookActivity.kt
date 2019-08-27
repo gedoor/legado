@@ -61,6 +61,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         page_view.callback = this
         viewModel.callBack = this
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
+        viewModel.chapterListFinish.observe(this, Observer { bookLoadFinish() })
         viewModel.initData(intent)
         savedInstanceState?.let {
             changeSourceDialog =
@@ -222,6 +223,17 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    /**
+     * 书籍加载完成,开始加载章节内容
+     */
+    private fun bookLoadFinish() {
+        viewModel.bookData.value?.let {
+            viewModel.loadContent(it, viewModel.durChapterIndex)
+            viewModel.loadContent(it, viewModel.durChapterIndex + 1)
+            viewModel.loadContent(it, viewModel.durChapterIndex - 1)
+        }
     }
 
     /**
