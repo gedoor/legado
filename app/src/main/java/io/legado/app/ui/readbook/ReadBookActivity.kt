@@ -249,28 +249,20 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
      * 内容加载完成
      */
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
-        launch {
-            when (bookChapter.index) {
-                viewModel.durChapterIndex -> {
-                    viewModel.curTextChapter =
-                        ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    page_view.upContent()
-                    curChapterChanged()
-                }
-                viewModel.durChapterIndex - 1 -> {
-                    viewModel.prevTextChapter =
-                        ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                }
-                viewModel.durChapterIndex + 1 -> {
-                    viewModel.nextTextChapter =
-                        ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
-                    viewModel.bookData.value?.let {
-                        for (i in viewModel.durChapterIndex.plus(2)
-                                ..viewModel.durChapterIndex.plus(8)) {
-                            viewModel.download(it, i)
-                        }
-                    }
-                }
+        when (bookChapter.index) {
+            viewModel.durChapterIndex -> launch {
+                viewModel.curTextChapter =
+                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+                page_view.upContent()
+                curChapterChanged()
+            }
+            viewModel.durChapterIndex - 1 -> launch {
+                viewModel.prevTextChapter =
+                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
+            }
+            viewModel.durChapterIndex + 1 -> launch {
+                viewModel.nextTextChapter =
+                    ChapterProvider.getTextChapter(content_text_view, bookChapter, content)
             }
         }
     }

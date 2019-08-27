@@ -101,7 +101,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                 BookHelp.getContent(book, chapter)?.let {
-                    callBack?.contentLoadFinish(chapter, it)
+                    contentLoadFinish(chapter, it)
                     synchronized(loadingLock) {
                         loadingChapters.remove(index)
                     }
@@ -138,23 +138,29 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         webBook?.getContent(book, chapter, scope = this)
             ?.onSuccess(IO) { content ->
                 if (content.isNullOrEmpty()) {
-                    callBack?.contentLoadFinish(chapter, context.getString(R.string.content_empty))
+                    contentLoadFinish(chapter, context.getString(R.string.content_empty))
                     synchronized(loadingLock) {
                         loadingChapters.remove(chapter.index)
                     }
                 } else {
                     BookHelp.saveContent(book, chapter, content)
-                    callBack?.contentLoadFinish(chapter, content)
+                    contentLoadFinish(chapter, content)
                     synchronized(loadingLock) {
                         loadingChapters.remove(chapter.index)
                     }
                 }
             }?.onError {
-                callBack?.contentLoadFinish(chapter, it.localizedMessage)
+                contentLoadFinish(chapter, it.localizedMessage)
                 synchronized(loadingLock) {
                     loadingChapters.remove(chapter.index)
                 }
             }
+    }
+
+    private fun contentLoadFinish(chapter: BookChapter, content: String) {
+        if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
+            callBack?.contentLoadFinish(chapter, content)
+        }
     }
 
     fun changeTo(book: Book) {
