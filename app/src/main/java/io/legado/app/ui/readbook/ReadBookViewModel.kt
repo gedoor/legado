@@ -97,6 +97,44 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun moveToNextChapter() {
+        durChapterIndex++
+        prevTextChapter = curTextChapter
+        curTextChapter = nextTextChapter
+        nextTextChapter = null
+        bookData.value?.let {
+            loadContent(it, durChapterIndex)
+            loadContent(it, durChapterIndex.plus(1))
+            launch(IO) {
+                for (i in 2..10) {
+                    delay(100)
+                    bookData.value?.let { book ->
+                        download(book, durChapterIndex + i)
+                    }
+                }
+            }
+        }
+    }
+
+    fun moveToPrevChapter() {
+        durChapterIndex--
+        nextTextChapter = curTextChapter
+        curTextChapter = prevTextChapter
+        prevTextChapter = null
+        bookData.value?.let {
+            loadContent(it, durChapterIndex)
+            loadContent(it, durChapterIndex.minus(1))
+            launch(IO) {
+                for (i in -5..-2) {
+                    delay(100)
+                    bookData.value?.let { book ->
+                        download(book, durChapterIndex + i)
+                    }
+                }
+            }
+        }
+    }
+
     fun loadContent(book: Book, index: Int) {
         synchronized(loadingLock) {
             if (loadingChapters.contains(index)) return
@@ -226,42 +264,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             bookData.value?.let {
                 bookSource = App.db.bookSourceDao().getBookSource(it.origin)
-            }
-        }
-    }
-
-    fun moveToNextChapter() {
-        durChapterIndex++
-        prevTextChapter = curTextChapter
-        curTextChapter = nextTextChapter
-        nextTextChapter = null
-        bookData.value?.let {
-            loadContent(it, durChapterIndex.plus(1))
-            launch(IO) {
-                for (i in 2..10) {
-                    delay(100)
-                    bookData.value?.let { book ->
-                        download(book, durChapterIndex + i)
-                    }
-                }
-            }
-        }
-    }
-
-    fun moveToPrevChapter() {
-        durChapterIndex--
-        nextTextChapter = curTextChapter
-        curTextChapter = prevTextChapter
-        prevTextChapter = null
-        bookData.value?.let {
-            loadContent(it, durChapterIndex.minus(1))
-            launch(IO) {
-                for (i in -5..-2) {
-                    delay(100)
-                    bookData.value?.let { book ->
-                        download(book, durChapterIndex + i)
-                    }
-                }
             }
         }
     }
