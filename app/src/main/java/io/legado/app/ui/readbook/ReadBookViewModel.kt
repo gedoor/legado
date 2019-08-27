@@ -209,6 +209,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
+            App.db.bookDao().insert(book)
             bookData.postValue(book)
             bookSource = App.db.bookSourceDao().getBookSource(book.origin)
             if (book.tocUrl.isEmpty()) {
