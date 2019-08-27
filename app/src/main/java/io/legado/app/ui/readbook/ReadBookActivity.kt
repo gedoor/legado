@@ -383,12 +383,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             val key = System.currentTimeMillis().toString()
             IntentDataHelp.putData(key, textChapter)
             ReadAloudService.play(
-                this,
-                book.name,
-                textChapter.title,
-                viewModel.durPageIndex,
-                key,
-                play
+                this, book.name, textChapter.title,
+                viewModel.durPageIndex, key, play
             )
         }
     }
@@ -401,7 +397,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         if (this.getPrefBoolean("brightnessAuto").not()) {
             brightness = value.toFloat()
             if (brightness < 1f) brightness = 1f
-            brightness = brightness * 1.0f / 255f
+            brightness /= 255f
         }
         val params = window.attributes
         params.screenBrightness = brightness
