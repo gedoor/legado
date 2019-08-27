@@ -24,14 +24,15 @@ object ChapterProvider {
         while (surplusText.isNotEmpty()) {
             val spannableStringBuilder = SpannableStringBuilder(surplusText)
             if (pageIndex == 0) {
-                var end = surplusText.indexOf("\n")
-                if (end == -1) end = surplusText.length
-                spannableStringBuilder.setSpan(
-                    titleSpan,
-                    0,
-                    end,
-                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE
-                )
+                val end = surplusText.indexOf("\n")
+                if (end > 0) {
+                    spannableStringBuilder.setSpan(
+                        titleSpan,
+                        0,
+                        end,
+                        Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+                    )
+                }
             }
             textView.text = spannableStringBuilder
             pageLengths.add(textView.getCharNum())
