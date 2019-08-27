@@ -199,9 +199,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun saveRead() {
         execute {
             bookData.value?.let { book ->
+                book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durPageIndex
-                App.db.bookDao().update(book)
+                curTextChapter?.let {
+                    book.durChapterTitle = it.title
+                    App.db.bookDao().update(book)
+                }
             }
         }
     }
