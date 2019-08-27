@@ -53,7 +53,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 bookSource?.let {
                     webBook = WebBook(it)
                 }
-                val count = App.db.bookChapterDao().getChapterCount(bookUrl)
+                val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
                 if (count == 0) {
                     if (book.tocUrl.isEmpty()) {
                         loadBookInfo(book)
@@ -68,7 +68,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     chapterListFinish.postValue(true)
                 }
             }
-        }
+        }.onError { it.printStackTrace() }
     }
 
     private fun loadBookInfo(book: Book) {
