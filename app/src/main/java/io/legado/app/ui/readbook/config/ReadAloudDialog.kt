@@ -113,7 +113,7 @@ class ReadAloudDialog : DialogFragment() {
                 dismiss()
             }
         }
-        iv_stop.onClick { ReadAloudService.stop(requireContext()) }
+        iv_stop.onClick { ReadAloudService.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
         iv_play_prev.onClick { ReadAloudService.prevParagraph(requireContext()) }
         iv_play_next.onClick { ReadAloudService.nextParagraph(requireContext()) }
