@@ -25,7 +25,7 @@ object ChapterProvider {
             val spannableStringBuilder = SpannableStringBuilder(surplusText)
             if (pageIndex == 0) {
                 var end = surplusText.indexOf("\n")
-                if (end == -1) end = surplusText.length.minus(1)
+                if (end == -1) end = surplusText.length
                 spannableStringBuilder.setSpan(
                     titleSpan,
                     0,
