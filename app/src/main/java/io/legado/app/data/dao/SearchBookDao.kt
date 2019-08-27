@@ -11,12 +11,6 @@ import io.legado.app.data.entities.SearchShow
 @Dao
 interface SearchBookDao {
 
-    @Query("SELECT * FROM searchBooks")
-    fun observeAll(): DataSource.Factory<Int, SearchBook>
-
-    @Query("SELECT * FROM searchBooks where time >= :time")
-    fun observeNew(time: Long): DataSource.Factory<Int, SearchBook>
-
     @Query(
         """
                 SELECT name, author, min(time) time, max(kind) kind, max(coverUrl) coverUrl,max(intro) intro, max(wordCount) wordCount, 
@@ -27,6 +21,12 @@ interface SearchBookDao {
             """
     )
     fun observeShow(key: String, time: Long): DataSource.Factory<Int, SearchShow>
+
+    @Query("SELECT * FROM searchBooks")
+    fun observeAll(): DataSource.Factory<Int, SearchBook>
+
+    @Query("SELECT * FROM searchBooks where time >= :time")
+    fun observeNew(time: Long): DataSource.Factory<Int, SearchBook>
 
     @Query("select * from searchBooks where bookUrl = :bookUrl")
     fun getSearchBook(bookUrl: String): SearchBook?
