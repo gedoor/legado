@@ -9,7 +9,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.service.ReadAloudService
@@ -23,7 +22,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var bookData = MutableLiveData<Book>()
     val chapterListFinish = MutableLiveData<Boolean>()
     var chapterSize = 0
-    var bookSource: BookSource? = null
     var callBack: CallBack? = null
     var durChapterIndex = 0
     var durPageIndex = 0
@@ -31,7 +29,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
-    private var webBook: WebBook? = null
+    var webBook: WebBook? = null
     private val loadingChapters = arrayListOf<Int>()
     private val loadingLock = "loadingLock"
 
@@ -49,8 +47,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 durPageIndex = book.durChapterPos
                 isLocalBook = book.origin == BookType.local
                 bookData.postValue(book)
-                bookSource = App.db.bookSourceDao().getBookSource(book.origin)
-                bookSource?.let {
+                App.db.bookSourceDao().getBookSource(book.origin)?.let {
                     webBook = WebBook(it)
                 }
                 val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
@@ -211,7 +208,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
             App.db.bookDao().insert(book)
             bookData.postValue(book)
-            bookSource = App.db.bookSourceDao().getBookSource(book.origin)
+            App.db.bookSourceDao().getBookSource(book.origin)?.let {
+                webBook = WebBook(it)
+            }
             if (book.tocUrl.isEmpty()) {
                 loadBookInfo(book)
             } else {
@@ -262,8 +261,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun upBookSource() {
         execute {
-            bookData.value?.let {
-                bookSource = App.db.bookSourceDao().getBookSource(it.origin)
+            bookData.value?.let { book ->
+                App.db.bookSourceDao().getBookSource(book.origin)?.let {
+                    webBook = WebBook(it)
+                }
             }
         }
     }

@@ -95,10 +95,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
      */
     private fun initView() {
         tv_chapter_name.onClick {
-            viewModel.bookSource?.let {
+            viewModel.webBook?.let {
                 startActivityForResult<SourceEditActivity>(
                     requestCodeEditSource,
-                    Pair("data", it.bookSourceUrl)
+                    Pair("data", it.bookSource.bookSourceUrl)
                 )
             }
         }

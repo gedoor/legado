@@ -12,7 +12,7 @@ import io.legado.app.model.webbook.BookInfo
 import io.legado.app.model.webbook.BookList
 import kotlinx.coroutines.CoroutineScope
 
-class WebBook(private val bookSource: BookSource) {
+class WebBook(val bookSource: BookSource) {
 
     val sourceUrl: String
         get() = bookSource.bookSourceUrl
