@@ -44,14 +44,12 @@ class ChapterListAdapter(val callback: Callback) :
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(bookChapter: BookChapter, callback: Callback) = with(itemView) {
-            tv_chapter_name.text = bookChapter.title
-            callback.let {
-                if (it.durChapterIndex() == bookChapter.index) {
-                    tv_chapter_name.setTextColor(context.accentColor)
-                } else {
-                    tv_chapter_name.setTextColor(context.getCompatColor(R.color.tv_text_default))
-                }
+            if (callback.durChapterIndex() == bookChapter.index) {
+                tv_chapter_name.setTextColor(context.accentColor)
+            } else {
+                tv_chapter_name.setTextColor(context.getCompatColor(R.color.tv_text_default))
             }
+            tv_chapter_name.text = bookChapter.title
             itemView.onClick {
                 callback.openChapter(bookChapter)
             }
