@@ -6,6 +6,7 @@ object Action {
     const val stop = "stop"
     const val resume = "resume"
     const val pause = "pause"
+    const val addTimer = "addTimer"
     const val setTimer = "setTimer"
     const val prevParagraph = "prevParagraph"
     const val nextParagraph = "nextParagraph"

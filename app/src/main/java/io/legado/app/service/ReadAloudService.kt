@@ -5,6 +5,7 @@ import android.content.*
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
+import android.os.Handler
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.support.v4.media.session.MediaSessionCompat
@@ -107,6 +108,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         }
     }
 
+    private val handler = Handler()
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
@@ -118,6 +120,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     private var textChapter: TextChapter? = null
     private var pageIndex = 0
     var mediaSessionCompat: MediaSessionCompat? = null
+    private val dsRunnable: Runnable? = Runnable { doDs() }
     var pause = false
     var title: String = ""
     var subtitle: String = ""
@@ -163,6 +166,8 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 Action.upTtsSpeechRate -> upSpeechRate(true)
                 Action.prevParagraph -> prevP()
                 Action.nextParagraph -> nextP()
+                Action.addTimer -> addTimer()
+                Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 else -> stopSelf()
             }
         }
@@ -217,6 +222,40 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 }
             }
         }
+    }
+
+    private fun setTimer(minute: Int) {
+        timeMinute = minute
+        if (minute > 0) {
+            handler.removeCallbacks(dsRunnable)
+            handler.postDelayed(dsRunnable, 6000)
+        }
+        ReadAloudNotification.upNotification(this)
+    }
+
+    private fun addTimer() {
+        if (timeMinute == 60) {
+            timeMinute = 0
+            handler.removeCallbacks(dsRunnable)
+        } else {
+            timeMinute += 10
+            if (timeMinute > 60) timeMinute = 60
+            handler.removeCallbacks(dsRunnable)
+            handler.postDelayed(dsRunnable, 6000)
+        }
+        ReadAloudNotification.upNotification(this)
+    }
+
+    private fun doDs() {
+        if (!pause) {
+            timeMinute--
+            if (timeMinute == 0) {
+                stopSelf()
+            } else if (timeMinute > 0) {
+                handler.postDelayed(dsRunnable, 6000)
+            }
+        }
+        ReadAloudNotification.upNotification(this)
     }
 
     private fun upSpeechRate(reset: Boolean = false) {

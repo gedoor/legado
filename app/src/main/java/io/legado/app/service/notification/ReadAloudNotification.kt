@@ -51,7 +51,7 @@ object ReadAloudNotification {
         builder.addAction(
             R.drawable.ic_time_add_24dp,
             service.getString(R.string.set_timer),
-            PendingIntentHelp.aloudServicePendingIntent(service, Action.setTimer)
+            PendingIntentHelp.aloudServicePendingIntent(service, Action.addTimer)
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
