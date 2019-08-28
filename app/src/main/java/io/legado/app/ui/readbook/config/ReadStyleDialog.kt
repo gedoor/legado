@@ -83,29 +83,46 @@ class ReadStyleDialog : DialogFragment() {
         tv_text_bold.onClick {
             textBold = !textBold
             tv_text_bold.isSelected = textBold
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(Bus.UP_CONFIG, false)
         }
         seek_text_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 textSize = progress + 5
                 postEvent(Bus.UP_CONFIG, true)
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
-            }
-
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
         iv_text_size_add.onClick {
             textSize++
             if (textSize > 50) textSize = 50
+            seek_text_size.progress = textSize - 5
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_line_size_remove.onClick {
             textSize--
             if (textSize < 5) textSize = 5
+            seek_text_size.progress = textSize - 5
+            postEvent(Bus.UP_CONFIG, true)
+        }
+        seek_text_letter_spacing.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                letterSpacing = (progress - 5) / 10f
+                postEvent(Bus.UP_CONFIG, true)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        iv_text_letter_spacing_add.onClick {
+            letterSpacing += 0.1f
+            seek_text_letter_spacing.progress = (letterSpacing * 10).toInt() + 5
+            postEvent(Bus.UP_CONFIG, true)
+        }
+        iv_text_letter_spacing_remove.onClick {
+            letterSpacing -= 0.1f
+            seek_text_letter_spacing.progress = (letterSpacing * 10).toInt() + 5
             postEvent(Bus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->

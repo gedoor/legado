@@ -84,10 +84,10 @@
             android:text="@string/text_size" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_size_add"
+            android:id="@+id/iv_text_size_remove"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_add"
+            android:src="@drawable/ic_remove"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 
@@ -100,10 +100,10 @@
             android:max="45" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_size_remove"
+            android:id="@+id/iv_text_size_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
+            android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 
@@ -125,10 +125,10 @@
             android:text="@string/text_letter_spacing" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_letter_spacing_add"
+            android:id="@+id/iv_text_letter_spacing_remove"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_add"
+            android:src="@drawable/ic_remove"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 
@@ -141,10 +141,10 @@
             android:max="10" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_letter_spacing_remove"
+            android:id="@+id/iv_text_letter_spacing_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
+            android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 
@@ -166,10 +166,10 @@
             android:text="@string/line_size" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_line_size_add"
+            android:id="@+id/iv_line_size_remove"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_add"
+            android:src="@drawable/ic_remove"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 
@@ -182,10 +182,10 @@
             android:max="50" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_line_size_remove"
+            android:id="@+id/iv_text_line_size_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
+            android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 

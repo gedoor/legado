@@ -462,6 +462,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             page_view.upStyle()
             if (it) {
                 loadContent()
+            } else {
+                page_view.upContent()
             }
         }
         observeEvent<Int>(Bus.TTS_START) { chapterStart ->
