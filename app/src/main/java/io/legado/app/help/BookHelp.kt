@@ -85,4 +85,7 @@ object BookHelp {
             ?: ""
     }
 
+    fun getDurChapterIndexByChapterName() {
+
+    }
 }

@@ -12,6 +12,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.invisible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -81,9 +82,12 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
             }
             callBack?.let {
                 if (book.origin != BookType.local && it.isUpdate(book.bookUrl)) {
+                    bv_unread.invisible()
                     rl_loading.show()
                 } else {
                     rl_loading.hide()
+                    bv_unread.setBadgeCount(book.getUnreadChapterNum())
+                    bv_unread.setHighlight(book.lastCheckCount > 0)
                 }
             } ?: rl_loading.hide()
         }
