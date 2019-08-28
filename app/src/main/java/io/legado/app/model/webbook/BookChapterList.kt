@@ -118,8 +118,8 @@ object BookChapterList {
         book.latestChapterTitle = chapterList.last().title
         if (book.totalChapterNum < chapterList.size) {
             book.lastCheckCount = chapterList.size - book.totalChapterNum
-            book.totalChapterNum = chapterList.size
         }
+        book.totalChapterNum = chapterList.size
         return chapterList
     }
 
