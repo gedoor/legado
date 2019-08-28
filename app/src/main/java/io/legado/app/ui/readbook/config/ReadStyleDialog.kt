@@ -216,9 +216,9 @@ class ReadStyleDialog : DialogFragment() {
                 else -> bg0
             }
             ReadBookConfig.getConfig(i).apply {
-                when (bgType) {
+                when (bgType()) {
                     2 -> {
-                        ImageLoader.load(requireContext(), bgStr)
+                        ImageLoader.load(requireContext(), bgStr())
                             .centerCrop()
                             .setAsFile(iv)
                     }

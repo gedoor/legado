@@ -116,12 +116,12 @@ object ReadBookConfig {
             else Color.parseColor(textColor)
         }
 
-        private fun bgStr(): String {
+        fun bgStr(): String {
             return if (App.INSTANCE.isNightTheme) bgStrNight
             else bgStr
         }
 
-        private fun bgType(): Int {
+        fun bgType(): Int {
             return if (App.INSTANCE.isNightTheme) bgTypeNight
             else bgType
         }
