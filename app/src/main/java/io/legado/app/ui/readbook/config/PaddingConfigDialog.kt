@@ -16,7 +16,7 @@ class PaddingConfigDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.dialog_read_padding, container)
     }
 
     override fun onStart() {
@@ -36,6 +36,16 @@ class PaddingConfigDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initData()
+        initView()
+    }
+
+    private fun initData() {
+
+    }
+
+    private fun initView() {
+
     }
 
 }
