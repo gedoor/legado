@@ -11,7 +11,7 @@ import io.legado.app.lib.theme.accentColor
 
 object ChapterProvider {
     val readAloudSpan = ForegroundColorSpan(App.INSTANCE.accentColor)
-    private val titleSpan = RelativeSizeSpan(1.3f)
+    private val titleSpan = RelativeSizeSpan(1.2f)
 
     fun getTextChapter(
         textView: ContentTextView, bookChapter: BookChapter,
