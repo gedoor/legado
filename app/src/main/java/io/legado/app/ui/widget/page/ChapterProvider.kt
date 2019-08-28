@@ -35,22 +35,26 @@ object ChapterProvider {
                 }
             }
             textView.text = spannableStringBuilder
-            pageLengths.add(textView.getCharNum())
-            textPages.add(
-                TextPage(
-                    index = pageIndex,
-                    text = spannableStringBuilder.delete(
-                        pageLengths[pageIndex],
-                        spannableStringBuilder.length
-                    ),
-                    title = bookChapter.title,
-                    chapterSize = chapterSize,
-                    chapterIndex = bookChapter.index
+            val lastCharNum = textView.getCharNum()
+            if (lastCharNum == 0) {
+                break
+            } else {
+                pageLengths.add(lastCharNum)
+                textPages.add(
+                    TextPage(
+                        index = pageIndex,
+                        text = spannableStringBuilder.delete(
+                            lastCharNum,
+                            spannableStringBuilder.length
+                        ),
+                        title = bookChapter.title,
+                        chapterSize = chapterSize,
+                        chapterIndex = bookChapter.index
+                    )
                 )
-            )
-            surplusText = surplusText.substring(pageLengths[pageIndex])
-
-            pageIndex++
+                surplusText = surplusText.substring(lastCharNum)
+                pageIndex++
+            }
         }
         for (item in textPages) {
             item.pageSize = textPages.size
