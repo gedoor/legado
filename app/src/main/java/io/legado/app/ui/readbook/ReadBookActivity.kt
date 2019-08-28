@@ -90,6 +90,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         Help.upSystemUiVisibility(window, !read_menu.isVisible)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.saveRead()
+    }
+
     /**
      * 初始化View
      */
