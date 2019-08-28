@@ -24,16 +24,8 @@ object ReadBookConfig {
         }
 
     var styleSelect
-        get() = if (App.INSTANCE.isNightTheme) {
-            App.INSTANCE.getPrefInt("readStyleSelectNight", 4)
-        } else {
-            App.INSTANCE.getPrefInt("readStyleSelect")
-        }
-        set(value) = if (App.INSTANCE.isNightTheme) {
-            App.INSTANCE.putPrefInt("readStyleSelectNight", value)
-        } else {
-            App.INSTANCE.putPrefInt("readStyleSelect", value)
-        }
+        get() = App.INSTANCE.getPrefInt("readStyleSelect")
+        set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
     var bg: Drawable? = null
 
     fun getConfig(index: Int = styleSelect): Config {
@@ -103,7 +95,9 @@ object ReadBookConfig {
 
     data class Config(
         var bgStr: String = "#015A86",
+        var bgStrNight: String = "#000000",
         var bgType: Int = 0,
+        var bgTypeNight: Int = 0,
         var darkStatusIcon: Boolean = true,
         var letterSpacing: Float = 1f,
         var lineSpacingExtra: Int = 12,
@@ -114,16 +108,28 @@ object ReadBookConfig {
         var paddingTop: Int = 0,
         var textBold: Boolean = false,
         var textColor: String = "#3E3D3B",
+        var textColorNight: String = "#adadad",
         var textSize: Int = 15
     ) {
         fun textColor(): Int {
-            return Color.parseColor(textColor)
+            return if (App.INSTANCE.isNightTheme) Color.parseColor(textColorNight)
+            else Color.parseColor(textColor)
+        }
+
+        private fun bgStr(): String {
+            return if (App.INSTANCE.isNightTheme) bgStrNight
+            else bgStr
+        }
+
+        private fun bgType(): Int {
+            return if (App.INSTANCE.isNightTheme) bgTypeNight
+            else bgType
         }
 
         fun bgDrawable(): Drawable {
             var bgDrawable: Drawable? = null
-            when (bgType) {
-                0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr))
+            when (bgType()) {
+                0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr()))
                 1 -> bgDrawable =
                     Drawable.createFromStream(
                         App.INSTANCE.assets.open("bg" + File.separator + bgStr),
