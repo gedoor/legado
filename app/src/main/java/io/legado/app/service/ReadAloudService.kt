@@ -11,6 +11,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
+import io.legado.app.constant.Action
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.help.IntentDataHelp
@@ -42,7 +43,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             play: Boolean = true
         ) {
             val readAloudIntent = Intent(context, ReadAloudService::class.java)
-            readAloudIntent.action = "play"
+            readAloudIntent.action = Action.play
             readAloudIntent.putExtra("title", title)
             readAloudIntent.putExtra("subtitle", subtitle)
             readAloudIntent.putExtra("pageIndex", pageIndex)
@@ -54,7 +55,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         fun pause(context: Context) {
             if (isRun) {
                 val intent = Intent(context, ReadAloudService::class.java)
-                intent.action = "pause"
+                intent.action = Action.pause
                 context.startService(intent)
             }
         }
@@ -62,7 +63,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         fun resume(context: Context) {
             if (isRun) {
                 val intent = Intent(context, ReadAloudService::class.java)
-                intent.action = "resume"
+                intent.action = Action.resume
                 context.startService(intent)
             }
         }
@@ -70,7 +71,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         fun stop(context: Context) {
             if (isRun) {
                 val intent = Intent(context, ReadAloudService::class.java)
-                intent.action = "stop"
+                intent.action = Action.stop
                 context.startService(intent)
             }
         }
@@ -78,7 +79,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         fun prevParagraph(context: Context) {
             if (isRun) {
                 val intent = Intent(context, ReadAloudService::class.java)
-                intent.action = "prevParagraph"
+                intent.action = Action.prevParagraph
                 context.startService(intent)
             }
         }
@@ -86,7 +87,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         fun nextParagraph(context: Context) {
             if (isRun) {
                 val intent = Intent(context, ReadAloudService::class.java)
-                intent.action = "nextParagraph"
+                intent.action = Action.nextParagraph
                 context.startService(intent)
             }
         }
@@ -94,7 +95,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         fun upTtsSpeechRate(context: Context) {
             if (isRun) {
                 val intent = Intent(context, ReadAloudService::class.java)
-                intent.action = "upTtsSpeechRate"
+                intent.action = Action.upTtsSpeechRate
                 context.startService(intent)
             }
         }
@@ -148,7 +149,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
-                "play" -> {
+                Action.play -> {
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
                     pageIndex = intent.getIntExtra("pageIndex", 0)
@@ -157,11 +158,11 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                         intent.getBooleanExtra("play", true)
                     )
                 }
-                "pause" -> pauseReadAloud(true)
-                "resume" -> resumeReadAloud()
-                "upTtsSpeechRate" -> upSpeechRate(true)
-                "prevParagraph" -> prevP()
-                "nextParagraph" -> nextP()
+                Action.pause -> pauseReadAloud(true)
+                Action.resume -> resumeReadAloud()
+                Action.upTtsSpeechRate -> upSpeechRate(true)
+                Action.prevParagraph -> prevP()
+                Action.nextParagraph -> nextP()
                 else -> stopSelf()
             }
         }

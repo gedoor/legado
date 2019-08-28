@@ -3,6 +3,7 @@ package io.legado.app.service.notification
 import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import io.legado.app.R
+import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
 import io.legado.app.help.PendingIntentHelp
 import io.legado.app.service.ReadAloudService
@@ -33,24 +34,24 @@ object ReadAloudNotification {
             builder.addAction(
                 R.drawable.ic_play_24dp,
                 service.getString(R.string.resume),
-                PendingIntentHelp.aloudServicePendingIntent(service, "resume")
+                PendingIntentHelp.aloudServicePendingIntent(service, Action.resume)
             )
         } else {
             builder.addAction(
                 R.drawable.ic_pause_24dp,
                 service.getString(R.string.pause),
-                PendingIntentHelp.aloudServicePendingIntent(service, "pause")
+                PendingIntentHelp.aloudServicePendingIntent(service, Action.pause)
             )
         }
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             service.getString(R.string.stop),
-            PendingIntentHelp.aloudServicePendingIntent(service, "stop")
+            PendingIntentHelp.aloudServicePendingIntent(service, Action.stop)
         )
         builder.addAction(
             R.drawable.ic_time_add_24dp,
             service.getString(R.string.set_timer),
-            PendingIntentHelp.aloudServicePendingIntent(service, "setTimer")
+            PendingIntentHelp.aloudServicePendingIntent(service, Action.setTimer)
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
