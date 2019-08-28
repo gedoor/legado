@@ -65,7 +65,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         savedInstanceState?.let {
             changeSourceDialog =
                 supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
-            changeSourceDialog?.callBack = this
         }
         setScreenBrightness(getPrefInt("brightness", 100))
     }
@@ -182,8 +181,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 if (changeSourceDialog == null) {
                     viewModel.bookData.value?.let {
                         changeSourceDialog = ChangeSourceDialog
-                            .newInstance(it.name, it.author, it.origin)
-                        changeSourceDialog?.callBack = this
+                            .newInstance(it.name, it.author)
                     }
                 }
                 changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
@@ -303,6 +301,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun chapterSize(): Int {
         return viewModel.chapterSize
+    }
+
+    override fun curOrigin(): String? {
+        return viewModel.bookData.value?.origin
     }
 
     override fun oldBook(): Book? {

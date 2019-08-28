@@ -50,7 +50,6 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         initOnClick()
         savedInstanceState?.let {
             changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
-            changeSourceDialog?.callBack = this
         }
     }
 
@@ -178,8 +177,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             if (changeSourceDialog == null) {
                 viewModel.bookData.value?.let {
                     changeSourceDialog = ChangeSourceDialog
-                        .newInstance(it.name, it.author, it.origin)
-                    changeSourceDialog?.callBack = this
+                        .newInstance(it.name, it.author)
                 }
             }
             changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
@@ -214,6 +212,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
             }
         }
+    }
+
+    override fun curOrigin(): String? {
+        return viewModel.bookData.value?.origin
     }
 
     override fun oldBook(): Book? {

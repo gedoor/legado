@@ -24,12 +24,11 @@ class ChangeSourceDialog : DialogFragment(),
     companion object {
         const val tag = "changeSourceDialog"
 
-        fun newInstance(name: String, author: String, origin: String): ChangeSourceDialog {
+        fun newInstance(name: String, author: String): ChangeSourceDialog {
             val changeSourceDialog = ChangeSourceDialog()
             val bundle = Bundle()
             bundle.putString("name", name)
             bundle.putString("author", author)
-            bundle.putString("origin", origin)
             changeSourceDialog.arguments = bundle
             return changeSourceDialog
         }
@@ -37,7 +36,6 @@ class ChangeSourceDialog : DialogFragment(),
 
     private lateinit var viewModel: ChangeSourceViewModel
     private lateinit var changeSourceAdapter: ChangeSourceAdapter
-    var callBack: CallBack? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         viewModel = getViewModel(ChangeSourceViewModel::class.java)
@@ -52,9 +50,6 @@ class ChangeSourceDialog : DialogFragment(),
             }
             bundle.getString("author")?.let {
                 viewModel.author = it
-            }
-            bundle.getString("origin")?.let {
-                viewModel.curOrigin = it
             }
         }
         tool_bar.inflateMenu(R.menu.search_view)
@@ -109,9 +104,10 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        callBack?.let {
+        val activity = activity
+        if (activity is CallBack) {
             val book = searchBook.toBook()
-            it.oldBook()?.let { oldBook ->
+            activity.oldBook()?.let { oldBook ->
                 book.durChapterIndex = oldBook.durChapterIndex
                 book.durChapterPos = oldBook.durChapterPos
                 book.durChapterTitle = oldBook.durChapterTitle
@@ -122,13 +118,17 @@ class ChangeSourceDialog : DialogFragment(),
                     book.coverUrl = oldBook.getDisplayCover()
                 }
             }
-            it.changeTo(book)
+            activity.changeTo(book)
         }
         dismiss()
     }
 
     override fun curOrigin(): String {
-        return viewModel.curOrigin
+        val activity = activity
+        if (activity is CallBack) {
+            return activity.curOrigin() ?: ""
+        }
+        return ""
     }
 
     override fun adapter(): ChangeSourceAdapter {
@@ -136,6 +136,7 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     interface CallBack {
+        fun curOrigin(): String?
         fun oldBook(): Book?
         fun changeTo(book: Book)
     }

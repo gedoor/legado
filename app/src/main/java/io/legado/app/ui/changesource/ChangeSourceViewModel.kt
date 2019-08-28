@@ -16,7 +16,6 @@ import org.jetbrains.anko.debug
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     var callBack: CallBack? = null
-    var curOrigin = ""
     var name: String = ""
     var author: String = ""
     var screenKey: String = ""
