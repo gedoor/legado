@@ -35,6 +35,7 @@ class ContentView : FrameLayout {
     )
 
     init {
+        //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
         addView(bgImage, LayoutParams(matchParent, matchParent))
         inflate(context, R.layout.view_book_page, this)
