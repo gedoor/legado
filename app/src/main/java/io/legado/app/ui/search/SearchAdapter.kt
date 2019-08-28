@@ -28,7 +28,7 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
             super.onBindViewHolder(holder, position, payloads)
         } else {
             getItem(position)?.let {
-                holder.bindChange(it, payloads, callBack)
+                holder.bindChange(it, payloads)
             }
         }
     }
@@ -95,7 +95,7 @@ class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(D
             }
         }
 
-        fun bindChange(searchBook: SearchShow, payloads: MutableList<Any>, callBack: CallBack?) =
+        fun bindChange(searchBook: SearchShow, payloads: MutableList<Any>) =
             with(itemView) {
                 when (payloads[0]) {
                     1 -> bv_originCount.setBadgeCount(searchBook.originCount)
