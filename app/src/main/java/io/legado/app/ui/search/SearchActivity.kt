@@ -15,6 +15,8 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.bookinfo.BookInfoActivity
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.invisible
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -50,8 +52,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
                     viewModel.search(it, {
                         content_view.showContentView()
                         initData()
+                        fb_stop.visible()
                     }, {
-
+                        fb_stop.invisible()
                     })
                 }
                 return true
@@ -61,7 +64,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
                 if (newText.isNullOrBlank()) viewModel.stop()
                 return false
             }
-
         })
         fb_stop.onClick { viewModel.stop() }
     }
