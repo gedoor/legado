@@ -125,6 +125,24 @@ class ReadStyleDialog : DialogFragment() {
             seek_text_letter_spacing.progress = (letterSpacing * 10).toInt() + 5
             postEvent(Bus.UP_CONFIG, true)
         }
+        seek_line_size.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                lineSpacingExtra = progress.toFloat()
+                postEvent(Bus.UP_CONFIG, true)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        iv_line_size_add.onClick {
+            lineSpacingExtra++
+            postEvent(Bus.UP_CONFIG, true)
+        }
+        iv_line_size_remove.onClick {
+            lineSpacingExtra--
+            postEvent(Bus.UP_CONFIG, true)
+        }
         rg_page_anim.onCheckedChange { _, checkedId ->
             for (i in 0 until rg_page_anim.childCount) {
                 if (checkedId == rg_page_anim[i].id) {

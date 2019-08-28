@@ -182,7 +182,7 @@
             android:max="50" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_line_size_add"
+            android:id="@+id/iv_line_size_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_add"
