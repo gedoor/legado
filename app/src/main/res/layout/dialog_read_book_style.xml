@@ -11,7 +11,10 @@
         android:id="@+id/tv_text_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:text="@string/text_bold"
         android:gravity="center"
         android:textSize="14sp"
@@ -23,7 +26,10 @@
         android:id="@+id/tv_text_font"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:text="@string/text_font"
         android:gravity="center"
         android:textSize="14sp"
@@ -35,7 +41,10 @@
         android:id="@+id/tv_text_indent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:text="@string/text_indent"
         android:gravity="center"
         android:textSize="14sp"
@@ -47,7 +56,10 @@
         android:id="@+id/tv_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:text="@string/padding"
         android:gravity="center"
         android:textSize="14sp"
@@ -67,9 +79,8 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/text_size" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -109,9 +120,8 @@
         app:layout_constraintTop_toBottomOf="@+id/ll_text_size">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/text_letter_spacing" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -151,9 +161,8 @@
         app:layout_constraintTop_toBottomOf="@+id/ll_text_letter_spacing">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/line_size" />
 
         <androidx.appcompat.widget.AppCompatImageView
