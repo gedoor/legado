@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 import java.util.*
 
-class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
+class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
+    AudioManager.OnAudioFocusChangeListener {
 
     companion object {
         val tag: String = ReadAloudService::class.java.simpleName
@@ -237,7 +238,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         timeMinute = minute
         if (minute > 0) {
             handler.removeCallbacks(dsRunnable)
-            handler.postDelayed(dsRunnable, 6000)
+            handler.postDelayed(dsRunnable, 60000)
         }
         ReadAloudNotification.upNotification(this)
     }
@@ -250,7 +251,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             timeMinute += 10
             if (timeMinute > 60) timeMinute = 60
             handler.removeCallbacks(dsRunnable)
-            handler.postDelayed(dsRunnable, 6000)
+            handler.postDelayed(dsRunnable, 60000)
         }
         postEvent(Bus.TTS_DS, timeMinute)
         ReadAloudNotification.upNotification(this)
@@ -262,7 +263,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             if (timeMinute == 0) {
                 stopSelf()
             } else if (timeMinute > 0) {
-                handler.postDelayed(dsRunnable, 6000)
+                handler.postDelayed(dsRunnable, 60000)
             }
         }
         postEvent(Bus.TTS_DS, timeMinute)
@@ -310,7 +311,8 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT
         )
 
-        mediaSessionCompat = MediaSessionCompat(this, tag, mComponent, mediaButtonReceiverPendingIntent)
+        mediaSessionCompat =
+            MediaSessionCompat(this, tag, mComponent, mediaButtonReceiverPendingIntent)
         mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@ReadAloudService, mediaButtonEvent)
