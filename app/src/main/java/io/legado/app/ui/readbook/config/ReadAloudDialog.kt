@@ -59,6 +59,7 @@ class ReadAloudDialog : DialogFragment() {
         if (activity is ReadBookActivity) {
             upPlayState(activity.readAloudStatus)
         }
+        seek_timer.progress = ReadAloudService.timeMinute
         tv_timer.text = requireContext().getString(R.string.timer_m, ReadAloudService.timeMinute)
         cb_by_page.isChecked = requireContext().getPrefBoolean("readAloudByPage")
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
