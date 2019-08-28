@@ -52,14 +52,14 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         liveData?.removeObservers(viewLifecycleOwner)
         liveData = LivePagedListBuilder(App.db.bookChapterDao().observeByBook(viewModel.bookUrl ?: ""), 30).build()
         liveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
-    }
-
-    private fun initView() {
         viewModel.bookDate.value?.let {
             loadBookFinish(it)
         } ?: viewModel.bookDate.observe(viewLifecycleOwner, Observer {
             loadBookFinish(it)
         })
+    }
+
+    private fun initView() {
         iv_chapter_top.onClick { recycler_view.scrollToPosition(0) }
         iv_chapter_bottom.onClick {
             if (adapter.itemCount > 0) {
