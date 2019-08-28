@@ -20,7 +20,7 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
                 this.onClick { callBack.changeTo(item) }
                 tv_origin.text = item.originName
                 tv_last.text = item.latestChapterTitle
-                if (callBack.curBookUrl() == item.bookUrl) {
+                if (callBack.curOrigin() == item.origin) {
                     iv_checked.visible()
                 } else {
                     iv_checked.invisible()
@@ -34,6 +34,6 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun changeTo(searchBook: SearchBook)
-        fun curBookUrl(): String
+        fun curOrigin(): String
     }
 }

@@ -24,12 +24,12 @@ class ChangeSourceDialog : DialogFragment(),
     companion object {
         const val tag = "changeSourceDialog"
 
-        fun newInstance(name: String, author: String, bookUrl: String? = null): ChangeSourceDialog {
+        fun newInstance(name: String, author: String, origin: String): ChangeSourceDialog {
             val changeSourceDialog = ChangeSourceDialog()
             val bundle = Bundle()
             bundle.putString("name", name)
             bundle.putString("author", author)
-            bundle.putString("bookUrl", bookUrl)
+            bundle.putString("origin", origin)
             changeSourceDialog.arguments = bundle
             return changeSourceDialog
         }
@@ -53,8 +53,8 @@ class ChangeSourceDialog : DialogFragment(),
             bundle.getString("author")?.let {
                 viewModel.author = it
             }
-            bundle.getString("bookUrl")?.let {
-                viewModel.curBookUrl = it
+            bundle.getString("origin")?.let {
+                viewModel.curOrigin = it
             }
         }
         tool_bar.inflateMenu(R.menu.search_view)
@@ -127,8 +127,8 @@ class ChangeSourceDialog : DialogFragment(),
         dismiss()
     }
 
-    override fun curBookUrl(): String {
-        return viewModel.curBookUrl
+    override fun curOrigin(): String {
+        return viewModel.curOrigin
     }
 
     override fun adapter(): ChangeSourceAdapter {
