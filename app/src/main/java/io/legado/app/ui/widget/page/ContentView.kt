@@ -52,7 +52,7 @@ class ContentView : FrameLayout {
             }
             page_panel.setPadding(paddingLeft.dp, pt, paddingRight.dp, paddingBottom.dp)
             content_text_view.textSize = textSize.toFloat()
-            content_text_view.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier)
+            content_text_view.setLineSpacing(lineSpacingExtra.toFloat(), lineSpacingMultiplier)
             content_text_view.letterSpacing = letterSpacing
             content_text_view.paint.isFakeBoldText = textBold
             textColor().let {

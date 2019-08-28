@@ -74,7 +74,7 @@ class ReadStyleDialog : DialogFragment() {
             tv_text_size.text = it.textSize.toString()
             seek_text_letter_spacing.progress = (it.letterSpacing * 10).toInt() + 5
             tv_text_letter_spacing.text = it.letterSpacing.toString()
-            seek_line_size.progress = it.lineSpacingExtra.toInt()
+            seek_line_size.progress = it.lineSpacingExtra
             tv_line_size.text = it.lineSpacingExtra.toString()
         }
         setBg()
@@ -138,7 +138,7 @@ class ReadStyleDialog : DialogFragment() {
         seek_line_size.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                lineSpacingExtra = seek_line_size.progress.toFloat()
+                lineSpacingExtra = seek_line_size.progress
                 tv_line_size.text = lineSpacingExtra.toString()
             }
 
