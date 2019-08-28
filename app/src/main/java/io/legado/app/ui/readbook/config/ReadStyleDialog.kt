@@ -87,11 +87,13 @@ class ReadStyleDialog : DialogFragment() {
         }
         seek_text_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                textSize = progress + 5
-                postEvent(Bus.UP_CONFIG, true)
+
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                textSize = seek_text_size.progress + 5
+                postEvent(Bus.UP_CONFIG, true)
+            }
         })
         iv_text_size_add.onClick {
             textSize++
@@ -108,12 +110,14 @@ class ReadStyleDialog : DialogFragment() {
         seek_text_letter_spacing.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                letterSpacing = (progress - 5) / 10f
-                postEvent(Bus.UP_CONFIG, true)
+
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                letterSpacing = (seek_text_letter_spacing.progress - 5) / 10f
+                postEvent(Bus.UP_CONFIG, true)
+            }
         })
         iv_text_letter_spacing_add.onClick {
             letterSpacing += 0.1f
@@ -128,12 +132,14 @@ class ReadStyleDialog : DialogFragment() {
         seek_line_size.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                lineSpacingExtra = progress.toFloat()
-                postEvent(Bus.UP_CONFIG, true)
+
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                lineSpacingExtra = seek_line_size.progress.toFloat()
+                postEvent(Bus.UP_CONFIG, true)
+            }
         })
         iv_line_size_add.onClick {
             lineSpacingExtra++
