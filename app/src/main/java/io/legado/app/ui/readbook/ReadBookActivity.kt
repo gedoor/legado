@@ -440,7 +440,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         super.observeLiveBus()
         observeEvent<Int>(Bus.ALOUD_STATE) {
             readAloudStatus = it
-            if (it == Status.STOP) {
+            if (it == Status.STOP || it == Status.PAUSE) {
                 viewModel.curTextChapter?.let { textChapter ->
                     val page = textChapter.page(viewModel.durPageIndex)
                     if (page != null && page.text is SpannableStringBuilder) {
