@@ -34,6 +34,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
         val tag: String = ReadAloudService::class.java.simpleName
         var isRun = false
         var textToSpeech: TextToSpeech? = null
+        var timeMinute: Int = 0
 
         fun play(
             context: Context,
@@ -101,6 +102,15 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             }
         }
 
+        fun setTimer(context: Context, minute: Int) {
+            if (isRun) {
+                val intent = Intent(context, ReadAloudService::class.java)
+                intent.action = Action.setTimer
+                intent.putExtra("minute", minute)
+                context.startService(intent)
+            }
+        }
+
         fun clearTTS() {
             textToSpeech?.stop()
             textToSpeech?.shutdown()
@@ -124,7 +134,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
     var pause = false
     var title: String = ""
     var subtitle: String = ""
-    var timeMinute: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -243,6 +252,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
             handler.removeCallbacks(dsRunnable)
             handler.postDelayed(dsRunnable, 6000)
         }
+        postEvent(Bus.TTS_DS, timeMinute)
         ReadAloudNotification.upNotification(this)
     }
 
@@ -255,6 +265,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener, AudioManage
                 handler.postDelayed(dsRunnable, 6000)
             }
         }
+        postEvent(Bus.TTS_DS, timeMinute)
         ReadAloudNotification.upNotification(this)
     }
 

@@ -54,10 +54,12 @@ class ReadAloudDialog : DialogFragment() {
 
     private fun initData() {
         observeEvent<Int>(Bus.ALOUD_STATE) { upPlayState(it) }
+        observeEvent<Int>(Bus.TTS_DS) { seek_timer.progress = it }
         val activity = activity
         if (activity is ReadBookActivity) {
             upPlayState(activity.readAloudStatus)
         }
+        tv_timer.text = requireContext().getString(R.string.timer_m, ReadAloudService.timeMinute)
         cb_by_page.isChecked = requireContext().getPrefBoolean("readAloudByPage")
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
@@ -92,15 +94,14 @@ class ReadAloudDialog : DialogFragment() {
         })
         seek_timer.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-
+                tv_timer.text = requireContext().getString(R.string.timer_m, progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
+                ReadAloudService.setTimer(requireContext(), seek_timer.progress)
             }
         })
     }

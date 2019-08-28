@@ -16,7 +16,10 @@ object ReadAloudNotification {
     fun upNotification(service: ReadAloudService) {
         var nTitle: String = when {
             service.pause -> service.getString(R.string.read_aloud_pause)
-            service.timeMinute in 1..60 -> service.getString(R.string.read_aloud_timer, service.timeMinute)
+            ReadAloudService.timeMinute in 1..60 -> service.getString(
+                R.string.read_aloud_timer,
+                ReadAloudService.timeMinute
+            )
             else -> service.getString(R.string.read_aloud_t)
         }
         nTitle += ": ${service.title}"
