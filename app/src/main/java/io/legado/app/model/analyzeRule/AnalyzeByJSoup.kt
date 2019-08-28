@@ -382,7 +382,8 @@ class AnalyzeByJSoup {
                     }
                 }
             }
-        } catch (ignore: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         return textS
