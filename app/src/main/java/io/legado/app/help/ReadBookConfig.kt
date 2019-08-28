@@ -5,6 +5,9 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import io.legado.app.App
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -60,16 +63,18 @@ object ReadBookConfig {
     }
 
     fun save() {
-        val json = GSON.toJson(configList)
-        val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + fileName)
-        //获取流并存储
-        try {
-            BufferedWriter(FileWriter(configFile)).use { writer ->
-                writer.write(json)
-                writer.flush()
+        GlobalScope.launch(IO) {
+            val json = GSON.toJson(configList)
+            val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + fileName)
+            //获取流并存储
+            try {
+                BufferedWriter(FileWriter(configFile)).use { writer ->
+                    writer.write(json)
+                    writer.flush()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
     }
 

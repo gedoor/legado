@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
@@ -56,18 +57,57 @@ class ReadStyleDialog : DialogFragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        ReadBookConfig.save()
+    }
+
     private fun initData() {
         requireContext().getPrefInt("pageAnim").let {
             if (it >= 0 && it < rg_page_anim.childCount) {
                 rg_page_anim.check(rg_page_anim[it].id)
             }
         }
+        ReadBookConfig.getConfig().let {
+            tv_text_bold.isSelected = it.textBold
+            seek_text_size.progress = it.textSize - 5
+            seek_text_letter_spacing.progress = (it.letterSpacing * 10).toInt() + 5
+            seek_line_size.progress = it.lineSpacingExtra.toInt()
+        }
         setBg()
         upBg()
     }
 
 
-    private fun initOnClick() {
+    private fun initOnClick() = with(ReadBookConfig.getConfig()) {
+        tv_text_bold.onClick {
+            textBold = !textBold
+            tv_text_bold.isSelected = textBold
+            postEvent(Bus.UP_CONFIG, true)
+        }
+        seek_text_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                textSize = progress + 5
+                postEvent(Bus.UP_CONFIG, true)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+        })
+        iv_text_size_add.onClick {
+            textSize++
+            if (textSize > 50) textSize = 50
+            postEvent(Bus.UP_CONFIG, true)
+        }
+        iv_line_size_remove.onClick {
+            textSize--
+            if (textSize < 5) textSize = 5
+            postEvent(Bus.UP_CONFIG, true)
+        }
         rg_page_anim.onCheckedChange { _, checkedId ->
             for (i in 0 until rg_page_anim.childCount) {
                 if (checkedId == rg_page_anim[i].id) {

@@ -97,7 +97,7 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
-            android:max="50" />
+            android:max="45" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_text_size_remove"
@@ -138,7 +138,7 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
-            android:max="50" />
+            android:max="10" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_text_letter_spacing_remove"
