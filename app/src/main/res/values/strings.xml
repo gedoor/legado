@@ -241,14 +241,14 @@
     <string name="search_book_source_num">搜索(共%d个书源)</string>
     <string name="chapter_list_size">目录(%d)</string>
     <string name="text_bold">加粗</string>
-    <string name="custom_font">字体</string>
+    <string name="text_font">字体</string>
     <string name="text">文字</string>
     <string name="home_page">软件主页</string>
     <string name="right">右</string>
     <string name="left">左</string>
     <string name="bottom">下</string>
     <string name="top">上</string>
-    <string name="padding">边距:</string>
+    <string name="padding">边距</string>
     <string name="padding_top">上边距</string>
     <string name="padding_bottom">下边距</string>
     <string name="padding_left">左边距</string>
@@ -433,7 +433,7 @@
     <string name="chapter_s">章节:</string>
     <string name="to">至</string>
     <string name="use_regex">使用正则表达式</string>
-    <string name="indent">缩进</string>
+    <string name="text_indent">缩进</string>
     <string name="indent_0">无缩进</string>
     <string name="indent_1">一字符缩进</string>
     <string name="indent_2">二字符缩进</string>

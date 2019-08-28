@@ -7,15 +7,64 @@
     android:background="@color/background"
     android:padding="10dp">
 
+    <io.legado.app.lib.theme.view.ATEStrokeTextView
+        android:id="@+id/tv_text_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:text="@string/text_bold"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/tv_text_font"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.legado.app.lib.theme.view.ATEStrokeTextView
+        android:id="@+id/tv_text_font"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:text="@string/text_font"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@+id/tv_text_bold"
+        app:layout_constraintRight_toLeftOf="@+id/tv_text_indent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.legado.app.lib.theme.view.ATEStrokeTextView
+        android:id="@+id/tv_text_indent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:text="@string/text_indent"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@+id/tv_text_font"
+        app:layout_constraintRight_toLeftOf="@+id/tv_padding"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.legado.app.lib.theme.view.ATEStrokeTextView
+        android:id="@+id/tv_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:text="@string/padding"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@+id/tv_text_indent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/ll_text_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
 
         <TextView
             android:layout_width="0dp"
@@ -49,12 +98,96 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_text_letter_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/ll_text_size">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_letter_spacing" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_text_letter_spacing_add"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_add"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:tint="@color/tv_text_default" />
+
+        <io.legado.app.lib.theme.view.ATESeekBar
+            android:id="@+id/seek_text_letter_spacing"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="4"
+            android:max="50" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_text_letter_spacing_remove"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_remove"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:tint="@color/tv_text_default" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_line_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/ll_text_letter_spacing">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/line_size" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_text_line_size_add"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_add"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:tint="@color/tv_text_default" />
+
+        <io.legado.app.lib.theme.view.ATESeekBar
+            android:id="@+id/seek_line_size"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="4"
+            android:max="50" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_line_size_remove"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_remove"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:tint="@color/tv_text_default" />
+
+    </LinearLayout>
+
     <View
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
         android:background="@color/btn_bg_press"
-        app:layout_constraintTop_toBottomOf="@+id/ll_text_size" />
+        app:layout_constraintTop_toBottomOf="@+id/ll_line_size" />
 
     <TextView
         android:id="@+id/tv_page_anim"
