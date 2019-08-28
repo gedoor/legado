@@ -107,6 +107,10 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 
+        <TextView
+            android:id="@+id/tv_text_size"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
@@ -147,6 +151,11 @@
             android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
+
+        <TextView
+            android:id="@+id/tv_text_letter_spacing"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -189,6 +198,10 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tint="@color/tv_text_default" />
 
+        <TextView
+            android:id="@+id/tv_line_size"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <View
