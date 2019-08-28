@@ -35,11 +35,13 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     .timeout(30000L)
                     .onSuccess(Dispatchers.IO) {
                         it?.let { list ->
-                            App.db.searchBookDao().insert(*list.toTypedArray())
+                            list.map { searchBook ->
+                                if (searchBook.name.contains(key) || searchBook.author.contains(key))
+                                    App.db.searchBookDao().insert(searchBook)
+                            }
                         }
                     }
             }
-
         }.onError {
             it.printStackTrace()
         }
