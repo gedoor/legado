@@ -60,6 +60,7 @@
         <activity android:name=".ui.booksource.BookSourceActivity" />
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
         <activity android:name=".ui.readrss.ReadRssActivity" />
+        <activity android:name=".ui.audio.AudioPlayActivity" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
