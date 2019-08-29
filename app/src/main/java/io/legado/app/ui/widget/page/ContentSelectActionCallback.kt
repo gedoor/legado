@@ -5,13 +5,16 @@ import android.view.Menu
 import android.view.MenuItem
 
 import io.legado.app.R
+import io.legado.app.constant.Bus
+import io.legado.app.utils.postEvent
 
-object ContentSelectActionCallback : ActionMode.Callback {
+class ContentSelectActionCallback(private val textView: ContentTextView) : ActionMode.Callback {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_replace -> {
-
+                val text = textView.text.substring(textView.selectionStart, textView.selectionEnd)
+                postEvent(Bus.REPLACE, text)
                 mode?.finish()
                 return true
             }

@@ -498,6 +498,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 viewModel.saveRead()
             }
         }
+        observeEvent<String>(Bus.REPLACE) {
+            toast(it)
+        }
     }
 
 }

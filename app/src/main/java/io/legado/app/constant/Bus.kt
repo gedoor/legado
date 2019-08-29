@@ -12,4 +12,5 @@ object Bus {
     const val READ_ALOUD_BUTTON = "readAloudButton"
     const val UP_CONFIG = "upConfig"
     const val OPEN_CHAPTER = "openChapter"
+    const val REPLACE = "replace"
 }
