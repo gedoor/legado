@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="8dp"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_padding_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
 
         <TextView
@@ -26,8 +27,8 @@
             android:id="@+id/iv_padding_top_remove"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_remove"
             android:tint="@color/tv_text_default" />
 
         <io.legado.app.lib.theme.view.ATESeekBar
@@ -36,14 +37,14 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
-            android:max="45" />
+            android:max="100" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_padding_top_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add"
             android:tint="@color/tv_text_default" />
 
         <TextView
@@ -52,6 +53,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             tools:ignore="RtlHardcoded" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -59,10 +61,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
 
         <TextView
@@ -74,8 +76,8 @@
             android:id="@+id/iv_padding_bottom_remove"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_remove"
             android:tint="@color/tv_text_default" />
 
         <io.legado.app.lib.theme.view.ATESeekBar
@@ -84,14 +86,14 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
-            android:max="45" />
+            android:max="100" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_padding_bottom_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add"
             android:tint="@color/tv_text_default" />
 
         <TextView
@@ -100,6 +102,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             tools:ignore="RtlHardcoded" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -107,10 +110,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
 
         <TextView
@@ -122,8 +125,8 @@
             android:id="@+id/iv_padding_left_remove"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_remove"
             android:tint="@color/tv_text_default" />
 
         <io.legado.app.lib.theme.view.ATESeekBar
@@ -132,14 +135,14 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
-            android:max="45" />
+            android:max="100" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_padding_left_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add"
             android:tint="@color/tv_text_default" />
 
         <TextView
@@ -148,6 +151,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             tools:ignore="RtlHardcoded" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -155,10 +159,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
 
         <TextView
@@ -170,8 +174,8 @@
             android:id="@+id/iv_padding_right_remove"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_remove"
             android:tint="@color/tv_text_default" />
 
         <io.legado.app.lib.theme.view.ATESeekBar
@@ -180,14 +184,14 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
-            android:max="45" />
+            android:max="100" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_padding_right_add"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_add"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add"
             android:tint="@color/tv_text_default" />
 
         <TextView
@@ -196,6 +200,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             tools:ignore="RtlHardcoded" />
+
     </LinearLayout>
 
 </LinearLayout>

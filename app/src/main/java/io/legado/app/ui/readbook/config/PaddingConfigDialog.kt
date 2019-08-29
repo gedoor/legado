@@ -5,9 +5,14 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.constant.Bus
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.readbook.Help
+import io.legado.app.utils.postEvent
+import kotlinx.android.synthetic.main.dialog_read_padding.*
 
 class PaddingConfigDialog : DialogFragment() {
 
@@ -40,12 +45,74 @@ class PaddingConfigDialog : DialogFragment() {
         initView()
     }
 
-    private fun initData() {
-
+    private fun initData() = with(ReadBookConfig.getConfig()) {
+        seek_padding_top.progress = paddingTop
+        seek_padding_bottom.progress = paddingBottom
+        seek_padding_left.progress = paddingLeft
+        seek_padding_right.progress = paddingRight
+        tv_padding_top.text = paddingTop.toString()
+        tv_padding_bottom.text = paddingBottom.toString()
+        tv_padding_left.text = paddingLeft.toString()
+        tv_padding_right.text = paddingRight.toString()
     }
 
-    private fun initView() {
+    private fun initView() = with(ReadBookConfig.getConfig()) {
+        seek_padding_top.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                paddingTop = progress
+                tv_padding_top.text = paddingTop.toString()
+            }
 
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                postEvent(Bus.UP_CONFIG, true)
+            }
+        })
+        seek_padding_bottom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                paddingBottom = progress
+                tv_padding_bottom.text = paddingBottom.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                postEvent(Bus.UP_CONFIG, true)
+            }
+        })
+        seek_padding_left.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                paddingLeft = progress
+                tv_padding_left.text = paddingLeft.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                postEvent(Bus.UP_CONFIG, true)
+            }
+        })
+        seek_padding_right.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                paddingRight = progress
+                tv_padding_right.text = paddingRight.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                postEvent(Bus.UP_CONFIG, true)
+            }
+        })
     }
 
 }

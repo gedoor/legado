@@ -87,6 +87,13 @@ class ReadStyleDialog : DialogFragment() {
             tv_text_bold.isSelected = textBold
             postEvent(Bus.UP_CONFIG, false)
         }
+        tv_padding.onClick {
+            val activity = activity
+            dismiss()
+            if (activity is ReadBookActivity) {
+                activity.showPaddingConfig()
+            }
+        }
         seek_text_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 textSize = progress + 5
