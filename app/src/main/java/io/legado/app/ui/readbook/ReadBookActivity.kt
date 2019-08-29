@@ -90,11 +90,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         Help.upSystemUiVisibility(window, !read_menu.isVisible)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.saveRead()
-    }
-
     /**
      * 初始化View
      */
@@ -244,6 +239,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             viewModel.loadContent(it, viewModel.durChapterIndex)
             viewModel.loadContent(it, viewModel.durChapterIndex + 1)
             viewModel.loadContent(it, viewModel.durChapterIndex - 1)
+            viewModel.saveRead()
         }
     }
 
