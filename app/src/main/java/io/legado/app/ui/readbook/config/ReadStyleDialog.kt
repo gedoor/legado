@@ -91,9 +91,11 @@ class ReadStyleDialog : DialogFragment() {
                 curPath = requireContext().getPrefString("readBookFont")
                 defaultFont = {
                     requireContext().putPrefString("readBookFont", "")
+                    postEvent(Bus.UP_CONFIG, true)
                 }
                 selectFile = {
                     requireContext().putPrefString("readBookFont", it)
+                    postEvent(Bus.UP_CONFIG, true)
                 }
             }.show()
         }
