@@ -50,7 +50,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
-                delay(100)
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(name, scope = this@execute)
                     .timeout(30000L)
@@ -68,6 +67,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                             }
                         }
                     }
+                delay(100)
             }
         }
     }

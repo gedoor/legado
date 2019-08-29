@@ -9,6 +9,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.model.WebBook
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
 
@@ -48,6 +49,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         }
                     }
                 }
+                delay(50)
             }
         }
     }

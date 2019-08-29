@@ -29,7 +29,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             //onCleared时自动取消
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
-                delay(100)//每隔100毫秒搜索一个书源
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(key, searchPage, scope = this@execute)
                     .timeout(30000L)
@@ -41,6 +40,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                             }
                         }
                     }
+                delay(100)//每隔100毫秒搜索一个书源
             }
         }.onError {
             it.printStackTrace()
