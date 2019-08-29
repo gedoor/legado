@@ -239,7 +239,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             viewModel.loadContent(it, viewModel.durChapterIndex)
             viewModel.loadContent(it, viewModel.durChapterIndex + 1)
             viewModel.loadContent(it, viewModel.durChapterIndex - 1)
-            viewModel.saveRead()
         }
     }
 
