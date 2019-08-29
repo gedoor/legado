@@ -47,12 +47,13 @@ class ContentView : FrameLayout {
         ReadBookConfig.getConfig().apply {
             val pt = if (context.getPrefBoolean("hideStatusBar", false)) {
                 top_bar.visible()
-                paddingTop.dp
+                0
             } else {
                 top_bar.gone()
-                paddingTop.dp + context.getStatusBarHeight()
+                context.getStatusBarHeight()
             }
-            page_panel.setPadding(paddingLeft.dp, pt, paddingRight.dp, paddingBottom.dp)
+            page_panel.setPadding(paddingLeft.dp, pt, paddingRight.dp, 0)
+            content_text_view.setPadding(0, paddingTop.dp, 0, paddingBottom.dp)
             content_text_view.textSize = textSize.toFloat()
             content_text_view.setLineSpacing(lineSpacingExtra.toFloat(), lineSpacingMultiplier)
             content_text_view.letterSpacing = letterSpacing
