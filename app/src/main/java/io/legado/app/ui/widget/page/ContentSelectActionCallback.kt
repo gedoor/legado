@@ -11,6 +11,9 @@ object ContentSelectActionCallback : ActionMode.Callback {
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_replace -> {
+
+                mode?.finish()
+                return true
             }
         }
         return false
