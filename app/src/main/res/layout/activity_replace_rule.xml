@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/replace" />
+        app:title="@string/replace_purify" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_replace_rule"
