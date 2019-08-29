@@ -42,6 +42,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 App.db.bookDao().lastReadBook
             }
+            saveRead(book)
             book?.let {
                 durChapterIndex = book.durChapterIndex
                 durPageIndex = book.durChapterPos
@@ -235,9 +236,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         chapterListFinish.postValue(true)
     }
 
-    fun saveRead() {
+    fun saveRead(book: Book? = bookData.value) {
         execute {
-            bookData.value?.let { book ->
+            book?.let { book ->
                 book.lastCheckCount = 0
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
