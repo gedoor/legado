@@ -43,7 +43,8 @@
             android:id="@+id/tv_bottom_left"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/tv_bottom_right"
