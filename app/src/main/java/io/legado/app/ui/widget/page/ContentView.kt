@@ -2,6 +2,7 @@ package io.legado.app.ui.widget.page
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
@@ -64,6 +65,13 @@ class ContentView : FrameLayout {
                 tv_top_right.setTextColor(it)
                 tv_bottom_left.setTextColor(it)
                 tv_bottom_right.setTextColor(it)
+            }
+        }
+        context.getPrefString("readBookFont")?.let {
+            if (it.isNotEmpty()) {
+                content_text_view.typeface = Typeface.createFromFile(it)
+            } else {
+                content_text_view.typeface = Typeface.DEFAULT
             }
         }
     }
