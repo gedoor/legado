@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.readbook.Help
@@ -99,6 +100,15 @@ class ReadStyleDialog : DialogFragment() {
                 }
             }.show()
         }
+        tv_text_indent.onClick {
+            selector(
+                title = getString(R.string.text_indent),
+                items = resources.getStringArray(R.array.indent).toList()
+            ) { _, index ->
+                putPrefInt("textIndent", index)
+                postEvent(Bus.UP_CONFIG, true)
+            }
+        }
         tv_padding.onClick {
             val activity = activity
             dismiss()
@@ -111,6 +121,7 @@ class ReadStyleDialog : DialogFragment() {
                 textSize = progress + 5
                 tv_text_size.text = textSize.toString()
             }
+
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)
@@ -236,11 +247,7 @@ class ReadStyleDialog : DialogFragment() {
             }
             ReadBookConfig.getConfig(i).apply {
                 when (bgType()) {
-                    2 -> {
-                        ImageLoader.load(requireContext(), bgStr())
-                            .centerCrop()
-                            .setAsFile(iv)
-                    }
+                    2 -> ImageLoader.load(requireContext(), bgStr()).centerCrop().setAsFile(iv)
                     else -> iv.setImageDrawable(bgDrawable())
                 }
             }
@@ -254,21 +261,11 @@ class ReadStyleDialog : DialogFragment() {
         bg3.borderColor = requireContext().primaryColor
         bg4.borderColor = requireContext().primaryColor
         when (ReadBookConfig.styleSelect) {
-            1 -> {
-                bg1.borderColor = requireContext().accentColor
-            }
-            2 -> {
-                bg2.borderColor = requireContext().accentColor
-            }
-            3 -> {
-                bg3.borderColor = requireContext().accentColor
-            }
-            4 -> {
-                bg4.borderColor = requireContext().accentColor
-            }
-            else -> {
-                bg0.borderColor = requireContext().accentColor
-            }
+            1 -> bg1.borderColor = requireContext().accentColor
+            2 -> bg2.borderColor = requireContext().accentColor
+            3 -> bg3.borderColor = requireContext().accentColor
+            4 -> bg4.borderColor = requireContext().accentColor
+            else -> bg0.borderColor = requireContext().accentColor
         }
     }
 }
