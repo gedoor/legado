@@ -40,6 +40,7 @@ class ContentView : FrameLayout {
         setBackgroundColor(context.getCompatColor(R.color.background))
         addView(bgImage, LayoutParams(matchParent, matchParent))
         inflate(context, R.layout.view_book_page, this)
+        top_bar.layoutParams.height = context.getStatusBarHeight()
         upStyle()
         upTime()
         content_text_view.customSelectionActionModeCallback =
