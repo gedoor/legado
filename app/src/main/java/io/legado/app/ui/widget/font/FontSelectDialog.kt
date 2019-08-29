@@ -71,8 +71,12 @@ class FontSelectDialog(context: Context) : FontAdapter.CallBack {
     }
 
     override fun onClick(file: File) {
-        selectFile?.invoke(file.absolutePath)
-        dialog?.dismiss()
+        file.absolutePath.let {
+            if (it != curPath) {
+                selectFile?.invoke(it)
+                dialog?.dismiss()
+            }
+        }
     }
 
     override fun curFilePath(): String {
