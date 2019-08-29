@@ -46,7 +46,7 @@ class FontSelectDialog(context: Context) : FontAdapter.CallBack {
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.adapter = adapter
         val files = getFontFiles()
-        if (files == null) {
+        if (files.isNullOrEmpty()) {
             tv_no_data.visible()
         } else {
             tv_no_data.invisible()
