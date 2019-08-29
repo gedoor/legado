@@ -1,12 +1,12 @@
 package io.legado.app.service
 
-import android.app.Service
-import android.content.Intent
-import android.os.IBinder
+import io.legado.app.base.BaseService
 
-class WebService : Service() {
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+class WebService : BaseService() {
+
+
+    override fun onCreate() {
+        super.onCreate()
     }
 
 }
