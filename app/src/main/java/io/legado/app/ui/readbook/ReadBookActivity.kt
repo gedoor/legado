@@ -464,7 +464,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             if (it) {
                 onClickReadAloud()
             } else {
-                readAloud()
+                readAloud(readAloudStatus == Status.PLAY)
             }
         }
         observeEvent<Boolean>(Bus.UP_CONFIG) {
