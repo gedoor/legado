@@ -34,7 +34,7 @@
         app:iconSpaceReserved="false">
 
         <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/colorPrimary"
+            android:defaultValue="@color/md_light_blue_600"
             android:key="colorPrimary"
             android:summary="白天，主色调"
             android:title="主色调"
@@ -42,7 +42,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/colorAccent"
+            android:defaultValue="@color/md_pink_800"
             android:key="colorAccent"
             android:summary="白天，强调色"
             android:title="强调色"
@@ -64,7 +64,7 @@
         app:iconSpaceReserved="false">
 
         <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/colorPrimary"
+            android:defaultValue="@color/md_blue_grey_600"
             android:key="colorPrimaryNight"
             android:summary="夜间，主色调"
             android:title="主色调"
@@ -72,7 +72,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/colorAccent"
+            android:defaultValue="@color/md_deep_orange_800"
             android:key="colorAccentNight"
             android:summary="夜间，强调色"
             android:title="强调色"
