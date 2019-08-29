@@ -42,6 +42,7 @@ class ContentView : FrameLayout {
         inflate(context, R.layout.view_book_page, this)
         upStyle()
         upTime()
+        content_text_view.customSelectionActionModeCallback = ContentSelectActionCallback
     }
 
     fun upStyle() {
