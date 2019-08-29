@@ -21,6 +21,7 @@ class FontSelectDialog(context: Context) : FontAdapter.CallBack {
         Environment.getExternalStorageDirectory().absolutePath + File.separator + "Fonts"
     private lateinit var adapter: FontAdapter
     private var builder: AlertBuilder<DialogInterface>
+    private var dialog: DialogInterface? = null
     @SuppressLint("InflateParams")
     private var view: View = LayoutInflater.from(context).inflate(R.layout.dialog_font_select, null)
     var curPath: String? = null
@@ -38,7 +39,7 @@ class FontSelectDialog(context: Context) : FontAdapter.CallBack {
     }
 
     fun show() {
-        builder.show()
+        dialog = builder.show()
     }
 
     private fun initData() = with(view) {
@@ -71,6 +72,7 @@ class FontSelectDialog(context: Context) : FontAdapter.CallBack {
 
     override fun onClick(file: File) {
         selectFile?.invoke(file.absolutePath)
+        dialog?.dismiss()
     }
 
     override fun curFilePath(): String {
