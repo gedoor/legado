@@ -206,11 +206,19 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     private fun newReadAloud(dataKey: String?, play: Boolean) {
         dataKey?.let {
             textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
-            textChapter?.let {
+            textChapter?.let { textChapter ->
                 nowSpeak = 0
-                readAloudNumber = it.getReadLength(pageIndex)
+                readAloudNumber = textChapter.getReadLength(pageIndex)
                 contentList.clear()
-                contentList.addAll(it.getUnRead(pageIndex).split("\n"))
+                if (getPrefBoolean("readAloudByPage")) {
+                    for (index in pageIndex..textChapter.lastIndex()) {
+                        textChapter.page(index)?.text?.split("\n")?.let {
+                            contentList.addAll(it)
+                        }
+                    }
+                } else {
+                    contentList.addAll(textChapter.getUnRead(pageIndex).split("\n"))
+                }
                 if (play) playTTS()
             } ?: stopSelf()
         } ?: stopSelf()

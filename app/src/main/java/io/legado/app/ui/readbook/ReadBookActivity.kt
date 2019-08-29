@@ -460,7 +460,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             viewModel.openChapter(it)
             page_view.upContent()
         }
-        observeEvent<Boolean>(Bus.READ_ALOUD_BUTTON) { onClickReadAloud() }
+        observeEvent<Boolean>(Bus.READ_ALOUD_BUTTON) {
+            if (it) {
+                onClickReadAloud()
+            } else {
+                readAloud()
+            }
+        }
         observeEvent<Boolean>(Bus.UP_CONFIG) {
             Help.upSystemUiVisibility(window, !read_menu.isVisible)
             page_view.upBg()

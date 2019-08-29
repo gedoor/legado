@@ -71,6 +71,7 @@ class ReadAloudDialog : DialogFragment() {
         cb_by_page.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
                 requireContext().putPrefBoolean("readAloudByPage", isChecked)
+                postEvent(Bus.READ_ALOUD_BUTTON, false)
             }
         }
         cb_tts_follow_sys.setOnCheckedChangeListener { buttonView, isChecked ->
