@@ -53,8 +53,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             isLoadingData.postValue(true)
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                 WebBook(bookSource).getBookInfo(book, this)
-                    .onSuccess {
-                        it?.let { loadChapter(it) }
+                    .onSuccess(IO) {
+                        it?.let {
+                            if (inBookshelf) {
+                                App.db.bookDao().update(book)
+                            }
+                            loadChapter(it)
+                        }
                     }.onError {
                         toast(R.string.error_get_book_info)
                     }
@@ -62,7 +67,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun loadChapter(book: Book) {
+    private fun loadChapter(book: Book) {
         execute {
             isLoadingData.postValue(true)
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
@@ -71,6 +76,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                         it?.let {
                             if (it.isNotEmpty()) {
                                 if (inBookshelf) {
+                                    App.db.bookDao().update(book)
                                     App.db.bookChapterDao().insert(*it.toTypedArray())
                                 }
                                 chapterListData.postValue(it)
