@@ -24,5 +24,3 @@ data class ReplaceRule(
     @ColumnInfo(name = "sortOrder")
     var order: Int = 0
 ) : Parcelable
-
-

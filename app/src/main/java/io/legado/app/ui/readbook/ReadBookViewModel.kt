@@ -197,8 +197,16 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
-        if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
-            callBack?.contentLoadFinish(chapter, content)
+        execute {
+            if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
+                val c = BookHelp.disposeContent(
+                    bookData.value?.name ?: "",
+                    webBook?.bookSource?.bookSourceUrl,
+                    content,
+                    bookData.value?.useReplaceRule ?: true
+                )
+                callBack?.contentLoadFinish(chapter, c)
+            }
         }
     }
 

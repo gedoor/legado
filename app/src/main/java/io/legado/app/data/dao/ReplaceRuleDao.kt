@@ -30,8 +30,17 @@ interface ReplaceRuleDao {
     @Query("SELECT * FROM replace_rules WHERE id in (:ids)")
     fun findByIds(vararg ids: Int): List<ReplaceRule>
 
-    @Query("SELECT * FROM replace_rules WHERE isEnabled = 1 AND scope LIKE '%' || :scope || '%'")
+    @Query(
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 
+        AND (scope LIKE '%' || :scope || '%' or scope = null or scope = '')"""
+    )
     fun findEnabledByScope(scope: String): List<ReplaceRule>
+
+    @Query(
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 
+        AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope = null or scope = '')"""
+    )
+    fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
 
     @get:Query("SELECT COUNT(*) - SUM(isEnabled) FROM replace_rules")
     val summary: Int

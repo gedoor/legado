@@ -3,6 +3,8 @@ package io.legado.app.help
 import io.legado.app.App
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import java.io.BufferedWriter
 import java.io.File
@@ -11,10 +13,12 @@ import java.io.IOException
 
 object BookHelp {
 
-    private var downloadPath = App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
+    private var downloadPath =
+        App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
 
     fun upDownloadPath() {
-        downloadPath = App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
+        downloadPath =
+            App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
     }
 
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
@@ -69,7 +73,8 @@ object BookHelp {
 
     private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
         val bookFolder = formatFolderName(book.name + book.bookUrl)
-        val chapterFile = String.format("%05d-%s", bookChapter.index, formatFolderName(bookChapter.title))
+        val chapterFile =
+            String.format("%05d-%s", bookChapter.index, formatFolderName(bookChapter.title))
         return "$downloadPath${File.separator}book_cache${File.separator}$bookFolder${File.separator}$chapterFile.nb"
     }
 
@@ -87,5 +92,36 @@ object BookHelp {
 
     fun getDurChapterIndexByChapterName() {
 
+    }
+
+    var bookName: String? = null
+    var bookOrigin: String? = null
+    var replaceRules: List<ReplaceRule> = arrayListOf()
+
+    fun disposeContent(name: String, origin: String?, content: String, enableReplace: Boolean)
+            : String {
+        var c = content
+        synchronized(this) {
+            if (enableReplace && (bookName != name || bookOrigin != origin)) {
+                replaceRules = if (origin.isNullOrEmpty()) {
+                    App.db.replaceRuleDao().findEnabledByScope(name)
+                } else {
+                    App.db.replaceRuleDao().findEnabledByScope(name, origin)
+                }
+            }
+        }
+        for (item in replaceRules) {
+            item.pattern?.let {
+                if (it.isNotEmpty()) {
+                    c = if (item.isRegex) {
+                        c.replace(it.toRegex(), item.replacement ?: "")
+                    } else {
+                        c.replace(it, item.replacement ?: "")
+                    }
+                }
+            }
+        }
+        val indent = App.INSTANCE.getPrefInt("textIndent", 2)
+        return c.replace("\\s*\\n+\\s*".toRegex(), "\n" + "　".repeat(indent))
     }
 }
