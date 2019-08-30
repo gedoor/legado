@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.ui.readbook.Help
 
-class BgTextConfigDiolog : DialogFragment() {
+class BgTextConfigDialog : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,

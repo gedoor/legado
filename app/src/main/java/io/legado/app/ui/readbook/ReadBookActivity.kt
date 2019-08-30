@@ -177,7 +177,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     fun showBgTextConfig() {
-        BgTextConfigDiolog().show(supportFragmentManager, "bgTextConfig")
+        BgTextConfigDialog().show(supportFragmentManager, "bgTextConfig")
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
