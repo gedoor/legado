@@ -13,6 +13,7 @@ import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
@@ -20,6 +21,7 @@ import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -28,6 +30,8 @@ import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.readbook.config.*
+import io.legado.app.ui.readbook.config.BgTextConfigDialog.Companion.BG_COLOR
+import io.legado.app.ui.readbook.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.ui.widget.page.ChapterProvider
@@ -42,6 +46,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.toHexString
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
@@ -50,7 +55,8 @@ import org.jetbrains.anko.toast
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
     PageView.CallBack,
     ChangeSourceDialog.CallBack,
-    ReadBookViewModel.CallBack {
+    ReadBookViewModel.CallBack,
+    ColorPickerDialogListener {
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
@@ -428,6 +434,23 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         val params = window.attributes
         params.screenBrightness = brightness
         window.attributes = params
+    }
+
+    override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.getConfig()) {
+        when (dialogId) {
+            TEXT_COLOR -> {
+                setTextColor(color)
+                postEvent(Bus.UP_CONFIG, false)
+            }
+            BG_COLOR -> {
+                setBg(0, "#${color.toHexString()}")
+                postEvent(Bus.UP_CONFIG, false)
+            }
+        }
+    }
+
+    override fun onDialogDismissed(dialogId: Int) {
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

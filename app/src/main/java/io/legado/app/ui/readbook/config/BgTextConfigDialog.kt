@@ -9,20 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.R
-import io.legado.app.constant.Bus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.readbook.Help
-import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
-import okhttp3.internal.toHexString
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class BgTextConfigDialog : DialogFragment(), ColorPickerDialogListener {
+class BgTextConfigDialog : DialogFragment() {
 
-    val selectTextColor = 121
-    val selectBgColor = 122
+    companion object {
+        const val TEXT_COLOR = 121
+        const val BG_COLOR = 122
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +62,7 @@ class BgTextConfigDialog : DialogFragment(), ColorPickerDialogListener {
                 .setColor(textColor())
                 .setShowAlphaSlider(false)
                 .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
-                .setDialogId(selectTextColor)
+                .setDialogId(TEXT_COLOR)
                 .show(requireActivity())
         }
         tv_bg_color.onClick {
@@ -75,7 +73,7 @@ class BgTextConfigDialog : DialogFragment(), ColorPickerDialogListener {
                 .setColor(bgColor)
                 .setShowAlphaSlider(false)
                 .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
-                .setDialogId(selectTextColor)
+                .setDialogId(TEXT_COLOR)
                 .show(requireActivity())
         }
         tv_default.onClick {
@@ -83,20 +81,5 @@ class BgTextConfigDialog : DialogFragment(), ColorPickerDialogListener {
         }
     }
 
-    override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.getConfig()) {
-        when (dialogId) {
-            selectTextColor -> {
-                setTextColor(color)
-                postEvent(Bus.UP_CONFIG, false)
-            }
-            selectBgColor -> {
-                setBg(0, "#${color.toHexString()}")
-                postEvent(Bus.UP_CONFIG, false)
-            }
-        }
-    }
 
-    override fun onDialogDismissed(dialogId: Int) {
-
-    }
 }
