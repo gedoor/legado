@@ -13,17 +13,15 @@ import io.legado.app.lib.theme.ThemeStore
  */
 class ATEProgressBar : ProgressBar {
 
-    constructor(context: Context) : super(context) {
-        init(context, null)
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context, attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context, attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(
@@ -31,11 +29,9 @@ class ATEProgressBar : ProgressBar {
         attrs,
         defStyleAttr,
         defStyleRes
-    ) {
-        init(context, attrs)
-    }
+    )
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    init {
         ATH.setTint(this, ThemeStore.accentColor(context))
     }
 }

@@ -10,19 +10,17 @@ import io.legado.app.lib.theme.ThemeStore
  */
 class ATEPrimaryTextView : AppCompatTextView {
 
-    constructor(context: Context) : super(context) {
-        init(context)
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    private fun init(context: Context) {
+    init {
         setTextColor(ThemeStore.textColorPrimary(context))
     }
 }

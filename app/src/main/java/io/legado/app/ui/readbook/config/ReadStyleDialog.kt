@@ -213,10 +213,12 @@ class ReadStyleDialog : DialogFragment() {
     }
 
     private fun changeBg(index: Int) {
-        ReadBookConfig.styleSelect = index
-        ReadBookConfig.upBg()
-        upBg()
-        postEvent(Bus.UP_CONFIG, true)
+        if (ReadBookConfig.styleSelect != index) {
+            ReadBookConfig.styleSelect = index
+            ReadBookConfig.upBg()
+            upBg()
+            postEvent(Bus.UP_CONFIG, true)
+        }
     }
 
     private fun showBgTextConfig(index: Int): Boolean {

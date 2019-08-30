@@ -9,19 +9,17 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dp
 
 class ATEStrokeTextView : AppCompatTextView {
-    constructor(context: Context) : super(context) {
-        init(context, null)
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context, attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context, attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    init {
         background = Selector.shapeBuild()
             .setCornerRadius(1.dp)
             .setStrokeWidth(1.dp)

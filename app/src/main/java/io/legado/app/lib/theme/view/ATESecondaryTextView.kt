@@ -3,26 +3,24 @@ package io.legado.app.lib.theme.view
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.secondaryTextColor
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 class ATESecondaryTextView : AppCompatTextView {
 
-    constructor(context: Context) : super(context) {
-        init(context)
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    private fun init(context: Context) {
-        setTextColor(ThemeStore.textColorSecondary(context))
+    init {
+        setTextColor(context.secondaryTextColor)
     }
 }

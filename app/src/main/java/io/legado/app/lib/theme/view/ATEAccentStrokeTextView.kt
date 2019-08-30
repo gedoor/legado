@@ -7,33 +7,31 @@ import io.legado.app.R
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dp
+import io.legado.app.utils.getCompatColor
 
 class ATEAccentStrokeTextView : AppCompatTextView {
-    constructor(context: Context) : super(context) {
-        init(context)
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context)
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    @Suppress("DEPRECATION")
-    private fun init(context: Context) {
+    init {
         background = Selector.shapeBuild()
             .setCornerRadius(3.dp)
             .setStrokeWidth(1.dp)
-            .setDisabledStrokeColor(context.resources.getColor(R.color.md_grey_500))
+            .setDisabledStrokeColor(context.getCompatColor(R.color.md_grey_500))
             .setDefaultStrokeColor(ThemeStore.accentColor(context))
-            .setPressedBgColor(context.resources.getColor(R.color.transparent30))
+            .setPressedBgColor(context.getCompatColor(R.color.transparent30))
             .create()
         setTextColor(
             Selector.colorBuild()
                 .setDefaultColor(ThemeStore.accentColor(context))
-                .setDisabledColor(context.resources.getColor(R.color.md_grey_500))
+                .setDisabledColor(context.getCompatColor(R.color.md_grey_500))
                 .create()
         )
     }

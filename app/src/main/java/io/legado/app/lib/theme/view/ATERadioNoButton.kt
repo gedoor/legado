@@ -14,19 +14,17 @@ import io.legado.app.utils.getCompatColor
  */
 class ATERadioNoButton : AppCompatRadioButton {
 
-    constructor(context: Context) : super(context) {
-        init(context, null)
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context, attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context, attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    init {
         background = Selector.shapeBuild()
             .setCornerRadius(2.dp)
             .setStrokeWidth(2.dp)

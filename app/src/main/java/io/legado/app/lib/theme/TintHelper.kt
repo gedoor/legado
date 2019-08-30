@@ -206,7 +206,7 @@ object TintHelper {
                 intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_checked),
                 intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
             ), intArrayOf(
-                // Rdio button includes own alpha for disabled state
+                // Radio button includes own alpha for disabled state
                 ColorUtils.stripAlpha(
                     ContextCompat.getColor(
                         radioButton.context,
@@ -223,11 +223,10 @@ object TintHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             radioButton.buttonTintList = sl
         } else {
-            val d = createTintedDrawable(
+            radioButton.buttonDrawable = createTintedDrawable(
                 ContextCompat.getDrawable(radioButton.context, R.drawable.abc_btn_radio_material),
                 sl
             )
-            radioButton.buttonDrawable = d
         }
     }
 

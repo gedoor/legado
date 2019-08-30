@@ -8,8 +8,10 @@
     android:padding="10dp">
 
     <io.legado.app.lib.theme.view.ATESwitch
+        android:id="@+id/sw_dark_status_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="6dp"
         android:text="@string/dark_status_icon" />
 
     <LinearLayout
@@ -25,10 +27,11 @@
             android:layout_gravity="center"
             android:layout_margin="6dp"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:singleLine="true"
             android:gravity="center"
             android:padding="6dp"
-            android:text="文字颜色"
+            android:text="@string/text_color"
             android:textSize="14sp"
             tools:ignore="HardcodedText" />
 
@@ -39,10 +42,11 @@
             android:layout_gravity="center"
             android:layout_margin="6dp"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:singleLine="true"
             android:gravity="center"
             android:padding="6dp"
-            android:text="背景颜色"
+            android:text="@string/bg_color"
             android:textSize="14sp"
             tools:ignore="HardcodedText" />
 
@@ -53,6 +57,7 @@
             android:layout_gravity="center"
             android:layout_margin="6dp"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:singleLine="true"
             android:gravity="center"
             android:padding="6dp"
@@ -74,7 +79,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:text="背景图片" />
+            android:text="@string/bg_image" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/bgImgList"
