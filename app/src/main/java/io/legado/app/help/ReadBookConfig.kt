@@ -131,6 +131,14 @@ object ReadBookConfig {
             }
         }
 
+        fun setStatusIconDark(isDark: Boolean) {
+            if (App.INSTANCE.isNightTheme) {
+                darkStatusIconNight = isDark
+            } else {
+                darkStatusIcon = isDark
+            }
+        }
+
         fun textColor(): Int {
             return if (App.INSTANCE.isNightTheme) Color.parseColor(textColorNight)
             else Color.parseColor(textColor)
