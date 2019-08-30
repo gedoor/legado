@@ -21,7 +21,7 @@
         android:padding="6dp">
 
         <io.legado.app.lib.theme.view.ATEStrokeTextView
-            android:id="@+id/tvSelectTextColor"
+            android:id="@+id/tv_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -36,7 +36,7 @@
             tools:ignore="HardcodedText" />
 
         <io.legado.app.lib.theme.view.ATEStrokeTextView
-            android:id="@+id/tvSelectBgColor"
+            android:id="@+id/tv_bg_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -51,7 +51,7 @@
             tools:ignore="HardcodedText" />
 
         <io.legado.app.lib.theme.view.ATEStrokeTextView
-            android:id="@+id/tvDefault"
+            android:id="@+id/tv_default"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
