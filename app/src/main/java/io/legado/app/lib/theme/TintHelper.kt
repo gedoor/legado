@@ -127,7 +127,7 @@ object TintHelper {
         view: View, @ColorInt color: Int,
         isBackground: Boolean
     ) {
-        setTintAuto(view, color, isBackground, ATHUtils.isWindowBackgroundDark(view.context))
+        setTintAuto(view, color, isBackground, view.context.isDarkTheme)
     }
 
     fun setTintAuto(
