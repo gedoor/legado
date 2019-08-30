@@ -100,6 +100,7 @@ object ReadBookConfig {
         var bgType: Int = 0,
         var bgTypeNight: Int = 0,
         var darkStatusIcon: Boolean = true,
+        var darkStatusIconNight: Boolean = false,
         var letterSpacing: Float = 1f,
         var lineSpacingExtra: Int = 12,
         var lineSpacingMultiplier: Float = 1.2f,
