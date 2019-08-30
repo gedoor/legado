@@ -1,5 +1,6 @@
 package io.legado.app.ui.readbook.config
 
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -50,6 +51,11 @@ class BgTextConfigDialog : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         initData()
         initView()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        ReadBookConfig.save()
     }
 
     private fun initData() = with(ReadBookConfig.getConfig()) {
