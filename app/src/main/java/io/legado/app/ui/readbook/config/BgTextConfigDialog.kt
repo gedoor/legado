@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.readbook.Help
+import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 
 class BgTextConfigDialog : DialogFragment() {
 
@@ -41,7 +43,7 @@ class BgTextConfigDialog : DialogFragment() {
         initData()
     }
 
-    private fun initData() {
-
+    private fun initData() = with(ReadBookConfig.getConfig()) {
+        sw_dark_status_icon.isChecked = statusIconDark()
     }
 }
