@@ -253,6 +253,7 @@ class ReadStyleDialog : DialogFragment() {
     }
 
     private fun showBgTextConfig() {
+        dismiss()
         val activity = activity
         if (activity is ReadBookActivity) {
             activity.showBgTextConfig()
