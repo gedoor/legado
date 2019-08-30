@@ -14,8 +14,10 @@ import io.legado.app.model.WebBook
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
@@ -228,7 +230,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             prevTextChapter = null
             curTextChapter = null
             nextTextChapter = null
-            callBack?.upContent()
+            withContext(Main) {
+                callBack?.upContent()
+            }
             App.db.bookDao().insert(book)
             bookData.postValue(book)
             App.db.bookSourceDao().getBookSource(book.origin)?.let {
