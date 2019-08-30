@@ -200,64 +200,33 @@ class ReadStyleDialog : DialogFragment() {
                 }
             }
         }
-        tv_bg0.onClick {
-            ReadBookConfig.styleSelect = 0
-            ReadBookConfig.upBg()
-            upBg()
-            postEvent(Bus.UP_CONFIG, true)
-        }
-        tv_bg0.onLongClick {
-            showBgTextConfig()
-            false
-        }
-        tv_bg1.onClick {
-            ReadBookConfig.styleSelect = 1
-            ReadBookConfig.upBg()
-            upBg()
-            postEvent(Bus.UP_CONFIG, true)
-        }
-        tv_bg1.onLongClick {
-            showBgTextConfig()
-            false
-        }
-        tv_bg2.onClick {
-            ReadBookConfig.styleSelect = 2
-            ReadBookConfig.upBg()
-            upBg()
-            postEvent(Bus.UP_CONFIG, true)
-        }
-        tv_bg2.onLongClick {
-            showBgTextConfig()
-            false
-        }
-        tv_bg3.onClick {
-            ReadBookConfig.styleSelect = 3
-            ReadBookConfig.upBg()
-            upBg()
-            postEvent(Bus.UP_CONFIG, true)
-        }
-        tv_bg3.onLongClick {
-            showBgTextConfig()
-            false
-        }
-        tv_bg4.onClick {
-            ReadBookConfig.styleSelect = 4
-            ReadBookConfig.upBg()
-            upBg()
-            postEvent(Bus.UP_CONFIG, true)
-        }
-        tv_bg4.onLongClick {
-            showBgTextConfig()
-            false
-        }
+        tv_bg0.onClick { changeBg(0) }
+        tv_bg0.onLongClick { showBgTextConfig(0) }
+        tv_bg1.onClick { changeBg(1) }
+        tv_bg1.onLongClick { showBgTextConfig(1) }
+        tv_bg2.onClick { changeBg(2) }
+        tv_bg2.onLongClick { showBgTextConfig(2) }
+        tv_bg3.onClick { changeBg(3) }
+        tv_bg3.onLongClick { showBgTextConfig(3) }
+        tv_bg4.onClick { changeBg(4) }
+        tv_bg4.onLongClick { showBgTextConfig(4) }
     }
 
-    private fun showBgTextConfig() {
+    private fun changeBg(index: Int) {
+        ReadBookConfig.styleSelect = index
+        ReadBookConfig.upBg()
+        upBg()
+        postEvent(Bus.UP_CONFIG, true)
+    }
+
+    private fun showBgTextConfig(index: Int): Boolean {
         dismiss()
+        changeBg(index)
         val activity = activity
         if (activity is ReadBookActivity) {
             activity.showBgTextConfig()
         }
+        return true
     }
 
     private fun setBg() {
