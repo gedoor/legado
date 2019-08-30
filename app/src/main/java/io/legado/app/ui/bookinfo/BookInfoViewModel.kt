@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -48,7 +49,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun loadBookInfo(book: Book) {
+    fun loadBookInfo(
+        book: Book,
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+    ) {
         execute {
             isLoadingData.postValue(true)
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
@@ -58,7 +62,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             if (inBookshelf) {
                                 App.db.bookDao().update(book)
                             }
-                            loadChapter(it)
+                            loadChapter(it, changeDruChapterIndex)
                         }
                     }.onError {
                         toast(R.string.error_get_book_info)
@@ -67,7 +71,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun loadChapter(book: Book) {
+    private fun loadChapter(
+        book: Book,
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+    ) {
         execute {
             isLoadingData.postValue(true)
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
@@ -79,12 +86,19 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                     App.db.bookDao().update(book)
                                     App.db.bookChapterDao().insert(*it.toTypedArray())
                                 }
-                                chapterListData.postValue(it)
-                                isLoadingData.postValue(false)
+                                if (changeDruChapterIndex == null) {
+                                    chapterListData.postValue(it)
+                                    isLoadingData.postValue(false)
+                                } else {
+                                    changeDruChapterIndex(it)
+                                }
+                            } else {
+                                toast(R.string.chapter_list_empty)
                             }
                         }
                     }.onError {
                         toast(R.string.error_get_chapter_list)
+                        it.printStackTrace()
                     }
             } ?: toast(R.string.error_no_source)
         }
@@ -100,10 +114,25 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             }
             bookData.postValue(book)
             if (book.tocUrl.isEmpty()) {
-                loadBookInfo(book)
+                loadBookInfo(book) { upChangeDurChapterIndex(book, it) }
             } else {
-                loadChapter(book)
+                loadChapter(book) { upChangeDurChapterIndex(book, it) }
             }
+        }
+    }
+
+    private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
+        execute {
+            book.durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
+                book.durChapterTitle,
+                book.durChapterIndex,
+                chapters
+            )
+            book.durChapterTitle = chapters[book.durChapterIndex].title
+            App.db.bookDao().update(book)
+            App.db.bookChapterDao().insert(*chapters.toTypedArray())
+            bookData.postValue(book)
+            chapterListData.postValue(chapters)
         }
     }
 

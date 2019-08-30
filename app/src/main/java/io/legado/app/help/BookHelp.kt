@@ -94,17 +94,20 @@ object BookHelp {
     }
 
     fun getDurChapterIndexByChapterTitle(
-        title: String,
+        title: String?,
         index: Int,
         chapters: List<BookChapter>
     ): Int {
+        if (title.isNullOrEmpty()) {
+            return min(index, chapters.lastIndex)
+        }
         if (chapters.size > index && title == chapters[index].title) {
             return index
         }
         var similarity = 0F
         var newIndex = index
         val start = max(index - 10, 0)
-        val end = min(index + 10, chapters.size - 1)
+        val end = min(index + 10, chapters.lastIndex)
         if (start < end) {
             for (i in start..end) {
                 val s = title.similarity(chapters[i].title)
