@@ -42,7 +42,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 App.db.bookDao().lastReadBook
             }
-            saveRead(book)
             book?.let {
                 durChapterIndex = book.durChapterIndex
                 durPageIndex = book.durChapterPos
@@ -66,6 +65,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     chapterListFinish.postValue(true)
                 }
             }
+            saveRead(book)
         }.onError { it.printStackTrace() }
     }
 
@@ -225,6 +225,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
+            prevTextChapter = null
+            curTextChapter = null
+            nextTextChapter = null
+            callBack?.upContent()
             App.db.bookDao().insert(book)
             bookData.postValue(book)
             App.db.bookSourceDao().getBookSource(book.origin)?.let {
@@ -321,5 +325,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     interface CallBack {
         fun contentLoadFinish(bookChapter: BookChapter, content: String)
+        fun upContent()
     }
 }

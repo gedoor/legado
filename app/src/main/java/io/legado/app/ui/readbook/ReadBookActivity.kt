@@ -190,6 +190,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> {
+                read_menu.runMenuOut()
                 if (changeSourceDialog == null) {
                     viewModel.bookData.value?.let {
                         changeSourceDialog = ChangeSourceDialog
@@ -285,6 +286,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 page_view.upContent()
             }
         }
+    }
+
+    override fun upContent() {
+        page_view.upContent()
     }
 
     private fun curChapterChanged() {
