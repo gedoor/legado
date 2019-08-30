@@ -1,5 +1,7 @@
 package io.legado.app.utils
 
+import kotlin.math.min
+
 // import org.apache.commons.text.StringEscapeUtils
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
@@ -34,3 +36,38 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
 fun String.startWithIgnoreCase(start: String): Boolean {
     return if (this.isBlank()) false else startsWith(start, true)
 }
+
+
+fun String.similarity(target: String): Float {
+    //计算两个字符串的长度。
+    val len1 = this.length
+    val len2 = target.length
+    //建立上面说的数组，比字符长度大一个空间
+    val dif = Array(len1 + 1) { IntArray(len2 + 1) }
+    //赋初值，步骤B。
+    for (a in 0..len1) {
+        dif[a][0] = a
+    }
+    for (a in 0..len2) {
+        dif[0][a] = a
+    }
+    //计算两个字符是否一样，计算左上的值
+    var temp: Int
+    for (i in 1..len1) {
+        for (j in 1..len2) {
+            temp = if (this[i - 1] == target[j - 1]) {
+                0
+            } else {
+                1
+            }
+            //取三个值中最小的
+            dif[i][j] = min(
+                min(dif[i - 1][j - 1] + temp, dif[i][j - 1] + 1),
+                dif[i - 1][j] + 1
+            )
+        }
+    }
+    //计算相似度
+    return 1 - dif[len1][len2].toFloat() / Math.max(length, target.length)
+}
+

@@ -117,8 +117,8 @@ class ChangeSourceDialog : DialogFragment(),
                 if (book.coverUrl.isNullOrEmpty()) {
                     book.coverUrl = oldBook.getDisplayCover()
                 }
+                activity.changeTo(book)
             }
-            activity.changeTo(book)
         }
         dismiss()
     }

@@ -6,10 +6,13 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.similarity
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import kotlin.math.max
+import kotlin.math.min
 
 object BookHelp {
 
@@ -90,8 +93,28 @@ object BookHelp {
             ?: ""
     }
 
-    fun getDurChapterIndexByChapterName() {
-
+    fun getDurChapterIndexByChapterTitle(
+        title: String,
+        index: Int,
+        chapters: List<BookChapter>
+    ): Int {
+        if (chapters.size > index && title == chapters[index].title) {
+            return index
+        }
+        var similarity = 0F
+        var newIndex = index
+        val start = max(index - 10, 0)
+        val end = min(index + 10, chapters.size - 1)
+        if (start < end) {
+            for (i in start..end) {
+                val s = title.similarity(chapters[i].title)
+                if (s > similarity) {
+                    similarity = s
+                    newIndex = i
+                }
+            }
+        }
+        return newIndex
     }
 
     var bookName: String? = null
