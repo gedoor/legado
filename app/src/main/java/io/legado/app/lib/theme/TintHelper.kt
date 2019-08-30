@@ -250,7 +250,10 @@ object TintHelper {
     }
 
     @JvmOverloads
-    fun setTint(progressBar: ProgressBar, @ColorInt color: Int, skipIndeterminate: Boolean = false) {
+    fun setTint(
+        progressBar: ProgressBar, @ColorInt color: Int,
+        skipIndeterminate: Boolean = false
+    ) {
         val sl = ColorStateList.valueOf(color)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             progressBar.progressTintList = sl
@@ -272,7 +275,11 @@ object TintHelper {
         val editTextColorStateList = ColorStateList(
             arrayOf(
                 intArrayOf(-android.R.attr.state_enabled),
-                intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_pressed, -android.R.attr.state_focused),
+                intArrayOf(
+                    android.R.attr.state_enabled,
+                    -android.R.attr.state_pressed,
+                    -android.R.attr.state_focused
+                ),
                 intArrayOf()
             ),
             intArrayOf(
@@ -314,7 +321,12 @@ object TintHelper {
             box.buttonTintList = sl
         } else {
             val drawable =
-                createTintedDrawable(ContextCompat.getDrawable(box.context, R.drawable.abc_btn_check_material), sl)
+                createTintedDrawable(
+                    ContextCompat.getDrawable(
+                        box.context,
+                        R.drawable.abc_btn_check_material
+                    ), sl
+                )
             box.buttonDrawable = drawable
         }
     }
@@ -380,7 +392,6 @@ object TintHelper {
     }
 
     fun setTint(switchView: Switch, @ColorInt color: Int, useDarker: Boolean) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) return
         if (switchView.trackDrawable != null) {
             switchView.trackDrawable = modifySwitchDrawable(
                 switchView.context,
@@ -390,7 +401,11 @@ object TintHelper {
         if (switchView.thumbDrawable != null) {
             switchView.thumbDrawable = modifySwitchDrawable(
                 switchView.context,
-                switchView.thumbDrawable, color, true, false, useDarker
+                switchView.thumbDrawable,
+                color,
+                thumb = true,
+                compatSwitch = false,
+                useDarker = useDarker
             )
         }
     }
@@ -399,13 +414,21 @@ object TintHelper {
         if (switchView.trackDrawable != null) {
             switchView.trackDrawable = modifySwitchDrawable(
                 switchView.context,
-                switchView.trackDrawable, color, false, true, useDarker
+                switchView.trackDrawable,
+                color,
+                thumb = false,
+                compatSwitch = true,
+                useDarker = useDarker
             )
         }
         if (switchView.thumbDrawable != null) {
             switchView.thumbDrawable = modifySwitchDrawable(
                 switchView.context,
-                switchView.thumbDrawable, color, true, true, useDarker
+                switchView.thumbDrawable,
+                color,
+                thumb = true,
+                compatSwitch = true,
+                useDarker = useDarker
             )
         }
     }
