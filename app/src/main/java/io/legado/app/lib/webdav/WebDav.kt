@@ -32,7 +32,7 @@ constructor(url: String) {
             return field
         }
 
-    private val okHttpClient: OkHttpClient = OkHttp.SingletonHelper.okHttpClient
+    private val okHttpClient: OkHttpClient = OkHttp.okHttpClient
 
     val path: String
         get() = url.toString()
@@ -207,7 +207,7 @@ constructor(url: String) {
     fun upload(localPath: String, contentType: String? = null): Boolean {
         val file = File(localPath)
         if (!file.exists()) return false
-        val mediaType = if (contentType == null) null else contentType.toMediaTypeOrNull()
+        val mediaType = contentType?.toMediaTypeOrNull()
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = RequestBody.create(mediaType, file)
         getUrl()?.let {
