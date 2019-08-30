@@ -218,7 +218,7 @@
     <string name="no_last_chapter">无最新章节信息</string>
     <string name="showTimeBattery">显示时间和电量</string>
     <string name="showLine">显示分隔线</string>
-    <string name="darkStatusIcon">深色状态栏图标</string>
+    <string name="dark_status_icon">深色状态栏图标</string>
     <string name="content">内容</string>
     <string name="copy_text">拷贝内容</string>
     <string name="download_all">一键缓存</string>
