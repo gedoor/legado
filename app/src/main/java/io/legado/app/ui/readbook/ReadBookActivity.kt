@@ -444,6 +444,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
             BG_COLOR -> {
                 setBg(0, "#${color.toHexString()}")
+                ReadBookConfig.upBg()
                 postEvent(Bus.UP_CONFIG, false)
             }
         }
