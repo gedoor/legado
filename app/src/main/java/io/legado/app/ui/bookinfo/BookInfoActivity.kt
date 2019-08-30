@@ -67,6 +67,12 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                     }
                 }
             }
+            R.id.menu_refresh -> {
+                upLoading(true)
+                viewModel.bookData.value?.let {
+                    viewModel.loadBookInfo(it)
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
