@@ -17,7 +17,7 @@ class BgTextConfigDiolog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.dialog_read_bg_text, container)
     }
 
     override fun onStart() {
@@ -38,6 +38,10 @@ class BgTextConfigDiolog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initData()
     }
 
+    private fun initData() {
+
+    }
 }

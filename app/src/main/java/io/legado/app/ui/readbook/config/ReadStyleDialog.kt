@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadStyleDialog : DialogFragment() {
 
@@ -205,11 +206,19 @@ class ReadStyleDialog : DialogFragment() {
             upBg()
             postEvent(Bus.UP_CONFIG, true)
         }
+        tv_bg0.onLongClick {
+            showBgTextConfig()
+            false
+        }
         tv_bg1.onClick {
             ReadBookConfig.styleSelect = 1
             ReadBookConfig.upBg()
             upBg()
             postEvent(Bus.UP_CONFIG, true)
+        }
+        tv_bg1.onLongClick {
+            showBgTextConfig()
+            false
         }
         tv_bg2.onClick {
             ReadBookConfig.styleSelect = 2
@@ -217,17 +226,36 @@ class ReadStyleDialog : DialogFragment() {
             upBg()
             postEvent(Bus.UP_CONFIG, true)
         }
+        tv_bg2.onLongClick {
+            showBgTextConfig()
+            false
+        }
         tv_bg3.onClick {
             ReadBookConfig.styleSelect = 3
             ReadBookConfig.upBg()
             upBg()
             postEvent(Bus.UP_CONFIG, true)
         }
+        tv_bg3.onLongClick {
+            showBgTextConfig()
+            false
+        }
         tv_bg4.onClick {
             ReadBookConfig.styleSelect = 4
             ReadBookConfig.upBg()
             upBg()
             postEvent(Bus.UP_CONFIG, true)
+        }
+        tv_bg4.onLongClick {
+            showBgTextConfig()
+            false
+        }
+    }
+
+    private fun showBgTextConfig() {
+        val activity = activity
+        if (activity is ReadBookActivity) {
+            activity.showBgTextConfig()
         }
     }
 

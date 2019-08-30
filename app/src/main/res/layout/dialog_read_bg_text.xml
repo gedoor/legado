@@ -1,12 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="10dp">
 
     <io.legado.app.lib.theme.view.ATESwitch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dark_status_icon" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="6dp">
+
+        <io.legado.app.lib.theme.view.ATEStrokeTextView
+            android:id="@+id/tvSelectTextColor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="文字颜色"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+        <io.legado.app.lib.theme.view.ATEStrokeTextView
+            android:id="@+id/tvSelectBgColor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="背景颜色"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+        <io.legado.app.lib.theme.view.ATEStrokeTextView
+            android:id="@+id/tvDefault"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="恢复默认"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:padding="6dp"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="背景图片" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bgImgList"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
