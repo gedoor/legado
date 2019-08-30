@@ -69,23 +69,33 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }.onError { it.printStackTrace() }
     }
 
-    private fun loadBookInfo(book: Book) {
+    private fun loadBookInfo(
+        book: Book,
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+    ) {
         execute {
             webBook?.getBookInfo(book, this)
                 ?.onSuccess {
-                    loadChapterList(book)
+                    loadChapterList(book, changeDruChapterIndex)
                 }
         }
     }
 
-    private fun loadChapterList(book: Book) {
+    private fun loadChapterList(
+        book: Book,
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+    ) {
         execute {
             webBook?.getChapterList(book, this)
                 ?.onSuccess(IO) { cList ->
                     if (!cList.isNullOrEmpty()) {
-                        App.db.bookChapterDao().insert(*cList.toTypedArray())
-                        chapterSize = cList.size
-                        chapterListFinish.postValue(true)
+                        if (changeDruChapterIndex == null) {
+                            App.db.bookChapterDao().insert(*cList.toTypedArray())
+                            chapterSize = cList.size
+                            chapterListFinish.postValue(true)
+                        } else {
+                            changeDruChapterIndex(cList)
+                        }
                     } else {
                         toast(R.string.error_load_toc)
                     }
@@ -221,15 +231,31 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 webBook = WebBook(it)
             }
             if (book.tocUrl.isEmpty()) {
-                loadBookInfo(book)
+                loadBookInfo(book) { upChangeDurChapterIndex(book, it) }
             } else {
-                loadChapterList(book)
+                loadChapterList(book) { upChangeDurChapterIndex(book, it) }
             }
         }
     }
 
     private fun autoChangeSource() {
 
+    }
+
+    private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
+        execute {
+            durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
+                book.durChapterTitle,
+                book.durChapterIndex,
+                chapters
+            )
+            book.durChapterIndex = durChapterIndex
+            book.durChapterTitle = chapters[durChapterIndex].title
+            App.db.bookDao().update(book)
+            App.db.bookChapterDao().insert(*chapters.toTypedArray())
+            chapterSize = chapters.size
+            chapterListFinish.postValue(true)
+        }
     }
 
     fun openChapter(chapter: BookChapter) {
