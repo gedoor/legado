@@ -229,6 +229,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     override fun changeTo(book: Book) {
+        upLoading(true)
         viewModel.changeTo(book)
     }
 
