@@ -73,7 +73,7 @@ class BgTextConfigDialog : DialogFragment() {
                 .setColor(bgColor)
                 .setShowAlphaSlider(false)
                 .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
-                .setDialogId(TEXT_COLOR)
+                .setDialogId(BG_COLOR)
                 .show(requireActivity())
         }
         tv_default.onClick {
