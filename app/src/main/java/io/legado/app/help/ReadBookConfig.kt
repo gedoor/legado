@@ -8,6 +8,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.internal.toHexString
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -111,6 +112,24 @@ object ReadBookConfig {
         var textColorNight: String = "#adadad",
         var textSize: Int = 15
     ) {
+        fun setBg(bgType: Int, bg: String) {
+            if (App.INSTANCE.isNightTheme) {
+                bgTypeNight = bgType
+                bgStrNight = bg
+            } else {
+                this.bgType = bgType
+                bgStr = bg
+            }
+        }
+
+        fun setTextColor(color: Int) {
+            if (App.INSTANCE.isNightTheme) {
+                textColorNight = "#${color.toHexString()}"
+            } else {
+                textColor = "#${color.toHexString()}"
+            }
+        }
+
         fun textColor(): Int {
             return if (App.INSTANCE.isNightTheme) Color.parseColor(textColorNight)
             else Color.parseColor(textColor)
