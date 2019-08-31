@@ -82,6 +82,9 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
             }
         }
+        if (item.groupId == R.id.source_group) {
+            search_view.setQuery(item.title, true)
+        }
         return super.onCompatOptionsItemSelected(item)
     }
 
