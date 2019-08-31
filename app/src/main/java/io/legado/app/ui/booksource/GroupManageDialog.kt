@@ -23,7 +23,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
+import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
@@ -48,7 +48,7 @@ class GroupManageDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModel(BookSourceViewModel::class.java)
+        viewModel = getViewModelOfActivity(BookSourceViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
