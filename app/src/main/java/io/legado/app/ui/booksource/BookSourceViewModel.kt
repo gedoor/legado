@@ -25,10 +25,14 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun upGroup(oldGroup: String, newGroup: String?) {
+        execute {
 
+        }
     }
 
     fun delGroup(group: String) {
+        execute {
 
+        }
     }
 }
