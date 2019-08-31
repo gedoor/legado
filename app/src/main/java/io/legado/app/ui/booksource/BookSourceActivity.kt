@@ -81,7 +81,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-
+            R.id.menu_group_manage -> GroupManageDialog().show(
+                supportFragmentManager,
+                "groupManage"
+            )
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/group"
+        android:id="@+id/tv_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1" />
@@ -15,6 +15,7 @@
         android:id="@+id/tv_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
         android:padding="8dp"
         android:text="@string/edit" />
 
@@ -22,6 +23,7 @@
         android:id="@+id/tv_del"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
         android:padding="8dp"
         android:text="@string/delete" />
 

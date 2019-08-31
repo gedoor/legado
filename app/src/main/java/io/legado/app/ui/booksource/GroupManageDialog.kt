@@ -1,23 +1,47 @@
 package io.legado.app.ui.booksource
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.theme.ATH
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.splitNotBlank
+import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
+import kotlinx.android.synthetic.main.item_book_group.view.tv_group
+import kotlinx.android.synthetic.main.item_group_manage.view.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class GroupManageDialog : DialogFragment() {
-
+    private val viewModel = getViewModelOfActivity(BookSourceViewModel::class.java)
     private lateinit var adapter: GroupAdapter
+
+    override fun onStart() {
+        super.onStart()
+        val dm = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,8 +58,11 @@ class GroupManageDialog : DialogFragment() {
 
     private fun initData() {
         tool_bar.title = getString(R.string.group_manage)
-        adapter = GroupAdapter(requireContext())
+        adapter = GroupAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
+        recycler_view.addItemDecoration(
+            DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
+        )
         recycler_view.adapter = adapter
         App.db.bookSourceDao().observeGroup().observe(viewLifecycleOwner, Observer {
             val groups = linkedSetOf<String>()
@@ -46,13 +73,38 @@ class GroupManageDialog : DialogFragment() {
         })
     }
 
+    @SuppressLint("InflateParams")
+    private fun editGroup(group: String) {
+        alert(title = getString(R.string.group_edit)) {
+            var editText: EditText? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
+                    editText = edit_view.apply {
+                        ATH.applyAccentTint(this)
+                        hint = "分组名称"
+                    }
+                }
+            }
 
-    class GroupAdapter(context: Context) :
+            yesButton {
+                viewModel.upGroup(group, editText?.text?.toString())
+            }
+
+            noButton()
+
+        }.show().applyTint().requestInputMethod()
+    }
+
+    class GroupAdapter(context: Context, val dialog: GroupManageDialog) :
         SimpleRecyclerAdapter<String>(context, R.layout.item_group_manage) {
 
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-
+            with(holder.itemView) {
+                tv_group.text = item
+                tv_edit.onClick { dialog.editGroup(item) }
+                tv_del.onClick { dialog.viewModel.delGroup(item) }
+            }
         }
-
     }
+
 }

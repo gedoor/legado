@@ -23,4 +23,12 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     fun update(vararg bookSource: BookSource) {
         execute { App.db.bookSourceDao().update(*bookSource) }
     }
+
+    fun upGroup(oldGroup: String, newGroup: String?) {
+
+    }
+
+    fun delGroup(group: String) {
+
+    }
 }
