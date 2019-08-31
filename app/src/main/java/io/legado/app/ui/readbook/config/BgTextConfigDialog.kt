@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -132,16 +131,21 @@ class BgTextConfigDialog : DialogFragment() {
     }
 
     class BgAdapter(context: Context) :
-        SimpleRecyclerAdapter<String>(context, R.layout.item_bg_image) {
+        CommonRecyclerAdapter<String>(context) {
 
-        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-            with(holder.itemView) {
-                ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
-                    .centerCrop()
-                    .setAsBitmap(iv_bg)
-                tv_name.text = item.substring(0, item.lastIndexOf("."))
-            }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+            return super.onCreateViewHolder(parent, viewType)
         }
+
+
+//        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
+//            with(holder.itemView) {
+//                ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
+//                    .centerCrop()
+//                    .setAsBitmap(iv_bg)
+//                tv_name.text = item.substring(0, item.lastIndexOf("."))
+//            }
+//        }
 
     }
 

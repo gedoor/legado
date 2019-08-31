@@ -1,6 +1,6 @@
 [
   {
-    "bgStr": "bg1.jpg",
+    "bgStr": "羊皮纸2.jpg",
     "bgType": 1,
     "darkStatusIcon": true,
     "textColor": "#5E432E",
@@ -14,8 +14,8 @@
     "paddingBottom": 0
   },
   {
-    "bgStr": "#C6BAA1",
-    "bgType": 0,
+    "bgStr": "羊皮纸2.jpg",
+    "bgType": 1,
     "darkStatusIcon": true,
     "textColor": "#5E432E",
     "textSize": 22,
