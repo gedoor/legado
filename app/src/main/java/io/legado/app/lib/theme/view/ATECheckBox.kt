@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatCheckBox
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -22,6 +22,6 @@ class ATECheckBox : AppCompatCheckBox {
     )
 
     init {
-        ATH.setTint(this, ThemeStore.accentColor(context))
+        ATH.setTint(this, context.accentColor)
     }
 }

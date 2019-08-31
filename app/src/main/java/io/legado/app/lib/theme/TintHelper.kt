@@ -317,18 +317,15 @@ object TintHelper {
                 color
             )
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            box.buttonTintList = sl
-        } else {
-            val drawable =
-                createTintedDrawable(
-                    ContextCompat.getDrawable(
-                        box.context,
-                        R.drawable.abc_btn_check_material
-                    ), sl
-                )
-            box.buttonDrawable = drawable
-        }
+        box.buttonTintList = sl
+        val drawable =
+            createTintedDrawable(
+                ContextCompat.getDrawable(
+                    box.context,
+                    R.drawable.abc_btn_check_material
+                ), sl
+            )
+        box.buttonDrawable = drawable
     }
 
     fun setTint(image: ImageView, @ColorInt color: Int) {
