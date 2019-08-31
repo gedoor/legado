@@ -64,13 +64,13 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_add_book_source -> {
+            R.id.menu_add_book_source -> {
                 this.startActivity<SourceEditActivity>()
             }
-            R.id.action_import_book_source_qr -> {
+            R.id.menu_import_book_source_qr -> {
                 this.startActivityForResult<QrCodeActivity>(qrRequestCode)
             }
-            R.id.action_select_all -> {
+            R.id.menu_select_all -> {
                 launch(IO) {
                     val isEnableList =
                         App.db.bookSourceDao().searchIsEnable("%${search_view.query}%")
@@ -81,6 +81,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
+
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)

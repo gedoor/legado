@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/action_select_all"
+        android:id="@+id/menu_select_all"
         android:icon="@drawable/ic_select_all"
         android:title="@string/select_all"
         app:showAsAction="always"
@@ -57,49 +57,49 @@
     </item>
 
     <item
-        android:id="@+id/action_add_book_source"
+        android:id="@+id/menu_add_book_source"
         android:icon="@drawable/ic_add"
         android:title="@string/add_book_source"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_import_book_source_local"
+        android:id="@+id/menu_import_book_source_local"
         android:icon="@drawable/ic_import"
         android:title="@string/import_book_source_local"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_import_book_source_onLine"
+        android:id="@+id/menu_import_book_source_onLine"
         android:icon="@drawable/ic_import"
         android:title="@string/import_book_source_on_line"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_import_book_source_qr"
+        android:id="@+id/menu_import_book_source_qr"
         android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_revert_selection"
+        android:id="@+id/menu_revert_selection"
         android:icon="@drawable/ic_swap_outline_24dp"
         android:title="@string/revert_selection"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_del_select"
+        android:id="@+id/menu_del_select"
         android:icon="@drawable/ic_clear_all"
         android:title="@string/del_select"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_check_book_source"
+        android:id="@+id/menu_check_book_source"
         android:icon="@drawable/ic_check_source"
         android:title="@string/check_select_source"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_share_wifi"
+        android:id="@+id/menu_share_wifi"
         android:icon="@drawable/ic_share"
         android:title="@string/wifi_share"
         app:showAsAction="never" />
