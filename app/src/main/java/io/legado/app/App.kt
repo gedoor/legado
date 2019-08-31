@@ -18,6 +18,7 @@ import io.legado.app.help.ActivityHelp
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.isNightTheme
@@ -69,18 +70,14 @@ class App : Application() {
         if (isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt(
-                        "colorPrimaryNight",
-                        getCompatColor(R.color.md_blue_grey_600)
-                    )
+                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
                 )
                 .accentColor(
-                    getPrefInt(
-                        "colorAccentNight",
-                        getCompatColor(R.color.md_deep_orange_800)
-                    )
+                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
                 )
-                .backgroundColor(getPrefInt("colorBackgroundNight", getCompatColor(R.color.md_grey_800)))
+                .backgroundColor(
+                    getPrefInt("colorBackgroundNight", getCompatColor(R.color.md_grey_800))
+                )
                 .apply()
         } else {
             ThemeStore.editTheme(this)
@@ -89,6 +86,7 @@ class App : Application() {
                 .backgroundColor(getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100)))
                 .apply()
         }
+        ChapterProvider.upReadAloudSpan()
     }
 
     fun applyDayNight() {
@@ -113,7 +111,8 @@ class App : Application() {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannelId() {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         notificationManager?.let {
             //用唯一的ID创建渠道对象
             val downloadChannel = NotificationChannel(
@@ -153,8 +152,8 @@ class App : Application() {
         }
     }
 
-    private fun registerActivityLife(){
-        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks{
+    private fun registerActivityLife() {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityPaused(activity: Activity) {
             }
 
