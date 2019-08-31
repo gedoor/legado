@@ -23,7 +23,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
@@ -33,7 +33,7 @@ import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class GroupManageDialog : DialogFragment() {
-    private val viewModel = getViewModelOfActivity(BookSourceViewModel::class.java)
+    private lateinit var viewModel: BookSourceViewModel
     private lateinit var adapter: GroupAdapter
 
     override fun onStart() {
@@ -48,6 +48,7 @@ class GroupManageDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = getViewModel(BookSourceViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
@@ -82,6 +83,7 @@ class GroupManageDialog : DialogFragment() {
                     editText = edit_view.apply {
                         ATH.applyAccentTint(this)
                         hint = "分组名称"
+                        setText(group)
                     }
                 }
             }
