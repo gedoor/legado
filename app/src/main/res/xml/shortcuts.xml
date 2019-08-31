@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="bookRead"
+        android:enabled="true"
+        android:icon="@drawable/ic_read_book"
+        android:shortcutShortLabel="@string/last_read"
+        android:shortcutLongLabel="@string/last_read"
+        android:shortcutDisabledMessage="@string/last_read"
+        tools:ignore="UnusedAttribute">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.gedoor.monkeybook"
+            android:targetClass="com.kunfei.bookshelf.view.activity.WelcomeToReadActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="bookshelf"
+        android:enabled="true"
+        android:icon="@drawable/ic_read_book"
+        android:shortcutShortLabel="@string/bookshelf"
+        android:shortcutLongLabel="@string/bookshelf"
+        android:shortcutDisabledMessage="@string/bookshelf"
+        tools:ignore="UnusedAttribute">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.gedoor.monkeybook"
+            android:targetClass="com.kunfei.bookshelf.view.activity.MainActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>
