@@ -138,8 +138,8 @@ class BgTextConfigDialog : DialogFragment() {
             with(holder.itemView) {
                 ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
                     .centerCrop()
-                    .setAsFile(iv_bg)
-                tv_name.text = item
+                    .setAsBitmap(iv_bg)
+                tv_name.text = item.substring(0, item.lastIndexOf("."))
             }
         }
 
