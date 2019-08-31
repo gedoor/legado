@@ -1,6 +1,7 @@
 package io.legado.app.ui.readbook.config
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -24,6 +25,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.readbook.Help
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
@@ -156,7 +158,15 @@ class BgTextConfigDialog : DialogFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             resultSelectBg -> {
-
+                if (resultCode == RESULT_OK) {
+                    data?.data?.let {
+                        FileUtils.getPath(requireContext(), it)?.let { path ->
+                            ReadBookConfig.getConfig().setBg(2, path)
+                            ReadBookConfig.upBg()
+                            postEvent(Bus.UP_CONFIG, false)
+                        }
+                    }
+                }
             }
         }
     }
