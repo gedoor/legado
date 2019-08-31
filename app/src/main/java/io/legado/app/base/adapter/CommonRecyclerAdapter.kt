@@ -343,7 +343,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
 
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int, payloads: MutableList<Any>) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
-            getItem(holder.layoutPosition)?.let {
+            getItem(holder.layoutPosition - getHeaderCount())?.let {
                 itemDelegates.getValue(getItemViewType(holder.layoutPosition))
                     .convert(holder, it, payloads)
             }
