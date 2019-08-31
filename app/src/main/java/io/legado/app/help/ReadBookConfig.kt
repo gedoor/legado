@@ -170,11 +170,11 @@ object ReadBookConfig {
                     0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr()))
                     1 -> bgDrawable =
                         Drawable.createFromStream(
-                            App.INSTANCE.assets.open("bg" + File.separator + bgStr),
+                            App.INSTANCE.assets.open("bg" + File.separator + bgStr()),
                             "bg"
                         )
                     else -> runCatching {
-                        bgDrawable = Drawable.createFromPath(bgStr)
+                        bgDrawable = Drawable.createFromPath(bgStr())
                     }
                 }
             }
