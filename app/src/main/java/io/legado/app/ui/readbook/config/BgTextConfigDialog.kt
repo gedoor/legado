@@ -143,7 +143,7 @@ class BgTextConfigDialog : DialogFragment() {
                 ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
                     .centerCrop()
                     .setAsBitmap(iv_bg)
-                tv_name.text = item.substring(0, item.lastIndexOf("."))
+                tv_name.text = item.substringBeforeLast(".")
                 this.onClick {
                     ReadBookConfig.getConfig().setBg(1, item)
                     ReadBookConfig.upBg()

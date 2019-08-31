@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -22,6 +23,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -36,9 +38,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     override val viewModel: BookSourceViewModel
         get() = getViewModel(BookSourceViewModel::class.java)
 
+    private val qrRequestCode = 101
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
-    private val qrRequestCode = 101
+    private var groups = hashSetOf<String>()
+    private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
@@ -50,6 +54,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_source, menu)
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
+        upGroupMenu()
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
@@ -106,6 +116,21 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         val dataFactory = App.db.bookSourceDao().observeSearch("%$searchKey%")
         bookSourceLiveDate = LivePagedListBuilder(dataFactory, 2000).build()
         bookSourceLiveDate?.observe(this, Observer { adapter.submitList(it) })
+
+        App.db.bookSourceDao().observeGroup().observe(this, Observer {
+            groups.clear()
+            it.map { group ->
+                groups.addAll(group.splitNotBlank(",", ";"))
+            }
+            upGroupMenu()
+        })
+    }
+
+    private fun upGroupMenu() {
+        groupMenu?.removeGroup(R.id.source_group)
+        groups.map {
+            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+        }
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {

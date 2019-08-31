@@ -18,7 +18,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     var callBack: CallBack? = null
     var name: String = ""
     var author: String = ""
-    var screenKey: String = ""
+    private var screenKey: String = ""
     private val searchBooks = linkedSetOf<SearchBook>()
 
     fun initData() {

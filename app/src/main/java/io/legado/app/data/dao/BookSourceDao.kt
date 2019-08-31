@@ -1,5 +1,6 @@
 package io.legado.app.data.dao
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
 import io.legado.app.data.entities.BookSource
@@ -12,6 +13,9 @@ interface BookSourceDao {
 
     @Query("select * from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey order by customOrder asc")
     fun observeSearch(searchKey: String = ""): DataSource.Factory<Int, BookSource>
+
+    @Query("select bookSourceGroup from book_sources")
+    fun observeGroup(): LiveData<List<String>>
 
     @Query("select distinct  enabled from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey")
     fun searchIsEnable(searchKey: String = ""): List<Boolean>

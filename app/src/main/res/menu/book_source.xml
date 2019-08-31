@@ -11,7 +11,7 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/action_group"
+        android:id="@+id/menu_group"
         android:icon="@drawable/ic_groups"
         android:title="@string/menu_action_group"
         app:showAsAction="always"
