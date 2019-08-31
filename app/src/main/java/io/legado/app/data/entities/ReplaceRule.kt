@@ -16,6 +16,7 @@ data class ReplaceRule(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     var name: String? = null,
+    var group: String? = null,
     var pattern: String? = null,
     var replacement: String? = null,
     var scope: String? = null,
