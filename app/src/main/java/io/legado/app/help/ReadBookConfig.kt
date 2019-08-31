@@ -95,7 +95,7 @@ object ReadBookConfig {
     }
 
     data class Config(
-        var bgStr: String = "#015A86",
+        var bgStr: String = "#EEEEEE",
         var bgStrNight: String = "#000000",
         var bgType: Int = 0,
         var bgTypeNight: Int = 0,
@@ -164,15 +164,17 @@ object ReadBookConfig {
 
         fun bgDrawable(): Drawable {
             var bgDrawable: Drawable? = null
-            when (bgType()) {
-                0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr()))
-                1 -> bgDrawable =
-                    Drawable.createFromStream(
-                        App.INSTANCE.assets.open("bg" + File.separator + bgStr),
-                        "bg"
-                    )
-                else -> runCatching {
-                    bgDrawable = Drawable.createFromPath(bgStr)
+            kotlin.runCatching {
+                when (bgType()) {
+                    0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr()))
+                    1 -> bgDrawable =
+                        Drawable.createFromStream(
+                            App.INSTANCE.assets.open("bg" + File.separator + bgStr),
+                            "bg"
+                        )
+                    else -> runCatching {
+                        bgDrawable = Drawable.createFromPath(bgStr)
+                    }
                 }
             }
             return bgDrawable ?: ColorDrawable(Color.parseColor("#015A86"))
