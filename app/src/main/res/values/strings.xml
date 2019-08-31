@@ -490,5 +490,6 @@
     <string name="bg_color">背景颜色</string>
     <string name="text_color">文字颜色</string>
     <string name="select_image">选择图片</string>
+    <string name="group_manage">分组管理</string>
 
 </resources>
