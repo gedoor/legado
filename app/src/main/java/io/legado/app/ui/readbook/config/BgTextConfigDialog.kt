@@ -16,8 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -34,7 +35,7 @@ class BgTextConfigDialog : DialogFragment() {
         const val BG_COLOR = 122
     }
 
-    private val ResultSelectBg = 123
+    private val resultSelectBg = 123
     private lateinit var adapter: BgAdapter
 
     override fun onCreateView(
@@ -124,29 +125,31 @@ class BgTextConfigDialog : DialogFragment() {
                 val intent = Intent(Intent.ACTION_GET_CONTENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.type = "image/*"
-                startActivityForResult(intent, ResultSelectBg)
+                startActivityForResult(intent, resultSelectBg)
                 Unit
             }
             .request()
     }
 
     class BgAdapter(context: Context) :
-        CommonRecyclerAdapter<String>(context) {
+        SimpleRecyclerAdapter<String>(context, R.layout.item_bg_image) {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-            return super.onCreateViewHolder(parent, viewType)
+        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
+            with(holder.itemView) {
+                ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
+                    .centerCrop()
+                    .setAsBitmap(iv_bg)
+                tv_name.text = item.substring(0, item.lastIndexOf("."))
+            }
         }
-
-
-//        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-//            with(holder.itemView) {
-//                ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
-//                    .centerCrop()
-//                    .setAsBitmap(iv_bg)
-//                tv_name.text = item.substring(0, item.lastIndexOf("."))
-//            }
-//        }
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            resultSelectBg -> {
+            }
+        }
+    }
 }
