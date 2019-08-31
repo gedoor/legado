@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
@@ -177,7 +178,7 @@ object ReadBookConfig {
                     }
                 }
             }
-            return bgDrawable ?: ColorDrawable(Color.parseColor("#015A86"))
+            return bgDrawable ?: ColorDrawable(App.INSTANCE.getCompatColor(R.color.background))
         }
     }
 }

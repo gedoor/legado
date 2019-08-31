@@ -18,12 +18,14 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.constant.Bus
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.readbook.Help
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -140,6 +142,11 @@ class BgTextConfigDialog : DialogFragment() {
                     .centerCrop()
                     .setAsBitmap(iv_bg)
                 tv_name.text = item.substring(0, item.lastIndexOf("."))
+                this.onClick {
+                    ReadBookConfig.getConfig().setBg(1, item)
+                    ReadBookConfig.upBg()
+                    postEvent(Bus.UP_CONFIG, false)
+                }
             }
         }
 
@@ -149,6 +156,7 @@ class BgTextConfigDialog : DialogFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             resultSelectBg -> {
+
             }
         }
     }
