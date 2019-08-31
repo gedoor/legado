@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -125,15 +124,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     override fun del(bookSource: BookSource) {
-        launch(IO) { App.db.bookSourceDao().delete(bookSource) }
-    }
-
-    override fun update(bookSource: BookSource) {
-        launch(IO) { App.db.bookSourceDao().update(bookSource) }
+        viewModel.del(bookSource)
     }
 
     override fun update(vararg bookSource: BookSource) {
-        launch(IO) { App.db.bookSourceDao().update(*bookSource) }
+        viewModel.update(*bookSource)
     }
 
     override fun edit(bookSource: BookSource) {

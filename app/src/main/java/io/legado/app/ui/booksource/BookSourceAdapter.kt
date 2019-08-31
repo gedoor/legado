@@ -92,7 +92,6 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         fun upCount(count: Int)
         fun del(bookSource: BookSource)
         fun edit(bookSource: BookSource)
-        fun update(bookSource: BookSource)
         fun update(vararg bookSource: BookSource)
         fun topSource(bookSource: BookSource)
     }

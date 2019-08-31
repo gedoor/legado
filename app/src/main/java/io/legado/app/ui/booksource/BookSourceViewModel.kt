@@ -16,4 +16,11 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun del(bookSource: BookSource) {
+        execute { App.db.bookSourceDao().delete(bookSource) }
+    }
+
+    fun update(vararg bookSource: BookSource) {
+        execute { App.db.bookSourceDao().update(*bookSource) }
+    }
 }
