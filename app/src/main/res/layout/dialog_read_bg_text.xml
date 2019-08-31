@@ -77,12 +77,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
             android:text="@string/bg_image" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/bgImgList"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="100dp" />
 

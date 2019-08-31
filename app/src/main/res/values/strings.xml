@@ -489,5 +489,6 @@
     <string name="bg_image">背景图片</string>
     <string name="bg_color">背景颜色</string>
     <string name="text_color">文字颜色</string>
+    <string name="select_image">选择图片</string>
 
 </resources>
