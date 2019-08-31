@@ -74,13 +74,10 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <io.legado.app.lib.theme.view.ATECheckBox
+        <io.legado.app.lib.theme.view.ATESwitch
             android:id="@+id/cb_by_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@null"
-            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-            android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
             android:text="@string/byPage"
             tools:ignore="RtlHardcoded" />
 
@@ -142,14 +139,11 @@
                 android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
-            <io.legado.app.lib.theme.view.ATECheckBox
+            <io.legado.app.lib.theme.view.ATESwitch
                 android:id="@+id/cb_tts_follow_sys"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:button="@null"
-                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                 android:text="@string/flow_sys"
                 android:contentDescription="@string/flow_sys"
                 tools:ignore="RtlHardcoded" />
