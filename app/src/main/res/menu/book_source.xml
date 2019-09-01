@@ -28,6 +28,9 @@
                 android:title="@string/sort">
 
                 <menu>
+                    <group
+                        android:id="@+id/menu_group_sort"
+                        android:checkableBehavior="single" />
 
                     <item
                         android:id="@+id/sort_manual"
