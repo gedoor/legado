@@ -30,6 +30,9 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE bookUrl = :bookUrl")
     fun getBook(bookUrl: String): Book?
 
+    @get:Query("SELECT * FROM books")
+    val allBooks: List<Book>
+
     @get:Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 1")
     val lastReadBook: Book?
 
