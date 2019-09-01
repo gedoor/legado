@@ -11,16 +11,16 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
 
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
@@ -35,7 +35,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initDataObservers()
-        initSwipeToDelete()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -61,6 +60,10 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                     this.setDrawable(it)
                 }
             })
+        val itemTouchCallback = ItemTouchCallback()
+        itemTouchCallback.onItemTouchCallbackListener = adapter
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
 
@@ -78,28 +81,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         }
     }
 
-    private fun initSwipeToDelete() {
-        ItemTouchHelper(object : ItemTouchHelper.Callback() {
-
-            override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                return makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
-            }
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                toast("You swiped the item!")
-            }
-        }).attachToRecyclerView(rv_replace_rule)
-
-    }
-
     override fun update(rule: ReplaceRule) {
         viewModel.update(rule)
     }
@@ -109,11 +90,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     override fun edit(rule: ReplaceRule) {
-        doAsync {
-            App.db.replaceRuleDao().enableAll(!allEnabled)
-            allEnabled = !allEnabled
-        }
 
-        toast("Edit function not implemented!")
     }
 }

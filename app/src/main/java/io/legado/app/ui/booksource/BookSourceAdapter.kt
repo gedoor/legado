@@ -14,8 +14,9 @@ import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class BookSourceAdapter :
-    PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookSourceAdapter(val callBack: CallBack) :
+    PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK),
+    OnItemTouchCallbackListener {
 
     companion object {
 
@@ -32,27 +33,23 @@ class BookSourceAdapter :
         }
     }
 
-    var callBack: CallBack? = null
+    override fun onSwiped(adapterPosition: Int) {
 
-    val itemTouchCallbackListener = object : OnItemTouchCallbackListener {
-        override fun onSwiped(adapterPosition: Int) {
+    }
 
-        }
-
-        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-            currentList?.let {
-                val srcSource = it[srcPosition]
-                val targetSource = it[targetPosition]
-                srcSource?.let { a ->
-                    targetSource?.let { b ->
-                        a.customOrder = targetPosition
-                        b.customOrder = srcPosition
-                        callBack?.update(a, b)
-                    }
+    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        currentList?.let {
+            val srcSource = it[srcPosition]
+            val targetSource = it[targetPosition]
+            srcSource?.let { a ->
+                targetSource?.let { b ->
+                    a.customOrder = targetPosition
+                    b.customOrder = srcPosition
+                    callBack.update(a, b)
                 }
             }
-            return true
         }
+        return true
     }
 
     override fun onCurrentListChanged(
@@ -60,7 +57,7 @@ class BookSourceAdapter :
         currentList: PagedList<BookSource>?
     ) {
         super.onCurrentListChanged(previousList, currentList)
-        callBack?.upCount(itemCount)
+        callBack.upCount(itemCount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -85,7 +82,7 @@ class BookSourceAdapter :
             itemView.setBackgroundColor(ThemeStore.backgroundColor(itemView.context))
         }
 
-        fun bind(bookSource: BookSource, callBack: CallBack?) = with(itemView) {
+        fun bind(bookSource: BookSource, callBack: CallBack) = with(itemView) {
             if (bookSource.bookSourceGroup.isNullOrEmpty()) {
                 cb_book_source.text = bookSource.bookSourceName
             } else {
@@ -95,11 +92,11 @@ class BookSourceAdapter :
             cb_book_source.isChecked = bookSource.enabled
             cb_book_source.setOnClickListener {
                 bookSource.enabled = cb_book_source.isChecked
-                callBack?.update(bookSource)
+                callBack.update(bookSource)
             }
-            iv_edit_source.onClick { callBack?.edit(bookSource) }
-            iv_top_source.onClick { callBack?.topSource(bookSource) }
-            iv_del_source.onClick { callBack?.del(bookSource) }
+            iv_edit_source.onClick { callBack.edit(bookSource) }
+            iv_top_source.onClick { callBack.topSource(bookSource) }
+            iv_del_source.onClick { callBack.del(bookSource) }
         }
     }
 

@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.ItemTouchCallback
 import kotlinx.android.synthetic.main.item_relace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
-    PagedListAdapter<ReplaceRule, ReplaceRuleAdapter.MyViewHolder>(DIFF_CALLBACK) {
+    PagedListAdapter<ReplaceRule, ReplaceRuleAdapter.MyViewHolder>(DIFF_CALLBACK),
+    ItemTouchCallback.OnItemTouchCallbackListener {
 
     companion object {
 
@@ -34,8 +36,12 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    init {
-        notifyDataSetChanged()
+    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        return true
+    }
+
+    override fun onSwiped(adapterPosition: Int) {
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -50,11 +56,8 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         fun bind(rule: ReplaceRule, listener: CallBack?) = with(itemView) {
             tv_name.text = rule.name
             swt_enabled.isChecked = rule.isEnabled
-            // divider.isGone          = hideDivider
             iv_delete.isGone = true
             iv_edit.isGone = true
-            // iv_delete.onClick { listener?.delete(rule) }
-            // iv_edit.onClick { listener?.edit(rule) }
             swt_enabled.onClick {
                 rule.isEnabled = swt_enabled.isChecked
                 listener?.update(rule)

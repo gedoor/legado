@@ -101,11 +101,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 LinearLayoutManager.VERTICAL
             )
         )
-        adapter = BookSourceAdapter()
-        adapter.callBack = this
+        adapter = BookSourceAdapter(this)
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()
-        itemTouchCallback.onItemTouchCallbackListener = adapter.itemTouchCallbackListener
+        itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
