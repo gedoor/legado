@@ -120,12 +120,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
                 PageDelegate.Direction.PREV -> {
                     it.moveToPrevious()
                 }
-
                 PageDelegate.Direction.NEXT -> {
                     it.moveToNext()
                 }
-                else -> {
-                }
+                else -> return
             }
         }
         upContent()
