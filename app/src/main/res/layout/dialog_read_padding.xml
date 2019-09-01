@@ -168,7 +168,7 @@
         <TextView
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="@string/padding_left" />
+            android:text="@string/padding_right" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_padding_right_remove"
