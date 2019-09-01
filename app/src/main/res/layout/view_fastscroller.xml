@@ -21,10 +21,6 @@
         android:id="@+id/fastscroll_scrollbar"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingEnd="@dimen/fastscroll_scrollbar_padding_end"
-        android:paddingLeft="@dimen/fastscroll_scrollbar_padding_start"
-        android:paddingRight="@dimen/fastscroll_scrollbar_padding_end"
-        android:paddingStart="@dimen/fastscroll_scrollbar_padding_start"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -41,6 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:paddingEnd="@dimen/fastscroll_scrollbar_padding_end"
+            android:paddingStart="@dimen/fastscroll_scrollbar_padding_start"
             tools:ignore="ContentDescription"
             tools:src="@drawable/fastscroll_handle" />
 
