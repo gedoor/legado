@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_add_empty"
+        android:id="@+id/menu_add"
+        android:icon="@drawable/ic_add"
         android:title="@string/add_group"
         app:showAsAction="always" />
 </menu>
