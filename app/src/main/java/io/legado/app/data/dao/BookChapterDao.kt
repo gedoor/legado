@@ -1,6 +1,6 @@
 package io.legado.app.data.dao
 
-import androidx.paging.DataSource
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,7 +11,7 @@ import io.legado.app.data.entities.BookChapter
 interface BookChapterDao {
 
     @Query("select * from chapters where bookUrl = :bookUrl")
-    fun observeByBook(bookUrl: String): DataSource.Factory<Int, BookChapter>
+    fun observeByBook(bookUrl: String): LiveData<List<BookChapter>>
 
     @Query("select * from chapters where bookUrl = :bookUrl")
     fun getChapterList(bookUrl: String): List<BookChapter>

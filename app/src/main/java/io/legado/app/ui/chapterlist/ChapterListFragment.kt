@@ -3,10 +3,7 @@ package io.legado.app.ui.chapterlist
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
@@ -26,7 +23,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
     lateinit var adapter: ChapterListAdapter
-    private var liveData: LiveData<PagedList<BookChapter>>? = null
     private var durChapterIndex = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,7 +33,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initRecyclerView() {
-        adapter = ChapterListAdapter(this)
+        adapter = ChapterListAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(
             DividerItemDecoration(
@@ -49,14 +45,17 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initData() {
-        liveData?.removeObservers(viewLifecycleOwner)
-        liveData = LivePagedListBuilder(App.db.bookChapterDao().observeByBook(viewModel.bookUrl ?: ""), 30).build()
-        liveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
-        viewModel.bookDate.value?.let {
-            loadBookFinish(it)
-        } ?: viewModel.bookDate.observe(viewLifecycleOwner, Observer {
+        viewModel.bookDate.observe(viewLifecycleOwner, Observer {
             loadBookFinish(it)
         })
+        viewModel.bookUrl?.let { bookUrl ->
+            App.db.bookChapterDao().observeByBook(bookUrl).observe(viewLifecycleOwner, Observer {
+                adapter.setItems(it)
+                viewModel.bookDate.value?.let { book ->
+                    loadBookFinish(book)
+                }
+            })
+        }
     }
 
     private fun initView() {
