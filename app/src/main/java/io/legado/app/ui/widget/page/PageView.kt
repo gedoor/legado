@@ -156,11 +156,11 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     }
 
     override fun hasNext(): Boolean {
-        return true
+        return pageFactory?.hasNext() == true
     }
 
     override fun hasPrev(): Boolean {
-        return true
+        return pageFactory?.hasPrev() == true
     }
 
     fun upStyle() {

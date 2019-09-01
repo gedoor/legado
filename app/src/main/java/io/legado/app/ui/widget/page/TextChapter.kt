@@ -26,7 +26,7 @@ data class TextChapter(
     }
 
     fun isLastIndex(index: Int): Boolean {
-        return index == pages.size - 1
+        return index >= pages.size - 1
     }
 
     fun pageSize(): Int {

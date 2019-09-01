@@ -10,11 +10,12 @@ class TextPageFactory private constructor(dataSource: DataSource) :
     }
 
     override fun hasPrev(): Boolean {
-        return true
+        return dataSource.hasPrevChapter() || dataSource.pageIndex() > 0
     }
 
     override fun hasNext(): Boolean {
-        return true
+        return dataSource.hasNextChapter()
+                || dataSource.getCurrentChapter()?.isLastIndex(dataSource.pageIndex()) != true
     }
 
     override fun pageAt(index: Int): TextPage {

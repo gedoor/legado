@@ -37,6 +37,7 @@ import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.TextChapter
+import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.view_book_page.*
@@ -248,10 +249,17 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 }
             }
             KeyEvent.KEYCODE_VOLUME_UP -> {
+                if (volumeKeyPage(PageDelegate.Direction.PREV)) {
+                    return true
+                }
             }
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                if (volumeKeyPage(PageDelegate.Direction.NEXT)) {
+                    return true
+                }
             }
             KeyEvent.KEYCODE_SPACE -> {
+
             }
         }
         return super.onKeyDown(keyCode, event)
@@ -260,10 +268,33 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
-
+                if (volumeKeyPage(PageDelegate.Direction.NONE)) {
+                    return true
+                }
             }
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    private fun volumeKeyPage(direction: PageDelegate.Direction): Boolean {
+        if (!read_menu.isVisible) {
+            if (getPrefBoolean("volumeKeyPage", true)) {
+                if (getPrefBoolean("volumeKeyPageOnPlay")
+                    || readAloudStatus != Status.PLAY
+                ) {
+                    when (direction) {
+                        PageDelegate.Direction.PREV -> {
+
+                        }
+                        PageDelegate.Direction.NEXT -> {
+
+                        }
+                    }
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     /**
