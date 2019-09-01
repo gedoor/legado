@@ -156,7 +156,6 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         if (noAnim) {
             fillPage(PageDelegate.Direction.PREV)
         }
-
     }
 
     fun moveToNextPage(noAnim: Boolean = true) {
@@ -228,7 +227,14 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
          */
         fun moveToPrevChapter(last: Boolean = true)
 
+        /**
+         * 保存页数
+         */
         fun setPageIndex(pageIndex: Int)
+
+        /**
+         * 点击屏幕中间
+         */
         fun clickCenter()
     }
 }
