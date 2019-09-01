@@ -121,7 +121,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private fun initDataObserve(searchKey: String = "") {
         bookSourceLiveDate?.removeObservers(this)
         val dataFactory = App.db.bookSourceDao().observeSearch("%$searchKey%")
-        bookSourceLiveDate = LivePagedListBuilder(dataFactory, 2000).build()
+        bookSourceLiveDate = LivePagedListBuilder(dataFactory, 10000).build()
         bookSourceLiveDate?.observe(this, Observer { adapter.submitList(it) })
 
         App.db.bookSourceDao().observeGroup().observe(this, Observer {
