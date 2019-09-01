@@ -43,7 +43,7 @@ class BookshelfController {
         return returnData
     }
 
-    fun saveBook(postData: String): ReturnData {
+    fun saveBook(postData: String?): ReturnData {
         val book = GSON.fromJsonObject<Book>(postData)
         val returnData = ReturnData()
         if (book != null) {

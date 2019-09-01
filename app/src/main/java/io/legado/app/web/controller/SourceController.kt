@@ -20,7 +20,7 @@ class SourceController {
             } else returnData.setData(bookSources)
         }
 
-    fun saveSource(postData: String): ReturnData {
+    fun saveSource(postData: String?): ReturnData {
         val returnData = ReturnData()
         try {
             val bookSource = GSON.fromJsonObject<BookSource>(postData)
@@ -40,7 +40,7 @@ class SourceController {
         return returnData
     }
 
-    fun saveSources(postData: String): ReturnData {
+    fun saveSources(postData: String?): ReturnData {
         val okSources = arrayListOf<BookSource>()
         kotlin.runCatching {
             val bookSources = GSON.fromJsonArray<BookSource>(postData)
@@ -68,7 +68,7 @@ class SourceController {
         return returnData.setData(bookSource)
     }
 
-    fun deleteSources(postData: String): ReturnData {
+    fun deleteSources(postData: String?): ReturnData {
         kotlin.runCatching {
             GSON.fromJsonArray<BookSource>(postData)?.let {
                 App.db.bookSourceDao().delete(*it.toTypedArray())
