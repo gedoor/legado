@@ -283,12 +283,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     || readAloudStatus != Status.PLAY
                 ) {
                     when (direction) {
-                        PageDelegate.Direction.PREV -> {
-
-                        }
-                        PageDelegate.Direction.NEXT -> {
-
-                        }
+                        PageDelegate.Direction.PREV -> page_view.moveToPrevPage()
+                        PageDelegate.Direction.NEXT -> page_view.moveToNextPage()
+                        else -> return true
                     }
                     return true
                 }
