@@ -1,6 +1,8 @@
 package io.legado.app.ui.replacerule
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -32,6 +34,18 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         initRecyclerView()
         initDataObservers()
         initSwipeToDelete()
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.replace_rule, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initRecyclerView() {
@@ -70,6 +84,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 }
             })
     }
+
 
     private fun initDataObservers() {
         rulesLiveData?.removeObservers(this)
