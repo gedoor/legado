@@ -80,7 +80,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_group_manage -> addGroup()
+            R.id.menu_add_empty -> addGroup()
         }
         return true
     }
