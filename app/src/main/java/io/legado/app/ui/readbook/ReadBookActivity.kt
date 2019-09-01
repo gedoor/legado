@@ -247,8 +247,23 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     return true
                 }
             }
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+            }
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+            }
+            KeyEvent.KEYCODE_SPACE -> {
+            }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
+
+            }
+        }
+        return super.onKeyUp(keyCode, event)
     }
 
     /**
