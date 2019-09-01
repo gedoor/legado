@@ -14,10 +14,8 @@ import kotlinx.android.synthetic.main.item_relace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class ReplaceRuleAdapter(context: Context) :
+class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     PagedListAdapter<ReplaceRule, ReplaceRuleAdapter.MyViewHolder>(DIFF_CALLBACK) {
-
-    var onClickListener: OnClickListener? = null
 
     companion object {
 
@@ -45,11 +43,11 @@ class ReplaceRuleAdapter(context: Context) :
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, pos: Int) {
-        getItem(pos)?.let { holder.bind(it, onClickListener) }
+        getItem(pos)?.let { holder.bind(it, callBack) }
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(rule: ReplaceRule, listener: OnClickListener?) = with(itemView) {
+        fun bind(rule: ReplaceRule, listener: CallBack?) = with(itemView) {
             tv_name.text = rule.name
             swt_enabled.isChecked = rule.isEnabled
             // divider.isGone          = hideDivider
@@ -64,7 +62,7 @@ class ReplaceRuleAdapter(context: Context) :
         }
     }
 
-    interface OnClickListener {
+    interface CallBack {
         fun update(rule: ReplaceRule)
         fun delete(rule: ReplaceRule)
         fun edit(rule: ReplaceRule)

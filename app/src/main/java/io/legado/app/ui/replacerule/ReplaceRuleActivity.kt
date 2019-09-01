@@ -23,9 +23,11 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
 
-class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule) {
+class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
+    ReplaceRuleAdapter.CallBack {
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
+
     private lateinit var adapter: ReplaceRuleAdapter
     private var rulesLiveData: LiveData<PagedList<ReplaceRule>>? = null
     private var allEnabled = false
@@ -51,31 +53,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_replace_rule)
         rv_replace_rule.layoutManager = LinearLayoutManager(this)
-        adapter = ReplaceRuleAdapter(this)
-        adapter.onClickListener = object : ReplaceRuleAdapter.OnClickListener {
-            override fun update(rule: ReplaceRule) {
-                doAsync {
-                    App.db.replaceRuleDao().update(rule)
-                    updateEnableAll()
-                }
-            }
-
-            override fun delete(rule: ReplaceRule) {
-                doAsync {
-                    App.db.replaceRuleDao().delete(rule)
-                    updateEnableAll()
-                }
-            }
-
-            override fun edit(rule: ReplaceRule) {
-                doAsync {
-                    App.db.replaceRuleDao().enableAll(!allEnabled)
-                    allEnabled = !allEnabled
-                }
-
-                toast("Edit function not implemented!")
-            }
-        }
+        adapter = ReplaceRuleAdapter(this, this)
         rv_replace_rule.adapter = adapter
         rv_replace_rule.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
@@ -120,5 +98,22 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             }
         }).attachToRecyclerView(rv_replace_rule)
 
+    }
+
+    override fun update(rule: ReplaceRule) {
+        viewModel.update(rule)
+    }
+
+    override fun delete(rule: ReplaceRule) {
+        viewModel.delete(rule)
+    }
+
+    override fun edit(rule: ReplaceRule) {
+        doAsync {
+            App.db.replaceRuleDao().enableAll(!allEnabled)
+            allEnabled = !allEnabled
+        }
+
+        toast("Edit function not implemented!")
     }
 }
