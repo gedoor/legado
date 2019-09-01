@@ -19,7 +19,8 @@ class TextPageFactory private constructor(dataSource: DataSource) :
     }
 
     override fun pageAt(index: Int): TextPage {
-        TODO("todo...")
+        return dataSource.getCurrentChapter()?.page(index)
+            ?: TextPage(index = index, title = "index：$index")
     }
 
     override fun moveToFirst() {
