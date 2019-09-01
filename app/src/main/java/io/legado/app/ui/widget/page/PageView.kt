@@ -8,11 +8,13 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
+import io.legado.app.ui.widget.page.delegate.NoAnmiPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.ui.widget.page.delegate.SlidePageDelegate
 import io.legado.app.utils.getPrefInt
 
-class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs), PageDelegate.PageInterface {
+class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs),
+    PageDelegate.PageInterface {
 
     var callback: CallBack? = null
     private var pageDelegate: PageDelegate? = null
@@ -44,7 +46,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
             }
 
             override fun isPrepared(): Boolean {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return true
             }
 
             override fun getChapterPosition(): Int {
@@ -123,14 +125,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
                     it.moveToNext()
                 }
                 else -> {
-
                 }
             }
-
-            prevPage?.setContent(it.previousPage())
-            curPage?.setContent(it.currentPage())
-            nextPage?.setContent(it.nextPage())
         }
+        upContent()
     }
 
     private fun setPageFactory(factory: TextPageFactory) {
@@ -143,6 +141,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     fun upPageAnim() {
         pageDelegate = when (context.getPrefInt("pageAnim")) {
             1 -> SlidePageDelegate(this)
+            2 -> NoAnmiPageDelegate(this)
             else -> CoverPageDelegate(this)
         }
     }
@@ -155,12 +154,17 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         }
     }
 
-    override fun hasNext(): Boolean {
-        return pageFactory?.hasNext() == true
+    fun moveToPrevPage(noAnim: Boolean = true) {
+        if (noAnim) {
+            fillPage(PageDelegate.Direction.PREV)
+        }
+
     }
 
-    override fun hasPrev(): Boolean {
-        return pageFactory?.hasPrev() == true
+    fun moveToNextPage(noAnim: Boolean = true) {
+        if (noAnim) {
+            fillPage(PageDelegate.Direction.NEXT)
+        }
     }
 
     fun upStyle() {
@@ -190,6 +194,14 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         nextPage?.upBattery(battery)
     }
 
+    override fun hasNext(): Boolean {
+        return pageFactory?.hasNext() == true
+    }
+
+    override fun hasPrev(): Boolean {
+        return pageFactory?.hasPrev() == true
+    }
+
     override fun clickCenter() {
         callback?.clickCenter()
     }
@@ -198,10 +210,26 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         fun chapterSize(): Int
         fun durChapterIndex(): Int
         fun durChapterPos(): Int
+        /**
+         * chapterOnDur: 0为当前页,1为下一页,-1为上一页
+         */
         fun textChapter(chapterOnDur: Int = 0): TextChapter?
+
+        /**
+         * 加载章节内容, index章节序号
+         */
         fun loadContent(index: Int)
+
+        /**
+         * 下一页
+         */
         fun moveToNextChapter()
+
+        /**
+         * 上一页
+         */
         fun moveToPrevChapter(last: Boolean = true)
+
         fun setPageIndex(pageIndex: Int)
         fun clickCenter()
     }

@@ -309,7 +309,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     /**
-     * 加载章节内容
+     * 加载章节内容, index章节序号
      */
     override fun loadContent(index: Int) {
         viewModel.bookData.value?.let {
@@ -405,6 +405,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         curPageChanged()
     }
 
+    /**
+     * chapterOnDur: 0为当前页,1为下一页,-1为上一页
+     */
     override fun textChapter(chapterOnDur: Int): TextChapter? {
         return when (chapterOnDur) {
             0 -> viewModel.curTextChapter
@@ -414,6 +417,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    /**
+     * 下一页
+     */
     override fun moveToNextChapter() {
         viewModel.durPageIndex = 0
         viewModel.moveToNextChapter()
@@ -421,6 +427,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         curChapterChanged()
     }
 
+    /**
+     * 上一页
+     */
     override fun moveToPrevChapter(last: Boolean) {
         viewModel.durPageIndex = if (last) viewModel.prevTextChapter?.lastIndex() ?: 0 else 0
         viewModel.moveToPrevChapter()
