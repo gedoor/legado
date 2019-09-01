@@ -26,6 +26,9 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabledExplore = 1 order by customOrder asc")
     fun observeFind(): DataSource.Factory<Int, BookSource>
 
+    @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")
+    fun getByGroup(group: String): List<BookSource>
+
     @get:Query("select * from book_sources order by customOrder asc")
     val all: List<BookSource>
 
