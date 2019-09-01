@@ -52,7 +52,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
             }
 
             override fun getChapter(position: Int): TextChapter? {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return callback?.textChapter(position)
             }
 
             override fun getCurrentChapter(): TextChapter? {
