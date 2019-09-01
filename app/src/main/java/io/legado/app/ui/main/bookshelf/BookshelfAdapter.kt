@@ -31,6 +31,7 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
                         && oldItem.durChapterTitle == newItem.durChapterTitle
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
                         && oldItem.durChapterTime == newItem.durChapterTime
+                        && oldItem.lastCheckTime == newItem.lastCheckTime
         }
     }
 

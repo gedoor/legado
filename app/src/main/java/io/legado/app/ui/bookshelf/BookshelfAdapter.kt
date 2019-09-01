@@ -10,7 +10,6 @@ import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
 
@@ -26,6 +25,8 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
                 oldItem.bookUrl == newItem.bookUrl
                         && oldItem.durChapterTitle == newItem.durChapterTitle
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
+                        && oldItem.durChapterTime == newItem.durChapterTime
+                        && oldItem.lastCheckTime == newItem.lastCheckTime
         }
     }
 
