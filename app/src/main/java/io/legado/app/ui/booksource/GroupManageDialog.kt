@@ -5,9 +5,11 @@ import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -32,7 +34,7 @@ import kotlinx.android.synthetic.main.item_book_group.view.tv_group
 import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class GroupManageDialog : DialogFragment() {
+class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: BookSourceViewModel
     private lateinit var adapter: GroupAdapter
 
@@ -59,6 +61,8 @@ class GroupManageDialog : DialogFragment() {
 
     private fun initData() {
         tool_bar.title = getString(R.string.group_manage)
+        tool_bar.inflateMenu(R.menu.group_manage)
+        tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(
@@ -74,6 +78,36 @@ class GroupManageDialog : DialogFragment() {
         })
     }
 
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_group_manage -> addGroup()
+        }
+        return true
+    }
+
+    @SuppressLint("InflateParams")
+    private fun addGroup() {
+        alert(title = getString(R.string.add_group)) {
+            var editText: EditText? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
+                    editText = edit_view.apply {
+                        ATH.applyAccentTint(this)
+                        hint = "分组名称"
+                    }
+                }
+            }
+            yesButton {
+                editText?.text?.toString()?.let {
+                    if (it.isNotBlank()) {
+                        viewModel.addGroup(it)
+                    }
+                }
+            }
+            noButton()
+        }.show().applyTint().requestInputMethod()
+    }
+
     @SuppressLint("InflateParams")
     private fun editGroup(group: String) {
         alert(title = getString(R.string.group_edit)) {
@@ -87,13 +121,10 @@ class GroupManageDialog : DialogFragment() {
                     }
                 }
             }
-
             yesButton {
                 viewModel.upGroup(group, editText?.text?.toString())
             }
-
             noButton()
-
         }.show().applyTint().requestInputMethod()
     }
 

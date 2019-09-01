@@ -26,6 +26,16 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute { App.db.bookSourceDao().update(*bookSource) }
     }
 
+    fun addGroup(group: String) {
+        execute {
+            val sources = App.db.bookSourceDao().noGroup
+            sources.map { source ->
+                source.bookSourceGroup = group
+            }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
+        }
+    }
+
     fun upGroup(oldGroup: String, newGroup: String?) {
         execute {
             val sources = App.db.bookSourceDao().getByGroup(oldGroup)
