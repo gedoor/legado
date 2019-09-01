@@ -14,7 +14,8 @@ import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookSourceAdapter :
+    PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
 
@@ -54,13 +55,22 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         }
     }
 
-    override fun onCurrentListChanged(previousList: PagedList<BookSource>?, currentList: PagedList<BookSource>?) {
+    override fun onCurrentListChanged(
+        previousList: PagedList<BookSource>?,
+        currentList: PagedList<BookSource>?
+    ) {
         super.onCurrentListChanged(previousList, currentList)
         callBack?.upCount(itemCount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_book_source, parent, false))
+        return MyViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_book_source,
+                parent,
+                false
+            )
+        )
     }
 
 
@@ -76,7 +86,12 @@ class BookSourceAdapter : PagedListAdapter<BookSource, BookSourceAdapter.MyViewH
         }
 
         fun bind(bookSource: BookSource, callBack: CallBack?) = with(itemView) {
-            cb_book_source.text = String.format("%s (%s)", bookSource.bookSourceName, bookSource.bookSourceGroup)
+            if (bookSource.bookSourceGroup.isNullOrEmpty()) {
+                cb_book_source.text = bookSource.bookSourceName
+            } else {
+                cb_book_source.text =
+                    String.format("%s (%s)", bookSource.bookSourceName, bookSource.bookSourceGroup)
+            }
             cb_book_source.isChecked = bookSource.enabled
             cb_book_source.setOnClickListener {
                 bookSource.enabled = cb_book_source.isChecked
