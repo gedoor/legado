@@ -18,7 +18,6 @@ import io.legado.app.utils.postEvent
 class MediaButtonReceiver : BroadcastReceiver() {
 
     companion object {
-        val TAG = MediaButtonReceiver::class.java.simpleName
 
         fun handleIntent(context: Context, intent: Intent): Boolean {
             val intentAction = intent.action
