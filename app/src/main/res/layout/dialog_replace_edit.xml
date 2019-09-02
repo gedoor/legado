@@ -24,13 +24,25 @@
             android:padding="10dp">
 
             <io.legado.app.lib.theme.view.ATETextInputLayout
-                android:id="@+id/til_replace_summary"
+                android:id="@+id/til_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/replace_rule_summary">
 
                 <io.legado.app.lib.theme.view.ATEEditText
-                    android:id="@+id/tie_replace_summary"
+                    android:id="@+id/et_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </io.legado.app.lib.theme.view.ATETextInputLayout>
+
+            <io.legado.app.lib.theme.view.ATETextInputLayout
+                android:id="@+id/til_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/group">
+
+                <io.legado.app.lib.theme.view.ATEEditText
+                    android:id="@+id/et_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </io.legado.app.lib.theme.view.ATETextInputLayout>
@@ -42,7 +54,7 @@
                 android:hint="@string/replace_rule">
 
                 <io.legado.app.lib.theme.view.ATEEditText
-                    android:id="@+id/tie_replace_rule"
+                    android:id="@+id/et_replace_rule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </io.legado.app.lib.theme.view.ATETextInputLayout>
@@ -60,19 +72,19 @@
                 android:hint="@string/replace_to">
 
                 <io.legado.app.lib.theme.view.ATEEditText
-                    android:id="@+id/tie_replace_to"
+                    android:id="@+id/et_replace_to"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </io.legado.app.lib.theme.view.ATETextInputLayout>
 
             <io.legado.app.lib.theme.view.ATETextInputLayout
-                android:id="@+id/til_use_to"
+                android:id="@+id/til_scope"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/use_to">
 
                 <io.legado.app.lib.theme.view.ATEEditText
-                    android:id="@+id/tie_use_to"
+                    android:id="@+id/et_scope"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </io.legado.app.lib.theme.view.ATETextInputLayout>

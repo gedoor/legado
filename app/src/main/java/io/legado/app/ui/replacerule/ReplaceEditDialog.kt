@@ -55,7 +55,12 @@ class ReplaceEditDialog : DialogFragment(),
     }
 
     private fun upReplaceView(replaceRule: ReplaceRule) {
-
+        et_name.setText(replaceRule.name)
+        et_group.setText(replaceRule.group)
+        et_replace_rule.setText(replaceRule.pattern)
+        cb_use_regex.isChecked = replaceRule.isRegex
+        et_replace_to.setText(replaceRule.replacement)
+        et_scope.setText(replaceRule.scope)
     }
 
 }
