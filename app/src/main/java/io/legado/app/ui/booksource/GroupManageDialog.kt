@@ -62,6 +62,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private fun initData() {
         tool_bar.title = getString(R.string.group_manage)
         tool_bar.inflateMenu(R.menu.group_manage)
+        tool_bar.menu.applyTint(requireContext(), false)
         tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
