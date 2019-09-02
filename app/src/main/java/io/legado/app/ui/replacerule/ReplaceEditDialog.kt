@@ -18,6 +18,20 @@ import kotlinx.android.synthetic.main.dialog_replace_edit.*
 
 class ReplaceEditDialog : DialogFragment(),
     Toolbar.OnMenuItemClickListener {
+
+    companion object {
+
+        fun newInstance(id: Long? = null): ReplaceEditDialog {
+            val dialog = ReplaceEditDialog()
+            id?.let {
+                val bundle = Bundle()
+                bundle.putLong("data", id)
+                dialog.arguments = bundle
+            }
+            return dialog
+        }
+    }
+
     private lateinit var viewModel: ReplaceEditViewModel
 
     override fun onStart() {
@@ -44,6 +58,9 @@ class ReplaceEditDialog : DialogFragment(),
         viewModel.replaceRuleData.observe(this, Observer {
             upReplaceView(it)
         })
+        arguments?.let {
+            viewModel.initData(it)
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

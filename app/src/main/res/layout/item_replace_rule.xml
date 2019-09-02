@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="8dp">
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:ignore="RtlSymmetry" />
+
+    <Switch
+        android:id="@+id/swt_enabled"
+        android:name="@string/enable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        tools:ignore="RtlSymmetry" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu_more"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="6dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_vert"
+        tools:ignore="RtlHardcoded" />
+</LinearLayout>

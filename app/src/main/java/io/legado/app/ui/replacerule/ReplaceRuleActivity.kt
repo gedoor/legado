@@ -91,6 +91,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     override fun edit(rule: ReplaceRule) {
-
+        ReplaceEditDialog
+            .newInstance(rule.id)
+            .show(supportFragmentManager, "editReplace")
     }
 }

@@ -14,7 +14,6 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.invisible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
-import kotlinx.android.synthetic.main.item_relace_rule.view.tv_name
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
