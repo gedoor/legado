@@ -44,7 +44,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-
+            R.id.menu_add_replace_rule ->
+                ReplaceEditDialog().show(supportFragmentManager, "replaceNew")
         }
         return super.onCompatOptionsItemSelected(item)
     }

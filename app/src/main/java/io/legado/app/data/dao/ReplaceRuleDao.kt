@@ -13,7 +13,7 @@ interface ReplaceRuleDao {
     fun observeAll(): DataSource.Factory<Int, ReplaceRule>
 
     @Query("SELECT id FROM replace_rules ORDER BY sortOrder ASC")
-    fun observeAllIds(): LiveData<List<Int>>
+    fun observeAllIds(): LiveData<List<Long>>
 
     @get:Query("SELECT MAX(sortOrder) FROM replace_rules")
     val maxOrder: Int
@@ -25,10 +25,10 @@ interface ReplaceRuleDao {
     val allEnabled: List<ReplaceRule>
 
     @Query("SELECT * FROM replace_rules WHERE id = :id")
-    fun findById(id: Int): ReplaceRule?
+    fun findById(id: Long): ReplaceRule?
 
     @Query("SELECT * FROM replace_rules WHERE id in (:ids)")
-    fun findByIds(vararg ids: Int): List<ReplaceRule>
+    fun findByIds(vararg ids: Long): List<ReplaceRule>
 
     @Query(
         """SELECT * FROM replace_rules WHERE isEnabled = 1 
