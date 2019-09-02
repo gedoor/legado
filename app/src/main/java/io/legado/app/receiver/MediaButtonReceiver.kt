@@ -48,9 +48,11 @@ class MediaButtonReceiver : BroadcastReceiver() {
             if (!ActivityHelp.isExist(ReadBookActivity::class.java)) {
                 val intent = Intent(context, ReadBookActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("readAloud", true)
                 context.startActivity(intent)
+            } else {
+                postEvent(Bus.READ_ALOUD_BUTTON, true)
             }
-            postEvent(Bus.READ_ALOUD_BUTTON, true)
         }
     }
 

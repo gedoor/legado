@@ -324,6 +324,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
                 page_view.upContent()
                 curChapterChanged()
+                if (intent.getBooleanExtra("readAloud", false)) {
+                    intent.removeExtra("readAloud")
+                    readAloud()
+                }
             }
             viewModel.durChapterIndex - 1 -> launch {
                 viewModel.prevTextChapter = ChapterProvider
