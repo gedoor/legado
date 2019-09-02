@@ -56,9 +56,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             }
 
             if (returnData == null) {
-                if (uri.endsWith("/")) {
+                if (uri.endsWith("/"))
                     uri += "index.html"
-                }
                 return assetsWeb.getResponse(uri)
             }
 
