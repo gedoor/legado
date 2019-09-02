@@ -12,14 +12,14 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
 
 
-    override fun serve(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
+    override fun serve(session: IHTTPSession): Response {
         var returnData: ReturnData? = null
         var uri = session.uri
 
         try {
             when (session.method.name) {
                 "OPTIONS" -> {
-                    val response = NanoHTTPD.newFixedLengthResponse("")
+                    val response = newFixedLengthResponse("")
                     response.addHeader("Access-Control-Allow-Methods", "POST")
                     response.addHeader("Access-Control-Allow-Headers", "content-type")
                     response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
@@ -62,12 +62,12 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 return assetsWeb.getResponse(uri)
             }
 
-            val response = NanoHTTPD.newFixedLengthResponse(Gson().toJson(returnData))
+            val response = newFixedLengthResponse(Gson().toJson(returnData))
             response.addHeader("Access-Control-Allow-Methods", "GET, POST")
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
             return response
         } catch (e: Exception) {
-            return NanoHTTPD.newFixedLengthResponse(e.message)
+            return newFixedLengthResponse(e.message)
         }
 
     }
