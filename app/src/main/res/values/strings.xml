@@ -43,9 +43,9 @@
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载任务</string>
-    <string name="action_list">列表视图</string>
-    <string name="action_grid3">网格视图三列</string>
-    <string name="action_grid4">网格视图四列</string>
+    <string name="layout_list">列表视图</string>
+    <string name="layout_grid3">网格视图三列</string>
+    <string name="layout_grid4">网格视图四列</string>
     <string name="bookshelf_layout">书架布局</string>
     <string name="book_library">书城</string>
     <string name="book_local">添加本地</string>
