@@ -31,7 +31,7 @@ class BookInfoEditActivity : VMBaseActivity<BookInfoEditViewModel>(R.layout.acti
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_save -> saveData()
+            R.id.menu_save -> saveData()
         }
         return super.onCompatOptionsItemSelected(item)
     }

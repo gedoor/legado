@@ -67,7 +67,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_save -> {
+            R.id.menu_save -> {
                 val bookSource = getSource()
                 if (bookSource == null) {
                     toast("书源名称和URL不能为空")

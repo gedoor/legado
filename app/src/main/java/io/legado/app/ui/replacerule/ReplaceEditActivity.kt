@@ -1,6 +1,8 @@
 package io.legado.app.ui.replacerule
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.utils.getViewModel
@@ -14,5 +16,17 @@ class ReplaceEditActivity :
 
     }
 
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.replace_edit, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_save -> {
+            }
+        }
+        return super.onCompatOptionsItemSelected(item)
+    }
 
 }
