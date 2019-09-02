@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.lib.theme.backgroundColor
 import kotlinx.android.synthetic.main.item_replace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -62,6 +63,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(rule: ReplaceRule, callBack: CallBack) = with(itemView) {
+            this.setBackgroundColor(context.backgroundColor)
             cb_name.text = rule.name
             swt_enabled.isChecked = rule.isEnabled
             swt_enabled.onClick {
