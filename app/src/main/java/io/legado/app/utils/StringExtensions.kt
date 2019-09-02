@@ -37,7 +37,9 @@ fun String.startWithIgnoreCase(start: String): Boolean {
     return if (this.isBlank()) false else startsWith(start, true)
 }
 
-
+/**
+ * 计算相似度
+ */
 fun String.similarity(target: String): Float {
     //计算两个字符串的长度。
     val len1 = this.length
