@@ -106,8 +106,8 @@ object BookHelp {
         }
         var similarity = 0F
         var newIndex = index
-        val start = max(index - 10, 0)
-        val end = min(index + 10, chapters.lastIndex)
+        val start = max(index - 20, 0)
+        val end = min(index + 20, chapters.lastIndex)
         if (start < end) {
             for (i in start..end) {
                 val s = title.similarity(chapters[i].title)
