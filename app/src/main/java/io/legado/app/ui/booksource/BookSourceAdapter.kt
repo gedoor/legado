@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.backgroundColor
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -78,11 +78,8 @@ class BookSourceAdapter(val callBack: CallBack) :
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        init {
-            itemView.setBackgroundColor(ThemeStore.backgroundColor(itemView.context))
-        }
-
         fun bind(bookSource: BookSource, callBack: CallBack) = with(itemView) {
+            this.setBackgroundColor(context.backgroundColor)
             if (bookSource.bookSourceGroup.isNullOrEmpty()) {
                 cb_book_source.text = bookSource.bookSourceName
             } else {
