@@ -9,10 +9,18 @@ import java.util.*
  */
 object ActivityHelp {
 
-    private var activities: MutableList<WeakReference<Activity>> = arrayListOf()
+    private val activities: MutableList<WeakReference<Activity>> = arrayListOf()
 
-    fun getActivities(): List<WeakReference<Activity>> {
-        return activities
+    /**
+     * 判断指定Activity是否存在
+     */
+    fun isExist(activityClass: Class<*>): Boolean {
+        for (item in activities) {
+            if (item.get()?.javaClass == activityClass) {
+                return true
+            }
+        }
+        return false
     }
 
     /**
@@ -72,20 +80,6 @@ object ActivityHelp {
         for (activityWeakReference in waitFinish) {
             activityWeakReference.get()?.finish()
         }
-    }
-
-    /**
-     * 判断指定Activity是否存在
-     */
-    fun isExist(activityClass: Class<*>): Boolean {
-        var result = false
-        for (item in activities) {
-            if (item.get()?.javaClass == activityClass) {
-                result = true
-                break
-            }
-        }
-        return result
     }
 
 }
