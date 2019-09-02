@@ -16,13 +16,6 @@
         android:title="@string/navigation_bar_color_change"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="false"
-        android:key="E-InkMode"
-        android:summary="@string/e_ink_mode_detail"
-        android:title="@string/e_ink_mode"
-        app:iconSpaceReserved="false" />
-
     <androidx.preference.Preference
         android:key="defaultTheme"
         android:summary="@string/restore_default_theme"
