@@ -175,13 +175,14 @@ object Restore {
             doAsync {
                 val items: List<Map<String, Any>> = jsonPath.parse(ruleFile.readText()).read("$")
                 val existingRules = App.db.replaceRuleDao().all.map { it.pattern }.toSet()
-                for (item in items) {
+                for ((index: Int, item: Map<String, Any>) in items.withIndex()) {
                     val jsonItem = jsonPath.parse(item)
                     val rule = ReplaceRule()
-                    rule.pattern = jsonItem.readString("$.regex")
-                    if (rule.pattern.isNullOrEmpty() || rule.pattern in existingRules) continue
-                    rule.name = jsonItem.readString("$.replaceSummary")
-                    rule.replacement = jsonItem.readString("$.replacement")
+                    rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis().plus(index)
+                    rule.pattern = jsonItem.readString("$.regex") ?: ""
+                    if (rule.pattern.isEmpty() || rule.pattern in existingRules) continue
+                    rule.name = jsonItem.readString("$.replaceSummary") ?: ""
+                    rule.replacement = jsonItem.readString("$.replacement") ?: ""
                     rule.isRegex = jsonItem.readBool("$.isRegex") == true
                     rule.scope = jsonItem.readString("$.useTo")
                     rule.isEnabled = jsonItem.readBool("$.enable") == true

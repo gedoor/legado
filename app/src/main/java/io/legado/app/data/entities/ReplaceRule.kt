@@ -14,7 +14,7 @@ import kotlinx.android.parcel.Parcelize
 )
 data class ReplaceRule(
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
+    var id: Long = System.currentTimeMillis(),
     var name: String = "",
     var group: String? = null,
     var pattern: String = "",
