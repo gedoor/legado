@@ -18,7 +18,6 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import org.jetbrains.anko.doAsync
 
@@ -51,11 +50,11 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(rv_replace_rule)
-        rv_replace_rule.layoutManager = LinearLayoutManager(this)
+        ATH.applyEdgeEffectColor(recycler_view)
+        recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ReplaceRuleAdapter(this, this)
-        rv_replace_rule.adapter = adapter
-        rv_replace_rule.addItemDecoration(
+        recycler_view.adapter = adapter
+        recycler_view.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
                 ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
                     this.setDrawable(it)
