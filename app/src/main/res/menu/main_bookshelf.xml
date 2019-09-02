@@ -9,19 +9,19 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_add_local"
+        android:id="@+id/menu_add_local"
         android:icon="@drawable/ic_add"
         android:title="@string/book_local"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_add_url"
+        android:id="@+id/menu_add_url"
         android:icon="@drawable/ic_add_online"
         android:title="@string/add_url"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_download_all"
+        android:id="@+id/menu_download_all"
         android:icon="@drawable/ic_download_line"
         android:title="@string/download_all"
         app:showAsAction="never" />
@@ -29,11 +29,11 @@
     <item
         android:id="@+id/action_list_grid"
         android:icon="@drawable/ic_view_quilt"
-        android:title="@string/action_list_grid"
+        android:title="@string/bookshelf_layout"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_arrange_bookshelf"
+        android:id="@+id/menu_arrange_bookshelf"
         android:icon="@drawable/ic_arrange"
         android:title="@string/arrange_bookshelf"
         app:showAsAction="never" />
