@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.bookshelf
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -130,10 +131,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         return false
     }
 
+    @SuppressLint("InflateParams")
     private fun showGroupInputDialog() {
         alert(title = "新建分组") {
             var editText: EditText? = null
-
             customView {
                 layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
                     editText = edit_view.apply {
@@ -142,13 +143,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     }
                 }
             }
-
             yesButton {
                 viewModel.saveBookGroup(editText?.text?.toString())
             }
-
             noButton()
-
         }.show().applyTint().requestInputMethod()
     }
 
