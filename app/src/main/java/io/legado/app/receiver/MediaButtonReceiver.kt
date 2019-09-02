@@ -28,20 +28,16 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 val keycode = event.keyCode
                 val action = event.action
 
-                var command = false
                 when (keycode) {
                     KeyEvent.KEYCODE_MEDIA_STOP,
                     KeyEvent.KEYCODE_MEDIA_PAUSE,
                     KeyEvent.KEYCODE_MEDIA_PLAY,
                     KeyEvent.KEYCODE_HEADSETHOOK,
                     KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
-                        command = true
-                    }
-                }
-                if (command) {
-                    if (action == KeyEvent.ACTION_DOWN) {
-                        readAloud(context)
-                        return true
+                        if (action == KeyEvent.ACTION_DOWN) {
+                            readAloud(context)
+                            return true
+                        }
                     }
                 }
             }
