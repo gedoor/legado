@@ -15,10 +15,10 @@ import kotlinx.android.parcel.Parcelize
 data class ReplaceRule(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    var name: String? = null,
+    var name: String = "",
     var group: String? = null,
-    var pattern: String? = null,
-    var replacement: String? = null,
+    var pattern: String = "",
+    var replacement: String = "",
     var scope: String? = null,
     var isEnabled: Boolean = true,
     var isRegex: Boolean = true,

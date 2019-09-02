@@ -124,8 +124,11 @@ object BookHelp {
     var bookOrigin: String? = null
     var replaceRules: List<ReplaceRule> = arrayListOf()
 
-    fun disposeContent(name: String, origin: String?, content: String, enableReplace: Boolean)
-            : String {
+    fun disposeContent(
+        name: String, origin: String?,
+        content: String,
+        enableReplace: Boolean
+    ): String {
         var c = content
         synchronized(this) {
             if (enableReplace && (bookName != name || bookOrigin != origin)) {
@@ -137,12 +140,12 @@ object BookHelp {
             }
         }
         for (item in replaceRules) {
-            item.pattern?.let {
+            item.pattern.let {
                 if (it.isNotEmpty()) {
                     c = if (item.isRegex) {
-                        c.replace(it.toRegex(), item.replacement ?: "")
+                        c.replace(it.toRegex(), item.replacement)
                     } else {
-                        c.replace(it, item.replacement ?: "")
+                        c.replace(it, item.replacement)
                     }
                 }
             }
