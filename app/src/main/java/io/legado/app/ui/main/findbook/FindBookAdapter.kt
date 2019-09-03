@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ColorUtils
+import io.legado.app.utils.gone
+import io.legado.app.utils.invisible
 import kotlinx.android.synthetic.main.item_find_book.view.*
 
 class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>(DIFF_CALLBACK) {
+
+    var exIndex = 0
 
     companion object {
         var DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookSource>() {
@@ -31,16 +35,24 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         currentList?.get(position)?.let {
-            holder.bind(it)
+            holder.bind(it, position == exIndex)
         }
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(bookSource: BookSource) = with(itemView) {
+        fun bind(bookSource: BookSource, ex: Boolean) = with(itemView) {
             val bgShape: GradientDrawable? = tv_name.background as? GradientDrawable
             bgShape?.setStroke(2, ColorUtils.getRandomColor())
             tv_name.text = bookSource.bookSourceName
+            if (ex) {
+                gl_child.invisible()
+                bookSource.getExploreRule().exploreUrl?.let {
+
+                }
+            } else {
+                gl_child.gone()
+            }
         }
     }
 }

@@ -39,6 +39,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         postEvent(Bus.UP_BOOK, book.bookUrl)
                         WebBook(bookSource).getChapterList(book).onSuccess(IO) {
                             it?.let {
+                                App.db.bookDao().update(book)
                                 if (it.size > App.db.bookChapterDao().getChapterCount(book.bookUrl)) {
                                     App.db.bookChapterDao().insert(*it.toTypedArray())
                                 }
