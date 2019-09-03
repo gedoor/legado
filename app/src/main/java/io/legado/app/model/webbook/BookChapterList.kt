@@ -26,12 +26,7 @@ object BookChapterList {
         var chapterList = arrayListOf<BookChapter>()
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
-        body ?: throw Exception(
-                App.INSTANCE.getString(
-                        R.string.error_get_web_content,
-                        baseUrl
-                )
-        )
+        body ?: throw Exception(App.INSTANCE.getString(R.string.error_get_web_content, baseUrl))
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
@@ -67,8 +62,9 @@ object BookChapterList {
                                     book,
                                     bookSource
                             )
-                            nextUrl =
-                                    if (chapterData.nextUrl.isNotEmpty()) chapterData.nextUrl[0] else ""
+                            nextUrl = if (chapterData.nextUrl.isNotEmpty())
+                                chapterData.nextUrl[0]
+                            else ""
                             chapterData.chapterList?.let {
                                 chapterList.addAll(it)
                             }
