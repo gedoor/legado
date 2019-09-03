@@ -1,5 +1,8 @@
 package io.legado.app.data.entities.rule
 
+import io.legado.app.constant.AppConst
+import javax.script.SimpleBindings
+
 data class ExploreRule(
     var exploreUrl: String? = null,
     override var bookList: String? = null,
@@ -14,8 +17,36 @@ data class ExploreRule(
     override var wordCount: String? = null
 ) : BookListRule {
 
+    fun getExploreKinds(baseUrl: String): ArrayList<ExploreKind>? {
+        exploreUrl?.let {
+            var a = it
+            if (a.isNotBlank()) {
+                try {
+                    if (it.startsWith("<js>", false)) {
 
-    data class ExploreUrl(
+                        val bindings = SimpleBindings()
+                        bindings["baseUrl"] = baseUrl
+                        a = AppConst.SCRIPT_ENGINE.eval(
+                            a.substring(4, a.lastIndexOf("<")),
+                            bindings
+                        ).toString()
+                    }
+                    val exploreKinds = arrayListOf<ExploreKind>()
+                    val b = a.split("(&&|\n)+".toRegex())
+                    b.map { c ->
+                        val d = c.split("::")
+                        exploreKinds.add(ExploreKind(d[0], d[1]))
+                    }
+                    return exploreKinds
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        return null
+    }
+
+    data class ExploreKind(
         var title: String,
         var url: String
     )
