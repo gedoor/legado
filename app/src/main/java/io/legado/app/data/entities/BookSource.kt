@@ -112,9 +112,4 @@ data class BookSource(
         return contentRuleV!!
     }
 
-    fun getExploreKind() {
-        getExploreRule().exploreUrl?.let {
-
-        }
-    }
 }
