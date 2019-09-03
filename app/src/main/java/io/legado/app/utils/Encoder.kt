@@ -1,5 +1,8 @@
 package io.legado.app.utils
 
+import android.util.Base64
+import java.nio.charset.StandardCharsets
+
 object Encoder {
 
     fun escape(src: String): String {
@@ -19,5 +22,14 @@ object Encoder {
             tmp.append(prefix).append(charCode.toString(16))
         }
         return tmp.toString()
+    }
+
+    fun base64Decoder(str: String): String {
+        val bytes = Base64.decode(str, Base64.DEFAULT)
+        return try {
+            String(bytes, StandardCharsets.UTF_8)
+        } catch (e: Exception) {
+            String(bytes)
+        }
     }
 }

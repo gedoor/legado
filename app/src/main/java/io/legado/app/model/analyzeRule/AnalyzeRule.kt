@@ -524,38 +524,36 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     /**
      * js实现跨域访问,不能删
      */
-//    fun ajax(urlStr: String): String? {
-//        try {
-//            val analyzeUrl = AnalyzeUrl(urlStr)
-//            val response = BaseModelImpl.getInstance().getResponseO(analyzeUrl)
-//                .blockingFirst()
-//            return response.body()
-//        } catch (e: Exception) {
-//            return e.localizedMessage
-//        }
-//
-//    }
+    suspend fun ajax(urlStr: String): String? {
+        return try {
+            val analyzeUrl = AnalyzeUrl(urlStr)
+            val response = analyzeUrl.getResponseAsync().await()
+            response.body()
+        } catch (e: Exception) {
+            e.localizedMessage
+        }
+    }
 
     /**
      * js实现解码,不能删
      */
-//    fun base64Decoder(base64: String): String {
-//        return StringUtils.base64Decode(base64)
-//    }
+    fun base64Decoder(str: String): String {
+        return Encoder.base64Decoder(str)
+    }
 
     /**
      * 章节数转数字
      */
-//    fun toNumChapter(s: String?): String? {
-//        if (s == null) {
-//            return null
-//        }
-//        val pattern = Pattern.compile("(第)(.+?)(章)")
-//        val matcher = pattern.matcher(s)
-//        return if (matcher.find()) {
-//            matcher.group(1) + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
-//        } else s
-//    }
+    fun toNumChapter(s: String?): String? {
+        if (s == null) {
+            return null
+        }
+        val pattern = Pattern.compile("(第)(.+?)(章)")
+        val matcher = pattern.matcher(s)
+        return if (matcher.find()) {
+            matcher.group(1) + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
+        } else s
+    }
 
     companion object {
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
