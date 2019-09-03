@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:gravity="center"
+    android:orientation="horizontal"
     android:padding="8dp">
 
     <androidx.appcompat.widget.AppCompatCheckBox
@@ -30,5 +30,6 @@
         android:layout_margin="6dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_more_vert"
+        android:tint="@color/tv_text_default"
         tools:ignore="RtlHardcoded" />
 </LinearLayout>
