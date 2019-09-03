@@ -132,7 +132,7 @@ class AnalyzeByJSonPath {
             }
             if (results.size > 0) {
                 if ("%" == elementsType) {
-                    for (i in 0 until results[0].size) {
+                    for (i in results[0].indices) {
                         for (temp in results) {
                             if (i < temp.size) {
                                 result.add(temp[i])
