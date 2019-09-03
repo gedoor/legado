@@ -7,13 +7,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.google.android.flexbox.FlexboxLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
 import kotlinx.android.synthetic.main.fragment_find_book.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
@@ -34,7 +33,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_find)
-        rv_find.layoutManager = FlexboxLayoutManager(context)
+        rv_find.layoutManager = LinearLayoutManager(context)
         adapter = FindBookAdapter()
         rv_find.adapter = adapter
     }

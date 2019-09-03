@@ -125,14 +125,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     sourceRule.makeUpRule(result)
                     result?.let {
                         if (sourceRule.rule.isNotEmpty()) {
-                            when (sourceRule.mode) {
-                                Mode.Js -> result = evalJS(sourceRule.rule, result)
-                                Mode.Json -> result =
-                                    getAnalyzeByJSonPath(it).getStringList(sourceRule.rule)
-                                Mode.XPath -> result =
-                                    getAnalyzeByXPath(it).getStringList(sourceRule.rule)
-                                Mode.Default -> result = getAnalyzeByJSoup(it).getStringList(sourceRule.rule)
-                                else -> result = sourceRule.rule
+                            result = when (sourceRule.mode) {
+                                Mode.Js -> evalJS(sourceRule.rule, result)
+                                Mode.Json -> getAnalyzeByJSonPath(it).getStringList(sourceRule.rule)
+                                Mode.XPath -> getAnalyzeByXPath(it).getStringList(sourceRule.rule)
+                                Mode.Default -> getAnalyzeByJSoup(it).getStringList(sourceRule.rule)
+                                else -> sourceRule.rule
                             }
                         }
                         if (sourceRule.replaceRegex.isNotEmpty() && result is List<*>) {
@@ -196,16 +194,16 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 sourceRule.makeUpRule(result)
                 result?.let {
                     if (sourceRule.rule.isNotBlank()) {
-                        when (sourceRule.mode) {
-                            Mode.Js -> result = evalJS(sourceRule.rule, it)
-                            Mode.Json -> result = getAnalyzeByJSonPath(it).getString(sourceRule.rule)
-                            Mode.XPath -> result = getAnalyzeByXPath(it).getString(sourceRule.rule)
-                            Mode.Default -> result = if (isUrl) {
+                        result = when (sourceRule.mode) {
+                            Mode.Js -> evalJS(sourceRule.rule, it)
+                            Mode.Json -> getAnalyzeByJSonPath(it).getString(sourceRule.rule)
+                            Mode.XPath -> getAnalyzeByXPath(it).getString(sourceRule.rule)
+                            Mode.Default -> if (isUrl) {
                                 getAnalyzeByJSoup(it).getString0(sourceRule.rule)
                             } else {
                                 getAnalyzeByJSoup(it).getString(sourceRule.rule)
                             }
-                            else -> result = sourceRule.rule
+                            else -> sourceRule.rule
                         }
                     }
                     if (sourceRule.replaceRegex.isNotEmpty()) {
@@ -236,13 +234,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             for (sourceRule in ruleList) {
                 putRule(sourceRule.putMap)
                 result?.let {
-                    when (sourceRule.mode) {
-                        Mode.Regex -> result =
-                            AnalyzeByRegex.getElement(result.toString(), sourceRule.rule.splitNotBlank("&&"))
-                        Mode.Js -> result = evalJS(sourceRule.rule, it)
-                        Mode.Json -> result = getAnalyzeByJSonPath(it).getObject(sourceRule.rule)
-                        Mode.XPath -> result = getAnalyzeByXPath(it).getElements(sourceRule.rule)
-                        else -> result = getAnalyzeByJSoup(it).getElements(sourceRule.rule)
+                    result = when (sourceRule.mode) {
+                        Mode.Regex -> AnalyzeByRegex.getElement(result.toString(), sourceRule.rule.splitNotBlank("&&"))
+                        Mode.Js -> evalJS(sourceRule.rule, it)
+                        Mode.Json -> getAnalyzeByJSonPath(it).getObject(sourceRule.rule)
+                        Mode.XPath -> getAnalyzeByXPath(it).getElements(sourceRule.rule)
+                        else -> getAnalyzeByJSoup(it).getElements(sourceRule.rule)
                     }
                     if (sourceRule.replaceRegex.isNotEmpty()) {
                         result = replaceRegex(result.toString(), sourceRule)
@@ -266,13 +263,12 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             for (sourceRule in ruleList) {
                 putRule(sourceRule.putMap)
                 result?.let {
-                    when (sourceRule.mode) {
-                        Mode.Regex -> result =
-                            AnalyzeByRegex.getElements(result.toString(), sourceRule.rule.splitNotBlank("&&"))
-                        Mode.Js -> result = evalJS(sourceRule.rule, result)
-                        Mode.Json -> result = getAnalyzeByJSonPath(it).getList(sourceRule.rule)
-                        Mode.XPath -> result = getAnalyzeByXPath(it).getElements(sourceRule.rule)
-                        else -> result = getAnalyzeByJSoup(it).getElements(sourceRule.rule)
+                    result = when (sourceRule.mode) {
+                        Mode.Regex -> AnalyzeByRegex.getElements(result.toString(), sourceRule.rule.splitNotBlank("&&"))
+                        Mode.Js -> evalJS(sourceRule.rule, result)
+                        Mode.Json -> getAnalyzeByJSonPath(it).getList(sourceRule.rule)
+                        Mode.XPath -> getAnalyzeByXPath(it).getElements(sourceRule.rule)
+                        else -> getAnalyzeByJSoup(it).getElements(sourceRule.rule)
                     }
                     if (sourceRule.replaceRegex.isNotEmpty()) {
                         result = replaceRegex(result.toString(), sourceRule)
