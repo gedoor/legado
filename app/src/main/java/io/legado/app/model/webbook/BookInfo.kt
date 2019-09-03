@@ -11,17 +11,17 @@ object BookInfo {
 
     @Throws(Exception::class)
     fun analyzeBookInfo(
-        book: Book,
-        body: String?,
-        bookSource: BookSource,
-        analyzeUrl: AnalyzeUrl
+            book: Book,
+            body: String?,
+            bookSource: BookSource,
+            analyzeUrl: AnalyzeUrl
     ) {
         val baseUrl = analyzeUrl.url
         body ?: throw Exception(
-            App.INSTANCE.getString(
-                R.string.error_get_web_content,
-                baseUrl
-            )
+                App.INSTANCE.getString(
+                        R.string.error_get_web_content,
+                        baseUrl
+                )
         )
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val infoRule = bookSource.getBookInfoRule()
