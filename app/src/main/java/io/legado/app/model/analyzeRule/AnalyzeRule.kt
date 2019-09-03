@@ -61,7 +61,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     private fun getAnalyzeByXPath(): AnalyzeByXPath {
         if (analyzeByXPath == null || objectChangedXP) {
             analyzeByXPath = AnalyzeByXPath()
-            analyzeByXPath!!.parse(content!!)
+            analyzeByXPath?.parse(content!!)
             objectChangedXP = false
         }
         return analyzeByXPath as AnalyzeByXPath
@@ -79,7 +79,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     private fun getAnalyzeByJSoup(): AnalyzeByJSoup {
         if (analyzeByJSoup == null || objectChangedJS) {
             analyzeByJSoup = AnalyzeByJSoup()
-            analyzeByJSoup!!.parse(content!!)
+            analyzeByJSoup?.parse(content!!)
             objectChangedJS = false
         }
         return analyzeByJSoup as AnalyzeByJSoup
@@ -97,7 +97,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     private fun getAnalyzeByJSonPath(): AnalyzeByJSonPath {
         if (analyzeByJSonPath == null || objectChangedJP) {
             analyzeByJSonPath = AnalyzeByJSonPath()
-            analyzeByJSonPath!!.parse(content!!)
+            analyzeByJSonPath?.parse(content!!)
             objectChangedJP = false
         }
         return analyzeByJSonPath as AnalyzeByJSonPath
