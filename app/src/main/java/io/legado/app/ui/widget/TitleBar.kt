@@ -60,7 +60,8 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         displayHomeAsUp = a.getBoolean(R.styleable.TitleBar_displayHomeAsUp, true)
 
         val navigationIcon = a.getDrawable(R.styleable.TitleBar_navigationIcon)
-        val navigationContentDescription = a.getText(R.styleable.TitleBar_navigationContentDescription)
+        val navigationContentDescription =
+            a.getText(R.styleable.TitleBar_navigationContentDescription)
         val titleText = a.getString(R.styleable.TitleBar_title)
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
 
@@ -71,7 +72,10 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
 
             if (a.hasValue(R.styleable.TitleBar_titleTextAppearance)) {
-                this.setTitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_titleTextAppearance, 0))
+                this.setTitleTextAppearance(
+                    context,
+                    a.getResourceId(R.styleable.TitleBar_titleTextAppearance, 0)
+                )
             }
 
             if (a.hasValue(R.styleable.TitleBar_titleTextColor)) {
@@ -79,7 +83,10 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
 
             if (a.hasValue(R.styleable.TitleBar_subtitleTextAppearance)) {
-                this.setSubtitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_subtitleTextAppearance, 0))
+                this.setSubtitleTextAppearance(
+                    context,
+                    a.getResourceId(R.styleable.TitleBar_subtitleTextAppearance, 0)
+                )
             }
 
             if (a.hasValue(R.styleable.TitleBar_subtitleTextColor)) {
@@ -177,7 +184,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     }
 
     private fun attachToActivity() {
-        if(attachToActivity) {
+        if (attachToActivity) {
             activity?.let {
                 it.setSupportActionBar(toolbar)
                 it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
@@ -191,7 +198,11 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         if (navigationIconTint != null) {
             wrapDrawableTint(toolbar.navigationIcon, navigationIconTint, navigationIconTintMode)
         } else {
-            wrapDrawableTint(toolbar.navigationIcon, ColorStateList.valueOf(primaryTextColor), navigationIconTintMode)
+            wrapDrawableTint(
+                toolbar.navigationIcon,
+                ColorStateList.valueOf(primaryTextColor),
+                navigationIconTintMode
+            )
         }
     }
 

@@ -29,12 +29,6 @@ class BadgeView @JvmOverloads constructor(
     defStyle: Int = android.R.attr.textViewStyle
 ) : AppCompatTextView(context, attrs, defStyle) {
 
-    /**
-     * @return Returns true if view is hidden on badge value 0 or null;
-     */
-    /**
-     * @param hideOnNull the hideOnNull to set
-     */
     var isHideOnNull = true
         set(hideOnNull) {
             field = hideOnNull
@@ -70,7 +64,12 @@ class BadgeView @JvmOverloads constructor(
     val badgeMargin: IntArray
         get() {
             val params = layoutParams as LayoutParams
-            return intArrayOf(params.leftMargin, params.topMargin, params.rightMargin, params.bottomMargin)
+            return intArrayOf(
+                params.leftMargin,
+                params.topMargin,
+                params.rightMargin,
+                params.bottomMargin
+            )
         }
 
     init {
@@ -154,7 +153,12 @@ class BadgeView @JvmOverloads constructor(
         setBadgeMargin(dipMargin, dipMargin, dipMargin, dipMargin)
     }
 
-    fun setBadgeMargin(leftDipMargin: Int, topDipMargin: Int, rightDipMargin: Int, bottomDipMargin: Int) {
+    fun setBadgeMargin(
+        leftDipMargin: Int,
+        topDipMargin: Int,
+        rightDipMargin: Int,
+        bottomDipMargin: Int
+    ) {
         val params = layoutParams as LayoutParams
         params.leftMargin = dip2Px(leftDipMargin.toFloat())
         params.topMargin = dip2Px(topDipMargin.toFloat())

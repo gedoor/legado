@@ -10,7 +10,8 @@ import android.widget.TextView
 import io.legado.app.R
 
 
-class KeyboardToolPop(context: Context, onClickListener: OnClickListener?) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
+class KeyboardToolPop(context: Context, onClickListener: OnClickListener?) :
+    PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
     init {
         @SuppressLint("InflateParams")
