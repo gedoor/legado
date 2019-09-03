@@ -18,20 +18,20 @@ object BookContent {
 
     @Throws(Exception::class)
     suspend fun analyzeContent(
-        coroutineScope: CoroutineScope,
-        response: Response<String>,
-        book: Book,
-        bookChapter: BookChapter,
-        bookSource: BookSource,
-        nextChapterUrlF: String? = null
+            coroutineScope: CoroutineScope,
+            response: Response<String>,
+            book: Book,
+            bookChapter: BookChapter,
+            bookSource: BookSource,
+            nextChapterUrlF: String? = null
     ): String {
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
         body ?: throw Exception(
-            App.INSTANCE.getString(
-                R.string.error_get_web_content,
-                baseUrl
-            )
+                App.INSTANCE.getString(
+                        R.string.error_get_web_content,
+                        baseUrl
+                )
         )
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
         val content = StringBuilder()
@@ -47,21 +47,21 @@ object BookContent {
                 App.db.bookChapterDao().getChapter(book.bookUrl, bookChapter.index + 1)?.url
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 if (!nextChapterUrl.isNullOrEmpty()
-                    && NetworkUtils.getAbsoluteURL(baseUrl, nextUrl)
-                    == NetworkUtils.getAbsoluteURL(baseUrl, nextChapterUrl)
+                        && NetworkUtils.getAbsoluteURL(baseUrl, nextUrl)
+                        == NetworkUtils.getAbsoluteURL(baseUrl, nextChapterUrl)
                 ) break
                 nextUrlList.add(nextUrl)
                 AnalyzeUrl(
-                    ruleUrl = nextUrl,
-                    book = book,
-                    headerMapF = bookSource.getHeaderMap()
+                        ruleUrl = nextUrl,
+                        book = book,
+                        headerMapF = bookSource.getHeaderMap()
                 ).getResponseAsync().await()
-                    .body()?.let { nextBody ->
-                        contentData = analyzeContent(nextBody, contentRule, book, baseUrl)
-                        nextUrl =
-                            if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
-                        content.append(contentData.content)
-                    }
+                        .body()?.let { nextBody ->
+                            contentData = analyzeContent(nextBody, contentRule, book, baseUrl)
+                            nextUrl =
+                                    if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
+                            content.append(contentData.content)
+                        }
             }
         } else if (contentData.nextUrl.size > 1) {
             val contentDataList = arrayListOf<ContentData<String>>()
@@ -72,15 +72,15 @@ object BookContent {
             for (item in contentDataList) {
                 withContext(coroutineScope.coroutineContext) {
                     val nextResponse = AnalyzeUrl(
-                        ruleUrl = item.nextUrl,
-                        book = book,
-                        headerMapF = bookSource.getHeaderMap()
+                            ruleUrl = item.nextUrl,
+                            book = book,
+                            headerMapF = bookSource.getHeaderMap()
                     ).getResponseAsync().await()
                     val nextContentData = analyzeContent(
-                        nextResponse.body() ?: "",
-                        contentRule,
-                        book,
-                        item.nextUrl
+                            nextResponse.body() ?: "",
+                            contentRule,
+                            book,
+                            item.nextUrl
                     )
                     item.content = nextContentData.content
                 }
@@ -92,8 +92,8 @@ object BookContent {
         if (content.isNotEmpty()) {
             if (!content[0].toString().startsWith(bookChapter.title)) {
                 content
-                    .insert(0, "\n")
-                    .insert(0, bookChapter.title)
+                        .insert(0, "\n")
+                        .insert(0, bookChapter.title)
             }
         }
         return content.toString()
@@ -101,10 +101,10 @@ object BookContent {
 
     @Throws(Exception::class)
     private fun analyzeContent(
-        body: String,
-        contentRule: ContentRule,
-        book: Book,
-        baseUrl: String
+            body: String,
+            contentRule: ContentRule,
+            book: Book,
+            baseUrl: String
     ): ContentData<List<String>> {
         val nextUrlList = arrayListOf<String>()
         val analyzeRule = AnalyzeRule(book)
