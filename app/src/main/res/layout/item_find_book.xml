@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
     android:orientation="vertical">
 
@@ -26,7 +27,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_add"
-            android:tint="@color/tv_text_secondary"
+            app:tint="@color/tv_text_secondary"
             tools:ignore="ContentDescription" />
 
     </LinearLayout>
