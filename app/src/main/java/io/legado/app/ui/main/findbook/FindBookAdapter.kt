@@ -60,11 +60,13 @@ class FindBookAdapter(private val scope: CoroutineScope) :
                     notifyItemChanged(oldEx)
                 }
                 if (exIndex == position) {
-                    gl_child.visible()
+                    rotate_loading.show()
                     Coroutine.async(scope) {
                         bookSource.getExploreRule().getExploreKinds(bookSource.bookSourceUrl)
                     }.onSuccess {
                         it?.let {
+                            rotate_loading.hide()
+                            gl_child.visible()
                             var rowNum = 0
                             var columnNum = 0
                             gl_child.removeAllViews()
