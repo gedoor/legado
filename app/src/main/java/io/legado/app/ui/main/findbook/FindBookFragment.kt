@@ -16,10 +16,11 @@ import io.legado.app.lib.theme.ATH
 import kotlinx.android.synthetic.main.fragment_find_book.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
-class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
+class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
+    FindBookAdapter.CallBack {
 
     private lateinit var adapter: FindBookAdapter
-    private var findLiveData:LiveData<PagedList<BookSource>>? = null
+    private var findLiveData: LiveData<PagedList<BookSource>>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -34,7 +35,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_find)
         rv_find.layoutManager = LinearLayoutManager(context)
-        adapter = FindBookAdapter(this)
+        adapter = FindBookAdapter(this, this)
         rv_find.adapter = adapter
     }
 
@@ -42,5 +43,9 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
         findLiveData?.removeObservers(viewLifecycleOwner)
         findLiveData = LivePagedListBuilder(App.db.bookSourceDao().observeFind(), 2000).build()
         findLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+    }
+
+    override fun scrollTo(pos: Int) {
+        rv_find.scrollToPosition(pos)
     }
 }

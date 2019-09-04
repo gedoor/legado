@@ -20,7 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class FindBookAdapter(private val scope: CoroutineScope) :
+class FindBookAdapter(private val scope: CoroutineScope, val callBack: CallBack) :
     PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     var exIndex = 0
@@ -58,6 +58,7 @@ class FindBookAdapter(private val scope: CoroutineScope) :
                         notifyItemChanged(position)
                     }
                     notifyItemChanged(oldEx)
+                    callBack.scrollTo(position)
                 }
                 if (exIndex == position) {
                     rotate_loading.show()
@@ -65,7 +66,6 @@ class FindBookAdapter(private val scope: CoroutineScope) :
                         bookSource.getExploreRule().getExploreKinds(bookSource.bookSourceUrl)
                     }.onSuccess {
                         it?.let {
-                            rotate_loading.hide()
                             gl_child.visible()
                             var rowNum = 0
                             var columnNum = 0
@@ -89,12 +89,20 @@ class FindBookAdapter(private val scope: CoroutineScope) :
                                 }
                             }
                         }
+                    }.onFinally {
+                        rotate_loading.hide()
                     }
                 } else {
+                    rotate_loading.hide()
                     gl_child.gone()
                 }
         }
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
+    interface CallBack {
+
+        fun scrollTo(pos: Int)
+    }
 }
