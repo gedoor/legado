@@ -76,6 +76,9 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
                                 columnNum = 0
                                 rowNum++
                             }
+                            tv.onClick {
+
+                            }
                         }
                     }
                 } else {
