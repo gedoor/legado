@@ -1,6 +1,7 @@
 package io.legado.app.data.entities.rule
 
 import io.legado.app.constant.AppConst
+import io.legado.app.help.JsExtensions
 import javax.script.SimpleBindings
 
 data class ExploreRule(
@@ -25,6 +26,7 @@ data class ExploreRule(
                     if (it.startsWith("<js>", false)) {
                         val bindings = SimpleBindings()
                         bindings["baseUrl"] = baseUrl
+                        bindings["java"] = JsExtensions()
                         a = AppConst.SCRIPT_ENGINE.eval(
                             a.substring(4, a.lastIndexOf("<")),
                             bindings
