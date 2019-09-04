@@ -38,6 +38,8 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                             App.db.searchBookDao().insert(*searchBooks.toTypedArray())
                             page++
                         }
+                    }.onError {
+                        it.printStackTrace()
                     }
             }
         }
