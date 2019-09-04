@@ -5,11 +5,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
+import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_explore_show.*
 
-class ExploreShowActivity : BaseActivity(R.layout.activity_explore_show),
+class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activity_explore_show),
     ExploreShowAdapter.CallBack {
+    override val viewModel: ExploreShowViewModel
+        get() = getViewModel(ExploreShowViewModel::class.java)
 
     private lateinit var adapter: ExploreShowAdapter
 
