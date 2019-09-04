@@ -23,7 +23,6 @@ data class ExploreRule(
             if (a.isNotBlank()) {
                 try {
                     if (it.startsWith("<js>", false)) {
-
                         val bindings = SimpleBindings()
                         bindings["baseUrl"] = baseUrl
                         a = AppConst.SCRIPT_ENGINE.eval(

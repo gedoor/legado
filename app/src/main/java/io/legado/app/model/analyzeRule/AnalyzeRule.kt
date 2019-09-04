@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
+import io.legado.app.help.JsExtensions
 import io.legado.app.utils.*
 import java.util.*
 import java.util.regex.Pattern
@@ -515,44 +516,11 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @Throws(Exception::class)
     private fun evalJS(jsStr: String, result: Any?): Any {
         val bindings = SimpleBindings()
-        bindings["java"] = this
+        bindings["book"] = this
+        bindings["java"] = JsExtensions()
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
         return SCRIPT_ENGINE.eval(jsStr, bindings)
-    }
-
-    /**
-     * js实现跨域访问,不能删
-     */
-    suspend fun ajax(urlStr: String): String? {
-        return try {
-            val analyzeUrl = AnalyzeUrl(urlStr)
-            val response = analyzeUrl.getResponseAsync().await()
-            response.body()
-        } catch (e: Exception) {
-            e.localizedMessage
-        }
-    }
-
-    /**
-     * js实现解码,不能删
-     */
-    fun base64Decoder(str: String): String {
-        return Encoder.base64Decoder(str)
-    }
-
-    /**
-     * 章节数转数字
-     */
-    fun toNumChapter(s: String?): String? {
-        if (s == null) {
-            return null
-        }
-        val pattern = Pattern.compile("(第)(.+?)(章)")
-        val matcher = pattern.matcher(s)
-        return if (matcher.find()) {
-            matcher.group(1) + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
-        } else s
     }
 
     companion object {
