@@ -26,6 +26,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         }
         initRecyclerView()
         viewModel.booksData.observe(this, Observer { upData(it) })
+        viewModel.initData(intent)
     }
 
     private fun initRecyclerView() {
