@@ -13,7 +13,5 @@ data class SearchShow(
 ) : BaseBook {
     override var variableMap: HashMap<String, String>? = null
 
-    override fun putVariable(key: String, value: String) {
-
-    }
+    override fun putVariable(key: String, value: String) = Unit
 }
