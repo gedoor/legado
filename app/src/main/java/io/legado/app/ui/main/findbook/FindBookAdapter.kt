@@ -74,6 +74,13 @@ class FindBookAdapter(private val scope: CoroutineScope, val callBack: CallBack)
                                 val tv = LayoutInflater.from(context)
                                     .inflate(R.layout.item_text, gl_child, false)
                                 tv.text_view.text = kind.title
+                                tv.text_view.onClick {
+                                    callBack.openExplore(
+                                        bookSource.bookSourceUrl,
+                                        kind.title,
+                                        kind.url
+                                    )
+                                }
                                 val rowSpecs = GridLayout.spec(rowNum, 1.0f)
                                 val colSpecs = GridLayout.spec(columnNum, 1.0f)
                                 val params = GridLayout.LayoutParams(rowSpecs, colSpecs)
@@ -83,13 +90,6 @@ class FindBookAdapter(private val scope: CoroutineScope, val callBack: CallBack)
                                 } else {
                                     columnNum = 0
                                     rowNum++
-                                }
-                                tv.onClick {
-                                    callBack.openExplore(
-                                        bookSource.bookSourceUrl,
-                                        kind.title,
-                                        kind.url
-                                    )
                                 }
                             }
                         }
