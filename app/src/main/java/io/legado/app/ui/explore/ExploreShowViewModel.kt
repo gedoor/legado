@@ -8,25 +8,35 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.WebBook
+import kotlinx.coroutines.Dispatchers.IO
 
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
 
     val booksData = MutableLiveData<List<SearchBook>>()
-    var bookSource: BookSource? = null
-    var page = 1
+    private var bookSource: BookSource? = null
+    private var exploreUrl: String? = null
+    private var page = 1
 
     fun initData(intent: Intent) {
         execute {
             val sourceUrl = intent.getStringExtra("sourceUrl")
-            val exploreUrl = intent.getStringExtra("exploreUrl")
+            exploreUrl = intent.getStringExtra("exploreUrl")
             if (bookSource == null) {
                 bookSource = App.db.bookSourceDao().getBookSource(sourceUrl)
             }
-            bookSource?.let {
-                WebBook(it).exploreBook(exploreUrl, page, this)
-                    .onSuccess { searchBooks ->
+            explore()
+        }
+    }
+
+    fun explore() {
+        bookSource?.let { source ->
+            exploreUrl?.let { url ->
+                WebBook(source).exploreBook(url, page, this)
+                    .onSuccess(IO) { searchBooks ->
                         searchBooks?.let {
-                            booksData.value = searchBooks
+                            booksData.postValue(searchBooks)
+                            App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+                            page++
                         }
                     }
             }
