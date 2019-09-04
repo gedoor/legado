@@ -34,7 +34,10 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_find_book, parent, false))
+        return MyViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_find_book, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int): Unit =
