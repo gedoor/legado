@@ -114,7 +114,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         curTextChapter = nextTextChapter
         nextTextChapter = null
         bookData.value?.let {
-            loadContent(it, durChapterIndex)
+            if (curTextChapter == null) {
+                loadContent(it, durChapterIndex)
+            } else {
+                callBack?.upContent()
+            }
             loadContent(it, durChapterIndex.plus(1))
             launch(IO) {
                 for (i in 2..10) {
@@ -133,7 +137,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         curTextChapter = prevTextChapter
         prevTextChapter = null
         bookData.value?.let {
-            loadContent(it, durChapterIndex)
+            if (curTextChapter == null) {
+                loadContent(it, durChapterIndex)
+            } else {
+                callBack?.upContent()
+            }
             loadContent(it, durChapterIndex.minus(1))
             launch(IO) {
                 for (i in -5..-2) {
