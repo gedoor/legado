@@ -43,7 +43,11 @@ object BookList {
         }
         val collections: List<Any>
         var reverse = false
-        val bookListRule = if (isSearch) bookSource.getSearchRule() else bookSource.getExploreRule()
+        val bookListRule = when {
+            isSearch -> bookSource.getSearchRule()
+            bookSource.getExploreRule().bookList.isNullOrBlank() -> bookSource.getSearchRule()
+            else -> bookSource.getExploreRule()
+        }
         var ruleList = bookListRule.bookList ?: ""
         if (ruleList.startsWith("-")) {
             reverse = true

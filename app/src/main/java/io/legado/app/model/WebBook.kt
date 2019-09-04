@@ -17,12 +17,11 @@ class WebBook(val bookSource: BookSource) {
     val sourceUrl: String
         get() = bookSource.bookSourceUrl
 
-    fun searchBook(
-        key: String,
-        page: Int? = 1,
-        isSearch: Boolean = true,
-        scope: CoroutineScope = Coroutine.DEFAULT
-    ): Coroutine<List<SearchBook>> {
+    /**
+     * 搜索
+     */
+    fun searchBook(key: String, page: Int? = 1, scope: CoroutineScope = Coroutine.DEFAULT)
+            : Coroutine<List<SearchBook>> {
         return Coroutine.async(scope) {
             bookSource.getSearchRule().searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(
@@ -33,11 +32,31 @@ class WebBook(val bookSource: BookSource) {
                     headerMapF = bookSource.getHeaderMap()
                 )
                 val response = analyzeUrl.getResponseAsync().await()
-                BookList.analyzeBookList(response, bookSource, analyzeUrl, isSearch)
+                BookList.analyzeBookList(response, bookSource, analyzeUrl, true)
             } ?: arrayListOf()
         }
     }
 
+    /**
+     * 发现
+     */
+    fun exploreBook(url: String, page: Int? = 1, scope: CoroutineScope = Coroutine.DEFAULT)
+            : Coroutine<List<SearchBook>> {
+        return Coroutine.async(scope) {
+            val analyzeUrl = AnalyzeUrl(
+                ruleUrl = url,
+                page = page,
+                baseUrl = sourceUrl,
+                headerMapF = bookSource.getHeaderMap()
+            )
+            val response = analyzeUrl.getResponseAsync().await()
+            BookList.analyzeBookList(response, bookSource, analyzeUrl, false)
+        }
+    }
+
+    /**
+     * 书籍信息
+     */
     fun getBookInfo(book: Book, scope: CoroutineScope = Coroutine.DEFAULT): Coroutine<Book> {
         return Coroutine.async(scope) {
             val analyzeUrl = AnalyzeUrl(
@@ -52,6 +71,9 @@ class WebBook(val bookSource: BookSource) {
         }
     }
 
+    /**
+     * 目录
+     */
     fun getChapterList(
         book: Book,
         scope: CoroutineScope = Coroutine.DEFAULT
@@ -68,6 +90,9 @@ class WebBook(val bookSource: BookSource) {
         }
     }
 
+    /**
+     * 章节内容
+     */
     fun getContent(
         book: Book,
         bookChapter: BookChapter,

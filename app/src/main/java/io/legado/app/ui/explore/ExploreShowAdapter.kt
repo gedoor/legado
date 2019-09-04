@@ -65,11 +65,11 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                     .setAsDrawable(iv_cover)
             }
             onClick {
-                callBack.showBookInfo(item.name, item.author)
+                callBack.showBookInfo(item.bookUrl)
             }
         }
 
     interface CallBack {
-        fun showBookInfo(name: String, author: String)
+        fun showBookInfo(bookUrl: String)
     }
 }

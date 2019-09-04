@@ -1,11 +1,13 @@
 package io.legado.app.ui.explore
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_explore_show.*
 
@@ -21,6 +23,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
             title_bar.title = it
         }
         initRecyclerView()
+        viewModel.booksData.observe(this, Observer { upData(it) })
     }
 
     private fun initRecyclerView() {
@@ -30,12 +33,11 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         recycler_view.adapter = adapter
     }
 
-    private fun initData() {
-        val sourceUrl = intent.getStringExtra("sourceUrl")
-        val exploreUrl = intent.getStringExtra("exploreUrl")
+    private fun upData(books: List<SearchBook>) {
+        adapter.addItems(books)
     }
 
-    override fun showBookInfo(name: String, author: String) {
+    override fun showBookInfo(bookUrl: String) {
 
     }
 }
