@@ -20,10 +20,10 @@ data class SearchBook(
     var originName: String = "",
     var name: String = "",
     var author: String = "",
-    var kind: String? = null,
+    override var kind: String? = null,
     var coverUrl: String? = null,
     var intro: String? = null,
-    var wordCount: String? = null,
+    override var wordCount: String? = null,
     var latestChapterTitle: String? = null,
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
     var time: Long = System.currentTimeMillis(),

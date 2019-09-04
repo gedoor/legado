@@ -9,7 +9,6 @@ import androidx.room.PrimaryKey
 import io.legado.app.constant.BookType
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.splitNotBlank
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import kotlin.math.max
@@ -24,7 +23,7 @@ data class Book(
     var originName: String = "",                //书源名称
     var name: String = "",                   // 书籍名称(书源获取)
     var author: String = "",                 // 作者名称(书源获取)
-    var kind: String? = null,                    // 分类信息(书源获取)
+    override var kind: String? = null,                    // 分类信息(书源获取)
     var customTag: String? = null,              // 分类信息(用户修改)
     var coverUrl: String? = null,               // 封面Url(书源获取)
     var customCoverUrl: String? = null,         // 封面Url(用户修改)
@@ -42,7 +41,7 @@ data class Book(
     var durChapterIndex: Int = 0,               // 当前章节索引
     var durChapterPos: Int = 0,                 // 当前阅读的进度(首行字符的索引位置)
     var durChapterTime: Long = System.currentTimeMillis(),               // 最近一次阅读书籍的时间(打开正文的时间)
-    var wordCount: String? = null,
+    override var wordCount: String? = null,
     var canUpdate: Boolean = true,              // 刷新书架时更新书籍信息
     var order: Int = 0,                         // 手动排序
     var originOrder: Int = 0,                   //书源排序
@@ -77,18 +76,6 @@ data class Book(
         initVariableMap()
         variableMap?.put(key, value)
         variable = GSON.toJson(variableMap)
-    }
-
-    fun getKindList(): List<String> {
-        val kindList = arrayListOf<String>()
-        wordCount?.let {
-            if (it.isNotBlank()) kindList.add(it)
-        }
-        kind?.let {
-            val kinds = it.splitNotBlank(",", "\n")
-            kindList.addAll(kinds)
-        }
-        return kindList
     }
 
     fun toSearchBook(): SearchBook {

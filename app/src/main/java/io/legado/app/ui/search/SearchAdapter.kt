@@ -15,9 +15,8 @@ import kotlinx.android.synthetic.main.item_bookshelf_list.view.tv_name
 import kotlinx.android.synthetic.main.item_search.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class SearchAdapter : PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(DiffCallBack()) {
-
-    var callBack: CallBack? = null
+class SearchAdapter(val callBack: CallBack) :
+    PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(DiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false))

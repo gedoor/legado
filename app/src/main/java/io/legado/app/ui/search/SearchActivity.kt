@@ -70,8 +70,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_search_list)
-        adapter = SearchAdapter()
-        adapter.callBack = this
+        adapter = SearchAdapter(this)
         rv_search_list.layoutManager = LinearLayoutManager(this)
         rv_search_list.adapter = adapter
     }
