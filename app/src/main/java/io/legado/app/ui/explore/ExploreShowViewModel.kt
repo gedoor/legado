@@ -32,6 +32,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         bookSource?.let { source ->
             exploreUrl?.let { url ->
                 WebBook(source).exploreBook(url, page, this)
+                    .timeout(30000L)
                     .onSuccess(IO) { searchBooks ->
                         searchBooks?.let {
                             booksData.postValue(searchBooks)
