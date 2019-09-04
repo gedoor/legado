@@ -13,6 +13,8 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.explore.ExploreShowActivity
+import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_find_book.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
@@ -47,5 +49,13 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
 
     override fun scrollTo(pos: Int) {
         rv_find.scrollToPosition(pos)
+    }
+
+    override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
+        startActivity<ExploreShowActivity>(
+            Pair("exploreName", title),
+            Pair("sourceUrl", sourceUrl),
+            Pair("exploreUrl", exploreUrl)
+        )
     }
 }

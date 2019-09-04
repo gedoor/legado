@@ -85,7 +85,11 @@ class FindBookAdapter(private val scope: CoroutineScope, val callBack: CallBack)
                                     rowNum++
                                 }
                                 tv.onClick {
-
+                                    callBack.openExplore(
+                                        bookSource.bookSourceUrl,
+                                        kind.title,
+                                        kind.url
+                                    )
                                 }
                             }
                         }
@@ -96,13 +100,15 @@ class FindBookAdapter(private val scope: CoroutineScope, val callBack: CallBack)
                     rotate_loading.hide()
                     gl_child.gone()
                 }
+            }
         }
-    }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     interface CallBack {
 
         fun scrollTo(pos: Int)
+
+        fun openExplore(sourceUrl: String, title: String, exploreUrl: String)
     }
 }
