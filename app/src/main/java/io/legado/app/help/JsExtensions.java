@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import io.legado.app.model.analyzeRule.AnalyzeUrl;
 import io.legado.app.utils.Encoder;
 import io.legado.app.utils.StringUtils;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class JsExtensions {
 
@@ -16,8 +18,11 @@ public class JsExtensions {
     public String ajax(String urlStr) {
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(urlStr, null, null, null, null, null);
-/*            Response response = analyzeUrl.getResponseAsync().await();
-            return response.body().toString();*/
+            Call call = analyzeUrl.getResponse();
+            Response response = call.execute();
+            if (response.body() != null) {
+                return response.body().toString();
+            }
         } catch (Exception e) {
             return e.getLocalizedMessage();
         }

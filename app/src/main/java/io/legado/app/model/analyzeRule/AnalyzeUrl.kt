@@ -15,6 +15,7 @@ import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
 import retrofit2.Response
 import java.net.URLEncoder
 import java.util.*
@@ -197,6 +198,31 @@ class AnalyzeUrl(
 
     enum class Method {
         GET, POST
+    }
+
+    fun getResponse(): Call<Response<String>> {
+        return when {
+            method == Method.POST -> {
+                if (fieldMap.isNotEmpty()) {
+                    HttpHelper.getApiService<IHttpPostApi>(
+                        baseUrl
+                    ).postMap(url, fieldMap, headerMap)
+                } else {
+                    HttpHelper.getApiService<IHttpPostApi>(
+                        baseUrl
+                    ).postBody(
+                        url,
+                        body,
+                        headerMap
+                    )
+                }
+            }
+            fieldMap.isEmpty() -> HttpHelper.getApiService<IHttpGetApi>(
+                baseUrl
+            ).get(url, headerMap)
+            else -> HttpHelper.getApiService<IHttpGetApi>(baseUrl)
+                .getMap(url, fieldMap, headerMap)
+        }
     }
 
     fun getResponseAsync(): Deferred<Response<String>> {
