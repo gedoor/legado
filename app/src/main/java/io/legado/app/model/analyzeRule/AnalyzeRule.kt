@@ -516,7 +516,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @Throws(Exception::class)
     private fun evalJS(jsStr: String, result: Any?): Any {
         val bindings = SimpleBindings()
-        bindings["book"] = this
+        bindings["book"] = book
         bindings["java"] = JsExtensions()
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
