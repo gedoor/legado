@@ -10,15 +10,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_find_book.view.*
 import kotlinx.android.synthetic.main.item_text.view.*
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class FindBookAdapter(private val scope: CoroutineScope) :
+    PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     var exIndex = 0
 
@@ -58,26 +61,30 @@ class FindBookAdapter:PagedListAdapter<BookSource, FindBookAdapter.MyViewHolder>
                 }
                 if (exIndex == position) {
                     gl_child.visible()
-                    bookSource.getExploreRule().getExploreKinds(bookSource.bookSourceUrl)?.let {
-                        var rowNum = 0
-                        var columnNum = 0
-                        gl_child.removeAllViews()
-                        it.map { kind ->
-                            val tv = LayoutInflater.from(context)
-                                .inflate(R.layout.item_text, gl_child, false)
-                            tv.text_view.text = kind.title
-                            val rowSpecs = GridLayout.spec(rowNum, 1.0f)
-                            val colSpecs = GridLayout.spec(columnNum, 1.0f)
-                            val params = GridLayout.LayoutParams(rowSpecs, colSpecs)
-                            gl_child.addView(tv, params)
-                            if (columnNum < 2) {
-                                columnNum++
-                            } else {
-                                columnNum = 0
-                                rowNum++
-                            }
-                            tv.onClick {
+                    Coroutine.async(scope) {
+                        bookSource.getExploreRule().getExploreKinds(bookSource.bookSourceUrl)
+                    }.onSuccess {
+                        it?.let {
+                            var rowNum = 0
+                            var columnNum = 0
+                            gl_child.removeAllViews()
+                            it.map { kind ->
+                                val tv = LayoutInflater.from(context)
+                                    .inflate(R.layout.item_text, gl_child, false)
+                                tv.text_view.text = kind.title
+                                val rowSpecs = GridLayout.spec(rowNum, 1.0f)
+                                val colSpecs = GridLayout.spec(columnNum, 1.0f)
+                                val params = GridLayout.LayoutParams(rowSpecs, colSpecs)
+                                gl_child.addView(tv, params)
+                                if (columnNum < 2) {
+                                    columnNum++
+                                } else {
+                                    columnNum = 0
+                                    rowNum++
+                                }
+                                tv.onClick {
 
+                                }
                             }
                         }
                     }

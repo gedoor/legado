@@ -34,7 +34,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book) {
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_find)
         rv_find.layoutManager = LinearLayoutManager(context)
-        adapter = FindBookAdapter()
+        adapter = FindBookAdapter(this)
         rv_find.adapter = adapter
     }
 

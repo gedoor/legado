@@ -36,7 +36,8 @@ data class ExploreRule(
                     val b = a.split("(&&|\n)+".toRegex())
                     b.map { c ->
                         val d = c.split("::")
-                        exploreKinds.add(ExploreKind(d[0], d[1]))
+                        if (d.size > 1)
+                            exploreKinds.add(ExploreKind(d[0], d[1]))
                     }
                     return exploreKinds
                 } catch (e: Exception) {
