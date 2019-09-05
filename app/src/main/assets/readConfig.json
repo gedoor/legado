@@ -43,7 +43,7 @@
   },
   {
     "bgStr": "宁静夜色",
-    "bgType": 0,
+    "bgType": 1,
     "darkStatusIcon": false,
     "textColor": "#adadad",
     "textSize": 22,
