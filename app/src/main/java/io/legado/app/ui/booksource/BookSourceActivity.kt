@@ -18,6 +18,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.storage.Restore
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.qrcode.QrCodeActivity
@@ -85,6 +86,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 supportFragmentManager,
                 "groupManage"
             )
+            R.id.menu_import_book_source_local -> Restore.importYueDuData(this)
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)

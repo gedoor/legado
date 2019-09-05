@@ -10,7 +10,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -93,81 +92,19 @@ object Restore {
         // Book source
         val sourceFile = File(yuedu, "myBookSource.json")
         val bookSources = mutableListOf<BookSource>()
-        if (shelfFile.exists()) try {
+        if (sourceFile.exists()) try {
             doAsync {
                 val items: List<Map<String, Any>> = jsonPath.parse(sourceFile.readText()).read("$")
-                val existingSources = App.db.bookSourceDao().all.map { it.bookSourceUrl }.toSet()
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
-                    val source = BookSource()
-                    source.bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
-                    if (source.bookSourceUrl.isBlank()) continue
-                    if (source.bookSourceUrl in existingSources) continue
-                    runCatching {
-                        source.bookSourceName = jsonItem.readString("bookSourceName") ?: ""
-                        source.bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
-                        source.loginUrl = jsonItem.readString("loginUrl")
-                        source.bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
-                        source.customOrder = jsonItem.readInt("serialNumber") ?: 0
-                        source.header = OldRule.uaToHeader(jsonItem.readString("httpUserAgent"))
-                        source.searchUrl = OldRule.toNewUrl(jsonItem.readString("ruleSearchUrl"))
-                        source.exploreUrl = OldRule.toNewUrl(jsonItem.readString("ruleFindUrl"))
-                        if (source.exploreUrl.isNullOrBlank()) {
-                            source.enabledExplore = false
-                        }
-                        val searchRule = SearchRule(
-                            bookList = jsonItem.readString("ruleSearchList"),
-                            name = jsonItem.readString("ruleSearchName"),
-                            author = jsonItem.readString("ruleSearchAuthor"),
-                            intro = jsonItem.readString("ruleSearchIntroduce"),
-                            kind = jsonItem.readString("ruleSearchKind"),
-                            bookUrl = jsonItem.readString("ruleSearchNoteUrl"),
-                            coverUrl = jsonItem.readString("ruleSearchCoverUrl"),
-                            lastChapter = jsonItem.readString("ruleSearchLastChapter")
-                        )
-                        source.ruleSearch = GSON.toJson(searchRule)
-                        val exploreRule = ExploreRule(
-                            bookList = jsonItem.readString("ruleFindList"),
-                            name = jsonItem.readString("ruleFindName"),
-                            author = jsonItem.readString("ruleFindAuthor"),
-                            intro = jsonItem.readString("ruleFindIntroduce"),
-                            kind = jsonItem.readString("ruleFindKind"),
-                            bookUrl = jsonItem.readString("ruleFindNoteUrl"),
-                            coverUrl = jsonItem.readString("ruleFindCoverUrl"),
-                            lastChapter = jsonItem.readString("ruleFindLastChapter")
-                        )
-                        source.ruleExplore = GSON.toJson(exploreRule)
-                        val bookInfoRule = BookInfoRule(
-                            init = jsonItem.readString("ruleBookInfoInit"),
-                            name = jsonItem.readString("ruleBookName"),
-                            author = jsonItem.readString("ruleBookAuthor"),
-                            intro = jsonItem.readString("ruleIntroduce"),
-                            kind = jsonItem.readString("ruleBookKind"),
-                            coverUrl = jsonItem.readString("ruleCoverUrl"),
-                            lastChapter = jsonItem.readString("ruleBookLastChapter"),
-                            tocUrl = jsonItem.readString("ruleChapterUrl")
-                        )
-                        source.ruleBookInfo = GSON.toJson(bookInfoRule)
-                        val chapterRule = TocRule(
-                            chapterList = jsonItem.readString("ruleChapterList"),
-                            chapterName = jsonItem.readString("ruleChapterName"),
-                            chapterUrl = jsonItem.readString("ruleContentUrl"),
-                            nextTocUrl = jsonItem.readString("ruleChapterUrlNext")
-                        )
-                        source.ruleToc = GSON.toJson(chapterRule)
-                        val contentRule = ContentRule(
-                            content = jsonItem.readString("ruleBookContent"),
-                            nextContentUrl = jsonItem.readString("ruleContentUrlNext")
-                        )
-                        source.ruleContent = GSON.toJson(contentRule)
+                    OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
+                        bookSources.add(it)
                     }
-
-                    bookSources.add(source)
                 }
                 App.db.bookSourceDao().insert(*bookSources.toTypedArray())
             }
         } catch (e: Exception) {
-            error(e.localizedMessage)
+            e.printStackTrace()
         }
 
 
