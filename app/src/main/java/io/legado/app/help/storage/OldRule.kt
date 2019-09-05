@@ -1,6 +1,8 @@
 package io.legado.app.help.storage
 
+import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.Option
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.GSON
@@ -12,7 +14,11 @@ import java.util.regex.Pattern
 object OldRule {
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
-
+    private val jsonPath = JsonPath.using(
+        Configuration.builder()
+            .options(Option.SUPPRESS_EXCEPTIONS)
+            .build()
+    )
 
     fun jsonToBookSource(json: String): BookSource? {
         var source: BookSource? = null
@@ -22,7 +28,7 @@ object OldRule {
         runCatching {
             source ?: let {
                 source = BookSource().apply {
-                    val jsonItem = JsonPath.parse(json)
+                    val jsonItem = jsonPath.parse(json)
                     bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
@@ -88,6 +94,7 @@ object OldRule {
 
     private fun toNewUrl(oldUrl: String?): String? {
         if (oldUrl == null) return null
+        if (oldUrl.startsWith("<js>", true)) return oldUrl
         val map = HashMap<String, String>()
         var url: String = oldUrl
         var mather = headerPattern.matcher(url)

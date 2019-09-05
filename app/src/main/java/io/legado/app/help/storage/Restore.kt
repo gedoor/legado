@@ -17,6 +17,11 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 
 object Restore {
+    private val jsonPath = JsonPath.using(
+        Configuration.builder()
+            .options(Option.SUPPRESS_EXCEPTIONS)
+            .build()
+    )
 
     fun restore() {
 
@@ -28,11 +33,6 @@ object Restore {
 
     fun importYueDuData(context: Context) {
         val yuedu = File(FileUtils.getSdPath(), "YueDu")
-        val jsonPath = JsonPath.using(
-            Configuration.builder()
-                .options(Option.SUPPRESS_EXCEPTIONS)
-                .build()
-        )
 
         // 导入书架
         val shelfFile = File(yuedu, "myBookShelf.json")
