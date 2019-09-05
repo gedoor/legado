@@ -123,7 +123,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         bookSourceLiveDate = LivePagedListBuilder(dataFactory, 10000).build()
         bookSourceLiveDate?.observe(this, Observer { adapter.submitList(it) })
 
-        App.db.bookSourceDao().observeGroup().observe(this, Observer {
+        App.db.bookSourceDao().liveGroup().observe(this, Observer {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(",", ";"))
