@@ -10,6 +10,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.JsExtensions
+import io.legado.app.utils.ACache
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefString
@@ -124,13 +125,18 @@ data class BookSource(
             if (a.isNotBlank()) {
                 try {
                     if (it.startsWith("<js>", false)) {
-                        val bindings = SimpleBindings()
-                        bindings["baseUrl"] = bookSourceUrl
-                        bindings["java"] = JsExtensions()
-                        a = AppConst.SCRIPT_ENGINE.eval(
-                            a.substring(4, a.lastIndexOf("<")),
-                            bindings
-                        ).toString()
+                        val aCache = ACache.get(App.INSTANCE, "explore")
+                        a = aCache.getAsString(bookSourceUrl) ?: ""
+                        if (a.isBlank()) {
+                            val bindings = SimpleBindings()
+                            bindings["baseUrl"] = bookSourceUrl
+                            bindings["java"] = JsExtensions()
+                            a = AppConst.SCRIPT_ENGINE.eval(
+                                it.substring(4, it.lastIndexOf("<")),
+                                bindings
+                            ).toString()
+                            aCache.put(bookSourceUrl, a)
+                        }
                     }
                     val b = a.split("(&&|\n)+".toRegex())
                     b.map { c ->
