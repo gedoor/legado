@@ -75,7 +75,8 @@ data class Book(
             coverUrl = coverUrl,
             intro = intro,
             tocUrl = tocUrl,
-            originOrder = originOrder
+            originOrder = originOrder,
+            variable = variable
         )
     }
 }
