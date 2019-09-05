@@ -59,6 +59,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 WebBook(bookSource).getBookInfo(book, this)
                     .onSuccess(IO) {
                         it?.let {
+                            bookData.postValue(book)
                             if (inBookshelf) {
                                 App.db.bookDao().update(book)
                             }
