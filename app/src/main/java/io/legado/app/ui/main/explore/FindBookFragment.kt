@@ -46,7 +46,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
     }
 
     override fun scrollTo(pos: Int) {
-        rv_find.scrollToPosition(pos)
+        rv_find.smoothScrollToPosition(pos)
     }
 
     override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
