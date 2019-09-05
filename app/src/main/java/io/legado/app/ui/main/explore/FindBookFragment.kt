@@ -18,6 +18,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
     FindBookAdapter.CallBack {
 
     private lateinit var adapter: FindBookAdapter
+    private lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -31,7 +32,8 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_find)
-        rv_find.layoutManager = LinearLayoutManager(context)
+        linearLayoutManager = LinearLayoutManager(context)
+        rv_find.layoutManager = linearLayoutManager
         adapter = FindBookAdapter(requireContext(), this, this)
         rv_find.adapter = adapter
     }

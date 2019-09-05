@@ -28,13 +28,11 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
                 tv_name.text = item.bookSourceName
                 ll_title.onClick {
                     val oldEx = exIndex
-                    if (exIndex == holder.layoutPosition) {
-                        exIndex = -1
-                    } else {
-                        exIndex = holder.layoutPosition
+                    exIndex = if (exIndex == holder.layoutPosition) -1 else holder.layoutPosition
+                    notifyItemChanged(oldEx, false)
+                    if (exIndex != -1) {
                         notifyItemChanged(holder.layoutPosition, false)
                     }
-                    notifyItemChanged(oldEx, false)
                     callBack.scrollTo(holder.layoutPosition)
                 }
             }
