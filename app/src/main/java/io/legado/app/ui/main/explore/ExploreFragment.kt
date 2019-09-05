@@ -7,18 +7,22 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseFragment
+import io.legado.app.base.VMBaseFragment
+import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.explore.ExploreShowActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
+import io.legado.app.utils.getViewModel
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_find_book.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 
-class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
-    FindBookAdapter.CallBack {
+class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_book),
+    ExploreAdapter.CallBack {
+    override val viewModel: ExploreViewModel
+        get() = getViewModel(ExploreViewModel::class.java)
 
-    private lateinit var adapter: FindBookAdapter
+    private lateinit var adapter: ExploreAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,7 +39,7 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
         ATH.applyEdgeEffectColor(rv_find)
         linearLayoutManager = LinearLayoutManager(context)
         rv_find.layoutManager = linearLayoutManager
-        adapter = FindBookAdapter(requireContext(), this, this)
+        adapter = ExploreAdapter(requireContext(), this, this)
         rv_find.adapter = adapter
     }
 
@@ -59,5 +63,9 @@ class FindBookFragment : BaseFragment(R.layout.fragment_find_book),
 
     override fun editSource(sourceUrl: String) {
         startActivity<SourceEditActivity>(Pair("data", sourceUrl))
+    }
+
+    override fun toTop(source: BookSource) {
+        viewModel.topSource(source)
     }
 }

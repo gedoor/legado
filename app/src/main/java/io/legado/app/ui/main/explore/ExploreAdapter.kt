@@ -10,6 +10,7 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.ACache
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_find_book.view.*
@@ -19,7 +20,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 
-class FindBookAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
+class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource>(context, R.layout.item_find_book) {
 
     var exIndex = 0
@@ -40,9 +41,17 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
                 ll_title.onLongClick {
                     val popupMenu = PopupMenu(context, ll_title)
                     popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
+                    popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
+                    popupMenu.menu.add(Menu.NONE, R.id.menu_refresh, Menu.NONE, R.string.refresh)
                     popupMenu.setOnMenuItemClickListener {
                         when (it.itemId) {
                             R.id.menu_edit -> callBack.editSource(item.bookSourceUrl)
+                            R.id.menu_top -> {
+                            }
+                            R.id.menu_refresh -> {
+                                ACache.get(context, "explore").remove(item.bookSourceUrl)
+                                notifyItemChanged(holder.layoutPosition)
+                            }
                         }
                         true
                     }
@@ -91,5 +100,6 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
         fun scrollTo(pos: Int)
         fun openExplore(sourceUrl: String, title: String, exploreUrl: String)
         fun editSource(sourceUrl: String)
+        fun toTop(source: BookSource)
     }
 }

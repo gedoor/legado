@@ -15,7 +15,7 @@ import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
-import io.legado.app.ui.main.explore.FindBookFragment
+import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.utils.getPrefInt
@@ -83,7 +83,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> BookshelfFragment()
-                1 -> FindBookFragment()
+                1 -> ExploreFragment()
                 2 -> RssFragment()
                 else -> MyFragment()
             }
