@@ -140,7 +140,13 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
         //搜索
         with(bookSource?.getSearchRule()) {
             searchEditList.clear()
-            searchEditList.add(EditEntity("searchUrl", this?.searchUrl, R.string.rule_search_url))
+            searchEditList.add(
+                EditEntity(
+                    "searchUrl",
+                    bookSource?.searchUrl,
+                    R.string.rule_search_url
+                )
+            )
             searchEditList.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
             searchEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
             searchEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
@@ -182,7 +188,13 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
         //发现
         with(bookSource?.getExploreRule()) {
             findEditList.clear()
-            findEditList.add(EditEntity("exploreUrl", this?.exploreUrl, R.string.rule_find_url))
+            findEditList.add(
+                EditEntity(
+                    "exploreUrl",
+                    bookSource?.exploreUrl,
+                    R.string.rule_find_url
+                )
+            )
             findEditList.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
             findEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
             findEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
@@ -224,7 +236,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
         for (entity in searchEditList) {
             with(entity) {
                 when (key) {
-                    "searchUrl" -> searchRule.searchUrl = value
+                    "searchUrl" -> source.searchUrl = value
                     "bookList" -> searchRule.bookList = value
                     "name" -> searchRule.name = value
                     "author" -> searchRule.author = value
@@ -241,7 +253,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
         for (entity in findEditList) {
             with(entity) {
                 when (key) {
-                    "exploreUrl" -> exploreRule.exploreUrl = value
+                    "exploreUrl" -> source.exploreUrl = value
                     "bookList" -> exploreRule.bookList = value
                     "name" -> exploreRule.name = value
                     "author" -> exploreRule.author = value

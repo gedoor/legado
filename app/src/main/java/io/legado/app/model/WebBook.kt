@@ -23,7 +23,7 @@ class WebBook(val bookSource: BookSource) {
     fun searchBook(key: String, page: Int? = 1, scope: CoroutineScope = Coroutine.DEFAULT)
             : Coroutine<List<SearchBook>> {
         return Coroutine.async(scope) {
-            bookSource.getSearchRule().searchUrl?.let { searchUrl ->
+            bookSource.searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(
                     ruleUrl = searchUrl,
                     key = key,

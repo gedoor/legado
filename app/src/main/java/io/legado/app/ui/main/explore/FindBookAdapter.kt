@@ -43,7 +43,7 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
                 rotate_loading.loadingColor = context.accentColor
                 rotate_loading.show()
                 Coroutine.async(scope) {
-                    item.getExploreRule().getExploreKinds(item.bookSourceUrl)
+                    item.getExploreKinds()
                 }.onSuccess {
                     it?.let {
                         gl_child.visible()

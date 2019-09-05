@@ -1,7 +1,6 @@
 package io.legado.app.data.entities.rule
 
 data class SearchRule(
-        var searchUrl: String? = null,
         override var bookList: String? = null,
         override var name: String? = null,
         override var author: String? = null,

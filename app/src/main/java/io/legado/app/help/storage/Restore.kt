@@ -110,8 +110,12 @@ object Restore {
                         source.bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                         source.customOrder = jsonItem.readInt("serialNumber") ?: 0
                         source.header = OldRule.uaToHeader(jsonItem.readString("httpUserAgent"))
+                        source.searchUrl = OldRule.toNewUrl(jsonItem.readString("ruleSearchUrl"))
+                        source.exploreUrl = OldRule.toNewUrl(jsonItem.readString("ruleFindUrl"))
+                        if (source.exploreUrl.isNullOrBlank()) {
+                            source.enabledExplore = false
+                        }
                         val searchRule = SearchRule(
-                            searchUrl = OldRule.toNewUrl(jsonItem.readString("ruleSearchUrl")),
                             bookList = jsonItem.readString("ruleSearchList"),
                             name = jsonItem.readString("ruleSearchName"),
                             author = jsonItem.readString("ruleSearchAuthor"),
@@ -123,7 +127,6 @@ object Restore {
                         )
                         source.ruleSearch = GSON.toJson(searchRule)
                         val exploreRule = ExploreRule(
-                            exploreUrl = OldRule.toNewUrl(jsonItem.readString("ruleFindUrl")),
                             bookList = jsonItem.readString("ruleFindList"),
                             name = jsonItem.readString("ruleFindName"),
                             author = jsonItem.readString("ruleFindAuthor"),

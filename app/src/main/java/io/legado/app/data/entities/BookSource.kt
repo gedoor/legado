@@ -6,14 +6,17 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.legado.app.App
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.data.entities.rule.*
+import io.legado.app.help.JsExtensions
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefString
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.util.*
+import javax.script.SimpleBindings
 
 @Parcelize
 @Entity(
@@ -21,24 +24,26 @@ import java.util.*
         indices = [(Index(value = ["bookSourceUrl"], unique = false))]
 )
 data class BookSource(
-        var bookSourceName: String = "",                    // 名称
-        var bookSourceGroup: String? = null,                // 分组
-        @PrimaryKey
+    var bookSourceName: String = "",                    // 名称
+    var bookSourceGroup: String? = null,                // 分组
+    @PrimaryKey
         var bookSourceUrl: String = "",                  // 地址，包括 http/https
-        var bookSourceType: Int = 0,                        // 类型，0 文本，1 音频
-        var bookUrlPattern: String? = null,
-        var customOrder: Int = 0,                 // 手动排序编号
-        var enabled: Boolean = true,            // 是否启用
-        var enabledExplore: Boolean = true,     //启用发现
-        var header: String? = null,               // header
-        var loginUrl: String? = null,             // 登录地址
-        var lastUpdateTime: Long = 0,             // 最后更新时间，用于排序
-        var weight: Int = 0,                      // 智能排序的权重
-        var ruleExplore: String? = null,          // 发现规则
-        var ruleSearch: String? = null,           // 搜索规则
-        var ruleBookInfo: String? = null,         // 书籍信息页规则
-        var ruleToc: String? = null,          // 目录页规则
-        var ruleContent: String? = null           // 正文页规则
+    var bookSourceType: Int = 0,                        // 类型，0 文本，1 音频
+    var bookUrlPattern: String? = null,
+    var customOrder: Int = 0,                 // 手动排序编号
+    var enabled: Boolean = true,            // 是否启用
+    var enabledExplore: Boolean = true,     //启用发现
+    var header: String? = null,               // header
+    var loginUrl: String? = null,             // 登录地址
+    var lastUpdateTime: Long = 0,             // 最后更新时间，用于排序
+    var weight: Int = 0,                      // 智能排序的权重
+    var exploreUrl: String? = null,           //发现url
+    var ruleExplore: String? = null,          // 发现规则
+    var searchUrl: String? = null,            //搜索url
+    var ruleSearch: String? = null,           // 搜索规则
+    var ruleBookInfo: String? = null,         // 书籍信息页规则
+    var ruleToc: String? = null,          // 目录页规则
+    var ruleContent: String? = null           // 正文页规则
 ) : Parcelable {
     @Ignore
     @IgnoredOnParcel
@@ -112,4 +117,38 @@ data class BookSource(
         return contentRuleV!!
     }
 
+    fun getExploreKinds(): ArrayList<ExploreKind>? {
+        exploreUrl?.let {
+            var a = it
+            if (a.isNotBlank()) {
+                try {
+                    if (it.startsWith("<js>", false)) {
+                        val bindings = SimpleBindings()
+                        bindings["baseUrl"] = bookSourceUrl
+                        bindings["java"] = JsExtensions()
+                        a = AppConst.SCRIPT_ENGINE.eval(
+                            a.substring(4, a.lastIndexOf("<")),
+                            bindings
+                        ).toString()
+                    }
+                    val exploreKinds = arrayListOf<ExploreKind>()
+                    val b = a.split("(&&|\n)+".toRegex())
+                    b.map { c ->
+                        val d = c.split("::")
+                        if (d.size > 1)
+                            exploreKinds.add(ExploreKind(d[0], d[1]))
+                    }
+                    return exploreKinds
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        return null
+    }
+
+    data class ExploreKind(
+        var title: String,
+        var url: String
+    )
 }
