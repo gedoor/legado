@@ -29,7 +29,7 @@ class SourceEditViewModel(application: Application) : BaseViewModel(application)
             App.db.bookSourceDao().insert(bookSource)
         }.onFinally {
             finally?.let { it() }
-        }
+        } 
     }
 
     fun pasteSource() {
