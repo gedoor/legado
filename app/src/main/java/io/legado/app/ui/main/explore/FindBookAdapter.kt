@@ -1,7 +1,6 @@
 package io.legado.app.ui.main.explore
 
 import android.content.Context
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.widget.GridLayout
 import io.legado.app.R
@@ -9,7 +8,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -26,21 +24,22 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            val bgShape: GradientDrawable? = tv_name.background as? GradientDrawable
-            bgShape?.setStroke(2, ColorUtils.getRandomColor())
-            tv_name.text = item.bookSourceName
-            ll_title.onClick {
-                val oldEx = exIndex
-                if (exIndex == holder.layoutPosition) {
-                    exIndex = -1
-                } else {
-                    exIndex = holder.layoutPosition
-                    notifyItemChanged(holder.layoutPosition)
+            if (payloads.isEmpty()) {
+                tv_name.text = item.bookSourceName
+                ll_title.onClick {
+                    val oldEx = exIndex
+                    if (exIndex == holder.layoutPosition) {
+                        exIndex = -1
+                    } else {
+                        exIndex = holder.layoutPosition
+                        notifyItemChanged(holder.layoutPosition, false)
+                    }
+                    notifyItemChanged(oldEx, false)
+                    callBack.scrollTo(holder.layoutPosition)
                 }
-                notifyItemChanged(oldEx)
-                callBack.scrollTo(holder.layoutPosition)
             }
             if (exIndex == holder.layoutPosition) {
+                iv_status.setImageResource(R.drawable.ic_remove)
                 rotate_loading.loadingColor = context.accentColor
                 rotate_loading.show()
                 Coroutine.async(scope) {
@@ -78,6 +77,7 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
                     rotate_loading.hide()
                 }
             } else {
+                iv_status.setImageResource(R.drawable.ic_add)
                 rotate_loading.hide()
                 gl_child.gone()
             }
