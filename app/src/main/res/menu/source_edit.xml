@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_debug_source"
+        android:id="@+id/menu_debug_source"
         android:icon="@drawable/ic_bug_report"
         android:title="@string/debug_source"
         app:showAsAction="ifRoom" />
@@ -20,22 +20,22 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_copy_source"
+        android:id="@+id/menu_copy_source"
         android:title="@string/copy_source"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_paste_source"
+        android:id="@+id/menu_paste_source"
         android:title="@string/paste_source"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_qr_code_camera"
+        android:id="@+id/menu_qr_code_camera"
         android:title="@string/import_by_qr_code"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_share_it"
+        android:id="@+id/menu_share_it"
         android:title="@string/qr_share"
         app:showAsAction="never" />
 
@@ -45,7 +45,7 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_rule_summary"
+        android:id="@+id/menu_rule_summary"
         android:title="@string/rule_summary"
         app:showAsAction="never" />
 

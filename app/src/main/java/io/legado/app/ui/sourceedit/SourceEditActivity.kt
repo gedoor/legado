@@ -1,6 +1,9 @@
 package io.legado.app.ui.sourceedit
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity
@@ -27,18 +30,19 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
-class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity_source_edit, false),
+class SourceEditActivity :
+    VMBaseActivity<SourceEditViewModel>(R.layout.activity_source_edit, false),
     KeyboardToolPop.OnClickListener {
     override val viewModel: SourceEditViewModel
         get() = getViewModel(SourceEditViewModel::class.java)
 
     private val adapter = SourceEditAdapter()
-    private val sourceEditList: ArrayList<EditEntity> = ArrayList()
-    private val searchEditList: ArrayList<EditEntity> = ArrayList()
-    private val findEditList: ArrayList<EditEntity> = ArrayList()
-    private val infoEditList: ArrayList<EditEntity> = ArrayList()
-    private val tocEditList: ArrayList<EditEntity> = ArrayList()
-    private val contentEditList: ArrayList<EditEntity> = ArrayList()
+    private val sourceEntities: ArrayList<EditEntity> = ArrayList()
+    private val searchEntities: ArrayList<EditEntity> = ArrayList()
+    private val findEntities: ArrayList<EditEntity> = ArrayList()
+    private val infoEntities: ArrayList<EditEntity> = ArrayList()
+    private val tocEntities: ArrayList<EditEntity> = ArrayList()
+    private val contentEntities: ArrayList<EditEntity> = ArrayList()
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
@@ -80,7 +84,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                     viewModel.save(bookSource) { setResult(Activity.RESULT_OK); finish() }
                 }
             }
-            R.id.action_debug_source -> {
+            R.id.menu_debug_source -> {
                 val bookSource = getSource()
                 if (bookSource == null) {
                     toast("书源名称和URL不能为空")
@@ -90,6 +94,13 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                     }
                 }
             }
+            R.id.menu_copy_source -> {
+                GSON.toJson(getSource())?.let { sourceStr ->
+                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                    clipboard?.primaryClip = ClipData.newPlainText(null, sourceStr)
+                }
+            }
+            R.id.menu_paste_source -> viewModel.pasteSource()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -117,12 +128,12 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
 
     private fun setEditEntities(tabPosition: Int?) {
         when (tabPosition) {
-            1 -> adapter.editEntities = searchEditList
-            2 -> adapter.editEntities = findEditList
-            3 -> adapter.editEntities = infoEditList
-            4 -> adapter.editEntities = tocEditList
-            5 -> adapter.editEntities = contentEditList
-            else -> adapter.editEntities = sourceEditList
+            1 -> adapter.editEntities = searchEntities
+            2 -> adapter.editEntities = findEntities
+            3 -> adapter.editEntities = infoEntities
+            4 -> adapter.editEntities = tocEntities
+            5 -> adapter.editEntities = contentEntities
+            else -> adapter.editEntities = sourceEntities
         }
         recycler_view.scrollToPosition(0)
     }
@@ -134,81 +145,89 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
         }
         //基本信息
         with(bookSource) {
-            sourceEditList.clear()
-            sourceEditList.add(EditEntity("bookSourceUrl", this?.bookSourceUrl, R.string.book_source_url))
-            sourceEditList.add(EditEntity("bookSourceName", this?.bookSourceName, R.string.book_source_name))
-            sourceEditList.add(EditEntity("bookSourceGroup", this?.bookSourceGroup, R.string.book_source_group))
-            sourceEditList.add(EditEntity("loginUrl", this?.loginUrl, R.string.book_source_login_url))
-            sourceEditList.add(EditEntity("bookUrlPattern", this?.bookUrlPattern, R.string.book_url_pattern))
-            sourceEditList.add(EditEntity("header", this?.header, R.string.source_http_header))
+            sourceEntities.clear()
+            sourceEntities
+                .add(EditEntity("bookSourceUrl", this?.bookSourceUrl, R.string.book_source_url))
+            sourceEntities
+                .add(EditEntity("bookSourceName", this?.bookSourceName, R.string.book_source_name))
+            sourceEntities.add(
+                EditEntity("bookSourceGroup", this?.bookSourceGroup, R.string.book_source_group)
+            )
+            sourceEntities
+                .add(EditEntity("loginUrl", this?.loginUrl, R.string.book_source_login_url))
+            sourceEntities
+                .add(EditEntity("bookUrlPattern", this?.bookUrlPattern, R.string.book_url_pattern))
+            sourceEntities.add(EditEntity("header", this?.header, R.string.source_http_header))
         }
         //搜索
         with(bookSource?.getSearchRule()) {
-            searchEditList.clear()
-            searchEditList.add(
-                EditEntity(
-                    "searchUrl",
-                    bookSource?.searchUrl,
-                    R.string.rule_search_url
-                )
-            )
-            searchEditList.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
-            searchEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
-            searchEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
-            searchEditList.add(EditEntity("kind", this?.kind, R.string.rule_book_kind))
-            searchEditList.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
-            searchEditList.add(EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter))
-            searchEditList.add(EditEntity("intro", this?.intro, R.string.rule_book_intro))
-            searchEditList.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
-            searchEditList.add(EditEntity("bookUrl", this?.bookUrl, R.string.rule_book_url))
+            searchEntities.clear()
+            searchEntities
+                .add(EditEntity("searchUrl", bookSource?.searchUrl, R.string.rule_search_url))
+            searchEntities.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
+            searchEntities.add(EditEntity("name", this?.name, R.string.rule_book_name))
+            searchEntities.add(EditEntity("author", this?.author, R.string.rule_book_author))
+            searchEntities.add(EditEntity("kind", this?.kind, R.string.rule_book_kind))
+            searchEntities.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
+            searchEntities
+                .add(EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter))
+            searchEntities.add(EditEntity("intro", this?.intro, R.string.rule_book_intro))
+            searchEntities.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
+            searchEntities.add(EditEntity("bookUrl", this?.bookUrl, R.string.rule_book_url))
         }
         //详情页
         with(bookSource?.getBookInfoRule()) {
-            infoEditList.clear()
-            infoEditList.add(EditEntity("init", this?.init, R.string.rule_book_info_init))
-            infoEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
-            infoEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
-            infoEditList.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
-            infoEditList.add(EditEntity("intro", this?.intro, R.string.rule_book_intro))
-            infoEditList.add(EditEntity("kind", this?.kind, R.string.rule_book_kind))
-            infoEditList.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
-            infoEditList.add(EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter))
-            infoEditList.add(EditEntity("tocUrl", this?.tocUrl, R.string.rule_toc_url))
+            infoEntities.clear()
+            infoEntities.add(EditEntity("init", this?.init, R.string.rule_book_info_init))
+            infoEntities.add(EditEntity("name", this?.name, R.string.rule_book_name))
+            infoEntities.add(EditEntity("author", this?.author, R.string.rule_book_author))
+            infoEntities.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
+            infoEntities.add(EditEntity("intro", this?.intro, R.string.rule_book_intro))
+            infoEntities.add(EditEntity("kind", this?.kind, R.string.rule_book_kind))
+            infoEntities.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
+            infoEntities.add(
+                EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter)
+            )
+            infoEntities.add(EditEntity("tocUrl", this?.tocUrl, R.string.rule_toc_url))
         }
         //目录页
         with(bookSource?.getTocRule()) {
-            tocEditList.clear()
-            tocEditList.add(EditEntity("chapterList", this?.chapterList, R.string.rule_chapter_list))
-            tocEditList.add(EditEntity("chapterName", this?.chapterName, R.string.rule_chapter_name))
-            tocEditList.add(EditEntity("chapterUrl", this?.chapterUrl, R.string.rule_chapter_url))
-            tocEditList.add(EditEntity("nextTocUrl", this?.nextTocUrl, R.string.rule_next_toc_url))
+            tocEntities.clear()
+            tocEntities.add(
+                EditEntity("chapterList", this?.chapterList, R.string.rule_chapter_list)
+            )
+            tocEntities.add(
+                EditEntity("chapterName", this?.chapterName, R.string.rule_chapter_name)
+            )
+            tocEntities.add(EditEntity("chapterUrl", this?.chapterUrl, R.string.rule_chapter_url))
+            tocEntities.add(EditEntity("nextTocUrl", this?.nextTocUrl, R.string.rule_next_toc_url))
         }
         //正文页
         with(bookSource?.getContentRule()) {
-            contentEditList.clear()
-            contentEditList.add(EditEntity("content", this?.content, R.string.rule_book_content))
-            contentEditList.add(EditEntity("nextContentUrl", this?.nextContentUrl, R.string.rule_content_url_next))
+            contentEntities.clear()
+            contentEntities.add(EditEntity("content", this?.content, R.string.rule_book_content))
+            contentEntities.add(
+                EditEntity("nextContentUrl", this?.nextContentUrl, R.string.rule_content_url_next)
+            )
         }
 
         //发现
         with(bookSource?.getExploreRule()) {
-            findEditList.clear()
-            findEditList.add(
-                EditEntity(
-                    "exploreUrl",
-                    bookSource?.exploreUrl,
-                    R.string.rule_find_url
-                )
+            findEntities.clear()
+            findEntities.add(
+                EditEntity("exploreUrl", bookSource?.exploreUrl, R.string.rule_find_url)
             )
-            findEditList.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
-            findEditList.add(EditEntity("name", this?.name, R.string.rule_book_name))
-            findEditList.add(EditEntity("author", this?.author, R.string.rule_book_author))
-            findEditList.add(EditEntity("kind", this?.kind, R.string.rule_book_kind))
-            findEditList.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
-            findEditList.add(EditEntity("intro", this?.intro, R.string.rule_book_intro))
-            findEditList.add(EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter))
-            findEditList.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
-            findEditList.add(EditEntity("bookUrl", this?.bookUrl, R.string.rule_book_url))
+            findEntities.add(EditEntity("bookList", this?.bookList, R.string.rule_book_list))
+            findEntities.add(EditEntity("name", this?.name, R.string.rule_book_name))
+            findEntities.add(EditEntity("author", this?.author, R.string.rule_book_author))
+            findEntities.add(EditEntity("kind", this?.kind, R.string.rule_book_kind))
+            findEntities.add(EditEntity("wordCount", this?.wordCount, R.string.rule_word_count))
+            findEntities.add(EditEntity("intro", this?.intro, R.string.rule_book_intro))
+            findEntities.add(
+                EditEntity("lastChapter", this?.lastChapter, R.string.rule_last_chapter)
+            )
+            findEntities.add(EditEntity("coverUrl", this?.coverUrl, R.string.rule_cover_url))
+            findEntities.add(EditEntity("bookUrl", this?.bookUrl, R.string.rule_book_url))
         }
         setEditEntities(0)
     }
@@ -226,11 +245,11 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
         val bookInfoRule = BookInfoRule()
         val tocRule = TocRule()
         val contentRule = ContentRule()
-        for (entity in sourceEditList) {
+        for (entity in sourceEntities) {
             with(entity) {
                 when (key) {
-                    "bookSourceUrl" -> if (value != null) source.bookSourceUrl = value!! else return null
-                    "bookSourceName" -> if (value != null) source.bookSourceName = value!! else return null
+                    "bookSourceUrl" -> value?.let { source.bookSourceUrl = it } ?: return null
+                    "bookSourceName" -> value?.let { source.bookSourceName = it } ?: return null
                     "bookSourceGroup" -> source.bookSourceGroup = value
                     "loginUrl" -> source.loginUrl = value
                     "bookUrlPattern" -> source.bookUrlPattern = value
@@ -238,7 +257,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                 }
             }
         }
-        for (entity in searchEditList) {
+        for (entity in searchEntities) {
             with(entity) {
                 when (key) {
                     "searchUrl" -> source.searchUrl = value
@@ -255,7 +274,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                 }
             }
         }
-        for (entity in findEditList) {
+        for (entity in findEntities) {
             with(entity) {
                 when (key) {
                     "exploreUrl" -> source.exploreUrl = value
@@ -272,7 +291,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                 }
             }
         }
-        for (entity in infoEditList) {
+        for (entity in infoEntities) {
             with(entity) {
                 when (key) {
                     "init" -> bookInfoRule.init = value
@@ -288,7 +307,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                 }
             }
         }
-        for (entity in tocEditList) {
+        for (entity in tocEntities) {
             with(entity) {
                 when (key) {
                     "chapterList" -> tocRule.chapterList = value
@@ -298,7 +317,7 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
                 }
             }
         }
-        for (entity in contentEditList) {
+        for (entity in contentEntities) {
             with(entity) {
                 when (key) {
                     "content" -> contentRule.content = value
