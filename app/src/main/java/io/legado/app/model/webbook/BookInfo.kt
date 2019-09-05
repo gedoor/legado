@@ -6,6 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.htmlFormat
 
 object BookInfo {
 
@@ -50,7 +51,7 @@ object BookInfo {
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, book.kind ?: "")
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取简介")
         analyzeRule.getString(infoRule.intro ?: "")?.let {
-            if (it.isNotEmpty()) book.intro = it
+            if (it.isNotEmpty()) book.intro = it.htmlFormat()
         }
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, book.intro ?: "", isHtml = true)
         SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取字数")
