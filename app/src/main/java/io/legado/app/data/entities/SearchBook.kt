@@ -1,7 +1,6 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import android.text.TextUtils
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
@@ -51,25 +50,10 @@ data class SearchBook(
 
     @IgnoredOnParcel
     @Ignore
-    override var variableMap: HashMap<String, String>? = null
-        get() = run {
-            initVariableMap()
-            return field
-        }
-
-    private fun initVariableMap() {
-        variableMap?.let {
-            variableMap = if (TextUtils.isEmpty(variable)) {
-                HashMap()
-            } else {
-                GSON.fromJsonObject(variable)
-            }
-        }
-    }
+    override var variableMap: HashMap<String, String> = GSON.fromJsonObject(variable) ?: HashMap()
 
     override fun putVariable(key: String, value: String) {
-        initVariableMap()
-        variableMap?.put(key, value)
+        variableMap[key] = value
         variable = GSON.toJson(variableMap)
     }
 

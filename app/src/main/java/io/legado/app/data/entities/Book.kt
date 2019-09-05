@@ -1,7 +1,6 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import android.text.TextUtils.isEmpty
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
@@ -50,11 +49,7 @@ data class Book(
 ) : Parcelable, BaseBook {
     @IgnoredOnParcel
     @Ignore
-    override var variableMap: HashMap<String, String>? = null
-        get() = run {
-            initVariableMap()
-            return field
-        }
+    override var variableMap: HashMap<String, String> = GSON.fromJsonObject(variable) ?: HashMap()
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 
@@ -62,19 +57,8 @@ data class Book(
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
-    private fun initVariableMap() {
-        if (variableMap == null) {
-            variableMap = if (isEmpty(variable)) {
-                HashMap()
-            } else {
-                GSON.fromJsonObject(variable)
-            }
-        }
-    }
-
     override fun putVariable(key: String, value: String) {
-        initVariableMap()
-        variableMap?.put(key, value)
+        variableMap[key] = value
         variable = GSON.toJson(variableMap)
     }
 
