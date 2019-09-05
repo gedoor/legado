@@ -60,6 +60,11 @@ class SourceEditActivity : VMBaseActivity<SourceEditViewModel>(R.layout.activity
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mSoftKeyboardTool?.dismiss()
+    }
+
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.source_edit, menu)
         return super.onCompatCreateOptionsMenu(menu)
