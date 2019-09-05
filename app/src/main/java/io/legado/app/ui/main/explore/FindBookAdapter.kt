@@ -56,20 +56,22 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
                 rotate_loading.show()
                 Coroutine.async(scope) {
                     item.getExploreKinds()
-                }.onSuccess {
-                    it?.let {
+                }.onSuccess { kindList ->
+                    if (!kindList.isNullOrEmpty()) {
                         gl_child.visible()
                         gl_child.removeAllViews()
-                        it.map { kind ->
+                        kindList.map { kind ->
                             val tv = LayoutInflater.from(context)
                                 .inflate(R.layout.item_text, gl_child, false)
                             tv.text_view.text = kind.title
                             tv.text_view.onClick {
-                                callBack.openExplore(
-                                    item.bookSourceUrl,
-                                    kind.title,
-                                    kind.url
-                                )
+                                kind.url?.let { kindUrl ->
+                                    callBack.openExplore(
+                                        item.bookSourceUrl,
+                                        kind.title,
+                                        kindUrl
+                                    )
+                                }
                             }
                             gl_child.addView(tv)
                         }

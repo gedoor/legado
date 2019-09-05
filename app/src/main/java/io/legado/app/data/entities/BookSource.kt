@@ -118,6 +118,7 @@ data class BookSource(
     }
 
     fun getExploreKinds(): ArrayList<ExploreKind>? {
+        val exploreKinds = arrayListOf<ExploreKind>()
         exploreUrl?.let {
             var a = it
             if (a.isNotBlank()) {
@@ -131,24 +132,22 @@ data class BookSource(
                             bindings
                         ).toString()
                     }
-                    val exploreKinds = arrayListOf<ExploreKind>()
                     val b = a.split("(&&|\n)+".toRegex())
                     b.map { c ->
                         val d = c.split("::")
                         if (d.size > 1)
                             exploreKinds.add(ExploreKind(d[0], d[1]))
                     }
-                    return exploreKinds
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    exploreKinds.add(ExploreKind(e.localizedMessage))
                 }
             }
         }
-        return null
+        return exploreKinds
     }
 
     data class ExploreKind(
         var title: String,
-        var url: String
+        var url: String? = null
     )
 }
