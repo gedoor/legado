@@ -474,9 +474,11 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     val regType = ruleType[j]
                     if (regType > 0) {
                         @Suppress("UNCHECKED_CAST")
-                        val resultList = result as List<String>
+                        val resultList = result as List<String?>
                         if (resultList.size > regType) {
-                            infoVal.insert(0, resultList[regType])
+                            resultList[regType]?.let {
+                                infoVal.insert(0, resultList[regType])
+                            }
                         }
                     } else if (regType < 0) {
                         val jsEval: Any = evalJS(ruleParam[j], result)
