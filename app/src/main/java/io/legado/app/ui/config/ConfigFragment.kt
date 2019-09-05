@@ -6,7 +6,9 @@ import android.view.View
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getPrefString
 
@@ -16,6 +18,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config)
+        bindPreferenceSummaryToValue(findPreference("downloadPath"))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,8 +37,9 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-
-
+        when (key) {
+            "downloadPath" -> BookHelp.upDownloadPath()
+        }
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
@@ -57,8 +61,17 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
             preference.onPreferenceChangeListener = this
             onPreferenceChange(
                 preference,
-                preference.context.getPrefString(preference.key, "")
+                getPreferenceString(preference.key)
             )
+        }
+    }
+
+    private fun getPreferenceString(key: String): String {
+        return when (key) {
+            "downloadPath" -> getPrefString("downloadPath")
+                ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
+                ?: App.INSTANCE.cacheDir.absolutePath
+            else -> getPrefString(key, "")
         }
     }
 

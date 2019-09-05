@@ -16,12 +16,16 @@ import kotlin.math.min
 
 object BookHelp {
 
-    private var downloadPath =
-        App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
+    private var downloadPath: String =
+        App.INSTANCE.getPrefString("downloadPath")
+            ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
+            ?: App.INSTANCE.cacheDir.absolutePath
 
     fun upDownloadPath() {
         downloadPath =
-            App.INSTANCE.getPrefString("downloadPath") ?: App.INSTANCE.getExternalFilesDir(null)
+            App.INSTANCE.getPrefString("downloadPath")
+                ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
+                        ?: App.INSTANCE.cacheDir.absolutePath
     }
 
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {

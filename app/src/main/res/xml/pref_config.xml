@@ -24,4 +24,9 @@
         android:title="文字操作显示搜索"
         app:iconSpaceReserved="false" />
 
+    <Preference
+        android:key="downloadPath"
+        android:title="@string/download_path"
+        app:iconSpaceReserved="false" />
+
 </androidx.preference.PreferenceScreen>
