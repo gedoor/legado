@@ -3,7 +3,6 @@ package io.legado.app.ui.main.explore
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.Menu
-import android.widget.GridLayout
 import android.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -60,8 +59,6 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
                 }.onSuccess {
                     it?.let {
                         gl_child.visible()
-                        var rowNum = 0
-                        var columnNum = 0
                         gl_child.removeAllViews()
                         it.map { kind ->
                             val tv = LayoutInflater.from(context)
@@ -74,16 +71,7 @@ class FindBookAdapter(context: Context, private val scope: CoroutineScope, val c
                                     kind.url
                                 )
                             }
-                            val rowSpecs = GridLayout.spec(rowNum, 1.0f)
-                            val colSpecs = GridLayout.spec(columnNum, 1.0f)
-                            val params = GridLayout.LayoutParams(rowSpecs, colSpecs)
-                            gl_child.addView(tv, params)
-                            if (columnNum < 2) {
-                                columnNum++
-                            } else {
-                                columnNum = 0
-                                rowNum++
-                            }
+                            gl_child.addView(tv)
                         }
                     }
                 }.onFinally {

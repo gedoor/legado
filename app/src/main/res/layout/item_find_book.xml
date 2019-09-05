@@ -40,13 +40,18 @@
 
     </LinearLayout>
 
-    <GridLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/gl_child"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
         android:padding="3dp"
-        android:columnCount="3"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:dividerDrawable="@drawable/shape_space_divider"
+        app:flexDirection="row"
+        app:flexWrap="wrap"
+        app:showDivider="middle" />
 
     <io.legado.app.ui.widget.anima.RotateLoading
         android:id="@+id/rotate_loading"
