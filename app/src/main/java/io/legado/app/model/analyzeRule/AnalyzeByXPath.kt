@@ -3,28 +3,48 @@ package io.legado.app.model.analyzeRule
 import android.text.TextUtils
 import io.legado.app.utils.splitNotBlank
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import org.seimicrawler.xpath.JXDocument
 import org.seimicrawler.xpath.JXNode
 import java.util.*
 
 class AnalyzeByXPath {
     private var jxDocument: JXDocument? = null
+    private var jxNode: JXNode? = null
 
     fun parse(doc: Any): AnalyzeByXPath {
-        if (doc is Document) {
+        if (doc is JXNode) {
+            jxNode = doc
+            if (jxNode?.isElement == false) {
+                jxDocument = strToJXDocument(doc.toString())
+                jxNode = null
+            }
+        } else if (doc is Document) {
             jxDocument = JXDocument.create(doc)
+            jxNode = null
+        } else if (doc is Element) {
+            jxDocument = JXDocument.create(Elements(doc))
+            jxNode = null
+        } else if (doc is Elements) {
+            jxDocument = JXDocument.create(doc)
+            jxNode = null
         } else {
-            var html = doc.toString()
-            // 给表格标签添加完整的框架结构,否则会丢失表格标签;html标准不允许表格标签独立在table之外
-            if (html.endsWith("</td>")) {
-                html = String.format("<tr>%s</tr>", html)
-            }
-            if (html.endsWith("</tr>") || html.endsWith("</tbody>")) {
-                html = String.format("<table>%s</table>", html)
-            }
-            jxDocument = JXDocument.create(html)
+            jxDocument = strToJXDocument(doc.toString())
+            jxNode = null
         }
         return this
+    }
+
+    private fun strToJXDocument(html: String): JXDocument {
+        var html1 = html
+        if (html1.endsWith("</td>")) {
+            html1 = String.format("<tr>%s</tr>", html1)
+        }
+        if (html1.endsWith("</tr>") || html1.endsWith("</tbody>")) {
+            html1 = String.format("<table>%s</table>", html1)
+        }
+        return JXDocument.create(html1)
     }
 
     internal fun getElements(xPath: String): List<JXNode>? {
@@ -49,7 +69,7 @@ class AnalyzeByXPath {
             }
         }
         if (rules.size == 1) {
-            return jxDocument?.selN(rules[0])
+            return jxNode?.sel(rules[0]) ?: jxDocument?.selN(rules[0])
         } else {
             val results = ArrayList<List<JXNode>>()
             for (rl in rules) {
@@ -99,11 +119,8 @@ class AnalyzeByXPath {
             }
         }
         if (rules.size == 1) {
-            val jxNodes = jxDocument!!.selN(xPath)
-            for (jxNode in jxNodes) {
-                /*if(jxNode.isString()){
-                    result.add(String.valueOf(jxNode));
-                }*/
+            val jxNodes = jxNode?.sel(xPath) ?: jxDocument?.selN(xPath)
+            jxNodes?.map {
                 result.add(jxNode.toString())
             }
             return result
@@ -148,7 +165,7 @@ class AnalyzeByXPath {
             elementsType = "|"
         }
         if (rules.size == 1) {
-            val jxNodes = jxDocument?.selN(rule)
+            val jxNodes = jxNode?.sel(rule) ?: jxDocument?.selN(rule)
             jxNodes?.let {
                 return TextUtils.join(",", jxNodes)
             }
