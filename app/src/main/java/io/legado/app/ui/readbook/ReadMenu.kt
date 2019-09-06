@@ -47,11 +47,11 @@ class ReadMenu : FrameLayout {
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
         seek_brightness.progress = context.getPrefInt("brightness", 100)
-        upBrightness()
+        upBrightnessState()
         bindEvent()
     }
 
-    private fun upBrightness() {
+    private fun upBrightnessState() {
         if (brightnessAuto()) {
             iv_brightness_auto.setColorFilter(context.accentColor)
             seek_brightness.isEnabled = false
@@ -59,7 +59,6 @@ class ReadMenu : FrameLayout {
             iv_brightness_auto.setColorFilter(context.buttonDisabledColor)
             seek_brightness.isEnabled = true
         }
-        callBack?.setScreenBrightness(context.getPrefInt("brightness", 100))
     }
 
     fun runMenuIn() {
@@ -93,7 +92,8 @@ class ReadMenu : FrameLayout {
                 "brightnessAuto",
                 !brightnessAuto()
             )
-            upBrightness()
+            upBrightnessState()
+            callBack?.setScreenBrightness(context.getPrefInt("brightness", 100))
         }
         seek_brightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
