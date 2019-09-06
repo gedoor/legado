@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import java.lang.reflect.Type
 import java.nio.charset.Charset
 
-class EncodeConverter private constructor(private val encode: String? = null) : Converter.Factory() {
+class EncodeConverter(private val encode: String? = null) : Converter.Factory() {
 
     override fun responseBodyConverter(
         type: Type?,
@@ -33,10 +33,4 @@ class EncodeConverter private constructor(private val encode: String? = null) : 
         }
     }
 
-    companion object {
-
-        fun create(encode: String? = null): EncodeConverter {
-            return EncodeConverter(encode)
-        }
-    }
 }
