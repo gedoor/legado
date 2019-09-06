@@ -186,16 +186,6 @@ class AnalyzeUrl(
         }
     }
 
-    /**
-     * 执行JS
-     */
-    @Throws(Exception::class)
-    private fun evalJS(jsStr: String, result: Any): Any {
-        val bindings = SimpleBindings()
-        bindings["result"] = result
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
-    }
-
     enum class Method {
         GET, POST
     }
