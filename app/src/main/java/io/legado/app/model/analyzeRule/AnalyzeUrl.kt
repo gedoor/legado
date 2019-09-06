@@ -90,7 +90,7 @@ class AnalyzeUrl(
                 ruleUrl = if (page <= pages.size) {
                     ruleUrl.replace(matcher.group(), pages[page - 1].trim { it <= ' ' })
                 } else {
-                    ruleUrl.replace(matcher.group(), pages[pages.size - 1].trim { it <= ' ' })
+                    ruleUrl.replace(matcher.group(), pages.last().trim { it <= ' ' })
                 }
             }
         }
