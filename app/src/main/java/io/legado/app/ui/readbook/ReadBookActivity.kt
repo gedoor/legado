@@ -47,7 +47,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.internal.toHexString
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
@@ -499,7 +498,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 postEvent(Bus.UP_CONFIG, false)
             }
             BG_COLOR -> {
-                setBg(0, "#${color.toHexString()}")
+                setBg(0, "#${color.hexString}")
                 ReadBookConfig.upBg()
                 postEvent(Bus.UP_CONFIG, false)
             }
