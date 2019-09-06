@@ -463,7 +463,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
      */
     override fun setScreenBrightness(value: Int) {
         var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        if (this.getPrefBoolean("brightnessAuto").not()) {
+        if (!read_menu.brightnessAuto()) {
             brightness = value.toFloat()
             if (brightness < 1f) brightness = 1f
             brightness /= 255f

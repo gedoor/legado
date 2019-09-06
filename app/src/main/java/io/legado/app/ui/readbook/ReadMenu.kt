@@ -52,7 +52,7 @@ class ReadMenu : FrameLayout {
     }
 
     private fun upBrightness() {
-        if (context.getPrefBoolean("brightnessAuto", true)) {
+        if (brightnessAuto()) {
             iv_brightness_auto.setColorFilter(context.accentColor)
             seek_brightness.isEnabled = false
         } else {
@@ -83,11 +83,15 @@ class ReadMenu : FrameLayout {
         seek_read_page.progress = dur
     }
 
+    fun brightnessAuto(): Boolean {
+        return context.getPrefBoolean("brightnessAuto", true)
+    }
+
     private fun bindEvent() {
         iv_brightness_auto.onClick {
             context.putPrefBoolean(
                 "brightnessAuto",
-                !context.getPrefBoolean("brightnessAuto", true)
+                !brightnessAuto()
             )
             upBrightness()
         }
