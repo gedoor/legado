@@ -94,9 +94,13 @@ object OldRule {
 
     private fun toNewUrl(oldUrl: String?): String? {
         if (oldUrl == null) return null
-        if (oldUrl.startsWith("<js>", true)) return oldUrl
-        val map = HashMap<String, String>()
         var url: String = oldUrl
+        if (oldUrl.startsWith("<js>", true)) {
+            url = url.replace("=searchKey", "={{key}}")
+                .replace("=searchPage", "={{page}}")
+            return url
+        }
+        val map = HashMap<String, String>()
         var mather = headerPattern.matcher(url)
         if (mather.find()) {
             val header = mather.group()
