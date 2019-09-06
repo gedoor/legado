@@ -54,6 +54,7 @@ import org.jetbrains.anko.toast
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
     PageView.CallBack,
+    ReadMenu.Callback,
     ChangeSourceDialog.CallBack,
     ReadBookViewModel.CallBack,
     ColorPickerDialogListener {
@@ -87,12 +88,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        Help.upSystemUiVisibility(window, !read_menu.isVisible)
+        upSystemUiVisibility()
     }
 
     override fun onResume() {
         super.onResume()
-        Help.upSystemUiVisibility(window, !read_menu.isVisible)
+        upSystemUiVisibility()
         timeElectricityReceiver = TimeElectricityReceiver.register(this)
     }
 
@@ -102,7 +103,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             unregisterReceiver(it)
             timeElectricityReceiver = null
         }
-        Help.upSystemUiVisibility(window, !read_menu.isVisible)
+        upSystemUiVisibility()
     }
 
     /**
@@ -125,57 +126,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 startActivity(intent)
             }
         }
-        read_menu.setListener(object : ReadMenu.Callback {
-            override fun setScreenBrightness(value: Int) {
-                this@ReadBookActivity.setScreenBrightness(value)
-            }
-
-            override fun autoPage() {
-
-            }
-
-            override fun skipToPage(page: Int) {
-                viewModel.durPageIndex = page
-                page_view.upContent()
-                curPageChanged()
-            }
-
-            override fun skipPreChapter() {
-                moveToPrevChapter(false)
-                page_view.upContent()
-            }
-
-            override fun skipNextChapter() {
-                moveToNextChapter()
-                page_view.upContent()
-            }
-
-            override fun openReplaceRule() {
-                startActivity<ReplaceRuleActivity>()
-            }
-
-            override fun openChapterList() {
-                viewModel.bookData.value?.let {
-                    startActivity<ChapterListActivity>(Pair("bookUrl", it.bookUrl))
-                }
-            }
-
-            override fun showReadStyle() {
-                ReadStyleDialog().show(supportFragmentManager, "readStyle")
-            }
-
-            override fun showMoreSetting() {
-                MoreConfigDialog().show(supportFragmentManager, "moreConfig")
-            }
-
-            override fun menuShow() {
-                Help.upSystemUiVisibility(window, !read_menu.isVisible)
-            }
-
-            override fun menuHide() {
-                Help.upSystemUiVisibility(window, !read_menu.isVisible)
-            }
-        })
     }
 
     fun showPaddingConfig() {
@@ -445,6 +395,38 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
+    override fun autoPage() {
+
+    }
+
+    override fun skipToPage(page: Int) {
+        viewModel.durPageIndex = page
+        page_view.upContent()
+        curPageChanged()
+    }
+
+    override fun openReplaceRule() {
+        startActivity<ReplaceRuleActivity>()
+    }
+
+    override fun openChapterList() {
+        viewModel.bookData.value?.let {
+            startActivity<ChapterListActivity>(Pair("bookUrl", it.bookUrl))
+        }
+    }
+
+    override fun showReadStyle() {
+        ReadStyleDialog().show(supportFragmentManager, "readStyle")
+    }
+
+    override fun showMoreSetting() {
+        MoreConfigDialog().show(supportFragmentManager, "moreConfig")
+    }
+
+    override fun upSystemUiVisibility() {
+        Help.upSystemUiVisibility(window, !read_menu.isVisible)
+    }
+
     /**
      * 朗读按钮
      */
@@ -479,7 +461,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     /**
      * 设置屏幕亮度
      */
-    private fun setScreenBrightness(value: Int) {
+    override fun setScreenBrightness(value: Int) {
         var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         if (this.getPrefBoolean("brightnessAuto").not()) {
             brightness = value.toFloat()
@@ -560,7 +542,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
         }
         observeEvent<Boolean>(Bus.UP_CONFIG) {
-            Help.upSystemUiVisibility(window, !read_menu.isVisible)
+            upSystemUiVisibility()
             page_view.upBg()
             content_view.upStyle()
             page_view.upStyle()

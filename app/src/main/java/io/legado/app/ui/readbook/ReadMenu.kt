@@ -17,9 +17,8 @@ import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ReadMenu : FrameLayout {
-
-    private var callback: Callback? = null
     var cnaShowMenu: Boolean = false
+    private var callback: Callback? = null
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
@@ -37,6 +36,7 @@ class ReadMenu : FrameLayout {
     )
 
     init {
+        callback = activity as? Callback
         inflate(context, R.layout.view_read_menu, this)
         if (context.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
@@ -48,6 +48,7 @@ class ReadMenu : FrameLayout {
         vwNavigationBar.onClick { }
         seek_brightness.progress = context.getPrefInt("brightness", 100)
         upBrightness()
+        bindEvent()
     }
 
     private fun upBrightness() {
@@ -59,11 +60,6 @@ class ReadMenu : FrameLayout {
             seek_brightness.isEnabled = true
         }
         callback?.setScreenBrightness(context.getPrefInt("brightness", 100))
-    }
-
-    fun setListener(callback: Callback) {
-        this.callback = callback
-        bindEvent()
     }
 
     fun runMenuIn() {
@@ -138,10 +134,10 @@ class ReadMenu : FrameLayout {
         }
 
         //上一章
-        tv_pre.onClick { callback?.skipPreChapter() }
+        tv_pre.onClick { callback?.moveToPrevChapter(false) }
 
         //下一章
-        tv_next.onClick { callback?.skipNextChapter() }
+        tv_next.onClick { callback?.moveToNextChapter() }
 
         //目录
         ll_catalog.onClick {
@@ -177,7 +173,7 @@ class ReadMenu : FrameLayout {
         menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                callback?.menuShow()
+                callback?.upSystemUiVisibility()
             }
 
             override fun onAnimationEnd(animation: Animation) {
@@ -211,7 +207,7 @@ class ReadMenu : FrameLayout {
                 bottom_menu.invisible()
                 cnaShowMenu = false
                 onMenuOutEnd?.invoke()
-                callback?.menuHide()
+                callback?.upSystemUiVisibility()
             }
 
             override fun onAnimationRepeat(animation: Animation) {
@@ -234,14 +230,13 @@ class ReadMenu : FrameLayout {
         fun setScreenBrightness(value: Int)
         fun autoPage()
         fun skipToPage(page: Int)
-        fun skipPreChapter()
-        fun skipNextChapter()
+        fun moveToPrevChapter(last: Boolean)
+        fun moveToNextChapter()
         fun openReplaceRule()
         fun openChapterList()
         fun showReadStyle()
         fun showMoreSetting()
-        fun menuShow()
-        fun menuHide()
+        fun upSystemUiVisibility()
     }
 
 }
