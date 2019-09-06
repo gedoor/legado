@@ -200,7 +200,7 @@ class AnalyzeUrl(
         GET, POST
     }
 
-    fun getResponse(): Call<Response<String>> {
+    fun getResponse(): Call<String> {
         return when {
             method == Method.POST -> {
                 if (fieldMap.isNotEmpty()) {

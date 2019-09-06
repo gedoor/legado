@@ -31,12 +31,12 @@ interface IHttpGetApi {
     fun get(
         @Url url: String,
         @HeaderMap headers: Map<String, String>
-    ): Call<Response<String>>
+    ): Call<String>
 
     @GET
     fun getMap(
         @Url url: String,
         @QueryMap(encoded = true) queryMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
-    ): Call<Response<String>>
+    ): Call<String>
 }

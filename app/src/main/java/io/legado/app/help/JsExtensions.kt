@@ -17,7 +17,7 @@ class JsExtensions {
             val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
             val call = analyzeUrl.getResponse()
             val response = call.execute()
-            response.body()?.toString()
+            response.body()
         } catch (e: Exception) {
             e.localizedMessage
         }

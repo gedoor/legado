@@ -34,12 +34,12 @@ interface IHttpPostApi {
         @Url url: String,
         @FieldMap(encoded = true) fieldMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
-    ): Call<Response<String>>
+    ): Call<String>
 
     @POST
     fun postBody(
         @Url url: String,
         @Body body: RequestBody,
         @HeaderMap headers: Map<String, String>
-    ): Call<Response<String>>
+    ): Call<String>
 }
