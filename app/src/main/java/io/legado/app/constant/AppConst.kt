@@ -18,7 +18,8 @@ object AppConst {
     const val APP_TAG = "Legado"
     const val RC_IMPORT_YUEDU_DATA = 100
 
-    const val userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.2357.134 Safari/537.36"
+    const val userAgent =
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"
 
     val SCRIPT_ENGINE: ScriptEngine = ScriptEngineManager().getEngineByName("rhino")
 
