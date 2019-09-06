@@ -1,10 +1,13 @@
 package io.legado.app.lib.webdav
 
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.lib.webdav.http.Handler
 import io.legado.app.lib.webdav.http.HttpAuth
-import io.legado.app.lib.webdav.http.OkHttp
-import okhttp3.*
+import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
 import org.jsoup.Jsoup
 import java.io.File
 import java.io.IOException
@@ -32,7 +35,7 @@ constructor(url: String) {
             return field
         }
 
-    private val okHttpClient: OkHttpClient = OkHttp.okHttpClient
+    private val okHttpClient = HttpHelper.client
 
     val path: String
         get() = url.toString()

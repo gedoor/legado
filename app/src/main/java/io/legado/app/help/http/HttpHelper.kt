@@ -7,27 +7,7 @@ import java.util.concurrent.TimeUnit
 
 object HttpHelper {
 
-    val client: OkHttpClient = getOkHttpClient()
-
-    inline fun <reified T> getApiService(baseUrl: String): T {
-        return getRetrofit(baseUrl).create(T::class.java)
-    }
-
-    inline fun <reified T> getApiService(baseUrl: String, encode: String): T {
-        return getRetrofit(baseUrl, encode).create(T::class.java)
-    }
-
-    fun getRetrofit(baseUrl: String, encode: String? = null): Retrofit {
-        return Retrofit.Builder().baseUrl(baseUrl)
-            //增加返回值为字符串的支持(以实体类返回)
-            .addConverterFactory(EncodeConverter.create(encode))
-            //增加返回值为Observable<T>的支持
-            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
-            .client(client)
-            .build()
-    }
-
-    private fun getOkHttpClient(): OkHttpClient {
+    val client: OkHttpClient by lazy {
         val default = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
             .tlsVersions(TlsVersion.TLS_1_2)
             .build()
@@ -50,7 +30,25 @@ object HttpHelper {
             .protocols(listOf(Protocol.HTTP_1_1))
             .addInterceptor(getHeaderInterceptor())
 
-        return builder.build()
+        builder.build()
+    }
+
+    inline fun <reified T> getApiService(baseUrl: String): T {
+        return getRetrofit(baseUrl).create(T::class.java)
+    }
+
+    inline fun <reified T> getApiService(baseUrl: String, encode: String): T {
+        return getRetrofit(baseUrl, encode).create(T::class.java)
+    }
+
+    fun getRetrofit(baseUrl: String, encode: String? = null): Retrofit {
+        return Retrofit.Builder().baseUrl(baseUrl)
+            //增加返回值为字符串的支持(以实体类返回)
+            .addConverterFactory(EncodeConverter.create(encode))
+            //增加返回值为Observable<T>的支持
+            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
+            .client(client)
+            .build()
     }
 
     private fun getHeaderInterceptor(): Interceptor {
