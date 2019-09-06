@@ -135,7 +135,7 @@ class ReadStyleDialog : DialogFragment() {
             tv_text_size.text = textSize.toString()
             postEvent(Bus.UP_CONFIG, true)
         }
-        iv_line_size_remove.onClick {
+        iv_text_size_remove.onClick {
             textSize--
             if (textSize < 5) textSize = 5
             seek_text_size.progress = textSize - 5
