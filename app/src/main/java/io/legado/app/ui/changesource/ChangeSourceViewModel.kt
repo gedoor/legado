@@ -35,7 +35,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             callBack?.adapter()?.let {
                 val books = searchBooks.toList()
                 books.sorted()
-                val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), searchBooks.toList()))
+                val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), books))
                 withContext(Main) {
                     synchronized(this) {
                         it.setItemsNoNotify(books)

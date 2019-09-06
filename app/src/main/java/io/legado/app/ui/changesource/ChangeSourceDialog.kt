@@ -37,7 +37,11 @@ class ChangeSourceDialog : DialogFragment(),
     private lateinit var viewModel: ChangeSourceViewModel
     private lateinit var changeSourceAdapter: ChangeSourceAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         viewModel = getViewModel(ChangeSourceViewModel::class.java)
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
@@ -75,7 +79,9 @@ class ChangeSourceDialog : DialogFragment(),
     private fun initRecyclerView() {
         changeSourceAdapter = ChangeSourceAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
-        recycler_view.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
+        recycler_view.addItemDecoration(
+            DividerItemDecoration(requireContext(), LinearLayout.VERTICAL)
+        )
         recycler_view.adapter = changeSourceAdapter
         viewModel.callBack = this
     }
