@@ -68,7 +68,7 @@ class AnalyzeUrl(
 
     init {
         baseUrl?.let {
-            this.baseUrl = it.split(",\n*".toRegex(), 1)[0]
+            this.baseUrl = it.split(",[^\\{]*".toRegex(), 1)[0]
         }
         headerMapF?.let { headerMap.putAll(it) }
         //替换参数
