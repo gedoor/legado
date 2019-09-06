@@ -35,8 +35,10 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 if (book.origin != BookType.local) {
                     val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
                     bookSource?.let {
-                        updateList.add(book.bookUrl)
-                        postEvent(Bus.UP_BOOK, book.bookUrl)
+                        synchronized(this) {
+                            updateList.add(book.bookUrl)
+                            postEvent(Bus.UP_BOOK, book.bookUrl)
+                        }
                         WebBook(bookSource).getChapterList(book).onSuccess(IO) {
                             it?.let {
                                 App.db.bookDao().update(book)
@@ -45,8 +47,10 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                                 }
                             }
                         }.onFinally {
-                            updateList.remove(book.bookUrl)
-                            postEvent(Bus.UP_BOOK, book.bookUrl)
+                            synchronized(this) {
+                                updateList.remove(book.bookUrl)
+                                postEvent(Bus.UP_BOOK, book.bookUrl)
+                            }
                         }
                     }
                 }
