@@ -1,7 +1,5 @@
 package io.legado.app.help.coroutine
 
-import android.util.Log
-
 class CompositeCoroutine : CoroutineContainer {
 
     private var resources: HashSet<Coroutine<*>>? = null
@@ -78,10 +76,7 @@ class CompositeCoroutine : CoroutineContainer {
             resources = null
         }
 
-        Log.e("TAG", "size: ${set?.size}")
-
         set?.forEachIndexed { index, coroutine ->
-            Log.e("TAG", "index: $index")
             coroutine.cancel()
         }
     }
