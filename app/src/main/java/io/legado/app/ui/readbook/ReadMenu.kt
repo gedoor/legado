@@ -99,7 +99,7 @@ class ReadMenu : FrameLayout {
         seek_read_page.progress = dur
     }
 
-    fun brightnessAuto(): Boolean {
+    private fun brightnessAuto(): Boolean {
         return context.getPrefBoolean("brightnessAuto", true)
     }
 
