@@ -9,7 +9,6 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.internal.toHexString
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -126,9 +125,9 @@ object ReadBookConfig {
 
         fun setTextColor(color: Int) {
             if (App.INSTANCE.isNightTheme) {
-                textColorNight = "#${color.toHexString()}"
+                textColorNight = "#${color.hexString}"
             } else {
-                textColor = "#${color.toHexString()}"
+                textColor = "#${color.hexString}"
             }
         }
 
