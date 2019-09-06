@@ -60,17 +60,15 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     fun startDebug(key: String) {
         cancelDebug()
         startTime = System.currentTimeMillis()
-        with(webBook) {
-            if (key.isAbsUrl()) {
-                val book = Book()
-                book.origin = sourceUrl
-                book.bookUrl = key
-                printLog(sourceUrl, 1, "开始访问$key")
-                infoDebug(book)
-            } else {
-                printLog(sourceUrl, 1, "开始搜索关键字$key")
-                searchDebug(key)
-            }
+        if (key.isAbsUrl()) {
+            val book = Book()
+            book.origin = webBook.sourceUrl
+            book.bookUrl = key
+            printLog(webBook.sourceUrl, 1, "开始访问$key")
+            infoDebug(book)
+        } else {
+            printLog(webBook.sourceUrl, 1, "开始搜索关键字$key")
+            searchDebug(key)
         }
     }
 
