@@ -295,11 +295,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             nowSpeak--
             readAloudNumber -= contentList[nowSpeak].length.minus(1)
             playTTS()
-            textChapter?.let {
-                if (readAloudNumber < it.getReadLength(pageIndex)) {
-                    postEvent(Bus.TTS_TURN_PAGE, -1)
-                }
-            }
         }
     }
 
