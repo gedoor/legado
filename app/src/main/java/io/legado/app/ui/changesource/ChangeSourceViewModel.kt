@@ -54,16 +54,14 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 WebBook(item).searchBook(name, scope = this@execute)
                     .timeout(30000L)
                     .onSuccess(IO) {
-                        it?.let { list ->
-                            for (searchBook in list) {
-                                if (searchBook.name == name && searchBook.author == author) {
-                                    if (searchBook.tocUrl.isEmpty()) {
-                                        loadBookInfo(searchBook.toBook())
-                                    } else {
-                                        loadChapter(searchBook.toBook())
-                                    }
-                                    break
+                        it?.forEach { searchBook ->
+                            if (searchBook.name == name && searchBook.author == author) {
+                                if (searchBook.tocUrl.isEmpty()) {
+                                    loadBookInfo(searchBook.toBook())
+                                } else {
+                                    loadChapter(searchBook.toBook())
                                 }
+                                return@onSuccess
                             }
                         }
                     }
