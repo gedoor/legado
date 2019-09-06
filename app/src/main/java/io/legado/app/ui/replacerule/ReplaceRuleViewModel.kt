@@ -22,6 +22,13 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun toTop(rule: ReplaceRule) {
+        execute {
+            rule.order = App.db.replaceRuleDao().minOrder - 1
+            App.db.replaceRuleDao().update(rule)
+        }
+    }
+
     fun addGroup(group: String) {
         execute {
             val sources = App.db.replaceRuleDao().noGroup

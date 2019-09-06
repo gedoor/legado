@@ -94,4 +94,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             .newInstance(rule.id)
             .show(supportFragmentManager, "editReplace")
     }
+
+    override fun toTop(rule: ReplaceRule) {
+        viewModel.toTop(rule)
+    }
 }

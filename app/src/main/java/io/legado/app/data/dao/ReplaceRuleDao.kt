@@ -15,6 +15,9 @@ interface ReplaceRuleDao {
     @Query("SELECT id FROM replace_rules ORDER BY sortOrder ASC")
     fun observeAllIds(): LiveData<List<Long>>
 
+    @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
+    val minOrder: Int
+
     @get:Query("SELECT MAX(sortOrder) FROM replace_rules")
     val maxOrder: Int
 
@@ -61,13 +64,7 @@ interface ReplaceRuleDao {
     fun insert(vararg replaceRule: ReplaceRule): List<Long>
 
     @Update
-    fun update(replaceRules: ReplaceRule)
-
-    @Update
     fun update(vararg replaceRules: ReplaceRule)
-
-    @Delete
-    fun delete(replaceRules: ReplaceRule)
 
     @Delete
     fun delete(vararg replaceRules: ReplaceRule)

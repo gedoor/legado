@@ -70,13 +70,16 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 rule.isEnabled = swt_enabled.isChecked
                 callBack.update(rule)
             }
+            iv_edit.onClick {
+                callBack.edit(rule)
+            }
             iv_menu_more.onClick {
                 val popupMenu = PopupMenu(context, it)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
+                popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
                 popupMenu.setOnMenuItemClickListener { item ->
                     when (item.itemId) {
-                        R.id.menu_edit -> callBack.edit(rule)
+                        R.id.menu_top -> callBack.toTop(rule)
                         R.id.menu_del -> callBack.delete(rule)
                     }
                     true
@@ -90,5 +93,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         fun update(rule: ReplaceRule)
         fun delete(rule: ReplaceRule)
         fun edit(rule: ReplaceRule)
+        fun toTop(rule: ReplaceRule)
     }
 }

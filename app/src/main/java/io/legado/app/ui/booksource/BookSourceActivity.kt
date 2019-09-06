@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
@@ -98,11 +99,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
+                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
+                    this.setDrawable(it)
+                }
+            })
         adapter = BookSourceAdapter(this)
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()
