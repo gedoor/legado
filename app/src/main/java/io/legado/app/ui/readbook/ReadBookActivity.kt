@@ -9,7 +9,6 @@ import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -83,7 +82,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             changeSourceDialog =
                 supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
         }
-        setScreenBrightness(getPrefInt("brightness", 100))
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -456,21 +454,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 viewModel.durPageIndex, key, play
             )
         }
-    }
-
-    /**
-     * 设置屏幕亮度
-     */
-    override fun setScreenBrightness(value: Int) {
-        var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        if (!read_menu.brightnessAuto()) {
-            brightness = value.toFloat()
-            if (brightness < 1f) brightness = 1f
-            brightness /= 255f
-        }
-        val params = window.attributes
-        params.screenBrightness = brightness
-        window.attributes = params
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.getConfig()) {

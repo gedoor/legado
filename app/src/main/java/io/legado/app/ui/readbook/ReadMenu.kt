@@ -2,6 +2,7 @@ package io.legado.app.ui.readbook
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
@@ -59,6 +60,22 @@ class ReadMenu : FrameLayout {
             iv_brightness_auto.setColorFilter(context.buttonDisabledColor)
             seek_brightness.isEnabled = true
         }
+        setScreenBrightness(context.getPrefInt("brightness", 100))
+    }
+
+    /**
+     * 设置屏幕亮度
+     */
+    private fun setScreenBrightness(value: Int) {
+        var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        if (!brightnessAuto()) {
+            brightness = value.toFloat()
+            if (brightness < 1f) brightness = 1f
+            brightness /= 255f
+        }
+        val params = activity?.window?.attributes
+        params?.screenBrightness = brightness
+        activity?.window?.attributes = params
     }
 
     fun runMenuIn() {
@@ -93,11 +110,10 @@ class ReadMenu : FrameLayout {
                 !brightnessAuto()
             )
             upBrightnessState()
-            callBack?.setScreenBrightness(context.getPrefInt("brightness", 100))
         }
         seek_brightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                callBack?.setScreenBrightness(progress)
+                setScreenBrightness(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -231,7 +247,6 @@ class ReadMenu : FrameLayout {
     }
 
     interface CallBack {
-        fun setScreenBrightness(value: Int)
         fun autoPage()
         fun skipToPage(page: Int)
         fun moveToPrevChapter(last: Boolean)
