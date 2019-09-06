@@ -416,7 +416,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             readAloudNumber += contentList[nowSpeak].length + 1
             nowSpeak += 1
             if (nowSpeak >= contentList.size) {
-                postEvent(Bus.TTS_NEXT, true)
+                postEvent(Bus.TTS_TURN_PAGE, 2)
             }
         }
 
@@ -425,7 +425,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             textChapter?.let {
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
-                    postEvent(Bus.TTS_NEXT, false)
+                    postEvent(Bus.TTS_TURN_PAGE, 1)
                     postEvent(Bus.TTS_START, readAloudNumber + start)
                 }
             }

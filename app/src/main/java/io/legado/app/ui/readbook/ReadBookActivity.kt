@@ -581,13 +581,24 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 }
             }
         }
-        observeEvent<Boolean>(Bus.TTS_NEXT) {
-            if (it) {
-                moveToNextChapter()
-            } else {
-                viewModel.durPageIndex = viewModel.durPageIndex + 1
-                page_view.upContent()
-                viewModel.saveRead()
+        observeEvent<Int>(Bus.TTS_TURN_PAGE) {
+            when (it) {
+                1 -> {
+                    viewModel.durPageIndex = viewModel.durPageIndex + 1
+                    page_view.upContent()
+                    viewModel.saveRead()
+                }
+                2 -> moveToNextChapter()
+                -1 -> {
+                    if (viewModel.durPageIndex > 0) {
+                        viewModel.durPageIndex = viewModel.durPageIndex - 1
+                        page_view.upContent()
+                        viewModel.saveRead()
+                    } else {
+                        moveToPrevChapter()
+                    }
+                }
+                -2 -> moveToPrevChapter()
             }
         }
         observeEvent<String>(Bus.REPLACE) {

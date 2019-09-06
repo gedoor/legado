@@ -18,6 +18,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadAloudDialog : DialogFragment() {
 
@@ -119,7 +120,9 @@ class ReadAloudDialog : DialogFragment() {
         iv_stop.onClick { ReadAloudService.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
         iv_play_prev.onClick { ReadAloudService.prevParagraph(requireContext()) }
+        iv_play_prev.onLongClick { postEvent(Bus.TTS_TURN_PAGE, -2); true }
         iv_play_next.onClick { ReadAloudService.nextParagraph(requireContext()) }
+        iv_play_next.onLongClick { postEvent(Bus.TTS_TURN_PAGE, 2); true }
     }
 
     private fun upPlayState(state: Int) {
