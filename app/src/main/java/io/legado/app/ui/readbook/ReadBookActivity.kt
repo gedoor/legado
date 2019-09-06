@@ -54,7 +54,7 @@ import org.jetbrains.anko.toast
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
     PageView.CallBack,
-    ReadMenu.Callback,
+    ReadMenu.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBookViewModel.CallBack,
     ColorPickerDialogListener {

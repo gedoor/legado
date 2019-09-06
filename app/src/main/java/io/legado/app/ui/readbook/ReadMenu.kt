@@ -18,7 +18,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ReadMenu : FrameLayout {
     var cnaShowMenu: Boolean = false
-    private var callback: Callback? = null
+    private var callBack: CallBack? = null
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
@@ -36,7 +36,7 @@ class ReadMenu : FrameLayout {
     )
 
     init {
-        callback = activity as? Callback
+        callBack = activity as? CallBack
         inflate(context, R.layout.view_read_menu, this)
         if (context.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
@@ -59,7 +59,7 @@ class ReadMenu : FrameLayout {
             iv_brightness_auto.setColorFilter(context.buttonDisabledColor)
             seek_brightness.isEnabled = true
         }
-        callback?.setScreenBrightness(context.getPrefInt("brightness", 100))
+        callBack?.setScreenBrightness(context.getPrefInt("brightness", 100))
     }
 
     fun runMenuIn() {
@@ -97,7 +97,7 @@ class ReadMenu : FrameLayout {
         }
         seek_brightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                callback?.setScreenBrightness(progress)
+                callBack?.setScreenBrightness(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -121,15 +121,15 @@ class ReadMenu : FrameLayout {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                callback?.skipToPage(seekBar.progress)
+                callBack?.skipToPage(seekBar.progress)
             }
         })
 
         //自动翻页
-        fabAutoPage.onClick { callback?.autoPage() }
+        fabAutoPage.onClick { callBack?.autoPage() }
 
         //替换
-        fabReplaceRule.onClick { callback?.openReplaceRule() }
+        fabReplaceRule.onClick { callBack?.openReplaceRule() }
 
         //夜间模式
         fabNightTheme.onClick {
@@ -138,15 +138,15 @@ class ReadMenu : FrameLayout {
         }
 
         //上一章
-        tv_pre.onClick { callback?.moveToPrevChapter(false) }
+        tv_pre.onClick { callBack?.moveToPrevChapter(false) }
 
         //下一章
-        tv_next.onClick { callback?.moveToNextChapter() }
+        tv_next.onClick { callBack?.moveToNextChapter() }
 
         //目录
         ll_catalog.onClick {
             runMenuOut {
-                callback?.openChapterList()
+                callBack?.openChapterList()
             }
         }
 
@@ -160,14 +160,14 @@ class ReadMenu : FrameLayout {
         //界面
         ll_font.onClick {
             runMenuOut {
-                callback?.showReadStyle()
+                callBack?.showReadStyle()
             }
         }
 
         //设置
         ll_setting.onClick {
             runMenuOut {
-                callback?.showMoreSetting()
+                callBack?.showMoreSetting()
             }
         }
     }
@@ -177,7 +177,7 @@ class ReadMenu : FrameLayout {
         menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                callback?.upSystemUiVisibility()
+                callBack?.upSystemUiVisibility()
             }
 
             override fun onAnimationEnd(animation: Animation) {
@@ -211,7 +211,7 @@ class ReadMenu : FrameLayout {
                 bottom_menu.invisible()
                 cnaShowMenu = false
                 onMenuOutEnd?.invoke()
-                callback?.upSystemUiVisibility()
+                callBack?.upSystemUiVisibility()
             }
 
             override fun onAnimationRepeat(animation: Animation) {
@@ -230,7 +230,7 @@ class ReadMenu : FrameLayout {
         }
     }
 
-    interface Callback {
+    interface CallBack {
         fun setScreenBrightness(value: Int)
         fun autoPage()
         fun skipToPage(page: Int)
