@@ -1,5 +1,6 @@
 package io.legado.app.help.http
 
+import android.annotation.SuppressLint
 import java.io.IOException
 import java.io.InputStream
 import java.security.KeyManagementException
@@ -21,10 +22,12 @@ object SSLHelper {
      * 这是一种有很大安全漏洞的办法
      */
     val unsafeTrustManager: X509TrustManager = object : X509TrustManager {
+        @SuppressLint("TrustAllX509TrustManager")
         @Throws(CertificateException::class)
         override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
         }
 
+        @SuppressLint("TrustAllX509TrustManager")
         @Throws(CertificateException::class)
         override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
         }
@@ -34,16 +37,15 @@ object SSLHelper {
         }
     }
 
-    val unsafeSSLSocketFactory: SSLSocketFactory
-        get() {
-            try {
-                val sslContext = SSLContext.getInstance("SSL")
-                sslContext.init(null, arrayOf(unsafeTrustManager), SecureRandom())
-                return sslContext.socketFactory
-            } catch (e: Exception) {
-                throw RuntimeException(e)
-            }
+    val unsafeSSLSocketFactory: SSLSocketFactory by lazy {
+        try {
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, arrayOf(unsafeTrustManager), SecureRandom())
+            sslContext.socketFactory
+        } catch (e: Exception) {
+            throw RuntimeException(e)
         }
+    }
 
     /**
      * 此类是用于主机名验证的基接口。 在握手期间，如果 URL 的主机名和服务器的标识主机名不匹配，
