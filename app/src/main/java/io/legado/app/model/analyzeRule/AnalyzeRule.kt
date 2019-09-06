@@ -533,18 +533,14 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * js实现跨域访问,不能删
      */
     fun ajax(urlStr: String): String? {
-        try {
+        return try {
             val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
             val call = analyzeUrl.getResponse()
             val response = call.execute()
-            if (response.body() != null) {
-                return response.body()!!.toString()
-            }
+            response.body()
         } catch (e: Exception) {
-            return e.localizedMessage
+            e.localizedMessage
         }
-
-        return null
     }
 
     /**
