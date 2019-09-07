@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -18,13 +19,16 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_replace_rule.*
+import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.doAsync
 
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
+    SearchView.OnQueryTextListener,
     ReplaceRuleAdapter.CallBack {
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
@@ -37,6 +41,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
+        initSearchView()
         initDataObservers()
     }
 
@@ -78,6 +83,14 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
+    private fun initSearchView() {
+        ATH.setTint(search_view, primaryTextColor)
+        search_view.onActionViewExpanded()
+        search_view.queryHint = getString(R.string.replace_purify_search)
+        search_view.clearFocus()
+        search_view.setOnQueryTextListener(this)
+    }
+
     private fun initDataObservers() {
         rulesLiveData?.removeObservers(this)
         rulesLiveData = LivePagedListBuilder(App.db.replaceRuleDao().observeAll(), 30).build()
@@ -105,6 +118,14 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 allEnabled = it == 0
             }
         }
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
     }
 
     override fun update(rule: ReplaceRule) {

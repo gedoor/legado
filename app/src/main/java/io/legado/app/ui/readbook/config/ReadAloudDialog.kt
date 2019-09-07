@@ -15,18 +15,19 @@ import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.readbook.Help
 import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_read_book.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadAloudDialog : DialogFragment() {
+    var callBack: CallBack? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        callBack = activity as? CallBack
         return inflater.inflate(R.layout.dialog_read_aloud, container)
     }
 
@@ -111,12 +112,10 @@ class ReadAloudDialog : DialogFragment() {
 
     private fun initOnClick() {
         iv_menu.onClick {
-            val activity = activity
-            if (activity is ReadBookActivity) {
-                activity.read_menu.runMenuIn()
-                dismiss()
-            }
+            callBack?.showMenu()
+            dismiss()
         }
+        iv_menu.onLongClick { callBack?.openChapterList(); true }
         iv_stop.onClick { ReadAloudService.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
         iv_play_prev.onClick { ReadAloudService.prevParagraph(requireContext()) }
@@ -134,13 +133,16 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun upTtsSpeechRate() {
-        val activity = activity
         ReadAloudService.upTtsSpeechRate(requireContext())
-        if (activity is ReadBookActivity) {
-            if (activity.readAloudStatus == Status.PLAY) {
-                ReadAloudService.pause(requireContext())
-                ReadAloudService.resume(requireContext())
-            }
+        if (callBack?.readAloudStatus == Status.PLAY) {
+            ReadAloudService.pause(requireContext())
+            ReadAloudService.resume(requireContext())
         }
+    }
+
+    interface CallBack {
+        fun showMenu()
+        fun openChapterList()
+        var readAloudStatus: Int
     }
 }

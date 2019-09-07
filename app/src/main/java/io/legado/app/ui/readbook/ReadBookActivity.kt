@@ -54,6 +54,7 @@ import org.jetbrains.anko.toast
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
     PageView.CallBack,
     ReadMenu.CallBack,
+    ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBookViewModel.CallBack,
     ColorPickerDialogListener {
@@ -63,7 +64,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     private val requestCodeEditSource = 111
     private var changeSourceDialog: ChangeSourceDialog? = null
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
-    var readAloudStatus = Status.STOP
+    override var readAloudStatus = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -315,6 +316,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 readAloud(false)
             }
         }
+    }
+
+    override fun showMenu() {
+        read_menu.runMenuIn()
     }
 
     override fun chapterSize(): Int {

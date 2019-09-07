@@ -32,7 +32,7 @@
     <string name="replace_purify">替换净化</string>
     <string name="not_available">暂无</string>
     <string name="enable">启用</string>
-
+    <string name="replace_purify_search">替换净化-搜索</string>
     <string name="bookshelf">书架</string>
     <string name="rss">订阅</string>
     <string name="recent_reading">最近阅读</string>
