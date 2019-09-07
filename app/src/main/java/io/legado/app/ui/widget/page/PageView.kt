@@ -220,14 +220,14 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         fun loadContent(index: Int)
 
         /**
-         * 下一页
+         * 下一章
          */
-        fun moveToNextChapter()
+        fun moveToNextChapter(): Boolean
 
         /**
-         * 上一页
+         * 上一章
          */
-        fun moveToPrevChapter(last: Boolean = true)
+        fun moveToPrevChapter(last: Boolean = true): Boolean
 
         /**
          * 保存页数

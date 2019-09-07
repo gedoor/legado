@@ -249,8 +249,8 @@ class ReadMenu : FrameLayout {
     interface CallBack {
         fun autoPage()
         fun skipToPage(page: Int)
-        fun moveToPrevChapter(last: Boolean)
-        fun moveToNextChapter()
+        fun moveToPrevChapter(last: Boolean): Boolean
+        fun moveToNextChapter(): Boolean
         fun openReplaceRule()
         fun openChapterList()
         fun showReadStyle()

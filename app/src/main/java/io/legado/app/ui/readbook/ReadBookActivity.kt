@@ -372,21 +372,31 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     /**
      * 下一页
      */
-    override fun moveToNextChapter() {
-        viewModel.durPageIndex = 0
-        viewModel.moveToNextChapter()
-        viewModel.saveRead()
-        curChapterChanged()
+    override fun moveToNextChapter(): Boolean {
+        return if (viewModel.durChapterIndex < viewModel.chapterSize - 1) {
+            viewModel.durPageIndex = 0
+            viewModel.moveToNextChapter()
+            viewModel.saveRead()
+            curChapterChanged()
+            true
+        } else {
+            false
+        }
     }
 
     /**
      * 上一页
      */
-    override fun moveToPrevChapter(last: Boolean) {
-        viewModel.durPageIndex = if (last) viewModel.prevTextChapter?.lastIndex() ?: 0 else 0
-        viewModel.moveToPrevChapter()
-        viewModel.saveRead()
-        curChapterChanged()
+    override fun moveToPrevChapter(last: Boolean): Boolean {
+        return if (viewModel.durChapterIndex > 0) {
+            viewModel.durPageIndex = if (last) viewModel.prevTextChapter?.lastIndex() ?: 0 else 0
+            viewModel.moveToPrevChapter()
+            viewModel.saveRead()
+            curChapterChanged()
+            true
+        } else {
+            false
+        }
     }
 
     override fun clickCenter() {
@@ -557,7 +567,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     page_view.upContent()
                     viewModel.saveRead()
                 }
-                2 -> moveToNextChapter()
+                2 -> if (moveToNextChapter()) ReadAloudService.stop(this)
                 -1 -> {
                     if (viewModel.durPageIndex > 0) {
                         viewModel.durPageIndex = viewModel.durPageIndex - 1
