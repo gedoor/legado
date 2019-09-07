@@ -111,6 +111,7 @@ class ReadMenu : FrameLayout {
             )
             upBrightnessState()
         }
+        //亮度调节
         seek_brightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 setScreenBrightness(progress)
@@ -200,11 +201,10 @@ class ReadMenu : FrameLayout {
                 vw_menu_bg.onClick { runMenuOut() }
                 val lp = vwNavigationBar.layoutParams
                 lp.height =
-                    if (context.getPrefBoolean("hideNavigationBar") and Help.isNavigationBarExist(
-                            activity
-                        )
-                    )
-                    context.getNavigationBarHeight() else 0
+                    if (context.getPrefBoolean("hideNavigationBar")
+                        && Help.isNavigationBarExist(activity)
+                    ) context.getNavigationBarHeight()
+                    else 0
                 vwNavigationBar.layoutParams = lp
             }
 
