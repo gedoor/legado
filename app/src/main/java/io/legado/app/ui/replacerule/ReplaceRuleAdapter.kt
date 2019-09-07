@@ -1,15 +1,11 @@
 package io.legado.app.ui.replacerule
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
@@ -18,69 +14,29 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
-    PagedListAdapter<ReplaceRule, ReplaceRuleAdapter.MyViewHolder>(DIFF_CALLBACK),
+    SimpleRecyclerAdapter<ReplaceRule>(context, R.layout.item_replace_rule),
     ItemTouchCallback.OnItemTouchCallbackListener {
 
-    companion object {
-
-        @JvmField
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ReplaceRule>() {
-            override fun areItemsTheSame(oldItem: ReplaceRule, newItem: ReplaceRule): Boolean =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: ReplaceRule, newItem: ReplaceRule): Boolean =
-                oldItem.id == newItem.id
-                        && oldItem.pattern == newItem.pattern
-                        && oldItem.replacement == newItem.replacement
-                        && oldItem.isRegex == newItem.isRegex
-                        && oldItem.isEnabled == newItem.isEnabled
-                        && oldItem.scope == newItem.scope
-        }
-    }
-
-    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-        return true
-    }
-
-    override fun onSwiped(adapterPosition: Int) {
-
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_replace_rule,
-                parent,
-                false
-            )
-        )
-    }
-
-    override fun onBindViewHolder(holder: MyViewHolder, pos: Int) {
-        getItem(pos)?.let { holder.bind(it, callBack) }
-    }
-
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        fun bind(rule: ReplaceRule, callBack: CallBack) = with(itemView) {
+    override fun convert(holder: ItemViewHolder, item: ReplaceRule, payloads: MutableList<Any>) {
+        with(holder.itemView) {
             this.setBackgroundColor(context.backgroundColor)
-            cb_name.text = rule.name
-            swt_enabled.isChecked = rule.isEnabled
+            cb_name.text = item.name
+            swt_enabled.isChecked = item.isEnabled
             swt_enabled.onClick {
-                rule.isEnabled = swt_enabled.isChecked
-                callBack.update(rule)
+                item.isEnabled = swt_enabled.isChecked
+                callBack.update(item)
             }
             iv_edit.onClick {
-                callBack.edit(rule)
+                callBack.edit(item)
             }
             iv_menu_more.onClick {
                 val popupMenu = PopupMenu(context, it)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
                 popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
-                popupMenu.setOnMenuItemClickListener { item ->
-                    when (item.itemId) {
-                        R.id.menu_top -> callBack.toTop(rule)
-                        R.id.menu_del -> callBack.delete(rule)
+                popupMenu.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.menu_top -> callBack.toTop(item)
+                        R.id.menu_del -> callBack.delete(item)
                     }
                     true
                 }
@@ -89,8 +45,24 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
+    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        val srcItem = getItem(srcPosition)
+        val targetItem = getItem(targetPosition)
+        if (srcItem != null && targetItem != null) {
+            val srcOrder = srcItem.order
+            srcItem.order = targetItem.order
+            targetItem.order = srcOrder
+            callBack.update(srcItem, targetItem)
+        }
+        return true
+    }
+
+    override fun onSwiped(adapterPosition: Int) {
+
+    }
+
     interface CallBack {
-        fun update(rule: ReplaceRule)
+        fun update(vararg rule: ReplaceRule)
         fun delete(rule: ReplaceRule)
         fun edit(rule: ReplaceRule)
         fun toTop(rule: ReplaceRule)

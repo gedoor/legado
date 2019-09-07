@@ -6,10 +6,8 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +32,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         get() = getViewModel(ReplaceRuleViewModel::class.java)
 
     private lateinit var adapter: ReplaceRuleAdapter
-    private var rulesLiveData: LiveData<PagedList<ReplaceRule>>? = null
     private var allEnabled = false
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
@@ -92,9 +89,11 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun initDataObservers() {
-        rulesLiveData?.removeObservers(this)
-        rulesLiveData = LivePagedListBuilder(App.db.replaceRuleDao().observeAll(), 30).build()
-        rulesLiveData?.observe(this, Observer<PagedList<ReplaceRule>> { adapter.submitList(it) })
+        App.db.replaceRuleDao().liveDataAll().observe(this, Observer {
+            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
+            adapter.setItemsNoNotify(it)
+            diffResult.dispatchUpdatesTo(adapter)
+        })
 
         App.db.replaceRuleDao().liveGroup().observe(this, Observer {
             groups.clear()
@@ -128,8 +127,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         return false
     }
 
-    override fun update(rule: ReplaceRule) {
-        viewModel.update(rule)
+    override fun update(vararg rule: ReplaceRule) {
+        viewModel.update(*rule)
     }
 
     override fun delete(rule: ReplaceRule) {

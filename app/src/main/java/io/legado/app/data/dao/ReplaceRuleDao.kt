@@ -1,7 +1,6 @@
 package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.*
 import io.legado.app.data.entities.ReplaceRule
 
@@ -10,10 +9,7 @@ import io.legado.app.data.entities.ReplaceRule
 interface ReplaceRuleDao {
 
     @Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
-    fun observeAll(): DataSource.Factory<Int, ReplaceRule>
-
-    @Query("SELECT id FROM replace_rules ORDER BY sortOrder ASC")
-    fun observeAllIds(): LiveData<List<Long>>
+    fun liveDataAll(): LiveData<List<ReplaceRule>>
 
     @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
     val minOrder: Int

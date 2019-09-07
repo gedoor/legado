@@ -10,9 +10,9 @@ import io.legado.app.utils.splitNotBlank
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
 
 
-    fun update(rule: ReplaceRule) {
+    fun update(vararg rule: ReplaceRule) {
         execute {
-            App.db.replaceRuleDao().update(rule)
+            App.db.replaceRuleDao().update(*rule)
         }
     }
 
