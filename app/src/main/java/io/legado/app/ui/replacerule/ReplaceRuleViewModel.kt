@@ -29,8 +29,9 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun upOrder(rules: List<ReplaceRule>) {
+    fun upOrder() {
         execute {
+            val rules = App.db.replaceRuleDao().all
             for ((index: Int, rule: ReplaceRule) in rules.withIndex()) {
                 rule.order = index + 1
             }

@@ -145,7 +145,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         viewModel.toTop(rule)
     }
 
-    override fun upOrder(rules: List<ReplaceRule>) {
-        viewModel.upOrder(rules)
+    override fun upOrder() {
+        viewModel.upOrder()
     }
 }
