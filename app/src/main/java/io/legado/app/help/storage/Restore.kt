@@ -126,7 +126,7 @@ object Restore {
                     rule.isRegex = jsonItem.readBool("$.isRegex") == true
                     rule.scope = jsonItem.readString("$.useTo")
                     rule.isEnabled = jsonItem.readBool("$.enable") == true
-                    rule.order = jsonItem.readInt("$.serialNumber") ?: 0
+                    rule.order = jsonItem.readInt("$.serialNumber") ?: index
                     replaceRules.add(rule)
                 }
                 App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
