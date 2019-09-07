@@ -3,6 +3,7 @@ package io.legado.app.ui.replacerule
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.SubMenu
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -18,6 +19,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import org.jetbrains.anko.doAsync
 
@@ -30,6 +32,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private lateinit var adapter: ReplaceRuleAdapter
     private var rulesLiveData: LiveData<PagedList<ReplaceRule>>? = null
     private var allEnabled = false
+    private var groups = hashSetOf<String>()
+    private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -39,6 +43,12 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.replace_rule, menu)
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
+        upGroupMenu()
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
@@ -68,11 +78,25 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
-
     private fun initDataObservers() {
         rulesLiveData?.removeObservers(this)
         rulesLiveData = LivePagedListBuilder(App.db.replaceRuleDao().observeAll(), 30).build()
         rulesLiveData?.observe(this, Observer<PagedList<ReplaceRule>> { adapter.submitList(it) })
+
+        App.db.replaceRuleDao().liveGroup().observe(this, Observer {
+            groups.clear()
+            it.map { group ->
+                groups.addAll(group.splitNotBlank(",", ";"))
+            }
+            upGroupMenu()
+        })
+    }
+
+    private fun upGroupMenu() {
+        groupMenu?.removeGroup(R.id.source_group)
+        groups.map {
+            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+        }
     }
 
     private fun updateEnableAll() {

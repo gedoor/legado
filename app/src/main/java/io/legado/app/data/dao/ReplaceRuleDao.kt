@@ -46,7 +46,7 @@ interface ReplaceRuleDao {
     fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
 
     @Query("select `group` from replace_rules")
-    fun observeGroup(): LiveData<List<String>>
+    fun liveGroup(): LiveData<List<String>>
 
     @Query("select * from replace_rules where `group` like '%' || :group || '%'")
     fun getByGroup(group: String): List<ReplaceRule>
