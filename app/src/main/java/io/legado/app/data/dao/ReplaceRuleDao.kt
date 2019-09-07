@@ -45,7 +45,7 @@ interface ReplaceRuleDao {
     )
     fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
 
-    @Query("select `group` from replace_rules")
+    @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
     fun liveGroup(): LiveData<List<String>>
 
     @Query("select * from replace_rules where `group` like '%' || :group || '%'")
