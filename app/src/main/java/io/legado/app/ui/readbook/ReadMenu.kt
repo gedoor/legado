@@ -105,10 +105,7 @@ class ReadMenu : FrameLayout {
 
     private fun bindEvent() {
         iv_brightness_auto.onClick {
-            context.putPrefBoolean(
-                "brightnessAuto",
-                !brightnessAuto()
-            )
+            context.putPrefBoolean("brightnessAuto", !brightnessAuto())
             upBrightnessState()
         }
         //亮度调节
