@@ -32,7 +32,7 @@ interface BookSourceDao {
     @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")
     fun getByGroup(group: String): List<BookSource>
 
-    @get:Query("select * from book_sources where bookSourceGroup = null or bookSourceGroup = ''")
+    @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = ''")
     val noGroup: List<BookSource>
 
     @get:Query("select * from book_sources order by customOrder asc")

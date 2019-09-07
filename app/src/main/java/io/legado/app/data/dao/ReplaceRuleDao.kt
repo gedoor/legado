@@ -51,7 +51,7 @@ interface ReplaceRuleDao {
     @Query("select * from replace_rules where `group` like '%' || :group || '%'")
     fun getByGroup(group: String): List<ReplaceRule>
 
-    @get:Query("select * from replace_rules where `group` = null or `group` = ''")
+    @get:Query("select * from replace_rules where `group` is null or `group` = ''")
     val noGroup: List<ReplaceRule>
 
     @get:Query("SELECT COUNT(*) - SUM(isEnabled) FROM replace_rules")
