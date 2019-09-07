@@ -131,6 +131,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
+        observeReplaceRuleData("%$newText%")
         return false
     }
 
