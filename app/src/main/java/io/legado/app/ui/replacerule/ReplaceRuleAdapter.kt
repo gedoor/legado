@@ -50,12 +50,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         val targetItem = getItem(targetPosition)
         if (srcItem != null && targetItem != null) {
             if (srcItem.order == targetItem.order) {
-                if (targetPosition > srcPosition) {
-                    srcItem.order = srcItem.order + 1
-                } else {
-                    srcItem.order = srcItem.order - 1
-                }
-                callBack.update(srcItem)
+                callBack.upOrder(getItems())
             } else {
                 val srcOrder = srcItem.order
                 srcItem.order = targetItem.order
@@ -75,5 +70,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         fun delete(rule: ReplaceRule)
         fun edit(rule: ReplaceRule)
         fun toTop(rule: ReplaceRule)
+        fun upOrder(rules: List<ReplaceRule>)
     }
 }

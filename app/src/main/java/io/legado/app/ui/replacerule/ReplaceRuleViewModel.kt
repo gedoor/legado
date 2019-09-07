@@ -29,6 +29,15 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun upOrder(rules: List<ReplaceRule>) {
+        execute {
+            for ((index: Int, rule: ReplaceRule) in rules.withIndex()) {
+                rule.order = index + 1
+            }
+            App.db.replaceRuleDao().update(*rules.toTypedArray())
+        }
+    }
+
     fun addGroup(group: String) {
         execute {
             val sources = App.db.replaceRuleDao().noGroup
