@@ -66,6 +66,9 @@ class ReplaceEditDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_save -> {
+                viewModel.save(getReplaceRule()) {
+                    dismiss()
+                }
             }
         }
         return true
@@ -80,4 +83,14 @@ class ReplaceEditDialog : DialogFragment(),
         et_scope.setText(replaceRule.scope)
     }
 
+    private fun getReplaceRule(): ReplaceRule {
+        val replaceRule: ReplaceRule = viewModel.replaceRuleData.value ?: ReplaceRule()
+        replaceRule.name = et_name.text.toString()
+        replaceRule.group = et_group.text.toString()
+        replaceRule.pattern = et_group.text.toString()
+        replaceRule.isRegex = cb_use_regex.isChecked
+        replaceRule.replacement = et_replace_to.text.toString()
+        replaceRule.scope = et_scope.text.toString()
+        return replaceRule
+    }
 }

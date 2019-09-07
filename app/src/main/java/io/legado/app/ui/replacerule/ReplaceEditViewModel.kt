@@ -26,6 +26,9 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
 
     fun save(replaceRule: ReplaceRule, success: () -> Unit) {
         execute {
+            if (replaceRule.order == 0) {
+                replaceRule.order = App.db.replaceRuleDao().maxOrder + 1
+            }
             App.db.replaceRuleDao().insert(replaceRule)
         }.onSuccess {
             success()

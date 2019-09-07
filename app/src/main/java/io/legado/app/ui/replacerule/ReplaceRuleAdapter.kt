@@ -49,10 +49,19 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
         if (srcItem != null && targetItem != null) {
-            val srcOrder = srcItem.order
-            srcItem.order = targetItem.order
-            targetItem.order = srcOrder
-            callBack.update(srcItem, targetItem)
+            if (srcItem.order == targetItem.order) {
+                if (targetPosition > srcPosition) {
+                    srcItem.order = srcItem.order + 1
+                } else {
+                    srcItem.order = srcItem.order - 1
+                }
+                callBack.update(srcItem)
+            } else {
+                val srcOrder = srcItem.order
+                srcItem.order = targetItem.order
+                targetItem.order = srcOrder
+                callBack.update(srcItem, targetItem)
+            }
         }
         return true
     }
