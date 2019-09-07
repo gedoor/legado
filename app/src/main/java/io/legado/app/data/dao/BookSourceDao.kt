@@ -17,7 +17,7 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabledExplore = 1 and exploreUrl is not null and exploreUrl <> '' order by customOrder asc")
     fun liveExplore(): LiveData<List<BookSource>>
 
-    @Query("select bookSourceGroup from book_sources")
+    @Query("select bookSourceGroup from book_sources where bookSourceGroup is not null and bookSourceGroup <> ''")
     fun liveGroup(): LiveData<List<String>>
 
     @Query("select distinct  enabled from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey")
