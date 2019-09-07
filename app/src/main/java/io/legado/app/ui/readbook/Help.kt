@@ -20,8 +20,7 @@ object Help {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         val hideNavigationBar = App.INSTANCE.getPrefBoolean("hideNavigationBar")
         if (hideNavigationBar) {
-            flag =
-                flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         }
         if (hide) {
             if (App.INSTANCE.getPrefBoolean("hideStatusBar")) {

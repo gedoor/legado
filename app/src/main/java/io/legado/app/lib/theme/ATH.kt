@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -34,18 +35,27 @@ object ATH {
         ) > since
     }
 
-    fun setStatusbarColorAuto(activity: Activity) {
+    fun setStatusbarColorAuto(activity: Activity, fullScreen: Boolean) {
+        val isTransparentStatusBar = activity.isTransparentStatusBar
         setStatusbarColor(
             activity,
-            ThemeStore.statusBarColor(activity, activity.isTransparentStatusBar)
+            ThemeStore.statusBarColor(activity, isTransparentStatusBar),
+            isTransparentStatusBar, fullScreen
         )
     }
 
-    fun setStatusbarColor(activity: Activity, color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    fun setStatusbarColor(
+        activity: Activity,
+        color: Int,
+        isTransparentStatusBar: Boolean,
+        fullScreen: Boolean
+    ) {
+        if (fullScreen && isTransparentStatusBar) {
+            activity.window.statusBarColor = Color.TRANSPARENT
+        } else {
             activity.window.statusBarColor = color
-            setLightStatusbarAuto(activity, color)
         }
+        setLightStatusbarAuto(activity, color)
     }
 
     fun setLightStatusbarAuto(activity: Activity, bgColor: Int) {
@@ -68,10 +78,10 @@ object ATH {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val decorView = activity.window.decorView
             var systemUiVisibility = decorView.systemUiVisibility
-            if (enabled) {
-                systemUiVisibility = systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            systemUiVisibility = if (enabled) {
+                systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
             } else {
-                systemUiVisibility = systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+                systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
             }
             decorView.systemUiVisibility = systemUiVisibility
         }

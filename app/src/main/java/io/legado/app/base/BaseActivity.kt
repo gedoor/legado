@@ -1,6 +1,5 @@
 package io.legado.app.base
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,15 +9,17 @@ import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.disableAutoFill
+import io.legado.app.utils.hideSoftInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity(private val layoutID: Int, private val fullScreen: Boolean = true) : AppCompatActivity(),
+abstract class BaseActivity(private val layoutID: Int, private val fullScreen: Boolean = true) :
+    AppCompatActivity(),
     CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,14 +81,8 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            if (isTransparentStatusBar) {
-                window.statusBarColor = Color.TRANSPARENT
-            } else {
-                window.statusBarColor = getCompatColor(R.color.status_bar_bag)
-            }
-        } else {
-            window.statusBarColor = ThemeStore.statusBarColor(this, isTransparentStatusBar)
         }
+        ATH.setStatusbarColorAuto(this, fullScreen)
     }
 
     open fun observeLiveBus() {
