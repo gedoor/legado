@@ -45,7 +45,10 @@ class ReadStyleDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
         val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        activity?.let {
+            Help.upSystemUiVisibility(it)
+            it.windowManager?.defaultDisplay?.getMetrics(dm)
+        }
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.transparent)
             it.decorView.setPadding(0, 0, 0, 0)
@@ -54,7 +57,6 @@ class ReadStyleDialog : DialogFragment() {
             attr.gravity = Gravity.BOTTOM
             it.attributes = attr
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            Help.upSystemUiVisibility(it)
         }
     }
 

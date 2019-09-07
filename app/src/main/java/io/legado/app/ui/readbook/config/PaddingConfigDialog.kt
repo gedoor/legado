@@ -28,7 +28,10 @@ class PaddingConfigDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
         val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        activity?.let {
+            Help.upSystemUiVisibility(it)
+            it.windowManager?.defaultDisplay?.getMetrics(dm)
+        }
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.transparent)
             it.decorView.setPadding(0, 0, 0, 0)
@@ -36,7 +39,6 @@ class PaddingConfigDialog : DialogFragment() {
             attr.dimAmount = 0.0f
             it.attributes = attr
             it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
-            Help.upSystemUiVisibility(it)
         }
     }
 
