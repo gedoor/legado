@@ -11,12 +11,13 @@ import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
 import io.legado.app.ui.widget.page.delegate.NoAnimPageDelegate
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.ui.widget.page.delegate.SlidePageDelegate
+import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
 
 class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs),
     PageDelegate.PageInterface {
 
-    var callback: CallBack? = null
+    private var callback: CallBack? = null
     private var pageDelegate: PageDelegate? = null
     private var pageFactory: TextPageFactory? = null
 
@@ -25,6 +26,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
     var nextPage: ContentView? = null
 
     init {
+        callback = activity as? CallBack
         prevPage = ContentView(context)
         addView(prevPage)
         nextPage = ContentView(context)
