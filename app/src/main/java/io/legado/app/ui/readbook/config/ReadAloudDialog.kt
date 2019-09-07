@@ -13,7 +13,6 @@ import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.service.ReadAloudService
 import io.legado.app.ui.readbook.Help
-import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -57,9 +56,8 @@ class ReadAloudDialog : DialogFragment() {
     private fun initData() {
         observeEvent<Int>(Bus.ALOUD_STATE) { upPlayState(it) }
         observeEvent<Int>(Bus.TTS_DS) { seek_timer.progress = it }
-        val activity = activity
-        if (activity is ReadBookActivity) {
-            upPlayState(activity.readAloudStatus)
+        callBack?.readAloudStatus?.let {
+            upPlayState(it)
         }
         seek_timer.progress = ReadAloudService.timeMinute
         tv_timer.text = requireContext().getString(R.string.timer_m, ReadAloudService.timeMinute)
@@ -111,10 +109,7 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun initOnClick() {
-        iv_menu.onClick {
-            callBack?.showMenu()
-            dismiss()
-        }
+        iv_menu.onClick { callBack?.showMenu(); dismiss() }
         iv_menu.onLongClick { callBack?.openChapterList(); true }
         iv_stop.onClick { ReadAloudService.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
