@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -35,11 +36,13 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private var allEnabled = false
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
+    private var replaceRuleLiveData: LiveData<List<ReplaceRule>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
-        initDataObservers()
+        observeReplaceRuleData()
+        observeGroupData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -88,13 +91,21 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         search_view.setOnQueryTextListener(this)
     }
 
-    private fun initDataObservers() {
-        App.db.replaceRuleDao().liveDataAll().observe(this, Observer {
+    private fun observeReplaceRuleData(key: String? = null) {
+        replaceRuleLiveData?.removeObservers(this)
+        replaceRuleLiveData = if (key.isNullOrEmpty()) {
+            App.db.replaceRuleDao().liveDataAll()
+        } else {
+            App.db.replaceRuleDao().liveDataSearch(key)
+        }
+        replaceRuleLiveData?.observe(this, Observer {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItemsNoNotify(it)
             diffResult.dispatchUpdatesTo(adapter)
         })
+    }
 
+    private fun observeGroupData() {
         App.db.replaceRuleDao().liveGroup().observe(this, Observer {
             groups.clear()
             it.map { group ->
