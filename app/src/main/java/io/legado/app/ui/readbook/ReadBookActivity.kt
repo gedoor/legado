@@ -415,6 +415,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         viewModel.durPageIndex = page
         page_view.upContent()
         curPageChanged()
+        viewModel.saveRead()
     }
 
     override fun openReplaceRule() {
@@ -567,7 +568,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     page_view.upContent()
                     viewModel.saveRead()
                 }
-                2 -> if (moveToNextChapter()) ReadAloudService.stop(this)
+                2 -> if (!moveToNextChapter()) ReadAloudService.stop(this)
                 -1 -> {
                     if (viewModel.durPageIndex > 0) {
                         viewModel.durPageIndex = viewModel.durPageIndex - 1
