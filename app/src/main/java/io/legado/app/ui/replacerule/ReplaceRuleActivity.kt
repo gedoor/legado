@@ -45,6 +45,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         when (item.itemId) {
             R.id.menu_add_replace_rule ->
                 ReplaceEditDialog().show(supportFragmentManager, "replaceNew")
+            R.id.menu_group_manage ->
+                GroupManageDialog().show(supportFragmentManager, "groupManage")
         }
         return super.onCompatOptionsItemSelected(item)
     }
