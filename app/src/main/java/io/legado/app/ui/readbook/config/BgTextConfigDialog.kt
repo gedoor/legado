@@ -30,6 +30,7 @@ import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
+import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class BgTextConfigDialog : DialogFragment() {
@@ -97,6 +98,11 @@ class BgTextConfigDialog : DialogFragment() {
     }
 
     private fun initView() = with(ReadBookConfig.getConfig()) {
+        sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
+            if (buttonView?.isPressed == true) {
+                setStatusIconDark(isChecked)
+            }
+        }
         tv_text_color.onClick {
             ColorPickerDialog.newBuilder()
                 .setColor(textColor())
