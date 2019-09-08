@@ -180,6 +180,7 @@
     <string name="clear_all_content">清除缓存会删除所有已保存章节,是否确认删除?</string>
     <string name="book_source_share_url">书源共享</string>
     <string name="replace_rule_summary">替换规则名称</string>
+    <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
     <string name="night_theme">夜间模式</string>
     <string name="welcome">启动页</string>
@@ -496,5 +497,7 @@
     <string name="add_group">添加分组</string>
     <string name="add_replace_rule">新建替换</string>
     <string name="group">分组</string>
+    <string name="enable_selection">启用所选</string>
+    <string name="disable_selection">禁用所选</string>
 
 </resources>

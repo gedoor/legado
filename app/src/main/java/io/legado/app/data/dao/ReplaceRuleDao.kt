@@ -32,6 +32,9 @@ interface ReplaceRuleDao {
     @Query("SELECT * FROM replace_rules WHERE id in (:ids)")
     fun findByIds(vararg ids: Long): List<ReplaceRule>
 
+    @Query("update replace_rules set isEnabled = 1 where id in (:ids)")
+    fun enableSection(vararg ids: Long)
+
     @Query(
         """SELECT * FROM replace_rules WHERE isEnabled = 1 
         AND (scope LIKE '%' || :scope || '%' or scope = null or scope = '')"""

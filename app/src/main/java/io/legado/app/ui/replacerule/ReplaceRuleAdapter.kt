@@ -29,6 +29,17 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
+    fun revertSelection() {
+        getItems().forEach {
+            if (selectedIds.contains(it.id)) {
+                selectedIds.remove(it.id)
+            } else {
+                selectedIds.add(it.id)
+            }
+        }
+        notifyItemRangeChanged(0, itemCount, 1)
+    }
+
     override fun convert(holder: ItemViewHolder, item: ReplaceRule, payloads: MutableList<Any>) {
         with(holder.itemView) {
             if (payloads.isEmpty()) {
@@ -41,6 +52,14 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 }
                 iv_edit.onClick {
                     callBack.edit(item)
+                }
+                cb_name.isChecked = selectedIds.contains(item.id)
+                cb_name.onClick {
+                    if (cb_name.isChecked) {
+                        selectedIds.add(item.id)
+                    } else {
+                        selectedIds.remove(item.id)
+                    }
                 }
                 iv_menu_more.onClick {
                     val popupMenu = PopupMenu(context, it)
@@ -55,17 +74,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                     }
                     popupMenu.show()
                 }
-                cb_name.onClick {
-                    if (cb_name.isChecked) {
-                        selectedIds.add(item.id)
-                    } else {
-                        selectedIds.remove(item.id)
-                    }
-                }
-                cb_name.isChecked = selectedIds.contains(item.id)
             } else {
                 when (payloads[0]) {
                     1 -> cb_name.isChecked = selectedIds.contains(item.id)
+                    2 -> swt_enabled.isChecked = item.isEnabled
                 }
             }
         }

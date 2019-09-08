@@ -25,8 +25,18 @@ class DiffCallBack(
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
         return oldItem.name == newItem.name
+                && oldItem.group == newItem.group
                 && oldItem.isEnabled == newItem.isEnabled
     }
 
-
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
+        return when {
+            oldItem.name == newItem.name
+                    && oldItem.group == newItem.group
+                    && oldItem.isEnabled != newItem.isEnabled -> 2
+            else -> null
+        }
+    }
 }
