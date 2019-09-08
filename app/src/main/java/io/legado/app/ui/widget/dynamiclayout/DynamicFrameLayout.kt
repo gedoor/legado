@@ -62,33 +62,25 @@ class DynamicFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(c
     }
 
     override fun addView(child: View) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
+        check(childCount <= 2) { "DynamicFrameLayout can host only one direct child" }
 
         super.addView(child)
     }
 
     override fun addView(child: View, index: Int) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
+        check(childCount <= 2) { "DynamicFrameLayout can host only one direct child" }
 
         super.addView(child, index)
     }
 
     override fun addView(child: View, params: ViewGroup.LayoutParams) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
+        check(childCount <= 2) { "DynamicFrameLayout can host only one direct child" }
 
         super.addView(child, params)
     }
 
     override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
+        check(childCount <= 2) { "DynamicFrameLayout can host only one direct child" }
 
         super.addView(child, index, params)
     }
