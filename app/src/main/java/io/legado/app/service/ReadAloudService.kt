@@ -120,6 +120,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     }
 
     private val handler = Handler()
+    private val ttsParams by lazy {
+        hashMapOf(Pair(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "content"))
+    }
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
@@ -234,11 +237,19 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             ReadAloudNotification.upNotification(this)
             for (i in nowSpeak until contentList.size) {
                 if (i == 0) {
-                    textToSpeech?.speak(contentList[i], TextToSpeech.QUEUE_FLUSH, null, "content$i")
+                    speak(contentList[i], TextToSpeech.QUEUE_FLUSH)
                 } else {
-                    textToSpeech?.speak(contentList[i], TextToSpeech.QUEUE_ADD, null, "content$i")
+                    speak(contentList[i], TextToSpeech.QUEUE_ADD)
                 }
             }
+        }
+    }
+
+    private fun speak(content: String, queueMode: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            textToSpeech?.speak(content, queueMode, null, "content")
+        } else {
+            textToSpeech?.speak(content, queueMode, ttsParams)
         }
     }
 
