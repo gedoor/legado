@@ -17,30 +17,56 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     SimpleRecyclerAdapter<ReplaceRule>(context, R.layout.item_replace_rule),
     ItemTouchCallback.OnItemTouchCallbackListener {
 
+    val selectedIds = linkedSetOf<Long>()
+
+    fun selectAll() {
+        if (selectedIds.size == itemCount) {
+            selectedIds.clear()
+            notifyItemRangeChanged(0, itemCount, 1)
+        } else {
+            getItems().forEach { selectedIds.add(it.id) }
+            notifyItemRangeChanged(0, itemCount, 1)
+        }
+    }
+
     override fun convert(holder: ItemViewHolder, item: ReplaceRule, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            this.setBackgroundColor(context.backgroundColor)
-            cb_name.text = item.name
-            swt_enabled.isChecked = item.isEnabled
-            swt_enabled.onClick {
-                item.isEnabled = swt_enabled.isChecked
-                callBack.update(item)
-            }
-            iv_edit.onClick {
-                callBack.edit(item)
-            }
-            iv_menu_more.onClick {
-                val popupMenu = PopupMenu(context, it)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
-                popupMenu.setOnMenuItemClickListener { menuItem ->
-                    when (menuItem.itemId) {
-                        R.id.menu_top -> callBack.toTop(item)
-                        R.id.menu_del -> callBack.delete(item)
-                    }
-                    true
+            if (payloads.isEmpty()) {
+                this.setBackgroundColor(context.backgroundColor)
+                cb_name.text = item.name
+                swt_enabled.isChecked = item.isEnabled
+                swt_enabled.onClick {
+                    item.isEnabled = swt_enabled.isChecked
+                    callBack.update(item)
                 }
-                popupMenu.show()
+                iv_edit.onClick {
+                    callBack.edit(item)
+                }
+                iv_menu_more.onClick {
+                    val popupMenu = PopupMenu(context, it)
+                    popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
+                    popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
+                    popupMenu.setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.menu_top -> callBack.toTop(item)
+                            R.id.menu_del -> callBack.delete(item)
+                        }
+                        true
+                    }
+                    popupMenu.show()
+                }
+                cb_name.onClick {
+                    if (cb_name.isChecked) {
+                        selectedIds.add(item.id)
+                    } else {
+                        selectedIds.remove(item.id)
+                    }
+                }
+                cb_name.isChecked = selectedIds.contains(item.id)
+            } else {
+                when (payloads[0]) {
+                    1 -> cb_name.isChecked = selectedIds.contains(item.id)
+                }
             }
         }
     }

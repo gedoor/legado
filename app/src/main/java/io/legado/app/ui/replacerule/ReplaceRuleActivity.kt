@@ -23,7 +23,6 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import kotlinx.android.synthetic.main.view_search.*
-import org.jetbrains.anko.doAsync
 
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
@@ -33,7 +32,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         get() = getViewModel(ReplaceRuleViewModel::class.java)
 
     private lateinit var adapter: ReplaceRuleAdapter
-    private var allEnabled = false
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var replaceRuleLiveData: LiveData<List<ReplaceRule>>? = null
@@ -62,6 +60,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 ReplaceEditDialog().show(supportFragmentManager, "replaceNew")
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
+            R.id.menu_select_all -> adapter.selectAll()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -100,6 +99,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         }
         replaceRuleLiveData?.observe(this, Observer {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
+            adapter.selectedIds.clear()
             adapter.setItemsNoNotify(it)
             diffResult.dispatchUpdatesTo(adapter)
         })
@@ -122,13 +122,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         }
     }
 
-    private fun updateEnableAll() {
-        doAsync {
-            App.db.replaceRuleDao().summary.let {
-                allEnabled = it == 0
-            }
-        }
-    }
 
     override fun onQueryTextChange(newText: String?): Boolean {
         observeReplaceRuleData("%$newText%")
