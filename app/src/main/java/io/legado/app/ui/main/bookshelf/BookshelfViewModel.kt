@@ -39,14 +39,18 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                             updateList.add(book.bookUrl)
                             postEvent(Bus.UP_BOOK, book.bookUrl)
                         }
-                        WebBook(bookSource).getChapterList(book).onSuccess(IO) {
+                        WebBook(bookSource).getChapterList(book)
+                            .onSuccess(IO) {
                             it?.let {
                                 App.db.bookDao().update(book)
-                                if (it.size > App.db.bookChapterDao().getChapterCount(book.bookUrl)) {
-                                    App.db.bookChapterDao().insert(*it.toTypedArray())
-                                }
+                                App.db.bookChapterDao().delByBook(book.bookUrl)
+                                App.db.bookChapterDao().insert(*it.toTypedArray())
                             }
-                        }.onFinally {
+                            }
+                            .onError {
+                                it.printStackTrace()
+                            }
+                            .onFinally {
                             synchronized(this) {
                                 updateList.remove(book.bookUrl)
                                 postEvent(Bus.UP_BOOK, book.bookUrl)
