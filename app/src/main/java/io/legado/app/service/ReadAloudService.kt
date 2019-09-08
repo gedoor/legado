@@ -234,9 +234,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             ReadAloudNotification.upNotification(this)
             for (i in nowSpeak until contentList.size) {
                 if (i == 0) {
-                    textToSpeech?.speak(contentList[i], TextToSpeech.QUEUE_FLUSH, null, "content")
+                    textToSpeech?.speak(contentList[i], TextToSpeech.QUEUE_FLUSH, null, "content$i")
                 } else {
-                    textToSpeech?.speak(contentList[i], TextToSpeech.QUEUE_ADD, null, "content")
+                    textToSpeech?.speak(contentList[i], TextToSpeech.QUEUE_ADD, null, "content$i")
                 }
             }
         }
