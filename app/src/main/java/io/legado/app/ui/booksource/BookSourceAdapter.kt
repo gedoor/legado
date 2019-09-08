@@ -1,107 +1,64 @@
 package io.legado.app.ui.booksource
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.paging.PagedList
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import android.content.Context
 import io.legado.app.R
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
 import io.legado.app.lib.theme.backgroundColor
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class BookSourceAdapter(val callBack: CallBack) :
-    PagedListAdapter<BookSource, BookSourceAdapter.MyViewHolder>(DIFF_CALLBACK),
+class BookSourceAdapter(context: Context, val callBack: CallBack) :
+    SimpleRecyclerAdapter<BookSource>(context, R.layout.item_book_source),
     OnItemTouchCallbackListener {
-
-    companion object {
-
-        @JvmField
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookSource>() {
-            override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.bookSourceUrl == newItem.bookSourceUrl
-
-            override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean =
-                oldItem.bookSourceUrl == newItem.bookSourceUrl
-                        && oldItem.bookSourceName == newItem.bookSourceName
-                        && oldItem.bookSourceGroup == newItem.bookSourceGroup
-                        && oldItem.enabled == newItem.enabled
-        }
-    }
 
     override fun onSwiped(adapterPosition: Int) {
 
     }
 
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-        currentList?.let {
-            val srcSource = it[srcPosition]
-            val targetSource = it[targetPosition]
-            srcSource?.let { a ->
-                targetSource?.let { b ->
-                    a.customOrder = targetPosition
-                    b.customOrder = srcPosition
-                    callBack.update(a, b)
-                }
+        val srcItem = getItem(srcPosition)
+        val targetItem = getItem(targetPosition)
+        if (srcItem != null && targetItem != null) {
+            if (srcItem.customOrder == targetItem.customOrder) {
+                callBack.upOrder()
+            } else {
+                val srcOrder = srcItem.customOrder
+                srcItem.customOrder = targetItem.customOrder
+                targetItem.customOrder = srcOrder
+                callBack.update(srcItem, targetItem)
             }
         }
         return true
     }
 
-    override fun onCurrentListChanged(
-        previousList: PagedList<BookSource>?,
-        currentList: PagedList<BookSource>?
-    ) {
-        super.onCurrentListChanged(previousList, currentList)
-        callBack.upCount(itemCount)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_book_source,
-                parent,
-                false
-            )
-        )
-    }
-
-
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, callBack) }
-    }
-
-
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        fun bind(bookSource: BookSource, callBack: CallBack) = with(itemView) {
+    override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
+        with(holder.itemView) {
             this.setBackgroundColor(context.backgroundColor)
-            if (bookSource.bookSourceGroup.isNullOrEmpty()) {
-                cb_book_source.text = bookSource.bookSourceName
+            if (item.bookSourceGroup.isNullOrEmpty()) {
+                cb_book_source.text = item.bookSourceName
             } else {
                 cb_book_source.text =
-                    String.format("%s (%s)", bookSource.bookSourceName, bookSource.bookSourceGroup)
+                    String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
             }
-            cb_book_source.isChecked = bookSource.enabled
+            cb_book_source.isChecked = item.enabled
             cb_book_source.setOnClickListener {
-                bookSource.enabled = cb_book_source.isChecked
-                callBack.update(bookSource)
+                item.enabled = cb_book_source.isChecked
+                callBack.update(item)
             }
-            iv_edit_source.onClick { callBack.edit(bookSource) }
-            iv_top_source.onClick { callBack.topSource(bookSource) }
-            iv_del_source.onClick { callBack.del(bookSource) }
+            iv_edit_source.onClick { callBack.edit(item) }
+            iv_top_source.onClick { callBack.topSource(item) }
+            iv_del_source.onClick { callBack.del(item) }
         }
     }
 
     interface CallBack {
-        fun upCount(count: Int)
         fun del(bookSource: BookSource)
         fun edit(bookSource: BookSource)
         fun update(vararg bookSource: BookSource)
         fun topSource(bookSource: BookSource)
+        fun upOrder()
     }
 }

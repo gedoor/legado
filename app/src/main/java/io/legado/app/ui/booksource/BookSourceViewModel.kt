@@ -26,6 +26,16 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute { App.db.bookSourceDao().update(*bookSource) }
     }
 
+    fun upOrder() {
+        execute {
+            val sources = App.db.bookSourceDao().all
+            for ((index: Int, source: BookSource) in sources.withIndex()) {
+                source.customOrder = index + 1
+            }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
+        }
+    }
+
     fun addGroup(group: String) {
         execute {
             val sources = App.db.bookSourceDao().noGroup

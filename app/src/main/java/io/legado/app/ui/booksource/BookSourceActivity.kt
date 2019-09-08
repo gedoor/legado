@@ -9,8 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,15 +41,16 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     private val qrRequestCode = 101
     private lateinit var adapter: BookSourceAdapter
-    private var bookSourceLiveDate: LiveData<PagedList<BookSource>>? = null
+    private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         initRecyclerView()
-        initDataObserve()
         initSearchView()
+        initLiveDataBookSource()
+        initLiveDataGroup()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -104,7 +104,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     this.setDrawable(it)
                 }
             })
-        adapter = BookSourceAdapter(this)
+        adapter = BookSourceAdapter(this, this)
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
@@ -120,12 +120,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         search_view.setOnQueryTextListener(this)
     }
 
-    private fun initDataObserve(searchKey: String = "") {
+    private fun initLiveDataBookSource(searchKey: String? = null) {
         bookSourceLiveDate?.removeObservers(this)
-        val dataFactory = App.db.bookSourceDao().observeSearch("%$searchKey%")
-        bookSourceLiveDate = LivePagedListBuilder(dataFactory, 10000).build()
-        bookSourceLiveDate?.observe(this, Observer { adapter.submitList(it) })
+        bookSourceLiveDate = if (searchKey.isNullOrEmpty()) {
+            App.db.bookSourceDao().liveDataAll()
+        } else {
+            App.db.bookSourceDao().liveDataSearch("%$searchKey%")
+        }
+        bookSourceLiveDate?.observe(this, Observer {
+            search_view.queryHint = getString(R.string.search_book_source_num, it.size)
+            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
+            adapter.setItemsNoNotify(it)
+            diffResult.dispatchUpdatesTo(adapter)
+        })
+    }
 
+    private fun initLiveDataGroup() {
         App.db.bookSourceDao().liveGroup().observe(this, Observer {
             groups.clear()
             it.map { group ->
@@ -144,17 +154,13 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let {
-            initDataObserve(it)
+            initLiveDataBookSource(it)
         }
         return false
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false
-    }
-
-    override fun upCount(count: Int) {
-        search_view.queryHint = getString(R.string.search_book_source_num, count)
     }
 
     override fun del(bookSource: BookSource) {
@@ -167,6 +173,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun edit(bookSource: BookSource) {
         startActivity<SourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
+    }
+
+    override fun upOrder() {
+        viewModel.upOrder()
     }
 
     override fun topSource(bookSource: BookSource) {
