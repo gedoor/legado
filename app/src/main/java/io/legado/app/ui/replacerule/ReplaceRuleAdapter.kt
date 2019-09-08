@@ -51,7 +51,12 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         with(holder.itemView) {
             if (payloads.isEmpty()) {
                 this.setBackgroundColor(context.backgroundColor)
-                cb_name.text = item.name
+                if (item.group.isNullOrEmpty()) {
+                    cb_name.text = item.name
+                } else {
+                    cb_name.text =
+                        String.format("%s (%s)", item.name, item.group)
+                }
                 swt_enabled.isChecked = item.isEnabled
                 swt_enabled.onClick {
                     item.isEnabled = swt_enabled.isChecked
