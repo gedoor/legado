@@ -35,6 +35,9 @@ interface ReplaceRuleDao {
     @Query("update replace_rules set isEnabled = 1 where id in (:ids)")
     fun enableSection(vararg ids: Long)
 
+    @Query("update replace_rules set isEnabled = 0 where id in (:ids)")
+    fun disableSection(vararg ids: Long)
+
     @Query(
         """SELECT * FROM replace_rules WHERE isEnabled = 1 
         AND (scope LIKE '%' || :scope || '%' or scope = null or scope = '')"""

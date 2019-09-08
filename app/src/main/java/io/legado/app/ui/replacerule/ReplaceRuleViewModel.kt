@@ -45,6 +45,12 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun disableSelection(ids: LinkedHashSet<Long>) {
+        execute {
+            App.db.replaceRuleDao().disableSection(*ids.toLongArray())
+        }
+    }
+
     fun addGroup(group: String) {
         execute {
             val sources = App.db.replaceRuleDao().noGroup
