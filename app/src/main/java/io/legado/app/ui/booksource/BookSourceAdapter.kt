@@ -68,41 +68,47 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            this.setBackgroundColor(context.backgroundColor)
-            if (item.bookSourceGroup.isNullOrEmpty()) {
-                cb_book_source.text = item.bookSourceName
-            } else {
-                cb_book_source.text =
-                    String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
-            }
-            swt_enabled.isChecked = item.enabled
-            swt_enabled.onClick {
-                item.enabled = swt_enabled.isChecked
-                callBack.update(item)
-            }
-            cb_book_source.isChecked = selectedIds.contains(item.bookSourceUrl)
-            cb_book_source.setOnClickListener {
-                if (cb_book_source.isChecked) {
-                    selectedIds.add(item.bookSourceUrl)
+            if (payloads.isEmpty()) {
+                this.setBackgroundColor(context.backgroundColor)
+                if (item.bookSourceGroup.isNullOrEmpty()) {
+                    cb_book_source.text = item.bookSourceName
                 } else {
-                    selectedIds.remove(item.bookSourceUrl)
+                    cb_book_source.text =
+                        String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
                 }
-            }
-            iv_edit.onClick { callBack.edit(item) }
-            iv_menu_more.onClick {
-                val popupMenu = PopupMenu(context, it)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
-                popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
-                popupMenu.setOnMenuItemClickListener { menuItem ->
-                    when (menuItem.itemId) {
-                        R.id.menu_top -> callBack.toTop(item)
-                        R.id.menu_del -> callBack.del(item)
+                swt_enabled.isChecked = item.enabled
+                swt_enabled.onClick {
+                    item.enabled = swt_enabled.isChecked
+                    callBack.update(item)
+                }
+                cb_book_source.isChecked = selectedIds.contains(item.bookSourceUrl)
+                cb_book_source.setOnClickListener {
+                    if (cb_book_source.isChecked) {
+                        selectedIds.add(item.bookSourceUrl)
+                    } else {
+                        selectedIds.remove(item.bookSourceUrl)
                     }
-                    true
                 }
-                popupMenu.show()
+                iv_edit.onClick { callBack.edit(item) }
+                iv_menu_more.onClick {
+                    val popupMenu = PopupMenu(context, it)
+                    popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
+                    popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
+                    popupMenu.setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.menu_top -> callBack.toTop(item)
+                            R.id.menu_del -> callBack.del(item)
+                        }
+                        true
+                    }
+                    popupMenu.show()
+                }
+            } else {
+                when (payloads[0]) {
+                    1 -> cb_book_source.isChecked = selectedIds.contains(item.bookSourceUrl)
+                    2 -> swt_enabled.isChecked = item.enabled
+                }
             }
-
         }
     }
 
