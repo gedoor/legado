@@ -28,8 +28,6 @@ import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 
@@ -72,22 +70,16 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_import_book_source_qr -> {
                 this.startActivityForResult<QrCodeActivity>(qrRequestCode)
             }
-            R.id.menu_select_all -> {
-                launch(IO) {
-                    val isEnableList =
-                        App.db.bookSourceDao().searchIsEnable("%${search_view.query}%")
-                    if (isEnableList.contains(false)) {
-                        App.db.bookSourceDao().enableAllSearch("%${search_view.query}%", "1")
-                    } else {
-                        App.db.bookSourceDao().enableAllSearch("%${search_view.query}%", "0")
-                    }
-                }
-            }
             R.id.menu_group_manage -> GroupManageDialog().show(
                 supportFragmentManager,
                 "groupManage"
             )
             R.id.menu_import_book_source_local -> Restore.importYueDuData(this)
+            R.id.menu_select_all -> adapter.selectAll()
+            R.id.menu_revert_selection -> adapter.revertSelection()
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)
@@ -179,7 +171,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         viewModel.upOrder()
     }
 
-    override fun topSource(bookSource: BookSource) {
+    override fun toTop(bookSource: BookSource) {
         viewModel.topSource(bookSource)
     }
 

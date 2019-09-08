@@ -1,6 +1,8 @@
 package io.legado.app.ui.booksource
 
 import android.content.Context
+import android.view.Menu
+import android.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -13,6 +15,36 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource>(context, R.layout.item_book_source),
     OnItemTouchCallbackListener {
+
+    private val selectedIds = linkedSetOf<String>()
+
+    fun selectAll() {
+        getItems().forEach {
+            selectedIds.add(it.bookSourceUrl)
+        }
+        notifyItemRangeChanged(0, itemCount, 1)
+    }
+
+    fun revertSelection() {
+        getItems().forEach {
+            if (selectedIds.contains(it.bookSourceUrl)) {
+                selectedIds.remove(it.bookSourceUrl)
+            } else {
+                selectedIds.add(it.bookSourceUrl)
+            }
+        }
+        notifyItemRangeChanged(0, itemCount, 1)
+    }
+
+    fun getSelectionIds(): LinkedHashSet<String> {
+        val selection = linkedSetOf<String>()
+        getItems().map {
+            if (selectedIds.contains(it.bookSourceUrl)) {
+                selection.add(it.bookSourceUrl)
+            }
+        }
+        return selection
+    }
 
     override fun onSwiped(adapterPosition: Int) {
 
@@ -48,9 +80,21 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 item.enabled = cb_book_source.isChecked
                 callBack.update(item)
             }
-            iv_edit_source.onClick { callBack.edit(item) }
-            iv_top_source.onClick { callBack.topSource(item) }
-            iv_del_source.onClick { callBack.del(item) }
+            iv_edit.onClick { callBack.edit(item) }
+            iv_menu_more.onClick {
+                val popupMenu = PopupMenu(context, it)
+                popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
+                popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
+                popupMenu.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.menu_top -> callBack.toTop(item)
+                        R.id.menu_del -> callBack.del(item)
+                    }
+                    true
+                }
+                popupMenu.show()
+            }
+
         }
     }
 
@@ -58,7 +102,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun del(bookSource: BookSource)
         fun edit(bookSource: BookSource)
         fun update(vararg bookSource: BookSource)
-        fun topSource(bookSource: BookSource)
+        fun toTop(bookSource: BookSource)
         fun upOrder()
     }
 }

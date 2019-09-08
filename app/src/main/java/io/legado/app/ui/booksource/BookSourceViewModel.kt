@@ -9,7 +9,6 @@ import io.legado.app.utils.splitNotBlank
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
-
     fun topSource(bookSource: BookSource) {
         execute {
             val minXh = App.db.bookSourceDao().minOrder
@@ -33,6 +32,24 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 source.customOrder = index + 1
             }
             App.db.bookSourceDao().update(*sources.toTypedArray())
+        }
+    }
+
+    fun enableSelection(ids: LinkedHashSet<String>) {
+        execute {
+            App.db.bookSourceDao().enableSection(*ids.toTypedArray())
+        }
+    }
+
+    fun disableSelection(ids: LinkedHashSet<String>) {
+        execute {
+            App.db.bookSourceDao().disableSection(*ids.toTypedArray())
+        }
+    }
+
+    fun delSelection(ids: LinkedHashSet<String>) {
+        execute {
+            App.db.bookSourceDao().delSection(*ids.toTypedArray())
         }
     }
 

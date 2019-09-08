@@ -23,8 +23,14 @@ interface BookSourceDao {
     @Query("select distinct  enabled from book_sources where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey")
     fun searchIsEnable(searchKey: String = ""): List<Boolean>
 
-    @Query("UPDATE book_sources SET enabled = :enable where bookSourceName like :searchKey or `bookSourceGroup` like :searchKey or bookSourceUrl like :searchKey")
-    fun enableAllSearch(searchKey: String = "", enable: String = "1")
+    @Query("update book_sources set enabled = 1 where bookSourceUrl in (:sourceUrls)")
+    fun enableSection(vararg sourceUrls: String)
+
+    @Query("update book_sources set enabled = 0 where bookSourceUrl in (:sourceUrls)")
+    fun disableSection(vararg sourceUrls: String)
+
+    @Query("delete from book_sources where bookSourceUrl in (:sourceUrls)")
+    fun delSection(vararg sourceUrls: String)
 
     @Query("select * from book_sources where enabledExplore = 1 order by customOrder asc")
     fun observeFind(): DataSource.Factory<Int, BookSource>
