@@ -20,13 +20,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     val selectedIds = linkedSetOf<Long>()
 
     fun selectAll() {
-        if (selectedIds.size == itemCount) {
-            selectedIds.clear()
-            notifyItemRangeChanged(0, itemCount, 1)
-        } else {
-            getItems().forEach { selectedIds.add(it.id) }
-            notifyItemRangeChanged(0, itemCount, 1)
+        getItems().forEach {
+            selectedIds.add(it.id)
         }
+        notifyItemRangeChanged(0, itemCount, 1)
     }
 
     fun revertSelection() {
