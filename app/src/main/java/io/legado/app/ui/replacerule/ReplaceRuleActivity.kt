@@ -64,7 +64,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             R.id.menu_revert_selection -> adapter.revertSelection()
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
-            R.id.menu_del_selection -> viewModel.disableSelection(adapter.getSelectionIds())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
         }
         return super.onCompatOptionsItemSelected(item)
     }
