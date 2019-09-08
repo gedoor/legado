@@ -121,9 +121,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     }
 
     private val handler = Handler()
-    private val ttsParams by lazy {
-        hashMapOf(Pair(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, AppConst.APP_TAG))
-    }
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
@@ -238,20 +235,24 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             ReadAloudNotification.upNotification(this)
             for (i in nowSpeak until contentList.size) {
                 if (i == 0) {
-                    speak(contentList[i], TextToSpeech.QUEUE_FLUSH)
+                    speak(contentList[i], TextToSpeech.QUEUE_FLUSH, AppConst.APP_TAG + i)
                 } else {
-                    speak(contentList[i], TextToSpeech.QUEUE_ADD)
+                    speak(contentList[i], TextToSpeech.QUEUE_ADD, AppConst.APP_TAG + i)
                 }
             }
         }
     }
 
-    private fun speak(content: String, queueMode: Int) {
+    private fun speak(content: String, queueMode: Int, utteranceId: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            textToSpeech?.speak(content, queueMode, null, AppConst.APP_TAG)
+            textToSpeech?.speak(content, queueMode, null, utteranceId)
         } else {
             @Suppress("DEPRECATION")
-            textToSpeech?.speak(content, queueMode, ttsParams)
+            textToSpeech?.speak(
+                content,
+                queueMode,
+                hashMapOf(Pair(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId))
+            )
         }
     }
 
