@@ -15,7 +15,6 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:singleLine="true"
-        android:text=""
         android:textColor="@color/tv_text_default" />
 
     <io.legado.app.lib.theme.view.ATESwitch

@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.legado.app.R
+import io.legado.app.utils.isNightTheme
 
 /**
  * @author afollestad, plusCubed
@@ -127,7 +128,7 @@ object TintHelper {
         view: View, @ColorInt color: Int,
         isBackground: Boolean
     ) {
-        setTintAuto(view, color, isBackground, view.context.isDarkTheme)
+        setTintAuto(view, color, isBackground, view.context.isNightTheme)
     }
 
     fun setTintAuto(
@@ -395,7 +396,11 @@ object TintHelper {
         if (switchView.trackDrawable != null) {
             switchView.trackDrawable = modifySwitchDrawable(
                 switchView.context,
-                switchView.trackDrawable, color, false, false, useDarker
+                switchView.trackDrawable,
+                color,
+                thumb = false,
+                compatSwitch = false,
+                useDarker = useDarker
             )
         }
         if (switchView.thumbDrawable != null) {
