@@ -133,6 +133,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         adapter.clearItems()
         adapter.addItems(chapterList)
         rv_chapter_list.scrollToPosition(viewModel.durChapterIndex)
+        upLoading(false)
     }
 
     private fun upLoading(isLoading: Boolean) {
