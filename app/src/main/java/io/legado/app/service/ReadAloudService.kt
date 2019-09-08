@@ -424,6 +424,13 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
 
         override fun onStart(s: String) {
             postEvent(Bus.TTS_START, readAloudNumber + 1)
+            textChapter?.let {
+                if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
+                    pageIndex++
+                    postEvent(Bus.TTS_TURN_PAGE, 1)
+                    postEvent(Bus.TTS_START, readAloudNumber + 1)
+                }
+            }
         }
 
         override fun onDone(s: String) {
