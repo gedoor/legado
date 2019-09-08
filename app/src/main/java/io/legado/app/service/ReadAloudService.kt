@@ -13,6 +13,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.help.IntentDataHelp
@@ -121,7 +122,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
 
     private val handler = Handler()
     private val ttsParams by lazy {
-        hashMapOf(Pair(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "content"))
+        hashMapOf(Pair(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, AppConst.APP_TAG))
     }
     private var ttsIsSuccess: Boolean = false
     private lateinit var audioManager: AudioManager
@@ -247,8 +248,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
 
     private fun speak(content: String, queueMode: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            textToSpeech?.speak(content, queueMode, null, "content")
+            textToSpeech?.speak(content, queueMode, null, AppConst.APP_TAG)
         } else {
+            @Suppress("DEPRECATION")
             textToSpeech?.speak(content, queueMode, ttsParams)
         }
     }
