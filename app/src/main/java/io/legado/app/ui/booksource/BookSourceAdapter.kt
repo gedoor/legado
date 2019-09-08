@@ -75,10 +75,18 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 cb_book_source.text =
                     String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
             }
-            cb_book_source.isChecked = item.enabled
-            cb_book_source.setOnClickListener {
-                item.enabled = cb_book_source.isChecked
+            swt_enabled.isChecked = item.enabled
+            swt_enabled.onClick {
+                item.enabled = swt_enabled.isChecked
                 callBack.update(item)
+            }
+            cb_book_source.isChecked = selectedIds.contains(item.bookSourceUrl)
+            cb_book_source.setOnClickListener {
+                if (cb_book_source.isChecked) {
+                    selectedIds.add(item.bookSourceUrl)
+                } else {
+                    selectedIds.remove(item.bookSourceUrl)
+                }
             }
             iv_edit.onClick { callBack.edit(item) }
             iv_menu_more.onClick {
