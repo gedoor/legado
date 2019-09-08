@@ -17,6 +17,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.R
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.isNightTheme
 import io.legado.app.utils.isTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_main.view.*
 import org.jetbrains.anko.backgroundColor
@@ -67,9 +68,11 @@ object ATH {
             val decorView = activity.window.decorView
             val systemUiVisibility = decorView.systemUiVisibility
             if (enabled) {
-                decorView.systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                decorView.systemUiVisibility =
+                    systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             } else {
-                decorView.systemUiVisibility = systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                decorView.systemUiVisibility =
+                    systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
             }
         }
     }
@@ -111,16 +114,28 @@ object ATH {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             color1 = ColorUtils.stripAlpha(color)
             @Suppress("DEPRECATION")
-            activity.setTaskDescription(ActivityManager.TaskDescription(activity.title as String, null, color1))
+            activity.setTaskDescription(
+                ActivityManager.TaskDescription(
+                    activity.title as String,
+                    null,
+                    color1
+                )
+            )
         }
     }
 
-    fun setTint(view: View, @ColorInt color: Int) {
-        TintHelper.setTintAuto(view, color, false)
+    fun setTint(
+        view: View, @ColorInt color: Int, isDark:
+        Boolean = view.context.isNightTheme
+    ) {
+        TintHelper.setTintAuto(view, color, false, isDark)
     }
 
-    fun setBackgroundTint(view: View, @ColorInt color: Int) {
-        TintHelper.setTintAuto(view, color, true)
+    fun setBackgroundTint(
+        view: View, @ColorInt color: Int,
+        isDark: Boolean = view.context.isNightTheme
+    ) {
+        TintHelper.setTintAuto(view, color, true, isDark)
     }
 
     fun setAlertDialogTint(dialog: AlertDialog): AlertDialog {

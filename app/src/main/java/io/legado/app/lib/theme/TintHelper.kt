@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.legado.app.R
-import io.legado.app.utils.isNightTheme
 
 /**
  * @author afollestad, plusCubed
@@ -122,13 +121,6 @@ object TintHelper {
                 )
             )
         }
-    }
-
-    fun setTintAuto(
-        view: View, @ColorInt color: Int,
-        isBackground: Boolean
-    ) {
-        setTintAuto(view, color, isBackground, view.context.isNightTheme)
     }
 
     fun setTintAuto(
