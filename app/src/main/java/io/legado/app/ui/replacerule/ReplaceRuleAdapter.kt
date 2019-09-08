@@ -17,7 +17,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     SimpleRecyclerAdapter<ReplaceRule>(context, R.layout.item_replace_rule),
     ItemTouchCallback.OnItemTouchCallbackListener {
 
-    val selectedIds = linkedSetOf<Long>()
+    private val selectedIds = linkedSetOf<Long>()
 
     fun selectAll() {
         getItems().forEach {
@@ -35,6 +35,16 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             }
         }
         notifyItemRangeChanged(0, itemCount, 1)
+    }
+
+    fun getSelectionIds(): LinkedHashSet<Long> {
+        val selection = linkedSetOf<Long>()
+        getItems().map {
+            if (selectedIds.contains(it.id)) {
+                selection.add(it.id)
+            }
+        }
+        return selection
     }
 
     override fun convert(holder: ItemViewHolder, item: ReplaceRule, payloads: MutableList<Any>) {

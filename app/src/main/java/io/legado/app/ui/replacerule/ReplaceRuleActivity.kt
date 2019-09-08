@@ -62,8 +62,9 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_select_all -> adapter.selectAll()
             R.id.menu_revert_selection -> adapter.revertSelection()
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.selectedIds)
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selectedIds)
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
+            R.id.menu_del_selection -> viewModel.disableSelection(adapter.getSelectionIds())
         }
         return super.onCompatOptionsItemSelected(item)
     }

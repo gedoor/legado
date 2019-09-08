@@ -33,7 +33,7 @@
                 app:showAsAction="never" />
 
             <item
-                android:id="@+id/menu_del_select"
+                android:id="@+id/menu_del_selection"
                 android:title="@string/del_select"
                 app:showAsAction="never" />
 
