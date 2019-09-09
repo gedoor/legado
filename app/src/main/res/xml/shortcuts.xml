@@ -12,8 +12,8 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.gedoor.monkeybook"
-            android:targetClass="com.kunfei.bookshelf.view.activity.WelcomeToReadActivity" />
+            android:targetPackage="${applicationId}"
+            android:targetClass="io.legado.app.ui.readbook.ReadBookActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 
@@ -28,8 +28,8 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.gedoor.monkeybook"
-            android:targetClass="com.kunfei.bookshelf.view.activity.MainActivity" />
+            android:targetPackage="${applicationId}"
+            android:targetClass="io.legado.app.ui.main.MainActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 </shortcuts>
