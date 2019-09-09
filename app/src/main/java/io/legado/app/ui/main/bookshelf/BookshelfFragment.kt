@@ -19,10 +19,7 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.bookinfo.BookInfoActivity
@@ -64,6 +61,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
+            R.id.menu_bookshelf_layout -> selectBookshelfLayout()
         }
     }
 
@@ -75,12 +73,18 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             viewModel.upChapterList()
         }
         tv_recent_reading.textColor = accentColor
-        rv_book_group.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        rv_book_group.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter()
         rv_book_group.adapter = bookGroupAdapter
         bookGroupAdapter.callBack = this
         rv_bookshelf.layoutManager = LinearLayoutManager(context)
-        rv_bookshelf.addItemDecoration(DividerItemDecoration(rv_bookshelf.context, LinearLayoutManager.VERTICAL))
+        rv_bookshelf.addItemDecoration(
+            DividerItemDecoration(
+                rv_bookshelf.context,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         bookshelfAdapter = BookshelfAdapter()
         rv_bookshelf.adapter = bookshelfAdapter
         bookshelfAdapter.callBack = this
@@ -150,4 +154,12 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }.show().applyTint().requestInputMethod()
     }
 
+    private fun selectBookshelfLayout() {
+        selector(
+            title = "选择书架布局",
+            items = resources.getStringArray(R.array.bookshelf_layout).toList()
+        ) { _, index ->
+            putPrefInt("bookshelf", index)
+        }
+    }
 }
