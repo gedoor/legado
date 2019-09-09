@@ -118,10 +118,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         context?.startActivity<BookInfoActivity>(Pair("bookUrl", book.bookUrl))
     }
 
-    override fun search() {
-
-    }
-
     override fun isUpdate(bookUrl: String): Boolean {
         return bookUrl in viewModel.updateList
     }

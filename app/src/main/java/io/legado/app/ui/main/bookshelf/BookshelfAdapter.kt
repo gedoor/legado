@@ -100,7 +100,6 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
     interface CallBack {
         fun open(book: Book)
         fun openBookInfo(book: Book)
-        fun search()
         fun isUpdate(bookUrl: String): Boolean
     }
 }
