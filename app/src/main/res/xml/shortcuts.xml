@@ -12,7 +12,7 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="io.legado.app"
+            android:targetPackage="${applicationId}"
             android:targetClass="io.legado.app.ui.readbook.ReadBookActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
@@ -28,7 +28,7 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="io.legado.app"
+            android:targetPackage="${applicationId}"
             android:targetClass="io.legado.app.ui.main.MainActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
