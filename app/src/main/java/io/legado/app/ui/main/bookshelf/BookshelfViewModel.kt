@@ -31,31 +31,30 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
 
     fun upChapterList() {
         execute {
-            App.db.bookDao().getRecentRead().map { book ->
+            App.db.bookDao().getRecentRead().forEach { book ->
                 if (book.origin != BookType.local) {
-                    val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
-                    bookSource?.let {
+                    App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                         synchronized(this) {
                             updateList.add(book.bookUrl)
                             postEvent(Bus.UP_BOOK, book.bookUrl)
                         }
                         WebBook(bookSource).getChapterList(book)
                             .onSuccess(IO) {
-                            it?.let {
-                                App.db.bookDao().update(book)
-                                App.db.bookChapterDao().delByBook(book.bookUrl)
-                                App.db.bookChapterDao().insert(*it.toTypedArray())
-                            }
+                                it?.let {
+                                    App.db.bookDao().update(book)
+                                    App.db.bookChapterDao().delByBook(book.bookUrl)
+                                    App.db.bookChapterDao().insert(*it.toTypedArray())
+                                }
                             }
                             .onError {
                                 it.printStackTrace()
                             }
                             .onFinally {
-                            synchronized(this) {
-                                updateList.remove(book.bookUrl)
-                                postEvent(Bus.UP_BOOK, book.bookUrl)
+                                synchronized(this) {
+                                    updateList.remove(book.bookUrl)
+                                    postEvent(Bus.UP_BOOK, book.bookUrl)
+                                }
                             }
-                        }
                     }
                 }
                 delay(50)
