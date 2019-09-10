@@ -50,10 +50,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search)
                 search_view.clearFocus()
                 query?.let {
                     viewModel.search(it, {
-                        content_view.showContentView()
+                        refresh_progress_bar.isAutoLoading = true
                         initData()
                         fb_stop.visible()
                     }, {
+                        refresh_progress_bar.isAutoLoading = false
                         fb_stop.invisible()
                     })
                 }
