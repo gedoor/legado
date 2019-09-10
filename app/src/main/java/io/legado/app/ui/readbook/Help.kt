@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.view.View.NO_ID
 import android.view.ViewGroup
+import android.view.Window
 import io.legado.app.App
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
@@ -16,7 +17,7 @@ object Help {
 
     private const val NAVIGATION = "navigationBarBackground"
 
-    fun upSystemUiVisibility(activity: Activity, toolBarHide: Boolean = true) {
+    fun upSystemUiVisibility(window: Window, toolBarHide: Boolean = true) {
         var flag = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -33,13 +34,13 @@ object Help {
                 flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             }
         }
-        activity.window.decorView.systemUiVisibility = flag
+        window.decorView.systemUiVisibility = flag
         if (toolBarHide) {
-            ATH.setLightStatusBar(activity, ReadBookConfig.getConfig().statusIconDark())
+            ATH.setLightStatusBar(window, ReadBookConfig.getConfig().statusIconDark())
         } else {
             ATH.setLightStatusBarAuto(
-                activity,
-                ThemeStore.statusBarColor(activity, activity.isTransparentStatusBar)
+                window,
+                ThemeStore.statusBarColor(App.INSTANCE, App.INSTANCE.isTransparentStatusBar)
             )
         }
     }

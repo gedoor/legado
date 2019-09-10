@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+import android.view.Window
 import android.widget.EdgeEffect
 import android.widget.ScrollView
 import androidx.annotation.ColorInt
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.isNightTheme
@@ -36,36 +38,36 @@ object ATH {
         ) > since
     }
 
-    fun setStatusBarColorAuto(activity: Activity, fullScreen: Boolean) {
-        val isTransparentStatusBar = activity.isTransparentStatusBar
+    fun setStatusBarColorAuto(window: Window, fullScreen: Boolean) {
+        val isTransparentStatusBar = App.INSTANCE.isTransparentStatusBar
         setStatusBarColor(
-            activity,
-            ThemeStore.statusBarColor(activity, isTransparentStatusBar),
+            window,
+            ThemeStore.statusBarColor(App.INSTANCE, isTransparentStatusBar),
             isTransparentStatusBar, fullScreen
         )
     }
 
     fun setStatusBarColor(
-        activity: Activity,
+        window: Window,
         color: Int,
         isTransparentStatusBar: Boolean,
         fullScreen: Boolean
     ) {
         if (fullScreen && isTransparentStatusBar) {
-            activity.window.statusBarColor = Color.TRANSPARENT
+            window.statusBarColor = Color.TRANSPARENT
         } else {
-            activity.window.statusBarColor = color
+            window.statusBarColor = color
         }
-        setLightStatusBarAuto(activity, color)
+        setLightStatusBarAuto(window, color)
     }
 
-    fun setLightStatusBarAuto(activity: Activity, bgColor: Int) {
-        setLightStatusBar(activity, ColorUtils.isColorLight(bgColor))
+    fun setLightStatusBarAuto(window: Window, bgColor: Int) {
+        setLightStatusBar(window, ColorUtils.isColorLight(bgColor))
     }
 
-    fun setLightStatusBar(activity: Activity, enabled: Boolean) {
+    fun setLightStatusBar(window: Window, enabled: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val decorView = activity.window.decorView
+            val decorView = window.decorView
             val systemUiVisibility = decorView.systemUiVisibility
             if (enabled) {
                 decorView.systemUiVisibility =
