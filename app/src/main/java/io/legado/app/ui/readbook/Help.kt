@@ -55,9 +55,8 @@ object Help {
             if (vp != null) {
                 for (i in 0 until vp.childCount) {
                     vp.getChildAt(i).context.packageName
-                    if (vp.getChildAt(i).id != NO_ID && NAVIGATION == activity.resources.getResourceEntryName(
-                            vp.getChildAt(i).id
-                        )
+                    if (vp.getChildAt(i).id != NO_ID
+                        && NAVIGATION == activity.resources.getResourceEntryName(vp.getChildAt(i).id)
                     ) {
                         return true
                     }

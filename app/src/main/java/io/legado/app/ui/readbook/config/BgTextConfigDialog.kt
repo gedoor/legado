@@ -103,6 +103,9 @@ class BgTextConfigDialog : DialogFragment() {
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
                 setStatusIconDark(isChecked)
+                activity?.let {
+                    Help.upSystemUiVisibility(it)
+                }
             }
         }
         tv_text_color.onClick {
