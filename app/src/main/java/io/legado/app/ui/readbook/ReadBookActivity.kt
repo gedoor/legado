@@ -437,7 +437,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     override fun upSystemUiVisibility() {
-        Help.upSystemUiVisibility(window, !read_menu.isVisible)
+        Help.upSystemUiVisibility(this, !read_menu.isVisible)
     }
 
     /**
