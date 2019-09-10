@@ -141,6 +141,10 @@ class ChangeSourceDialog : DialogFragment(),
         return changeSourceAdapter
     }
 
+    override fun upSearchState(isSearch: Boolean) {
+        refresh_progress_bar.isAutoLoading = isSearch
+    }
+
     interface CallBack {
         fun curOrigin(): String?
         fun oldBook(): Book?

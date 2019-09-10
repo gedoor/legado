@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -18,6 +19,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     var callBack: CallBack? = null
     var name: String = ""
     var author: String = ""
+    private var task: Coroutine<*>? = null
     private var screenKey: String = ""
     private val searchBooks = linkedSetOf<SearchBook>()
 
@@ -47,7 +49,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     fun search() {
-        execute {
+        task = execute {
+            callBack?.upSearchState(true)
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
@@ -67,6 +70,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                     }
                 delay(100)
             }
+        }
+
+        task?.invokeOnCompletion {
+            callBack?.upSearchState(false)
         }
     }
 
@@ -118,5 +125,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     interface CallBack {
         fun adapter(): ChangeSourceAdapter
+        fun upSearchState(isSearch: Boolean)
     }
 }
