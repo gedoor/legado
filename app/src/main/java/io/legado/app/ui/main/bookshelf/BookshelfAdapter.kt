@@ -27,8 +27,7 @@ class BookshelfAdapter(private val callBack: CallBack) :
                 oldItem.bookUrl == newItem.bookUrl
 
             override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean =
-                oldItem.bookUrl == newItem.bookUrl
-                        && oldItem.durChapterTitle == newItem.durChapterTitle
+                oldItem.durChapterTitle == newItem.durChapterTitle
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
                         && oldItem.durChapterTime == newItem.durChapterTime
                         && oldItem.lastCheckTime == newItem.lastCheckTime
