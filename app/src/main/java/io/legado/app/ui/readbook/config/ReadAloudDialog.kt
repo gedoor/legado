@@ -87,8 +87,7 @@ class ReadAloudDialog : DialogFragment() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 requireContext().putPrefInt("ttsSpeechRate", seek_tts_SpeechRate.progress)
@@ -101,8 +100,7 @@ class ReadAloudDialog : DialogFragment() {
                 tv_timer.text = requireContext().getString(R.string.timer_m, progress)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 ReadAloudService.setTimer(requireContext(), seek_timer.progress)

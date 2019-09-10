@@ -119,7 +119,7 @@ class ReadStyleDialog : DialogFragment() {
                 tv_text_size.text = ReadBookConfig.getConfig().textSize.toString()
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)
             }
@@ -151,7 +151,7 @@ class ReadStyleDialog : DialogFragment() {
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)
             }
@@ -181,7 +181,7 @@ class ReadStyleDialog : DialogFragment() {
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)
             }
