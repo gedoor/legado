@@ -76,8 +76,15 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
-        mp?.start()
         super.play()
+        mp?.start()
+        textChapter?.let {
+            if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
+                pageIndex++
+                postEvent(Bus.TTS_TURN_PAGE, 1)
+            }
+        }
+        postEvent(Bus.TTS_START, readAloudNumber + 1)
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
@@ -86,6 +93,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
+        readAloudNumber += contentList[nowSpeak].length + 1
         if (nowSpeak < contentList.size) {
             nowSpeak++
             play()
