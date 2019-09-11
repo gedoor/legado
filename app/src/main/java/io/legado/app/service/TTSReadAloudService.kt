@@ -8,9 +8,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.IntentHelp
-import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
@@ -55,7 +53,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 } else {
                     textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
                     ttsIsSuccess = true
-                    playTTS()
+                    play()
                 }
             } else {
                 toast(R.string.tts_init_failed)
@@ -63,29 +61,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         }
     }
 
-    override fun newReadAloud(dataKey: String?, play: Boolean) {
-        dataKey?.let {
-            textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
-            textChapter?.let { textChapter ->
-                nowSpeak = 0
-                readAloudNumber = textChapter.getReadLength(pageIndex)
-                contentList.clear()
-                if (getPrefBoolean("readAloudByPage")) {
-                    for (index in pageIndex..textChapter.lastIndex()) {
-                        textChapter.page(index)?.text?.split("\n")?.let {
-                            contentList.addAll(it)
-                        }
-                    }
-                } else {
-                    contentList.addAll(textChapter.getUnRead(pageIndex).split("\n"))
-                }
-                if (play) playTTS()
-            } ?: stopSelf()
-        } ?: stopSelf()
-    }
-
     @Suppress("DEPRECATION")
-    private fun playTTS() {
+    override fun play() {
         if (contentList.size < 1 || !ttsIsSuccess) {
             return
         }
@@ -138,7 +115,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             textToSpeech?.stop()
             nowSpeak--
             readAloudNumber -= contentList[nowSpeak].length.minus(1)
-            playTTS()
+            play()
         }
     }
 
@@ -150,7 +127,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             textToSpeech?.stop()
             readAloudNumber += contentList[nowSpeak].length.plus(1)
             nowSpeak++
-            playTTS()
+            play()
         }
     }
 
@@ -169,7 +146,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
      */
     override fun resumeReadAloud() {
         super.resumeReadAloud()
-        playTTS()
+        play()
     }
 
     /**
