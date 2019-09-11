@@ -64,7 +64,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.inflateMenu(R.menu.group_manage)
         tool_bar.menu.applyTint(requireContext(), false)
         tool_bar.setOnMenuItemClickListener(this)
-        adapter = GroupAdapter(requireContext(), this)
+        adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(
             DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
@@ -129,14 +129,14 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         }.show().applyTint().requestInputMethod()
     }
 
-    class GroupAdapter(context: Context, val dialog: GroupManageDialog) :
+    private inner class GroupAdapter(context: Context) :
         SimpleRecyclerAdapter<String>(context, R.layout.item_group_manage) {
 
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 tv_group.text = item
-                tv_edit.onClick { dialog.editGroup(item) }
-                tv_del.onClick { dialog.viewModel.delGroup(item) }
+                tv_edit.onClick { editGroup(item) }
+                tv_del.onClick { viewModel.delGroup(item) }
             }
         }
     }
