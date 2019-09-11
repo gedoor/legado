@@ -145,6 +145,7 @@
         android:id="@+id/view_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/iv_cover"
         app:layout_constraintBottom_toTopOf="@+id/fl_action"

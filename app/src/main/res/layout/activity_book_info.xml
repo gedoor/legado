@@ -13,23 +13,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/book_info" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/iv_cover_s"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        app:cardCornerRadius="5.0dp"
+    <io.legado.app.ui.widget.image.CoverImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="86dp"
+        android:layout_height="120dp"
+        android:layout_margin="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_cover_default"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar">
-
-        <io.legado.app.ui.widget.image.CoverImageView
-            android:id="@+id/iv_cover"
-            android:layout_width="86dp"
-            android:layout_height="120dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/img_cover_default" />
-
-    </androidx.cardview.widget.CardView>
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
     <LinearLayout
         android:id="@+id/ll_book_info"
@@ -39,10 +31,9 @@
         android:layout_marginRight="12dp"
         android:minHeight="115dp"
         android:orientation="vertical"
-        android:paddingBottom="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/iv_cover_s"
+        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_cover_s">
+        app:layout_constraintTop_toTopOf="@+id/iv_cover">
 
         <TextView
             android:id="@+id/tv_name"
@@ -146,8 +137,9 @@
         android:id="@+id/view_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/ll_book_info">
+        app:layout_constraintTop_toBottomOf="@+id/iv_cover">
 
         <View
             android:layout_width="match_parent"
