@@ -25,7 +25,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.receiver.TimeElectricityReceiver
-import io.legado.app.service.ReadAloudService
+import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.readbook.config.*
@@ -190,7 +190,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
                 if (readAloudStatus == Status.PLAY) {
-                    ReadAloudService.pause(this)
+                    BaseReadAloudService.pause(this)
                     toast(R.string.read_aloud_pause)
                     return true
                 }
@@ -444,14 +444,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
      * 朗读按钮
      */
     private fun onClickReadAloud() {
-        if (!ReadAloudService.isRun) {
+        if (!BaseReadAloudService.isRun) {
             readAloudStatus = Status.STOP
             SystemUtils.ignoreBatteryOptimization(this)
         }
         when (readAloudStatus) {
             Status.STOP -> readAloud()
-            Status.PLAY -> ReadAloudService.pause(this)
-            Status.PAUSE -> ReadAloudService.resume(this)
+            Status.PLAY -> BaseReadAloudService.pause(this)
+            Status.PAUSE -> BaseReadAloudService.resume(this)
         }
     }
 
@@ -464,7 +464,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         if (book != null && textChapter != null) {
             val key = System.currentTimeMillis().toString()
             IntentDataHelp.putData(key, textChapter)
-            ReadAloudService.play(
+            BaseReadAloudService.play(
                 this, book.name, textChapter.title,
                 viewModel.durPageIndex, key, play
             )
@@ -569,7 +569,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     page_view.upContent()
                     viewModel.saveRead()
                 }
-                2 -> if (!moveToNextChapter()) ReadAloudService.stop(this)
+                2 -> if (!moveToNextChapter()) BaseReadAloudService.stop(this)
                 -1 -> {
                     if (viewModel.durPageIndex > 0) {
                         viewModel.durPageIndex = viewModel.durPageIndex - 1

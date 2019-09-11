@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
-import io.legado.app.service.ReadAloudService
+import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.readbook.Help
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
@@ -61,8 +61,9 @@ class ReadAloudDialog : DialogFragment() {
         callBack?.readAloudStatus?.let {
             upPlayState(it)
         }
-        seek_timer.progress = ReadAloudService.timeMinute
-        tv_timer.text = requireContext().getString(R.string.timer_m, ReadAloudService.timeMinute)
+        seek_timer.progress = BaseReadAloudService.timeMinute
+        tv_timer.text =
+            requireContext().getString(R.string.timer_m, BaseReadAloudService.timeMinute)
         cb_by_page.isChecked = requireContext().getPrefBoolean("readAloudByPage")
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
@@ -103,7 +104,7 @@ class ReadAloudDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                ReadAloudService.setTimer(requireContext(), seek_timer.progress)
+                BaseReadAloudService.setTimer(requireContext(), seek_timer.progress)
             }
         })
     }
@@ -111,11 +112,11 @@ class ReadAloudDialog : DialogFragment() {
     private fun initOnClick() {
         iv_menu.onClick { callBack?.showMenu(); dismiss() }
         iv_menu.onLongClick { callBack?.openChapterList(); true }
-        iv_stop.onClick { ReadAloudService.stop(requireContext()); dismiss() }
+        iv_stop.onClick { BaseReadAloudService.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
-        iv_play_prev.onClick { ReadAloudService.prevParagraph(requireContext()) }
+        iv_play_prev.onClick { BaseReadAloudService.prevParagraph(requireContext()) }
         iv_play_prev.onLongClick { postEvent(Bus.TTS_TURN_PAGE, -2); true }
-        iv_play_next.onClick { ReadAloudService.nextParagraph(requireContext()) }
+        iv_play_next.onClick { BaseReadAloudService.nextParagraph(requireContext()) }
         iv_play_next.onLongClick { postEvent(Bus.TTS_TURN_PAGE, 2); true }
     }
 
@@ -128,10 +129,10 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun upTtsSpeechRate() {
-        ReadAloudService.upTtsSpeechRate(requireContext())
+        BaseReadAloudService.upTtsSpeechRate(requireContext())
         if (callBack?.readAloudStatus == Status.PLAY) {
-            ReadAloudService.pause(requireContext())
-            ReadAloudService.resume(requireContext())
+            BaseReadAloudService.pause(requireContext())
+            BaseReadAloudService.resume(requireContext())
         }
     }
 
