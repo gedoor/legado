@@ -36,7 +36,6 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     private var changeSourceDialog: ChangeSourceDialog? = null
     private lateinit var adapter: ChapterListAdapter
-    private var reorder: Boolean = false; // 是否倒序
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
@@ -205,7 +204,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         iv_chapter_top.onClick {
-            reorder = !reorder;
+            adapter.reorder = !adapter.reorder;
             adapter.notifyDataSetChanged();
         }
     }
