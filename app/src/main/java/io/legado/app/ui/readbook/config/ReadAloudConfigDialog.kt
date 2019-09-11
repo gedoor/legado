@@ -3,7 +3,6 @@ package io.legado.app.ui.readbook.config
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +15,8 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.readbook.Help
 import io.legado.app.utils.postEvent
 
-class MoreConfigDialog : DialogFragment() {
-
-    private val readPreferTag = "readPreferenceFragment"
+class ReadAloudConfigDialog : DialogFragment() {
+    private val readAloudPreferTag = "readAloudPreferTag"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,26 +42,25 @@ class MoreConfigDialog : DialogFragment() {
             it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
-            attr.gravity = Gravity.BOTTOM
             it.attributes = attr
-            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var preferenceFragment = childFragmentManager.findFragmentByTag(readPreferTag)
-        if (preferenceFragment == null) preferenceFragment = ReadPreferenceFragment()
+        var preferenceFragment = childFragmentManager.findFragmentByTag(readAloudPreferTag)
+        if (preferenceFragment == null) preferenceFragment = ReadAloudPreferenceFragment()
         childFragmentManager.beginTransaction()
-            .replace(view.id, preferenceFragment, readPreferTag)
+            .replace(view.id, preferenceFragment, readAloudPreferTag)
             .commit()
     }
 
-    class ReadPreferenceFragment : PreferenceFragmentCompat(),
+    class ReadAloudPreferenceFragment : PreferenceFragmentCompat(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            addPreferencesFromResource(R.xml.pref_config_read)
+            addPreferencesFromResource(R.xml.pref_config_aloud)
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,8 +83,8 @@ class MoreConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                "hideStatusBar" -> postEvent(Bus.UP_CONFIG, true)
-                "hideNavigationBar" -> postEvent(Bus.UP_CONFIG, true)
+                "readAloudByPage" -> postEvent(Bus.READ_ALOUD_BUTTON, false)
+
             }
         }
 

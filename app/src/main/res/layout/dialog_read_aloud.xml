@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_menu"
+    android:orientation="vertical"
     android:padding="10dp">
 
     <LinearLayout
@@ -14,13 +14,14 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iv_menu"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/menu"
             android:src="@drawable/ic_chapter_list"
             android:tint="@color/tv_text_default" />
 
@@ -29,43 +30,47 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iv_play_prev"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="上一句"
             android:src="@drawable/ic_skip_previous"
             android:tint="@color/tv_text_default" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iv_play_pause"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="播放/暂停"
             android:src="@drawable/ic_play_24dp"
             android:tint="@color/tv_text_default" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iv_stop"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/stop"
             android:src="@drawable/ic_stop_black_24dp"
             android:tint="@color/tv_text_default" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iv_play_next"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="下一句"
             android:src="@drawable/ic_skip_next"
             android:tint="@color/tv_text_default" />
 
@@ -74,21 +79,25 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <io.legado.app.lib.theme.view.ATESwitch
-            android:id="@+id/cb_by_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/byPage"
-            tools:ignore="RtlHardcoded" />
+        <ImageView
+            android:id="@+id/iv_other_config"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="其它设置"
+            android:src="@drawable/ic_settings"
+            android:tint="@color/tv_text_default" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center">
+        android:padding="8dp">
 
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -144,8 +153,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/flow_sys"
                 android:contentDescription="@string/flow_sys"
+                android:text="@string/flow_sys"
                 tools:ignore="RtlHardcoded" />
         </LinearLayout>
 

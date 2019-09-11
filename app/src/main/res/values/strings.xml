@@ -487,7 +487,7 @@
     <string name="battery_show">%d%%</string>
     <string name="timer_m">%d分钟</string>
     <string name="brightness_auto">自动亮度%s</string>
-    <string name="byPage">按页</string>
+    <string name="read_aloud_by_page">按页朗读</string>
     <string name="bg_image">背景图片</string>
     <string name="bg_color">背景颜色</string>
     <string name="text_color">文字颜色</string>
@@ -499,5 +499,6 @@
     <string name="group">分组</string>
     <string name="enable_selection">启用所选</string>
     <string name="disable_selection">禁用所选</string>
+    <string name="tts">TTS</string>
 
 </resources>

@@ -402,10 +402,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun clickCenter() {
         if (readAloudStatus != Status.STOP) {
-            ReadAloudDialog().show(supportFragmentManager, "readAloud")
+            showReadAloudDialog()
         } else {
             read_menu.runMenuIn()
         }
+    }
+
+    override fun showReadAloudDialog() {
+        ReadAloudDialog().show(supportFragmentManager, "readAloud")
     }
 
     override fun autoPage() {

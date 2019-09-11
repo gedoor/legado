@@ -65,19 +65,12 @@ class ReadAloudDialog : DialogFragment() {
         seek_timer.progress = BaseReadAloudService.timeMinute
         tv_timer.text =
             requireContext().getString(R.string.timer_m, BaseReadAloudService.timeMinute)
-        cb_by_page.isChecked = requireContext().getPrefBoolean("readAloudByPage")
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
         seek_tts_SpeechRate.progress = requireContext().getPrefInt("ttsSpeechRate", 5)
     }
 
     private fun initOnChange() {
-        cb_by_page.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) {
-                requireContext().putPrefBoolean("readAloudByPage", isChecked)
-                postEvent(Bus.READ_ALOUD_BUTTON, false)
-            }
-        }
         cb_tts_follow_sys.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
                 requireContext().putPrefBoolean("ttsFollowSys", isChecked)
@@ -112,6 +105,9 @@ class ReadAloudDialog : DialogFragment() {
 
     private fun initOnClick() {
         iv_menu.onClick { callBack?.showMenu(); dismiss() }
+        iv_other_config.onClick {
+            ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
+        }
         iv_menu.onLongClick { callBack?.openChapterList(); true }
         iv_stop.onClick { ReadAloud.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }

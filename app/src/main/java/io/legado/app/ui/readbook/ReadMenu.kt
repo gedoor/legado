@@ -16,6 +16,7 @@ import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadMenu : FrameLayout {
     var cnaShowMenu: Boolean = false
@@ -170,7 +171,10 @@ class ReadMenu : FrameLayout {
                 postEvent(Bus.READ_ALOUD_BUTTON, true)
             }
         }
-
+        ll_read_aloud.onLongClick {
+            runMenuOut { callBack?.showReadAloudDialog() }
+            true
+        }
         //界面
         ll_font.onClick {
             runMenuOut {
@@ -252,6 +256,7 @@ class ReadMenu : FrameLayout {
         fun openChapterList()
         fun showReadStyle()
         fun showMoreSetting()
+        fun showReadAloudDialog()
         fun upSystemUiVisibility()
     }
 
