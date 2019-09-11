@@ -3,7 +3,6 @@ package io.legado.app.service
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import android.support.v4.media.session.PlaybackStateCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
@@ -134,8 +133,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     override fun pauseReadAloud(pause: Boolean) {
         super.pauseReadAloud(pause)
         textToSpeech?.stop()
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
-        upNotification()
     }
 
     /**

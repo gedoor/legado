@@ -199,6 +199,8 @@ abstract class BaseReadAloudService : BaseService(),
     open fun pauseReadAloud(pause: Boolean) {
         postEvent(Bus.ALOUD_STATE, Status.PAUSE)
         this.pause = pause
+        upNotification()
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
     }
 
     @CallSuper
@@ -341,7 +343,7 @@ abstract class BaseReadAloudService : BaseService(),
     /**
      * 更新通知
      */
-    fun upNotification() {
+    private fun upNotification() {
         var nTitle: String = when {
             pause -> getString(R.string.read_aloud_pause)
             timeMinute in 1..60 -> getString(
