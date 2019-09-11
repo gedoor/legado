@@ -291,7 +291,7 @@ abstract class BaseReadAloudService : BaseService(),
         return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 
-    fun upMediaSessionPlaybackState(state: Int) {
+    private fun upMediaSessionPlaybackState(state: Int) {
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
@@ -299,7 +299,6 @@ abstract class BaseReadAloudService : BaseService(),
                 .build()
         )
     }
-
 
     /**
      * 初始化MediaSession, 注册多媒体按钮
