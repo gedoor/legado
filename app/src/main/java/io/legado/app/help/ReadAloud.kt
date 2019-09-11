@@ -2,12 +2,23 @@ package io.legado.app.help
 
 import android.content.Context
 import android.content.Intent
+import io.legado.app.App
 import io.legado.app.constant.Action
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
+import io.legado.app.utils.getPrefBoolean
 
 object ReadAloud {
-    var aloudClass = TTSReadAloudService::class.java
+    var aloudClass: Class<*> = getReadAloudClass()
+
+    fun getReadAloudClass(): Class<*> {
+        return if (App.INSTANCE.getPrefBoolean("tts", true)) {
+            TTSReadAloudService::class.java
+        } else {
+            HttpReadAloudService::class.java
+        }
+    }
 
     fun play(
         context: Context,
