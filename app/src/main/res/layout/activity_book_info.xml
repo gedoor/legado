@@ -24,8 +24,9 @@
 
         <io.legado.app.ui.widget.image.CoverImageView
             android:id="@+id/iv_cover"
-            android:layout_width="76dp"
-            android:layout_height="110dp"
+            android:layout_width="86dp"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/img_cover_default" />
 
     </androidx.cardview.widget.CardView>
@@ -35,7 +36,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:layout_marginRight="6dp"
+        android:layout_marginRight="12dp"
         android:minHeight="115dp"
         android:orientation="vertical"
         android:paddingBottom="8dp"
@@ -47,7 +48,7 @@
             android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="6dp"
             android:singleLine="true"
             android:textColor="@color/tv_text_default"
             android:textSize="18sp" />
@@ -56,7 +57,7 @@
             android:id="@+id/tv_author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="3dp"
             android:singleLine="true"
             android:textSize="14sp" />
 
@@ -70,7 +71,6 @@
                 android:id="@+id/tv_origin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:textSize="14sp"
@@ -80,6 +80,7 @@
                 android:id="@+id/tv_change_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="@string/change_origin" />
@@ -90,7 +91,7 @@
             android:id="@+id/ll_kind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="3dp"
             android:orientation="horizontal"
             android:visibility="gone">
 
@@ -109,7 +110,6 @@
                 android:id="@+id/tv_kind_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:singleLine="true"
@@ -152,7 +152,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:layout_marginTop="4dp"
             android:background="@color/bg_divider_line" />
 
         <TextView
@@ -187,7 +186,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:layout_marginTop="4dp"
             android:background="@color/bg_divider_line" />
 
         <LinearLayout
