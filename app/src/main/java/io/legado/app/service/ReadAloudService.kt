@@ -125,7 +125,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var speak: Boolean = true
     private var nowSpeak: Int = 0
     private val contentList = arrayListOf<String>()
     private var readAloudNumber: Int = 0
@@ -147,13 +146,13 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         }
         initMediaSession()
         initBroadcastReceiver()
-        upMediaSessionPlaybackState()
         upSpeechRate()
         ReadAloudNotification.upNotification(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         clearTTS()
         unregisterReceiver(broadcastReceiver)
         postEvent(Bus.ALOUD_STATE, Status.STOP)
@@ -231,6 +230,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             return
         }
         if (requestFocus()) {
+            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
             postEvent(Bus.ALOUD_STATE, Status.PLAY)
             ReadAloudNotification.upNotification(this)
             for (i in nowSpeak until contentList.size) {
@@ -322,28 +322,31 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     }
 
     /**
-     * 初始化MediaSession
+     * 初始化MediaSession, 注册多媒体按钮
      */
     private fun initMediaSession() {
-        val mComponent = ComponentName(packageName, MediaButtonReceiver::class.java.name)
-        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        mediaButtonIntent.component = mComponent
+        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON).apply {
+            component = ComponentName(packageName, MediaButtonReceiver::class.java.name)
+        }
         val mediaButtonReceiverPendingIntent = PendingIntent.getBroadcast(
-            this, 0,
-            mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT
+            this,
+            0,
+            mediaButtonIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT
         )
 
-        mediaSessionCompat =
-            MediaSessionCompat(this, tag, mComponent, mediaButtonReceiverPendingIntent)
+        mediaSessionCompat = MediaSessionCompat(this, tag)
         mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@ReadAloudService, mediaButtonEvent)
             }
         })
         mediaSessionCompat?.setMediaButtonReceiver(mediaButtonReceiverPendingIntent)
+        mediaSessionCompat?.isActive = true
     }
 
     private fun initBroadcastReceiver() {
+        //断开耳机监听
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 val action = intent.action
@@ -357,9 +360,10 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     }
 
     private fun pauseReadAloud(pause: Boolean) {
-        if (pause) postEvent(Bus.ALOUD_STATE, Status.PAUSE)
+        postEvent(Bus.ALOUD_STATE, Status.PAUSE)
         this.pause = pause
         textToSpeech?.stop()
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         ReadAloudNotification.upNotification(this)
     }
 
@@ -386,14 +390,11 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 
-    private fun upMediaSessionPlaybackState() {
+    private fun upMediaSessionPlaybackState(state: Int) {
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
-                .setState(
-                    if (speak) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
-                    nowSpeak.toLong(), 1f
-                )
+                .setState(state, nowSpeak.toLong(), 1f)
                 .build()
         )
     }

@@ -85,9 +85,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 LinearLayoutManager.VERTICAL
             )
         )
-        bookshelfAdapter = BookshelfAdapter()
+        bookshelfAdapter = BookshelfAdapter(this)
         rv_bookshelf.adapter = bookshelfAdapter
-        bookshelfAdapter.callBack = this
         observeEvent<String>(Bus.UP_BOOK) { bookshelfAdapter.notification(it) }
     }
 

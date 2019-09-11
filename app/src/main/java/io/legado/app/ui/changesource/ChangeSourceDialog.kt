@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -48,6 +49,9 @@ class ChangeSourceDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
+            refresh_progress_bar.isAutoLoading = it
+        })
         arguments?.let { bundle ->
             bundle.getString("name")?.let {
                 viewModel.name = it
@@ -139,10 +143,6 @@ class ChangeSourceDialog : DialogFragment(),
 
     override fun adapter(): ChangeSourceAdapter {
         return changeSourceAdapter
-    }
-
-    override fun upSearchState(isSearch: Boolean) {
-        refresh_progress_bar.isAutoLoading = isSearch
     }
 
     interface CallBack {

@@ -1,6 +1,7 @@
 package io.legado.app.ui.changesource
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.App
 import io.legado.app.R
@@ -17,6 +18,7 @@ import org.jetbrains.anko.debug
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     var callBack: CallBack? = null
+    val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""
     var author: String = ""
     private var task: Coroutine<*>? = null
@@ -50,7 +52,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun search() {
         task = execute {
-            callBack?.upSearchState(true)
+            searchStateData.postValue(true)
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
@@ -73,7 +75,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
 
         task?.invokeOnCompletion {
-            callBack?.upSearchState(false)
+            searchStateData.postValue(false)
         }
     }
 
@@ -125,6 +127,5 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     interface CallBack {
         fun adapter(): ChangeSourceAdapter
-        fun upSearchState(isSearch: Boolean)
     }
 }

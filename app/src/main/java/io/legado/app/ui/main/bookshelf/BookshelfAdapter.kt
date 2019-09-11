@@ -17,7 +17,8 @@ import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookshelfAdapter(private val callBack: CallBack) :
+    PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         @JvmField
@@ -26,15 +27,12 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
                 oldItem.bookUrl == newItem.bookUrl
 
             override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean =
-                oldItem.bookUrl == newItem.bookUrl
-                        && oldItem.durChapterTitle == newItem.durChapterTitle
+                oldItem.durChapterTitle == newItem.durChapterTitle
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
                         && oldItem.durChapterTime == newItem.durChapterTime
                         && oldItem.lastCheckTime == newItem.lastCheckTime
         }
     }
-
-    var callBack: CallBack? = null
 
     fun notification(bookUrl: String) {
         for (i in 0..itemCount) {
@@ -66,7 +64,7 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
             itemView.setBackgroundColor(ThemeStore.backgroundColor(itemView.context))
         }
 
-        fun bind(book: Book, callBack: CallBack?) = with(itemView) {
+        fun bind(book: Book, callBack: CallBack) = with(itemView) {
             this.setBackgroundColor(context.getCompatColor(R.color.background))
             tv_name.text = book.name
             tv_author.text = book.author
@@ -79,21 +77,19 @@ class BookshelfAdapter : PagedListAdapter<Book, BookshelfAdapter.MyViewHolder>(D
                     .centerCrop()
                     .setAsDrawable(iv_cover)
             }
-            itemView.onClick { callBack?.open(book) }
+            itemView.onClick { callBack.open(book) }
             itemView.onLongClick {
-                callBack?.openBookInfo(book)
+                callBack.openBookInfo(book)
                 true
             }
-            callBack?.let {
-                if (book.origin != BookType.local && it.isUpdate(book.bookUrl)) {
-                    bv_unread.invisible()
-                    rl_loading.show()
-                } else {
-                    rl_loading.hide()
-                    bv_unread.setBadgeCount(book.getUnreadChapterNum())
-                    bv_unread.setHighlight(book.lastCheckCount > 0)
-                }
-            } ?: rl_loading.hide()
+            if (book.origin != BookType.local && callBack.isUpdate(book.bookUrl)) {
+                bv_unread.invisible()
+                rl_loading.show()
+            } else {
+                rl_loading.hide()
+                bv_unread.setBadgeCount(book.getUnreadChapterNum())
+                bv_unread.setHighlight(book.lastCheckCount > 0)
+            }
         }
     }
 

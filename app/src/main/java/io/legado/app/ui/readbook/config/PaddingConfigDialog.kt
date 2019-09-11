@@ -116,9 +116,7 @@ class PaddingConfigDialog : DialogFragment() {
                 tv_padding_top.text = paddingTop.toString()
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)
@@ -130,9 +128,7 @@ class PaddingConfigDialog : DialogFragment() {
                 tv_padding_bottom.text = paddingBottom.toString()
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)
@@ -144,9 +140,7 @@ class PaddingConfigDialog : DialogFragment() {
                 tv_padding_left.text = paddingLeft.toString()
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)
@@ -158,9 +152,7 @@ class PaddingConfigDialog : DialogFragment() {
                 tv_padding_right.text = paddingRight.toString()
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 postEvent(Bus.UP_CONFIG, true)

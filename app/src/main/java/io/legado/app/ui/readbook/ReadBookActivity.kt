@@ -485,9 +485,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
     }
 
-    override fun onDialogDismissed(dialogId: Int) {
-
-    }
+    /**
+     * colorSelectDialog
+     */
+    override fun onDialogDismissed(dialogId: Int) = Unit
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
