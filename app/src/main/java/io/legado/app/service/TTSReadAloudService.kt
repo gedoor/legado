@@ -41,7 +41,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
     override fun onDestroy() {
         super.onDestroy()
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         clearTTS()
     }
 
