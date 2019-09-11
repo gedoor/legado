@@ -3,7 +3,6 @@ package io.legado.app.ui.bookinfo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.LinearLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +16,7 @@ import io.legado.app.ui.bookinfo.edit.BookInfoEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.ui.sourceedit.SourceEditActivity
+import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -24,8 +24,6 @@ import kotlinx.android.synthetic.main.activity_book_info.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
-import androidx.recyclerview.widget.RecyclerView
-
 
 
 class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info),
@@ -156,14 +154,14 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         adapter = ChapterListAdapter(this, this)
         ATH.applyEdgeEffectColor(rv_chapter_list)
         rv_chapter_list.layoutManager = LinearLayoutManager(this)
-        rv_chapter_list.addItemDecoration(getRecyclerViewDivider())
+        getCompatDrawable(R.drawable.recyclerview_item_divider)?.let { drawable ->
+            rv_chapter_list.addItemDecoration(
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
+                    setDrawable(drawable)
+                }
+            )
+        }
         rv_chapter_list.adapter = adapter
-    }
-
-    private fun getRecyclerViewDivider(): RecyclerView.ItemDecoration {
-        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        itemDecoration.setDrawable(resources.getDrawable(R.drawable.recyclerview_item_divider))
-        return itemDecoration
     }
 
     private fun initOnClick() {
