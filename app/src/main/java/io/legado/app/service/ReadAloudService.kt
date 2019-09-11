@@ -345,12 +345,13 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         mediaSessionCompat?.isActive = true
     }
 
+    /**
+     * 断开耳机监听
+     */
     private fun initBroadcastReceiver() {
-        //断开耳机监听
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                val action = intent.action
-                if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == action) {
+                if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
                     pauseReadAloud(true)
                 }
             }
