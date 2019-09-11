@@ -63,7 +63,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
     @Suppress("DEPRECATION")
     override fun play() {
-        if (contentList.size < 1 || !ttsIsSuccess) {
+        if (contentList.isEmpty() || !ttsIsSuccess) {
             return
         }
         if (requestFocus()) {
@@ -166,7 +166,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
         override fun onDone(s: String) {
             readAloudNumber += contentList[nowSpeak].length + 1
-            nowSpeak += 1
+            nowSpeak++
             if (nowSpeak >= contentList.size) {
                 postEvent(Bus.TTS_TURN_PAGE, 2)
             }
