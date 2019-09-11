@@ -7,7 +7,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.TTSReadAloudService
 
 object ReadAloud {
-
+    var aloudClass = TTSReadAloudService::class.java
 
     fun play(
         context: Context,
@@ -17,7 +17,7 @@ object ReadAloud {
         dataKey: String,
         play: Boolean = true
     ) {
-        val readAloudIntent = Intent(context, TTSReadAloudService::class.java)
+        val readAloudIntent = Intent(context, aloudClass)
         readAloudIntent.action = Action.play
         readAloudIntent.putExtra("title", title)
         readAloudIntent.putExtra("subtitle", subtitle)
@@ -29,7 +29,7 @@ object ReadAloud {
 
     fun pause(context: Context) {
         if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, TTSReadAloudService::class.java)
+            val intent = Intent(context, aloudClass)
             intent.action = Action.pause
             context.startService(intent)
         }
@@ -37,7 +37,7 @@ object ReadAloud {
 
     fun resume(context: Context) {
         if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, TTSReadAloudService::class.java)
+            val intent = Intent(context, aloudClass)
             intent.action = Action.resume
             context.startService(intent)
         }
@@ -45,7 +45,7 @@ object ReadAloud {
 
     fun stop(context: Context) {
         if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, TTSReadAloudService::class.java)
+            val intent = Intent(context, aloudClass)
             intent.action = Action.stop
             context.startService(intent)
         }
@@ -53,7 +53,7 @@ object ReadAloud {
 
     fun prevParagraph(context: Context) {
         if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, TTSReadAloudService::class.java)
+            val intent = Intent(context, aloudClass)
             intent.action = Action.prevParagraph
             context.startService(intent)
         }
@@ -61,7 +61,7 @@ object ReadAloud {
 
     fun nextParagraph(context: Context) {
         if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, TTSReadAloudService::class.java)
+            val intent = Intent(context, aloudClass)
             intent.action = Action.nextParagraph
             context.startService(intent)
         }
@@ -69,7 +69,7 @@ object ReadAloud {
 
     fun upTtsSpeechRate(context: Context) {
         if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, TTSReadAloudService::class.java)
+            val intent = Intent(context, aloudClass)
             intent.action = Action.upTtsSpeechRate
             context.startService(intent)
         }
@@ -77,7 +77,7 @@ object ReadAloud {
 
     fun setTimer(context: Context, minute: Int) {
         if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, TTSReadAloudService::class.java)
+            val intent = Intent(context, aloudClass)
             intent.action = Action.setTimer
             intent.putExtra("minute", minute)
             context.startService(intent)
