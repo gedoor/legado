@@ -125,7 +125,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var speak: Boolean = true
     private var nowSpeak: Int = 0
     private val contentList = arrayListOf<String>()
     private var readAloudNumber: Int = 0
@@ -147,7 +146,6 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         }
         initMediaSession()
         initBroadcastReceiver()
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         upSpeechRate()
         ReadAloudNotification.upNotification(this)
     }
@@ -363,7 +361,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     }
 
     private fun pauseReadAloud(pause: Boolean) {
-        if (pause) postEvent(Bus.ALOUD_STATE, Status.PAUSE)
+        postEvent(Bus.ALOUD_STATE, Status.PAUSE)
         this.pause = pause
         textToSpeech?.stop()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
