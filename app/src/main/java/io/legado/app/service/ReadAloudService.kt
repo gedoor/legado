@@ -325,12 +325,14 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
      * 初始化MediaSession, 注册多媒体按钮
      */
     private fun initMediaSession() {
-        val mComponent = ComponentName(packageName, MediaButtonReceiver::class.java.name)
-        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        mediaButtonIntent.component = mComponent
+        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON).apply {
+            component = ComponentName(packageName, MediaButtonReceiver::class.java.name)
+        }
         val mediaButtonReceiverPendingIntent = PendingIntent.getBroadcast(
-            this, 0,
-            mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT
+            this,
+            0,
+            mediaButtonIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT
         )
 
         mediaSessionCompat = MediaSessionCompat(this, tag)
