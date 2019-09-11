@@ -130,8 +130,8 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
     private var readAloudNumber: Int = 0
     private var textChapter: TextChapter? = null
     private var pageIndex = 0
-    var mediaSessionCompat: MediaSessionCompat? = null
     private val dsRunnable: Runnable? = Runnable { doDs() }
+    var mediaSessionCompat: MediaSessionCompat? = null
     var pause = false
     var title: String = ""
     var subtitle: String = ""
