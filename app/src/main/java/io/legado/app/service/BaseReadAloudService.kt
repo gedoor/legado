@@ -189,7 +189,11 @@ abstract class BaseReadAloudService : BaseService(),
         } ?: stopSelf()
     }
 
-    abstract fun play()
+    open fun play() {
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        postEvent(Bus.ALOUD_STATE, Status.PLAY)
+        upNotification()
+    }
 
     @CallSuper
     open fun pauseReadAloud(pause: Boolean) {

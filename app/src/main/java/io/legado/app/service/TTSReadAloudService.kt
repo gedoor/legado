@@ -7,7 +7,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
-import io.legado.app.constant.Status
 import io.legado.app.help.IntentHelp
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
@@ -67,9 +66,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             return
         }
         if (requestFocus()) {
-            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-            postEvent(Bus.ALOUD_STATE, Status.PLAY)
-            upNotification()
+            super.play()
             for (i in nowSpeak until contentList.size) {
                 if (i == 0) {
                     speak(contentList[i], TextToSpeech.QUEUE_FLUSH, AppConst.APP_TAG + i)

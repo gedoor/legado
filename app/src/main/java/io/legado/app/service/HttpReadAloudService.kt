@@ -74,6 +74,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onPrepared(mp: MediaPlayer?) {
         mp?.start()
+        super.play()
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
