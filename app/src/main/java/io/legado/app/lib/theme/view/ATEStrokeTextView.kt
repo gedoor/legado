@@ -8,16 +8,7 @@ import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dp
 
-class ATEStrokeTextView : AppCompatTextView {
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+class ATEStrokeTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs) {
 
     init {
         background = Selector.shapeBuild()

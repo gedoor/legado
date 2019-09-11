@@ -8,17 +8,8 @@ import io.legado.app.lib.theme.secondaryTextColor
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ATESecondaryTextView : AppCompatTextView {
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+class ATESecondaryTextView(context: Context, attrs: AttributeSet) :
+    AppCompatTextView(context, attrs) {
 
     init {
         setTextColor(context.secondaryTextColor)

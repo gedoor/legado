@@ -12,17 +12,8 @@ import io.legado.app.utils.getCompatColor
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ATERadioNoButton : AppCompatRadioButton {
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+class ATERadioNoButton(context: Context, attrs: AttributeSet) :
+    AppCompatRadioButton(context, attrs) {
 
     init {
         background = Selector.shapeBuild()

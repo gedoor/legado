@@ -8,17 +8,8 @@ import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 
 
-class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
+    AppCompatAutoCompleteTextView(context, attrs) {
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

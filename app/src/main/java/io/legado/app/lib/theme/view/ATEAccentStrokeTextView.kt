@@ -9,16 +9,8 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 
-class ATEAccentStrokeTextView : AppCompatTextView {
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+class ATEAccentStrokeTextView(context: Context, attrs: AttributeSet) :
+    AppCompatTextView(context, attrs) {
 
     init {
         background = Selector.shapeBuild()

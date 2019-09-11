@@ -8,17 +8,8 @@ import io.legado.app.lib.theme.ThemeStore
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ATEPrimaryTextView : AppCompatTextView {
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+class ATEPrimaryTextView(context: Context, attrs: AttributeSet) :
+    AppCompatTextView(context, attrs) {
 
     init {
         setTextColor(ThemeStore.textColorPrimary(context))

@@ -6,16 +6,7 @@ import com.google.android.material.textfield.TextInputLayout
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 
-class ATETextInputLayout : TextInputLayout {
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+class ATETextInputLayout(context: Context, attrs: AttributeSet?) : TextInputLayout(context, attrs) {
 
     init {
         defaultHintTextColor = Selector.colorBuild().setDefaultColor(ThemeStore.accentColor(context)).create()
