@@ -13,46 +13,58 @@
         app:title="@string/book_info"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.ui.widget.image.CoverImageView
-        android:id="@+id/iv_cover"
-        android:layout_width="76dp"
-        android:layout_height="110dp"
-        android:layout_margin="10dp"
-        android:src="@drawable/img_cover_default"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/iv_cover_s"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:cardCornerRadius="5.0dp"
+        android:layout_margin="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <io.legado.app.ui.widget.image.CoverImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="76dp"
+            android:layout_height="110dp"
+            android:src="@drawable/img_cover_default"
+            />
+
+    </androidx.cardview.widget.CardView>
 
     <LinearLayout
         android:id="@+id/ll_book_info"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginLeft="6dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
         android:layout_marginRight="6dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="@+id/iv_cover"
-        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_cover">
+        android:minHeight="115dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="@+id/iv_cover_s"
+        app:layout_constraintLeft_toRightOf="@+id/iv_cover_s"
+        app:layout_constraintRight_toRightOf="parent">
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:singleLine="true"
-            android:textSize="16sp" />
+            android:layout_marginBottom="12dp"
+            android:textColor="@color/tv_text_default"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tv_author"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textSize="14sp"
             android:singleLine="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:orientation="horizontal">
 
             <TextView
@@ -61,6 +73,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:singleLine="true"
+                android:textSize="14sp"
+                android:layout_marginRight="8dp"
                 tools:ignore="NestedWeights" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -76,8 +90,8 @@
         <LinearLayout
             android:id="@+id/ll_kind"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:visibility="gone"
             android:orientation="horizontal">
 
@@ -119,140 +133,138 @@
         <TextView
             android:id="@+id/tv_lasted"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:singleLine="true"
+            android:textSize="14sp"
             app:layout_constraintLeft_toLeftOf="@+id/tv_name"
             app:layout_constraintRight_toRightOf="@id/tv_name"
             app:layout_constraintBottom_toBottomOf="@+id/iv_cover" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_intro"
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_margin="10dp"
-        android:scrollbars="vertical"
-        android:textIsSelectable="true"
-        app:layout_constraintTop_toBottomOf="@+id/iv_cover" />
-
-    <View
-        android:id="@+id/view_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_shadow_top"
-        app:layout_constraintTop_toBottomOf="@+id/iv_cover" />
-
     <LinearLayout
-        android:id="@+id/ll_chapter_base_info"
+        android:id="@+id/view_info"
+        app:layout_constraintTop_toBottomOf="@+id/ll_book_info"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:background="@color/background"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:elevation="5dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/tv_intro">
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/bg_divider_line" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/chapter_list" />
-
-        <TextView
-            android:id="@+id/tv_current_chapter_info"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:ellipsize="middle"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:gravity="center_vertical"
+            android:textSize="16sp"
             android:textColor="@color/tv_text_default"
+            android:text="简介"
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:minHeight="100dp"
+            android:maxHeight="160dp"
+            android:scrollbars="vertical"
+            android:textIsSelectable="true"
             android:textSize="12sp" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_chapter_top"
-            android:layout_width="36dp"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/go_to_top"
-            android:src="@drawable/ic_arrow_drop_up"
-            android:tooltipText="@string/go_to_top"
-            app:tint="@color/tv_text_default"
-            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_chapter_bottom"
-            android:layout_width="36dp"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/go_to_bottom"
-            android:src="@drawable/ic_arrow_drop_down"
-            android:tooltipText="@string/go_to_bottom"
-            app:tint="@color/tv_text_default"
-            tools:ignore="UnusedAttribute" />
+    <LinearLayout
+        android:id="@+id/view_chapter"
+        app:layout_constraintTop_toBottomOf="@+id/view_info"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/bg_divider_line" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textSize="16sp"
+                android:textColor="@color/tv_text_default"
+                android:text="目录"
+                android:paddingTop="8dp"
+                android:paddingLeft="8dp"
+                android:layout_weight="1.0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_chapter_base_info"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:elevation="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/view_chapter">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前位置：" />
+
+            <TextView
+                android:id="@+id/tv_current_chapter_info"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:ellipsize="middle"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:gravity="center_vertical"
+                android:textColor="@color/tv_text_default"
+                android:textSize="14sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_chapter_top"
+                android:layout_width="36dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/go_to_top"
+                android:padding="10dp"
+                android:src="@drawable/ic_exchange_order"
+                android:tooltipText="@string/go_to_top"
+                app:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
         android:id="@+id/rv_chapter_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/ll_chapter_base_info"
+        app:layout_constraintTop_toBottomOf="@+id/view_chapter"
         app:layout_constraintBottom_toTopOf="@id/fl_action" />
 
     <FrameLayout
         android:id="@+id/fl_action"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/background"
         app:layout_constraintBottom_toBottomOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/background_menu"
-            android:orientation="horizontal"
-            android:padding="3dp">
-
-            <TextView
-                android:id="@+id/tv_shelf"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/selector_fillet_btn_bg"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="@string/remove_from_bookshelf"
-                android:textColor="@color/tv_text_default"
-                android:textSize="15sp" />
-
-            <Space
-                android:layout_width="3dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/tv_read"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/selector_fillet_btn_bg"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="@string/reading"
-                android:textColor="@color/tv_text_default"
-                android:textSize="15sp" />
-
-        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_loading"
@@ -265,6 +277,48 @@
             android:text="@string/data_loading"
             android:textColor="#767676"
             android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_shelf"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_btn_write_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/remove_from_bookshelf"
+                android:textColor="@color/tv_text_default"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_read"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_btn_accent_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/reading"
+                android:textColor="@color/tv_text_button_nor"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <View
+            android:background="@color/bg_divider_line"
+            android:layout_width="match_parent"
+            android:layout_height="1px" />
+
     </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

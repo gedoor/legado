@@ -24,6 +24,9 @@ import kotlinx.android.synthetic.main.activity_book_info.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
+import androidx.recyclerview.widget.RecyclerView
+
+
 
 class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info),
     ChapterListAdapter.CallBack,
@@ -82,7 +85,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         tv_author.text = getString(R.string.author_show, book.author)
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
-        tv_intro.text = getString(R.string.intro_show, book.getDisplayIntro())
+        tv_intro.text = book.getDisplayIntro(); // getString(R.string.intro_show, book.getDisplayIntro())
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
                 .placeholder(R.drawable.img_cover_default)
@@ -153,8 +156,14 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         adapter = ChapterListAdapter(this, this)
         ATH.applyEdgeEffectColor(rv_chapter_list)
         rv_chapter_list.layoutManager = LinearLayoutManager(this)
-        rv_chapter_list.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
+        rv_chapter_list.addItemDecoration(getRecyclerViewDivider())
         rv_chapter_list.adapter = adapter
+    }
+
+    private fun getRecyclerViewDivider(): RecyclerView.ItemDecoration {
+        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(resources.getDrawable(R.drawable.recyclerview_item_divider))
+        return itemDecoration
     }
 
     private fun initOnClick() {
@@ -195,12 +204,8 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         iv_chapter_top.onClick {
-            rv_chapter_list.scrollToPosition(0)
-        }
-        iv_chapter_bottom.onClick {
-            viewModel.chapterListData.value?.let {
-                rv_chapter_list.scrollToPosition(it.size - 1)
-            }
+            adapter.reorder = !adapter.reorder;
+            adapter.notifyDataSetChanged();
         }
     }
 

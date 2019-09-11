@@ -40,7 +40,7 @@
     <color name="darker_gray">#aaaaaaaa</color>
 
     <!-- 分格线背景色 -->
-    <color name="bg_divider_line">#FFD4D4D4</color>
+    <color name="bg_divider_line">#8fe0e0e0</color>
     <!--statusBarBackground-->
     <color name="status_bar_bag">#19000000</color>
     <color name="navigation_bar_bag">#f4f4f4</color>
@@ -49,6 +49,10 @@
     <color name="translucent">#99343434</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+
+    <!-- btn -->
+    <color name="btn_write">#ffffffff</color>
+    <color name="btn_write_press">#efe0e0e0</color>
 
     <!--"control" means checkbox / radio button-->
 
