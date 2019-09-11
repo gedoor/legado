@@ -333,10 +333,7 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
             mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT
         )
 
-        mediaSessionCompat = MediaSessionCompat(
-            this, tag, mComponent,
-            mediaButtonReceiverPendingIntent
-        )
+        mediaSessionCompat = MediaSessionCompat(this, tag)
         mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@ReadAloudService, mediaButtonEvent)
