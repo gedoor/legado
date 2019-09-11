@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="tts_speech_per">
+        <item>普通女声</item>
+        <item>普通男声</item>
+        <item>度逍遥</item>
+        <item>百度丫丫</item>
+        <item>百度骚男</item>
+        <item>百度暖女</item>
+        <item>百度评书</item>
+        <item>百度主持</item>
+    </string-array>
+
+    <string-array name="tts_speech_per_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
     <string-array name="bookshelf_layout">
         <item>@string/layout_list</item>
         <item>@string/layout_grid3</item>

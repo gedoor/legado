@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import io.legado.app.constant.Bus
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
@@ -30,7 +31,9 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun getAudioPath(): String {
         val audioText = contentList[nowSpeak]
-        return "http://tts.baidu.com/text2audio?idx=1&tex=$audioText&cuid=baidu_speech_demo&cod=2&lan=zh&ctp=1&pdt=1&spd=4&per=6&vol=5&pit=5&_res_tag_=audio"
+        val spd = getPrefInt("ttsSpeechRate", 5) + 5
+        val per = getPrefInt("ttsSpeechPer")
+        return "http://tts.baidu.com/text2audio?idx=1&tex=$audioText&cuid=baidu_speech_demo&cod=2&lan=zh&ctp=1&pdt=1&spd=$spd&per=$per&vol=5&pit=5&_res_tag_=audio"
     }
 
     override fun play() {

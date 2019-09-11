@@ -14,5 +14,11 @@
         android:key="readAloudOnLine"
         app:iconSpaceReserved="false" />
 
+    <androidx.preference.ListPreference
+        android:key="ttsSpeechPer"
+        android:title="在线朗读音色"
+        android:entries="@array/tts_speech_per"
+        android:entryValues="@array/tts_speech_per_value"
+        app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>
