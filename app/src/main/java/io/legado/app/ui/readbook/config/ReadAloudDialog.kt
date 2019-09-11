@@ -118,10 +118,10 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun upPlayState(state: Int) {
-        if (state == Status.PAUSE) {
-            iv_play_pause.setImageResource(R.drawable.ic_play_24dp)
-        } else {
+        if (state == Status.PLAY) {
             iv_play_pause.setImageResource(R.drawable.ic_pause_24dp)
+        } else {
+            iv_play_pause.setImageResource(R.drawable.ic_play_24dp)
         }
     }
 
