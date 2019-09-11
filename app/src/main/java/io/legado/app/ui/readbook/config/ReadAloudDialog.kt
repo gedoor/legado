@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
+import io.legado.app.help.ReadAloud
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.readbook.Help
 import io.legado.app.utils.*
@@ -104,7 +105,7 @@ class ReadAloudDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                BaseReadAloudService.setTimer(requireContext(), seek_timer.progress)
+                ReadAloud.setTimer(requireContext(), seek_timer.progress)
             }
         })
     }
@@ -112,11 +113,11 @@ class ReadAloudDialog : DialogFragment() {
     private fun initOnClick() {
         iv_menu.onClick { callBack?.showMenu(); dismiss() }
         iv_menu.onLongClick { callBack?.openChapterList(); true }
-        iv_stop.onClick { BaseReadAloudService.stop(requireContext()); dismiss() }
+        iv_stop.onClick { ReadAloud.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
-        iv_play_prev.onClick { BaseReadAloudService.prevParagraph(requireContext()) }
+        iv_play_prev.onClick { ReadAloud.prevParagraph(requireContext()) }
         iv_play_prev.onLongClick { postEvent(Bus.TTS_TURN_PAGE, -2); true }
-        iv_play_next.onClick { BaseReadAloudService.nextParagraph(requireContext()) }
+        iv_play_next.onClick { ReadAloud.nextParagraph(requireContext()) }
         iv_play_next.onLongClick { postEvent(Bus.TTS_TURN_PAGE, 2); true }
     }
 
@@ -129,10 +130,10 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun upTtsSpeechRate() {
-        BaseReadAloudService.upTtsSpeechRate(requireContext())
+        ReadAloud.upTtsSpeechRate(requireContext())
         if (callBack?.readAloudStatus == Status.PLAY) {
-            BaseReadAloudService.pause(requireContext())
-            BaseReadAloudService.resume(requireContext())
+            ReadAloud.pause(requireContext())
+            ReadAloud.resume(requireContext())
         }
     }
 

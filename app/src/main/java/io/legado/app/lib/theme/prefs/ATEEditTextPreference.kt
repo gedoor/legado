@@ -92,9 +92,7 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) : EditTextP
     protected fun onBindDialogView(view: View) {
         editText = view.findViewById(android.R.id.edit)
 
-        if (editText == null) {
-            throw IllegalStateException("Dialog view must contain an EditText with id" + " @android:id/edit")
-        }
+        checkNotNull(editText) { "Dialog view must contain an EditText with id" + " @android:id/edit" }
 
         view.findViewById<TextView>(android.R.id.message).visibility = View.GONE
 

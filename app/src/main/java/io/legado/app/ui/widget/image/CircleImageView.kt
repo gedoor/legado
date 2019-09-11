@@ -18,6 +18,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
+import io.legado.app.utils.getCompatColor
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -190,7 +191,7 @@ class CircleImageView : AppCompatImageView {
     }
 
     fun setCircleBackgroundColorResource(@ColorRes circleBackgroundRes: Int) {
-        circleBackgroundColor = context.resources.getColor(circleBackgroundRes)
+        circleBackgroundColor = context.getCompatColor(circleBackgroundRes)
     }
 
     override fun setImageBitmap(bm: Bitmap) {

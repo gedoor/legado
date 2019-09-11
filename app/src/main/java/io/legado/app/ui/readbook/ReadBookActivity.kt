@@ -20,6 +20,7 @@ import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.ReadAloud
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
@@ -190,7 +191,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
                 if (readAloudStatus == Status.PLAY) {
-                    BaseReadAloudService.pause(this)
+                    ReadAloud.pause(this)
                     toast(R.string.read_aloud_pause)
                     return true
                 }
@@ -450,8 +451,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         }
         when (readAloudStatus) {
             Status.STOP -> readAloud()
-            Status.PLAY -> BaseReadAloudService.pause(this)
-            Status.PAUSE -> BaseReadAloudService.resume(this)
+            Status.PLAY -> ReadAloud.pause(this)
+            Status.PAUSE -> ReadAloud.resume(this)
         }
     }
 
@@ -464,7 +465,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         if (book != null && textChapter != null) {
             val key = System.currentTimeMillis().toString()
             IntentDataHelp.putData(key, textChapter)
-            BaseReadAloudService.play(
+            ReadAloud.play(
                 this, book.name, textChapter.title,
                 viewModel.durPageIndex, key, play
             )
@@ -569,7 +570,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     page_view.upContent()
                     viewModel.saveRead()
                 }
-                2 -> if (!moveToNextChapter()) BaseReadAloudService.stop(this)
+                2 -> if (!moveToNextChapter()) ReadAloud.stop(this)
                 -1 -> {
                     if (viewModel.durPageIndex > 0) {
                         viewModel.durPageIndex = viewModel.durPageIndex - 1

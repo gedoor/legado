@@ -19,8 +19,8 @@ import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.MediaHelp
-import io.legado.app.help.PendingIntentHelp
 import io.legado.app.receiver.MediaButtonReceiver
+import io.legado.app.ui.readbook.ReadBookActivity
 import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
@@ -32,80 +32,6 @@ abstract class BaseReadAloudService : BaseService(),
         var isRun = false
         var timeMinute: Int = 0
 
-        fun play(
-            context: Context,
-            title: String,
-            subtitle: String,
-            pageIndex: Int,
-            dataKey: String,
-            play: Boolean = true
-        ) {
-            val readAloudIntent = Intent(context, TTSReadAloudService::class.java)
-            readAloudIntent.action = Action.play
-            readAloudIntent.putExtra("title", title)
-            readAloudIntent.putExtra("subtitle", subtitle)
-            readAloudIntent.putExtra("pageIndex", pageIndex)
-            readAloudIntent.putExtra("dataKey", dataKey)
-            readAloudIntent.putExtra("play", play)
-            context.startService(readAloudIntent)
-        }
-
-        fun pause(context: Context) {
-            if (isRun) {
-                val intent = Intent(context, TTSReadAloudService::class.java)
-                intent.action = Action.pause
-                context.startService(intent)
-            }
-        }
-
-        fun resume(context: Context) {
-            if (isRun) {
-                val intent = Intent(context, TTSReadAloudService::class.java)
-                intent.action = Action.resume
-                context.startService(intent)
-            }
-        }
-
-        fun stop(context: Context) {
-            if (isRun) {
-                val intent = Intent(context, TTSReadAloudService::class.java)
-                intent.action = Action.stop
-                context.startService(intent)
-            }
-        }
-
-        fun prevParagraph(context: Context) {
-            if (isRun) {
-                val intent = Intent(context, TTSReadAloudService::class.java)
-                intent.action = Action.prevParagraph
-                context.startService(intent)
-            }
-        }
-
-        fun nextParagraph(context: Context) {
-            if (isRun) {
-                val intent = Intent(context, TTSReadAloudService::class.java)
-                intent.action = Action.nextParagraph
-                context.startService(intent)
-            }
-        }
-
-        fun upTtsSpeechRate(context: Context) {
-            if (isRun) {
-                val intent = Intent(context, TTSReadAloudService::class.java)
-                intent.action = Action.upTtsSpeechRate
-                context.startService(intent)
-            }
-        }
-
-        fun setTimer(context: Context, minute: Int) {
-            if (isRun) {
-                val intent = Intent(context, TTSReadAloudService::class.java)
-                intent.action = Action.setTimer
-                intent.putExtra("minute", minute)
-                context.startService(intent)
-            }
-        }
     }
 
     private val handler = Handler()
@@ -361,29 +287,29 @@ abstract class BaseReadAloudService : BaseService(),
             .setOngoing(true)
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
-            .setContentIntent(PendingIntentHelp.readBookActivityPendingIntent(this))
+            .setContentIntent(readBookActivityPendingIntent(this))
         if (pause) {
             builder.addAction(
                 R.drawable.ic_play_24dp,
                 getString(R.string.resume),
-                PendingIntentHelp.aloudServicePendingIntent(this, Action.resume)
+                aloudServicePendingIntent(this, Action.resume)
             )
         } else {
             builder.addAction(
                 R.drawable.ic_pause_24dp,
                 getString(R.string.pause),
-                PendingIntentHelp.aloudServicePendingIntent(this, Action.pause)
+                aloudServicePendingIntent(this, Action.pause)
             )
         }
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.stop),
-            PendingIntentHelp.aloudServicePendingIntent(this, Action.stop)
+            aloudServicePendingIntent(this, Action.stop)
         )
         builder.addAction(
             R.drawable.ic_time_add_24dp,
             getString(R.string.set_timer),
-            PendingIntentHelp.aloudServicePendingIntent(this, Action.addTimer)
+            aloudServicePendingIntent(this, Action.addTimer)
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
@@ -393,5 +319,17 @@ abstract class BaseReadAloudService : BaseService(),
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(112201, notification)
+    }
+
+    fun readBookActivityPendingIntent(context: Context): PendingIntent {
+        val intent = Intent(context, ReadBookActivity::class.java)
+        intent.action = "readBookActivity"
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    fun aloudServicePendingIntent(context: Context, actionStr: String): PendingIntent {
+        val intent = Intent(context, TTSReadAloudService::class.java)
+        intent.action = actionStr
+        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }

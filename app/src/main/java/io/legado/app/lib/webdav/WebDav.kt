@@ -6,7 +6,8 @@ import io.legado.app.lib.webdav.http.HttpAuth
 import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.jsoup.Jsoup
 import java.io.File
@@ -132,11 +133,11 @@ constructor(url: String) {
                 .url(url)
                 // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
                 // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-                .method("PROPFIND", RequestBody.create("text/plain".toMediaTypeOrNull(), requestPropsStr))
+                .method("PROPFIND", requestPropsStr.toRequestBody("text/plain".toMediaTypeOrNull()))
 
             HttpAuth.auth?.let { request.header("Authorization", Credentials.basic(it.user, it.pass)) }
 
-            request.header("Depth", if (depth < 0) "infinity" else Integer.toString(depth))
+            request.header("Depth", if (depth < 0) "infinity" else depth.toString())
 
             return okHttpClient.newCall(request.build()).execute()
         }
@@ -212,7 +213,7 @@ constructor(url: String) {
         if (!file.exists()) return false
         val mediaType = contentType?.toMediaTypeOrNull()
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
-        val fileBody = RequestBody.create(mediaType, file)
+        val fileBody = file.asRequestBody(mediaType)
         getUrl()?.let {
             val request = Request.Builder()
                 .url(it)

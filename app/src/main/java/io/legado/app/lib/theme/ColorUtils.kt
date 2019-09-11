@@ -116,9 +116,7 @@ object ColorUtils {
             }
 
         init {
-            if (upper <= lower) {
-                throw IllegalArgumentException("must be lower < upper")
-            }
+            require(upper > lower) { "must be lower < upper" }
             setAlpha(alpha)
             setLower(lower)
             setUpper(upper)
@@ -129,10 +127,10 @@ object ColorUtils {
         }
 
         private fun setAlpha(alpha: Int) {
-            var alpha = alpha
-            if (alpha > 255) alpha = 255
-            if (alpha < 0) alpha = 0
-            this.alpha = alpha
+            var alpha1 = alpha
+            if (alpha1 > 255) alpha1 = 255
+            if (alpha1 < 0) alpha1 = 0
+            this.alpha = alpha1
         }
 
         private fun getLower(): Int {
@@ -140,9 +138,9 @@ object ColorUtils {
         }
 
         private fun setLower(lower: Int) {
-            var lower = lower
-            if (lower < 0) lower = 0
-            this.lower = lower
+            var lower1 = lower
+            if (lower1 < 0) lower1 = 0
+            this.lower = lower1
         }
 
         private fun getUpper(): Int {
@@ -150,9 +148,9 @@ object ColorUtils {
         }
 
         private fun setUpper(upper: Int) {
-            var upper = upper
-            if (upper > 255) upper = 255
-            this.upper = upper
+            var upper1 = upper
+            if (upper1 > 255) upper1 = 255
+            this.upper = upper1
         }
     }
 }
