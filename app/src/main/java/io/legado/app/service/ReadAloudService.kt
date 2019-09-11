@@ -279,6 +279,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         ReadAloudNotification.upNotification(this)
     }
 
+    /**
+     * 定时
+     */
     private fun doDs() {
         if (!pause) {
             timeMinute--
@@ -292,6 +295,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         ReadAloudNotification.upNotification(this)
     }
 
+    /**
+     * 更新朗读速度
+     */
     private fun upSpeechRate(reset: Boolean = false) {
         if (this.getPrefBoolean("ttsFollowSys", true)) {
             if (reset) {
@@ -303,6 +309,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         }
     }
 
+    /**
+     * 上一段
+     */
     private fun prevP() {
         if (nowSpeak > 0) {
             textToSpeech?.stop()
@@ -312,6 +321,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         }
     }
 
+    /**
+     * 下一段
+     */
     private fun nextP() {
         if (nowSpeak < contentList.size - 1) {
             textToSpeech?.stop()
@@ -360,6 +372,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         registerReceiver(broadcastReceiver, intentFilter)
     }
 
+    /**
+     * 暂停朗读
+     */
     private fun pauseReadAloud(pause: Boolean) {
         postEvent(Bus.ALOUD_STATE, Status.PAUSE)
         this.pause = pause
@@ -368,6 +383,9 @@ class ReadAloudService : BaseService(), TextToSpeech.OnInitListener,
         ReadAloudNotification.upNotification(this)
     }
 
+    /**
+     * 恢复朗读
+     */
     private fun resumeReadAloud() {
         pause = false
         playTTS()
