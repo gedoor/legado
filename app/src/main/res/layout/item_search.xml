@@ -73,7 +73,8 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_kind_1"
@@ -84,7 +85,8 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_kind_2"
@@ -95,7 +97,8 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:abt_radius="2dp" />
 
         </LinearLayout>
 

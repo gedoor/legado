@@ -130,4 +130,8 @@
             <enum name="CW270" value="270" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="ATEAccentBgTextView">
+        <attr name="abt_radius" format="dimension" />
+    </declare-styleable>
 </resources>

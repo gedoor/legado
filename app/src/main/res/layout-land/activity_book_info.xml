@@ -83,7 +83,8 @@
                 android:layout_marginStart="8dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:text="@string/change_origin" />
+                android:text="@string/change_origin"
+                app:abt_radius="2dp" />
 
         </LinearLayout>
 
@@ -104,7 +105,8 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_kind_1"
@@ -114,7 +116,8 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_kind_2"
@@ -125,7 +128,8 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:abt_radius="2dp" />
 
         </LinearLayout>
 
@@ -226,7 +230,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackground"
                 android:ellipsize="middle"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
@@ -297,7 +301,7 @@
                 android:textColor="@color/tv_text_default"
                 android:textSize="15sp" />
 
-            <TextView
+            <io.legado.app.lib.theme.view.ATEAccentBgTextView
                 android:id="@+id/tv_read"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
