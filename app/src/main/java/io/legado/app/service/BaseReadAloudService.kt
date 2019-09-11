@@ -321,15 +321,12 @@ abstract class BaseReadAloudService : BaseService(),
         startForeground(112201, notification)
     }
 
-    fun readBookActivityPendingIntent(context: Context): PendingIntent {
+    private fun readBookActivityPendingIntent(context: Context): PendingIntent {
         val intent = Intent(context, ReadBookActivity::class.java)
         intent.action = "readBookActivity"
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    fun aloudServicePendingIntent(context: Context, actionStr: String): PendingIntent {
-        val intent = Intent(context, TTSReadAloudService::class.java)
-        intent.action = actionStr
-        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
+    abstract fun aloudServicePendingIntent(context: Context, actionStr: String): PendingIntent
+
 }
