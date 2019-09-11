@@ -11,7 +11,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.help.ReadAloud
 import io.legado.app.lib.theme.ATH
+import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.readbook.Help
 import io.legado.app.utils.postEvent
 
@@ -79,8 +81,15 @@ class ReadAloudConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                "readAloudByPage" -> postEvent(Bus.READ_ALOUD_BUTTON, false)
-
+                "readAloudByPage" -> {
+                    if (BaseReadAloudService.isRun) {
+                        postEvent(Bus.READ_ALOUD_BUTTON, false)
+                    }
+                }
+                "readAloudOnLine" -> {
+                    ReadAloud.stop(requireContext())
+                    ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
+                }
             }
         }
 

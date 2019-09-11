@@ -8,5 +8,11 @@
         android:key="readAloudByPage"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
+        android:title="@string/read_aloud_on_line"
+        android:key="readAloudOnLine"
+        app:iconSpaceReserved="false" />
+
 
 </androidx.preference.PreferenceScreen>

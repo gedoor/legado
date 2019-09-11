@@ -13,10 +13,10 @@ object ReadAloud {
     var aloudClass: Class<*> = getReadAloudClass()
 
     fun getReadAloudClass(): Class<*> {
-        return if (App.INSTANCE.getPrefBoolean("tts", true)) {
-            TTSReadAloudService::class.java
-        } else {
+        return if (App.INSTANCE.getPrefBoolean("readAloudOnLine")) {
             HttpReadAloudService::class.java
+        } else {
+            TTSReadAloudService::class.java
         }
     }
 

@@ -488,6 +488,7 @@
     <string name="timer_m">%d分钟</string>
     <string name="brightness_auto">自动亮度%s</string>
     <string name="read_aloud_by_page">按页朗读</string>
+    <string name="read_aloud_on_line">在线朗读</string>
     <string name="bg_image">背景图片</string>
     <string name="bg_color">背景颜色</string>
     <string name="text_color">文字颜色</string>
