@@ -39,10 +39,6 @@ class ReadAloudConfigDialog : DialogFragment() {
         }
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.transparent)
-            it.decorView.setPadding(0, 0, 0, 0)
-            val attr = it.attributes
-            attr.dimAmount = 0.0f
-            it.attributes = attr
             it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
