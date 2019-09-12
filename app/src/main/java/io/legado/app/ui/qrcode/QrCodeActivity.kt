@@ -14,6 +14,7 @@ import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.utils.FileUtils
 import kotlinx.android.synthetic.main.activity_qrcode_capture.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import org.jetbrains.anko.toast
 
 class QrCodeActivity : BaseActivity(R.layout.activity_qrcode_capture), QRCodeView.Delegate {
 
@@ -88,7 +89,7 @@ class QrCodeActivity : BaseActivity(R.layout.activity_qrcode_capture), QRCodeVie
     }
 
     override fun onScanQRCodeOpenCameraError() {
-
+        toast("打开相机失败")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
