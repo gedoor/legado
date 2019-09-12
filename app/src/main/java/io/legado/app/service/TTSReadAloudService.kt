@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.MediaHelp
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
@@ -68,6 +69,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             return
         }
         if (requestFocus()) {
+            MediaHelp.playSilentSound(this)
             super.play()
             for (i in nowSpeak until contentList.size) {
                 if (i == 0) {

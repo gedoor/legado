@@ -8,8 +8,6 @@ import io.legado.app.constant.Bus
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.launch
-import org.jetbrains.anko.toast
 
 class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnPreparedListener,
@@ -57,7 +55,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun upSpeechRate(reset: Boolean) {
-        mediaPlayer.stop()
         play()
     }
 
@@ -81,6 +78,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onPrepared(mp: MediaPlayer?) {
         super.play()
+        if (pause) return
         mp?.start()
         textChapter?.let {
             if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
@@ -92,8 +90,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
-        launch { toast("播放出错") }
-        return false
+        return true
     }
 
     override fun onCompletion(mp: MediaPlayer?) {

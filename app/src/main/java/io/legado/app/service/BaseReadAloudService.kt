@@ -39,7 +39,7 @@ abstract class BaseReadAloudService : BaseService(),
     private lateinit var mFocusRequest: AudioFocusRequest
     private var broadcastReceiver: BroadcastReceiver? = null
     private var mediaSessionCompat: MediaSessionCompat? = null
-    private var pause = false
+    var pause = false
     var title: String = ""
     private var subtitle: String = ""
     val contentList = arrayListOf<String>()
@@ -203,7 +203,6 @@ abstract class BaseReadAloudService : BaseService(),
      * @return 音频焦点
      */
     fun requestFocus(): Boolean {
-        MediaHelp.playSilentSound(this)
         val request: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioManager.requestAudioFocus(mFocusRequest)
         } else {
