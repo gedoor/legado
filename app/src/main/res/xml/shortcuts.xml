@@ -13,7 +13,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="${applicationId}"
-            android:targetClass="io.legado.app.ui.readbook.ReadBookActivity" />
+            android:targetClass="io.legado.app.ui.book.read.ReadBookActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 

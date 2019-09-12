@@ -22,10 +22,10 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.bookinfo.BookInfoActivity
+import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.bookshelf.BookshelfActivity
-import io.legado.app.ui.readbook.ReadBookActivity
-import io.legado.app.ui.search.SearchActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edittext.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*

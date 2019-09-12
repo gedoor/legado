@@ -16,7 +16,7 @@
         android:layout_height="match_parent" />
 
 
-    <io.legado.app.ui.readbook.ReadMenu
+    <io.legado.app.ui.book.read.ReadMenu
         android:id="@+id/read_menu"
             android:layout_width="match_parent"
         android:layout_height="match_parent"

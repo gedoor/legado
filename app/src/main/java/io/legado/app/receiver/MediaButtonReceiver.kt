@@ -6,7 +6,7 @@ import android.content.Intent
 import android.view.KeyEvent
 import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
-import io.legado.app.ui.readbook.ReadBookActivity
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.postEvent
 
 

@@ -20,7 +20,7 @@ import io.legado.app.constant.Status
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
-import io.legado.app.ui.readbook.ReadBookActivity
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent

@@ -39,7 +39,7 @@
         </activity>
         <activity android:name=".ui.main.MainActivity" />
         <activity
-            android:name=".ui.readbook.ReadBookActivity"
+            android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask" />
         <activity
@@ -47,22 +47,22 @@
             android:theme="@style/Activity.Permission" />
         <activity android:name=".ui.config.ConfigActivity" />
         <activity
-            android:name=".ui.sourceedit.SourceEditActivity"
+            android:name=".ui.book.source.edit.SourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
-        <activity android:name=".ui.search.SearchActivity" />
+        <activity android:name="io.legado.app.ui.book.search.SearchActivity" />
         <activity android:name=".ui.about.AboutActivity" />
         <activity android:name=".ui.bookshelf.BookshelfActivity" />
         <activity android:name=".ui.qrcode.QrCodeActivity" />
         <activity android:name=".ui.about.DonateActivity" />
-        <activity android:name=".ui.bookinfo.BookInfoActivity" />
-        <activity android:name=".ui.bookinfo.edit.BookInfoEditActivity" />
-        <activity android:name=".ui.sourcedebug.SourceDebugActivity" />
-        <activity android:name=".ui.booksource.BookSourceActivity" />
+        <activity android:name=".ui.book.info.BookInfoActivity" />
+        <activity android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity" />
+        <activity android:name=".ui.book.source.debug.SourceDebugActivity" />
+        <activity android:name=".ui.book.source.manage.BookSourceActivity" />
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
-        <activity android:name=".ui.readrss.ReadRssActivity" />
+        <activity android:name=".ui.rss.read.ReadRssActivity" />
         <activity android:name=".ui.audio.AudioPlayActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
 

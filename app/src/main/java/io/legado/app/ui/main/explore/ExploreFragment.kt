@@ -10,8 +10,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.book.source.edit.SourceEditActivity
 import io.legado.app.ui.explore.ExploreShowActivity
-import io.legado.app.ui.sourceedit.SourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_find_book.*

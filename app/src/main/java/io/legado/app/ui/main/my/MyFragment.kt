@@ -13,7 +13,7 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
-import io.legado.app.ui.booksource.BookSourceActivity
+import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
