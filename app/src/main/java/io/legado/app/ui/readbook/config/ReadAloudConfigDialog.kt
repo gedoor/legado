@@ -92,15 +92,12 @@ class ReadAloudConfigDialog : DialogFragment() {
                     }
                 }
                 "readAloudOnLine" -> {
-                    ReadAloud.stop(requireContext())
-                    ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
-                }
-                "ttsSpeechPer" -> {
                     if (BaseReadAloudService.isRun) {
                         ReadAloud.stop(requireContext())
-                        postEvent(Bus.READ_ALOUD_BUTTON, true)
+                        ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
                     }
                 }
+                "ttsSpeechPer" -> ReadAloud.upTtsSpeechRate(requireContext())
             }
         }
 
