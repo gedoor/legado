@@ -8,7 +8,7 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.io.IOException
 import java.io.StringReader
 
-object CoreXMLParser {
+object RssParser {
 
     @Throws(XmlPullParserException::class, IOException::class)
     fun parseXML(xml: String): MutableList<RssArticle> {
