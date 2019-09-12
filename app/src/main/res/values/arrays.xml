@@ -14,12 +14,12 @@
     <string-array name="tts_speech_per_value">
         <item>0</item>
         <item>1</item>
-        <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>11</item>
         <item>5</item>
         <item>6</item>
-        <item>7</item>
+        <item>9</item>
     </string-array>
 
     <string-array name="bookshelf_layout">
