@@ -117,11 +117,13 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
      * 筛选
      */
     fun screen(key: String?) {
-        screenKey = key ?: ""
-        if (key.isNullOrEmpty()) {
-            initData()
-        } else {
-
+        execute {
+            screenKey = key ?: ""
+            if (key.isNullOrEmpty()) {
+                initData()
+            } else {
+                App.db.searchBookDao()
+            }
         }
     }
 
