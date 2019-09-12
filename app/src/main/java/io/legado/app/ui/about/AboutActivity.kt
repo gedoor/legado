@@ -27,9 +27,7 @@ class AboutActivity : BaseActivity(R.layout.activity_about) {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_scoring -> {
-                openIntent("market://details?id=$packageName")
-            }
+            R.id.menu_scoring -> openIntent("market://details?id=$packageName")
         }
         return super.onCompatOptionsItemSelected(item)
     }
