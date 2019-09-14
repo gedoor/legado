@@ -12,6 +12,7 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.progressAdd
 import kotlinx.android.synthetic.main.dialog_read_padding.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -61,52 +62,35 @@ class PaddingConfigDialog : DialogFragment() {
 
     private fun initView() = with(ReadBookConfig.getConfig()) {
         iv_padding_top_add.onClick {
-            paddingTop++
-            if (paddingTop > 100) paddingTop = 100
-            seek_padding_top.progress = paddingTop
-            tv_padding_top.text = paddingTop.toString()
+            seek_padding_top.progressAdd(1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_padding_top_remove.onClick {
-            paddingTop--
-            if (paddingTop < 0) paddingTop = 0
-            seek_padding_top.progress = paddingTop
-            tv_padding_top.text = paddingTop.toString()
+            seek_padding_top.progressAdd(-1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_padding_bottom_add.onClick {
-            paddingBottom++
-            if (paddingBottom > 100) paddingBottom = 100
-            seek_padding_bottom.progress = paddingBottom
-            tv_padding_bottom.text = paddingBottom.toString()
+            seek_padding_bottom.progressAdd(1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_padding_bottom_remove.onClick {
-            paddingBottom--
-            if (paddingBottom < 0) paddingBottom = 0
-            seek_padding_bottom.progress = paddingBottom
-            tv_padding_bottom.text = paddingBottom.toString()
+            seek_padding_bottom.progressAdd(-1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_padding_left_add.onClick {
-            paddingLeft++
-            if (paddingLeft > 100) paddingLeft = 100
-            seek_padding_left.progress = paddingLeft
-            tv_padding_left.text = paddingLeft.toString()
+            seek_padding_left.progressAdd(1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_padding_left_remove.onClick {
-            paddingLeft++
-            if (paddingLeft < 0) paddingLeft = 0
-            seek_padding_left.progress = paddingLeft
-            tv_padding_left.text = paddingLeft.toString()
+            seek_padding_left.progressAdd(-1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_padding_right_add.onClick {
-            paddingRight++
-            if (paddingRight > 100) paddingRight = 100
-            seek_padding_right.progress = paddingRight
-            tv_padding_right.text = paddingRight.toString()
+            seek_padding_right.progressAdd(1)
+            postEvent(Bus.UP_CONFIG, true)
+        }
+        iv_padding_right_remove.onClick {
+            seek_padding_right.progressAdd(-1)
             postEvent(Bus.UP_CONFIG, true)
         }
 

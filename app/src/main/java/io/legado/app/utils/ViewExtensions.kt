@@ -3,17 +3,13 @@ package io.legado.app.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.os.Build
-import android.os.Handler
-import android.view.PixelCopy
 import android.view.View
 import android.view.View.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.App
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
 
 
 private tailrec fun getCompatActivity(context: Context?): AppCompatActivity? {
@@ -61,4 +57,8 @@ fun View.screenshot(): Bitmap? {
         draw(c)
         screenshot
     }.getOrNull()
+}
+
+fun SeekBar.progressAdd(int: Int) {
+    progress += int
 }
