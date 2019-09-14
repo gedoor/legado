@@ -74,11 +74,15 @@ class MoreConfigDialog : DialogFragment() {
 
         override fun onResume() {
             super.onResume()
-            preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+            preferenceManager
+                .sharedPreferences
+                .registerOnSharedPreferenceChangeListener(this)
         }
 
         override fun onPause() {
-            preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+            preferenceManager
+                .sharedPreferences
+                .unregisterOnSharedPreferenceChangeListener(this)
             super.onPause()
         }
 
