@@ -125,21 +125,11 @@ class ReadStyleDialog : DialogFragment() {
             }
         })
         iv_text_size_add.onClick {
-            with(ReadBookConfig.getConfig()) {
-                textSize++
-                if (textSize > 50) textSize = 50
-                seek_text_size.progress = textSize - 5
-                tv_text_size.text = textSize.toString()
-            }
+            seek_text_size.progressAdd(1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_text_size_remove.onClick {
-            with(ReadBookConfig.getConfig()) {
-                textSize--
-                if (textSize < 5) textSize = 5
-                seek_text_size.progress = textSize - 5
-                tv_text_size.text = textSize.toString()
-            }
+            seek_text_size.progressAdd(-1)
             postEvent(Bus.UP_CONFIG, true)
         }
         seek_text_letter_spacing.setOnSeekBarChangeListener(object :
@@ -157,19 +147,11 @@ class ReadStyleDialog : DialogFragment() {
             }
         })
         iv_text_letter_spacing_add.onClick {
-            with(ReadBookConfig.getConfig()) {
-                letterSpacing += 0.1f
-                seek_text_letter_spacing.progress = (letterSpacing * 10).toInt() + 5
-                tv_text_letter_spacing.text = letterSpacing.toString()
-            }
+            seek_text_letter_spacing.progressAdd(1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_text_letter_spacing_remove.onClick {
-            with(ReadBookConfig.getConfig()) {
-                letterSpacing -= 0.1f
-                seek_text_letter_spacing.progress = (letterSpacing * 10).toInt() + 5
-                tv_text_letter_spacing.text = letterSpacing.toString()
-            }
+            seek_text_letter_spacing.progressAdd(-1)
             postEvent(Bus.UP_CONFIG, true)
         }
         seek_line_size.setOnSeekBarChangeListener(object :
@@ -187,17 +169,11 @@ class ReadStyleDialog : DialogFragment() {
             }
         })
         iv_line_size_add.onClick {
-            with(ReadBookConfig.getConfig()) {
-                lineSpacingExtra++
-                tv_line_size.text = lineSpacingExtra.toString()
-            }
+            seek_line_size.progressAdd(1)
             postEvent(Bus.UP_CONFIG, true)
         }
         iv_line_size_remove.onClick {
-            with(ReadBookConfig.getConfig()) {
-                lineSpacingExtra--
-                tv_line_size.text = lineSpacingExtra.toString()
-            }
+            seek_line_size.progressAdd(-1)
             postEvent(Bus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
