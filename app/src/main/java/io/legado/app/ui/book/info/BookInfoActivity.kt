@@ -50,7 +50,8 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         } ?: viewModel.loadBook(intent)
         initOnClick()
         savedInstanceState?.let {
-            changeSourceDialog = supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
+            changeSourceDialog =
+                supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
         }
     }
 
@@ -83,7 +84,8 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         tv_author.text = getString(R.string.author_show, book.author)
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
-        tv_intro.text = book.getDisplayIntro(); // getString(R.string.intro_show, book.getDisplayIntro())
+        tv_intro.text =
+            book.getDisplayIntro() // getString(R.string.intro_show, book.getDisplayIntro())
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
                 .placeholder(R.drawable.img_cover_default)
@@ -202,8 +204,8 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         iv_chapter_top.onClick {
-            adapter.reorder = !adapter.reorder;
-            adapter.notifyDataSetChanged();
+            adapter.reorder = !adapter.reorder
+            adapter.notifyDataSetChanged()
         }
     }
 

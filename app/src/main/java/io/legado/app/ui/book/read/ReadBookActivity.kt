@@ -33,7 +33,6 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.source.edit.SourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
-import io.legado.app.ui.readbook.config.*
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.PageView
