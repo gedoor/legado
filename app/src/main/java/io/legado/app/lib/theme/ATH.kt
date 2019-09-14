@@ -51,8 +51,12 @@ object ATH {
         isTransparentStatusBar: Boolean,
         fullScreen: Boolean
     ) {
-        if (fullScreen && isTransparentStatusBar) {
-            activity.window.statusBarColor = Color.TRANSPARENT
+        if (fullScreen) {
+            if (isTransparentStatusBar) {
+                activity.window.statusBarColor = Color.TRANSPARENT
+            } else {
+                activity.window.statusBarColor = activity.getCompatColor(R.color.status_bar_bag)
+            }
         } else {
             activity.window.statusBarColor = color
         }
