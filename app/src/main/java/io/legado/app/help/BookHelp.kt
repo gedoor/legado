@@ -7,10 +7,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.similarity
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -29,21 +26,10 @@ object BookHelp {
     }
 
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
-        if (content.isEmpty()) {
-            return
-        }
+        if (content.isEmpty()) return
         val filePath = getChapterPath(book, bookChapter)
         val file = FileHelp.getFile(filePath)
-        //获取流并存储
-        try {
-            BufferedWriter(FileWriter(file)).use { writer ->
-                writer.write(content)
-                writer.flush()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
+        file.writeText(content)
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {

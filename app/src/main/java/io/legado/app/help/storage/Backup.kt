@@ -56,7 +56,7 @@ object Backup {
 
     private fun backupRssSource(path: String) {
         val json = GSON.toJson(App.db.rssSourceDao().all)
-        val file = FileHelp.getFile(path + File.separator + "cssSource.json")
+        val file = FileHelp.getFile(path + File.separator + "rssSource.json")
         file.writeText(json)
     }
 

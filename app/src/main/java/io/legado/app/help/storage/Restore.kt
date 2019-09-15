@@ -2,14 +2,20 @@ package io.legado.app.help.storage
 
 import android.content.Context
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.data.entities.RssSource
+import io.legado.app.help.FileHelp
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.utils.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -23,12 +29,55 @@ object Restore {
             .build()
     )
 
-    fun restore() {
-
+    fun restore(activity: AppCompatActivity) {
+        PermissionsCompat.Builder(activity)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                val path =
+                    FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
+                restore(path)
+            }
+            .request()
     }
 
-    fun importFromGithub() {
-
+    fun restore(path: String) {
+        try {
+            val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
+            val json = file.readText()
+            GSON.fromJsonArray<Book>(json)?.let {
+                App.db.bookDao().insert(*it.toTypedArray())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
+            val file = FileHelp.getFile(path + File.separator + "bookSource.json")
+            val json = file.readText()
+            GSON.fromJsonArray<BookSource>(json)?.let {
+                App.db.bookSourceDao().insert(*it.toTypedArray())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
+            val file = FileHelp.getFile(path + File.separator + "rssSource.json")
+            val json = file.readText()
+            GSON.fromJsonArray<RssSource>(json)?.let {
+                App.db.rssSourceDao().insert(*it.toTypedArray())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
+            val file = FileHelp.getFile(path + File.separator + "replaceRule.json")
+            val json = file.readText()
+            GSON.fromJsonArray<ReplaceRule>(json)?.let {
+                App.db.replaceRuleDao().insert(*it.toTypedArray())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun importYueDuData(context: Context) {
