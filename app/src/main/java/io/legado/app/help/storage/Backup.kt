@@ -4,42 +4,38 @@ import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.FileHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 import java.io.File
 
 object Backup {
 
-    fun backup(activity: AppCompatActivity) {
-        PermissionsCompat.Builder(activity)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                val path =
-                    FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
-                backupBookshelf(path)
-                backupBookSource(path)
-                backupRssSource(path)
-                backupReplaceRule(path)
+    fun backup() {
+        doAsync {
+            val path =
+                FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
+            backupBookshelf(path)
+            backupBookSource(path)
+            backupRssSource(path)
+            backupReplaceRule(path)
+            uiThread {
+                App.INSTANCE.toast(R.string.backup_success)
             }
-            .request()
+        }
     }
 
     fun autoBackup(activity: AppCompatActivity) {
-        PermissionsCompat.Builder(activity)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                val path =
-                    FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
-                backupBookshelf(path)
-                backupBookSource(path)
-                backupRssSource(path)
-                backupReplaceRule(path)
-            }
-            .request()
+        doAsync {
+            val path =
+                FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
+            backupBookshelf(path)
+            backupBookSource(path)
+            backupRssSource(path)
+            backupReplaceRule(path)
+        }
     }
 
     private fun backupBookshelf(path: String) {
