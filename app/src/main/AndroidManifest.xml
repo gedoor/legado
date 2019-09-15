@@ -65,6 +65,7 @@
         <activity android:name=".ui.rss.read.ReadRssActivity" />
         <activity android:name=".ui.audio.AudioPlayActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
+        <activity android:name=".ui.rss.source.RssSourceActivity" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
