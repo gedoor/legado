@@ -28,6 +28,7 @@ object FileUtils {
         try {
             sdCardDirectory = File(sdCardDirectory).canonicalPath
         } catch (ioe: IOException) {
+            ioe.printStackTrace()
         }
 
         return sdCardDirectory
