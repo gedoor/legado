@@ -48,7 +48,7 @@ object BookHelp {
         runCatching {
             val file = File(filePath)
             if (file.exists()) {
-                return String(file.readBytes())
+                return file.readText()
             }
         }
         return null
