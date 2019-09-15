@@ -81,10 +81,10 @@ object Restore {
     }
 
     fun importYueDuData(context: Context) {
-        val yuedu = File(FileUtils.getSdPath(), "YueDu")
+        val file = File(FileUtils.getSdPath(), "YueDu")
 
         // 导入书架
-        val shelfFile = File(yuedu, "myBookShelf.json")
+        val shelfFile = File(file, "myBookShelf.json")
         val books = mutableListOf<Book>()
         if (shelfFile.exists()) try {
             doAsync {
@@ -130,16 +130,14 @@ object Restore {
                 uiThread {
                     context.toast(if (count > 0) "成功地导入 $count 本新书和音频" else "没有发现新书或音频")
                 }
-
             }
-
         } catch (e: Exception) {
             Log.e(AppConst.APP_TAG, "Failed to import book shelf.", e)
             context.toast("Unable to import books:\n${e.localizedMessage}")
         }
 
         // Book source
-        val sourceFile = File(yuedu, "myBookSource.json")
+        val sourceFile = File(file, "myBookSource.json")
         val bookSources = mutableListOf<BookSource>()
         if (sourceFile.exists()) try {
             doAsync {
@@ -156,9 +154,8 @@ object Restore {
             e.printStackTrace()
         }
 
-
         // Replace rules
-        val ruleFile = File(yuedu, "myBookReplaceRule.json")
+        val ruleFile = File(file, "myBookReplaceRule.json")
         val replaceRules = mutableListOf<ReplaceRule>()
         if (ruleFile.exists()) try {
             doAsync {
@@ -184,7 +181,6 @@ object Restore {
                     context.toast(if (count > 0) "成功地导入 $count 条净化替换规则" else "没有发现新的净化替换规则")
                 }
             }
-
         } catch (e: Exception) {
             Log.e(AppConst.APP_TAG, e.localizedMessage)
         }
