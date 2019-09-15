@@ -8,6 +8,9 @@ import io.legado.app.data.entities.RssSource
 @Dao
 interface RssSourceDao {
 
+    @get:Query("SELECT * FROM rssSources")
+    val all: List<RssSource>
+
     @Query("SELECT * FROM rssSources")
     fun liveAll(): LiveData<List<RssSource>>
 

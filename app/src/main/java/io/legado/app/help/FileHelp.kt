@@ -28,8 +28,8 @@ object FileHelp {
                 file.createNewFile()
             }
         } catch (e: IOException) {
+            e.printStackTrace()
         }
-
         return file
     }
 }
