@@ -21,13 +21,17 @@
         android:title="WebDav 密码"
         android:summary="输入你的WebDav授权密码"
         android:singleLine="true"
-        android:password="true"
+        android:inputType="textPassword"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="web_dav_restore"
+        android:title="备份"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
         android:key="web_dav_restore"
         android:title="恢复"
-        android:summary="从WebDav恢复"
         app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>

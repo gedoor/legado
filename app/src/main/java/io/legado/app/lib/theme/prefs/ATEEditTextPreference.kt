@@ -20,10 +20,8 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.applyTint
 
-class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) : EditTextPreference(
-    context,
-    attrs
-),
+class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) :
+    EditTextPreference(context, attrs),
     DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
 
     private var builder: AlertDialog.Builder? = null
@@ -36,8 +34,7 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) : EditTextP
     private var mWhichButtonClicked: Int = 0
 
     override fun onClick() {
-        if (dialog != null && dialog!!.isShowing) return
-
+        if (dialog?.isShowing == true) return
         showDialog(null)
     }
 
@@ -96,14 +93,14 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) : EditTextP
 
         view.findViewById<TextView>(android.R.id.message).visibility = View.GONE
 
-        val editText = this.editText!!
+        editText?.let {
+            ATH.setTint(it, ThemeStore.accentColor(context))
 
-        ATH.setTint(editText, ThemeStore.accentColor(context))
-
-        editText.requestFocus()
-        editText.setText(text)
-        // Place cursor at the end
-        editText.setSelection(editText.length())
+            it.requestFocus()
+            it.setText(text)
+            // Place cursor at the end
+            it.setSelection(it.length())
+        }
     }
 
     override fun onClick(dialog: DialogInterface?, which: Int) {
@@ -163,7 +160,7 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) : EditTextP
             dest.writeBundle(dialogBundle)
         }
 
-        constructor(superState: Parcelable) : super(superState) {}
+        constructor(superState: Parcelable) : super(superState)
 
         companion object {
 
