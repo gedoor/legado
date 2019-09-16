@@ -17,7 +17,10 @@ object MediaHelp {
             or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
             or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
             or PlaybackStateCompat.ACTION_STOP
-            or PlaybackStateCompat.ACTION_SEEK_TO)
+            or PlaybackStateCompat.ACTION_SEEK_TO
+            or PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
+            or PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
+            or PlaybackStateCompat.ACTION_PLAY_FROM_URI)
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequest {
