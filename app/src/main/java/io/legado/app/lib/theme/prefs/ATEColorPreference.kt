@@ -15,7 +15,7 @@ import androidx.preference.PreferenceViewHolder
 import com.jaredrummler.android.colorpicker.*
 import io.legado.app.lib.theme.ATH
 
-class ATEColorPreference : Preference,
+class ATEColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
     ColorPickerDialogListener {
 
     private val SIZE_NORMAL = 0
@@ -35,20 +35,7 @@ class ATEColorPreference : Preference,
     private var presets: IntArray? = null
     private var dialogTitle: Int = 0
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-        defStyleRes
-    ) {
-        init(attrs)
-    }
-
-    private fun init(attrs: AttributeSet) {
+    init {
         isPersistent = true
         val a = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference)
         showDialog = a.getBoolean(R.styleable.ColorPreference_cpv_showDialog, true)
