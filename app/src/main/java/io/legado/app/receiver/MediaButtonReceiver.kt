@@ -25,20 +25,11 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 val event =
                     intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT) ?: return false
 
-                val keycode = event.keyCode
                 val action = event.action
 
-                when (keycode) {
-                    KeyEvent.KEYCODE_MEDIA_STOP,
-                    KeyEvent.KEYCODE_MEDIA_PAUSE,
-                    KeyEvent.KEYCODE_MEDIA_PLAY,
-                    KeyEvent.KEYCODE_HEADSETHOOK,
-                    KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
-                        if (action == KeyEvent.ACTION_DOWN) {
-                            readAloud(context)
-                            return true
-                        }
-                    }
+                if (action == KeyEvent.ACTION_DOWN) {
+                    readAloud(context)
+                    return true
                 }
             }
             return false
