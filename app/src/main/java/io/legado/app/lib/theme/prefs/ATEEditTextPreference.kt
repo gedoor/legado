@@ -25,10 +25,9 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) :
     DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
 
     private var builder: AlertDialog.Builder? = null
-
     private var dialog: AlertDialog? = null
-
     private var editText: EditText? = null
+    var inputType: Int? = null
 
     /** Which button was clicked.  */
     private var mWhichButtonClicked: Int = 0
@@ -92,10 +91,11 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) :
         checkNotNull(editText) { "Dialog view must contain an EditText with id" + " @android:id/edit" }
 
         view.findViewById<TextView>(android.R.id.message).visibility = View.GONE
-
+        inputType?.let {
+            editText?.inputType = it
+        }
         editText?.let {
             ATH.setTint(it, ThemeStore.accentColor(context))
-
             it.requestFocus()
             it.setText(text)
             // Place cursor at the end
@@ -108,14 +108,10 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) :
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
-        onDialogClosed(mWhichButtonClicked == DialogInterface.BUTTON_POSITIVE)
-
-        text = editText?.text.toString()
-        callChangeListener(text)
-    }
-
-    protected fun onDialogClosed(positiveResult: Boolean) {
-
+        if (mWhichButtonClicked == DialogInterface.BUTTON_POSITIVE) {
+            text = editText?.text.toString()
+            callChangeListener(text)
+        }
     }
 
     override fun onSaveInstanceState(): Parcelable {
