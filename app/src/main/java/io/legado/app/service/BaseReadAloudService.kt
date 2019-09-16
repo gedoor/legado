@@ -179,7 +179,9 @@ abstract class BaseReadAloudService : BaseService(),
         upNotification()
     }
 
-
+    /**
+     * 音频焦点变化
+     */
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
