@@ -19,6 +19,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_replace_rule.*
