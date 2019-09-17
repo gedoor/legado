@@ -8,9 +8,8 @@ import androidx.preference.PreferenceViewHolder
 import io.legado.app.lib.theme.ThemeStore
 
 
-class ATEPreferenceCategory : PreferenceCategory {
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+class ATEPreferenceCategory(context: Context, attrs: AttributeSet) :
+    PreferenceCategory(context, attrs) {
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)

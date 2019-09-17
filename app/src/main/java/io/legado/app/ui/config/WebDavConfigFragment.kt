@@ -18,8 +18,18 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_web_dav)
-        bindPreferenceSummaryToValue(findPreference("web_dav_url"))
-        bindPreferenceSummaryToValue(findPreference("web_dav_account"))
+        findPreference<EditTextPreference>("web_dav_url")?.let {
+            it.setOnBindEditTextListener { editText ->
+                ATH.setTint(editText, requireContext().accentColor)
+            }
+            bindPreferenceSummaryToValue(it)
+        }
+        findPreference<EditTextPreference>("web_dav_account")?.let {
+            it.setOnBindEditTextListener { editText ->
+                ATH.setTint(editText, requireContext().accentColor)
+            }
+            bindPreferenceSummaryToValue(it)
+        }
         findPreference<EditTextPreference>("web_dav_password")?.let {
             it.setOnBindEditTextListener { editText ->
                 ATH.setTint(editText, requireContext().accentColor)
