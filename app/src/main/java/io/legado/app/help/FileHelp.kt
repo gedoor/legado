@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import io.legado.app.App
 import java.io.File
 import java.io.IOException
 
@@ -31,5 +32,10 @@ object FileHelp {
             e.printStackTrace()
         }
         return file
+    }
+
+    fun getCachePath(): String {
+        return App.INSTANCE.externalCacheDir?.absolutePath
+            ?: App.INSTANCE.cacheDir.absolutePath
     }
 }

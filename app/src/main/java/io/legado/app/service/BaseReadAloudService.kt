@@ -59,6 +59,7 @@ abstract class BaseReadAloudService : BaseService(),
         initMediaSession()
         initBroadcastReceiver()
         upNotification()
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
     }
 
     override fun onDestroy() {
@@ -116,7 +117,6 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     open fun play() {
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(Bus.ALOUD_STATE, Status.PLAY)
         upNotification()
     }
@@ -132,6 +132,7 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)

@@ -12,6 +12,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.FileHelp
+import io.legado.app.help.storage.Backup.defaultPath
 import io.legado.app.utils.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -24,10 +25,6 @@ object Restore {
             .options(Option.SUPPRESS_EXCEPTIONS)
             .build()
     )
-
-    private val defaultPath by lazy {
-        FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
-    }
 
     fun restore(path: String = defaultPath) {
         doAsync {
@@ -67,6 +64,7 @@ object Restore {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            uiThread { App.INSTANCE.toast("恢复完成") }
         }
     }
 

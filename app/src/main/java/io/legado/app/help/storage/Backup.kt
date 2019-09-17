@@ -13,10 +13,13 @@ import java.io.File
 
 object Backup {
 
+    val defaultPath by lazy {
+        FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
+    }
+
     fun backup() {
         doAsync {
-            val path =
-                FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
+            val path = defaultPath
             backupBookshelf(path)
             backupBookSource(path)
             backupRssSource(path)
@@ -29,8 +32,7 @@ object Backup {
 
     fun autoBackup(activity: AppCompatActivity) {
         doAsync {
-            val path =
-                FileUtils.getSdCardPath() + File.separator + "YueDu" + File.separator + "legadoBackUp"
+            val path = defaultPath
             backupBookshelf(path)
             backupBookSource(path)
             backupRssSource(path)
