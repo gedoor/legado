@@ -27,7 +27,6 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) :
     private var builder: AlertDialog.Builder? = null
     private var dialog: AlertDialog? = null
     private var editText: EditText? = null
-    var inputType: Int? = null
 
     /** Which button was clicked.  */
     private var mWhichButtonClicked: Int = 0
@@ -91,9 +90,7 @@ class ATEEditTextPreference(context: Context?, attrs: AttributeSet?) :
         checkNotNull(editText) { "Dialog view must contain an EditText with id" + " @android:id/edit" }
 
         view.findViewById<TextView>(android.R.id.message).visibility = View.GONE
-        inputType?.let {
-            editText?.inputType = it
-        }
+
         editText?.let {
             ATH.setTint(it, ThemeStore.accentColor(context))
             it.requestFocus()
