@@ -259,22 +259,9 @@
         android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/tv_loading"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/tv_text_button_nor"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/data_loading"
-            android:textColor="#767676"
-            android:textSize="16sp" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background"
             android:orientation="horizontal">
 
             <TextView
@@ -306,6 +293,18 @@
                 android:textSize="15sp" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/tv_text_button_nor"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/data_loading"
+            android:textColor="#767676"
+            android:textSize="16sp" />
 
         <View
             android:layout_width="match_parent"
