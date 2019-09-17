@@ -20,7 +20,10 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
         bindPreferenceSummaryToValue(findPreference("web_dav_url"))
         bindPreferenceSummaryToValue(findPreference("web_dav_account"))
         findPreference<ATEEditTextPreference>("web_dav_password")?.let {
-            it.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+            it.setOnBindEditTextListener { editText ->
+                editText.inputType =
+                    InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+            }
             bindPreferenceSummaryToValue(it)
         }
     }
