@@ -3,6 +3,7 @@ package io.legado.app.ui.config
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -10,7 +11,7 @@ import io.legado.app.R
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.prefs.ATEEditTextPreference
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getPrefString
 
 class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
@@ -19,8 +20,9 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
         addPreferencesFromResource(R.xml.pref_config_web_dav)
         bindPreferenceSummaryToValue(findPreference("web_dav_url"))
         bindPreferenceSummaryToValue(findPreference("web_dav_account"))
-        findPreference<ATEEditTextPreference>("web_dav_password")?.let {
+        findPreference<EditTextPreference>("web_dav_password")?.let {
             it.setOnBindEditTextListener { editText ->
+                ATH.setTint(editText, requireContext().accentColor)
                 editText.inputType =
                     InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
             }
