@@ -42,6 +42,12 @@ object Backup {
         }
     }
 
+    private fun backupPreference(path: String) {
+        val file = FileHelp.getFile(path + File.separator + "config.xml")
+
+
+    }
+
     private fun backupBookshelf(path: String) {
         val json = GSON.toJson(App.db.bookDao().allBooks)
         val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
