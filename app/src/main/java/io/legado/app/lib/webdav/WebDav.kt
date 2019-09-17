@@ -21,7 +21,7 @@ import java.util.*
 
 class WebDav @Throws(MalformedURLException::class)
 constructor(url: String) {
-    private val url: URL = URL(null, url, Handler.HANDLER)
+    private val url: URL = URL(null, url, Handler)
     private var httpUrl: String? = null
 
     var displayName: String? = null
