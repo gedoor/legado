@@ -14,6 +14,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.FileHelp
 import io.legado.app.help.storage.Backup.defaultPath
 import io.legado.app.utils.*
+import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -64,6 +65,18 @@ object Restore {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all?.map {
+                val edit = App.INSTANCE.defaultSharedPreferences.edit()
+                when (val value = it.value) {
+                    is Int -> edit.putInt(it.key, value)
+                    is Boolean -> edit.putBoolean(it.key, value)
+                    is Long -> edit.putLong(it.key, value)
+                    is Float -> edit.putFloat(it.key, value)
+                    is String -> edit.putString(it.key, value)
+                    else -> Unit
+                }
+                edit.commit()
+            }
             uiThread { App.INSTANCE.toast("恢复完成") }
         }
     }
@@ -91,7 +104,8 @@ object Restore {
                     book.origin = jsonItem.readString("$.tag") ?: ""
                     book.originName = jsonItem.readString("$.bookInfoBean.origin") ?: ""
                     book.author = jsonItem.readString("$.bookInfoBean.author") ?: ""
-                    book.type = if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
+                    book.type =
+                        if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
                     book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl
                     book.coverUrl = jsonItem.readString("$.bookInfoBean.coverUrl")
                     book.customCoverUrl = jsonItem.readString("$.customCoverPath")
