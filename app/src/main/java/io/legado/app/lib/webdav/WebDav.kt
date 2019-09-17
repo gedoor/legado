@@ -21,6 +21,7 @@ import java.util.*
 
 class WebDav @Throws(MalformedURLException::class)
 constructor(url: String) {
+    private val okHttpClient = HttpHelper.client
     private val url: URL = URL(null, url, Handler)
     private var httpUrl: String? = null
 
@@ -36,10 +37,9 @@ constructor(url: String) {
             return field
         }
 
-    private val okHttpClient = HttpHelper.client
+    fun getPath() = url.toString()
 
-    val path: String
-        get() = url.toString()
+    fun getHost() = url.host
 
     private val inputStream: InputStream?
         get() = getUrl()?.let { url ->
@@ -55,9 +55,6 @@ constructor(url: String) {
             }
             return null
         }
-
-    val host: String
-        get() = url.host
 
     private fun getUrl(): String? {
         if (httpUrl == null) {
@@ -111,7 +108,6 @@ constructor(url: String) {
                     return parseDir(body.string())
                 }
             }
-
         }
         return ArrayList()
     }
@@ -194,9 +190,7 @@ constructor(url: String) {
      */
     fun downloadTo(savedPath: String, replaceExisting: Boolean): Boolean {
         if (File(savedPath).exists()) {
-            if (!replaceExisting) {
-                return false
-            }
+            if (!replaceExisting) return false
         }
         val inputS = inputStream ?: return false
         File(savedPath).writeBytes(inputS.readBytes())
@@ -225,7 +219,6 @@ constructor(url: String) {
 
     /**
      * 执行请求，获取响应结果
-     *
      * @param requestBuilder 因为还需要追加验证信息，所以此处传递Request.Builder的对象，而不是Request的对象
      * @return 请求执行的结果
      */
