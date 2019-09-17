@@ -5,13 +5,13 @@
     <androidx.preference.EditTextPreference
         android:key="web_dav_url"
         android:title="WebDav 服务器地址"
-        android:summary="输入你的服务器地址"
+        android:summary="@string/web_dav_url_s"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.EditTextPreference
         android:key="web_dav_account"
         android:title="WebDav 账号"
-        android:summary="输入你的WebDav账号"
+        android:summary="@string/web_dav_account_s"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.EditTextPreference
