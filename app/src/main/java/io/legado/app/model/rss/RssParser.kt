@@ -40,44 +40,38 @@ object RssParser {
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_TITLE,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         currentArticle.title = xmlPullParser.nextText().trim()
                     }
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_LINK,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         currentArticle.link = xmlPullParser.nextText().trim()
                     }
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_AUTHOR,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         currentArticle.author = xmlPullParser.nextText().trim()
                     }
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_CATEGORY,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         currentArticle.categories.add(xmlPullParser.nextText().trim())
                     }
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_THUMBNAIL,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         currentArticle.image =
                             xmlPullParser.getAttributeValue(null, RSSKeywords.RSS_ITEM_URL)
                     }
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_ENCLOSURE,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         val type = xmlPullParser.getAttributeValue(null, RSSKeywords.RSS_ITEM_TYPE)
                         if (type != null && type.contains("image/")) {
                             currentArticle.image =
@@ -87,8 +81,7 @@ object RssParser {
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_DESCRIPTION,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         val description = xmlPullParser.nextText()
                         currentArticle.description = description.trim()
                         if (currentArticle.image == null) {
@@ -98,8 +91,7 @@ object RssParser {
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_CONTENT,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         val content = xmlPullParser.nextText().trim()
                         currentArticle.content = content
                         if (currentArticle.image == null) {
@@ -109,8 +101,7 @@ object RssParser {
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_PUB_DATE,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         val nextTokenType = xmlPullParser.next()
                         if (nextTokenType == XmlPullParser.TEXT) {
                             currentArticle.pubDate = xmlPullParser.text.trim()
@@ -121,15 +112,13 @@ object RssParser {
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_TIME,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         currentArticle.pubDate = xmlPullParser.nextText()
                     }
                     xmlPullParser.name.equals(
                         RSSKeywords.RSS_ITEM_GUID,
                         ignoreCase = true
-                    )
-                    -> if (insideItem) {
+                    ) -> if (insideItem) {
                         currentArticle.guid = xmlPullParser.nextText().trim()
                     }
                 }
