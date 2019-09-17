@@ -33,8 +33,8 @@ object RssParser {
             // Start parsing the item
             if (eventType == XmlPullParser.START_TAG) {
                 when {
-                    xmlPullParser.name
-                        .equals(RSSKeywords.RSS_ITEM, true) -> insideItem = true
+                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM, true) ->
+                        insideItem = true
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_TITLE, true) ->
                         if (insideItem) currentArticle.title = xmlPullParser.nextText().trim()
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_LINK, true) ->
