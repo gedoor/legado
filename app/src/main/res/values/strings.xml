@@ -504,5 +504,6 @@
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
     <string name="web_dav_url_s">输入你的服务器地址</string>
     <string name="web_dav_account_s">输入你的WebDav账号</string>
+    <string name="rss_source">订阅源</string>
 
 </resources>
