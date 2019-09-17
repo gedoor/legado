@@ -13,7 +13,7 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.Restore
+import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
@@ -50,7 +50,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             R.id.menu_restore -> PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Restore.restore() }
+                .onGranted { WebDavHelp.showRestoreDialog(requireContext()) }
                 .request()
         }
     }
