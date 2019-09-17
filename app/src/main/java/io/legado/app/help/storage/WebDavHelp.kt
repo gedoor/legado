@@ -10,9 +10,13 @@ import io.legado.app.utils.getPrefString
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.uiThread
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.min
 
 object WebDavHelp {
+    private val zipFilePath = FileHelp.getCachePath() + "/backup" + ".zip"
 
     fun getWebDavUrl(): String? {
         var url = App.INSTANCE.getPrefString("web_dav_url")
@@ -67,7 +71,6 @@ object WebDavHelp {
         doAsync {
             getWebDavUrl()?.let {
                 val file = WebDav(it + "legado/" + name)
-                val zipFilePath = FileHelp.getCachePath() + "/backup" + ".zip"
                 file.downloadTo(zipFilePath, true)
                 ZipUtils.unzipFile(zipFilePath, Backup.defaultPath)
                 Restore.restore()
@@ -76,6 +79,21 @@ object WebDavHelp {
     }
 
     fun backUpWebDav() {
-
+        if (initWebDav()) {
+            val paths = arrayListOf<String>()
+            paths.add(Backup.defaultPath + File.separator + "bookshelf.json")
+            paths.add(Backup.defaultPath + File.separator + "bookSource.json")
+            paths.add(Backup.defaultPath + File.separator + "rssSource.json")
+            paths.add(Backup.defaultPath + File.separator + "replaceRule.json")
+            FileHelp.deleteFile(zipFilePath)
+            if (ZipUtils.zipFiles(paths, zipFilePath)) {
+                WebDav(getWebDavUrl() + "legado").makeAsDir()
+                val putUrl = getWebDavUrl() + "legado/backup" + SimpleDateFormat(
+                    "yyyy-MM-dd",
+                    Locale.getDefault()
+                ).format(Date(System.currentTimeMillis())) + ".zip"
+                WebDav(putUrl).upload(zipFilePath)
+            }
+        }
     }
 }

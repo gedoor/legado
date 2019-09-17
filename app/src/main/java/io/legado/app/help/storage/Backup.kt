@@ -24,6 +24,7 @@ object Backup {
             backupBookSource(path)
             backupRssSource(path)
             backupReplaceRule(path)
+            WebDavHelp.backUpWebDav()
             uiThread {
                 App.INSTANCE.toast(R.string.backup_success)
             }
@@ -37,6 +38,7 @@ object Backup {
             backupBookSource(path)
             backupRssSource(path)
             backupReplaceRule(path)
+            WebDavHelp.backUpWebDav()
         }
     }
 

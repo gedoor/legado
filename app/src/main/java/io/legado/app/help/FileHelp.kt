@@ -38,4 +38,21 @@ object FileHelp {
         return App.INSTANCE.externalCacheDir?.absolutePath
             ?: App.INSTANCE.cacheDir.absolutePath
     }
+
+    //递归删除文件夹下的数据
+    @Synchronized
+    fun deleteFile(filePath: String) {
+        val file = File(filePath)
+        if (!file.exists()) return
+
+        if (file.isDirectory) {
+            val files = file.listFiles()
+            for (subFile in files) {
+                val path = subFile.path
+                deleteFile(path)
+            }
+        }
+        //删除文件
+        file.delete()
+    }
 }
