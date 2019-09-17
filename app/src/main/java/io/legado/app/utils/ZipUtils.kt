@@ -164,24 +164,24 @@ object ZipUtils {
         zos: ZipOutputStream,
         comment: String?
     ): Boolean {
-        var rootPath = rootPath
+        var rootPath1 = rootPath
         if (!srcFile.exists()) return true
-        rootPath = rootPath + (if (isSpace(rootPath)) "" else File.separator) + srcFile.name
+        rootPath1 = rootPath1 + (if (isSpace(rootPath1)) "" else File.separator) + srcFile.name
         if (srcFile.isDirectory) {
             val fileList = srcFile.listFiles()
             if (fileList == null || fileList.isEmpty()) {
-                val entry = ZipEntry("$rootPath/")
+                val entry = ZipEntry("$rootPath1/")
                 entry.comment = comment
                 zos.putNextEntry(entry)
                 zos.closeEntry()
             } else {
                 for (file in fileList) {
-                    if (!zipFile(file, rootPath, zos, comment)) return false
+                    if (!zipFile(file, rootPath1, zos, comment)) return false
                 }
             }
         } else {
             BufferedInputStream(FileInputStream(srcFile)).use { `is` ->
-                val entry = ZipEntry(rootPath)
+                val entry = ZipEntry(rootPath1)
                 entry.comment = comment
                 zos.putNextEntry(entry)
                 zos.write(`is`.readBytes())
