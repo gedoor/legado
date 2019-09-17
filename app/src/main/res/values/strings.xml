@@ -501,5 +501,6 @@
     <string name="enable_selection">启用所选</string>
     <string name="disable_selection">禁用所选</string>
     <string name="tts">TTS</string>
+    <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
 
 </resources>

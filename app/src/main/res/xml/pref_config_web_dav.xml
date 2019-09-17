@@ -17,11 +17,11 @@
     <io.legado.app.lib.theme.prefs.ATEEditTextPreference
         android:key="web_dav_password"
         android:title="WebDav 密码"
-        android:summary="输入你的WebDav授权密码"
+        android:summary="@string/web_dav_pw_s"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
-        android:key="web_dav_restore"
+        android:key="web_dav_backup"
         android:title="备份"
         app:iconSpaceReserved="false" />
 
