@@ -47,10 +47,7 @@ constructor(url: String) {
         get() = getUrl()?.let { url ->
             val request = Request.Builder().url(url)
             HttpAuth.auth?.let {
-                request.header(
-                    "Authorization",
-                    Credentials.basic(it.user, it.pass)
-                )
+                request.header("Authorization", Credentials.basic(it.user, it.pass))
             }
 
             try {
@@ -263,8 +260,7 @@ constructor(url: String) {
     }
 
     companion object {
-        val TAG = WebDav::class.java.simpleName
-        val OBJECT_NOT_EXISTS_TAG = "ObjectNotFound"
+
         // 指定返回哪些属性
         private const val DIR = """<?xml version=\"1.0\"?>\n
                 <a:propfind xmlns:a=\"DAV:\">\n
@@ -273,26 +269,5 @@ constructor(url: String) {
                 </a:prop>\n
                 </a:propfind>"""
 
-        /**
-         * 打印对象内的所有属性
-         */
-        fun <T> printAllAttrs(className: String, o: Any): T? {
-            try {
-                val c = Class.forName(className)
-                val fields = c.declaredFields
-                for (f in fields) {
-                    f.isAccessible = true
-                }
-                println("=============$className===============")
-                for (f in fields) {
-                    val field = f.toString().substring(f.toString().lastIndexOf(".") + 1) //取出属性名称
-                    println(field + " --> " + f.get(o))
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-            return null
-        }
     }
 }
