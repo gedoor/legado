@@ -467,11 +467,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         val book = viewModel.bookData.value
         val textChapter = viewModel.curTextChapter
         if (book != null && textChapter != null) {
-            val key = System.currentTimeMillis().toString()
-            IntentDataHelp.putData(key, textChapter)
+            val key = IntentDataHelp.putData(textChapter)
             ReadAloud.play(
-                this, book.name, textChapter.title,
-                viewModel.durPageIndex, key, play
+                this,
+                book.name,
+                textChapter.title,
+                viewModel.durPageIndex,
+                key,
+                play
             )
         }
     }

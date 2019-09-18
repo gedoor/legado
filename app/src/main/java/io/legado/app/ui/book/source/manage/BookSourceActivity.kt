@@ -21,6 +21,7 @@ import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.storage.Restore
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.service.CheckSourceService
 import io.legado.app.ui.book.source.edit.SourceEditActivity
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
+import org.jetbrains.anko.startService
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     BookSourceAdapter.CallBack,
@@ -80,6 +82,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
+            R.id.menu_check_book_source ->
+                startService<CheckSourceService>(Pair("data", adapter.getSelectionIds()))
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)

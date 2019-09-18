@@ -4,8 +4,10 @@ object IntentDataHelp {
 
     private val bigData: MutableMap<String, Any> = mutableMapOf()
 
-    fun putData(key: String, data: Any) {
+    fun putData(data: Any, tag: String = ""): String {
+        val key = tag + System.currentTimeMillis()
         bigData[key] = data
+        return key
     }
 
     fun getData(key: String): Any? {
