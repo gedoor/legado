@@ -17,7 +17,7 @@ object LogUtils {
             addFileHandler(
                 this,
                 Level.INFO,
-                FileHelp.getCachePath() + File.separator + System.currentTimeMillis() + ".log"
+                FileHelp.getCachePath() + File.separator + getCurrentDateStr(DATE_PATTERN) + ".log"
             )
         }
     }
@@ -28,8 +28,8 @@ object LogUtils {
         }
     }
 
-    // 正常的日期格式
     const val DATE_PATTERN_FULL = "yyyy-MM-dd HH:mm:ss"
+    private const val DATE_PATTERN = "yyyy-MM-dd"
 
     /**
      * 为log添加控制台handler
