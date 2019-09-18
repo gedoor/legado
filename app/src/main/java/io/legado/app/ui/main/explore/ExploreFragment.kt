@@ -2,6 +2,8 @@ package io.legado.app.ui.main.explore
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
@@ -26,6 +28,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
 
     private lateinit var adapter: ExploreAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private var liveExplore: LiveData<List<BookSource>>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -40,6 +43,15 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
         search_view.isSubmitButtonEnabled = true
         search_view.queryHint = getString(R.string.screen_find)
         search_view.clearFocus()
+        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
     }
 
     private fun initRecyclerView() {
@@ -50,8 +62,14 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
         rv_find.adapter = adapter
     }
 
-    private fun initData() {
-        App.db.bookSourceDao().liveExplore().observe(viewLifecycleOwner, Observer {
+    private fun initData(key: String? = null) {
+        liveExplore?.removeObservers(viewLifecycleOwner)
+        liveExplore = if (key.isNullOrBlank()) {
+            App.db.bookSourceDao().liveExplore()
+        } else {
+            App.db.bookSourceDao().liveExplore("%$key%")
+        }
+        liveExplore?.observe(viewLifecycleOwner, Observer {
             adapter.setItems(it)
         })
     }
