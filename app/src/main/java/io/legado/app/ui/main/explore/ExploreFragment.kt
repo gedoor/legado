@@ -49,6 +49,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                initData(newText)
                 return false
             }
         })
