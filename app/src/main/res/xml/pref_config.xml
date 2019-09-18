@@ -29,4 +29,9 @@
         android:title="@string/download_path"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
+        android:key="recordLog"
+        android:title="记录日志"
+        app:iconSpaceReserved="false" />
 </androidx.preference.PreferenceScreen>
