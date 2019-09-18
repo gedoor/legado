@@ -12,13 +12,13 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_source_debug.*
+import kotlinx.android.synthetic.main.activity_book_source_debug.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
-class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_source_debug) {
+class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_book_source_debug) {
 
     override val viewModel: SourceDebugModel
         get() = getViewModel(SourceDebugModel::class.java)

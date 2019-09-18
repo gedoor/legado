@@ -24,14 +24,14 @@ import io.legado.app.ui.book.source.debug.SourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_source_edit.*
+import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
 class SourceEditActivity :
-    VMBaseActivity<SourceEditViewModel>(R.layout.activity_source_edit, false),
+    VMBaseActivity<SourceEditViewModel>(R.layout.activity_book_source_edit, false),
     KeyboardToolPop.OnClickListener {
     override val viewModel: SourceEditViewModel
         get() = getViewModel(SourceEditViewModel::class.java)

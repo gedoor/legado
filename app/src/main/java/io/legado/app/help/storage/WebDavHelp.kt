@@ -88,10 +88,9 @@ object WebDavHelp {
             FileHelp.deleteFile(zipFilePath)
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 WebDav(getWebDavUrl() + "legado").makeAsDir()
-                val putUrl = getWebDavUrl() + "legado/backup" + SimpleDateFormat(
-                    "yyyy-MM-dd",
-                    Locale.getDefault()
-                ).format(Date(System.currentTimeMillis())) + ".zip"
+                val putUrl = getWebDavUrl() + "legado/backup" +
+                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            .format(Date(System.currentTimeMillis())) + ".zip"
                 WebDav(putUrl).upload(zipFilePath)
             }
         }
