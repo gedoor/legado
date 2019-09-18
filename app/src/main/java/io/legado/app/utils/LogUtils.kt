@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import io.legado.app.App
 import io.legado.app.help.FileHelp
 import java.io.File
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.*
@@ -31,16 +30,6 @@ object LogUtils {
 
     // 正常的日期格式
     const val DATE_PATTERN_FULL = "yyyy-MM-dd HH:mm:ss"
-
-    /**
-     * 为log设置等级
-     *
-     * @param log
-     * @param level
-     */
-    fun setLogLevel(log: Logger, level: Level) {
-        log.level = level
-    }
 
     /**
      * 为log添加控制台handler
@@ -78,20 +67,13 @@ object LogUtils {
             fileHandler.level = level
             fileHandler.formatter = object : Formatter() {
                 override fun format(record: LogRecord): String {
-
                     // 设置文件输出格式
-                    return (getCurrentDateStr(DATE_PATTERN_FULL) +
-                            " - Level:" + record.level.name.substring(0, 1) +
-                            " " + record.message + "\n")
+                    return (getCurrentDateStr(DATE_PATTERN_FULL) + ":" + record.message + "\n")
                 }
             }
-
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
-
         // 添加输出文件handler
         log.addHandler(fileHandler)
     }
