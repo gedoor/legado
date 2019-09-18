@@ -25,9 +25,7 @@ object IntentHelp {
         return PendingIntent.getService(
             context,
             0,
-            Intent(context, T::class.java).apply {
-                this.action = action
-            },
+            Intent(context, T::class.java).apply { this.action = action },
             PendingIntent.FLAG_UPDATE_CURRENT
         )
     }

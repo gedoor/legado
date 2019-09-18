@@ -297,24 +297,24 @@ abstract class BaseReadAloudService : BaseService(),
             builder.addAction(
                 R.drawable.ic_play_24dp,
                 getString(R.string.resume),
-                aloudServicePendingIntent(this, Action.resume)
+                aloudServicePendingIntent(Action.resume)
             )
         } else {
             builder.addAction(
                 R.drawable.ic_pause_24dp,
                 getString(R.string.pause),
-                aloudServicePendingIntent(this, Action.pause)
+                aloudServicePendingIntent(Action.pause)
             )
         }
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.stop),
-            aloudServicePendingIntent(this, Action.stop)
+            aloudServicePendingIntent(Action.stop)
         )
         builder.addAction(
             R.drawable.ic_time_add_24dp,
             getString(R.string.set_timer),
-            aloudServicePendingIntent(this, Action.addTimer)
+            aloudServicePendingIntent(Action.addTimer)
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
@@ -326,6 +326,6 @@ abstract class BaseReadAloudService : BaseService(),
         startForeground(112201, notification)
     }
 
-    abstract fun aloudServicePendingIntent(context: Context, actionStr: String): PendingIntent
+    abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?
 
 }

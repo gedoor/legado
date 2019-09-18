@@ -1,10 +1,9 @@
 package io.legado.app.service
 
 import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.media.MediaPlayer
 import io.legado.app.constant.Bus
+import io.legado.app.help.IntentHelp
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
@@ -103,9 +102,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
-    override fun aloudServicePendingIntent(context: Context, actionStr: String): PendingIntent {
-        val intent = Intent(context, HttpReadAloudService::class.java)
-        intent.action = actionStr
-        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
+        return IntentHelp.servicePendingIntent<HttpReadAloudService>(this, actionStr)
     }
 }
