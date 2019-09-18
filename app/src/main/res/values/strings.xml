@@ -506,5 +506,6 @@
     <string name="web_dav_account_s">输入你的WebDav账号</string>
     <string name="rss_source">订阅源</string>
     <string name="screen">筛选</string>
+    <string name="screen_find">筛选发现</string>
 
 </resources>
