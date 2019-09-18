@@ -32,7 +32,9 @@ constructor(url: String) {
     var urlName = ""
         get() {
             if (field.isEmpty()) {
-                this.urlName = (if (parent.isEmpty()) url.file else url.toString().replace(parent, "")).replace("/", "")
+                this.urlName = (if (parent.isEmpty()) url.file else url.toString()
+                    .replace(parent, ""))
+                    .replace("/", "")
             }
             return field
         }
@@ -44,7 +46,12 @@ constructor(url: String) {
     private val inputStream: InputStream?
         get() = getUrl()?.let { url ->
             val request = Request.Builder().url(url)
-            HttpAuth.auth?.let { request.header("Authorization", Credentials.basic(it.user, it.pass)) }
+            HttpAuth.auth?.let {
+                request.header(
+                    "Authorization",
+                    Credentials.basic(it.user, it.pass)
+                )
+            }
 
             try {
                 return okHttpClient.newCall(request.build()).execute().body?.byteStream()
@@ -67,7 +74,6 @@ constructor(url: String) {
             } catch (e: UnsupportedEncodingException) {
                 e.printStackTrace()
             }
-
         }
         return httpUrl
     }
@@ -131,7 +137,12 @@ constructor(url: String) {
                 // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
                 .method("PROPFIND", requestPropsStr.toRequestBody("text/plain".toMediaTypeOrNull()))
 
-            HttpAuth.auth?.let { request.header("Authorization", Credentials.basic(it.user, it.pass)) }
+            HttpAuth.auth?.let {
+                request.header(
+                    "Authorization",
+                    Credentials.basic(it.user, it.pass)
+                )
+            }
 
             request.header("Depth", if (depth < 0) "infinity" else depth.toString())
 
@@ -224,7 +235,12 @@ constructor(url: String) {
      */
     @Throws(IOException::class)
     private fun execRequest(requestBuilder: Request.Builder): Boolean {
-        HttpAuth.auth?.let { requestBuilder.header("Authorization", Credentials.basic(it.user, it.pass)) }
+        HttpAuth.auth?.let {
+            requestBuilder.header(
+                "Authorization",
+                Credentials.basic(it.user, it.pass)
+            )
+        }
 
         val response = okHttpClient.newCall(requestBuilder.build()).execute()
         return response.isSuccessful
@@ -250,12 +266,12 @@ constructor(url: String) {
         val TAG = WebDav::class.java.simpleName
         val OBJECT_NOT_EXISTS_TAG = "ObjectNotFound"
         // 指定返回哪些属性
-        private val DIR = "<?xml version=\"1.0\"?>\n" +
-                "<a:propfind xmlns:a=\"DAV:\">\n" +
-                "<a:prop>\n" +
-                "<a:displayname/>\n<a:resourcetype/>\n<a:getcontentlength/>\n<a:creationdate/>\n<a:getlastmodified/>\n%s" +
-                "</a:prop>\n" +
-                "</a:propfind>"
+        private const val DIR = """<?xml version=\"1.0\"?>\n
+                <a:propfind xmlns:a=\"DAV:\">\n
+                <a:prop>\n
+                <a:displayname/>\n<a:resourcetype/>\n<a:getcontentlength/>\n<a:creationdate/>\n<a:getlastmodified/>\n%s
+                </a:prop>\n
+                </a:propfind>"""
 
         /**
          * 打印对象内的所有属性
