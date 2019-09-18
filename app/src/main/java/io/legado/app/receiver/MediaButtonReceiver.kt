@@ -22,10 +22,10 @@ class MediaButtonReceiver : BroadcastReceiver() {
 
         fun handleIntent(context: Context, intent: Intent): Boolean {
             val intentAction = intent.action
-            LogUtils.log("耳机按键: $intentAction")
+            val keyEventAction = intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)?.action
+            LogUtils.log("耳机按键: $intentAction $keyEventAction")
             if (Intent.ACTION_MEDIA_BUTTON == intentAction) {
-                val action = intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)?.action
-                if (action == KeyEvent.ACTION_DOWN) {
+                if (keyEventAction == KeyEvent.ACTION_DOWN) {
                     readAloud(context)
                     return true
                 }
