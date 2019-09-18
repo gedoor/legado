@@ -42,39 +42,6 @@ fun Context.getSecondaryDisabledTextColor(dark: Boolean): Int {
     } else ContextCompat.getColor(this, R.color.secondary_text_disabled_material_dark)
 }
 
-
-@SuppressLint("PrivateResource")
-@ColorInt
-fun Fragment.getPrimaryTextColor(dark: Boolean): Int {
-    return if (dark) {
-        ContextCompat.getColor(requireContext(), R.color.primary_text_default_material_light)
-    } else ContextCompat.getColor(requireContext(), R.color.primary_text_default_material_dark)
-}
-
-@SuppressLint("PrivateResource")
-@ColorInt
-fun Fragment.getSecondaryTextColor(dark: Boolean): Int {
-    return if (dark) {
-        ContextCompat.getColor(requireContext(), R.color.secondary_text_default_material_light)
-    } else ContextCompat.getColor(requireContext(), R.color.secondary_text_default_material_dark)
-}
-
-@SuppressLint("PrivateResource")
-@ColorInt
-fun Fragment.getPrimaryDisabledTextColor(dark: Boolean): Int {
-    return if (dark) {
-        ContextCompat.getColor(requireContext(), R.color.primary_text_disabled_material_light)
-    } else ContextCompat.getColor(requireContext(), R.color.primary_text_disabled_material_dark)
-}
-
-@SuppressLint("PrivateResource")
-@ColorInt
-fun Fragment.getSecondaryDisabledTextColor(dark: Boolean): Int {
-    return if (dark) {
-        ContextCompat.getColor(requireContext(), R.color.secondary_text_disabled_material_light)
-    } else ContextCompat.getColor(requireContext(), R.color.secondary_text_disabled_material_dark)
-}
-
 val Context.primaryColor: Int
     get() = ThemeStore.primaryColor(this)
 
@@ -112,16 +79,16 @@ val Fragment.backgroundColor: Int
     get() = ThemeStore.backgroundColor(requireContext())
 
 val Fragment.primaryTextColor: Int
-    get() = getPrimaryTextColor(isDarkTheme)
+    get() = requireContext().getPrimaryTextColor(isDarkTheme)
 
 val Fragment.secondaryTextColor: Int
-    get() = getSecondaryTextColor(isDarkTheme)
+    get() = requireContext().getSecondaryTextColor(isDarkTheme)
 
 val Fragment.primaryDisabledTextColor: Int
-    get() = getPrimaryDisabledTextColor(isDarkTheme)
+    get() = requireContext().getPrimaryDisabledTextColor(isDarkTheme)
 
 val Fragment.secondaryDisabledTextColor: Int
-    get() = getSecondaryDisabledTextColor(isDarkTheme)
+    get() = requireContext().getSecondaryDisabledTextColor(isDarkTheme)
 
 val Context.buttonDisabledColor: Int
     get() = if (isDarkTheme) {
