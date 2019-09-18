@@ -82,7 +82,7 @@ object Restore {
     }
 
     fun importYueDuData(context: Context) {
-        val file = File(FileUtils.getSdPath(), "YueDu")
+        val file = File(FileUtils.getSdCardPath(), "YueDu")
 
         // 导入书架
         val shelfFile = File(file, "myBookShelf.json")

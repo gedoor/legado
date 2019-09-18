@@ -16,7 +16,6 @@ import java.util.*
 
 
 object FileUtils {
-    fun getSdPath() = Environment.getExternalStorageDirectory().absolutePath
 
     fun getFileByPath(filePath: String): File? {
         return if (filePath.isBlank()) null else File(filePath)
@@ -41,8 +40,8 @@ object FileUtils {
         try {
             val getVolumeList = storageManager.javaClass.getMethod("getVolumeList")
 
-            val storageValumeClazz = Class.forName("android.os.storage.StorageVolume")
-            val getPath = storageValumeClazz.getMethod("getPath")
+            val storageVolumeClazz = Class.forName("android.os.storage.StorageVolume")
+            val getPath = storageVolumeClazz.getMethod("getPath")
 
             val invokeVolumeList = getVolumeList.invoke(storageManager)
             val length = Array.getLength(invokeVolumeList)
