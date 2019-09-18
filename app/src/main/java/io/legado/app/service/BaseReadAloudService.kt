@@ -18,6 +18,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
@@ -289,7 +290,9 @@ abstract class BaseReadAloudService : BaseService(),
             .setOngoing(true)
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
-            .setContentIntent(readBookActivityPendingIntent(this))
+            .setContentIntent(
+                IntentHelp.servicePendingIntent<ReadBookActivity>(this, "activity")
+            )
         if (pause) {
             builder.addAction(
                 R.drawable.ic_play_24dp,
@@ -321,12 +324,6 @@ abstract class BaseReadAloudService : BaseService(),
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(112201, notification)
-    }
-
-    private fun readBookActivityPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, ReadBookActivity::class.java)
-        intent.action = "readBookActivity"
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     abstract fun aloudServicePendingIntent(context: Context, actionStr: String): PendingIntent
