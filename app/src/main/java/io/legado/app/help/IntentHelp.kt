@@ -29,4 +29,13 @@ object IntentHelp {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
+
+    inline fun <reified T> activityPendingIntent(context: Context, action: String): PendingIntent? {
+        return PendingIntent.getActivity(
+            context,
+            0,
+            Intent(context, T::class.java).apply { this.action = action },
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
 }

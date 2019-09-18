@@ -291,7 +291,7 @@ abstract class BaseReadAloudService : BaseService(),
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(
-                IntentHelp.servicePendingIntent<ReadBookActivity>(this, "activity")
+                IntentHelp.activityPendingIntent<ReadBookActivity>(this, "activity")
             )
         if (pause) {
             builder.addAction(

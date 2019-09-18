@@ -36,7 +36,7 @@ class CheckSourceService : BaseService() {
             .setContentTitle(getString(R.string.check_book_source))
             .setContentText(msg)
             .setContentIntent(
-                IntentHelp.servicePendingIntent<BookSourceActivity>(this, "activity")
+                IntentHelp.activityPendingIntent<BookSourceActivity>(this, "activity")
             )
             .addAction(
                 R.drawable.ic_stop_black_24dp,
