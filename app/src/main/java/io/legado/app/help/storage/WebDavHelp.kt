@@ -78,13 +78,13 @@ object WebDavHelp {
         }
     }
 
-    fun backUpWebDav() {
+    fun backUpWebDav(path: String) {
         if (initWebDav()) {
             val paths = arrayListOf<String>()
-            paths.add(Backup.defaultPath + File.separator + "bookshelf.json")
-            paths.add(Backup.defaultPath + File.separator + "bookSource.json")
-            paths.add(Backup.defaultPath + File.separator + "rssSource.json")
-            paths.add(Backup.defaultPath + File.separator + "replaceRule.json")
+            paths.add(path + File.separator + "bookshelf.json")
+            paths.add(path + File.separator + "bookSource.json")
+            paths.add(path + File.separator + "rssSource.json")
+            paths.add(path + File.separator + "replaceRule.json")
             FileHelp.deleteFile(zipFilePath)
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 WebDav(getWebDavUrl() + "legado").makeAsDir()

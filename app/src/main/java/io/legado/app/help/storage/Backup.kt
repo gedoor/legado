@@ -1,6 +1,5 @@
 package io.legado.app.help.storage
 
-import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.FileHelp
@@ -27,21 +26,21 @@ object Backup {
             backupRssSource(path)
             backupReplaceRule(path)
             backupPreference(path)
-            WebDavHelp.backUpWebDav()
+            WebDavHelp.backUpWebDav(path)
             uiThread {
                 App.INSTANCE.toast(R.string.backup_success)
             }
         }
     }
 
-    fun autoBackup(activity: AppCompatActivity) {
+    fun autoBackup() {
         doAsync {
-            val path = defaultPath
+            val path = defaultPath + File.separator + "autoBackup"
             backupBookshelf(path)
             backupBookSource(path)
             backupRssSource(path)
             backupReplaceRule(path)
-            WebDavHelp.backUpWebDav()
+            WebDavHelp.backUpWebDav(path)
         }
     }
 
