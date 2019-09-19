@@ -219,7 +219,7 @@ abstract class BaseReadAloudService : BaseService(),
      * 初始化MediaSession, 注册多媒体按钮
      */
     private fun initMediaSession() {
-        mediaSessionCompat = MediaSessionCompat(this, TTSReadAloudService.tag)
+        mediaSessionCompat = MediaSessionCompat(this, "readAloud")
         mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)

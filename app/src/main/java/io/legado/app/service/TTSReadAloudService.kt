@@ -19,7 +19,6 @@ import java.util.*
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
     companion object {
-        val tag: String = TTSReadAloudService::class.java.simpleName
         var textToSpeech: TextToSpeech? = null
 
         fun clearTTS() {
