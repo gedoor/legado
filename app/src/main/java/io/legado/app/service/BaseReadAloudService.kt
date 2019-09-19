@@ -69,6 +69,7 @@ abstract class BaseReadAloudService : BaseService(),
         unregisterReceiver(broadcastReceiver)
         postEvent(Bus.ALOUD_STATE, Status.STOP)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
+        mediaSessionCompat?.release()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
