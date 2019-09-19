@@ -23,7 +23,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private lateinit var adapter: RssSourceAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-
+        initRecyclerView()
     }
 
     private fun initRecyclerView() {
@@ -44,23 +44,23 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     override fun del(source: RssSource) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun edit(source: RssSource) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun update(vararg source: RssSource) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun toTop(source: RssSource) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun upOrder() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
 }
