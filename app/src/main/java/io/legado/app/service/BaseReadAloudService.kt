@@ -187,28 +187,6 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     /**
-     * 音频焦点变化
-     */
-    override fun onAudioFocusChange(focusChange: Int) {
-        when (focusChange) {
-            AudioManager.AUDIOFOCUS_GAIN -> {
-                // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
-                if (!pause) resumeReadAloud()
-            }
-            AudioManager.AUDIOFOCUS_LOSS -> {
-                // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
-                if (!pause) pauseReadAloud(false)
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
-            }
-        }
-    }
-
-    /**
      * @return 音频焦点
      */
     fun requestFocus(): Boolean {
@@ -225,6 +203,9 @@ abstract class BaseReadAloudService : BaseService(),
         return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 
+    /**
+     * 更新媒体状态
+     */
     private fun upMediaSessionPlaybackState(state: Int) {
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
@@ -273,6 +254,28 @@ abstract class BaseReadAloudService : BaseService(),
         }
         val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    /**
+     * 音频焦点变化
+     */
+    override fun onAudioFocusChange(focusChange: Int) {
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
+                if (!pause) resumeReadAloud()
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
+                if (!pause) pauseReadAloud(false)
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
+            }
+        }
     }
 
     /**
