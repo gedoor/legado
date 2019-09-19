@@ -1,7 +1,10 @@
 package io.legado.app.service
 
 import android.app.PendingIntent
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
@@ -11,6 +14,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
@@ -234,23 +238,25 @@ abstract class BaseReadAloudService : BaseService(),
      * 初始化MediaSession, 注册多媒体按钮
      */
     private fun initMediaSession() {
-        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON).apply {
-            component = ComponentName(packageName, MediaButtonReceiver::class.java.name)
-        }
-        val mediaButtonReceiverPendingIntent = PendingIntent.getBroadcast(
-            this,
-            0,
-            mediaButtonIntent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
-
         mediaSessionCompat = MediaSessionCompat(this, TTSReadAloudService.tag)
         mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
             }
         })
-        mediaSessionCompat?.setMediaButtonReceiver(mediaButtonReceiverPendingIntent)
+        mediaSessionCompat?.setMediaButtonReceiver(
+            PendingIntent.getBroadcast(
+                this,
+                0,
+                Intent(
+                    Intent.ACTION_MEDIA_BUTTON,
+                    null,
+                    App.INSTANCE,
+                    MediaButtonReceiver::class.java
+                ),
+                PendingIntent.FLAG_CANCEL_CURRENT
+            )
+        )
         mediaSessionCompat?.isActive = true
     }
 
