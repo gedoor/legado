@@ -22,6 +22,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ReadAloud
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -519,6 +520,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 super.finish()
             }
         } ?: super.finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Backup.autoBackup()
     }
 
     override fun observeLiveBus() {
