@@ -36,7 +36,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
-        menuInflater.inflate(R.menu.my_config, menu)
+        menuInflater.inflate(R.menu.main_my, menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
