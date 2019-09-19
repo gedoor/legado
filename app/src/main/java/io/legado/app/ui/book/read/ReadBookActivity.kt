@@ -207,7 +207,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 }
             }
             KeyEvent.KEYCODE_SPACE -> {
-
+                page_view.moveToNextPage()
             }
         }
         return super.onKeyDown(keyCode, event)
