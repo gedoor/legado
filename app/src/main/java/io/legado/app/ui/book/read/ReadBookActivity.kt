@@ -13,6 +13,7 @@ import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHO
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
@@ -524,7 +525,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
 
     override fun onDestroy() {
         super.onDestroy()
-        Backup.autoBackup()
+        if (!BuildConfig.DEBUG) {
+            Backup.autoBackup()
+        }
     }
 
     override fun observeLiveBus() {
