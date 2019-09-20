@@ -60,8 +60,12 @@ object ChapterProvider {
             item.pageSize = textPages.size
         }
         return TextChapter(
-            bookChapter.index, bookChapter.title, bookChapter.url,
-            textPages, pageLengths
+            bookChapter.index,
+            bookChapter.title,
+            bookChapter.url,
+            textPages,
+            pageLengths,
+            chapterSize
         )
     }
 

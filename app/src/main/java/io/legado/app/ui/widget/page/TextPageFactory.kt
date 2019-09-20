@@ -62,11 +62,18 @@ class TextPageFactory private constructor(dataSource: DataSource) :
     }
 
     override fun currentPage(): TextPage? = dataSource.pageIndex().let { index ->
-        return dataSource.getCurrentChapter()?.page(index)
-            ?: TextPage(index = index, title = "index：$index")
+        return if (dataSource.isScroll()) {
+            dataSource.getCurrentChapter()?.scrollPage()
+        } else {
+            dataSource.getCurrentChapter()?.page(index)
+        } ?: TextPage(index = index, title = "index：$index")
     }
 
     override fun nextPage(): TextPage? = dataSource.pageIndex().let { index ->
+        if (dataSource.isScroll()) {
+            return dataSource.getNextChapter()?.scrollPage()
+                ?: TextPage(index = index + 1, title = "index：${index + 1}")
+        }
         dataSource.getCurrentChapter()?.let {
             if (index < it.pageSize() - 1) {
                 return dataSource.getCurrentChapter()?.page(index + 1)?.removePageAloudSpan()
@@ -78,6 +85,10 @@ class TextPageFactory private constructor(dataSource: DataSource) :
     }
 
     override fun previousPage(): TextPage? = dataSource.pageIndex().let { index ->
+        if (dataSource.isScroll()) {
+            return dataSource.getPreviousChapter()?.scrollPage()
+                ?: TextPage(index = index + 1, title = "index：${index + 1}")
+        }
         if (index > 0) {
             return dataSource.getCurrentChapter()?.page(index - 1)?.removePageAloudSpan()
                 ?: TextPage(index = index - 1, title = "index：${index - 1}")

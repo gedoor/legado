@@ -1,8 +1,7 @@
 package io.legado.app.ui.widget.page
 
-import io.legado.app.data.entities.BookChapter
-
 interface DataSource {
+    fun isScroll(): Boolean
 
     fun pageIndex(): Int
 
@@ -28,7 +27,4 @@ interface DataSource {
 
     fun moveToPrevChapter()
 
-    interface CallBack {
-        fun onLoadFinish(bookChapter: BookChapter, content: String)
-    }
 }

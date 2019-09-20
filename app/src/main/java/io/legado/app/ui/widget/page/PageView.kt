@@ -36,6 +36,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         upPageAnim()
 
         setPageFactory(TextPageFactory.create(object : DataSource {
+            override fun isScroll(): Boolean {
+                return pageDelegate is ScrollPageDelegate
+            }
+
             override fun pageIndex(): Int {
                 return callback?.durChapterPos() ?: 0
             }

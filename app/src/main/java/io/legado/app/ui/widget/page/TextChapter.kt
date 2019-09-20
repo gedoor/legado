@@ -1,11 +1,14 @@
 package io.legado.app.ui.widget.page
 
+import android.text.SpannableStringBuilder
+
 data class TextChapter(
     val position: Int,
     val title: String,
     val url: String,
     val pages: List<TextPage>,
-    val pageLengths: List<Int>
+    val pageLengths: List<Int>,
+    val chaptersSize: Int
 ) {
     fun page(index: Int): TextPage? {
         if (index >= 0 && index < pages.size) {
@@ -17,6 +20,17 @@ data class TextChapter(
     fun lastPage(): TextPage? {
         if (pages.isNotEmpty()) {
             return pages[pages.lastIndex]
+        }
+        return null
+    }
+
+    fun scrollPage(): TextPage? {
+        if (pages.isNotEmpty()) {
+            val spannableStringBuilder = SpannableStringBuilder()
+            pages.forEach {
+                spannableStringBuilder.append(it.text)
+            }
+            return TextPage(0, spannableStringBuilder, title, position, chaptersSize)
         }
         return null
     }
