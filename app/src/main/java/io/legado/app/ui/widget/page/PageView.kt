@@ -207,6 +207,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         fun chapterSize(): Int
         fun durChapterIndex(): Int
         fun durChapterPos(): Int
+
         /**
          * chapterOnDur: 0为当前页,1为下一页,-1为上一页
          */
