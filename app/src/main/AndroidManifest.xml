@@ -45,12 +45,17 @@
         <activity
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
-        <activity android:name=".ui.config.ConfigActivity" />
         <activity
             android:name=".ui.book.source.edit.SourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.rss.source.edit.RssSourceEditActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name=".ui.config.ConfigActivity" />
         <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
         <activity android:name="io.legado.app.ui.book.search.SearchActivity" />
         <activity android:name=".ui.about.AboutActivity" />
@@ -66,7 +71,6 @@
         <activity android:name=".ui.audio.AudioPlayActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
-        <activity android:name=".ui.rss.source.edit.RssSourceEditActivity" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />

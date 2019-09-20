@@ -6,7 +6,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.utils.getViewModel
 
 class RssSourceEditActivity :
-    VMBaseActivity<RssSourceEditViewModel>(R.layout.activity_rss_source_edit) {
+    VMBaseActivity<RssSourceEditViewModel>(R.layout.activity_rss_source_edit, false) {
 
     override val viewModel: RssSourceEditViewModel
         get() = getViewModel(RssSourceEditViewModel::class.java)
