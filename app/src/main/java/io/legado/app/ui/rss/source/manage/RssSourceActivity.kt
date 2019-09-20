@@ -1,4 +1,4 @@
-package io.legado.app.ui.rss.source
+package io.legado.app.ui.rss.source.manage
 
 import android.os.Bundle
 import androidx.core.content.ContextCompat

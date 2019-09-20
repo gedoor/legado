@@ -1,4 +1,4 @@
-package io.legado.app.ui.rss.source
+package io.legado.app.ui.rss.source.manage
 
 import android.content.Context
 import io.legado.app.R

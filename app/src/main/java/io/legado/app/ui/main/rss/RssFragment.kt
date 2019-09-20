@@ -10,7 +10,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.rss.source.RssSourceActivity
+import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_rss.*
 import kotlinx.android.synthetic.main.view_title_bar.*
