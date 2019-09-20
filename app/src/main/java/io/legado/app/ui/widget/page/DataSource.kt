@@ -7,8 +7,6 @@ interface DataSource {
 
     fun setPageIndex(pageIndex: Int)
 
-    fun isPrepared(): Boolean
-
     fun getChapterPosition(): Int
 
     fun getChapter(position: Int): TextChapter?

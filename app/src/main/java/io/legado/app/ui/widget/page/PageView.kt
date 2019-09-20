@@ -48,10 +48,6 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
                 callback?.setPageIndex(pageIndex)
             }
 
-            override fun isPrepared(): Boolean {
-                return true
-            }
-
             override fun getChapterPosition(): Int {
                 return callback?.durChapterIndex() ?: 0
             }
