@@ -100,4 +100,12 @@ class ContentView : FrameLayout {
         tv_bottom_left.text = page?.title
         tv_bottom_right.text = "${page?.index?.plus(1)}/${page?.pageSize}"
     }
+
+    fun isTextSelected(): Boolean {
+        return content_text_view.selectionEnd - content_text_view.selectionStart != 0
+    }
+
+    fun contentTextView(): ContentTextView? {
+        return content_text_view
+    }
 }

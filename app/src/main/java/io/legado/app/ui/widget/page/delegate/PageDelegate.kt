@@ -50,6 +50,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     var isCancel = false
     var isRunning = false
     var isStarted = false
+    var isLongPress = false
 
     protected fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
@@ -154,13 +155,20 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
-
-        if (isMoved && event.action == MotionEvent.ACTION_UP) {
-            // 开启翻页效果
-            if (!noNext) {
-                onScrollStart()
-            }
+        if (curPage?.isTextSelected() == true) {
+            curPage?.dispatchTouchEvent(event)
             return true
+        }
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            curPage?.contentTextView()?.setTextIsSelectable(true)
+            curPage?.dispatchTouchEvent(event)
+        } else if (event.action == MotionEvent.ACTION_UP) {
+            curPage?.dispatchTouchEvent(event)
+            if (isMoved) {
+                // 开启翻页效果
+                if (!noNext) onScrollStart()
+                return true
+            }
         }
         return detector.onTouchEvent(event)
     }
@@ -182,6 +190,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
         override fun onDown(e: MotionEvent): Boolean {
+            isLongPress = false
 //            abort()
             //是否移动
             isMoved = false
@@ -229,7 +238,13 @@ abstract class PageDelegate(protected val pageView: PageView) {
             return true
         }
 
+        override fun onLongPress(e: MotionEvent?) {
+            curPage?.dispatchTouchEvent(e)
+            isLongPress = true
+        }
+
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            curPage?.contentTextView()?.setTextIsSelectable(false)
             if (!isMoved && abs(distanceX) > abs(distanceY)) {
                 if (distanceX < 0) {
                     //上一页的参数配置
