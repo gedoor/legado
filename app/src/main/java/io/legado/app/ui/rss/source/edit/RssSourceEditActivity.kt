@@ -11,9 +11,9 @@ class RssSourceEditActivity :
     override val viewModel: RssSourceEditViewModel
         get() = getViewModel(RssSourceEditViewModel::class.java)
 
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
 
     }
-
 
 }
