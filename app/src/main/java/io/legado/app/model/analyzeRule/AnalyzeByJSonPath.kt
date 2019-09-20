@@ -177,6 +177,7 @@ class AnalyzeByJSonPath {
                 try {
                     return it.read<ArrayList<Any>>(rules[0])
                 } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
             return null
