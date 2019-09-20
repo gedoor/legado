@@ -1,7 +1,7 @@
 package io.legado.app.ui.widget.page
 
 interface DataSource {
-    fun isScroll(): Boolean
+    fun isScrollDelegate(): Boolean
 
     fun pageIndex(): Int
 

@@ -11,8 +11,10 @@ import io.legado.app.ui.widget.page.delegate.*
 import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
 
-class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs),
-    PageDelegate.PageInterface {
+class PageView(context: Context, attrs: AttributeSet) :
+    FrameLayout(context, attrs),
+    PageDelegate.PageInterface,
+    DataSource {
 
     private var callback: CallBack? = null
     private var pageDelegate: PageDelegate? = null
@@ -34,62 +36,8 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         setWillNotDraw(false)
 
         upPageAnim()
-
-        setPageFactory(TextPageFactory.create(object : DataSource {
-            override fun isScroll(): Boolean {
-                return pageDelegate is ScrollPageDelegate
-            }
-
-            override fun pageIndex(): Int {
-                return callback?.durChapterPos() ?: 0
-            }
-
-            override fun setPageIndex(pageIndex: Int) {
-                callback?.setPageIndex(pageIndex)
-            }
-
-            override fun getChapterPosition(): Int {
-                return callback?.durChapterIndex() ?: 0
-            }
-
-            override fun getChapter(position: Int): TextChapter? {
-                return callback?.textChapter(position)
-            }
-
-            override fun getCurrentChapter(): TextChapter? {
-                return callback?.textChapter(0)
-            }
-
-            override fun getNextChapter(): TextChapter? {
-                return callback?.textChapter(1)
-            }
-
-            override fun getPreviousChapter(): TextChapter? {
-                return callback?.textChapter(-1)
-            }
-
-            override fun hasNextChapter(): Boolean {
-                callback?.let {
-                    return it.durChapterIndex() < it.chapterSize() - 1
-                }
-                return false
-            }
-
-            override fun hasPrevChapter(): Boolean {
-                callback?.let {
-                    return it.durChapterIndex() > 0
-                }
-                return false
-            }
-
-            override fun moveToNextChapter() {
-                callback?.moveToNextChapter()
-            }
-
-            override fun moveToPrevChapter() {
-                callback?.moveToPrevChapter()
-            }
-        }))
+        this.pageFactory = TextPageFactory.create(this)
+        upContent()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -132,14 +80,8 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         upContent()
     }
 
-    private fun setPageFactory(factory: TextPageFactory) {
-        this.pageFactory = factory
-
-        //可做成异步回调
-        upContent()
-    }
-
     fun upPageAnim() {
+        pageDelegate = null
         pageDelegate = when (context.getPrefInt("pageAnim")) {
             0 -> CoverPageDelegate(this)
             1 -> SlidePageDelegate(this)
@@ -205,6 +147,60 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
     override fun clickCenter() {
         callback?.clickCenter()
+    }
+
+    override fun isScrollDelegate(): Boolean {
+        return pageDelegate is ScrollPageDelegate
+    }
+
+    override fun pageIndex(): Int {
+        return callback?.durChapterPos() ?: 0
+    }
+
+    override fun setPageIndex(pageIndex: Int) {
+        callback?.setPageIndex(pageIndex)
+    }
+
+    override fun getChapterPosition(): Int {
+        return callback?.durChapterIndex() ?: 0
+    }
+
+    override fun getChapter(position: Int): TextChapter? {
+        return callback?.textChapter(position)
+    }
+
+    override fun getCurrentChapter(): TextChapter? {
+        return callback?.textChapter(0)
+    }
+
+    override fun getNextChapter(): TextChapter? {
+        return callback?.textChapter(1)
+    }
+
+    override fun getPreviousChapter(): TextChapter? {
+        return callback?.textChapter(-1)
+    }
+
+    override fun hasNextChapter(): Boolean {
+        callback?.let {
+            return it.durChapterIndex() < it.chapterSize() - 1
+        }
+        return false
+    }
+
+    override fun hasPrevChapter(): Boolean {
+        callback?.let {
+            return it.durChapterIndex() > 0
+        }
+        return false
+    }
+
+    override fun moveToNextChapter() {
+        callback?.moveToNextChapter()
+    }
+
+    override fun moveToPrevChapter() {
+        callback?.moveToPrevChapter()
     }
 
     interface CallBack {
