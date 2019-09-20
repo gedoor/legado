@@ -1,6 +1,8 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -15,6 +17,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_source.*
 import kotlinx.android.synthetic.main.view_search.*
+import kotlinx.android.synthetic.main.view_title_bar.*
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
@@ -26,8 +29,21 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private lateinit var adapter: RssSourceAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        setSupportActionBar(toolbar)
         initRecyclerView()
         initSearchView()
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.rss_source, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initRecyclerView() {
