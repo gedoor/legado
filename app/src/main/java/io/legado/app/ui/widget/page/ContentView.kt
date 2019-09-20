@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
@@ -77,6 +78,10 @@ class ContentView : FrameLayout {
                 content_text_view.typeface = Typeface.DEFAULT
             }
         }
+    }
+
+    fun textViewTouch(event: MotionEvent) {
+        content_text_view.onTouchEvent(event)
     }
 
     fun setBg(bg: Drawable?) {

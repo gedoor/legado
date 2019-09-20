@@ -114,6 +114,7 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        curPage?.textViewTouch(event)
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
     }
 
