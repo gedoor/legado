@@ -7,10 +7,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.widget.page.delegate.CoverPageDelegate
-import io.legado.app.ui.widget.page.delegate.NoAnimPageDelegate
-import io.legado.app.ui.widget.page.delegate.PageDelegate
-import io.legado.app.ui.widget.page.delegate.SlidePageDelegate
+import io.legado.app.ui.widget.page.delegate.*
 import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
 
@@ -140,9 +137,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
 
     fun upPageAnim() {
         pageDelegate = when (context.getPrefInt("pageAnim")) {
+            0 -> CoverPageDelegate(this)
             1 -> SlidePageDelegate(this)
-            2 -> NoAnimPageDelegate(this)
-            else -> CoverPageDelegate(this)
+            2 -> ScrollPageDelegate(this)
+            else -> NoAnimPageDelegate(this)
         }
     }
 
