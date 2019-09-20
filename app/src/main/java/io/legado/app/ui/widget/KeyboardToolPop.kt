@@ -43,8 +43,10 @@ class KeyboardToolPop(
         SimpleRecyclerAdapter<String>(context, R.layout.item_text) {
 
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-            holder.itemView.text_view.text = item
-            holder.itemView.onClick { onClickListener?.click(item) }
+            with(holder.itemView) {
+                text_view.text = item
+                onClick { onClickListener?.click(item) }
+            }
         }
     }
 
