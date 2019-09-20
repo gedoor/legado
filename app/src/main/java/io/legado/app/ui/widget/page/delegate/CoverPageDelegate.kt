@@ -57,11 +57,15 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         bitmap?.let {
-            if (distanceX < 0) {
-                bitmapMatrix.setTranslate(distanceX, 0.toFloat())
-                canvas.drawBitmap(it, bitmapMatrix, null)
-            } else {
-                curPage?.translationX = offsetX
+            when (direction) {
+                Direction.PREV -> {
+                    bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+                    canvas.drawBitmap(it, bitmapMatrix, null)
+                }
+                Direction.NEXT -> {
+                    curPage?.translationX = offsetX
+                }
+                Direction.NONE -> Unit
             }
             addShadow(distanceX.toInt(), canvas)
         }
@@ -71,7 +75,7 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         if (left < 0) {
             shadowDrawableR.setBounds(left + viewWidth, 0, left + viewWidth + 30, viewHeight)
             shadowDrawableR.draw(canvas)
-        } else {
+        } else if (left > 0) {
             shadowDrawableR.setBounds(left, 0, left + 30, viewHeight)
             shadowDrawableR.draw(canvas)
         }
