@@ -4,34 +4,47 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import kotlinx.android.synthetic.main.item_text.view.*
+import kotlinx.android.synthetic.main.popup_keyboard_tool.view.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class KeyboardToolPop(context: Context, onClickListener: OnClickListener?) :
-    PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
+class KeyboardToolPop(
+    context: Context,
+    private val chars: List<String>,
+    val onClickListener: OnClickListener?
+) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
     init {
         @SuppressLint("InflateParams")
-        val view = LayoutInflater.from(context).inflate(R.layout.popup_keyboard_tool, null)
-        this.contentView = view
+        this.contentView = LayoutInflater.from(context).inflate(R.layout.popup_keyboard_tool, null)
 
         isTouchable = true
         isOutsideTouchable = false
         isFocusable = false
         inputMethodMode = INPUT_METHOD_NEEDED //解决遮盖输入法
+        initRecyclerView()
+    }
 
-        val linearLayout = contentView.findViewById<LinearLayout>(R.id.ll_content)
+    private fun initRecyclerView() = with(contentView) {
+        val adapter = Adapter(context)
+        recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        recycler_view.adapter = adapter
+        adapter.setItems(chars)
+    }
 
-        for (i in 0 until linearLayout.childCount) {
-            val tv = linearLayout.getChildAt(i) as TextView
-            tv.setOnClickListener { v ->
-                (v as? TextView)?.text.toString().let {
-                    onClickListener?.click(it)
-                }
-            }
+    inner class Adapter(context: Context) :
+        SimpleRecyclerAdapter<String>(context, R.layout.item_text) {
+
+        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
+            holder.itemView.text_view.text = item
+            holder.itemView.onClick { onClickListener?.click(item) }
         }
     }
 

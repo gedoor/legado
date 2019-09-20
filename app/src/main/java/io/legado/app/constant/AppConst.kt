@@ -1,8 +1,6 @@
 package io.legado.app.constant
 
 import android.annotation.SuppressLint
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import io.legado.app.App
 import io.legado.app.R
 import java.text.SimpleDateFormat
@@ -29,11 +27,32 @@ object AppConst {
         SimpleDateFormat("HH:mm")
     }
 
-    val GSON_CONVERTER: Gson by lazy {
-        GsonBuilder()
-            .disableHtmlEscaping()
-            .setPrettyPrinting()
-            .setDateFormat("yyyy-MM-dd HH:mm:ssZ")
-            .create()
-    }
+    val keyboardToolChars = arrayListOf(
+        "@",
+        "&",
+        "|",
+        "%",
+        "/",
+        ":",
+        "[",
+        "]",
+        "{",
+        "}",
+        "<",
+        ">",
+        "\\",
+        "$",
+        "#",
+        "!",
+        ".",
+        "href",
+        "src",
+        "textNodes",
+        "xpath",
+        "json",
+        "css",
+        "id",
+        "class",
+        "tag"
+    )
 }

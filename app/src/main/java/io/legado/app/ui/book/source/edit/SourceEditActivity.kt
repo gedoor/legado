@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.lib.theme.ATH
@@ -107,7 +108,7 @@ class SourceEditActivity :
 
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
-        mSoftKeyboardTool = KeyboardToolPop(this, this)
+        mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
