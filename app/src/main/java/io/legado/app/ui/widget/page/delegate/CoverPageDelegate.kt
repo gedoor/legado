@@ -8,7 +8,6 @@ import io.legado.app.ui.widget.page.PageView
 class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     private val shadowDrawableR: GradientDrawable
-    private val shadowDrawableL: GradientDrawable
     private val bitmapMatrix = Matrix()
 
     init {
@@ -17,11 +16,6 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             GradientDrawable.Orientation.LEFT_RIGHT, shadowColors
         )
         shadowDrawableR.gradientType = GradientDrawable.LINEAR_GRADIENT
-
-        shadowDrawableL = GradientDrawable(
-            GradientDrawable.Orientation.RIGHT_LEFT, shadowColors
-        )
-        shadowDrawableL.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
     override fun onScrollStart() {
@@ -47,6 +41,8 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun onScrollStop() {
+        curPage?.x = 0.toFloat()
+
         if (!isCancel) {
             pageView.fillPage(direction)
         }
@@ -61,9 +57,12 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         bitmap?.let {
-            bitmapMatrix.setTranslate(distanceX, 0.toFloat())
-            canvas.drawBitmap(it, bitmapMatrix, null)
-
+            if (distanceX < 0) {
+                bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+                canvas.drawBitmap(it, bitmapMatrix, null)
+            } else {
+                curPage?.translationX = offsetX
+            }
             addShadow(distanceX.toInt(), canvas)
         }
     }
@@ -73,8 +72,8 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             shadowDrawableR.setBounds(left + viewWidth, 0, left + viewWidth + 30, viewHeight)
             shadowDrawableR.draw(canvas)
         } else {
-            shadowDrawableL.setBounds(left - 30, 0, left, viewHeight)
-            shadowDrawableL.draw(canvas)
+            shadowDrawableR.setBounds(left, 0, left + 30, viewHeight)
+            shadowDrawableR.draw(canvas)
         }
     }
 }
