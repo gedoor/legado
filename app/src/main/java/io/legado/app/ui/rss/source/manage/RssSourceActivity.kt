@@ -78,7 +78,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
-
         })
     }
 
