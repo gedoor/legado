@@ -112,6 +112,10 @@ class PageView(context: Context, attrs: AttributeSet) : FrameLayout(context, att
         pageDelegate?.scroll()
     }
 
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return true
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
