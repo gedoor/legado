@@ -146,6 +146,7 @@
     <string name="edit_book_source">编辑书源</string>
     <string name="disable_book_source">禁用书源</string>
     <string name="add_book_source">新建书源</string>
+    <string name="add_rss_source">新建订阅源</string>
     <string name="book_file_selector">添加书籍</string>
     <string name="scan_book_source">扫描</string>
     <string name="copy_source">拷贝书源</string>
