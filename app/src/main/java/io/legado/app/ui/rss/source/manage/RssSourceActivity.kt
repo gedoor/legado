@@ -68,7 +68,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private fun initSearchView() {
         ATH.setTint(search_view, primaryTextColor)
         search_view.onActionViewExpanded()
-        search_view.queryHint = getString(R.string.search_book_source)
+        search_view.queryHint = getString(R.string.search_rss_source)
         search_view.clearFocus()
         search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
