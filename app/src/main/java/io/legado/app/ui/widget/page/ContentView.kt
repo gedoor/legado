@@ -19,27 +19,35 @@ import java.util.*
 
 
 class ContentView : FrameLayout {
-
+    private var isScroll: Boolean = false
     private val bgImage: AppCompatImageView = AppCompatImageView(context)
         .apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context) {
+        this.isScroll = true
+        init()
+    }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init()
+    }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+            super(context, attrs, defStyleAttr) {
+        init()
+    }
 
-    init {
+    fun init() {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
         addView(bgImage, LayoutParams(matchParent, matchParent))
-        inflate(context, R.layout.view_book_page, this)
+        if (isScroll) {
+            inflate(context, R.layout.view_book_page_scroll, this)
+        } else {
+            inflate(context, R.layout.view_book_page, this)
+        }
         top_bar.layoutParams.height = context.getStatusBarHeight()
         upStyle()
         upTime()
