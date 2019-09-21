@@ -13,7 +13,14 @@ import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.view_book_page.view.*
+import kotlinx.android.synthetic.main.view_book_page.view.content_text_view
+import kotlinx.android.synthetic.main.view_book_page.view.page_panel
+import kotlinx.android.synthetic.main.view_book_page.view.top_bar
+import kotlinx.android.synthetic.main.view_book_page.view.tv_bottom_left
+import kotlinx.android.synthetic.main.view_book_page.view.tv_bottom_right
+import kotlinx.android.synthetic.main.view_book_page.view.tv_top_left
+import kotlinx.android.synthetic.main.view_book_page.view.tv_top_right
+import kotlinx.android.synthetic.main.view_book_page_scroll.view.*
 import org.jetbrains.anko.matchParent
 import java.util.*
 
@@ -110,5 +117,13 @@ class ContentView : FrameLayout {
 
     fun contentTextView(): ContentTextView? {
         return content_text_view
+    }
+
+    fun scrollTo(pos: Int?) {
+        if (pos != null) {
+            page_scroll_view?.post {
+                page_scroll_view?.scrollTo(0, content_text_view.layout.getLineTop(pos))
+            }
+        }
     }
 }

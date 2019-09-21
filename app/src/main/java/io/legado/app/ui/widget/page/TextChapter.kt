@@ -7,6 +7,7 @@ data class TextChapter(
     val title: String,
     val url: String,
     val pages: List<TextPage>,
+    val pageLines: List<Int>,
     val pageLengths: List<Int>,
     val chaptersSize: Int
 ) {
@@ -63,6 +64,17 @@ data class TextChapter(
             }
         }
         return stringBuilder.toString()
+    }
+
+    fun getStartLine(pageIndex: Int): Int {
+        if (pageLines.size > pageIndex) {
+            var lines = 0
+            for (index: Int in 0 until pageIndex) {
+                lines += pageLines[index] + 1
+            }
+            return lines
+        }
+        return 0
     }
 }
 

@@ -34,10 +34,8 @@ class PageView(context: Context, attrs: AttributeSet) :
         addView(curPage)
         upBg()
         setWillNotDraw(false)
-
+        pageFactory = TextPageFactory.create(this)
         upPageAnim()
-        this.pageFactory = TextPageFactory.create(this)
-        upContent()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -88,6 +86,7 @@ class PageView(context: Context, attrs: AttributeSet) :
             2 -> ScrollPageDelegate(this)
             else -> NoAnimPageDelegate(this)
         }
+        upContent()
     }
 
     fun upContent() {
@@ -95,6 +94,11 @@ class PageView(context: Context, attrs: AttributeSet) :
             prevPage?.setContent(it.previousPage())
             curPage?.setContent(it.currentPage())
             nextPage?.setContent(it.nextPage())
+        }
+        callback?.let {
+            if (isScrollDelegate()) {
+                curPage?.scrollTo(it.textChapter()?.getStartLine(it.durChapterPos()))
+            }
         }
     }
 

@@ -18,6 +18,7 @@ object ChapterProvider {
         content: String, chapterSize: Int
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
+        val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
         var surplusText = content
         var pageIndex = 0
@@ -35,10 +36,12 @@ object ChapterProvider {
                 }
             }
             textView.text = spannableStringBuilder
-            val lastCharNum = textView.getCharNum()
+            val lastLine = textView.getLineNum()
+            val lastCharNum = textView.getCharNum(lastLine)
             if (lastCharNum == 0) {
                 break
             } else {
+                pageLines.add(lastLine)
                 pageLengths.add(lastCharNum)
                 textPages.add(
                     TextPage(
@@ -64,6 +67,7 @@ object ChapterProvider {
             bookChapter.title,
             bookChapter.url,
             textPages,
+            pageLines,
             pageLengths,
             chapterSize
         )

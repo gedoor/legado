@@ -16,8 +16,8 @@ class ContentTextView : AppCompatTextView {
     /**
      * 获取当前页总字数
      */
-    fun getCharNum(): Int {
-        return layout?.getLineEnd(getLineNum()) ?: 0
+    fun getCharNum(lineNum: Int = getLineNum()): Int {
+        return layout?.getLineEnd(lineNum) ?: 0
     }
 
     /**
