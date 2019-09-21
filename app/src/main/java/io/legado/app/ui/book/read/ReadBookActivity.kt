@@ -282,12 +282,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             viewModel.durChapterIndex - 1 -> launch {
                 viewModel.prevTextChapter = ChapterProvider
                     .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
-                page_view.upContent()
+                page_view.upContent(-1)
             }
             viewModel.durChapterIndex + 1 -> launch {
                 viewModel.nextTextChapter = ChapterProvider
                     .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
-                page_view.upContent()
+                page_view.upContent(1)
             }
         }
     }

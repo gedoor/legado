@@ -91,11 +91,17 @@ class PageView(context: Context, attrs: AttributeSet) :
         upContent()
     }
 
-    fun upContent() {
+    fun upContent(position: Int = 0) {
         pageFactory?.let {
-            prevPage?.setContent(it.previousPage())
-            curPage?.setContent(it.currentPage())
-            nextPage?.setContent(it.nextPage())
+            when (position) {
+                -1 -> prevPage?.setContent(it.previousPage())
+                1 -> nextPage?.setContent(it.nextPage())
+                else -> {
+                    curPage?.setContent(it.currentPage())
+                    nextPage?.setContent(it.nextPage())
+                    prevPage?.setContent(it.previousPage())
+                }
+            }
         }
         callback?.let {
             if (isScrollDelegate()) {
