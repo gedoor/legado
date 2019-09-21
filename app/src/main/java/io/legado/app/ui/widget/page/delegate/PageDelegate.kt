@@ -3,6 +3,7 @@ package io.legado.app.ui.widget.page.delegate
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
+import android.text.method.ScrollingMovementMethod
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.Scroller
@@ -43,6 +44,10 @@ abstract class PageDelegate(protected val pageView: PageView) {
             pageView.context,
             FastOutLinearInInterpolator()
         )
+    }
+
+    private val scrollingMovementMethod: ScrollingMovementMethod by lazy {
+        ScrollingMovementMethod()
     }
 
     private val detector: GestureDetector by lazy {
@@ -266,6 +271,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             distanceY: Float
         ): Boolean {
             curPage?.contentTextView()?.setTextIsSelectable(false)
+            curPage?.contentTextView()?.movementMethod = scrollingMovementMethod
             if (pageView.isScrollDelegate()) {
                 curPage?.dispatchTouchEvent(e2)
                 return true
