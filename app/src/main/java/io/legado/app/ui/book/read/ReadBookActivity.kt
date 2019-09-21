@@ -375,10 +375,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     /**
      * 下一页
      */
-    override fun moveToNextChapter(): Boolean {
+    override fun moveToNextChapter(upContent: Boolean): Boolean {
         return if (viewModel.durChapterIndex < viewModel.chapterSize - 1) {
             viewModel.durPageIndex = 0
-            viewModel.moveToNextChapter()
+            viewModel.moveToNextChapter(upContent)
             viewModel.saveRead()
             curChapterChanged()
             true
@@ -390,10 +390,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     /**
      * 上一页
      */
-    override fun moveToPrevChapter(last: Boolean): Boolean {
+    override fun moveToPrevChapter(upContent: Boolean, last: Boolean): Boolean {
         return if (viewModel.durChapterIndex > 0) {
             viewModel.durPageIndex = if (last) viewModel.prevTextChapter?.lastIndex() ?: 0 else 0
-            viewModel.moveToPrevChapter()
+            viewModel.moveToPrevChapter(upContent)
             viewModel.saveRead()
             curChapterChanged()
             true
@@ -586,14 +586,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                     page_view.upContent()
                     viewModel.saveRead()
                 }
-                2 -> if (!moveToNextChapter()) ReadAloud.stop(this)
+                2 -> if (!moveToNextChapter(true)) ReadAloud.stop(this)
                 -1 -> {
                     if (viewModel.durPageIndex > 0) {
                         viewModel.durPageIndex = viewModel.durPageIndex - 1
                         page_view.upContent()
                         viewModel.saveRead()
                     } else {
-                        moveToPrevChapter()
+                        moveToPrevChapter(true)
                     }
                 }
                 -2 -> moveToPrevChapter(false)

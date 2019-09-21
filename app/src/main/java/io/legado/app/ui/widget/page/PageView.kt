@@ -208,11 +208,11 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun moveToNextChapter() {
-        callback?.moveToNextChapter()
+        callback?.moveToNextChapter(false)
     }
 
     override fun moveToPrevChapter() {
-        callback?.moveToPrevChapter()
+        callback?.moveToPrevChapter(false)
     }
 
     override fun scrollToLine(line: Int) {
@@ -241,12 +241,12 @@ class PageView(context: Context, attrs: AttributeSet) :
         /**
          * 下一章
          */
-        fun moveToNextChapter(): Boolean
+        fun moveToNextChapter(upContent: Boolean): Boolean
 
         /**
          * 上一章
          */
-        fun moveToPrevChapter(last: Boolean = true): Boolean
+        fun moveToPrevChapter(upContent: Boolean, last: Boolean = true): Boolean
 
         /**
          * 保存页数

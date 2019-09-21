@@ -153,10 +153,10 @@ class ReadMenu : FrameLayout {
         }
 
         //上一章
-        tv_pre.onClick { callBack?.moveToPrevChapter(false) }
+        tv_pre.onClick { callBack?.moveToPrevChapter(upContent = true, last = false) }
 
         //下一章
-        tv_next.onClick { callBack?.moveToNextChapter() }
+        tv_next.onClick { callBack?.moveToNextChapter(true) }
 
         //目录
         ll_catalog.onClick {
@@ -250,8 +250,8 @@ class ReadMenu : FrameLayout {
     interface CallBack {
         fun autoPage()
         fun skipToPage(page: Int)
-        fun moveToPrevChapter(last: Boolean): Boolean
-        fun moveToNextChapter(): Boolean
+        fun moveToPrevChapter(upContent: Boolean, last: Boolean): Boolean
+        fun moveToNextChapter(upContent: Boolean): Boolean
         fun openReplaceRule()
         fun openChapterList()
         fun showReadStyle()

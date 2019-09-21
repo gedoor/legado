@@ -108,7 +108,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun moveToNextChapter() {
+    fun moveToNextChapter(upContent: Boolean) {
         durChapterIndex++
         prevTextChapter = curTextChapter
         curTextChapter = nextTextChapter
@@ -116,7 +116,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         bookData.value?.let {
             if (curTextChapter == null) {
                 loadContent(it, durChapterIndex)
-            } else {
+            } else if (upContent) {
                 callBack?.upContent()
             }
             loadContent(it, durChapterIndex.plus(1))
@@ -131,7 +131,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun moveToPrevChapter() {
+    fun moveToPrevChapter(upContent: Boolean) {
         durChapterIndex--
         nextTextChapter = curTextChapter
         curTextChapter = prevTextChapter
@@ -139,7 +139,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         bookData.value?.let {
             if (curTextChapter == null) {
                 loadContent(it, durChapterIndex)
-            } else {
+            } else if (upContent) {
                 callBack?.upContent()
             }
             loadContent(it, durChapterIndex.minus(1))
