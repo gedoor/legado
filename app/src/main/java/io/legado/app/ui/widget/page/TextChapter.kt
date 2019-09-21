@@ -31,7 +31,10 @@ data class TextChapter(
             pages.forEach {
                 spannableStringBuilder.append(it.text)
             }
-            return TextPage(0, spannableStringBuilder, title, position, pages.size)
+            return TextPage(
+                index = 0, text = spannableStringBuilder, title = title,
+                pageSize = pages.size, chapterSize = chaptersSize, chapterIndex = position
+            )
         }
         return null
     }
