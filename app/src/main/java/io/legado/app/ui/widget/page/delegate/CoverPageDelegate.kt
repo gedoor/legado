@@ -42,7 +42,6 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     override fun onScrollStop() {
         curPage?.x = 0.toFloat()
-
         if (!isCancel) {
             pageView.fillPage(direction)
         }
@@ -57,15 +56,11 @@ class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         bitmap?.let {
-            when (direction) {
-                Direction.PREV -> {
-                    bitmapMatrix.setTranslate(distanceX, 0.toFloat())
-                    canvas.drawBitmap(it, bitmapMatrix, null)
-                }
-                Direction.NEXT -> {
-                    curPage?.translationX = offsetX
-                }
-                Direction.NONE -> Unit
+            if (direction == Direction.PREV) {
+                bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+                canvas.drawBitmap(it, bitmapMatrix, null)
+            } else if (direction == Direction.NEXT) {
+                curPage?.translationX = offsetX
             }
             addShadow(distanceX.toInt(), canvas)
         }
