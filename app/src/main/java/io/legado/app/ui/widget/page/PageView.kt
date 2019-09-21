@@ -210,7 +210,11 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun scrollToLine(line: Int) {
-
+        callback?.textChapter()?.let {
+            val pageIndex = it.getPageIndex(line)
+            curPage?.setPageIndex(pageIndex)
+            callback?.setPageIndex(pageIndex)
+        }
     }
 
     interface CallBack {

@@ -26,8 +26,9 @@ import java.util.*
 
 
 class ContentView : FrameLayout {
-    private var isScroll: Boolean = false
     var callBack: CallBack? = null
+    private var isScroll: Boolean = false
+    private var pageSize: Int = 0
     private val bgImage: AppCompatImageView = AppCompatImageView(context)
         .apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
@@ -112,11 +113,18 @@ class ContentView : FrameLayout {
         tv_top_right.text = context.getString(R.string.battery_show, battery)
     }
 
+    fun setContent(textPage: TextPage?) {
+        content_text_view.text = textPage?.text
+        tv_bottom_left.text = textPage?.title
+        pageSize = textPage?.pageSize ?: 0
+        setPageIndex(textPage?.index)
+    }
+
     @SuppressLint("SetTextI18n")
-    fun setContent(page: TextPage?) {
-        content_text_view.text = page?.text
-        tv_bottom_left.text = page?.title
-        tv_bottom_right.text = "${page?.index?.plus(1)}/${page?.pageSize}"
+    fun setPageIndex(pageIndex: Int?) {
+        pageIndex?.let {
+            tv_bottom_right.text = "${pageIndex.plus(1)}/${pageSize}"
+        }
     }
 
     fun isTextSelected(): Boolean {

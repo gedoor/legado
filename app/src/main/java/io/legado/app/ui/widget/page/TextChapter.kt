@@ -31,7 +31,7 @@ data class TextChapter(
             pages.forEach {
                 spannableStringBuilder.append(it.text)
             }
-            return TextPage(0, spannableStringBuilder, title, position, chaptersSize)
+            return TextPage(0, spannableStringBuilder, title, position, pages.size)
         }
         return null
     }
@@ -73,6 +73,17 @@ data class TextChapter(
                 lines += pageLines[index] + 1
             }
             return lines
+        }
+        return 0
+    }
+
+    fun getPageIndex(line: Int): Int {
+        var lines = 0
+        for (pageIndex in pageLines.indices) {
+            lines += pageLines[pageIndex] + 1
+            if (line < lines) {
+                return pageIndex
+            }
         }
         return 0
     }
