@@ -13,15 +13,9 @@ import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.view_book_page.view.content_text_view
-import kotlinx.android.synthetic.main.view_book_page.view.page_panel
-import kotlinx.android.synthetic.main.view_book_page.view.top_bar
-import kotlinx.android.synthetic.main.view_book_page.view.tv_bottom_left
-import kotlinx.android.synthetic.main.view_book_page.view.tv_bottom_right
-import kotlinx.android.synthetic.main.view_book_page.view.tv_top_left
-import kotlinx.android.synthetic.main.view_book_page.view.tv_top_right
-import kotlinx.android.synthetic.main.view_book_page_scroll.view.*
+import kotlinx.android.synthetic.main.view_book_page.view.*
 import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.sdk27.listeners.onScrollChange
 import java.util.*
 
 
@@ -47,21 +41,15 @@ class ContentView : FrameLayout {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
         addView(bgImage, LayoutParams(matchParent, matchParent))
-        if (isScroll) {
-            inflate(context, R.layout.view_book_page_scroll, this)
-        } else {
-            inflate(context, R.layout.view_book_page, this)
-        }
+        inflate(context, R.layout.view_book_page, this)
         top_bar.layoutParams.height = context.getStatusBarHeight()
         upStyle()
         upTime()
         content_text_view.customSelectionActionModeCallback =
             ContentSelectActionCallback(content_text_view)
-        page_scroll_view?.scrollListener = object : PageScrollView.OnScrollListener {
-            override fun onScroll(scrollY: Int) {
-                content_text_view.layout?.getLineForVertical(scrollY)?.let { line ->
-                    callBack?.scrollToLine(line)
-                }
+        content_text_view.onScrollChange { _, _, scrollY, _, _ ->
+            content_text_view.layout?.getLineForVertical(scrollY)?.let { line ->
+                callBack?.scrollToLine(line)
             }
         }
     }
@@ -137,8 +125,8 @@ class ContentView : FrameLayout {
 
     fun scrollTo(pos: Int?) {
         if (pos != null) {
-            page_scroll_view?.post {
-                page_scroll_view?.scrollTo(0, content_text_view.layout.getLineTop(pos))
+            content_text_view.post {
+                content_text_view.scrollTo(0, content_text_view.layout.getLineTop(pos))
             }
         }
     }
