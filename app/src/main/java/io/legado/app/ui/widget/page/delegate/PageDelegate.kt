@@ -270,8 +270,10 @@ abstract class PageDelegate(protected val pageView: PageView) {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
-            curPage?.contentTextView()?.setTextIsSelectable(false)
-            curPage?.contentTextView()?.movementMethod = scrollingMovementMethod
+            curPage?.contentTextView()?.let {
+                it.setTextIsSelectable(false)
+                it.movementMethod = scrollingMovementMethod
+            }
             if (pageView.isScrollDelegate()) {
                 curPage?.dispatchTouchEvent(e2)
                 return true
