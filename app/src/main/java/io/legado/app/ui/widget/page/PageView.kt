@@ -100,12 +100,12 @@ class PageView(context: Context, attrs: AttributeSet) :
                     curPage?.setContent(it.currentPage())
                     nextPage?.setContent(it.nextPage())
                     prevPage?.setContent(it.previousPage())
+                    callback?.let { callback ->
+                        if (isScrollDelegate()) {
+                            curPage?.scrollTo(callback.textChapter()?.getStartLine(callback.durChapterPos()))
+                        }
+                    }
                 }
-            }
-        }
-        callback?.let {
-            if (isScrollDelegate()) {
-                curPage?.scrollTo(it.textChapter()?.getStartLine(it.durChapterPos()))
             }
         }
     }
