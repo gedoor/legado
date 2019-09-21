@@ -6,6 +6,7 @@ import android.widget.ScrollView
 
 
 class PageScrollView : ScrollView {
+
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -16,5 +17,14 @@ class PageScrollView : ScrollView {
         defStyleAttr
     )
 
+    var scrollListener: OnScrollListener? = null
 
+    override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
+        super.onScrollChanged(l, t, oldl, oldt)
+        scrollListener?.onScroll(t)
+    }
+
+    interface OnScrollListener {
+        fun onScroll(scrollY: Int)
+    }
 }

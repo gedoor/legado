@@ -27,6 +27,7 @@ import java.util.*
 
 class ContentView : FrameLayout {
     private var isScroll: Boolean = false
+    var callBack: CallBack? = null
     private val bgImage: AppCompatImageView = AppCompatImageView(context)
         .apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
@@ -55,6 +56,13 @@ class ContentView : FrameLayout {
         upTime()
         content_text_view.customSelectionActionModeCallback =
             ContentSelectActionCallback(content_text_view)
+        page_scroll_view?.scrollListener = object : PageScrollView.OnScrollListener {
+            override fun onScroll(scrollY: Int) {
+                content_text_view.layout?.getLineForVertical(scrollY)?.let { line ->
+                    callBack?.scrollToLine(line)
+                }
+            }
+        }
     }
 
     fun upStyle() {
@@ -125,5 +133,9 @@ class ContentView : FrameLayout {
                 page_scroll_view?.scrollTo(0, content_text_view.layout.getLineTop(pos))
             }
         }
+    }
+
+    interface CallBack {
+        fun scrollToLine(line: Int)
     }
 }
