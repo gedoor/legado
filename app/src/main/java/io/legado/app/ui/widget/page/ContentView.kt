@@ -51,6 +51,9 @@ class ContentView : FrameLayout {
             content_text_view.layout?.getLineForVertical(scrollY)?.let { line ->
                 callBack?.scrollToLine(line)
             }
+            if (content_text_view.atBottom()) {
+                setPageIndex(pageSize - 1)
+            }
         }
     }
 
