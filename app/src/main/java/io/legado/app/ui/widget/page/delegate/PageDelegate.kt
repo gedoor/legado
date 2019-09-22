@@ -173,6 +173,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
         onScrollStart()
     }
 
+    /**
+     * 触摸事件处理
+     */
     fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
         if (curPage?.isTextSelected() == true) {
@@ -206,7 +209,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
         NONE, PREV, NEXT
     }
 
-
+    /**
+     * 触摸事件处理
+     */
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
         override fun onDown(e: MotionEvent): Boolean {
