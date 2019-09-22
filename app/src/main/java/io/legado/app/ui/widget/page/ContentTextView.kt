@@ -98,6 +98,11 @@ class ContentTextView : AppCompatTextView {
         mOffsetHeight = mLayoutHeight + totalPaddingTop + totalPaddingBottom - measuredHeight
     }
 
+    override fun scrollTo(x: Int, y: Int) {
+        setScrollState(scrollStateIdle)
+        super.scrollTo(x, min(y, mOffsetHeight))
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event?.let {

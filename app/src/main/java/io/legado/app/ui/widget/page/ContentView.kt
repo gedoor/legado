@@ -134,6 +134,15 @@ class ContentView : FrameLayout {
         }
     }
 
+    fun scrollToBottom() {
+        content_text_view.post {
+            content_text_view.scrollTo(
+                0,
+                content_text_view.layout.getLineTop(content_text_view.lineCount)
+            )
+        }
+    }
+
     interface CallBack {
         fun scrollToLine(line: Int)
     }
