@@ -188,7 +188,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
         if (event.action == MotionEvent.ACTION_DOWN) {
             curPage?.let {
                 it.contentTextView()?.let { contentTextView ->
-                    contentTextView.setTextIsSelectable(true)
+                    if (!contentTextView.isTextSelectable) {
+                        contentTextView.setTextIsSelectable(true)
+                    }
                     atTop = contentTextView.atTop()
                     atBottom = contentTextView.atBottom()
                 }
