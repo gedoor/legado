@@ -125,31 +125,29 @@ class ContentTextView : AppCompatTextView {
                 }
                 MotionEvent.ACTION_MOVE -> {
                     val index = event.findPointerIndex(mScrollPointerId)
-                    if (index < 0) {
-                        return false
-                    }
+                    if (index > 0) {
+                        val y = (event.getY(index) + 0.5f).toInt()
+                        var dy = mLastTouchY - y
 
-                    val y = (event.getY(index) + 0.5f).toInt()
-                    var dy = mLastTouchY - y
+                        if (mScrollState != scrollStateDragging) {
+                            var startScroll = false
 
-                    if (mScrollState != scrollStateDragging) {
-                        var startScroll = false
-
-                        if (abs(dy) > mTouchSlop) {
-                            if (dy > 0) {
-                                dy -= mTouchSlop
-                            } else {
-                                dy += mTouchSlop
+                            if (abs(dy) > mTouchSlop) {
+                                if (dy > 0) {
+                                    dy -= mTouchSlop
+                                } else {
+                                    dy += mTouchSlop
+                                }
+                                startScroll = true
                             }
-                            startScroll = true
+                            if (startScroll) {
+                                setScrollState(scrollStateDragging)
+                            }
                         }
-                        if (startScroll) {
-                            setScrollState(scrollStateDragging)
-                        }
-                    }
 
-                    if (mScrollState == scrollStateDragging) {
-                        mLastTouchY = y
+                        if (mScrollState == scrollStateDragging) {
+                            mLastTouchY = y
+                        }
                     }
                 }
                 MotionEvent.ACTION_POINTER_UP -> {
