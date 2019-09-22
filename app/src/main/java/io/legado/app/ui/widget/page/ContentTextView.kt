@@ -27,6 +27,7 @@ class ContentTextView : AppCompatTextView {
     private val scrollStateDragging = 1
     val scrollStateSettling = 2
 
+    private val mViewFling: ViewFling by lazy { ViewFling() }
     private var velocityTracker: VelocityTracker? = null
     private var mScrollState = scrollStateIdle
     private var mScrollPointerId = -1
@@ -34,7 +35,7 @@ class ContentTextView : AppCompatTextView {
     private var mTouchSlop: Int = 0
     private var mMinFlingVelocity: Int = 0
     private var mMaxFlingVelocity: Int = 0
-    private val mViewFling = ViewFling()
+
     //滑动距离的最大边界
     private var mOffsetHeight: Int = 0
 
@@ -80,13 +81,8 @@ class ContentTextView : AppCompatTextView {
         initOffsetHeight()
     }
 
-    override fun onTextChanged(
-        text: CharSequence,
-        start: Int,
-        lengthBefore: Int,
-        lengthAfter: Int
-    ) {
-        super.onTextChanged(text, start, lengthBefore, lengthAfter)
+    override fun setText(text: CharSequence?, type: BufferType?) {
+        super.setText(text, type)
         initOffsetHeight()
     }
 
