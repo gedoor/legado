@@ -1,13 +1,6 @@
 package io.legado.app.ui.widget.page
 
-class TextPageFactory private constructor(dataSource: DataSource) :
-    PageFactory<TextPage>(dataSource) {
-
-    companion object {
-        fun create(dataSource: DataSource): TextPageFactory {
-            return TextPageFactory(dataSource)
-        }
-    }
+class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
 
     override fun hasPrev(): Boolean = with(dataSource) {
         return if (isScrollDelegate()) {

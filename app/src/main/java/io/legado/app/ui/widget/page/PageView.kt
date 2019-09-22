@@ -35,7 +35,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         addView(curPage)
         upBg()
         setWillNotDraw(false)
-        pageFactory = TextPageFactory.create(this)
+        pageFactory = TextPageFactory(this)
         upPageAnim()
         curPage?.callBack = this
     }
