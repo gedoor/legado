@@ -21,14 +21,13 @@ class ContentTextView : AppCompatTextView {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr)
 
-    private val INVALID_POINTER = -1
-    private val SCROLL_STATE_IDLE = 0
-    private val SCROLL_STATE_DRAGGING = 1
-    val SCROLL_STATE_SETTLING = 2
+    private val scrollStateIdle = 0
+    private val scrollStateDragging = 1
+    val scrollStateSettling = 2
 
     private var velocityTracker: VelocityTracker? = null
-    private var mScrollState = SCROLL_STATE_IDLE
-    private var mScrollPointerId = INVALID_POINTER
+    private var mScrollState = scrollStateIdle
+    private var mScrollPointerId = -1
     private var mLastTouchY: Int = 0
     private var mTouchSlop: Int = 0
     private var mMinFlingVelocity: Int = 0
@@ -77,7 +76,7 @@ class ContentTextView : AppCompatTextView {
             velocityTracker?.addMovement(it)
             when (action) {
                 MotionEvent.ACTION_DOWN -> {
-                    setScrollState(SCROLL_STATE_IDLE)
+                    setScrollState(scrollStateIdle)
                     mScrollPointerId = event.getPointerId(0)
                     mLastTouchY = (event.y + 0.5f).toInt()
                 }
@@ -94,7 +93,7 @@ class ContentTextView : AppCompatTextView {
                     val y = (event.getY(index) + 0.5f).toInt()
                     var dy = mLastTouchY - y
 
-                    if (mScrollState != SCROLL_STATE_DRAGGING) {
+                    if (mScrollState != scrollStateDragging) {
                         var startScroll = false
 
                         if (abs(dy) > mTouchSlop) {
@@ -106,11 +105,11 @@ class ContentTextView : AppCompatTextView {
                             startScroll = true
                         }
                         if (startScroll) {
-                            setScrollState(SCROLL_STATE_DRAGGING)
+                            setScrollState(scrollStateDragging)
                         }
                     }
 
-                    if (mScrollState == SCROLL_STATE_DRAGGING) {
+                    if (mScrollState == scrollStateDragging) {
                         mLastTouchY = y
                     }
                 }
@@ -128,7 +127,7 @@ class ContentTextView : AppCompatTextView {
                     if (abs(yVelocity) > mMinFlingVelocity) {
                         mViewFling.fling(-yVelocity.toInt())
                     } else {
-                        setScrollState(SCROLL_STATE_IDLE)
+                        setScrollState(scrollStateIdle)
                     }
                     resetTouch()
                 }
@@ -150,7 +149,7 @@ class ContentTextView : AppCompatTextView {
             return
         }
         mScrollState = state
-        if (state != SCROLL_STATE_SETTLING) {
+        if (state != scrollStateSettling) {
             mViewFling.stop()
         }
     }
@@ -177,7 +176,7 @@ class ContentTextView : AppCompatTextView {
 
         fun fling(velocityY: Int) {
             mLastFlingY = 0
-            setScrollState(SCROLL_STATE_SETTLING)
+            setScrollState(scrollStateSettling)
             mScroller.fling(
                 0,
                 0,
