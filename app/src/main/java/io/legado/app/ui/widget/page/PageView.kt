@@ -66,25 +66,22 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun fillPage(direction: PageDelegate.Direction) {
-        pageFactory?.let {
-            when (direction) {
-                PageDelegate.Direction.PREV -> {
-                    it.moveToPrevious()
-                    upContent()
+        when (direction) {
+            PageDelegate.Direction.PREV -> {
+                pageFactory?.moveToPrevious()
+                upContent()
+                if (isScrollDelegate()) {
+                    curPage?.scrollToBottom()
                 }
-                PageDelegate.Direction.NEXT -> {
-                    it.moveToNext()
-                    upContent()
+            }
+            PageDelegate.Direction.NEXT -> {
+                pageFactory?.moveToNext()
+                upContent()
+                if (isScrollDelegate()) {
+                    curPage?.scrollTo(0)
                 }
-                else -> Unit
             }
-        }
-        if (isScrollDelegate()) {
-            when (direction) {
-                PageDelegate.Direction.PREV -> curPage?.scrollToBottom()
-                PageDelegate.Direction.NEXT -> curPage?.scrollTo(0)
-                else -> Unit
-            }
+            else -> Unit
         }
     }
 
