@@ -71,14 +71,19 @@ class PageView(context: Context, attrs: AttributeSet) :
                 PageDelegate.Direction.PREV -> {
                     it.moveToPrevious()
                     upContent()
-                    curPage?.scrollToBottom()
                 }
                 PageDelegate.Direction.NEXT -> {
                     it.moveToNext()
                     upContent()
-                    curPage?.scrollTo(0)
                 }
-                else -> return
+                else -> Unit
+            }
+        }
+        if (isScrollDelegate()) {
+            when (direction) {
+                PageDelegate.Direction.PREV -> curPage?.scrollToBottom()
+                PageDelegate.Direction.NEXT -> curPage?.scrollTo(0)
+                else -> Unit
             }
         }
     }
