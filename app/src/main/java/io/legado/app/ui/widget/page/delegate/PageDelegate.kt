@@ -278,7 +278,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
             if (pageView.isScrollDelegate()) {
                 //传递触摸事件到textView
                 curPage?.dispatchTouchEvent(e2)
-                return true
             }
             if (!isMoved && abs(distanceX) > abs(distanceY)) {
                 if (distanceX < 0) {
