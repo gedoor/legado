@@ -124,9 +124,9 @@ class ContentTextView : AppCompatTextView {
                 }
                 MotionEvent.ACTION_UP -> {
                     velocityTracker?.computeCurrentVelocity(1000, mMaxFlingVelocity.toFloat())
-                    val yVelocity = velocityTracker?.getXVelocity(mScrollPointerId) ?: 0f
+                    val yVelocity = velocityTracker?.getYVelocity(mScrollPointerId) ?: 0f
                     if (abs(yVelocity) > mMinFlingVelocity) {
-                        mViewFling.fling(yVelocity.toInt())
+                        mViewFling.fling(-yVelocity.toInt())
                     } else {
                         setScrollState(SCROLL_STATE_IDLE)
                     }
