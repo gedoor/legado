@@ -39,7 +39,9 @@ class TextPageFactory private constructor(dataSource: DataSource) :
 
     override fun moveToNext(): Boolean = dataSource.pageIndex().let { index ->
         return if (hasNext()) {
-            if (dataSource.getCurrentChapter()?.isLastIndex(index) == true) {
+            if (dataSource.getCurrentChapter()?.isLastIndex(index) == true
+                || dataSource.isScrollDelegate()
+            ) {
                 dataSource.moveToNextChapter()
             } else {
                 dataSource.setPageIndex(index.plus(1))
@@ -51,10 +53,10 @@ class TextPageFactory private constructor(dataSource: DataSource) :
 
     override fun moveToPrevious(): Boolean = dataSource.pageIndex().let { index ->
         return if (hasPrev()) {
-            if (index > 0) {
-                dataSource.setPageIndex(index.minus(1))
-            } else {
+            if (index <= 0 || dataSource.isScrollDelegate()) {
                 dataSource.moveToPrevChapter()
+            } else {
+                dataSource.setPageIndex(index.minus(1))
             }
             true
         } else

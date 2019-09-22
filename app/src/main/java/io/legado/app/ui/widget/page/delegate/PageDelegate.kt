@@ -176,7 +176,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     /**
      * 触摸事件处理
      */
-    fun onTouch(event: MotionEvent): Boolean {
+    open fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
         if (curPage?.isTextSelected() == true) {
             curPage?.dispatchTouchEvent(event)
@@ -278,8 +278,35 @@ abstract class PageDelegate(protected val pageView: PageView) {
             if (pageView.isScrollDelegate()) {
                 //传递触摸事件到textView
                 curPage?.dispatchTouchEvent(e2)
-            }
-            if (!isMoved && abs(distanceX) > abs(distanceY)) {
+                if (!isMoved && abs(distanceX) < abs(distanceY)) {
+                    if (distanceY < 0) {
+                        //上一页的参数配置
+                        direction = Direction.PREV
+                        //判断是否上一页存在
+                        val hasPrev = pageView.hasPrev()
+                        //如果上一页不存在
+                        if (!hasPrev) {
+                            noNext = true
+                            return true
+                        }
+                        //上一页截图
+                        bitmap = prevPage?.screenshot()
+                    } else {
+                        //进行下一页的配置
+                        direction = Direction.NEXT
+                        //判断是否下一页存在
+                        val hasNext = pageView.hasNext()
+                        //如果不存在表示没有下一页了
+                        if (!hasNext) {
+                            noNext = true
+                            return true
+                        }
+                        //下一页截图
+                        bitmap = nextPage?.screenshot()
+                    }
+                    isMoved = true
+                }
+            } else if (!isMoved && abs(distanceX) > abs(distanceY)) {
                 if (distanceX < 0) {
                     //上一页的参数配置
                     direction = Direction.PREV
@@ -308,7 +335,11 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 isMoved = true
             }
             if (isMoved) {
-                isCancel = if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
+                isCancel = if (pageView.isScrollDelegate()) {
+                    if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
+                } else {
+                    if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
+                }
                 isRunning = true
                 //设置触摸点
                 setTouchPoint(e2.x, e2.y)
