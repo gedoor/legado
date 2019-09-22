@@ -81,8 +81,13 @@ class ContentTextView : AppCompatTextView {
         initOffsetHeight()
     }
 
-    override fun setText(text: CharSequence?, type: BufferType?) {
-        super.setText(text, type)
+    override fun onTextChanged(
+        text: CharSequence?,
+        start: Int,
+        lengthBefore: Int,
+        lengthAfter: Int
+    ) {
+        super.onTextChanged(text, start, lengthBefore, lengthAfter)
         initOffsetHeight()
     }
 
