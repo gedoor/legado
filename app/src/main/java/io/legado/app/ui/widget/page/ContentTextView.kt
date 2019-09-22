@@ -193,6 +193,9 @@ class ContentTextView : AppCompatTextView {
         }
     }
 
+    /**
+     * 惯性滚动
+     */
     private inner class ViewFling : Runnable {
 
         private var mLastFlingY = 0
