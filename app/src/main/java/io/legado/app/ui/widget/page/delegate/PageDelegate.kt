@@ -65,7 +65,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
     var isCancel = false
     var isRunning = false
     var isStarted = false
-    var isLongPress = false
 
     protected fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
@@ -211,7 +210,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
         override fun onDown(e: MotionEvent): Boolean {
-            isLongPress = false
 //            abort()
             //是否移动
             isMoved = false
@@ -259,11 +257,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
             return true
         }
 
-        override fun onLongPress(e: MotionEvent?) {
-            curPage?.dispatchTouchEvent(e)
-            isLongPress = true
-        }
-
         override fun onScroll(
             e1: MotionEvent,
             e2: MotionEvent,
@@ -271,10 +264,14 @@ abstract class PageDelegate(protected val pageView: PageView) {
             distanceY: Float
         ): Boolean {
             curPage?.contentTextView()?.let {
-                it.setTextIsSelectable(false)
-                it.movementMethod = scrollingMovementMethod
+                //滑动时禁止选择文字
+                if (it.isTextSelectable) {
+                    it.setTextIsSelectable(false)
+                    it.movementMethod = scrollingMovementMethod
+                }
             }
             if (pageView.isScrollDelegate()) {
+                //传递触摸事件到textView
                 curPage?.dispatchTouchEvent(e2)
                 return true
             }
