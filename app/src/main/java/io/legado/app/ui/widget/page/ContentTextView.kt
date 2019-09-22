@@ -99,7 +99,6 @@ class ContentTextView : AppCompatTextView {
     }
 
     override fun scrollTo(x: Int, y: Int) {
-        setScrollState(scrollStateIdle)
         super.scrollTo(x, min(y, mOffsetHeight))
     }
 
