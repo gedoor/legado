@@ -11,6 +11,8 @@ import android.widget.OverScroller
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 
 class ContentTextView : AppCompatTextView {
@@ -33,6 +35,8 @@ class ContentTextView : AppCompatTextView {
     private var mMinFlingVelocity: Int = 0
     private var mMaxFlingVelocity: Int = 0
     private val mViewFling = ViewFling()
+    //滑动距离的最大边界
+    private var mOffsetHeight: Int = 0
 
     //f(x) = (x-1)^5 + 1
     private val sQuinticInterpolator = Interpolator {
@@ -48,6 +52,14 @@ class ContentTextView : AppCompatTextView {
         mMaxFlingVelocity = vc.scaledMaximumFlingVelocity
     }
 
+    fun atTop(): Boolean {
+        return scrollY <= 0
+    }
+
+    fun atBottom(): Boolean {
+        return scrollY >= mOffsetHeight
+    }
+
     /**
      * 获取当前页总字数
      */
@@ -61,6 +73,33 @@ class ContentTextView : AppCompatTextView {
     fun getLineNum(): Int {
         val topOfLastLine = height - paddingTop - paddingBottom - lineHeight
         return layout?.getLineForVertical(topOfLastLine) ?: 0
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        initOffsetHeight()
+    }
+
+    override fun onTextChanged(
+        text: CharSequence,
+        start: Int,
+        lengthBefore: Int,
+        lengthAfter: Int
+    ) {
+        super.onTextChanged(text, start, lengthBefore, lengthAfter)
+        initOffsetHeight()
+    }
+
+    private fun initOffsetHeight() {
+        val mLayoutHeight: Int
+
+        //获得内容面板
+        val mLayout = layout ?: return
+        //获得内容面板的高度
+        mLayoutHeight = mLayout.height
+
+        //计算滑动距离的边界
+        mOffsetHeight = mLayoutHeight + totalPaddingTop + totalPaddingBottom - measuredHeight
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -168,7 +207,11 @@ class ContentTextView : AppCompatTextView {
                 val y = scroller.currY
                 val dy = y - mLastFlingY
                 mLastFlingY = y
-                this@ContentTextView.scrollBy(0, dy)
+                if (dy < 0 && scrollY > 0) {
+                    scrollBy(0, max(dy, -scrollY))
+                } else if (dy > 0 && scrollY < mOffsetHeight) {
+                    scrollBy(0, min(dy, mOffsetHeight - scrollY))
+                }
                 postOnAnimation()
             }
             enableRunOnAnimationRequests()
