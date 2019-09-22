@@ -9,13 +9,21 @@ class TextPageFactory private constructor(dataSource: DataSource) :
         }
     }
 
-    override fun hasPrev(): Boolean {
-        return dataSource.hasPrevChapter() || dataSource.pageIndex() > 0
+    override fun hasPrev(): Boolean = with(dataSource) {
+        return if (isScrollDelegate()) {
+            hasPrevChapter()
+        } else {
+            hasPrevChapter() || pageIndex() > 0
+        }
     }
 
-    override fun hasNext(): Boolean {
-        return dataSource.hasNextChapter()
-                || dataSource.getCurrentChapter()?.isLastIndex(dataSource.pageIndex()) != true
+    override fun hasNext(): Boolean = with(dataSource) {
+        return if (isScrollDelegate()) {
+            hasNextChapter()
+        } else {
+            hasNextChapter()
+                    || getCurrentChapter()?.isLastIndex(pageIndex()) != true
+        }
     }
 
     override fun pageAt(index: Int): TextPage {
@@ -27,76 +35,76 @@ class TextPageFactory private constructor(dataSource: DataSource) :
         dataSource.setPageIndex(0)
     }
 
-    override fun moveToLast() {
-        dataSource.getCurrentChapter()?.let {
+    override fun moveToLast() = with(dataSource) {
+        getCurrentChapter()?.let {
             if (it.pageSize() == 0) {
-                dataSource.setPageIndex(0)
+                setPageIndex(0)
             } else {
-                dataSource.setPageIndex(it.pageSize().minus(1))
+                setPageIndex(it.pageSize().minus(1))
             }
-        } ?: dataSource.setPageIndex(0)
+        } ?: setPageIndex(0)
     }
 
-    override fun moveToNext(): Boolean = dataSource.pageIndex().let { index ->
+    override fun moveToNext(): Boolean = with(dataSource) {
         return if (hasNext()) {
-            if (dataSource.getCurrentChapter()?.isLastIndex(index) == true
-                || dataSource.isScrollDelegate()
+            if (getCurrentChapter()?.isLastIndex(pageIndex()) == true
+                || isScrollDelegate()
             ) {
-                dataSource.moveToNextChapter()
+                moveToNextChapter()
             } else {
-                dataSource.setPageIndex(index.plus(1))
+                setPageIndex(pageIndex().plus(1))
             }
             true
         } else
             false
     }
 
-    override fun moveToPrevious(): Boolean = dataSource.pageIndex().let { index ->
+    override fun moveToPrevious(): Boolean = with(dataSource) {
         return if (hasPrev()) {
-            if (index <= 0 || dataSource.isScrollDelegate()) {
-                dataSource.moveToPrevChapter()
+            if (pageIndex() <= 0 || isScrollDelegate()) {
+                moveToPrevChapter()
             } else {
-                dataSource.setPageIndex(index.minus(1))
+                setPageIndex(pageIndex().minus(1))
             }
             true
         } else
             false
     }
 
-    override fun currentPage(): TextPage? = dataSource.pageIndex().let { index ->
-        return if (dataSource.isScrollDelegate()) {
-            dataSource.getCurrentChapter()?.scrollPage()
+    override fun currentPage(): TextPage? = with(dataSource) {
+        return if (isScrollDelegate()) {
+            getCurrentChapter()?.scrollPage()
         } else {
-            dataSource.getCurrentChapter()?.page(index)
-        } ?: TextPage(index = index, title = "index：$index")
+            getCurrentChapter()?.page(pageIndex())
+        } ?: TextPage(index = pageIndex(), title = "index：${pageIndex()}")
     }
 
-    override fun nextPage(): TextPage? = dataSource.pageIndex().let { index ->
-        if (dataSource.isScrollDelegate()) {
-            return dataSource.getNextChapter()?.scrollPage()
-                ?: TextPage(index = index + 1, title = "index：${index + 1}")
+    override fun nextPage(): TextPage? = with(dataSource) {
+        if (isScrollDelegate()) {
+            return getNextChapter()?.scrollPage()
+                ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
         }
-        dataSource.getCurrentChapter()?.let {
-            if (index < it.pageSize() - 1) {
-                return dataSource.getCurrentChapter()?.page(index + 1)?.removePageAloudSpan()
-                    ?: TextPage(index = index + 1, title = "index：${index + 1}")
+        getCurrentChapter()?.let {
+            if (pageIndex() < it.pageSize() - 1) {
+                return getCurrentChapter()?.page(pageIndex() + 1)?.removePageAloudSpan()
+                    ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
             }
         }
-        return dataSource.getNextChapter()?.page(0)?.removePageAloudSpan()
-            ?: TextPage(index = index + 1, title = "index：${index + 1}")
+        return getNextChapter()?.page(0)?.removePageAloudSpan()
+            ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
     }
 
-    override fun previousPage(): TextPage? = dataSource.pageIndex().let { index ->
-        if (dataSource.isScrollDelegate()) {
-            return dataSource.getPreviousChapter()?.scrollPage()
-                ?: TextPage(index = index + 1, title = "index：${index + 1}")
+    override fun previousPage(): TextPage? = with(dataSource) {
+        if (isScrollDelegate()) {
+            return getPreviousChapter()?.scrollPage()
+                ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
         }
-        if (index > 0) {
-            return dataSource.getCurrentChapter()?.page(index - 1)?.removePageAloudSpan()
-                ?: TextPage(index = index - 1, title = "index：${index - 1}")
+        if (pageIndex() > 0) {
+            return getCurrentChapter()?.page(pageIndex() - 1)?.removePageAloudSpan()
+                ?: TextPage(index = pageIndex() - 1, title = "index：${pageIndex() - 1}")
         }
-        return dataSource.getPreviousChapter()?.lastPage()?.removePageAloudSpan()
-            ?: TextPage(index = index - 1, title = "index：${index - 1}")
+        return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
+            ?: TextPage(index = pageIndex() - 1, title = "index：${pageIndex() - 1}")
     }
 
 
