@@ -2,23 +2,11 @@ package io.legado.app.ui.widget.page.delegate
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import android.view.MotionEvent
 import io.legado.app.ui.widget.page.PageView
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
-    private var atTop: Boolean = false
-    private var atBottom: Boolean = false
-    private val bitmapMatrix = Matrix()
 
-    override fun onTouch(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            curPage?.contentTextView()?.let {
-                atTop = it.atTop()
-                atBottom = it.atBottom()
-            }
-        }
-        return super.onTouch(event)
-    }
+    private val bitmapMatrix = Matrix()
 
     override fun onScrollStart() {
         if (!atTop && !atBottom) {

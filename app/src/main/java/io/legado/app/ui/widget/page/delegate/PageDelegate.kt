@@ -38,6 +38,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
+    //textView在顶端或低端
+    protected var atTop: Boolean = false
+    protected var atBottom: Boolean = false
 
     private val scroller: Scroller by lazy {
         Scroller(
@@ -176,15 +179,21 @@ abstract class PageDelegate(protected val pageView: PageView) {
     /**
      * 触摸事件处理
      */
-    open fun onTouch(event: MotionEvent): Boolean {
+    fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
         if (curPage?.isTextSelected() == true) {
             curPage?.dispatchTouchEvent(event)
             return true
         }
         if (event.action == MotionEvent.ACTION_DOWN) {
-            curPage?.contentTextView()?.setTextIsSelectable(true)
-            curPage?.dispatchTouchEvent(event)
+            curPage?.let {
+                it.contentTextView()?.let { contentTextView ->
+                    contentTextView.setTextIsSelectable(true)
+                    atTop = contentTextView.atTop()
+                    atBottom = contentTextView.atBottom()
+                }
+                it.dispatchTouchEvent(event)
+            }
         } else if (event.action == MotionEvent.ACTION_UP) {
             curPage?.dispatchTouchEvent(event)
             if (isMoved) {
@@ -276,35 +285,41 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 }
             }
             if (pageView.isScrollDelegate()) {
-                //传递触摸事件到textView
-                curPage?.dispatchTouchEvent(e2)
                 if (!isMoved && abs(distanceX) < abs(distanceY)) {
                     if (distanceY < 0) {
-                        //上一页的参数配置
-                        direction = Direction.PREV
-                        //判断是否上一页存在
-                        val hasPrev = pageView.hasPrev()
-                        //如果上一页不存在
-                        if (!hasPrev) {
-                            noNext = true
-                            return true
+                        if (atTop) {
+                            //上一页的参数配置
+                            direction = Direction.PREV
+                            //判断是否上一页存在
+                            val hasPrev = pageView.hasPrev()
+                            //如果上一页不存在
+                            if (!hasPrev) {
+                                noNext = true
+                                return true
+                            }
+                            //上一页截图
+                            bitmap = prevPage?.screenshot()
                         }
-                        //上一页截图
-                        bitmap = prevPage?.screenshot()
                     } else {
-                        //进行下一页的配置
-                        direction = Direction.NEXT
-                        //判断是否下一页存在
-                        val hasNext = pageView.hasNext()
-                        //如果不存在表示没有下一页了
-                        if (!hasNext) {
-                            noNext = true
-                            return true
+                        if (atBottom) {
+                            //进行下一页的配置
+                            direction = Direction.NEXT
+                            //判断是否下一页存在
+                            val hasNext = pageView.hasNext()
+                            //如果不存在表示没有下一页了
+                            if (!hasNext) {
+                                noNext = true
+                                return true
+                            }
+                            //下一页截图
+                            bitmap = nextPage?.screenshot()
                         }
-                        //下一页截图
-                        bitmap = nextPage?.screenshot()
                     }
                     isMoved = true
+                }
+                if ((atTop && direction != Direction.PREV) || (atBottom && direction != Direction.NEXT) || direction == Direction.NONE) {
+                    //传递触摸事件到textView
+                    curPage?.dispatchTouchEvent(e2)
                 }
             } else if (!isMoved && abs(distanceX) > abs(distanceY)) {
                 if (distanceX < 0) {
