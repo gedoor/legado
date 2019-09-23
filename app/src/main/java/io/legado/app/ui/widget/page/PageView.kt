@@ -108,6 +108,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                     callback?.let { callback ->
                         if (isScrollDelegate) {
                             curPage?.scrollTo(callback.textChapter()?.getStartLine(callback.durChapterPos()))
+                            prevPage?.scrollToBottom()
                         }
                     }
                 }
