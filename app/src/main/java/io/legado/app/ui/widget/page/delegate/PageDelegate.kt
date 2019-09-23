@@ -104,6 +104,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected fun stopScroll() {
         isRunning = false
         isStarted = false
+        invalidate()
         if (pageView.isScrollDelegate) {
             pageView.postDelayed({
                 bitmap?.recycle()
@@ -113,7 +114,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
             bitmap?.recycle()
             bitmap = null
         }
-        invalidate()
     }
 
     fun setViewSize(width: Int, height: Int) {
@@ -144,7 +144,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     fun start(direction: Direction) {
         if (isStarted) return
-        this.direction = direction
         if (direction === Direction.NEXT) {
             val x = viewWidth.toFloat()
             val y = viewHeight.toFloat()
@@ -153,8 +152,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             //设置点击点
             setTouchPoint(x, y, false)
             //设置方向
-            val hasNext = pageView.hasNext()
-            if (!hasNext) {
+            if (!hasNext()) {
                 return
             }
         } else {
@@ -165,8 +163,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             //设置点击点
             setTouchPoint(x, y, false)
             //设置方向方向
-            val hashPrev = pageView.hasPrev()
-            if (!hashPrev) {
+            if (!hasPrev()) {
                 return
             }
         }
@@ -240,26 +237,22 @@ abstract class PageDelegate(protected val pageView: PageView) {
             val x = e.x
             val y = e.y
             if (centerRectF.contains(x, y)) {
-                pageView.clickCenter()
+                pageView.callback?.clickCenter()
                 setTouchPoint(x, y)
             } else {
-                direction = if (x > viewWidth / 2) Direction.NEXT else Direction.PREV
-                if (direction == Direction.NEXT) {
-                    //判断是否下一页存在
-                    val hasNext = pageView.hasNext()
+                bitmap = if (x > viewWidth / 2) {
                     //设置动画方向
-                    if (!hasNext) {
+                    if (!hasNext()) {
                         return true
                     }
                     //下一页截图
-                    bitmap = nextPage?.screenshot()
+                    nextPage?.screenshot()
                 } else {
-                    val hasPrev = pageView.hasPrev()
-                    if (!hasPrev) {
+                    if (!hasPrev()) {
                         return true
                     }
                     //上一页截图
-                    bitmap = prevPage?.screenshot()
+                    prevPage?.screenshot()
                 }
                 setTouchPoint(x, y)
                 onScrollStart()
@@ -280,12 +273,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
                             val event = e1.toAction(MotionEvent.ACTION_UP)
                             curPage?.dispatchTouchEvent(event)
                             event.recycle()
-                            //上一页的参数配置
-                            direction = Direction.PREV
-                            //判断是否上一页存在
-                            val hasPrev = pageView.hasPrev()
                             //如果上一页不存在
-                            if (!hasPrev) {
+                            if (!hasPrev()) {
                                 noNext = true
                                 return true
                             }
@@ -297,12 +286,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
                             val event = e1.toAction(MotionEvent.ACTION_UP)
                             curPage?.dispatchTouchEvent(event)
                             event.recycle()
-                            //进行下一页的配置
-                            direction = Direction.NEXT
-                            //判断是否下一页存在
-                            val hasNext = pageView.hasNext()
                             //如果不存在表示没有下一页了
-                            if (!hasNext) {
+                            if (!hasNext()) {
                                 noNext = true
                                 return true
                             }
@@ -322,24 +307,16 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 event.recycle()
                 if (abs(distanceX) > abs(distanceY)) {
                     if (distanceX < 0) {
-                        //上一页的参数配置
-                        direction = Direction.PREV
-                        //判断是否上一页存在
-                        val hasPrev = pageView.hasPrev()
                         //如果上一页不存在
-                        if (!hasPrev) {
+                        if (!hasPrev()) {
                             noNext = true
                             return true
                         }
                         //上一页截图
                         bitmap = prevPage?.screenshot()
                     } else {
-                        //进行下一页的配置
-                        direction = Direction.NEXT
-                        //判断是否下一页存在
-                        val hasNext = pageView.hasNext()
                         //如果不存在表示没有下一页了
-                        if (!hasNext) {
+                        if (!hasNext()) {
                             noNext = true
                             return true
                         }
@@ -363,9 +340,15 @@ abstract class PageDelegate(protected val pageView: PageView) {
         }
     }
 
-    interface PageInterface {
-        fun hasNext(): Boolean
-        fun hasPrev(): Boolean
-        fun clickCenter()
+    private fun hasPrev(): Boolean {
+        //上一页的参数配置
+        direction = Direction.PREV
+        return pageView.pageFactory?.hasPrev() == true
+    }
+
+    private fun hasNext(): Boolean {
+        //进行下一页的配置
+        direction = Direction.NEXT
+        return pageView.pageFactory?.hasNext() == true
     }
 }

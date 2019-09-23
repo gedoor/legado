@@ -13,13 +13,12 @@ import io.legado.app.utils.getPrefInt
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
-    PageDelegate.PageInterface,
     ContentView.CallBack,
     DataSource {
 
-    private var callback: CallBack? = null
+    var callback: CallBack? = null
+    var pageFactory: TextPageFactory? = null
     private var pageDelegate: PageDelegate? = null
-    private var pageFactory: TextPageFactory? = null
 
     var prevPage: ContentView? = null
     var curPage: ContentView? = null
@@ -167,18 +166,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         curPage?.upBattery(battery)
         prevPage?.upBattery(battery)
         nextPage?.upBattery(battery)
-    }
-
-    override fun hasNext(): Boolean {
-        return pageFactory?.hasNext() == true
-    }
-
-    override fun hasPrev(): Boolean {
-        return pageFactory?.hasPrev() == true
-    }
-
-    override fun clickCenter() {
-        callback?.clickCenter()
     }
 
     override val isScrollDelegate: Boolean
