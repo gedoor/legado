@@ -20,9 +20,9 @@ import java.net.URLEncoder
 import java.util.*
 
 class WebDav @Throws(MalformedURLException::class)
-constructor(url: String) {
+constructor(urlStr: String) {
     private val okHttpClient = HttpHelper.client
-    private val url: URL = URL(null, url, Handler)
+    private val url: URL = URL(null, urlStr, Handler)
     private var httpUrl: String? = null
 
     var displayName: String? = null
@@ -32,9 +32,10 @@ constructor(url: String) {
     var urlName = ""
         get() {
             if (field.isEmpty()) {
-                this.urlName = (if (parent.isEmpty()) url.file else url.toString()
-                    .replace(parent, ""))
-                    .replace("/", "")
+                this.urlName = (
+                        if (parent.isEmpty()) url.file
+                        else url.toString().replace(parent, "")
+                        ).replace("/", "")
             }
             return field
         }
@@ -140,9 +141,7 @@ constructor(url: String) {
                     Credentials.basic(it.user, it.pass)
                 )
             }
-
             request.header("Depth", if (depth < 0) "infinity" else depth.toString())
-
             return okHttpClient.newCall(request.build()).execute()
         }
         return null
@@ -238,7 +237,6 @@ constructor(url: String) {
                 Credentials.basic(it.user, it.pass)
             )
         }
-
         val response = okHttpClient.newCall(requestBuilder.build()).execute()
         return response.isSuccessful
     }
