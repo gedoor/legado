@@ -1,10 +1,10 @@
 package io.legado.app.lib.webdav
 
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.lib.webdav.http.Handler
 import io.legado.app.lib.webdav.http.HttpAuth
 import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -22,17 +22,13 @@ import java.util.*
 class WebDav @Throws(MalformedURLException::class)
 constructor(urlStr: String) {
     companion object {
-        private val okHttpClient by lazy {
-            OkHttpClient.Builder().build()
-        }
         // 指定返回哪些属性
-        private const val DIR = """<?xml version=\"1.0\"?>\n
-                <a:propfind xmlns:a=\"DAV:\">\n
-                <a:prop>\n
-                <a:displayname/>\n<a:resourcetype/>\n<a:getcontentlength/>\n<a:creationdate/>\n<a:getlastmodified/>\n%s
-                </a:prop>\n
-                </a:propfind>"""
-
+        private const val DIR = "<?xml version=\"1.0\"?>\n" +
+                "<a:propfind xmlns:a=\"DAV:\">\n" +
+                "<a:prop>\n" +
+                "<a:displayname/>\n<a:resourcetype/>\n<a:getcontentlength/>\n<a:creationdate/>\n<a:getlastmodified/>\n%s" +
+                "</a:prop>\n" +
+                "</a:propfind>"
     }
     private val url: URL = URL(null, urlStr, Handler)
     private var httpUrl: String? = null
@@ -64,7 +60,7 @@ constructor(urlStr: String) {
             }
 
             try {
-                return okHttpClient.newCall(request.build()).execute().body?.byteStream()
+                return HttpHelper.client.newCall(request.build()).execute().body?.byteStream()
             } catch (e: IOException) {
                 e.printStackTrace()
             } catch (e: IllegalArgumentException) {
@@ -154,7 +150,7 @@ constructor(urlStr: String) {
                 )
             }
             request.header("Depth", if (depth < 0) "infinity" else depth.toString())
-            return okHttpClient.newCall(request.build()).execute()
+            return HttpHelper.client.newCall(request.build()).execute()
         }
         return null
     }
@@ -249,7 +245,7 @@ constructor(urlStr: String) {
                 Credentials.basic(it.user, it.pass)
             )
         }
-        val response = okHttpClient.newCall(requestBuilder.build()).execute()
+        val response = HttpHelper.client.newCall(requestBuilder.build()).execute()
         return response.isSuccessful
     }
 
