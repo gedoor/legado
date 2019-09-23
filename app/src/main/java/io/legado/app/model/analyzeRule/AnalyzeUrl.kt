@@ -30,7 +30,7 @@ import javax.script.SimpleBindings
 @Keep
 @SuppressLint("DefaultLocale")
 class AnalyzeUrl(
-    private var ruleUrl: String,
+    var ruleUrl: String,
     key: String? = null,
     page: Int? = null,
     headerMapF: Map<String, String>? = null,

@@ -26,8 +26,13 @@ object BookChapterList {
         var chapterList = arrayListOf<BookChapter>()
         val baseUrl: String = NetworkUtils.getUrl(response)
         val body: String? = response.body()
-        body ?: throw Exception(App.INSTANCE.getString(R.string.error_get_web_content, baseUrl))
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
+        body ?: throw Exception(
+            App.INSTANCE.getString(
+                R.string.error_get_web_content,
+                analyzeUrl.ruleUrl
+            )
+        )
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:${analyzeUrl.ruleUrl}")
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
         var reverse = false

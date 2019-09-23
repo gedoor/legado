@@ -23,6 +23,7 @@ object BookContent {
         book: Book,
         bookChapter: BookChapter,
         bookSource: BookSource,
+        analyzeUrl: AnalyzeUrl,
         nextChapterUrlF: String? = null
     ): String {
         val baseUrl: String = NetworkUtils.getUrl(response)
@@ -30,10 +31,10 @@ object BookContent {
         body ?: throw Exception(
             App.INSTANCE.getString(
                 R.string.error_get_web_content,
-                baseUrl
+                analyzeUrl.ruleUrl
             )
         )
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:${analyzeUrl.ruleUrl}")
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()

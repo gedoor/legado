@@ -114,6 +114,7 @@ class WebBook(val bookSource: BookSource) {
                 book,
                 bookChapter,
                 bookSource,
+                analyzeUrl,
                 nextChapterUrl
             )
         }

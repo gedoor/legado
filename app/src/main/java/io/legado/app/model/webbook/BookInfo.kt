@@ -21,10 +21,10 @@ object BookInfo {
         body ?: throw Exception(
             App.INSTANCE.getString(
                 R.string.error_get_web_content,
-                baseUrl
+                analyzeUrl.ruleUrl
             )
         )
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:$baseUrl")
+        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:${analyzeUrl.ruleUrl}")
         val infoRule = bookSource.getBookInfoRule()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body, baseUrl)
