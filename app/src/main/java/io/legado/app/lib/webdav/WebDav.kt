@@ -245,12 +245,4 @@ constructor(urlStr: String) {
         return null
     }
 
-    fun canRead(): Boolean {
-        return true
-    }
-
-    fun canWrite(): Boolean {
-        return false
-    }
-
 }
