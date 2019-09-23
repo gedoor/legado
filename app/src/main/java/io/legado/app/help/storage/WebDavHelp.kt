@@ -18,7 +18,7 @@ import kotlin.math.min
 object WebDavHelp {
     private val zipFilePath = FileHelp.getCachePath() + "/backup" + ".zip"
 
-    fun getWebDavUrl(): String? {
+    private fun getWebDavUrl(): String? {
         var url = App.INSTANCE.getPrefString("web_dav_url")
         if (url.isNullOrBlank()) return null
         if (!url.endsWith("/")) url += "/"
