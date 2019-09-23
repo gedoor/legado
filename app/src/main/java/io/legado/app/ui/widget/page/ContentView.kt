@@ -52,7 +52,6 @@ class ContentView : FrameLayout {
                 callBack?.scrollToLine(line)
             }
             if (content_text_view.atBottom()) {
-                setPageIndex(pageSize - 1)
                 callBack?.scrollToLast()
             }
         }

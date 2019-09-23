@@ -247,6 +247,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         if (isScrollDelegate) {
             callback?.textChapter()?.let {
                 callback?.setPageIndex(it.lastIndex())
+                curPage?.setPageIndex(it.lastIndex())
             }
         }
     }
