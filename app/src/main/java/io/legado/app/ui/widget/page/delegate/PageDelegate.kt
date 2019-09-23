@@ -188,9 +188,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
         if (event.action == MotionEvent.ACTION_DOWN) {
             curPage?.let {
                 it.contentTextView()?.let { contentTextView ->
-                    if (!contentTextView.isTextSelectable) {
-                        contentTextView.setTextIsSelectable(true)
-                    }
                     atTop = contentTextView.atTop()
                     atBottom = contentTextView.atBottom()
                 }
@@ -279,17 +276,11 @@ abstract class PageDelegate(protected val pageView: PageView) {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
-            curPage?.contentTextView()?.let {
-                //滑动时禁止选择文字
-                if (it.isTextSelectable) {
-                    it.setTextIsSelectable(false)
-                    it.movementMethod = scrollingMovementMethod
-                }
-            }
             if (pageView.isScrollDelegate()) {
                 if (!isMoved && abs(distanceX) < abs(distanceY)) {
                     if (distanceY < 0) {
                         if (atTop) {
+                            curPage?.dispatchTouchEvent(e1.toAction(MotionEvent.ACTION_UP))
                             //上一页的参数配置
                             direction = Direction.PREV
                             //判断是否上一页存在
@@ -304,6 +295,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
                         }
                     } else {
                         if (atBottom) {
+                            curPage?.dispatchTouchEvent(e1.toAction(MotionEvent.ACTION_UP))
                             //进行下一页的配置
                             direction = Direction.NEXT
                             //判断是否下一页存在
@@ -324,6 +316,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
                     curPage?.dispatchTouchEvent(e2)
                 }
             } else if (!isMoved && abs(distanceX) > abs(distanceY)) {
+                curPage?.dispatchTouchEvent(e1.toAction(MotionEvent.ACTION_UP))
                 if (distanceX < 0) {
                     //上一页的参数配置
                     direction = Direction.PREV
