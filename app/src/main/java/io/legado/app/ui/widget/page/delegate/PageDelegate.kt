@@ -94,7 +94,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             startY,
             dx,
             dy,
-            if (dx != 0) getDuration(dx, viewWidth) else getDuration(dy, viewHeight)
+            if (dx != 0) (dx * 0.3).toInt() else (dy * 0.3).toInt()
         )
         isRunning = true
         isStarted = true
@@ -107,10 +107,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
         bitmap?.recycle()
         bitmap = null
         invalidate()
-    }
-
-    private fun getDuration(distance: Int, len: Int): Int {
-        return (300f * abs(distance) / len).toInt()
     }
 
     fun setViewSize(width: Int, height: Int) {

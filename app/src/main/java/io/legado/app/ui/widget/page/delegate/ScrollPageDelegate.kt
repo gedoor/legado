@@ -15,20 +15,22 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         }
         val distanceY: Float
         when (direction) {
-            Direction.NEXT -> if (isCancel) {
-                var dis = viewHeight - startY + touchY
-                if (dis > viewHeight) {
-                    dis = viewHeight.toFloat()
+            Direction.NEXT -> distanceY =
+                if (isCancel) {
+                    var dis = viewHeight - startY + touchY
+                    if (dis > viewHeight) {
+                        dis = viewHeight.toFloat()
+                    }
+                    viewHeight - dis
+                } else {
+                    -(touchY + (viewHeight - startY))
                 }
-                distanceY = viewHeight - dis
-            } else {
-                distanceY = -(touchY + (viewHeight - startY))
-            }
-            else -> distanceY = if (isCancel) {
-                -(touchY - startY)
-            } else {
-                viewWidth - (touchY - startY)
-            }
+            else -> distanceY =
+                if (isCancel) {
+                    -(touchY - startY)
+                } else {
+                    viewHeight - (touchY - startY)
+                }
         }
 
         startScroll(0, touchY.toInt(), 0, distanceY.toInt())

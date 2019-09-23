@@ -11,20 +11,22 @@ class SlidePageDelegate(pageView: PageView) : PageDelegate(pageView) {
     override fun onScrollStart() {
         val distanceX: Float
         when (direction) {
-            Direction.NEXT -> if (isCancel) {
-                var dis = viewWidth - startX + touchX
-                if (dis > viewWidth) {
-                    dis = viewWidth.toFloat()
+            Direction.NEXT -> distanceX =
+                if (isCancel) {
+                    var dis = viewWidth - startX + touchX
+                    if (dis > viewWidth) {
+                        dis = viewWidth.toFloat()
+                    }
+                    viewWidth - dis
+                } else {
+                    -(touchX + (viewWidth - startX))
                 }
-                distanceX = viewWidth - dis
-            } else {
-                distanceX = -(touchX + (viewWidth - startX))
-            }
-            else -> distanceX = if (isCancel) {
-                -(touchX - startX)
-            } else {
-                viewWidth - (touchX - startX)
-            }
+            else -> distanceX =
+                if (isCancel) {
+                    -(touchX - startX)
+                } else {
+                    viewWidth - (touchX - startX)
+                }
         }
 
         startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
