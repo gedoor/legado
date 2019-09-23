@@ -145,5 +145,6 @@ class ContentView : FrameLayout {
 
     interface CallBack {
         fun scrollToLine(line: Int)
+        fun scrollToLast()
     }
 }

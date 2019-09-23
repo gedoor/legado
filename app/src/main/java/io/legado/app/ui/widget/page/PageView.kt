@@ -228,6 +228,12 @@ class PageView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    override fun scrollToLast() {
+        callback?.textChapter()?.let {
+            callback?.setPageIndex(it.lastIndex())
+        }
+    }
+
     interface CallBack {
         fun chapterSize(): Int
         fun durChapterIndex(): Int
