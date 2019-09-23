@@ -46,7 +46,7 @@ constructor(urlStr: String) {
 
     var displayName: String? = null
     var size: Long = 0
-    private var exists = false
+    var exists = false
     var parent = ""
     var urlName = ""
         get() {
@@ -251,14 +251,6 @@ constructor(urlStr: String) {
 
     fun canWrite(): Boolean {
         return false
-    }
-
-    fun exists(): Boolean {
-        return exists
-    }
-
-    fun exists(exists: Boolean) {
-        this.exists = exists
     }
 
 }
