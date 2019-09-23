@@ -53,6 +53,7 @@ class ContentView : FrameLayout {
             }
             if (content_text_view.atBottom()) {
                 setPageIndex(pageSize - 1)
+                callBack?.scrollToLast()
             }
         }
     }
