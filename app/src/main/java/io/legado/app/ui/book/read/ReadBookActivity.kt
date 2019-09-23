@@ -582,16 +582,24 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         observeEvent<Int>(Bus.TTS_TURN_PAGE) {
             when (it) {
                 1 -> {
-                    viewModel.durPageIndex = viewModel.durPageIndex + 1
-                    page_view.upContent()
-                    viewModel.saveRead()
+                    if (page_view.isScrollDelegate) {
+                        page_view.moveToNextPage()
+                    } else {
+                        viewModel.durPageIndex = viewModel.durPageIndex + 1
+                        page_view.upContent()
+                        viewModel.saveRead()
+                    }
                 }
                 2 -> if (!moveToNextChapter(true)) ReadAloud.stop(this)
                 -1 -> {
                     if (viewModel.durPageIndex > 0) {
-                        viewModel.durPageIndex = viewModel.durPageIndex - 1
-                        page_view.upContent()
-                        viewModel.saveRead()
+                        if (page_view.isScrollDelegate) {
+                            page_view.moveToPrevPage()
+                        } else {
+                            viewModel.durPageIndex = viewModel.durPageIndex - 1
+                            page_view.upContent()
+                            viewModel.saveRead()
+                        }
                     } else {
                         moveToPrevChapter(true)
                     }

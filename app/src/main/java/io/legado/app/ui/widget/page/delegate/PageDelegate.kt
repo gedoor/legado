@@ -270,7 +270,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
-            if (pageView.isScrollDelegate()) {
+            if (pageView.isScrollDelegate) {
                 if (!isMoved && abs(distanceX) < abs(distanceY)) {
                     if (distanceY < 0) {
                         if (atTop) {
@@ -339,7 +339,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 isMoved = true
             }
             if (isMoved) {
-                isCancel = if (pageView.isScrollDelegate()) {
+                isCancel = if (pageView.isScrollDelegate) {
                     if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
                 } else {
                     if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0

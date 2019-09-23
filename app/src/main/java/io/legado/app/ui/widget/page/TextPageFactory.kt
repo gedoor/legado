@@ -3,19 +3,19 @@ package io.legado.app.ui.widget.page
 class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
 
     override fun hasPrev(): Boolean = with(dataSource) {
-        return if (isScrollDelegate()) {
+        return if (isScrollDelegate) {
             hasPrevChapter()
         } else {
-            hasPrevChapter() || pageIndex() > 0
+            hasPrevChapter() || pageIndex > 0
         }
     }
 
     override fun hasNext(): Boolean = with(dataSource) {
-        return if (isScrollDelegate()) {
+        return if (isScrollDelegate) {
             hasNextChapter()
         } else {
             hasNextChapter()
-                    || getCurrentChapter()?.isLastIndex(pageIndex()) != true
+                    || getCurrentChapter()?.isLastIndex(pageIndex) != true
         }
     }
 
@@ -40,12 +40,12 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override fun moveToNext(): Boolean = with(dataSource) {
         return if (hasNext()) {
-            if (getCurrentChapter()?.isLastIndex(pageIndex()) == true
-                || isScrollDelegate()
+            if (getCurrentChapter()?.isLastIndex(pageIndex) == true
+                || isScrollDelegate
             ) {
                 moveToNextChapter()
             } else {
-                setPageIndex(pageIndex().plus(1))
+                setPageIndex(pageIndex.plus(1))
             }
             true
         } else
@@ -54,10 +54,10 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override fun moveToPrevious(): Boolean = with(dataSource) {
         return if (hasPrev()) {
-            if (pageIndex() <= 0 || isScrollDelegate()) {
+            if (pageIndex <= 0 || isScrollDelegate) {
                 moveToPrevChapter()
             } else {
-                setPageIndex(pageIndex().minus(1))
+                setPageIndex(pageIndex.minus(1))
             }
             true
         } else
@@ -65,39 +65,39 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun currentPage(): TextPage? = with(dataSource) {
-        return if (isScrollDelegate()) {
+        return if (isScrollDelegate) {
             getCurrentChapter()?.scrollPage()
         } else {
-            getCurrentChapter()?.page(pageIndex())
-        } ?: TextPage(index = pageIndex(), title = "index：${pageIndex()}")
+            getCurrentChapter()?.page(pageIndex)
+        } ?: TextPage(index = pageIndex, title = "index：${pageIndex}")
     }
 
     override fun nextPage(): TextPage? = with(dataSource) {
-        if (isScrollDelegate()) {
+        if (isScrollDelegate) {
             return getNextChapter()?.scrollPage()
-                ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
+                ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
         }
         getCurrentChapter()?.let {
-            if (pageIndex() < it.pageSize() - 1) {
-                return getCurrentChapter()?.page(pageIndex() + 1)?.removePageAloudSpan()
-                    ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
+            if (pageIndex < it.pageSize() - 1) {
+                return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
+                    ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
             }
         }
         return getNextChapter()?.page(0)?.removePageAloudSpan()
-            ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
+            ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
     }
 
     override fun previousPage(): TextPage? = with(dataSource) {
-        if (isScrollDelegate()) {
+        if (isScrollDelegate) {
             return getPreviousChapter()?.scrollPage()
-                ?: TextPage(index = pageIndex() + 1, title = "index：${pageIndex() + 1}")
+                ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
         }
-        if (pageIndex() > 0) {
-            return getCurrentChapter()?.page(pageIndex() - 1)?.removePageAloudSpan()
-                ?: TextPage(index = pageIndex() - 1, title = "index：${pageIndex() - 1}")
+        if (pageIndex > 0) {
+            return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
+                ?: TextPage(index = pageIndex - 1, title = "index：${pageIndex - 1}")
         }
         return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
-            ?: TextPage(index = pageIndex() - 1, title = "index：${pageIndex() - 1}")
+            ?: TextPage(index = pageIndex - 1, title = "index：${pageIndex - 1}")
     }
 
 

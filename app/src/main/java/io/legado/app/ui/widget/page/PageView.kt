@@ -70,14 +70,14 @@ class PageView(context: Context, attrs: AttributeSet) :
             PageDelegate.Direction.PREV -> {
                 pageFactory?.moveToPrevious()
                 upContent()
-                if (isScrollDelegate()) {
+                if (isScrollDelegate) {
                     curPage?.scrollToBottom()
                 }
             }
             PageDelegate.Direction.NEXT -> {
                 pageFactory?.moveToNext()
                 upContent()
-                if (isScrollDelegate()) {
+                if (isScrollDelegate) {
                     curPage?.scrollTo(0)
                 }
             }
@@ -106,7 +106,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                     nextPage?.setContent(it.nextPage())
                     prevPage?.setContent(it.previousPage())
                     callback?.let { callback ->
-                        if (isScrollDelegate()) {
+                        if (isScrollDelegate) {
                             curPage?.scrollTo(callback.textChapter()?.getStartLine(callback.durChapterPos()))
                         }
                     }
@@ -117,13 +117,25 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     fun moveToPrevPage(noAnim: Boolean = true) {
         if (noAnim) {
-            fillPage(PageDelegate.Direction.PREV)
+            if (isScrollDelegate) {
+                callback?.textChapter()?.let {
+                    curPage?.scrollTo(it.getStartLine(pageIndex - 1))
+                }
+            } else {
+                fillPage(PageDelegate.Direction.PREV)
+            }
         }
     }
 
     fun moveToNextPage(noAnim: Boolean = true) {
         if (noAnim) {
-            fillPage(PageDelegate.Direction.NEXT)
+            if (isScrollDelegate) {
+                callback?.textChapter()?.let {
+                    curPage?.scrollTo(it.getStartLine(pageIndex + 1))
+                }
+            } else {
+                fillPage(PageDelegate.Direction.NEXT)
+            }
         }
     }
 
@@ -166,13 +178,11 @@ class PageView(context: Context, attrs: AttributeSet) :
         callback?.clickCenter()
     }
 
-    override fun isScrollDelegate(): Boolean {
-        return pageDelegate is ScrollPageDelegate
-    }
+    override val isScrollDelegate: Boolean
+        get() = pageDelegate is ScrollPageDelegate
 
-    override fun pageIndex(): Int {
-        return callback?.durChapterPos() ?: 0
-    }
+    override val pageIndex: Int
+        get() = callback?.durChapterPos() ?: 0
 
     override fun setPageIndex(pageIndex: Int) {
         callback?.setPageIndex(pageIndex)
@@ -221,7 +231,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun scrollToLine(line: Int) {
-        if (isScrollDelegate()) {
+        if (isScrollDelegate) {
             callback?.textChapter()?.let {
                 val pageIndex = it.getPageIndex(line)
                 curPage?.setPageIndex(pageIndex)
@@ -231,7 +241,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun scrollToLast() {
-        if (isScrollDelegate()) {
+        if (isScrollDelegate) {
             callback?.textChapter()?.let {
                 callback?.setPageIndex(it.lastIndex())
             }
