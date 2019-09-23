@@ -31,7 +31,18 @@ constructor(urlStr: String) {
                 "</a:propfind>"
     }
     private val url: URL = URL(null, urlStr, Handler)
-    private var httpUrl: String? = null
+    private val httpUrl: String? by lazy {
+        val raw = url.toString().replace("davs://", "https://").replace("dav://", "http://")
+        try {
+            return@lazy URLEncoder.encode(raw, "UTF-8")
+                .replace("\\+".toRegex(), "%20")
+                .replace("%3A".toRegex(), ":")
+                .replace("%2F".toRegex(), "/")
+        } catch (e: UnsupportedEncodingException) {
+            e.printStackTrace()
+            return@lazy null
+        }
+    }
 
     var displayName: String? = null
     var size: Long = 0
@@ -51,38 +62,6 @@ constructor(urlStr: String) {
     fun getPath() = url.toString()
 
     fun getHost() = url.host
-
-    private val inputStream: InputStream?
-        get() = getUrl()?.let { url ->
-            val request = Request.Builder().url(url)
-            HttpAuth.auth?.let {
-                request.header("Authorization", Credentials.basic(it.user, it.pass))
-            }
-
-            try {
-                return HttpHelper.client.newCall(request.build()).execute().body?.byteStream()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-            return null
-        }
-
-    private fun getUrl(): String? {
-        if (httpUrl == null) {
-            val raw = url.toString().replace("davs://", "https://").replace("dav://", "http://")
-            try {
-                httpUrl = URLEncoder.encode(raw, "UTF-8")
-                    .replace("\\+".toRegex(), "%20")
-                    .replace("%3A".toRegex(), ":")
-                    .replace("%2F".toRegex(), "/")
-            } catch (e: UnsupportedEncodingException) {
-                e.printStackTrace()
-            }
-        }
-        return httpUrl
-    }
 
     /**
      * 填充文件信息。实例化WebDAVFile对象时，并没有将远程文件的信息填充到实例中。需要手动填充！
@@ -136,7 +115,7 @@ constructor(urlStr: String) {
         } else {
             String.format(DIR, requestProps.toString() + "\n")
         }
-        getUrl()?.let { url ->
+        httpUrl?.let { url ->
             val request = Request.Builder()
                 .url(url)
                 // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
@@ -159,7 +138,7 @@ constructor(urlStr: String) {
         val list = ArrayList<WebDav>()
         val document = Jsoup.parse(s)
         val elements = document.getElementsByTag("d:response")
-        getUrl()?.let { url ->
+        httpUrl?.let { url ->
             val baseUrl = if (url.endsWith("/")) url else "$url/"
             for (element in elements) {
                 val href = element.getElementsByTag("d:href")[0].text()
@@ -187,7 +166,7 @@ constructor(urlStr: String) {
      */
     @Throws(IOException::class)
     fun makeAsDir(): Boolean {
-        getUrl()?.let { url ->
+        httpUrl?.let { url ->
             val request = Request.Builder()
                 .url(url)
                 .method("MKCOL", null)
@@ -207,7 +186,7 @@ constructor(urlStr: String) {
         if (File(savedPath).exists()) {
             if (!replaceExisting) return false
         }
-        val inputS = inputStream ?: return false
+        val inputS = getInputStream() ?: return false
         File(savedPath).writeBytes(inputS.readBytes())
         return true
     }
@@ -223,7 +202,7 @@ constructor(urlStr: String) {
         val mediaType = contentType?.toMediaTypeOrNull()
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = file.asRequestBody(mediaType)
-        getUrl()?.let {
+        httpUrl?.let {
             val request = Request.Builder()
                 .url(it)
                 .put(fileBody)
@@ -247,6 +226,23 @@ constructor(urlStr: String) {
         }
         val response = HttpHelper.client.newCall(requestBuilder.build()).execute()
         return response.isSuccessful
+    }
+
+    private fun getInputStream(): InputStream? {
+        httpUrl?.let { url ->
+            val request = Request.Builder().url(url)
+            HttpAuth.auth?.let {
+                request.header("Authorization", Credentials.basic(it.user, it.pass))
+            }
+            try {
+                return HttpHelper.client.newCall(request.build()).execute().body?.byteStream()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
+        }
+        return null
     }
 
     fun canRead(): Boolean {
