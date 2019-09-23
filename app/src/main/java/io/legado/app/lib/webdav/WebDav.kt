@@ -1,10 +1,10 @@
 package io.legado.app.lib.webdav
 
-import io.legado.app.help.http.HttpHelper
 import io.legado.app.lib.webdav.http.Handler
 import io.legado.app.lib.webdav.http.HttpAuth
 import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -21,7 +21,19 @@ import java.util.*
 
 class WebDav @Throws(MalformedURLException::class)
 constructor(urlStr: String) {
-    private val okHttpClient = HttpHelper.client
+    companion object {
+        private val okHttpClient by lazy {
+            OkHttpClient.Builder().build()
+        }
+        // 指定返回哪些属性
+        private const val DIR = """<?xml version=\"1.0\"?>\n
+                <a:propfind xmlns:a=\"DAV:\">\n
+                <a:prop>\n
+                <a:displayname/>\n<a:resourcetype/>\n<a:getcontentlength/>\n<a:creationdate/>\n<a:getlastmodified/>\n%s
+                </a:prop>\n
+                </a:propfind>"""
+
+    }
     private val url: URL = URL(null, urlStr, Handler)
     private var httpUrl: String? = null
 
@@ -257,15 +269,4 @@ constructor(urlStr: String) {
         this.exists = exists
     }
 
-    companion object {
-
-        // 指定返回哪些属性
-        private const val DIR = """<?xml version=\"1.0\"?>\n
-                <a:propfind xmlns:a=\"DAV:\">\n
-                <a:prop>\n
-                <a:displayname/>\n<a:resourcetype/>\n<a:getcontentlength/>\n<a:creationdate/>\n<a:getlastmodified/>\n%s
-                </a:prop>\n
-                </a:propfind>"""
-
-    }
 }
