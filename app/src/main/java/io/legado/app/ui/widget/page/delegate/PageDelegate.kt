@@ -94,7 +94,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             startY,
             dx,
             dy,
-            if (dx != 0) (dx * 0.3).toInt() else (dy * 0.3).toInt()
+            if (dx != 0) (abs(dx) * 0.3).toInt() else (abs(dy) * 0.3).toInt()
         )
         isRunning = true
         isStarted = true
