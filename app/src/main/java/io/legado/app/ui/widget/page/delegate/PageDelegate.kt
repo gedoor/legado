@@ -274,7 +274,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 if (!isMoved && abs(distanceX) < abs(distanceY)) {
                     if (distanceY < 0) {
                         if (atTop) {
-                            curPage?.dispatchTouchEvent(e1.toAction(MotionEvent.ACTION_UP))
+                            val event = e1.toAction(MotionEvent.ACTION_UP)
+                            curPage?.dispatchTouchEvent(event)
+                            event.recycle()
                             //上一页的参数配置
                             direction = Direction.PREV
                             //判断是否上一页存在
@@ -289,7 +291,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
                         }
                     } else {
                         if (atBottom) {
-                            curPage?.dispatchTouchEvent(e1.toAction(MotionEvent.ACTION_UP))
+                            val event = e1.toAction(MotionEvent.ACTION_UP)
+                            curPage?.dispatchTouchEvent(event)
+                            event.recycle()
                             //进行下一页的配置
                             direction = Direction.NEXT
                             //判断是否下一页存在
@@ -309,34 +313,38 @@ abstract class PageDelegate(protected val pageView: PageView) {
                     //传递触摸事件到textView
                     curPage?.dispatchTouchEvent(e2)
                 }
-            } else if (!isMoved && abs(distanceX) > abs(distanceY)) {
-                curPage?.dispatchTouchEvent(e1.toAction(MotionEvent.ACTION_UP))
-                if (distanceX < 0) {
-                    //上一页的参数配置
-                    direction = Direction.PREV
-                    //判断是否上一页存在
-                    val hasPrev = pageView.hasPrev()
-                    //如果上一页不存在
-                    if (!hasPrev) {
-                        noNext = true
-                        return true
+            } else if (!isMoved) {
+                val event = e1.toAction(MotionEvent.ACTION_UP)
+                curPage?.dispatchTouchEvent(event)
+                event.recycle()
+                if (abs(distanceX) > abs(distanceY)) {
+                    if (distanceX < 0) {
+                        //上一页的参数配置
+                        direction = Direction.PREV
+                        //判断是否上一页存在
+                        val hasPrev = pageView.hasPrev()
+                        //如果上一页不存在
+                        if (!hasPrev) {
+                            noNext = true
+                            return true
+                        }
+                        //上一页截图
+                        bitmap = prevPage?.screenshot()
+                    } else {
+                        //进行下一页的配置
+                        direction = Direction.NEXT
+                        //判断是否下一页存在
+                        val hasNext = pageView.hasNext()
+                        //如果不存在表示没有下一页了
+                        if (!hasNext) {
+                            noNext = true
+                            return true
+                        }
+                        //下一页截图
+                        bitmap = nextPage?.screenshot()
                     }
-                    //上一页截图
-                    bitmap = prevPage?.screenshot()
-                } else {
-                    //进行下一页的配置
-                    direction = Direction.NEXT
-                    //判断是否下一页存在
-                    val hasNext = pageView.hasNext()
-                    //如果不存在表示没有下一页了
-                    if (!hasNext) {
-                        noNext = true
-                        return true
-                    }
-                    //下一页截图
-                    bitmap = nextPage?.screenshot()
+                    isMoved = true
                 }
-                isMoved = true
             }
             if (isMoved) {
                 isCancel = if (pageView.isScrollDelegate) {
