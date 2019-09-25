@@ -166,24 +166,24 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
         val aCache = ACache.get(this, cacheDir = false)
-        val cacheUrls: MutableList<String>? = aCache
+        val cacheUrls: MutableList<String> = aCache
             .getAsString("sourceUrl")
             ?.splitNotBlank(",")
-            ?.toMutableList()
+            ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_book_source_on_line) {
             var editText: ATEAutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
                     edit_view.setFilterValues(cacheUrls) {
-                        cacheUrls?.remove(it)
+                        cacheUrls.remove(it)
                     }
                 }
             }
             okButton {
                 val text = editText?.text?.toString()
                 text?.let {
-                    if (cacheUrls?.contains(it) == true) {
+                    if (!cacheUrls.contains(it)) {
                         cacheUrls.add(0, it)
                         aCache.put("sourceUrl", cacheUrls.joinToString(","))
                     }
