@@ -167,7 +167,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private fun showImportDialog() {
         val cacheUrls: List<String>? = ACache
             .get(this, "cacheUrls", cacheDir = false)
-            ?.getAsString("sourceUrl")
+            .getAsString("sourceUrl")
             ?.splitNotBlank(";")
             ?.toMutableList()
         alert(titleResource = R.string.import_book_source_on_line) {

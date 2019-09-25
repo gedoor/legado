@@ -776,7 +776,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             maxSize: Long = MAX_SIZE.toLong(),
             maxCount: Int = MAX_COUNT,
             cacheDir: Boolean = true
-        ): ACache? {
+        ): ACache {
             val f = if (cacheDir) File(ctx.cacheDir, cacheName) else File(ctx.filesDir, cacheName)
             return get(f, maxSize, maxCount)
         }
@@ -786,17 +786,15 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             cacheDir: File,
             maxSize: Long = MAX_SIZE.toLong(),
             maxCount: Int = MAX_COUNT
-        ): ACache? {
-            try {
+        ): ACache {
+            synchronized(this) {
                 var manager = mInstanceMap[cacheDir.absoluteFile.toString() + myPid()]
                 if (manager == null) {
                     manager = ACache(cacheDir, maxSize, maxCount)
                     mInstanceMap[cacheDir.absolutePath + myPid()] = manager
                 }
                 return manager
-            } catch (ignored: Exception) {
             }
-            return null
         }
 
         private fun myPid(): String {
