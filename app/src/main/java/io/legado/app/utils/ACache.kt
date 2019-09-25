@@ -9,6 +9,7 @@ import android.graphics.PixelFormat
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
+import io.legado.app.App
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.*
@@ -405,7 +406,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      */
     private object Utils {
 
-        private val mSeparator = ' '
+        private const val mSeparator = ' '
 
         /**
          * 判断缓存的String数据是否到期
@@ -566,7 +567,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         fun bitmap2Drawable(bm: Bitmap?): Drawable? {
             return if (bm == null) {
                 null
-            } else BitmapDrawable(bm)
+            } else BitmapDrawable(App.INSTANCE.resources, bm)
         }
     }
 
