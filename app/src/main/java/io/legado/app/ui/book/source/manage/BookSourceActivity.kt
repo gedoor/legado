@@ -165,10 +165,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
-        val cacheUrls: MutableList<String>? = ACache
-            .get(this, "cacheUrls", cacheDir = false)
+        val aCache = ACache.get(this, cacheDir = false)
+        val cacheUrls: MutableList<String>? = aCache
             .getAsString("sourceUrl")
-            ?.splitNotBlank(";")
+            ?.splitNotBlank(",")
             ?.toMutableList()
         alert(titleResource = R.string.import_book_source_on_line) {
             var editText: ATEAutoCompleteTextView? = null
@@ -185,6 +185,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 text?.let {
                     if (cacheUrls?.contains(it) == true) {
                         cacheUrls.add(0, it)
+                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
                     }
                 }
             }
