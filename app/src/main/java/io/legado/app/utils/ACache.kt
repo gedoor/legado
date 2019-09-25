@@ -31,7 +31,8 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                 Log.i("ACache", "can't make dirs in %s" + cacheDir.absolutePath)
             }
             mCache = ACacheManager(cacheDir, max_size, max_count)
-        } catch (ignored: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
     }
@@ -130,7 +131,6 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         } catch (e: Exception) {
             null
         }
-
     }
 
     // =======================================
