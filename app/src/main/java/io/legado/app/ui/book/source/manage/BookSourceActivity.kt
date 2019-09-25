@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.source.manage
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -29,6 +30,7 @@ import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.service.CheckSourceService
 import io.legado.app.ui.book.source.edit.SourceEditActivity
 import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.utils.ACache
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
@@ -161,12 +163,17 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun showImportDialog() {
+        val cacheUrls = ACache.get(this, "cacheUrls")
         alert(titleResource = R.string.import_book_source_on_line) {
             var editText: ATEAutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
+                    edit_view.setFilterValues("") {
+
+                    }
                 }
             }
             okButton {
