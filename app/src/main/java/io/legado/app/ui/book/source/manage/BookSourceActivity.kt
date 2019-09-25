@@ -165,7 +165,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
-        val cacheUrls: List<String>? = ACache
+        val cacheUrls: MutableList<String>? = ACache
             .get(this, "cacheUrls", cacheDir = false)
             .getAsString("sourceUrl")
             ?.splitNotBlank(";")
@@ -176,12 +176,17 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
                     edit_view.setFilterValues(cacheUrls) {
-
+                        cacheUrls?.remove(it)
                     }
                 }
             }
             okButton {
-                editText?.text
+                val text = editText?.text?.toString()
+                text?.let {
+                    if (cacheUrls?.contains(it) == true) {
+                        cacheUrls.add(0, it)
+                    }
+                }
             }
             cancelButton()
         }.show().applyTint()
