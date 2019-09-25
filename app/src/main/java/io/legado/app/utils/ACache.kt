@@ -15,6 +15,7 @@ import java.io.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.math.min
 
 
 /**
@@ -47,25 +48,11 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
     fun put(key: String, value: String) {
         try {
             val file = mCache.newFile(key)
-            var out: BufferedWriter? = null
-            try {
-                out = BufferedWriter(FileWriter(file), 1024)
-                out.write(value)
-            } catch (ignored: IOException) {
-            } finally {
-                if (out != null) {
-                    try {
-                        out.flush()
-                        out.close()
-                    } catch (ignored: IOException) {
-                    }
-
-                }
-                mCache.put(file)
-            }
-        } catch (ignored: Exception) {
+            file.writeText(value)
+            mCache.put(file)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
     }
 
     /**
@@ -197,22 +184,8 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      */
     fun put(key: String, value: ByteArray) {
         val file = mCache.newFile(key)
-        var out: FileOutputStream? = null
-        try {
-            out = FileOutputStream(file)
-            out.write(value)
-        } catch (ignored: Exception) {
-        } finally {
-            if (out != null) {
-                try {
-                    out.flush()
-                    out.close()
-                } catch (ignored: IOException) {
-                }
-
-            }
-            mCache.put(file)
-        }
+        file.writeBytes(value)
+        mCache.put(file)
     }
 
     /**
@@ -232,15 +205,13 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @return byte 数据
      */
     fun getAsBinary(key: String): ByteArray? {
-        var raf: RandomAccessFile? = null
         var removeFile = false
         try {
             val file = mCache[key]
             if (!file.exists())
                 return null
-            raf = RandomAccessFile(file, "r")
-            val byteArray = ByteArray(raf.length().toInt())
-            raf.read(byteArray)
+
+            val byteArray = file.readBytes()
             return if (!Utils.isDue(byteArray)) {
                 Utils.clearDateInfo(byteArray)
             } else {
@@ -251,14 +222,6 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             e.printStackTrace()
             return null
         } finally {
-            if (raf != null) {
-                try {
-                    raf.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-
-            }
             if (removeFile)
                 remove(key)
         }
@@ -274,10 +237,10 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
     @JvmOverloads
     fun put(key: String, value: Serializable, saveTime: Int = -1) {
         try {
-            val baos = ByteArrayOutputStream()
-            ObjectOutputStream(baos).use { oos ->
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            ObjectOutputStream(byteArrayOutputStream).use { oos ->
                 oos.writeObject(value)
-                val data = baos.toByteArray()
+                val data = byteArrayOutputStream.toByteArray()
                 if (saveTime != -1) {
                     put(key, data, saveTime)
                 } else {
@@ -460,15 +423,15 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
          */
         fun isDue(data: ByteArray): Boolean {
             try {
-                val strs = getDateInfoFromDate(data)
-                if (strs != null && strs.size == 2) {
-                    var saveTimeStr = strs[0]
+                val text = getDateInfoFromDate(data)
+                if (text != null && text.size == 2) {
+                    var saveTimeStr = text[0]
                     while (saveTimeStr.startsWith("0")) {
                         saveTimeStr = saveTimeStr
                             .substring(1)
                     }
                     val saveTime = java.lang.Long.valueOf(saveTimeStr)
-                    val deleteAfter = java.lang.Long.valueOf(strs[1])
+                    val deleteAfter = java.lang.Long.valueOf(text[1])
                     if (System.currentTimeMillis() > saveTime + deleteAfter * 1000) {
                         return true
                     }
@@ -544,7 +507,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             val copy = ByteArray(newLength)
             System.arraycopy(
                 original, from, copy, 0,
-                Math.min(original.size - from, newLength)
+                min(original.size - from, newLength)
             )
             return copy
         }
@@ -561,9 +524,9 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
          * Bitmap → byte[]
          */
         fun bitmap2Bytes(bm: Bitmap): ByteArray {
-            val baos = ByteArrayOutputStream()
-            bm.compress(Bitmap.CompressFormat.PNG, 100, baos)
-            return baos.toByteArray()
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            bm.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+            return byteArrayOutputStream.toByteArray()
         }
 
         /*
