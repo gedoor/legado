@@ -769,31 +769,27 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         private val mInstanceMap = HashMap<String, ACache>()
 
         @JvmOverloads
-        operator fun get(ctx: Context, cacheName: String = "ACache"): ACache? {
-            val f = File(ctx.cacheDir, cacheName)
-            return get(f, MAX_SIZE.toLong(), MAX_COUNT)
-        }
-
-        operator fun get(ctx: Context, max_zise: Long, max_count: Int): ACache? {
-            try {
-                val f = File(ctx.cacheDir, "ACache")
-                return get(f, max_zise, max_count)
-            } catch (ignored: Exception) {
-            }
-
-            return null
+        fun get(
+            ctx: Context,
+            cacheName: String = "ACache",
+            maxSize: Long = MAX_SIZE.toLong(),
+            maxCount: Int = MAX_COUNT,
+            cacheDir: Boolean = true
+        ): ACache? {
+            val f = if (cacheDir) File(ctx.cacheDir, cacheName) else File(ctx.filesDir, cacheName)
+            return get(f, maxSize, maxCount)
         }
 
         @JvmOverloads
-        operator fun get(
+        fun get(
             cacheDir: File,
-            max_zise: Long = MAX_SIZE.toLong(),
-            max_count: Int = MAX_COUNT
+            maxSize: Long = MAX_SIZE.toLong(),
+            maxCount: Int = MAX_COUNT
         ): ACache? {
             try {
                 var manager = mInstanceMap[cacheDir.absoluteFile.toString() + myPid()]
                 if (manager == null) {
-                    manager = ACache(cacheDir, max_zise, max_count)
+                    manager = ACache(cacheDir, maxSize, maxCount)
                     mInstanceMap[cacheDir.absolutePath + myPid()] = manager
                 }
                 return manager

@@ -38,9 +38,11 @@ class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
         showDropDown()
     }
 
-    fun setFilterValues(values: List<String>, delCallBack: ((value: String) -> Unit)? = null) {
+    fun setFilterValues(values: List<String>?, delCallBack: ((value: String) -> Unit)? = null) {
         this.delCallBack = delCallBack
-        setAdapter(MyAdapter(context, values))
+        values?.let {
+            setAdapter(MyAdapter(context, values))
+        }
     }
 
     fun setFilterValues(vararg value: String, delCallBack: ((value: String) -> Unit)? = null) {
