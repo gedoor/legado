@@ -126,7 +126,7 @@ data class BookSource(
                 try {
                     if (it.startsWith("<js>", false)) {
                         val aCache = ACache.get(App.INSTANCE, "explore")
-                        a = aCache.getAsString(bookSourceUrl) ?: ""
+                        a = aCache?.getAsString(bookSourceUrl) ?: ""
                         if (a.isBlank()) {
                             val bindings = SimpleBindings()
                             bindings["baseUrl"] = bookSourceUrl
@@ -135,7 +135,7 @@ data class BookSource(
                                 it.substring(4, it.lastIndexOf("<")),
                                 bindings
                             ).toString()
-                            aCache.put(bookSourceUrl, a)
+                            aCache?.put(bookSourceUrl, a)
                         }
                     }
                     val b = a.split("(&&|\n)+".toRegex())

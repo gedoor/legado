@@ -336,7 +336,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @param value 保存的bitmap数据
      */
     fun put(key: String, value: Bitmap) {
-        put(key, Utils.Bitmap2Bytes(value))
+        put(key, Utils.bitmap2Bytes(value))
     }
 
     /**
@@ -347,7 +347,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @param saveTime 保存的时间，单位：秒
      */
     fun put(key: String, value: Bitmap, saveTime: Int) {
-        put(key, Utils.Bitmap2Bytes(value), saveTime)
+        put(key, Utils.bitmap2Bytes(value), saveTime)
     }
 
     /**
@@ -358,7 +358,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
     fun getAsBitmap(key: String): Bitmap? {
         return if (getAsBinary(key) == null) {
             null
-        } else Utils.Bytes2Bimap(getAsBinary(key)!!)
+        } else Utils.bytes2Bitmap(getAsBinary(key)!!)
     }
 
     // =======================================
@@ -395,7 +395,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         return if (getAsBinary(key) == null) {
             null
         } else Utils.bitmap2Drawable(
-            Utils.Bytes2Bimap(
+            Utils.bytes2Bitmap(
                 getAsBinary(key)!!
             )
         )
@@ -486,16 +486,17 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
 
         fun newByteArrayWithDateInfo(second: Int, data2: ByteArray): ByteArray {
             val data1 = createDateInfo(second).toByteArray()
-            val retdata = ByteArray(data1.size + data2.size)
-            System.arraycopy(data1, 0, retdata, 0, data1.size)
-            System.arraycopy(data2, 0, retdata, data1.size, data2.size)
-            return retdata
+            val retData = ByteArray(data1.size + data2.size)
+            System.arraycopy(data1, 0, retData, 0, data1.size)
+            System.arraycopy(data2, 0, retData, data1.size, data2.size)
+            return retData
         }
 
         fun clearDateInfo(strInfo: String?): String? {
-            var strInfo = strInfo
-            if (strInfo != null && hasDateInfo(strInfo.toByteArray())) {
-                strInfo = strInfo.substring(strInfo.indexOf(mSeparator) + 1)
+            strInfo?.let {
+                if (hasDateInfo(strInfo.toByteArray())) {
+                    return strInfo.substring(strInfo.indexOf(mSeparator) + 1)
+                }
             }
             return strInfo
         }
@@ -559,7 +560,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         /*
          * Bitmap → byte[]
          */
-        fun Bitmap2Bytes(bm: Bitmap): ByteArray {
+        fun bitmap2Bytes(bm: Bitmap): ByteArray {
             val baos = ByteArrayOutputStream()
             bm.compress(Bitmap.CompressFormat.PNG, 100, baos)
             return baos.toByteArray()
@@ -568,8 +569,8 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         /*
          * byte[] → Bitmap
          */
-        fun Bytes2Bimap(b: ByteArray): Bitmap? {
-            return if (b.size == 0) {
+        fun bytes2Bitmap(b: ByteArray): Bitmap? {
+            return if (b.isEmpty()) {
                 null
             } else BitmapFactory.decodeByteArray(b, 0, b.size)
         }

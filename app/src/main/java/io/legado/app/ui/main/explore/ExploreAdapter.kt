@@ -48,7 +48,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                             R.id.menu_edit -> callBack.editSource(item.bookSourceUrl)
                             R.id.menu_top -> callBack.toTop(item)
                             R.id.menu_refresh -> {
-                                ACache.get(context, "explore").remove(item.bookSourceUrl)
+                                ACache.get(context, "explore")?.remove(item.bookSourceUrl)
                                 notifyItemChanged(holder.layoutPosition)
                             }
                         }
