@@ -22,8 +22,7 @@ class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    var delCallBack: DelCallBack? = null
-    var showDel: Boolean = false
+    var delCallBack: ((value: String) -> Unit)? = null
 
     init {
         ATH.applyAccentTint(this)
@@ -39,13 +38,13 @@ class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
         showDropDown()
     }
 
-    fun setFilterValues(values: List<String>, showDel: Boolean = false) {
-        this.showDel = showDel
+    fun setFilterValues(values: List<String>, delCallBack: ((value: String) -> Unit)? = null) {
+        this.delCallBack = delCallBack
         setAdapter(MyAdapter(context, values))
     }
 
-    fun setFilterValues(vararg value: String, showDel: Boolean = false) {
-        this.showDel = showDel
+    fun setFilterValues(vararg value: String, delCallBack: ((value: String) -> Unit)? = null) {
+        this.delCallBack = delCallBack
         setAdapter(MyAdapter(context, value.toMutableList()))
     }
 
@@ -56,11 +55,11 @@ class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
             val view = convertView ?: LayoutInflater.from(context)
                 .inflate(R.layout.item_1line_text_and_del, parent, false)
             view.text_view.text = getItem(position)
-            if (showDel) view.iv_delete.visible() else view.iv_delete.gone()
+            if (delCallBack != null) view.iv_delete.visible() else view.iv_delete.gone()
             view.iv_delete.onClick {
                 getItem(position)?.let {
                     remove(it)
-                    delCallBack?.delete(it)
+                    delCallBack?.invoke(it)
                     showDropDown()
                 }
             }
@@ -68,7 +67,4 @@ class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
         }
     }
 
-    interface DelCallBack {
-        fun delete(value: String)
-    }
 }
