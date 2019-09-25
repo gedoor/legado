@@ -22,7 +22,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
     AppCompatAutoCompleteTextView(context, attrs) {
 
-    var callBack: CallBack? = null
+    var delCallBack: DelCallBack? = null
     var showDel: Boolean = false
 
     init {
@@ -48,12 +48,12 @@ class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
         performFiltering(text, KeyEvent.KEYCODE_UNKNOWN)
     }
 
-    fun setSelectValues(values: List<String>, showDel: Boolean = false) {
+    fun setFilterValues(values: List<String>, showDel: Boolean = false) {
         this.showDel = showDel
         setAdapter(MyAdapter(context, values))
     }
 
-    fun setSelectValues(vararg value: String, showDel: Boolean = false) {
+    fun setFilterValues(vararg value: String, showDel: Boolean = false) {
         this.showDel = showDel
         setAdapter(MyAdapter(context, value.toMutableList()))
     }
@@ -69,7 +69,7 @@ class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
             view.iv_delete.onClick {
                 getItem(position)?.let {
                     remove(it)
-                    callBack?.delete(it)
+                    delCallBack?.delete(it)
                     performFiltering()
                 }
             }
@@ -77,7 +77,7 @@ class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    interface CallBack {
+    interface DelCallBack {
         fun delete(value: String)
     }
 }
