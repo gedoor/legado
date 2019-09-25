@@ -27,7 +27,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edittext.view.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
@@ -135,9 +135,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         alert(title = "新建分组") {
             var editText: EditText? = null
             customView {
-                layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        ATH.applyAccentTint(this)
                         hint = "分组名称"
                     }
                 }

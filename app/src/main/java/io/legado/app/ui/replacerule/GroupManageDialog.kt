@@ -23,12 +23,11 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
-import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.splitNotBlank
-import kotlinx.android.synthetic.main.dialog_edittext.view.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_book_group.view.tv_group
 import kotlinx.android.synthetic.main.item_group_manage.view.*
@@ -91,9 +90,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         alert(title = getString(R.string.add_group)) {
             var editText: EditText? = null
             customView {
-                layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        ATH.applyAccentTint(this)
                         hint = "分组名称"
                     }
                 }
@@ -114,9 +112,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         alert(title = getString(R.string.group_edit)) {
             var editText: EditText? = null
             customView {
-                layoutInflater.inflate(R.layout.dialog_edittext, null).apply {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        ATH.applyAccentTint(this)
                         hint = "分组名称"
                         setText(group)
                     }

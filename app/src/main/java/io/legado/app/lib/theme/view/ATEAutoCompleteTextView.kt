@@ -2,36 +2,31 @@ package io.legado.app.lib.theme.view
 
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
 import android.util.AttributeSet
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import io.legado.app.R
-import io.legado.app.lib.theme.Selector
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_1line_text_and_del.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
-    AppCompatAutoCompleteTextView(context, attrs) {
+class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     var delCallBack: DelCallBack? = null
     var showDel: Boolean = false
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            backgroundTintList = Selector.colorBuild()
-                .setFocusedColor(ThemeStore.accentColor(context))
-                .setDefaultColor(ThemeStore.textColorPrimary(context))
-                .create()
-        }
+        ATH.applyAccentTint(this)
     }
 
     override fun enoughToFilter(): Boolean {
@@ -41,11 +36,7 @@ class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
 
-        performFiltering()
-    }
-
-    fun performFiltering() {
-        performFiltering(text, KeyEvent.KEYCODE_UNKNOWN)
+        showDropDown()
     }
 
     fun setFilterValues(values: List<String>, showDel: Boolean = false) {
@@ -70,7 +61,7 @@ class ATEAutoCompleteTextView(context: Context, attrs: AttributeSet) :
                 getItem(position)?.let {
                     remove(it)
                     delCallBack?.delete(it)
-                    performFiltering()
+                    showDropDown()
                 }
             }
             return view

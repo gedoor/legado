@@ -19,14 +19,21 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.storage.Restore
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.cancelButton
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.service.CheckSourceService
 import io.legado.app.ui.book.source.edit.SourceEditActivity
 import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_book_source.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
@@ -84,6 +91,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
             R.id.menu_check_book_source ->
                 startService<CheckSourceService>(Pair("data", adapter.getSelectionIds()))
+            R.id.menu_import_book_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)
@@ -152,6 +160,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
         }
     }
+
+    private fun showImportDialog() {
+        alert(titleResource = R.string.import_book_source_on_line) {
+            var editText: ATEAutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                }
+            }
+            okButton {
+                editText?.text
+            }
+            cancelButton()
+        }.show().applyTint()
+    }
+
 
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let {

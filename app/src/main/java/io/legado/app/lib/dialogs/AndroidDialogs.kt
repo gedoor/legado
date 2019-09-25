@@ -57,7 +57,7 @@ fun Context.alert(
     titleResource: Int? = null,
     messageResource: Int? = null,
     init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-): AlertBuilder<DialogInterface> {
+): AlertBuilder<AlertDialog> {
     return AndroidAlertBuilder(this).apply {
         if (titleResource != null) {
             this.titleResource = titleResource
