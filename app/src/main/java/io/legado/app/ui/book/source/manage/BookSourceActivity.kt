@@ -177,6 +177,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     editText = edit_view
                     edit_view.setFilterValues(cacheUrls) {
                         cacheUrls.remove(it)
+                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
                     }
                 }
             }
