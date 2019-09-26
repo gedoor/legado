@@ -18,6 +18,22 @@ fun String?.isJson(): Boolean = this?.run {
     }
 } ?: false
 
+fun String?.isJsonObject(): Boolean = this?.run {
+    val str = this.trim()
+    when {
+        str.startsWith("{") && str.endsWith("}") -> true
+        else -> false
+    }
+} ?: false
+
+fun String?.isJsonArray(): Boolean = this?.run {
+    val str = this.trim()
+    when {
+        str.startsWith("[") && str.endsWith("]") -> true
+        else -> false
+    }
+} ?: false
+
 fun String?.htmlFormat(): String = if (this.isNullOrBlank()) "" else
     this.replace("(?i)<(br[\\s/]*|/*p\\b.*?|/*div\\b.*?)>".toRegex(), "\n")// 替换特定标签为换行符
         .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符

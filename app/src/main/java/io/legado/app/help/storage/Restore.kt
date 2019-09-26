@@ -5,6 +5,7 @@ import android.util.Log
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
+import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
@@ -21,11 +22,13 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 
 object Restore {
-    private val jsonPath = JsonPath.using(
-        Configuration.builder()
-            .options(Option.SUPPRESS_EXCEPTIONS)
-            .build()
-    )
+    val jsonPath: ParseContext by lazy {
+        JsonPath.using(
+            Configuration.builder()
+                .options(Option.SUPPRESS_EXCEPTIONS)
+                .build()
+        )
+    }
 
     fun restore(path: String = defaultPath) {
         doAsync {

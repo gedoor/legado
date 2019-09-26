@@ -1,10 +1,8 @@
 package io.legado.app.help.storage
 
-import com.jayway.jsonpath.Configuration
-import com.jayway.jsonpath.JsonPath
-import com.jayway.jsonpath.Option
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.readInt
@@ -14,11 +12,6 @@ import java.util.regex.Pattern
 object OldRule {
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
-    private val jsonPath = JsonPath.using(
-        Configuration.builder()
-            .options(Option.SUPPRESS_EXCEPTIONS)
-            .build()
-    )
 
     fun jsonToBookSource(json: String): BookSource? {
         var source: BookSource? = null

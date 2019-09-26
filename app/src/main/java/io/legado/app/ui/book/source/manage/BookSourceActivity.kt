@@ -188,6 +188,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                         cacheUrls.add(0, it)
                         aCache.put("sourceUrl", cacheUrls.joinToString(","))
                     }
+                    viewModel.importSource(it)
                 }
             }
             cancelButton()

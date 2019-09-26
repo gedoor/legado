@@ -2,10 +2,15 @@ package io.legado.app.ui.book.source.manage
 
 import android.app.Application
 import android.text.TextUtils
+import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.BookSource
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.storage.OldRule
+import io.legado.app.help.storage.Restore.jsonPath
+import io.legado.app.utils.*
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -90,6 +95,52 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 }
                 App.db.bookSourceDao().update(*sources.toTypedArray())
             }
+        }
+    }
+
+    fun importSource(text: String) {
+        execute {
+            val text1 = text.trim()
+            if (text1.isJsonObject()) {
+                val json = JsonPath.parse(text1)
+                val urls = json.read<List<String>>("$.sourceUrls")
+                if (!urls.isNullOrEmpty()) {
+                    urls.forEach { importSourceUrl(it) }
+                } else {
+                    OldRule.jsonToBookSource(text1)?.let {
+                        App.db.bookSourceDao().insert(it)
+                    }
+                }
+            } else if (text1.isJsonArray()) {
+                val bookSources = mutableListOf<BookSource>()
+                val items: List<Map<String, Any>> = jsonPath.parse(text1).read("$")
+                for (item in items) {
+                    val jsonItem = jsonPath.parse(item)
+                    OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
+                        bookSources.add(it)
+                    }
+                }
+                App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+            } else if (text1.isAbsUrl()) {
+                importSourceUrl(text1)
+            } else {
+                toast("格式不对")
+            }
+        }.onError {
+            toast(it.localizedMessage)
+        }
+    }
+
+    private fun importSourceUrl(url: String) {
+        execute {
+            NetworkUtils.getBaseUrl(url)?.let {
+                val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
+                response.body()?.let { body ->
+                    importSource(body)
+                }
+            }
+        }.onError {
+            toast(it.localizedMessage)
         }
     }
 }
