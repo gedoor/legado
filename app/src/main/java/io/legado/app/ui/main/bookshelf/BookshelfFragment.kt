@@ -72,7 +72,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             refresh_layout.isRefreshing = false
             viewModel.upChapterList()
         }
-        tv_recent_reading.textColor = accentColor
         rv_book_group.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter()
