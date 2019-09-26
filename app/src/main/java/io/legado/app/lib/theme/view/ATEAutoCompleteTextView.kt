@@ -1,9 +1,10 @@
 package io.legado.app.lib.theme.view
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -32,12 +33,13 @@ class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
         return true
     }
 
-    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
-        super.onFocusChanged(focused, direction, previouslyFocusedRect)
 
-        if (focused) {
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
             showDropDown()
         }
+        return super.onTouchEvent(event)
     }
 
     fun setFilterValues(values: List<String>?, delCallBack: ((value: String) -> Unit)? = null) {
