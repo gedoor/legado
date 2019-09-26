@@ -18,16 +18,9 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"/>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager_bookshelf"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_bookshelf"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

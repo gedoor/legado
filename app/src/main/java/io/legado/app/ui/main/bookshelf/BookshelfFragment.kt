@@ -11,46 +11,36 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.Bus
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.book.info.BookInfoActivity
-import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
-import io.legado.app.ui.bookshelf.BookshelfActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.textColor
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     SearchView.OnQueryTextListener,
-    BookGroupAdapter.CallBack,
-    BookshelfAdapter.CallBack {
+    BookGroupAdapter.CallBack {
 
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
 
-    private lateinit var bookshelfAdapter: BookshelfAdapter
+    private lateinit var booksAdapter: BooksAdapter
     private lateinit var bookGroupAdapter: BookGroupAdapter
     private var bookGroupLiveData: LiveData<PagedList<BookGroup>>? = null
-    private var bookshelfLiveData: LiveData<PagedList<Book>>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         initRecyclerView()
         initBookGroupData()
-        initBookshelfData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -66,27 +56,14 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(rv_bookshelf)
-        refresh_layout.setColorSchemeColors(accentColor)
-        refresh_layout.setOnRefreshListener {
-            refresh_layout.isRefreshing = false
-            viewModel.upChapterList()
-        }
+        ATH.applyEdgeEffectColor(view_pager_bookshelf)
         rv_book_group.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter()
         rv_book_group.adapter = bookGroupAdapter
         bookGroupAdapter.callBack = this
-        rv_bookshelf.layoutManager = LinearLayoutManager(context)
-        rv_bookshelf.addItemDecoration(
-            DividerItemDecoration(
-                rv_bookshelf.context,
-                LinearLayoutManager.VERTICAL
-            )
-        )
-        bookshelfAdapter = BookshelfAdapter(this)
-        rv_bookshelf.adapter = bookshelfAdapter
-        observeEvent<String>(Bus.UP_BOOK) { bookshelfAdapter.notification(it) }
+        view_pager_bookshelf.adapter = BookshelfAdapter(this)
+        observeEvent<String>(Bus.UP_BOOK) { booksAdapter.notification(it) }
     }
 
     private fun initBookGroupData() {
@@ -95,29 +72,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer { bookGroupAdapter.submitList(it) })
     }
 
-    private fun initBookshelfData() {
-        bookshelfLiveData?.removeObservers(viewLifecycleOwner)
-        bookshelfLiveData = LivePagedListBuilder(App.db.bookDao().recentRead(), 20).build()
-        bookshelfLiveData?.observe(viewLifecycleOwner, Observer { bookshelfAdapter.submitList(it) })
-    }
-
     override fun open(bookGroup: BookGroup) {
         when (bookGroup.groupId) {
             -10 -> showGroupInputDialog()
-            else -> context?.startActivity<BookshelfActivity>(Pair("data", bookGroup))
+            else -> context
         }
-    }
-
-    override fun open(book: Book) {
-        context?.startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
-    }
-
-    override fun openBookInfo(book: Book) {
-        context?.startActivity<BookInfoActivity>(Pair("bookUrl", book.bookUrl))
-    }
-
-    override fun isUpdate(bookUrl: String): Boolean {
-        return bookUrl in viewModel.updateList
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

@@ -59,7 +59,6 @@
         <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
         <activity android:name="io.legado.app.ui.book.search.SearchActivity" />
         <activity android:name=".ui.about.AboutActivity" />
-        <activity android:name=".ui.bookshelf.BookshelfActivity" />
         <activity android:name=".ui.qrcode.QrCodeActivity" />
         <activity android:name=".ui.about.DonateActivity" />
         <activity android:name=".ui.book.info.BookInfoActivity" />
