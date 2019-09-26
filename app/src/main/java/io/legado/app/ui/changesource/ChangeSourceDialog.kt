@@ -26,12 +26,12 @@ class ChangeSourceDialog : DialogFragment(),
         const val tag = "changeSourceDialog"
 
         fun newInstance(name: String, author: String): ChangeSourceDialog {
-            val changeSourceDialog = ChangeSourceDialog()
-            val bundle = Bundle()
-            bundle.putString("name", name)
-            bundle.putString("author", author)
-            changeSourceDialog.arguments = bundle
-            return changeSourceDialog
+            return ChangeSourceDialog().apply {
+                val bundle = Bundle()
+                bundle.putString("name", name)
+                bundle.putString("author", author)
+                arguments = bundle
+            }
         }
     }
 

@@ -11,7 +11,7 @@ class BookshelfAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     }
 
     override fun createFragment(position: Int): Fragment {
-        return BooksFragment()
+        return BooksFragment.newInstance(position)
     }
 
 }

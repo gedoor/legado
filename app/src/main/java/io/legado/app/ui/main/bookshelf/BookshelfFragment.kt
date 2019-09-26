@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
@@ -36,6 +37,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private lateinit var booksAdapter: BooksAdapter
     private lateinit var bookGroupAdapter: BookGroupAdapter
     private var bookGroupLiveData: LiveData<PagedList<BookGroup>>? = null
+    private var position = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -63,6 +65,13 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         rv_book_group.adapter = bookGroupAdapter
         bookGroupAdapter.callBack = this
         view_pager_bookshelf.adapter = BookshelfAdapter(this)
+        view_pager_bookshelf.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                this@BookshelfFragment.position = position
+            }
+        })
         observeEvent<String>(Bus.UP_BOOK) { booksAdapter.notification(it) }
     }
 

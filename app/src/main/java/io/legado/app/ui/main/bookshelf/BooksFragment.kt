@@ -25,6 +25,17 @@ import org.jetbrains.anko.startActivity
 
 class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
     BooksAdapter.CallBack {
+
+    companion object {
+        fun newInstance(position: Int): BooksFragment {
+            return BooksFragment().apply {
+                val bundle = Bundle()
+                bundle.putInt("position", position)
+                arguments = bundle
+            }
+        }
+    }
+
     override val viewModel: BooksViewModel
         get() = getViewModel(BooksViewModel::class.java)
 
