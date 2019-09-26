@@ -110,6 +110,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                     OldRule.jsonToBookSource(text1)?.let {
                         App.db.bookSourceDao().insert(it)
                     }
+                    toast("成功导入1条")
                 }
             } else if (text1.isJsonArray()) {
                 val bookSources = mutableListOf<BookSource>()
@@ -121,6 +122,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                     }
                 }
                 App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+                toast("成功导入${bookSources.size}条")
             } else if (text1.isAbsUrl()) {
                 importSourceUrl(text1)
             } else {
