@@ -35,7 +35,9 @@ class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
 
-        showDropDown()
+        if (focused) {
+            showDropDown()
+        }
     }
 
     fun setFilterValues(values: List<String>?, delCallBack: ((value: String) -> Unit)? = null) {
