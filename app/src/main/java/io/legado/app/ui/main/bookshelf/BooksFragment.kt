@@ -42,10 +42,14 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
     private lateinit var activityViewModel: MainViewModel
     private lateinit var booksAdapter: BooksAdapter
     private var bookshelfLiveData: LiveData<PagedList<Book>>? = null
-    private val groupId = -1
+    private var groupId = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
+        arguments?.let {
+            val position = it.getInt("position", 0)
+
+        }
         initRecyclerView()
         upRecyclerData()
     }

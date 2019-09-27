@@ -9,8 +9,6 @@ import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import io.legado.app.App
@@ -36,7 +34,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private lateinit var booksAdapter: BooksAdapter
     private lateinit var bookGroupAdapter: BookGroupAdapter
-    private var bookGroupLiveData: LiveData<PagedList<BookGroup>>? = null
+    private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private var position = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,9 +59,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         ATH.applyEdgeEffectColor(view_pager_bookshelf)
         rv_book_group.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        bookGroupAdapter = BookGroupAdapter()
+        bookGroupAdapter = BookGroupAdapter(requireContext(), this)
         rv_book_group.adapter = bookGroupAdapter
-        bookGroupAdapter.callBack = this
         view_pager_bookshelf.adapter = BookshelfAdapter(this)
         view_pager_bookshelf.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
@@ -77,8 +74,18 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private fun initBookGroupData() {
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
-        bookGroupLiveData = LivePagedListBuilder(App.db.bookGroupDao().observeAll(), 10).build()
-        bookGroupLiveData?.observe(viewLifecycleOwner, Observer { bookGroupAdapter.submitList(it) })
+        bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
+        bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
+            mutableListOf(
+                BookGroup(-1, "全部"),
+                BookGroup(-2, "本地"),
+                BookGroup(-3, "音频")
+            ).apply {
+                addAll(it)
+            }.let {
+                bookGroupAdapter.setItems(it)
+            }
+        })
     }
 
     override fun open(bookGroup: BookGroup) {
