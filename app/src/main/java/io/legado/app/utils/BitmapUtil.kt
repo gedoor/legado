@@ -13,9 +13,12 @@ import android.view.View
 import io.legado.app.App
 import java.io.IOException
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.min
+import kotlin.math.sqrt
 
 
-@SuppressWarnings("unused", "WeakerAccess")
+@Suppress("unused", "WeakerAccess")
 object BitmapUtil {
     /**
      * 从path中获取图片信息,在通过BitmapFactory.decodeFile(String path)方法将突破转成Bitmap时，
@@ -195,11 +198,11 @@ object BitmapUtil {
         val lowerBound = if (maxNumOfPixels == -1)
             1
         else
-            Math.ceil(Math.sqrt(w * h / maxNumOfPixels)).toInt()
+            ceil(sqrt(w * h / maxNumOfPixels)).toInt()
 
-        val upperBound = if (minSideLength == -1) 128 else Math.min(
-            Math.floor(w / minSideLength),
-            Math.floor(h / minSideLength)
+        val upperBound = if (minSideLength == -1) 128 else min(
+            floor(w / minSideLength),
+            floor(h / minSideLength)
         ).toInt()
 
         if (upperBound < lowerBound) {
