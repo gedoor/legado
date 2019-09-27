@@ -39,7 +39,7 @@ object AppConst {
     }
 
     val defaultBookGroups by lazy {
-        mutableListOf(
+        listOf(
             BookGroup(-1, "全部"),
             BookGroup(-2, "本地"),
             BookGroup(-3, "音频")

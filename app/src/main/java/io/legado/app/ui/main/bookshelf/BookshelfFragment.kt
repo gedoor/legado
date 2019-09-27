@@ -9,13 +9,11 @@ import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
@@ -23,6 +21,7 @@ import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
+import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
@@ -34,10 +33,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
 
-    private lateinit var booksAdapter: BooksAdapter
-    private lateinit var bookGroupAdapter: BookGroupAdapter
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
-    private var position = -1
+    private val bookGroups = mutableListOf<BookGroup>().apply { addAll(AppConst.defaultBookGroups) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -58,39 +55,29 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override val groupSize: Int
-        get() = bookGroupAdapter.itemCount
+        get() = bookGroups.size
 
-    override fun getGroup(position: Int): BookGroup? {
-        return bookGroupAdapter.getItem(position)
+    override fun getGroup(position: Int): BookGroup {
+        return bookGroups[position]
     }
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(view_pager_bookshelf)
-        rv_book_group.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        bookGroupAdapter = BookGroupAdapter(requireContext(), this)
-        rv_book_group.adapter = bookGroupAdapter
-        bookGroupAdapter.setItems(AppConst.defaultBookGroups)
         view_pager_bookshelf.adapter = BookshelfAdapter(this, this)
-        view_pager_bookshelf.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                this@BookshelfFragment.position = position
-            }
-        })
-        observeEvent<String>(Bus.UP_BOOK) { booksAdapter.notification(it) }
+        TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->
+            tab.text = bookGroups[position].groupName
+        }.attach()
     }
 
     private fun initBookGroupData() {
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
-            AppConst.defaultBookGroups.apply {
-                addAll(it)
-            }.let {
-                bookGroupAdapter.setItems(it)
+            for (index in AppConst.defaultBookGroups.size until bookGroups.size) {
+                bookGroups.removeAt(AppConst.defaultBookGroups.size)
             }
+            bookGroups.addAll(it)
+            view_pager_bookshelf.adapter?.notifyDataSetChanged()
         })
     }
 
