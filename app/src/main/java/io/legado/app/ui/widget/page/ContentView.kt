@@ -10,7 +10,6 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
-import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
@@ -90,10 +89,7 @@ class ContentView : FrameLayout {
     }
 
     fun setBg(bg: Drawable?) {
-        //all supported
-        ImageLoader.load(context, bg)
-            .centerCrop()
-            .setAsDrawable(bgImage)
+        bgImage.background = bg
     }
 
     fun upTime() {
