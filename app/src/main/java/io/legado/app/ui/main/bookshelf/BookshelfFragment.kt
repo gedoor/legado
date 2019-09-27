@@ -9,6 +9,7 @@ import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.App
 import io.legado.app.R
@@ -62,6 +63,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     private fun initRecyclerView() {
+        tab_layout.isTabIndicatorFullWidth = false
+        tab_layout.tabMode = TabLayout.MODE_SCROLLABLE
         ATH.applyEdgeEffectColor(view_pager_bookshelf)
         view_pager_bookshelf.adapter = BookshelfAdapter(this, this)
         TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->

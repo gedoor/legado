@@ -2,6 +2,7 @@ package io.legado.app.ui.main.bookshelf
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
@@ -62,11 +63,11 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
         }
         rv_bookshelf.layoutManager = LinearLayoutManager(context)
         rv_bookshelf.addItemDecoration(
-            DividerItemDecoration(
-                rv_bookshelf.context,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL).apply {
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_divider)?.let {
+                    this.setDrawable(it)
+                }
+            })
         booksAdapter = BooksAdapter(this)
         rv_bookshelf.adapter = booksAdapter
 
