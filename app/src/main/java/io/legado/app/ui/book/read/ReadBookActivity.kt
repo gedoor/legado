@@ -304,7 +304,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 tv_chapter_url.text = it.url
                 tv_chapter_url.visible()
             }
-            read_menu.upReadProgress(it.pageSize().minus(1), viewModel.durPageIndex)
+            seek_read_page.max = it.pageSize().minus(1)
             tv_pre.isEnabled = viewModel.durChapterIndex != 0
             tv_next.isEnabled = viewModel.durChapterIndex != viewModel.chapterSize - 1
             curPageChanged()
