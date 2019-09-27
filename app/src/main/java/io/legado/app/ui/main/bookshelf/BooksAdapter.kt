@@ -35,7 +35,7 @@ class BooksAdapter(private val callBack: CallBack) :
     }
 
     fun notification(bookUrl: String) {
-        for (i in 0..itemCount) {
+        for (i in 0 until itemCount) {
             getItem(i)?.let {
                 if (it.bookUrl == bookUrl) {
                     notifyItemChanged(i)
