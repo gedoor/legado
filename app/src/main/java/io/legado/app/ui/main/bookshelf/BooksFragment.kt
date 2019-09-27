@@ -77,7 +77,6 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
         bookshelfLiveData?.removeObservers(this)
         when (groupId) {
             -1 -> {
-
                 bookshelfLiveData =
                     LivePagedListBuilder(App.db.bookDao().observeAll(), 10).build()
             }
