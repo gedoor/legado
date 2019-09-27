@@ -3,6 +3,7 @@ package io.legado.app.constant
 import android.annotation.SuppressLint
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.data.entities.BookGroup
 import java.text.SimpleDateFormat
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -35,6 +36,14 @@ object AppConst {
             "@", "&", "|", "%", "/", ":", "[", "]", "{", "}", "<", ">",
             "\\", "$", "#", "!", ".", "href", "src", "textNodes", "xpath",
             "json", "css", "id", "class", "tag"
+        )
+    }
+
+    val defaultBookGroups by lazy {
+        mutableListOf(
+            BookGroup(-1, "全部"),
+            BookGroup(-2, "本地"),
+            BookGroup(-3, "音频")
         )
     }
 }

@@ -2,16 +2,23 @@ package io.legado.app.ui.main.bookshelf
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import io.legado.app.data.entities.BookGroup
 
 
-class BookshelfAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+class BookshelfAdapter(fragment: Fragment, val callBack: CallBack) :
+    FragmentStateAdapter(fragment) {
 
     override fun getItemCount(): Int {
-        return 3
+        return callBack.groupSize
     }
 
     override fun createFragment(position: Int): Fragment {
-        return BooksFragment.newInstance(position)
+        val groupId = callBack.getGroup(position)?.groupId ?: -1
+        return BooksFragment.newInstance(groupId)
     }
 
+    interface CallBack {
+        val groupSize: Int
+        fun getGroup(position: Int): BookGroup?
+    }
 }

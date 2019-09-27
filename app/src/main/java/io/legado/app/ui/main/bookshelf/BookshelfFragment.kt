@@ -14,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.*
@@ -27,7 +28,8 @@ import org.jetbrains.anko.startActivity
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     SearchView.OnQueryTextListener,
-    BookGroupAdapter.CallBack {
+    BookGroupAdapter.CallBack,
+    BookshelfAdapter.CallBack {
 
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
@@ -55,13 +57,21 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }
     }
 
+    override val groupSize: Int
+        get() = bookGroupAdapter.itemCount
+
+    override fun getGroup(position: Int): BookGroup? {
+        return bookGroupAdapter.getItem(position)
+    }
+
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(view_pager_bookshelf)
         rv_book_group.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bookGroupAdapter = BookGroupAdapter(requireContext(), this)
         rv_book_group.adapter = bookGroupAdapter
-        view_pager_bookshelf.adapter = BookshelfAdapter(this)
+        bookGroupAdapter.setItems(AppConst.defaultBookGroups)
+        view_pager_bookshelf.adapter = BookshelfAdapter(this, this)
         view_pager_bookshelf.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -76,11 +86,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
-            mutableListOf(
-                BookGroup(-1, "全部"),
-                BookGroup(-2, "本地"),
-                BookGroup(-3, "音频")
-            ).apply {
+            AppConst.defaultBookGroups.apply {
                 addAll(it)
             }.let {
                 bookGroupAdapter.setItems(it)

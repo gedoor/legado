@@ -30,7 +30,7 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
         fun newInstance(position: Int): BooksFragment {
             return BooksFragment().apply {
                 val bundle = Bundle()
-                bundle.putInt("position", position)
+                bundle.putInt("groupId", position)
                 arguments = bundle
             }
         }
@@ -47,8 +47,7 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
         arguments?.let {
-            val position = it.getInt("position", 0)
-
+            groupId = it.getInt("groupId", -1)
         }
         initRecyclerView()
         upRecyclerData()
