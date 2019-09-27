@@ -23,7 +23,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upChapterList() {
         execute {
-            App.db.bookDao().getRecentRead().forEach { book ->
+            App.db.bookDao().allBooks.forEach { book ->
                 if (book.origin != BookType.local) {
                     App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                         synchronized(this) {

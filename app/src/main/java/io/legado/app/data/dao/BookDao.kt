@@ -9,13 +9,13 @@ import io.legado.app.data.entities.Book
 @Dao
 interface BookDao {
 
-    @Query("SELECT * FROM books")
+    @Query("SELECT * FROM books order by durChapterTime desc")
     fun observeAll(): DataSource.Factory<Int, Book>
 
-    @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
+    @Query("SELECT * FROM books WHERE type = ${BookType.audio} order by durChapterTime desc")
     fun observeAudio(): DataSource.Factory<Int, Book>
 
-    @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
+    @Query("SELECT * FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
     fun observeLocal(): DataSource.Factory<Int, Book>
 
     @Query("SELECT * FROM books WHERE `group` = :group")
@@ -42,12 +42,6 @@ interface BookDao {
     @get:Query("SELECT COUNT(*) FROM books")
     val allBookCount: Int
 
-    @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,20")
-    fun recentRead(): DataSource.Factory<Int, Book>
-
-    @Query("SELECT * FROM books ORDER BY durChapterTime DESC limit 0,20")
-    fun getRecentRead(): List<Book>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg book: Book)
 
@@ -56,4 +50,5 @@ interface BookDao {
 
     @Query("delete from books where bookUrl = :bookUrl")
     fun delete(bookUrl: String)
+
 }
