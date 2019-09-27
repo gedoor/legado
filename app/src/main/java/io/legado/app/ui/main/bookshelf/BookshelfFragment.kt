@@ -28,7 +28,6 @@ import org.jetbrains.anko.startActivity
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     SearchView.OnQueryTextListener,
-    BookGroupAdapter.CallBack,
     BookshelfAdapter.CallBack {
 
     override val viewModel: BookshelfViewModel
@@ -82,10 +81,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             bookGroups.addAll(it)
             view_pager_bookshelf.adapter?.notifyDataSetChanged()
         })
-    }
-
-    override fun onClickGroup(position: Int) {
-        view_pager_bookshelf.setCurrentItem(position, false)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
