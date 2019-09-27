@@ -94,11 +94,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         })
     }
 
-    override fun open(bookGroup: BookGroup) {
-        when (bookGroup.groupId) {
-            -10 -> showGroupInputDialog()
-            else -> context
-        }
+    override fun onClickGroup(position: Int) {
+        view_pager_bookshelf.setCurrentItem(position, false)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
