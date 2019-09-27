@@ -312,6 +312,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     private fun curPageChanged() {
+        seek_read_page.progress = viewModel.durPageIndex
         when (readAloudStatus) {
             Status.PLAY -> readAloud()
             Status.PAUSE -> {
