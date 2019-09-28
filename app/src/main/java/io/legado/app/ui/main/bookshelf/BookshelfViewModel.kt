@@ -20,15 +20,15 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun upGroup(bookGroup: BookGroup) {
+    fun upGroup(vararg bookGroup: BookGroup) {
         execute {
-            App.db.bookGroupDao().update(bookGroup)
+            App.db.bookGroupDao().update(*bookGroup)
         }
     }
 
-    fun delGroup(bookGroup: BookGroup) {
+    fun delGroup(vararg bookGroup: BookGroup) {
         execute {
-            App.db.bookGroupDao().delete(bookGroup)
+            App.db.bookGroupDao().delete(*bookGroup)
         }
     }
 }

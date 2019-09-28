@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
@@ -20,6 +21,7 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
@@ -75,6 +77,10 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
             adapter.setItems(it)
         })
+        val itemTouchCallback = ItemTouchCallback()
+        itemTouchCallback.onItemTouchCallbackListener = adapter
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -136,7 +142,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private inner class GroupAdapter(context: Context) :
-        SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage) {
+        SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage),
+        ItemTouchCallback.OnItemTouchCallbackListener {
 
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             with(holder.itemView) {
@@ -144,6 +151,22 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 tv_edit.onClick { editGroup(item) }
                 tv_del.onClick { viewModel.delGroup(item) }
             }
+        }
+
+        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            val srcItem = getItem(srcPosition)
+            val targetItem = getItem(targetPosition)
+            if (srcItem != null && targetItem != null) {
+                val order = srcItem.order
+                srcItem.order = targetItem.order
+                targetItem.order = order
+                viewModel.upGroup(srcItem, targetItem)
+            }
+            return true
+        }
+
+        override fun onSwiped(adapterPosition: Int) {
+
         }
     }
 
