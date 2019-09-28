@@ -20,4 +20,15 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+    fun addGroup(groupName: String) {
+
+    }
+
+    fun upGroup(bookGroup: BookGroup) {
+
+    }
+
+    fun delGroup(bookGroup: BookGroup) {
+
+    }
 }

@@ -1,4 +1,4 @@
-package io.legado.app.ui.replacerule
+package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -19,21 +19,21 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
-import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
-    private lateinit var viewModel: ReplaceRuleViewModel
+    private lateinit var viewModel: BookshelfViewModel
     private lateinit var adapter: GroupAdapter
 
     override fun onStart() {
@@ -48,7 +48,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModelOfActivity(ReplaceRuleViewModel::class.java)
+        viewModel = getViewModel(BookshelfViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
@@ -68,12 +68,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
         )
         recycler_view.adapter = adapter
-        App.db.replaceRuleDao().liveGroup().observe(viewLifecycleOwner, Observer {
-            val groups = linkedSetOf<String>()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
-            }
-            adapter.setItems(groups.toList())
+        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
+            adapter.setItems(it)
         })
     }
 
@@ -107,30 +103,30 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     @SuppressLint("InflateParams")
-    private fun editGroup(group: String) {
+    private fun editGroup(bookGroup: BookGroup) {
         alert(title = getString(R.string.group_edit)) {
             var editText: EditText? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
                         hint = "分组名称"
-                        setText(group)
+                        setText(bookGroup.groupName)
                     }
                 }
             }
             yesButton {
-                viewModel.upGroup(group, editText?.text?.toString())
+                viewModel.upGroup(bookGroup.copy(groupName = editText?.text?.toString() ?: ""))
             }
             noButton()
         }.show().applyTint().requestInputMethod()
     }
 
     private inner class GroupAdapter(context: Context) :
-        SimpleRecyclerAdapter<String>(context, R.layout.item_group_manage) {
+        SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage) {
 
-        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
+        override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             with(holder.itemView) {
-                tv_group.text = item
+                tv_group.text = item.groupName
                 tv_edit.onClick { editGroup(item) }
                 tv_del.onClick { viewModel.delGroup(item) }
             }
