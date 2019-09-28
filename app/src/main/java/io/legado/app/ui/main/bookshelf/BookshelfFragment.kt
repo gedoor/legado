@@ -1,11 +1,9 @@
 package io.legado.app.ui.main.bookshelf
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -16,11 +14,12 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.search.SearchActivity
-import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -51,6 +50,15 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
             R.id.menu_bookshelf_layout -> selectBookshelfLayout()
+            R.id.menu_group_manage -> fragmentManager?.let {
+                GroupManageDialog().show(it, "groupManageDialog")
+            }
+            R.id.menu_add_local -> {
+            }
+            R.id.menu_add_url -> {
+            }
+            R.id.menu_arrange_bookshelf -> {
+            }
         }
     }
 
@@ -90,24 +98,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun onQueryTextChange(newText: String?): Boolean {
         return false
-    }
-
-    @SuppressLint("InflateParams")
-    private fun showGroupInputDialog() {
-        alert(title = "新建分组") {
-            var editText: EditText? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view.apply {
-                        hint = "分组名称"
-                    }
-                }
-            }
-            yesButton {
-                viewModel.saveBookGroup(editText?.text?.toString())
-            }
-            noButton()
-        }.show().applyTint().requestInputMethod()
     }
 
     private fun selectBookshelfLayout() {
