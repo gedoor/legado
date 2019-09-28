@@ -7,28 +7,28 @@ import io.legado.app.data.entities.BookGroup
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
 
-    fun saveBookGroup(group: String?) {
-        if (!group.isNullOrBlank()) {
-            execute {
-                App.db.bookGroupDao().insert(
-                    BookGroup(
-                        App.db.bookGroupDao().maxId + 1,
-                        group
-                    )
-                )
-            }
+
+    fun addGroup(groupName: String) {
+        execute {
+            val maxId = App.db.bookGroupDao().maxId
+            val bookGroup = BookGroup(
+                groupId = maxId.plus(1),
+                groupName = groupName,
+                order = maxId.plus(1)
+            )
+            App.db.bookGroupDao().insert(bookGroup)
         }
     }
 
-    fun addGroup(groupName: String) {
-
-    }
-
     fun upGroup(bookGroup: BookGroup) {
-
+        execute {
+            App.db.bookGroupDao().update(bookGroup)
+        }
     }
 
     fun delGroup(bookGroup: BookGroup) {
-
+        execute {
+            App.db.bookGroupDao().delete(bookGroup)
+        }
     }
 }
