@@ -38,11 +38,7 @@ object AppConst {
         )
     }
 
-    val defaultBookGroups by lazy {
-        listOf(
-            BookGroup(-1, "全部"),
-            BookGroup(-2, "本地"),
-            BookGroup(-3, "音频")
-        )
-    }
+    val bookGroupAll = BookGroup(-1, App.INSTANCE.getString(R.string.all))
+    val bookGroupLocal = BookGroup(-2, App.INSTANCE.getString(R.string.local))
+    val bookGroupAudio = BookGroup(-3, App.INSTANCE.getString(R.string.audio))
 }

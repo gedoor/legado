@@ -24,9 +24,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.requestInputMethod
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
@@ -35,6 +33,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: BookshelfViewModel
     private lateinit var adapter: GroupAdapter
+    private var callBack: CallBack? = null
 
     override fun onStart() {
         super.onStart()
@@ -54,6 +53,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        callBack = parentFragment as? CallBack
         initData()
     }
 
@@ -62,6 +62,10 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.applyTint(requireContext(), false)
         tool_bar.setOnMenuItemClickListener(this)
+        tool_bar.menu.findItem(R.id.menu_group_local)
+            .isChecked = getPrefBoolean("bookGroupLocal", true)
+        tool_bar.menu.findItem(R.id.menu_group_audio)
+            .isChecked = getPrefBoolean("bookGroupAudio", true)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(
@@ -76,6 +80,16 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> addGroup()
+            R.id.menu_group_local -> {
+                item.isChecked = !item.isChecked
+                putPrefBoolean("bookGroupLocal", item.isChecked)
+                callBack?.upGroup()
+            }
+            R.id.menu_group_audio -> {
+                item.isChecked = !item.isChecked
+                putPrefBoolean("bookGroupAudio", item.isChecked)
+                callBack?.upGroup()
+            }
         }
         return true
     }
@@ -133,4 +147,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         }
     }
 
+    interface CallBack {
+        fun upGroup()
+    }
 }

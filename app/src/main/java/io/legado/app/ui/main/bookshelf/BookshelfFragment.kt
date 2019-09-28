@@ -17,6 +17,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.startActivity
@@ -27,13 +28,14 @@ import org.jetbrains.anko.startActivity
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     SearchView.OnQueryTextListener,
+    GroupManageDialog.CallBack,
     BookshelfAdapter.CallBack {
 
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
 
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
-    private val bookGroups = mutableListOf<BookGroup>().apply { addAll(AppConst.defaultBookGroups) }
+    private val bookGroups = mutableListOf<BookGroup>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -50,9 +52,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
             R.id.menu_bookshelf_layout -> selectBookshelfLayout()
-            R.id.menu_group_manage -> fragmentManager?.let {
-                GroupManageDialog().show(it, "groupManageDialog")
-            }
+            R.id.menu_group_manage -> GroupManageDialog()
+                .show(childFragmentManager, "groupManageDialog")
             R.id.menu_add_local -> {
             }
             R.id.menu_add_url -> {
@@ -83,11 +84,18 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
-            for (index in AppConst.defaultBookGroups.size until bookGroups.size) {
-                bookGroups.removeAt(AppConst.defaultBookGroups.size)
+            synchronized(this) {
+                bookGroups.clear()
+                bookGroups.add(AppConst.bookGroupAll)
+                if (getPrefBoolean("bookGroupLocal", true)) {
+                    bookGroups.add(AppConst.bookGroupLocal)
+                }
+                if (getPrefBoolean("bookGroupAudio", true)) {
+                    bookGroups.add(AppConst.bookGroupAudio)
+                }
+                bookGroups.addAll(it)
+                view_pager_bookshelf.adapter?.notifyDataSetChanged()
             }
-            bookGroups.addAll(it)
-            view_pager_bookshelf.adapter?.notifyDataSetChanged()
         })
     }
 
@@ -98,6 +106,20 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun onQueryTextChange(newText: String?): Boolean {
         return false
+    }
+
+    override fun upGroup() {
+        synchronized(this) {
+            bookGroups.remove(AppConst.bookGroupLocal)
+            bookGroups.remove(AppConst.bookGroupAudio)
+            if (getPrefBoolean("bookGroupAudio", true)) {
+                bookGroups.add(1, AppConst.bookGroupAudio)
+            }
+            if (getPrefBoolean("bookGroupLocal", true)) {
+                bookGroups.add(1, AppConst.bookGroupLocal)
+            }
+            view_pager_bookshelf.adapter?.notifyDataSetChanged()
+        }
     }
 
     private fun selectBookshelfLayout() {
