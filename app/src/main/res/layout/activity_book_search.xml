@@ -41,6 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/title_bar">
 
         <TextView
@@ -54,12 +55,13 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/rv_history"
+            android:id="@+id/tv_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/searchHistory" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_history"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
 
