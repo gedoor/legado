@@ -17,12 +17,13 @@ import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.activity_book_search.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
-class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_search), SearchAdapter.CallBack {
+class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_search),
+    SearchAdapter.CallBack {
 
     override val viewModel: SearchViewModel
         get() = getViewModel(SearchViewModel::class.java)
