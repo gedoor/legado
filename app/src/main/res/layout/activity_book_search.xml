@@ -50,7 +50,7 @@
             android:text="@string/bookshelf" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_bookshelf"
+            android:id="@+id/rv_bookshelf_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -61,7 +61,7 @@
             android:text="@string/searchHistory" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_history"
+            android:id="@+id/rv_history_key"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
 

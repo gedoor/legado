@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -29,6 +30,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         get() = getViewModel(SearchViewModel::class.java)
 
     private lateinit var adapter: SearchAdapter
+    private lateinit var bookAdapter: BookAdapter
+    private lateinit var historyKeyAdapter: HistoryKeyAdapter
     private var searchBookData: LiveData<PagedList<SearchShow>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -67,14 +70,30 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 return false
             }
         })
-        fb_stop.onClick { viewModel.stop() }
+        search_view.setOnQueryTextFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                ll_history.visible()
+            } else {
+                ll_history.invisible()
+            }
+        }
     }
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
+        ATH.applyEdgeEffectColor(rv_bookshelf_search)
+        ATH.applyEdgeEffectColor(rv_history_key)
+        bookAdapter = BookAdapter(this)
+        rv_bookshelf_search.layoutManager =
+            LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        rv_bookshelf_search.adapter = bookAdapter
+        historyKeyAdapter = HistoryKeyAdapter(this)
+        rv_history_key.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        rv_history_key.adapter = historyKeyAdapter
         adapter = SearchAdapter(this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
+        fb_stop.onClick { viewModel.stop() }
     }
 
     private fun initData() {
