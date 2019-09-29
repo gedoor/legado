@@ -24,7 +24,7 @@ interface BookDao {
     @Query("SELECT bookUrl FROM books WHERE `group` = :group")
     fun observeUrlsByGroup(group: Int): LiveData<List<String>>
 
-    @Query("SELECT bookUrl FROM books WHERE name like '%' | :key | '%' or author like '%' | :key | '%'")
+    @Query("SELECT bookUrl FROM books WHERE name like '%' || :key || '%' or author like '%' || :key || '%'")
     fun liveDataSearch(key: String): LiveData<List<Book>>
 
     @Query("SELECT * FROM books WHERE `name` in (:names)")
