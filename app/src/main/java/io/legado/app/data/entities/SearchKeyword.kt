@@ -13,5 +13,5 @@ data class SearchKeyword(
     @PrimaryKey
     var word: String = "",                      // 搜索关键词
     var usage: Int = 1,                         // 使用次数
-    var lastUseTime: Long = 0                   // 最后一次使用时间
+    var lastUseTime: Long = System.currentTimeMillis()      // 最后一次使用时间
 ) : Parcelable

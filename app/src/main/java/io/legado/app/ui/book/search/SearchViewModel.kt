@@ -4,6 +4,7 @@ import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +60,15 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         execute {
             val searchBook = App.db.searchBookDao().getFirstByNameAuthor(name, author)
             success?.invoke(searchBook)
+        }
+    }
+
+    fun saveSearchKey(key: String) {
+        execute {
+            App.db.searchKeywordDao().get(key)?.let {
+                it.usage = it.usage + 1
+                App.db.searchKeywordDao().update(it)
+            } ?: App.db.searchKeywordDao().insert(SearchKeyword(key, 1))
         }
     }
 }

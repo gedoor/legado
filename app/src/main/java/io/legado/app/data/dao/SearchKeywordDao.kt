@@ -17,6 +17,9 @@ interface SearchKeywordDao {
     @Query("SELECT * FROM search_keywords where word like '%'||:key||'%' ORDER BY usage DESC")
     fun liveDataSearch(key: String): LiveData<List<SearchKeyword>>
 
+    @Query("select * from search_keywords where word = :key")
+    fun get(key: String): SearchKeyword?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg keywords: SearchKeyword)
 

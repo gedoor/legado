@@ -58,6 +58,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             override fun onQueryTextSubmit(query: String?): Boolean {
                 search_view.clearFocus()
                 query?.let {
+                    viewModel.saveSearchKey(query)
                     viewModel.search(it, {
                         refresh_progress_bar.isAutoLoading = true
                         initData()
