@@ -13,10 +13,12 @@ import java.util.logging.Formatter
 object LogUtils {
     const val TIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
 
+    @JvmStatic
     fun d(tag: String, msg: String) {
         logger.log(Level.INFO, "$tag $msg")
     }
 
+    @JvmStatic
     fun e(tag: String, msg: String) {
         logger.log(Level.WARNING, "$tag $msg")
     }
