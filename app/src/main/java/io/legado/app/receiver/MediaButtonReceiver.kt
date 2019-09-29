@@ -4,10 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
-import com.apkfuns.logutils.LogUtils
 import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.postEvent
 
 

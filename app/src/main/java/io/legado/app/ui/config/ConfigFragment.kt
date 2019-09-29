@@ -6,12 +6,11 @@ import android.view.View
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.apkfuns.logutils.LogUtils
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
-import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 
 
@@ -41,7 +40,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             "downloadPath" -> BookHelp.upDownloadPath()
-            "recordLog" -> LogUtils.getLog2FileConfig().configLog2FileEnable(getPrefBoolean("recordLog"))
+            "recordLog" -> LogUtils.upLevel()
         }
     }
 
