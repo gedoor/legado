@@ -148,4 +148,7 @@ dependencies {
     //颜色选择
     implementation 'com.jaredrummler:colorpicker:1.1.0'
 
+    //日志记录
+    implementation 'com.apkfuns.logutils:library:1.7.5'
+    implementation 'com.apkfuns.log2file:log2file:1.3.1'
 }

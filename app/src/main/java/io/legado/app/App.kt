@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import com.apkfuns.log2file.LogFileEngineFactory
+import com.apkfuns.logutils.LogUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
@@ -16,12 +18,15 @@ import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.data.AppDatabase
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.CrashHandler
+import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.isNightTheme
+import java.io.File
 
 @Suppress("DEPRECATION")
 class App : Application() {
@@ -43,6 +48,11 @@ class App : Application() {
         super.onCreate()
         INSTANCE = this
         CrashHandler().init(this)
+        LogUtils.getLog2FileConfig()
+            .configLog2FileEnable(getPrefBoolean("recordLog"))
+            .configLog2FilePath(FileHelp.getCachePath() + File.separator + "logs" + File.separator)
+            .configLog2FileNameFormat("%d{yyyyMMdd}.log")
+            .configLogFileEngine(LogFileEngineFactory(this))
         db = AppDatabase.createDatabase(INSTANCE)
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode
