@@ -14,7 +14,7 @@ interface SearchKeywordDao {
     @Query("SELECT * FROM search_keywords ORDER BY lastUseTime DESC")
     fun liveDataByTime(): LiveData<List<SearchKeyword>>
 
-    @Query("SELECT * FROM search_keywords where word like '%' || :key || '%' ORDER BY usage DESC")
+    @Query("SELECT * FROM search_keywords where word like '%'||:key||'%' ORDER BY usage DESC")
     fun liveDataSearch(key: String): LiveData<List<SearchKeyword>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
