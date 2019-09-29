@@ -28,7 +28,11 @@ object LogUtils {
     }
 
     private val fileHandler by lazy {
-        FileHandler(FileHelp.getCachePath() + File.separator + "app.log", 1024, 2).apply {
+        FileHandler(
+            FileHelp.getCachePath() + File.separator + "logs" + File.separator + "app.log",
+            2048,
+            10
+        ).apply {
             formatter = object : Formatter() {
                 override fun format(record: LogRecord): String {
                     // 设置文件输出格式
