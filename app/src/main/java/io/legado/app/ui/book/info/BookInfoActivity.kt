@@ -204,8 +204,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         iv_chapter_top.onClick {
-            adapter.reorder = !adapter.reorder
-            adapter.notifyDataSetChanged()
+            rv_chapter_list.scrollToPosition(0)
+        }
+        iv_chapter_bottom.onClick {
+            rv_chapter_list.scrollToPosition(adapter.itemCount - 1)
         }
     }
 

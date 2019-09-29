@@ -245,9 +245,19 @@
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/go_to_top"
-                android:padding="10dp"
-                android:src="@drawable/ic_exchange_order"
+                android:src="@drawable/ic_arrow_drop_up"
                 android:tooltipText="@string/go_to_top"
+                app:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_chapter_bottom"
+                android:layout_width="36dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/go_to_bottom"
+                android:src="@drawable/ic_arrow_drop_down"
+                android:tooltipText="@string/go_to_bottom"
                 app:tint="@color/tv_text_default"
                 tools:ignore="UnusedAttribute" />
         </LinearLayout>
