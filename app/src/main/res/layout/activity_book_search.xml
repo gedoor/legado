@@ -45,8 +45,10 @@
         app:layout_constraintTop_toBottomOf="@id/title_bar">
 
         <TextView
+            android:id="@+id/tv_book_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="6dp"
             android:text="@string/bookshelf" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -58,6 +60,7 @@
             android:id="@+id/tv_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="6dp"
             android:text="@string/searchHistory" />
 
         <androidx.recyclerview.widget.RecyclerView

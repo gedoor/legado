@@ -1,6 +1,6 @@
 package io.legado.app.data.dao
 
-import androidx.paging.DataSource
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.SearchKeyword
 
@@ -9,16 +9,16 @@ import io.legado.app.data.entities.SearchKeyword
 interface SearchKeywordDao {
 
     @Query("SELECT * FROM search_keywords ORDER BY usage DESC")
-    fun observeByUsage(): DataSource.Factory<Int, SearchKeyword>
+    fun liveDataByUsage(): LiveData<List<SearchKeyword>>
 
     @Query("SELECT * FROM search_keywords ORDER BY lastUseTime DESC")
-    fun observeByTime(): DataSource.Factory<Int, SearchKeyword>
+    fun liveDataByTime(): LiveData<List<SearchKeyword>>
+
+    @Query("SELECT * FROM search_keywords where word like '%' | :key | '%' ORDER BY usage DESC")
+    fun liveDataSearch(key: String): LiveData<List<SearchKeyword>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg keywords: SearchKeyword)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(keyword: SearchKeyword): Long
 
     @Update
     fun update(vararg keywords: SearchKeyword)

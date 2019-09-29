@@ -11,11 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.data.entities.SearchShow
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_search.*
@@ -33,6 +36,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private lateinit var bookAdapter: BookAdapter
     private lateinit var historyKeyAdapter: HistoryKeyAdapter
     private var searchBookData: LiveData<PagedList<SearchShow>>? = null
+    private var historyData: LiveData<List<SearchKeyword>>? = null
+    private var bookData: LiveData<List<Book>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -67,10 +72,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrBlank()) viewModel.stop()
+                upHistory(newText)
                 return false
             }
         })
-        search_view.setOnQueryTextFocusChangeListener { v, hasFocus ->
+        search_view.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 ll_history.visible()
             } else {
@@ -105,6 +111,27 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             ), 30
         ).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
+    }
+
+    private fun upHistory(key: String?) {
+        bookData?.removeObservers(this)
+        if (key.isNullOrBlank()) {
+            tv_book_show.gone()
+            rv_bookshelf_search.gone()
+        } else {
+            tv_book_show.visible()
+            rv_bookshelf_search.visible()
+            bookData = App.db.bookDao().liveDataSearch(key)
+            bookData?.observe(this, Observer { bookAdapter.setItems(it) })
+        }
+        historyData?.removeObservers(this)
+        historyData =
+            if (key.isNullOrBlank()) {
+                App.db.searchKeywordDao().liveDataByUsage()
+            } else {
+                App.db.searchKeywordDao().liveDataSearch(key)
+            }
+        historyData?.observe(this, Observer { historyKeyAdapter.setItems(it) })
     }
 
     override fun showBookInfo(name: String, author: String) {
