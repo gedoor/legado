@@ -13,7 +13,7 @@ import java.util.logging.Formatter
 object LogUtils {
     const val TIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
 
-    val logger: Logger by lazy {
+    val MyLogger: Logger by lazy {
         Logger.getGlobal().apply {
             addHandler(fileHandler)
         }

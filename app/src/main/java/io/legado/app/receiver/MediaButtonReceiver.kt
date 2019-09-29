@@ -7,7 +7,9 @@ import android.view.KeyEvent
 import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.utils.LogUtils.MyLogger
 import io.legado.app.utils.postEvent
+import java.util.logging.Level
 
 
 /**
@@ -22,7 +24,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
         fun handleIntent(context: Context, intent: Intent): Boolean {
             val intentAction = intent.action
             val keyEventAction = intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)?.action
-//            LogUtils.log("耳机按键: $intentAction $keyEventAction")
+            MyLogger.log(Level.INFO, "耳机按键: $intentAction $keyEventAction")
             if (Intent.ACTION_MEDIA_BUTTON == intentAction) {
                 if (keyEventAction == KeyEvent.ACTION_DOWN) {
                     readAloud(context)
