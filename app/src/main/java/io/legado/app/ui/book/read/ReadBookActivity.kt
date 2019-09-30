@@ -330,13 +330,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         return viewModel.chapterSize
     }
 
-    override fun curOrigin(): String? {
-        return viewModel.bookData.value?.origin
-    }
+    override val curOrigin: String?
+        get() = viewModel.bookData.value?.origin
 
-    override fun oldBook(): Book? {
-        return viewModel.bookData.value
-    }
+    override val oldBook: Book?
+        get() = viewModel.bookData.value
 
     override fun changeTo(book: Book) {
         viewModel.changeTo(book)

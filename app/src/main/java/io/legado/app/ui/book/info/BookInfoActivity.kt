@@ -232,13 +232,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
     }
 
-    override fun curOrigin(): String? {
-        return viewModel.bookData.value?.origin
-    }
+    override val curOrigin: String?
+        get() = viewModel.bookData.value?.origin
 
-    override fun oldBook(): Book? {
-        return viewModel.bookData.value
-    }
+    override val oldBook: Book?
+        get() = viewModel.bookData.value
 
     override fun changeTo(book: Book) {
         upLoading(true)
