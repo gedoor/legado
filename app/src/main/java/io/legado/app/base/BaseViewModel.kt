@@ -2,6 +2,7 @@ package io.legado.app.base
 
 import android.app.Application
 import android.content.Context
+import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
@@ -31,6 +32,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         return Coroutine.async(scope) { block().await() }
     }
 
+    @CallSuper
     override fun onCleared() {
         super.onCleared()
         cancel()
