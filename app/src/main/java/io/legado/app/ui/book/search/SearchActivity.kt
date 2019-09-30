@@ -120,10 +120,17 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             tv_book_show.gone()
             rv_bookshelf_search.gone()
         } else {
-            tv_book_show.visible()
-            rv_bookshelf_search.visible()
             bookData = App.db.bookDao().liveDataSearch(key)
-            bookData?.observe(this, Observer { bookAdapter.setItems(it) })
+            bookData?.observe(this, Observer {
+                if (it.isEmpty()) {
+                    tv_book_show.gone()
+                    rv_bookshelf_search.gone()
+                } else {
+                    tv_book_show.visible()
+                    rv_bookshelf_search.visible()
+                }
+                bookAdapter.setItems(it)
+            })
         }
         historyData?.removeObservers(this)
         historyData =
