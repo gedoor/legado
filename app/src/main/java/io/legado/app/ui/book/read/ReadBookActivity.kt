@@ -36,6 +36,7 @@ import io.legado.app.ui.book.source.edit.SourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.TextChapter
@@ -609,7 +610,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
         }
         observeEvent<String>(Bus.REPLACE) {
-            toast(it)
+            ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
         }
     }
 
