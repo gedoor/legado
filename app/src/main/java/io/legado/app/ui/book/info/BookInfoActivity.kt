@@ -183,7 +183,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 }
             }
         }
-        tv_loading.onClick { }
+        tv_loading.onClick {
+            viewModel.bookData.value?.let {
+                viewModel.loadBookInfo(it)
+            }
+        }
         tv_origin.onClick {
             viewModel.bookData.value?.let {
                 startActivity<SourceEditActivity>(Pair("data", it.origin))
