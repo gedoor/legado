@@ -21,7 +21,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         context: CoroutineContext = scope.coroutineContext.plus(Dispatchers.IO),
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
-        return Coroutine.async(scope) { block() }
+        return Coroutine.async(scope, context) { block() }
     }
 
     fun <R> submit(
