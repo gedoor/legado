@@ -154,7 +154,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="简介"
+            android:text="@string/book_intro"
             android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
@@ -184,22 +184,15 @@
             android:layout_height="5dp"
             android:background="@color/bg_divider_line" />
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:paddingLeft="8dp"
-                android:paddingTop="8dp"
-                android:text="目录"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp" />
-
-        </LinearLayout>
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/chapter_list"
+            android:textColor="@color/tv_text_default"
+            android:textSize="16sp" />
 
         <LinearLayout
             android:id="@+id/ll_chapter_base_info"
@@ -215,7 +208,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="当前位置：" />
+                android:text="@string/dur_pos" />
 
             <TextView
                 android:id="@+id/tv_current_chapter_info"
@@ -294,8 +287,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/selector_btn_accent_bg"
-                android:clickable="true"
-                android:focusable="true"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/reading"

@@ -509,5 +509,6 @@
     <string name="rss_source_edit">编辑订阅源</string>
     <string name="screen">筛选</string>
     <string name="screen_find">筛选发现</string>
+    <string name="dur_pos">当前位置：</string>
 
 </resources>
