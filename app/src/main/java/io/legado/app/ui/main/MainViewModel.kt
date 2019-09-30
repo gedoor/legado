@@ -38,9 +38,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                                     App.db.bookChapterDao().insert(*it.toTypedArray())
                                 }
                             }
-                            .onError {
-                                it.printStackTrace()
-                            }
                             .onFinally {
                                 synchronized(this) {
                                     updateList.remove(book.bookUrl)

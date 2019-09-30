@@ -68,7 +68,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
             saveRead(book)
-        }.onError { it.printStackTrace() }
+        }
     }
 
     private fun loadBookInfo(
@@ -103,7 +103,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }?.onError {
                     toast(R.string.error_load_toc)
-                    it.printStackTrace()
                 } ?: autoChangeSource()
         }
     }

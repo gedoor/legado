@@ -47,8 +47,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     }
                 delay(100)//每隔100毫秒搜索一个书源
             }
-        }.onError {
-            it.printStackTrace()
         }
 
         task?.invokeOnCompletion {

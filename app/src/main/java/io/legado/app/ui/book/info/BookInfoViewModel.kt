@@ -99,7 +99,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                         }
                     }.onError {
                         toast(R.string.error_get_chapter_list)
-                        it.printStackTrace()
                     }
             } ?: toast(R.string.error_no_source)
         }
