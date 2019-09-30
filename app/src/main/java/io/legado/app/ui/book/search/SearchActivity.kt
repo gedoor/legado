@@ -44,6 +44,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
+        initOtherView()
         initData()
         intent.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
@@ -103,6 +104,12 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
         fb_stop.onClick { viewModel.stop() }
+    }
+
+    private fun initOtherView() {
+        tv_clear_history.onClick {
+            viewModel.clearHistory()
+        }
     }
 
     private fun initData() {

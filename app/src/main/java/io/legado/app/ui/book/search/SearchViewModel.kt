@@ -71,4 +71,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             } ?: App.db.searchKeywordDao().insert(SearchKeyword(key, 1))
         }
     }
+
+    fun clearHistory() {
+        execute {
+            App.db.searchKeywordDao().deleteAll()
+        }
+    }
 }
