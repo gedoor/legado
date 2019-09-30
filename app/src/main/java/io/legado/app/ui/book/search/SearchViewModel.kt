@@ -8,9 +8,13 @@ import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
+    private var searchPool = Executors.newFixedThreadPool(99).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
     var searchKey: String = ""
     var startTime: Long = 0
@@ -26,7 +30,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         searchKey = key
         startTime = System.currentTimeMillis()
         start?.invoke()
-        task = execute {
+        task = execute(context = searchPool) {
             //onCleared时自动取消
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
@@ -53,6 +57,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun stop() {
+        searchPool.cancel()
         task?.cancel()
     }
 
@@ -76,5 +81,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.searchKeywordDao().deleteAll()
         }
+    }
+
+    override fun onCleared() {
+        searchPool.close()
+        super.onCleared()
     }
 }

@@ -8,17 +8,26 @@ import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.toast
+import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application), CoroutineScope by MainScope(),
+open class BaseViewModel(application: Application) : AndroidViewModel(application),
+    CoroutineScope by MainScope(),
     AnkoLogger {
 
     val context: Context by lazy { this.getApplication<App>() }
 
-    fun <T> execute(scope: CoroutineScope = this, block: suspend CoroutineScope.() -> T): Coroutine<T> {
+    fun <T> execute(
+        scope: CoroutineScope = this,
+        context: CoroutineContext = scope.coroutineContext.plus(Dispatchers.IO),
+        block: suspend CoroutineScope.() -> T
+    ): Coroutine<T> {
         return Coroutine.async(scope) { block() }
     }
 
-    fun <R> submit(scope: CoroutineScope = this, block: suspend CoroutineScope.() -> Deferred<R>): Coroutine<R> {
+    fun <R> submit(
+        scope: CoroutineScope = this,
+        block: suspend CoroutineScope.() -> Deferred<R>
+    ): Coroutine<R> {
         return Coroutine.async(scope) { block().await() }
     }
 

@@ -107,7 +107,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
     private fun initOtherView() {
         tv_clear_history.onClick { viewModel.clearHistory() }
-        fb_stop.onClick { viewModel.stop() }
+        fb_stop.onClick {
+            viewModel.stop()
+            refresh_progress_bar.isAutoLoading = false
+        }
     }
 
     private fun initData() {
