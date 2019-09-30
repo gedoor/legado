@@ -134,6 +134,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             bookData.postValue(book)
             chapterListData.postValue(chapters)
+        }.onError {
+            it.printStackTrace()
         }
     }
 
