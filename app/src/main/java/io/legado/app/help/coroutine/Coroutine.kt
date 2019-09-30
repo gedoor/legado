@@ -1,5 +1,6 @@
 package io.legado.app.help.coroutine
 
+import io.legado.app.BuildConfig
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -119,6 +120,9 @@ class Coroutine<T>(
                 val value = executeBlock(context, timeMillis ?: 0L, block)
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
+                if (BuildConfig.DEBUG) {
+                    e.printStackTrace()
+                }
                 val consume: Boolean = errorReturn?.value?.let { value ->
                     success?.let { dispatchCallback(this, value, it) }
                     true
