@@ -27,6 +27,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
 class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_search),
+    BookAdapter.CallBack,
+    HistoryKeyAdapter.CallBack,
     SearchAdapter.CallBack {
 
     override val viewModel: SearchViewModel
@@ -90,11 +92,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         ATH.applyEdgeEffectColor(recycler_view)
         ATH.applyEdgeEffectColor(rv_bookshelf_search)
         ATH.applyEdgeEffectColor(rv_history_key)
-        bookAdapter = BookAdapter(this)
+        bookAdapter = BookAdapter(this, this)
         rv_bookshelf_search.layoutManager =
             LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         rv_bookshelf_search.adapter = bookAdapter
-        historyKeyAdapter = HistoryKeyAdapter(this)
+        historyKeyAdapter = HistoryKeyAdapter(this, this)
         rv_history_key.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         rv_history_key.adapter = historyKeyAdapter
         adapter = SearchAdapter(this)
@@ -112,9 +114,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             ), 30
         ).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
+        upHistory()
     }
 
-    private fun upHistory(key: String?) {
+    private fun upHistory(key: String? = null) {
         bookData?.removeObservers(this)
         if (key.isNullOrBlank()) {
             tv_book_show.gone()
@@ -148,5 +151,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 startActivity<BookInfoActivity>(Pair("searchBookUrl", it.bookUrl))
             }
         }
+    }
+
+    override fun showBookInfo(url: String) {
+        startActivity<BookInfoActivity>(Pair("bookUrl", url))
+    }
+
+    override fun searchHistory(key: String) {
+        search_view.setQuery(key, false)
     }
 }

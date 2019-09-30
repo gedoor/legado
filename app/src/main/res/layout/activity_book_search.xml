@@ -43,6 +43,8 @@
         android:background="@color/background"
         android:orientation="vertical"
         android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintTop_toBottomOf="@id/title_bar"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -84,7 +86,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_history_key"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </LinearLayout>
