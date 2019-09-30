@@ -103,13 +103,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         adapter = SearchAdapter(this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
-        fb_stop.onClick { viewModel.stop() }
     }
 
     private fun initOtherView() {
-        tv_clear_history.onClick {
-            viewModel.clearHistory()
-        }
+        tv_clear_history.onClick { viewModel.clearHistory() }
+        fb_stop.onClick { viewModel.stop() }
     }
 
     private fun initData() {
