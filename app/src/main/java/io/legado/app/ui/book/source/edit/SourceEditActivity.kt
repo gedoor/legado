@@ -141,7 +141,7 @@ class SourceEditActivity :
         }
         //基本信息
         sourceEntities.clear()
-        searchEntities.apply {
+        sourceEntities.apply {
             add(EditEntity("bookSourceUrl", bookSource?.bookSourceUrl, R.string.book_source_url))
             add(EditEntity("bookSourceName", bookSource?.bookSourceName, R.string.book_source_name))
             add(
