@@ -9,7 +9,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import java.util.concurrent.Executors
 
@@ -55,7 +54,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun stop() {
-        searchPool.cancel()
         task?.cancel()
     }
 
@@ -82,7 +80,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     override fun onCleared() {
-        searchPool.close()
         super.onCleared()
+        searchPool.close()
     }
 }

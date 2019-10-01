@@ -135,7 +135,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     override fun onCleared() {
-        searchPool.close()
         super.onCleared()
+        searchPool.close()
     }
 }
