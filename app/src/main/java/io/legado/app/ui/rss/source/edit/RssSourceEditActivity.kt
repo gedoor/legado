@@ -36,7 +36,7 @@ class RssSourceEditActivity :
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
 
-    private lateinit var adapter: RssSourceEditAdapter
+    private val adapter = RssSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
 
     override val viewModel: RssSourceEditViewModel
