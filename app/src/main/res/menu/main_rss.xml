@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_rss_add"
+        android:title="@string/add"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_rss_config"
         android:title="@string/setting"
         android:icon="@drawable/ic_settings"

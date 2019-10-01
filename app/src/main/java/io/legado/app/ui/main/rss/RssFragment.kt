@@ -10,6 +10,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.rss.article.RssArticlesActivity
 import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_rss.*
@@ -34,6 +35,9 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
             R.id.menu_rss_config -> startActivity<RssSourceActivity>()
+            R.id.menu_rss_add -> {
+                startActivity<RssArticlesActivity>()
+            }
         }
     }
 
