@@ -19,7 +19,7 @@ import org.jetbrains.anko.debug
 import java.util.concurrent.Executors
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
-    private var searchPool = Executors.newFixedThreadPool(99).asCoroutineDispatcher()
+    private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
     var callBack: CallBack? = null
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""

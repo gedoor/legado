@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
-    private var searchPool = Executors.newFixedThreadPool(99).asCoroutineDispatcher()
+    private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
     var searchKey: String = ""
     var startTime: Long = 0
