@@ -7,10 +7,12 @@ import android.view.Menu
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
+import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.getViewModel
@@ -33,6 +35,19 @@ class RssSourceEditActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
+        viewModel.sourceLiveData.observe(this, Observer {
+            upRecyclerView(it)
+        })
+        if (viewModel.sourceLiveData.value == null) {
+            val sourceID = intent.getStringExtra("data")
+            if (sourceID == null) {
+                upRecyclerView(null)
+            } else {
+                sourceID.let { viewModel.setSource(sourceID) }
+            }
+        } else {
+            upRecyclerView(viewModel.sourceLiveData.value)
+        }
     }
 
     override fun onDestroy() {
@@ -53,6 +68,9 @@ class RssSourceEditActivity :
         recycler_view.adapter = adapter
     }
 
+    private fun upRecyclerView(rssSource: RssSource?) {
+
+    }
 
     override fun sendText(text: String) {
         if (text.isBlank()) return

@@ -7,6 +7,9 @@ import io.legado.app.data.entities.RssSource
 @Dao
 interface RssSourceDao {
 
+    @Query("select * from rssSources where sourceUrl = :key")
+    fun getByKey(key: String): RssSource?
+
     @get:Query("SELECT * FROM rssSources")
     val all: List<RssSource>
 
