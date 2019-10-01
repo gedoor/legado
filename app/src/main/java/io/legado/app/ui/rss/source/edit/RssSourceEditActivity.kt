@@ -134,6 +134,7 @@ class RssSourceEditActivity :
             add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.rss_rule_content))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.rss_rule_link))
         }
+        adapter.editEntities = sourceEntities
     }
 
     private fun getRssSource(): RssSource? {
