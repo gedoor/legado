@@ -20,7 +20,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.book.source.debug.SourceDebugActivity
+import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
@@ -83,7 +83,7 @@ class RssSourceEditActivity :
             R.id.menu_debug_source -> {
                 getRssSource()?.let {
                     viewModel.save(it) {
-                        startActivity<SourceDebugActivity>(Pair("key", it.sourceUrl))
+                        startActivity<RssSourceDebugActivity>(Pair("key", it.sourceUrl))
                     }
                 }
             }

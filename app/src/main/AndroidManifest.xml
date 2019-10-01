@@ -70,6 +70,7 @@
         <activity android:name=".ui.audio.AudioPlayActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
+        <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
