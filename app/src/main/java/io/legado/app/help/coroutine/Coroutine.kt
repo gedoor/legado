@@ -7,7 +7,7 @@ import kotlin.coroutines.CoroutineContext
 
 class Coroutine<T>(
     scope: CoroutineScope,
-    context: CoroutineContext = scope.coroutineContext.plus(Dispatchers.IO),
+    context: CoroutineContext = Dispatchers.IO,
     block: suspend CoroutineScope.() -> T
 ) {
 
@@ -17,7 +17,7 @@ class Coroutine<T>(
 
         fun <T> async(
             scope: CoroutineScope = DEFAULT,
-            context: CoroutineContext = scope.coroutineContext.plus(Dispatchers.IO),
+            context: CoroutineContext = Dispatchers.IO,
             block: suspend CoroutineScope.() -> T
         ): Coroutine<T> {
             return Coroutine(scope, context, block)
@@ -117,7 +117,7 @@ class Coroutine<T>(
         return scope.plus(Dispatchers.Main).launch {
             try {
                 start?.let { dispatchVoidCallback(this, it) }
-                val value = executeBlock(context, timeMillis ?: 0L, block)
+                val value = executeBlock(scope, context, timeMillis ?: 0L, block)
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
                 if (BuildConfig.DEBUG) {
@@ -162,11 +162,12 @@ class Coroutine<T>(
     }
 
     private suspend inline fun executeBlock(
+        scope: CoroutineScope,
         context: CoroutineContext,
         timeMillis: Long,
         noinline block: suspend CoroutineScope.() -> T
     ): T? {
-        return withContext(context) {
+        return withContext(scope.coroutineContext.plus(context)) {
             if (timeMillis > 0L) withTimeout(timeMillis) {
                 block()
             } else block()

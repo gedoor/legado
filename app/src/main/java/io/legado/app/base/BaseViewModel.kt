@@ -19,7 +19,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun <T> execute(
         scope: CoroutineScope = this,
-        context: CoroutineContext = scope.coroutineContext.plus(Dispatchers.IO),
+        context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
         return Coroutine.async(scope, context) { block() }
@@ -27,9 +27,10 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun <R> submit(
         scope: CoroutineScope = this,
+        context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> Deferred<R>
     ): Coroutine<R> {
-        return Coroutine.async(scope) { block().await() }
+        return Coroutine.async(scope, context) { block().await() }
     }
 
     @CallSuper
