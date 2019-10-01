@@ -11,6 +11,8 @@ import io.legado.app.model.webbook.BookContent
 import io.legado.app.model.webbook.BookInfo
 import io.legado.app.model.webbook.BookList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 
 class WebBook(val bookSource: BookSource) {
 
@@ -20,9 +22,13 @@ class WebBook(val bookSource: BookSource) {
     /**
      * 搜索
      */
-    fun searchBook(key: String, page: Int? = 1, scope: CoroutineScope = Coroutine.DEFAULT)
-            : Coroutine<List<SearchBook>> {
-        return Coroutine.async(scope) {
+    fun searchBook(
+        key: String,
+        page: Int? = 1,
+        scope: CoroutineScope = Coroutine.DEFAULT,
+        context: CoroutineContext = Dispatchers.IO
+    ): Coroutine<List<SearchBook>> {
+        return Coroutine.async(scope, context) {
             bookSource.searchUrl?.let { searchUrl ->
                 val analyzeUrl = AnalyzeUrl(
                     ruleUrl = searchUrl,
@@ -40,9 +46,13 @@ class WebBook(val bookSource: BookSource) {
     /**
      * 发现
      */
-    fun exploreBook(url: String, page: Int? = 1, scope: CoroutineScope = Coroutine.DEFAULT)
-            : Coroutine<List<SearchBook>> {
-        return Coroutine.async(scope) {
+    fun exploreBook(
+        url: String,
+        page: Int? = 1,
+        scope: CoroutineScope = Coroutine.DEFAULT,
+        context: CoroutineContext = Dispatchers.IO
+    ): Coroutine<List<SearchBook>> {
+        return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(
                 ruleUrl = url,
                 page = page,
@@ -57,8 +67,12 @@ class WebBook(val bookSource: BookSource) {
     /**
      * 书籍信息
      */
-    fun getBookInfo(book: Book, scope: CoroutineScope = Coroutine.DEFAULT): Coroutine<Book> {
-        return Coroutine.async(scope) {
+    fun getBookInfo(
+        book: Book,
+        scope: CoroutineScope = Coroutine.DEFAULT,
+        context: CoroutineContext = Dispatchers.IO
+    ): Coroutine<Book> {
+        return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(
                 book = book,
                 ruleUrl = book.bookUrl,
@@ -76,9 +90,10 @@ class WebBook(val bookSource: BookSource) {
      */
     fun getChapterList(
         book: Book,
-        scope: CoroutineScope = Coroutine.DEFAULT
+        scope: CoroutineScope = Coroutine.DEFAULT,
+        context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<BookChapter>> {
-        return Coroutine.async(scope) {
+        return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(
                 book = book,
                 ruleUrl = book.tocUrl,
@@ -97,9 +112,10 @@ class WebBook(val bookSource: BookSource) {
         book: Book,
         bookChapter: BookChapter,
         nextChapterUrl: String? = null,
-        scope: CoroutineScope = Coroutine.DEFAULT
+        scope: CoroutineScope = Coroutine.DEFAULT,
+        context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
-        return Coroutine.async(scope) {
+        return Coroutine.async(scope, context) {
             val analyzeUrl =
                 AnalyzeUrl(
                     book = book,

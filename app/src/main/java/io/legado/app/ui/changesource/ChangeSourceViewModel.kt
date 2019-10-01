@@ -54,12 +54,12 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     fun search() {
-        task = execute(context = searchPool) {
+        task = execute {
             searchStateData.postValue(true)
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
-                WebBook(item).searchBook(name, scope = this@execute)
+                WebBook(item).searchBook(name, scope = this@execute, context = searchPool)
                     .timeout(30000L)
                     .onSuccess(IO) {
                         it?.forEach { searchBook ->

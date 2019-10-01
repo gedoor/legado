@@ -29,12 +29,17 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         searchKey = key
         startTime = System.currentTimeMillis()
         start?.invoke()
-        task = execute(context = searchPool) {
+        task = execute {
             //onCleared时自动取消
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
-                WebBook(item).searchBook(key, searchPage, scope = this@execute)
+                WebBook(item).searchBook(
+                    key,
+                    searchPage,
+                    scope = this@execute,
+                    context = searchPool
+                )
                     .timeout(30000L)
                     .onSuccess(Dispatchers.IO) {
                         it?.let { list ->
