@@ -5,7 +5,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 
 
-class RssSourceDebugActivity : BaseActivity(R.layout.activity_book_source_debug, false) {
+class RssSourceDebugActivity : BaseActivity(R.layout.activity_source_debug, false) {
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
