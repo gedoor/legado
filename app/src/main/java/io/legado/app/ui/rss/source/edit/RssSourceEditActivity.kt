@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
+import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.KeyboardToolPop
@@ -28,6 +29,7 @@ class RssSourceEditActivity :
     private var mIsSoftKeyBoardShowing = false
 
     private lateinit var adapter: RssSourceEditAdapter
+    private val sourceEntities: ArrayList<EditEntity> = ArrayList()
 
     override val viewModel: RssSourceEditViewModel
         get() = getViewModel(RssSourceEditViewModel::class.java)
@@ -69,6 +71,33 @@ class RssSourceEditActivity :
     }
 
     private fun upRecyclerView(rssSource: RssSource?) {
+        sourceEntities.clear()
+        sourceEntities.apply {
+            add(EditEntity("sourceName", rssSource?.sourceName, R.string.rss_source_name))
+            add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.rss_source_url))
+            add(EditEntity("iconUrl", rssSource?.iconUrl, R.string.rss_source_icon))
+            add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.rss_rule_title))
+            add(EditEntity("ruleAuthor", rssSource?.ruleAuthor, R.string.rss_rule_author))
+            add(EditEntity("ruleGuid", rssSource?.ruleGuid, R.string.rss_rule_guid))
+            add(EditEntity("rulePubDate", rssSource?.rulePubDate, R.string.rss_rule_date))
+            add(
+                EditEntity(
+                    "ruleCategories",
+                    rssSource?.ruleCategories,
+                    R.string.rss_rule_categories
+                )
+            )
+            add(
+                EditEntity(
+                    "ruleDescription",
+                    rssSource?.ruleDescription,
+                    R.string.rss_rule_description
+                )
+            )
+            add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.rss_rule_image))
+            add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.rss_rule_content))
+            add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.rss_rule_link))
+        }
 
     }
 

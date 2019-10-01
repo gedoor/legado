@@ -16,11 +16,13 @@ data class RssSource(
     var ruleGuid: String? = null,
     var ruleTitle: String? = null,
     var ruleAuthor: String? = null,
-    var ruleLink: String? = null,
     var rulePubDate: String? = null,
-    var ruleDescription: String? = null,
-    var ruleContent: String? = null,
-    var ruleImage: String? = null,
+    //类别
     var ruleCategories: String? = null,
+    //描述
+    var ruleDescription: String? = null,
+    var ruleImage: String? = null,
+    var ruleContent: String? = null,
+    var ruleLink: String? = null,
     var customOrder: Int = 0
 ) : Parcelable

@@ -375,6 +375,21 @@
     <string name="rule_content_url_next">正文下一页URL规则(nextContentUrl)</string>
     <!--book source end-->
 
+    <!-- rss source start-->
+    <string name="rss_source_name">名称</string>
+    <string name="rss_source_url">url</string>
+    <string name="rss_source_icon">图标</string>
+    <string name="rss_rule_title">标题</string>
+    <string name="rss_rule_author">作者</string>
+    <string name="rss_rule_guid">guid</string>
+    <string name="rss_rule_date">时间</string>
+    <string name="rss_rule_categories">类别</string>
+    <string name="rss_rule_description">描述</string>
+    <string name="rss_rule_image">图片url</string>
+    <string name="rss_rule_content">内容</string>
+    <string name="rss_rule_link">链接</string>
+    <!-- rss source end-->
+
     <!--error string start-->
     <string name="error_no_source">没有书源</string>
     <string name="error_get_book_info">书籍信息获取失败</string>
