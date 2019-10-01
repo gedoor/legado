@@ -30,8 +30,10 @@ object LogUtils {
     }
 
     private val fileHandler by lazy {
+        val logFolder = FileHelp.getCachePath() + File.separator + "logs"
+        FileHelp.getFolder(logFolder)
         FileHandler(
-            FileHelp.getCachePath() + File.separator + "logs" + File.separator + "app.log",
+            logFolder + File.separator + "app.log",
             2048,
             10
         ).apply {
