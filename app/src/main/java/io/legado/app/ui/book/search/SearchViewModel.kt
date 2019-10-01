@@ -9,7 +9,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.delay
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -49,7 +48,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                             }
                         }
                     }
-                delay(100)//每隔100毫秒搜索一个书源
             }
         }
 

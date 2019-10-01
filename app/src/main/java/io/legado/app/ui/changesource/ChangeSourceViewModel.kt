@@ -13,7 +13,6 @@ import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.debug
 import java.util.concurrent.Executors
@@ -73,7 +72,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                             }
                         }
                     }
-                delay(100)
             }
         }
 
