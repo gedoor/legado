@@ -43,7 +43,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_add_book_source -> startActivity<RssSourceEditActivity>()
+            R.id.menu_add -> startActivity<RssSourceEditActivity>()
         }
         return super.onCompatOptionsItemSelected(item)
     }
