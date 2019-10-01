@@ -18,5 +18,11 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }
     }
 
-
+    fun save(rssSource: RssSource, success: (() -> Unit)) {
+        execute {
+            App.db.rssSourceDao().insert(rssSource)
+        }.onSuccess {
+            success()
+        }
+    }
 }

@@ -1,9 +1,11 @@
 package io.legado.app.ui.rss.source.edit
 
+import android.app.Activity
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
@@ -62,6 +64,20 @@ class RssSourceEditActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_save -> {
+                getRssSource()?.let {
+                    viewModel.save(it) {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                    }
+                }
+            }
+        }
+        return super.onCompatOptionsItemSelected(item)
+    }
+
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
@@ -98,7 +114,30 @@ class RssSourceEditActivity :
             add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.rss_rule_content))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.rss_rule_link))
         }
+    }
 
+    private fun getRssSource(): RssSource? {
+        val source = viewModel.sourceLiveData.value ?: RssSource()
+        sourceEntities.forEach {
+            when (it.key) {
+                "sourceName" -> source.sourceName = it.value ?: ""
+                "sourceUrl" -> source.sourceName = it.value ?: ""
+                "iconUrl" -> source.sourceName = it.value ?: ""
+                "ruleTitle" -> source.sourceName = it.value ?: ""
+                "ruleAuthor" -> source.sourceName = it.value ?: ""
+                "ruleGuid" -> source.sourceName = it.value ?: ""
+                "rulePubDate" -> source.sourceName = it.value ?: ""
+                "ruleCategories" -> source.sourceName = it.value ?: ""
+                "ruleDescription" -> source.sourceName = it.value ?: ""
+                "ruleImage" -> source.sourceName = it.value ?: ""
+                "ruleContent" -> source.sourceName = it.value ?: ""
+                "ruleLink" -> source.sourceName = it.value ?: ""
+            }
+        }
+        if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
+            return null
+        }
+        return source
     }
 
     override fun sendText(text: String) {
