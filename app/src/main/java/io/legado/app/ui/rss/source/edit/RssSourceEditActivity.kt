@@ -1,6 +1,9 @@
 package io.legado.app.ui.rss.source.edit
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity
@@ -17,10 +20,13 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.book.source.debug.SourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
+import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.startActivity
 import kotlin.math.abs
 
 class RssSourceEditActivity :
@@ -74,6 +80,20 @@ class RssSourceEditActivity :
                     }
                 }
             }
+            R.id.menu_debug_source -> {
+                getRssSource()?.let {
+                    viewModel.save(it) {
+                        startActivity<SourceDebugActivity>(Pair("key", it.sourceUrl))
+                    }
+                }
+            }
+            R.id.menu_copy_source -> {
+                GSON.toJson(getRssSource())?.let { sourceStr ->
+                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                    clipboard?.primaryClip = ClipData.newPlainText(null, sourceStr)
+                }
+            }
+            R.id.menu_paste_source -> viewModel.pasteSource()
         }
         return super.onCompatOptionsItemSelected(item)
     }
