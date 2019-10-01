@@ -18,7 +18,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class KeyboardToolPop(
     context: Context,
     private val chars: List<String>,
-    val onClickListener: OnClickListener?
+    val callBack: CallBack?
 ) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
     init {
@@ -45,13 +45,13 @@ class KeyboardToolPop(
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 text_view.text = item
-                onClick { onClickListener?.click(item) }
+                onClick { callBack?.sendText(item) }
             }
         }
     }
 
-    interface OnClickListener {
-        fun click(text: String)
+    interface CallBack {
+        fun sendText(text: String)
     }
 
 }

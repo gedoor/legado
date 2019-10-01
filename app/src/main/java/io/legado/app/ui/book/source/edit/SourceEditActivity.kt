@@ -34,7 +34,7 @@ import kotlin.math.abs
 
 class SourceEditActivity :
     VMBaseActivity<SourceEditViewModel>(R.layout.activity_book_source_edit, false),
-    KeyboardToolPop.OnClickListener {
+    KeyboardToolPop.CallBack {
     override val viewModel: SourceEditViewModel
         get() = getViewModel(SourceEditViewModel::class.java)
 
@@ -92,7 +92,7 @@ class SourceEditActivity :
                     toast("书源名称和URL不能为空")
                 } else {
                     viewModel.save(bookSource) {
-                        startActivity<SourceDebugActivity>("key" to bookSource.bookSourceUrl)
+                        startActivity<SourceDebugActivity>(Pair("key", bookSource.bookSourceUrl))
                     }
                 }
             }
@@ -567,7 +567,7 @@ class SourceEditActivity :
         return source
     }
 
-    override fun click(text: String) {
+    override fun sendText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
