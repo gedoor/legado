@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.source.edit
+package io.legado.app.ui.rss.source.edit
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,7 +10,7 @@ import io.legado.app.R
 import io.legado.app.data.entities.EditEntity
 import kotlinx.android.synthetic.main.item_source_edit.view.*
 
-class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>() {
+class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHolder>() {
 
     var editEntities: ArrayList<EditEntity> = ArrayList()
         set(value) {
@@ -60,7 +60,12 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
             editText.setText(editEntity.value)
             textInputLayout.hint = context.getString(editEntity.hint)
             val textWatcher = object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+                override fun beforeTextChanged(
+                    s: CharSequence,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
 
                 }
 
@@ -76,6 +81,5 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
             editText.setTag(R.id.tag2, textWatcher)
         }
     }
-
 
 }

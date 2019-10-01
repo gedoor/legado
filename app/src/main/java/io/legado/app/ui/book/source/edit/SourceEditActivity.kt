@@ -19,6 +19,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.rule.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.source.debug.SourceDebugActivity
@@ -618,5 +619,4 @@ class SourceEditActivity :
         }
     }
 
-    class EditEntity(var key: String, var value: String?, var hint: Int)
 }
