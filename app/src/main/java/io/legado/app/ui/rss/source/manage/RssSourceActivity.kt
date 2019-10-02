@@ -5,9 +5,13 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssSource
@@ -29,11 +33,13 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         get() = getViewModel(RssSourceViewModel::class.java)
 
     private lateinit var adapter: RssSourceAdapter
+    private var sourceLiveData: LiveData<List<RssSource>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         initRecyclerView()
         initSearchView()
+        initData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -78,6 +84,18 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
+        })
+    }
+
+    private fun initData() {
+        sourceLiveData?.removeObservers(this)
+        sourceLiveData = App.db.rssSourceDao().liveAll()
+        sourceLiveData?.observe(this, Observer {
+            val diffResult = DiffUtil.calculateDiff(
+                DiffCallBack(adapter.getItems(), it)
+            )
+            adapter.setItemsNoNotify(it)
+            diffResult.dispatchUpdatesTo(adapter)
         })
     }
 
