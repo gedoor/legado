@@ -13,8 +13,9 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.model.rss.RssParser
 import io.legado.app.ui.rss.read.ReadRssActivity
 import kotlinx.android.synthetic.main.item_rss.view.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.listView
 import org.jetbrains.anko.sdk27.listeners.onItemClick
+import org.jetbrains.anko.startActivity
 import java.net.URL
 
 class RssArticlesActivity : AppCompatActivity() {
@@ -48,7 +49,7 @@ class RssArticlesActivity : AppCompatActivity() {
 
 class ArticleAdapter(var articles: MutableList<RssArticle>, var context: Context) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val item_rss = LayoutInflater.from(context).inflate(R.layout.item_rss, null)
+        val item_rss = LayoutInflater.from(context).inflate(R.layout.item_rss_article, null)
         val article = articles[position]
         item_rss.title.text = article.title
         item_rss.pub_date.text = article.pubDate
