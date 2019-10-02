@@ -27,6 +27,8 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             App.db.rssSourceDao().insert(rssSource)
         }.onSuccess {
             success()
+        }.onError {
+            toast(it.localizedMessage)
         }
     }
 
