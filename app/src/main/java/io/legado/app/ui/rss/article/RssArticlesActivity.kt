@@ -21,9 +21,9 @@ import java.net.URL
 class RssArticlesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (intent.hasExtra("QuickAddURL")) {
+        if (intent.hasExtra("url")) {
             // 处理从 快速添加并预览 跳转到这个页面
-            val urlString = intent.getStringExtra("QuickAddURL")
+            val urlString = intent.getStringExtra("url")
             val adapter = ArticleAdapter(mutableListOf<RssArticle>(), this)
             listView {
                 this.adapter = adapter

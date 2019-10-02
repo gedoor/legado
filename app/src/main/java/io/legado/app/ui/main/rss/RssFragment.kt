@@ -58,7 +58,7 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
                     }
                     yesButton{
                         Log.i("RSS","Quick Add URL: ${urlEdit.text}")
-                        startActivity<RssArticlesActivity>("QuickAddURL" to urlEdit.text.toString().trim())
+                        startActivity<RssArticlesActivity>("url" to urlEdit.text.toString().trim())
                     }
                 }.show()
             }
@@ -79,6 +79,6 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
     }
 
     override fun openRss(rssSource: RssSource) {
-
+        startActivity<RssArticlesActivity>(Pair("url", rssSource.sourceUrl))
     }
 }
