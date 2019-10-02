@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -11,6 +12,7 @@
         android:layout_height="wrap_content"
         app:contentInsetStartWithNavigation="0dp"
         app:displayHomeAsUp="true"
+        app:fitStatusBar="false"
         app:title="@string/rss_source_edit" />
 
     <androidx.recyclerview.widget.RecyclerView

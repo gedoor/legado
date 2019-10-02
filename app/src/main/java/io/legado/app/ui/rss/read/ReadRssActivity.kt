@@ -9,7 +9,7 @@ class ReadRssActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_rss)
-        val s = intent.getStringExtra("description")
-        webView.loadData("<style>img{max-width:100%}</style>"+s,"text/html","utf-8")
+        val description = intent.getStringExtra("description")
+        webView.loadData("<style>img{max-width:100%}</style>$description","text/html", "utf-8")
     }
 }

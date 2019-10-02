@@ -79,20 +79,14 @@ class SourceEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> {
-                val bookSource = getSource()
-                if (bookSource == null) {
-                    toast("书源名称和URL不能为空")
-                } else {
-                    viewModel.save(bookSource) { setResult(Activity.RESULT_OK); finish() }
+                getSource()?.let {
+                    viewModel.save(it) { setResult(Activity.RESULT_OK); finish() }
                 }
             }
             R.id.menu_debug_source -> {
-                val bookSource = getSource()
-                if (bookSource == null) {
-                    toast("书源名称和URL不能为空")
-                } else {
-                    viewModel.save(bookSource) {
-                        startActivity<SourceDebugActivity>(Pair("key", bookSource.bookSourceUrl))
+                getSource()?.let {
+                    viewModel.save(it) {
+                        startActivity<SourceDebugActivity>(Pair("key", it.bookSourceUrl))
                     }
                 }
             }
@@ -147,7 +141,7 @@ class SourceEditActivity :
         }
         //基本信息
         sourceEntities.clear()
-        searchEntities.apply {
+        sourceEntities.apply {
             add(EditEntity("bookSourceUrl", bookSource?.bookSourceUrl, R.string.book_source_url))
             add(EditEntity("bookSourceName", bookSource?.bookSourceName, R.string.book_source_name))
             add(
@@ -249,84 +243,76 @@ class SourceEditActivity :
         val bookInfoRule = BookInfoRule()
         val tocRule = TocRule()
         val contentRule = ContentRule()
-        for (entity in sourceEntities) {
-            with(entity) {
-                when (key) {
-                    "bookSourceUrl" -> value?.let { source.bookSourceUrl = it } ?: return null
-                    "bookSourceName" -> value?.let { source.bookSourceName = it } ?: return null
-                    "bookSourceGroup" -> source.bookSourceGroup = value
-                    "loginUrl" -> source.loginUrl = value
-                    "bookUrlPattern" -> source.bookUrlPattern = value
-                    "header" -> source.header = value
-                }
+        sourceEntities.forEach {
+            when (it.key) {
+                "bookSourceUrl" -> source.bookSourceUrl = it.value ?: ""
+                "bookSourceName" -> source.bookSourceName = it.value ?: ""
+                "bookSourceGroup" -> source.bookSourceGroup = it.value
+                "loginUrl" -> source.loginUrl = it.value
+                "bookUrlPattern" -> source.bookUrlPattern = it.value
+                "header" -> source.header = it.value
             }
         }
-        for (entity in searchEntities) {
-            with(entity) {
-                when (key) {
-                    "searchUrl" -> source.searchUrl = value
-                    "bookList" -> searchRule.bookList = value
-                    "name" -> searchRule.name = value
-                    "author" -> searchRule.author = value
-                    "kind" -> searchRule.kind = value
-                    "intro" -> searchRule.intro = value
-                    "updateTime" -> searchRule.updateTime = value
-                    "wordCount" -> searchRule.wordCount = value
-                    "lastChapter" -> searchRule.lastChapter = value
-                    "coverUrl" -> searchRule.coverUrl = value
-                    "bookUrl" -> searchRule.bookUrl = value
-                }
+        if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
+            toast("书源名称和URL不能为空")
+            return null
+        }
+        searchEntities.forEach {
+            when (it.key) {
+                "searchUrl" -> source.searchUrl = it.value
+                "bookList" -> searchRule.bookList = it.value
+                "name" -> searchRule.name = it.value
+                "author" -> searchRule.author = it.value
+                "kind" -> searchRule.kind = it.value
+                "intro" -> searchRule.intro = it.value
+                "updateTime" -> searchRule.updateTime = it.value
+                "wordCount" -> searchRule.wordCount = it.value
+                "lastChapter" -> searchRule.lastChapter = it.value
+                "coverUrl" -> searchRule.coverUrl = it.value
+                "bookUrl" -> searchRule.bookUrl = it.value
             }
         }
-        for (entity in findEntities) {
-            with(entity) {
-                when (key) {
-                    "exploreUrl" -> source.exploreUrl = value
-                    "bookList" -> exploreRule.bookList = value
-                    "name" -> exploreRule.name = value
-                    "author" -> exploreRule.author = value
-                    "kind" -> exploreRule.kind = value
-                    "intro" -> exploreRule.intro = value
-                    "updateTime" -> exploreRule.updateTime = value
-                    "wordCount" -> exploreRule.wordCount = value
-                    "lastChapter" -> exploreRule.lastChapter = value
-                    "coverUrl" -> exploreRule.coverUrl = value
-                    "bookUrl" -> exploreRule.bookUrl = value
-                }
+        findEntities.forEach {
+            when (it.key) {
+                "exploreUrl" -> source.exploreUrl = it.value
+                "bookList" -> exploreRule.bookList = it.value
+                "name" -> exploreRule.name = it.value
+                "author" -> exploreRule.author = it.value
+                "kind" -> exploreRule.kind = it.value
+                "intro" -> exploreRule.intro = it.value
+                "updateTime" -> exploreRule.updateTime = it.value
+                "wordCount" -> exploreRule.wordCount = it.value
+                "lastChapter" -> exploreRule.lastChapter = it.value
+                "coverUrl" -> exploreRule.coverUrl = it.value
+                "bookUrl" -> exploreRule.bookUrl = it.value
             }
         }
-        for (entity in infoEntities) {
-            with(entity) {
-                when (key) {
-                    "init" -> bookInfoRule.init = value
-                    "name" -> bookInfoRule.name = value
-                    "author" -> bookInfoRule.author = value
-                    "kind" -> bookInfoRule.kind = value
-                    "intro" -> bookInfoRule.intro = value
-                    "updateTime" -> bookInfoRule.updateTime = value
-                    "wordCount" -> bookInfoRule.wordCount = value
-                    "lastChapter" -> bookInfoRule.lastChapter = value
-                    "coverUrl" -> bookInfoRule.coverUrl = value
-                    "tocUrl" -> bookInfoRule.tocUrl = value
-                }
+        infoEntities.forEach {
+            when (it.key) {
+                "init" -> bookInfoRule.init = it.value
+                "name" -> bookInfoRule.name = it.value
+                "author" -> bookInfoRule.author = it.value
+                "kind" -> bookInfoRule.kind = it.value
+                "intro" -> bookInfoRule.intro = it.value
+                "updateTime" -> bookInfoRule.updateTime = it.value
+                "wordCount" -> bookInfoRule.wordCount = it.value
+                "lastChapter" -> bookInfoRule.lastChapter = it.value
+                "coverUrl" -> bookInfoRule.coverUrl = it.value
+                "tocUrl" -> bookInfoRule.tocUrl = it.value
             }
         }
-        for (entity in tocEntities) {
-            with(entity) {
-                when (key) {
-                    "chapterList" -> tocRule.chapterList = value
-                    "chapterName" -> tocRule.chapterName = value
-                    "chapterUrl" -> tocRule.chapterUrl = value
-                    "nextTocUrl" -> tocRule.nextTocUrl = value
-                }
+        tocEntities.forEach {
+            when (it.key) {
+                "chapterList" -> tocRule.chapterList = it.value
+                "chapterName" -> tocRule.chapterName = it.value
+                "chapterUrl" -> tocRule.chapterUrl = it.value
+                "nextTocUrl" -> tocRule.nextTocUrl = it.value
             }
         }
-        for (entity in contentEntities) {
-            with(entity) {
-                when (key) {
-                    "content" -> contentRule.content = value
-                    "nextContentUrl" -> contentRule.nextContentUrl = value
-                }
+        contentEntities.forEach {
+            when (it.key) {
+                "content" -> contentRule.content = it.value
+                "nextContentUrl" -> contentRule.nextContentUrl = it.value
             }
         }
         source.ruleSearch = GSON.toJson(searchRule)
