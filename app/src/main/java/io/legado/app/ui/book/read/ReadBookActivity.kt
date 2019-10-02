@@ -42,7 +42,7 @@ import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_read_book.*
+import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -55,7 +55,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
-class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
+class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
     PageView.CallBack,
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
