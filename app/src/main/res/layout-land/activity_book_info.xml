@@ -28,7 +28,7 @@
         android:layout_width="86dp"
         android:layout_height="120dp"
         android:layout_margin="10dp"
-        android:src="@drawable/img_cover_default"
+        android:src="@drawable/image_cover_default"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 

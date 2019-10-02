@@ -16,15 +16,15 @@ class RefreshProgressBar @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    internal var a = 1
-    var maxProgress = 100
+    private var a = 1
     private var durProgress = 0
-    var secondMaxProgress = 100
     private var secondDurProgress = 0
+    var maxProgress = 100
+    var secondMaxProgress = 100
     var bgColor = 0x00000000
     var secondColor = -0x3e3e3f
     var fontColor = -0xc9c9ca
-    var speed = 1
+    var speed = 2
     var secondFinalProgress = 0
         private set
     private var paint: Paint = Paint()

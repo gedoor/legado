@@ -84,8 +84,8 @@ class SearchAdapter(val callBack: CallBack) :
             }
             searchBook.coverUrl.let {
                 ImageLoader.load(context, it)//Glide自动识别http://和file://
-                    .placeholder(R.drawable.img_cover_default)
-                    .error(R.drawable.img_cover_default)
+                    .placeholder(R.drawable.image_cover_default)
+                    .error(R.drawable.image_cover_default)
                     .centerCrop()
                     .setAsDrawable(iv_cover)
             }
@@ -100,8 +100,8 @@ class SearchAdapter(val callBack: CallBack) :
                     1 -> bv_originCount.setBadgeCount(searchBook.originCount)
                     2 -> searchBook.coverUrl.let {
                         ImageLoader.load(context, it)//Glide自动识别http://和file://
-                            .placeholder(R.drawable.img_cover_default)
-                            .error(R.drawable.img_cover_default)
+                            .placeholder(R.drawable.image_cover_default)
+                            .error(R.drawable.image_cover_default)
                             .centerCrop()
                             .setAsDrawable(iv_cover)
                     }

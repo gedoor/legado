@@ -34,7 +34,7 @@
                     android:layout_height="126dp"
                     android:contentDescription="@string/img_cover"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/img_cover_default" />
+                    android:src="@drawable/image_cover_default" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

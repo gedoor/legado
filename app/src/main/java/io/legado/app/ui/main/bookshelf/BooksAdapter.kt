@@ -72,8 +72,8 @@ class BooksAdapter(private val callBack: CallBack) :
             tv_last.text = book.latestChapterTitle
             book.getDisplayCover()?.let {
                 ImageLoader.load(context, it)//Glide自动识别http://和file://
-                    .placeholder(R.drawable.img_cover_default)
-                    .error(R.drawable.img_cover_default)
+                    .placeholder(R.drawable.image_cover_default)
+                    .error(R.drawable.image_cover_default)
                     .centerCrop()
                     .setAsDrawable(iv_cover)
             }

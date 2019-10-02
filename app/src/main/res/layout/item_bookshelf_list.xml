@@ -16,7 +16,7 @@
         android:layout_margin="8dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
-        android:src="@drawable/img_cover_default"
+        android:src="@drawable/image_cover_default"
         android:transitionName="img_cover"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

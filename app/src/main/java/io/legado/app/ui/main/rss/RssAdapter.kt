@@ -17,6 +17,8 @@ class RssAdapter(context: Context, val callBack: CallBack) :
             tv_name.text = item.sourceName
             ImageLoader.load(context, item.sourceIcon)
                 .centerCrop()
+                .placeholder(R.drawable.image_rss)
+                .error(R.drawable.image_rss)
                 .setAsBitmap(iv_icon)
             onClick { callBack.openRss(item) }
         }
