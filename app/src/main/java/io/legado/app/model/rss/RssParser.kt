@@ -42,7 +42,7 @@ object RssParser {
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_AUTHOR, true) ->
                         if (insideItem) currentArticle.author = xmlPullParser.nextText().trim()
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_CATEGORY, true) ->
-                        if (insideItem) currentArticle.categories.add(xmlPullParser.nextText().trim())
+                        if (insideItem) currentArticle.categoryList.add(xmlPullParser.nextText().trim())
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_THUMBNAIL, true) ->
                         if (insideItem) currentArticle.image =
                             xmlPullParser.getAttributeValue(null, RSSKeywords.RSS_ITEM_URL)
@@ -92,6 +92,7 @@ object RssParser {
             ) {
                 // The item is correctly parsed
                 insideItem = false
+                currentArticle.categories = currentArticle.categoryList.joinToString(",")
                 articleList.add(currentArticle)
                 currentArticle = RssArticle()
             }

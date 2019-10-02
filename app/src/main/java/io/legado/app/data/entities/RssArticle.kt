@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 
@@ -9,7 +10,7 @@ data class RssArticle(
     var origin: String = "",
     var time: Long = System.currentTimeMillis(),
     @PrimaryKey
-    var guid: String? = null,
+    var guid: String = "",
     var title: String? = null,
     var author: String? = null,
     var link: String? = null,
@@ -17,5 +18,10 @@ data class RssArticle(
     var description: String? = null,
     var content: String? = null,
     var image: String? = null,
-    var categories: MutableList<String> = mutableListOf()
-)
+    var categories: String? = null
+) {
+
+    @Ignore
+    var categoryList: MutableList<String> = mutableListOf()
+
+}
