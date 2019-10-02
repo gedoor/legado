@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "rssArticles")
 data class RssArticle(
     var origin: String = "",
+    var time: Long = System.currentTimeMillis(),
     @PrimaryKey
     var guid: String? = null,
     var title: String? = null,
