@@ -6,13 +6,17 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.ItemTouchCallback
+import kotlinx.android.synthetic.main.item_rss_source.view.*
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss_source),
     ItemTouchCallback.OnItemTouchCallbackListener {
 
     override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
+        with(holder.itemView) {
+            cb_source.text = item.sourceName
 
+        }
     }
 
 
