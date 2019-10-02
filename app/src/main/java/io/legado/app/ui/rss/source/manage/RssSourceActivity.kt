@@ -3,11 +3,16 @@ package io.legado.app.ui.rss.source.manage
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssSource
@@ -16,6 +21,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_rss_source.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -29,11 +35,16 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         get() = getViewModel(RssSourceViewModel::class.java)
 
     private lateinit var adapter: RssSourceAdapter
+    private var sourceLiveData: LiveData<List<RssSource>>? = null
+    private var groups = hashSetOf<String>()
+    private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         initRecyclerView()
         initSearchView()
+        initLiveDataGroup()
+        initLiveDataSource()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -41,9 +52,20 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
+        upGroupMenu()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_add_book_source -> startActivity<RssSourceEditActivity>()
+            R.id.menu_add -> startActivity<RssSourceEditActivity>()
+            R.id.menu_select_all -> adapter.selectAll()
+            R.id.menu_revert_selection -> adapter.revertSelection()
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -81,12 +103,45 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         })
     }
 
+    private fun initLiveDataGroup() {
+        App.db.rssSourceDao().liveGroup().observe(this, Observer {
+            groups.clear()
+            it.map { group ->
+                groups.addAll(group.splitNotBlank(",", ";"))
+            }
+            upGroupMenu()
+        })
+    }
+
+    private fun upGroupMenu() {
+        groupMenu?.removeGroup(R.id.source_group)
+        groups.map {
+            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+        }
+    }
+
+    private fun initLiveDataSource(key: String? = null) {
+        sourceLiveData?.removeObservers(this)
+        sourceLiveData =
+            if (key.isNullOrBlank()) {
+                App.db.rssSourceDao().liveAll()
+            } else {
+                App.db.rssSourceDao().liveSearch("%$key%")
+            }
+        sourceLiveData?.observe(this, Observer {
+            val diffResult = DiffUtil
+                .calculateDiff(DiffCallBack(adapter.getItems(), it))
+            adapter.setItemsNoNotify(it)
+            diffResult.dispatchUpdatesTo(adapter)
+        })
+    }
+
     override fun del(source: RssSource) {
 
     }
 
     override fun edit(source: RssSource) {
-
+        startActivity<RssSourceEditActivity>(Pair("data", source.sourceUrl))
     }
 
     override fun update(vararg source: RssSource) {

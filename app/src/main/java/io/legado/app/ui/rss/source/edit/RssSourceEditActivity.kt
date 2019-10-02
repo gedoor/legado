@@ -27,6 +27,7 @@ import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import kotlin.math.abs
 
 class RssSourceEditActivity :
@@ -111,7 +112,8 @@ class RssSourceEditActivity :
         sourceEntities.apply {
             add(EditEntity("sourceName", rssSource?.sourceName, R.string.rss_source_name))
             add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.rss_source_url))
-            add(EditEntity("iconUrl", rssSource?.iconUrl, R.string.rss_source_icon))
+            add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.rss_source_icon))
+            add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.rss_source_group))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.rss_rule_title))
             add(EditEntity("ruleAuthor", rssSource?.ruleAuthor, R.string.rss_rule_author))
             add(EditEntity("ruleGuid", rssSource?.ruleGuid, R.string.rss_rule_guid))
@@ -142,20 +144,22 @@ class RssSourceEditActivity :
         sourceEntities.forEach {
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
-                "sourceUrl" -> source.sourceName = it.value ?: ""
-                "iconUrl" -> source.sourceName = it.value ?: ""
-                "ruleTitle" -> source.sourceName = it.value ?: ""
-                "ruleAuthor" -> source.sourceName = it.value ?: ""
-                "ruleGuid" -> source.sourceName = it.value ?: ""
-                "rulePubDate" -> source.sourceName = it.value ?: ""
-                "ruleCategories" -> source.sourceName = it.value ?: ""
-                "ruleDescription" -> source.sourceName = it.value ?: ""
-                "ruleImage" -> source.sourceName = it.value ?: ""
-                "ruleContent" -> source.sourceName = it.value ?: ""
-                "ruleLink" -> source.sourceName = it.value ?: ""
+                "sourceUrl" -> source.sourceUrl = it.value ?: ""
+                "sourceIcon" -> source.sourceIcon = it.value ?: ""
+                "sourceGroup" -> source.sourceGroup = it.value
+                "ruleTitle" -> source.ruleTitle = it.value
+                "ruleAuthor" -> source.ruleAuthor = it.value
+                "ruleGuid" -> source.ruleGuid = it.value
+                "rulePubDate" -> source.rulePubDate = it.value
+                "ruleCategories" -> source.ruleCategories = it.value
+                "ruleDescription" -> source.ruleDescription = it.value
+                "ruleImage" -> source.ruleImage = it.value
+                "ruleContent" -> source.ruleContent = it.value
+                "ruleLink" -> source.ruleLink = it.value
             }
         }
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
+            toast("名称或url不能为空")
             return null
         }
         return source

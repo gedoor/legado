@@ -135,12 +135,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }
         bookSourceLiveDate?.observe(this, Observer {
             search_view.queryHint = getString(R.string.search_book_source_num, it.size)
-            val diffResult = DiffUtil.calculateDiff(
-                DiffCallBack(
-                    adapter.getItems(),
-                    it
-                )
-            )
+            val diffResult = DiffUtil
+                .calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItemsNoNotify(it)
             diffResult.dispatchUpdatesTo(adapter)
         })

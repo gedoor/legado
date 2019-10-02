@@ -9,7 +9,7 @@
     android:padding="16dp">
 
     <io.legado.app.lib.theme.view.ATECheckBox
-        android:id="@+id/cb_book_source"
+        android:id="@+id/cb_source"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
