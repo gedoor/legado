@@ -16,11 +16,6 @@ class RssArticlesAdapter(context: Context, val callBack: CallBack) :
         with(holder.itemView) {
             tv_title.text = item.title
             tv_pub_date.text = item.pubDate
-            if (item.author.isNullOrBlank()) {
-                tv_author.text = item.link
-            } else {
-                tv_author.text = item.author
-            }
             onClick {
                 callBack.readRss(item)
             }
