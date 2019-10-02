@@ -91,9 +91,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         sourceLiveData?.removeObservers(this)
         sourceLiveData = App.db.rssSourceDao().liveAll()
         sourceLiveData?.observe(this, Observer {
-            val diffResult = DiffUtil.calculateDiff(
-                DiffCallBack(adapter.getItems(), it)
-            )
+            val diffResult = DiffUtil
+                .calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItemsNoNotify(it)
             diffResult.dispatchUpdatesTo(adapter)
         })
