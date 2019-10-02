@@ -24,6 +24,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         initView()
         intent.getStringExtra("url")?.let {
             initData(it)
+            viewModel.loadContent(it)
         }
     }
 
