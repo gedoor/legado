@@ -12,7 +12,7 @@ import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.model.rss.RssParser
 import io.legado.app.ui.rss.read.ReadRssActivity
-import kotlinx.android.synthetic.main.item_rss.view.*
+import kotlinx.android.synthetic.main.item_rss_article.view.*
 import org.jetbrains.anko.listView
 import org.jetbrains.anko.sdk27.listeners.onItemClick
 import org.jetbrains.anko.startActivity
