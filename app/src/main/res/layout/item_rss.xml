@@ -9,6 +9,7 @@
         android:id="@+id/iv_icon"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:background="@color/colorPrimary"
         android:src="@drawable/ic_image"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
