@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
+import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.yesButton
@@ -22,7 +23,6 @@ import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_rss.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import org.jetbrains.anko.padding
 
 class RssFragment : BaseFragment(R.layout.fragment_rss),
     RssAdapter.CallBack {
@@ -78,7 +78,7 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
         })
     }
 
-    override fun openRss() {
+    override fun openRss(rssSource: RssSource) {
 
     }
 }
