@@ -16,11 +16,14 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources")
     fun liveAll(): LiveData<List<RssSource>>
 
+    @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key")
+    fun liveSearch(key: String): LiveData<List<RssSource>>
+
     @Query("SELECT * FROM rssSources where enabled = 1")
     fun liveEnabled(): LiveData<List<RssSource>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg rssSource: RssSource)
+    @Query("select sourceGroup from rssSources where sourceGroup is not null and sourceGroup <> ''")
+    fun liveGroup(): LiveData<List<String>>
 
     @Query("update rssSources set enabled = 1 where sourceUrl in (:sourceUrls)")
     fun enableSection(vararg sourceUrls: String)
@@ -30,6 +33,9 @@ interface RssSourceDao {
 
     @Query("delete from rssSources where sourceUrl in (:sourceUrls)")
     fun delSection(vararg sourceUrls: String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg rssSource: RssSource)
 
     @Update
     fun update(vararg rssSource: RssSource)

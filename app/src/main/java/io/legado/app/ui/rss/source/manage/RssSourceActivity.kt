@@ -3,6 +3,7 @@ package io.legado.app.ui.rss.source.manage
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
@@ -20,6 +21,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_rss_source.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -34,17 +36,26 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
+    private var groups = hashSetOf<String>()
+    private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         initRecyclerView()
         initSearchView()
-        initData()
+        initLiveDataGroup()
+        initLiveDataSource()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_source, menu)
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
+        upGroupMenu()
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
@@ -92,9 +103,31 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         })
     }
 
-    private fun initData() {
+    private fun initLiveDataGroup() {
+        App.db.rssSourceDao().liveGroup().observe(this, Observer {
+            groups.clear()
+            it.map { group ->
+                groups.addAll(group.splitNotBlank(",", ";"))
+            }
+            upGroupMenu()
+        })
+    }
+
+    private fun upGroupMenu() {
+        groupMenu?.removeGroup(R.id.source_group)
+        groups.map {
+            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+        }
+    }
+
+    private fun initLiveDataSource(key: String? = null) {
         sourceLiveData?.removeObservers(this)
-        sourceLiveData = App.db.rssSourceDao().liveAll()
+        sourceLiveData =
+            if (key.isNullOrBlank()) {
+                App.db.rssSourceDao().liveAll()
+            } else {
+                App.db.rssSourceDao().liveSearch("%$key%")
+            }
         sourceLiveData?.observe(this, Observer {
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(adapter.getItems(), it))
