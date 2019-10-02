@@ -24,7 +24,9 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         initView()
         intent.getStringExtra("url")?.let {
             initData(it)
-            viewModel.loadContent(it)
+            viewModel.loadContent(it) {
+                refresh_progress_bar.isAutoLoading = false
+            }
         }
     }
 
@@ -33,6 +35,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = RssArticlesAdapter(this)
         recycler_view.adapter = adapter
+        refresh_progress_bar.isAutoLoading = true
     }
 
     private fun initData(origin: String) {

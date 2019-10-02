@@ -9,7 +9,7 @@ import java.net.URL
 
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
 
-    fun loadContent(url: String) {
+    fun loadContent(url: String, onFinally: () -> Unit) {
         execute {
             val xml = URL(url).readText()
             RssParser.parseXML(xml).let {
@@ -18,6 +18,8 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 }
                 App.db.rssArtivleDao().insert(*it.toTypedArray())
             }
+        }.onFinally {
+            onFinally()
         }
     }
 }
