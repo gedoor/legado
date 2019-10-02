@@ -1,75 +1,44 @@
 package io.legado.app.ui.rss.article
 
-import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssArticle
-import io.legado.app.model.rss.RssParser
-import io.legado.app.ui.rss.read.ReadRssActivity
-import kotlinx.android.synthetic.main.item_rss_article.view.*
-import org.jetbrains.anko.listView
-import org.jetbrains.anko.sdk27.listeners.onItemClick
-import org.jetbrains.anko.startActivity
-import java.net.URL
+import io.legado.app.lib.theme.ATH
+import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_rss_artivles.*
 
-class RssArticlesActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (intent.hasExtra("url")) {
-            // 处理从 快速添加并预览 跳转到这个页面
-            val urlString = intent.getStringExtra("url")
-            val adapter = ArticleAdapter(mutableListOf<RssArticle>(), this)
-            listView {
-                this.adapter = adapter
-                onItemClick { p0, p1, p2, p3 ->
-                    startActivity<ReadRssActivity>("description" to adapter.articles[p2].description)
-                }
-            }
-            val loading = ProgressDialog(this@RssArticlesActivity)
-            loading.setMessage("加载中...")
-            loading.show()
-            Thread {
-                val xml = URL(urlString).readText()
-                val articles = RssParser.parseXML(xml)
-                runOnUiThread {
-                    adapter.articles = articles
-                    adapter.notifyDataSetChanged()
-                    loading.dismiss()
-                }
-            }.start()
+class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activity_rss_artivles) {
+
+    override val viewModel: RssArticlesViewModel
+        get() = getViewModel(RssArticlesViewModel::class.java)
+
+    private var adapter: RssArticlesAdapter? = null
+    private var rssArticlesData: LiveData<List<RssArticle>>? = null
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initView()
+        intent.getStringExtra("url")?.let {
+            initData(it)
         }
     }
-}
 
-class ArticleAdapter(var articles: MutableList<RssArticle>, var context: Context) : BaseAdapter() {
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val item_rss = LayoutInflater.from(context).inflate(R.layout.item_rss_article, null)
-        val article = articles[position]
-        item_rss.title.text = article.title
-        item_rss.pub_date.text = article.pubDate
-        if (article.author != null && article.author != "") {
-            item_rss.author.text = article.author
-        } else {
-            item_rss.author.text = article.link
-        }
-        return item_rss
+    private fun initView() {
+        ATH.applyEdgeEffectColor(recycler_view)
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        adapter = RssArticlesAdapter(this)
+        recycler_view.adapter = adapter
     }
 
-    override fun getItem(position: Int): Any {
-        return articles[position]
-    }
-
-    override fun getItemId(position: Int): Long {
-        return 1
-    }
-
-    override fun getCount(): Int {
-        return articles.size
+    private fun initData(origin: String) {
+        rssArticlesData?.removeObservers(this)
+        rssArticlesData = App.db.rssArtivleDao().liveByOrigin(origin)
+        rssArticlesData?.observe(this, Observer {
+            adapter?.setItems(it)
+        })
     }
 }
