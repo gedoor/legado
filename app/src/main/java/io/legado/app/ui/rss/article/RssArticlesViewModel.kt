@@ -13,6 +13,9 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         execute {
             val xml = URL(url).readText()
             RssParser.parseXML(xml).let {
+                it.forEach { rssArticle ->
+                    rssArticle.origin = url
+                }
                 App.db.rssArtivleDao().insert(*it.toTypedArray())
             }
         }
