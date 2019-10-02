@@ -12,7 +12,8 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
 
-class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activity_rss_artivles) {
+class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activity_rss_artivles),
+    RssArticlesAdapter.CallBack {
 
     override val viewModel: RssArticlesViewModel
         get() = getViewModel(RssArticlesViewModel::class.java)
@@ -33,7 +34,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        adapter = RssArticlesAdapter(this)
+        adapter = RssArticlesAdapter(this, this)
         recycler_view.adapter = adapter
         refresh_progress_bar.isAutoLoading = true
     }
@@ -44,5 +45,9 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         rssArticlesData?.observe(this, Observer {
             adapter?.setItems(it)
         })
+    }
+
+    override fun readRss(rssArticle: RssArticle) {
+
     }
 }
