@@ -8,10 +8,11 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity(tableName = "rssSources")
 data class RssSource(
-    var sourceName: String = "",
     @PrimaryKey
     var sourceUrl: String = "",
-    var iconUrl: String = "",
+    var sourceName: String = "",
+    var sourceIcon: String = "",
+    var sourceGroup: String? = null,
     var enabled: Boolean = true,
     var ruleGuid: String? = null,
     var ruleTitle: String? = null,

@@ -50,6 +50,11 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
+            R.id.menu_select_all -> adapter.selectAll()
+            R.id.menu_revert_selection -> adapter.revertSelection()
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -103,7 +108,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     override fun edit(source: RssSource) {
-
+        startActivity<RssSourceEditActivity>(Pair("data", source.sourceUrl))
     }
 
     override fun update(vararg source: RssSource) {

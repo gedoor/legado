@@ -112,7 +112,8 @@ class RssSourceEditActivity :
         sourceEntities.apply {
             add(EditEntity("sourceName", rssSource?.sourceName, R.string.rss_source_name))
             add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.rss_source_url))
-            add(EditEntity("iconUrl", rssSource?.iconUrl, R.string.rss_source_icon))
+            add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.rss_source_icon))
+            add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.rss_source_group))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.rss_rule_title))
             add(EditEntity("ruleAuthor", rssSource?.ruleAuthor, R.string.rss_rule_author))
             add(EditEntity("ruleGuid", rssSource?.ruleGuid, R.string.rss_rule_guid))
@@ -144,16 +145,17 @@ class RssSourceEditActivity :
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
                 "sourceUrl" -> source.sourceUrl = it.value ?: ""
-                "iconUrl" -> source.iconUrl = it.value ?: ""
-                "ruleTitle" -> source.ruleTitle = it.value ?: ""
-                "ruleAuthor" -> source.ruleAuthor = it.value ?: ""
-                "ruleGuid" -> source.ruleGuid = it.value ?: ""
-                "rulePubDate" -> source.rulePubDate = it.value ?: ""
-                "ruleCategories" -> source.ruleCategories = it.value ?: ""
-                "ruleDescription" -> source.ruleDescription = it.value ?: ""
-                "ruleImage" -> source.ruleImage = it.value ?: ""
-                "ruleContent" -> source.ruleContent = it.value ?: ""
-                "ruleLink" -> source.ruleLink = it.value ?: ""
+                "sourceIcon" -> source.sourceIcon = it.value ?: ""
+                "sourceGroup" -> source.sourceGroup = it.value
+                "ruleTitle" -> source.ruleTitle = it.value
+                "ruleAuthor" -> source.ruleAuthor = it.value
+                "ruleGuid" -> source.ruleGuid = it.value
+                "rulePubDate" -> source.rulePubDate = it.value
+                "ruleCategories" -> source.ruleCategories = it.value
+                "ruleDescription" -> source.ruleDescription = it.value
+                "ruleImage" -> source.ruleImage = it.value
+                "ruleContent" -> source.ruleContent = it.value
+                "ruleLink" -> source.ruleLink = it.value
             }
         }
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {

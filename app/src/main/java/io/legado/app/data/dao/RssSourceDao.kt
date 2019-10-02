@@ -22,6 +22,15 @@ interface RssSourceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rssSource: RssSource)
 
+    @Query("update rssSources set enabled = 1 where sourceUrl in (:sourceUrls)")
+    fun enableSection(vararg sourceUrls: String)
+
+    @Query("update rssSources set enabled = 0 where sourceUrl in (:sourceUrls)")
+    fun disableSection(vararg sourceUrls: String)
+
+    @Query("delete from rssSources where sourceUrl in (:sourceUrls)")
+    fun delSection(vararg sourceUrls: String)
+
     @Update
     fun update(vararg rssSource: RssSource)
 

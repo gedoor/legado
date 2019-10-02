@@ -379,6 +379,7 @@
     <string name="rss_source_name">名称</string>
     <string name="rss_source_url">url</string>
     <string name="rss_source_icon">图标</string>
+    <string name="rss_source_group">分组</string>
     <string name="rss_rule_title">标题</string>
     <string name="rss_rule_author">作者</string>
     <string name="rss_rule_guid">guid</string>
