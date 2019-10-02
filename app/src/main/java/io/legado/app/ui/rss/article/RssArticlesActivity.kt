@@ -9,8 +9,10 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
+import org.jetbrains.anko.startActivity
 
 class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activity_rss_artivles),
     RssArticlesAdapter.CallBack {
@@ -48,6 +50,6 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     }
 
     override fun readRss(rssArticle: RssArticle) {
-
+        startActivity<ReadRssActivity>(Pair("description", rssArticle.description))
     }
 }
