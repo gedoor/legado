@@ -143,17 +143,17 @@ class RssSourceEditActivity :
         sourceEntities.forEach {
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
-                "sourceUrl" -> source.sourceName = it.value ?: ""
-                "iconUrl" -> source.sourceName = it.value ?: ""
-                "ruleTitle" -> source.sourceName = it.value ?: ""
-                "ruleAuthor" -> source.sourceName = it.value ?: ""
-                "ruleGuid" -> source.sourceName = it.value ?: ""
-                "rulePubDate" -> source.sourceName = it.value ?: ""
-                "ruleCategories" -> source.sourceName = it.value ?: ""
-                "ruleDescription" -> source.sourceName = it.value ?: ""
-                "ruleImage" -> source.sourceName = it.value ?: ""
-                "ruleContent" -> source.sourceName = it.value ?: ""
-                "ruleLink" -> source.sourceName = it.value ?: ""
+                "sourceUrl" -> source.sourceUrl = it.value ?: ""
+                "iconUrl" -> source.iconUrl = it.value ?: ""
+                "ruleTitle" -> source.ruleTitle = it.value ?: ""
+                "ruleAuthor" -> source.ruleAuthor = it.value ?: ""
+                "ruleGuid" -> source.ruleGuid = it.value ?: ""
+                "rulePubDate" -> source.rulePubDate = it.value ?: ""
+                "ruleCategories" -> source.ruleCategories = it.value ?: ""
+                "ruleDescription" -> source.ruleDescription = it.value ?: ""
+                "ruleImage" -> source.ruleImage = it.value ?: ""
+                "ruleContent" -> source.ruleContent = it.value ?: ""
+                "ruleLink" -> source.ruleLink = it.value ?: ""
             }
         }
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
