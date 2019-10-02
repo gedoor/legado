@@ -27,6 +27,7 @@ import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import kotlin.math.abs
 
 class RssSourceEditActivity :
@@ -156,6 +157,7 @@ class RssSourceEditActivity :
             }
         }
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
+            toast("名称或url不能为空")
             return null
         }
         return source
