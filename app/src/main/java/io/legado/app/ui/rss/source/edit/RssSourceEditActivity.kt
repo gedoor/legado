@@ -49,9 +49,7 @@ class RssSourceEditActivity :
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)
         })
-        intent.getStringExtra("data")?.let {
-            viewModel.setSource(it)
-        }
+        viewModel.initData(intent)
     }
 
     override fun onDestroy() {
@@ -98,7 +96,6 @@ class RssSourceEditActivity :
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
-        upRecyclerView(null)
     }
 
     private fun upRecyclerView(rssSource: RssSource?) {
