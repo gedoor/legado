@@ -10,15 +10,15 @@
         android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/app_name"
+        android:textColor="@color/tv_text_default"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="@color/tv_text_default"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tv_pub_date"
-        app:layout_constraintRight_toLeftOf="@+id/image_view" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/image_view"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_pub_date"
@@ -29,19 +29,20 @@
         android:text="@string/app_name"
         android:textSize="12sp"
         android:textStyle="italic"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/image_view" />
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="84dp"
+        android:layout_width="110dp"
         android:layout_height="68dp"
+        android:contentDescription="@string/img_cover"
         android:paddingLeft="16dp"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        android:scaleType="centerCrop"
         app:layout_constraintRight_toRightOf="parent"
-        android:contentDescription="@string/img_cover"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
