@@ -13,10 +13,10 @@ interface RssSourceDao {
     @get:Query("SELECT * FROM rssSources")
     val all: List<RssSource>
 
-    @Query("SELECT * FROM rssSources")
+    @Query("SELECT * FROM rssSources order by customOrder")
     fun liveAll(): LiveData<List<RssSource>>
 
-    @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key")
+    @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key order by customOrder")
     fun liveSearch(key: String): LiveData<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where enabled = 1")
