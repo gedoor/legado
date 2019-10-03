@@ -125,8 +125,8 @@ class RssSourceEditActivity :
                 )
             )
             add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.rss_rule_image))
-            add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.rss_rule_content))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.rss_rule_link))
+            add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.rss_rule_content))
         }
         adapter.editEntities = sourceEntities
     }
@@ -147,8 +147,8 @@ class RssSourceEditActivity :
                 "ruleCategories" -> source.ruleCategories = it.value
                 "ruleDescription" -> source.ruleDescription = it.value
                 "ruleImage" -> source.ruleImage = it.value
-                "ruleContent" -> source.ruleContent = it.value
                 "ruleLink" -> source.ruleLink = it.value
+                "ruleContent" -> source.ruleContent = it.value
             }
         }
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {

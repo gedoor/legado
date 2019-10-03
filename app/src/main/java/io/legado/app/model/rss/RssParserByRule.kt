@@ -84,8 +84,8 @@ object RssParserByRule {
         rssArticle.categories = analyzeRule.getString(ruleCategories)
         rssArticle.description = analyzeRule.getString(ruleDescription)
         rssArticle.image = analyzeRule.getString(ruleImage)
-        rssArticle.content = analyzeRule.getString(ruleContent)
         rssArticle.link = analyzeRule.getString(ruleLink)
+        rssArticle.content = analyzeRule.getString(ruleContent)
         if (rssArticle.title.isNullOrBlank()) {
             return null
         }
