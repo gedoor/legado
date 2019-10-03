@@ -137,7 +137,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     override fun del(source: RssSource) {
-
+        viewModel.del(source)
     }
 
     override fun edit(source: RssSource) {
@@ -145,15 +145,15 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     override fun update(vararg source: RssSource) {
-
+        viewModel.update(*source)
     }
 
     override fun toTop(source: RssSource) {
-
+        viewModel.topSource(source)
     }
 
     override fun upOrder() {
-
+        viewModel.upOrder()
     }
 
 }

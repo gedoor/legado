@@ -31,6 +31,9 @@ interface RssSourceDao {
     @Query("update rssSources set enabled = 0 where sourceUrl in (:sourceUrls)")
     fun disableSection(vararg sourceUrls: String)
 
+    @get:Query("select min(customOrder) from rssSources")
+    val minOrder: Int
+
     @Query("delete from rssSources where sourceUrl in (:sourceUrls)")
     fun delSection(vararg sourceUrls: String)
 
@@ -39,6 +42,9 @@ interface RssSourceDao {
 
     @Update
     fun update(vararg rssSource: RssSource)
+
+    @Delete
+    fun delete(vararg rssSource: RssSource)
 
     @Query("delete from rssSources where sourceUrl = :sourceUrl")
     fun delete(sourceUrl: String)

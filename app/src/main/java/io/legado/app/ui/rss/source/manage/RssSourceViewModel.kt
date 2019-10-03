@@ -3,8 +3,35 @@ package io.legado.app.ui.rss.source.manage
 import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.entities.RssSource
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
+
+    fun topSource(rssSource: RssSource) {
+        execute {
+            val minXh = App.db.rssSourceDao().minOrder
+            rssSource.customOrder = minXh - 1
+            App.db.rssSourceDao().insert(rssSource)
+        }
+    }
+
+    fun del(rssSource: RssSource) {
+        execute { App.db.rssSourceDao().delete(rssSource) }
+    }
+
+    fun update(vararg rssSource: RssSource) {
+        execute { App.db.rssSourceDao().update(*rssSource) }
+    }
+
+    fun upOrder() {
+        execute {
+            val sources = App.db.rssSourceDao().all
+            for ((index: Int, source: RssSource) in sources.withIndex()) {
+                source.customOrder = index + 1
+            }
+            App.db.rssSourceDao().update(*sources.toTypedArray())
+        }
+    }
 
     fun enableSelection(ids: LinkedHashSet<String>) {
         execute {
