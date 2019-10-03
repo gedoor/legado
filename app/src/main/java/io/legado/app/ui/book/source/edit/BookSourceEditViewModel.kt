@@ -12,26 +12,34 @@ import io.legado.app.help.storage.OldRule
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
     val sourceLiveData: MutableLiveData<BookSource> = MutableLiveData()
+    var oldSourceUrl: String? = null
 
-    fun setBookSource(key: String) {
+    fun setBookSource(key: String?) {
         execute {
-            App.db.bookSourceDao().getBookSource(key)?.let {
+            var source: BookSource? = null
+            if (key != null) {
+                source = App.db.bookSourceDao().getBookSource(key)
+            }
+            source?.let {
+                oldSourceUrl = it.bookSourceUrl
                 sourceLiveData.postValue(it)
+            } ?: let {
+                sourceLiveData.postValue(BookSource().apply {
+                    customOrder = App.db.bookSourceDao().maxOrder + 1
+                })
             }
         }
     }
 
     fun save(bookSource: BookSource, finally: (() -> Unit)? = null) {
         execute {
-            sourceLiveData.value?.let {
-                if (it.bookSourceUrl != bookSource.bookSourceUrl) {
+            oldSourceUrl?.let {
+                if (oldSourceUrl != bookSource.bookSourceUrl) {
                     App.db.bookSourceDao().delete(it)
                 }
-            } ?: let {
-                bookSource.customOrder = App.db.bookSourceDao().maxOrder + 1
             }
+            oldSourceUrl = bookSource.bookSourceUrl
             App.db.bookSourceDao().insert(bookSource)
-            sourceLiveData.postValue(bookSource)
         }.onFinally {
             finally?.let { it() }
         } 

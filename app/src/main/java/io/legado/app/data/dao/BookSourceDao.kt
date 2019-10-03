@@ -65,6 +65,9 @@ interface BookSourceDao {
     @Delete
     fun delete(vararg bookSource: BookSource)
 
+    @Query("delete from book_sources where bookSourceUrl = :key")
+    fun delete(key: String)
+
     @get:Query("select min(customOrder) from book_sources")
     val minOrder: Int
 
