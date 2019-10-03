@@ -31,7 +31,7 @@ class RssArticlesAdapter(context: Context, val callBack: CallBack) :
                     .setAsBitmap(image_view)
             }
             if (item.read) {
-                tv_title.textColorResource = R.color.tv_text_secondary
+                tv_title.textColorResource = R.color.tv_text_summary
             } else {
                 tv_title.textColorResource = R.color.tv_text_default
             }
