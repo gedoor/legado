@@ -41,6 +41,7 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.startService
+import org.jetbrains.anko.toast
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     BookSourceAdapter.CallBack,
@@ -56,6 +57,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
+        initUriScheme()
         initRecyclerView()
         initSearchView()
         initLiveDataBookSource()
@@ -99,6 +101,20 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             search_view.setQuery(item.title, true)
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private fun initUriScheme() {
+        intent.data?.let{
+            when(it.path)
+            {
+                "/importonline" -> {
+                    it.getQueryParameter("src")?.let{
+                        viewModel.importSource(it)
+                    }
+                }
+                else -> {toast("格式不对")}
+            }
+        }
     }
 
     private fun initRecyclerView() {
