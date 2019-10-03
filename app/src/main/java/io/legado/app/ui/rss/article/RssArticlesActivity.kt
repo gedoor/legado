@@ -1,8 +1,10 @@
 package io.legado.app.ui.rss.article
 
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -39,6 +41,12 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.addItemDecoration(
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
+                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
+                    this.setDrawable(it)
+                }
+            })
         adapter = RssArticlesAdapter(this, this)
         recycler_view.adapter = adapter
         refresh_progress_bar.isAutoLoading = true
