@@ -35,7 +35,7 @@ object Backup {
 
     fun autoBackup() {
         doAsync {
-            val path = defaultPath + File.separator + "autoBackup"
+            val path = defaultPath
             backupBookshelf(path)
             backupBookSource(path)
             backupRssSource(path)
