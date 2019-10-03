@@ -13,6 +13,6 @@ interface RssArticleDao {
     @Query("select * from rssArticles where origin = :origin order by time desc")
     fun liveByOrigin(origin: String): LiveData<List<RssArticle>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(vararg rssArticle: RssArticle)
 }
