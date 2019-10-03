@@ -18,7 +18,9 @@ data class RssArticle(
     var description: String? = null,
     var content: String? = null,
     var image: String? = null,
-    var categories: String? = null
+    var categories: String? = null,
+    var read: Boolean = false,
+    var star: Boolean = false
 ) {
 
     @Ignore
