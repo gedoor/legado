@@ -25,6 +25,9 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
+        viewModel.titleLiveData.observe(this, Observer {
+            title_bar.title = it
+        })
         intent.getStringExtra("url")?.let {
             initData(it)
             viewModel.loadContent(it) {
