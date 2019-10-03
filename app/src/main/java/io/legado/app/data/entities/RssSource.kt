@@ -14,6 +14,8 @@ data class RssSource(
     var sourceIcon: String = "",
     var sourceGroup: String? = null,
     var enabled: Boolean = true,
+    //列表规则
+    var ruleArticles: String? = null,
     var ruleGuid: String? = null,
     var ruleTitle: String? = null,
     var ruleAuthor: String? = null,

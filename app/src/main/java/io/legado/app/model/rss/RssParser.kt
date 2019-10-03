@@ -11,7 +11,7 @@ import java.io.StringReader
 object RssParser {
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun parseXML(xml: String): MutableList<RssArticle> {
+    fun parseXML(xml: String, sourceUrl: String): MutableList<RssArticle> {
 
         val articleList = mutableListOf<RssArticle>()
         var currentArticle = RssArticle()
@@ -93,6 +93,7 @@ object RssParser {
                 // The item is correctly parsed
                 insideItem = false
                 currentArticle.categories = currentArticle.categoryList.joinToString(",")
+                currentArticle.origin = sourceUrl
                 articleList.add(currentArticle)
                 currentArticle = RssArticle()
             }
