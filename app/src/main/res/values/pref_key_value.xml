@@ -19,7 +19,7 @@
     <string name="pv_user_agent">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.2357.134 Safari/537.36</string>
 
     <string name="source_rule_url">https://gedoor.github.io/MyBookshelf/sourcerule.html</string>
-    <string name="this_github_url">https://github.com/gedoor/MyBookshelf</string>
+    <string name="this_github_url">https://github.com/gedoor/legado</string>
     <string name="disclaimer_url">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
     <string name="home_page_url">https://gedoor.github.io/MyBookshelf/</string>
     <string name="latest_release_url">https://github.com/gedoor/MyBookshelf/releases/latest</string>
