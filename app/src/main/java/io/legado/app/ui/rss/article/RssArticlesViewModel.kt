@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
 import kotlinx.coroutines.Dispatchers.IO
@@ -31,6 +32,13 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 }.onFinally {
                     onFinally()
                 }
+        }
+    }
+
+    fun read(rssArticle: RssArticle) {
+        execute {
+            rssArticle.read = true
+            App.db.rssArtivleDao().update(rssArticle)
         }
     }
 

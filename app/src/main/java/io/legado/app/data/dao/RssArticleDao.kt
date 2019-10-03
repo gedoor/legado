@@ -1,10 +1,7 @@
 package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.RssArticle
 
 @Dao
@@ -15,4 +12,7 @@ interface RssArticleDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(vararg rssArticle: RssArticle)
+
+    @Update
+    fun update(vararg rssArticle: RssArticle)
 }
