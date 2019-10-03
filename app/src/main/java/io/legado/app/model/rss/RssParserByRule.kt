@@ -1,17 +1,27 @@
 package io.legado.app.model.rss
 
+import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.analyzeRule.AnalyzeRule
-import org.xmlpull.v1.XmlPullParserException
-import java.io.IOException
+import retrofit2.Response
 
 object RssParserByRule {
 
-    @Throws(XmlPullParserException::class, IOException::class)
-    fun parseXML(xml: String, rssSource: RssSource): MutableList<RssArticle> {
-
+    @Throws(Exception::class)
+    fun parseXML(response: Response<String>, rssSource: RssSource): MutableList<RssArticle> {
         val articleList = mutableListOf<RssArticle>()
+
+        val xml = response.body()
+        if (xml.isNullOrBlank()) {
+            throw Exception(
+                App.INSTANCE.getString(
+                    R.string.error_get_web_content,
+                    rssSource.sourceUrl
+                )
+            )
+        }
 
         val analyzeRule = AnalyzeRule()
         analyzeRule.setContent(xml)

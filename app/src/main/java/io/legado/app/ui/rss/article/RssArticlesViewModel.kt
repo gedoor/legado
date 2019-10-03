@@ -4,9 +4,8 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.rss.RssParser
-import io.legado.app.model.rss.RssParserByRule
+import io.legado.app.data.entities.RssSource
+import io.legado.app.model.Rss
 
 
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
@@ -15,19 +14,15 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
 
     fun loadContent(url: String, onFinally: () -> Unit) {
         execute {
-            val rssSource = App.db.rssSourceDao().getByKey(url)
-            rssSource?.let {
+            var rssSource = App.db.rssSourceDao().getByKey(url)
+            if (rssSource == null) {
+                rssSource = RssSource(sourceUrl = url)
+            } else {
                 titleLiveData.postValue(rssSource.sourceName)
             }
-            AnalyzeUrl(url).getResponseAsync().await().body()?.let { xml ->
-                if (rssSource == null || rssSource.ruleArticles.isNullOrBlank()) {
-                    RssParser.parseXML(xml, url).let {
-                        App.db.rssArtivleDao().insert(*it.toTypedArray())
-                    }
-                } else {
-                    RssParserByRule.parseXML(xml, rssSource).let {
-                        App.db.rssArtivleDao().insert(*it.toTypedArray())
-                    }
+            Rss.getArticles(rssSource, this).onSuccess {
+                it?.let {
+                    App.db.rssArtivleDao().insert(*it.toTypedArray())
                 }
             }
         }.onFinally {
