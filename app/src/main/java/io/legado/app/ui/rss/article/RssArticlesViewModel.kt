@@ -24,9 +24,11 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 it?.let {
                     App.db.rssArtivleDao().insert(*it.toTypedArray())
                 }
+            }.onError {
+                toast(it.localizedMessage)
+            }.onFinally {
+                onFinally()
             }
-        }.onFinally {
-            onFinally()
         }
     }
 
