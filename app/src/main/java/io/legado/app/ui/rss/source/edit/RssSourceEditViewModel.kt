@@ -25,7 +25,6 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     fun save(rssSource: RssSource, success: (() -> Unit)) {
         execute {
             sourceLiveData.value?.let {
-                rssSource.customOrder = it.customOrder
                 App.db.rssSourceDao().delete(it)
             } ?: let {
                 rssSource.customOrder = App.db.rssSourceDao().maxOrder + 1
