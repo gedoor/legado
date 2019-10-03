@@ -19,7 +19,7 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key order by customOrder")
     fun liveSearch(key: String): LiveData<List<RssSource>>
 
-    @Query("SELECT * FROM rssSources where enabled = 1")
+    @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
     fun liveEnabled(): LiveData<List<RssSource>>
 
     @Query("select sourceGroup from rssSources where sourceGroup is not null and sourceGroup <> ''")
