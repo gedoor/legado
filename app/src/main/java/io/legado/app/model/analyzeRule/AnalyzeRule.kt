@@ -445,7 +445,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             }
             //分离正则表达式
             val ruleStrS =
-                rule.trim { it <= ' ' }.splitNotBlank("##")
+                rule.trim { it <= ' ' }.split("##")
             rule = ruleStrS[0]
             if (ruleStrS.size > 1) {
                 replaceRegex = ruleStrS[1]

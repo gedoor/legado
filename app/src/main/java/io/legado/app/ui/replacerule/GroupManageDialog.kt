@@ -29,7 +29,6 @@ import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_book_group.view.tv_group
 import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 

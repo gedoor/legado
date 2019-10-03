@@ -6,7 +6,8 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.model.WebBook
 import io.legado.app.model.webbook.SourceDebug
 
-class SourceDebugModel(application: Application) : BaseViewModel(application), SourceDebug.Callback {
+class BookSourceDebugModel(application: Application) : BaseViewModel(application),
+    SourceDebug.Callback {
 
     private var webBook: WebBook? = null
 

@@ -8,11 +8,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.lib.theme.ATH
-import io.legado.app.utils.getViewModel
+import io.legado.app.utils.ACache
 import kotlinx.android.synthetic.main.activity_donate.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.toast
@@ -60,7 +59,7 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-
+            ACache.get(this, cacheDir = false).put("proTime", System.currentTimeMillis())
         }
     }
 

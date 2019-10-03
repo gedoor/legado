@@ -5,7 +5,7 @@ object RSSKeywords {
     const val RSS_ITEM = "item"
     const val RSS_ITEM_TITLE = "title"
     const val RSS_ITEM_LINK = "link"
-    const val RSS_ITEM_AUTHOR = "dc:creator"
+    const val RSS_ITEM_AUTHOR = "author"
     const val RSS_ITEM_CATEGORY = "category"
     const val RSS_ITEM_THUMBNAIL = "media:thumbnail"
     const val RSS_ITEM_ENCLOSURE = "enclosure"

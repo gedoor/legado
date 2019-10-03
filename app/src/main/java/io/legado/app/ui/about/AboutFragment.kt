@@ -24,7 +24,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "mail" -> openIntent(Intent.ACTION_SENDTO, "mailto:kunfei.ge@gmail.com")
-            "gitHub" -> openIntent(Intent.ACTION_VIEW, getString(R.string.this_github_url))
+            "git" -> openIntent(Intent.ACTION_VIEW, getString(R.string.this_github_url))
         }
         return super.onPreferenceTreeClick(preference)
     }

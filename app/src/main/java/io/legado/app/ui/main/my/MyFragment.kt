@@ -10,6 +10,7 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
+import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
@@ -21,6 +22,7 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
@@ -82,9 +84,9 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             key: String?
         ) {
             when (key) {
-                "isNightTheme" -> {
-                    App.INSTANCE.applyDayNight()
-                }
+                "isNightTheme" -> App.INSTANCE.applyDayNight()
+                "recordLog" -> LogUtils.upLevel()
+                "downloadPath" -> BookHelp.upDownloadPath()
             }
         }
 

@@ -12,11 +12,13 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.debug
+import java.util.concurrent.Executors
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
+    private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
     var callBack: CallBack? = null
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""
@@ -56,7 +58,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
-                WebBook(item).searchBook(name, scope = this@execute)
+                WebBook(item).searchBook(name, scope = this@execute, context = searchPool)
                     .timeout(30000L)
                     .onSuccess(IO) {
                         it?.forEach { searchBook ->
@@ -70,7 +72,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                             }
                         }
                     }
-                delay(100)
             }
         }
 
@@ -129,5 +130,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     interface CallBack {
         fun adapter(): ChangeSourceAdapter
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        searchPool.close()
     }
 }

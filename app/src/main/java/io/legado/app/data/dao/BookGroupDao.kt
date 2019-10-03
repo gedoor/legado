@@ -1,10 +1,7 @@
 package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.BookGroup
 
 @Dao
@@ -17,5 +14,11 @@ interface BookGroupDao {
     val maxId: Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(bookGroup: BookGroup)
+    fun insert(vararg bookGroup: BookGroup)
+
+    @Update
+    fun update(vararg bookGroup: BookGroup)
+
+    @Delete
+    fun delete(vararg bookGroup: BookGroup)
 }

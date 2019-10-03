@@ -10,6 +10,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 
 
@@ -39,6 +40,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             "downloadPath" -> BookHelp.upDownloadPath()
+            "recordLog" -> LogUtils.upLevel()
         }
     }
 

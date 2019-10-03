@@ -1,18 +1,26 @@
 package io.legado.app.help.coroutine
 
-import android.util.Log
+import io.legado.app.BuildConfig
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class Coroutine<T>(scope: CoroutineScope, block: suspend CoroutineScope.() -> T) {
+class Coroutine<T>(
+    scope: CoroutineScope,
+    context: CoroutineContext = Dispatchers.IO,
+    block: suspend CoroutineScope.() -> T
+) {
 
     companion object {
 
         val DEFAULT = MainScope()
 
-        fun <T> async(scope: CoroutineScope = DEFAULT, block: suspend CoroutineScope.() -> T): Coroutine<T> {
-            return Coroutine(scope, block)
+        fun <T> async(
+            scope: CoroutineScope = DEFAULT,
+            context: CoroutineContext = Dispatchers.IO,
+            block: suspend CoroutineScope.() -> T
+        ): Coroutine<T> {
+            return Coroutine(scope, context, block)
         }
 
     }
@@ -37,7 +45,7 @@ class Coroutine<T>(scope: CoroutineScope, block: suspend CoroutineScope.() -> T)
         get() = job.isCompleted
 
     init {
-        this.job = executeInternal(scope, block)
+        this.job = executeInternal(scope, context, block)
     }
 
     fun timeout(timeMillis: () -> Long): Coroutine<T> {
@@ -101,13 +109,20 @@ class Coroutine<T>(scope: CoroutineScope, block: suspend CoroutineScope.() -> T)
         return job.invokeOnCompletion(handler)
     }
 
-    private fun executeInternal(scope: CoroutineScope, block: suspend CoroutineScope.() -> T): Job {
+    private fun executeInternal(
+        scope: CoroutineScope,
+        context: CoroutineContext,
+        block: suspend CoroutineScope.() -> T
+    ): Job {
         return scope.plus(Dispatchers.Main).launch {
             try {
                 start?.let { dispatchVoidCallback(this, it) }
-                val value = executeBlock(scope, timeMillis ?: 0L, block)
+                val value = executeBlock(scope, context, timeMillis ?: 0L, block)
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
+                if (BuildConfig.DEBUG) {
+                    e.printStackTrace()
+                }
                 val consume: Boolean = errorReturn?.value?.let { value ->
                     success?.let { dispatchCallback(this, value, it) }
                     true
@@ -148,10 +163,11 @@ class Coroutine<T>(scope: CoroutineScope, block: suspend CoroutineScope.() -> T)
 
     private suspend inline fun executeBlock(
         scope: CoroutineScope,
+        context: CoroutineContext,
         timeMillis: Long,
         noinline block: suspend CoroutineScope.() -> T
     ): T? {
-        return withContext(scope.coroutineContext.plus(Dispatchers.IO)) {
+        return withContext(scope.coroutineContext.plus(context)) {
             if (timeMillis > 0L) withTimeout(timeMillis) {
                 block()
             } else block()

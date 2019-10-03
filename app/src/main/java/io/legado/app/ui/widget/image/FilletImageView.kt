@@ -7,6 +7,8 @@ import android.graphics.Path
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
+import io.legado.app.utils.dp
+import kotlin.math.max
 
 class FilletImageView : AppCompatImageView {
     internal var width: Float = 0.toFloat()
@@ -29,7 +31,7 @@ class FilletImageView : AppCompatImageView {
     private fun init(context: Context, attrs: AttributeSet) {
         // 读取配置
         val array = context.obtainStyledAttributes(attrs, R.styleable.FilletImageView)
-        val defaultRadius = 5
+        val defaultRadius = 5.dp
         val radius = array.getDimensionPixelOffset(R.styleable.FilletImageView_radius, defaultRadius)
         leftTopRadius = array.getDimensionPixelOffset(R.styleable.FilletImageView_left_top_radius, defaultRadius)
         rightTopRadius = array.getDimensionPixelOffset(R.styleable.FilletImageView_right_top_radius, defaultRadius)
@@ -62,11 +64,11 @@ class FilletImageView : AppCompatImageView {
 
     override fun onDraw(canvas: Canvas) {
         //这里做下判断，只有图片的宽高大于设置的圆角距离的时候才进行裁剪
-        val maxLeft = Math.max(leftTopRadius, leftBottomRadius)
-        val maxRight = Math.max(rightTopRadius, rightBottomRadius)
+        val maxLeft = max(leftTopRadius, leftBottomRadius)
+        val maxRight = max(rightTopRadius, rightBottomRadius)
         val minWidth = maxLeft + maxRight
-        val maxTop = Math.max(leftTopRadius, rightTopRadius)
-        val maxBottom = Math.max(leftBottomRadius, rightBottomRadius)
+        val maxTop = max(leftTopRadius, rightTopRadius)
+        val maxBottom = max(leftBottomRadius, rightBottomRadius)
         val minHeight = maxTop + maxBottom
         if (width >= minWidth && height > minHeight) {
             @SuppressLint("DrawAllocation") val path = Path()

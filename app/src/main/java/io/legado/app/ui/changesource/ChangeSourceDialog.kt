@@ -35,6 +35,7 @@ class ChangeSourceDialog : DialogFragment(),
         }
     }
 
+    private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeSourceViewModel
     private lateinit var changeSourceAdapter: ChangeSourceAdapter
 
@@ -49,6 +50,7 @@ class ChangeSourceDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        callBack = activity as? CallBack
         viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
         })
@@ -114,31 +116,24 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        val activity = activity
-        if (activity is CallBack) {
-            val book = searchBook.toBook()
-            activity.oldBook()?.let { oldBook ->
-                book.durChapterIndex = oldBook.durChapterIndex
-                book.durChapterPos = oldBook.durChapterPos
-                book.durChapterTitle = oldBook.durChapterTitle
-                book.customCoverUrl = oldBook.customCoverUrl
-                book.customIntro = oldBook.customIntro
-                book.order = oldBook.order
-                if (book.coverUrl.isNullOrEmpty()) {
-                    book.coverUrl = oldBook.getDisplayCover()
-                }
-                activity.changeTo(book)
+        val book = searchBook.toBook()
+        callBack?.oldBook?.let { oldBook ->
+            book.durChapterIndex = oldBook.durChapterIndex
+            book.durChapterPos = oldBook.durChapterPos
+            book.durChapterTitle = oldBook.durChapterTitle
+            book.customCoverUrl = oldBook.customCoverUrl
+            book.customIntro = oldBook.customIntro
+            book.order = oldBook.order
+            if (book.coverUrl.isNullOrEmpty()) {
+                book.coverUrl = oldBook.getDisplayCover()
             }
+            callBack?.changeTo(book)
         }
         dismiss()
     }
 
     override fun curOrigin(): String {
-        val activity = activity
-        if (activity is CallBack) {
-            return activity.curOrigin() ?: ""
-        }
-        return ""
+        return callBack?.curOrigin ?: ""
     }
 
     override fun adapter(): ChangeSourceAdapter {
@@ -146,8 +141,8 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     interface CallBack {
-        fun curOrigin(): String?
-        fun oldBook(): Book?
+        val curOrigin: String?
+        val oldBook: Book?
         fun changeTo(book: Book)
     }
 

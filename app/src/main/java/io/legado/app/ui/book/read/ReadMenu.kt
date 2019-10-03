@@ -95,11 +95,6 @@ class ReadMenu : FrameLayout {
         }
     }
 
-    fun upReadProgress(max: Int, dur: Int) {
-        seek_read_page.max = max
-        seek_read_page.progress = dur
-    }
-
     private fun brightnessAuto(): Boolean {
         return context.getPrefBoolean("brightnessAuto", true)
     }

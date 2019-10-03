@@ -22,6 +22,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.view.View
 import android.widget.ImageView
+import kotlin.math.roundToInt
 
 object Utils {
 
@@ -29,7 +30,7 @@ object Utils {
     private val sCanvas = Canvas()
 
     fun dp2Px(dp: Int): Int {
-        return Math.round(dp * DENSITY)
+        return (dp * DENSITY).roundToInt()
     }
 
     fun createBitmapFromView(view: View): Bitmap? {
@@ -55,7 +56,7 @@ object Utils {
         return bitmap
     }
 
-    fun createBitmapSafely(
+    private fun createBitmapSafely(
         width: Int,
         height: Int,
         config: Bitmap.Config,

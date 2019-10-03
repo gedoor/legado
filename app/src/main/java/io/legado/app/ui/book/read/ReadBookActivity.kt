@@ -32,16 +32,17 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
-import io.legado.app.ui.book.source.edit.SourceEditActivity
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_read_book.*
+import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -54,7 +55,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
-class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_read_book),
+class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
     PageView.CallBack,
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
@@ -113,7 +114,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     private fun initView() {
         tv_chapter_name.onClick {
             viewModel.webBook?.let {
-                startActivityForResult<SourceEditActivity>(
+                startActivityForResult<BookSourceEditActivity>(
                     requestCodeEditSource,
                     Pair("data", it.bookSource.bookSourceUrl)
                 )
@@ -304,7 +305,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
                 tv_chapter_url.text = it.url
                 tv_chapter_url.visible()
             }
-            read_menu.upReadProgress(it.pageSize().minus(1), viewModel.durPageIndex)
+            seek_read_page.max = it.pageSize().minus(1)
             tv_pre.isEnabled = viewModel.durChapterIndex != 0
             tv_next.isEnabled = viewModel.durChapterIndex != viewModel.chapterSize - 1
             curPageChanged()
@@ -312,6 +313,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
     }
 
     private fun curPageChanged() {
+        seek_read_page.progress = viewModel.durPageIndex
         when (readAloudStatus) {
             Status.PLAY -> readAloud()
             Status.PAUSE -> {
@@ -328,13 +330,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
         return viewModel.chapterSize
     }
 
-    override fun curOrigin(): String? {
-        return viewModel.bookData.value?.origin
-    }
+    override val curOrigin: String?
+        get() = viewModel.bookData.value?.origin
 
-    override fun oldBook(): Book? {
-        return viewModel.bookData.value
-    }
+    override val oldBook: Book?
+        get() = viewModel.bookData.value
 
     override fun changeTo(book: Book) {
         viewModel.changeTo(book)
@@ -608,7 +608,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_rea
             }
         }
         observeEvent<String>(Bus.REPLACE) {
-            toast(it)
+            ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
         }
     }
 

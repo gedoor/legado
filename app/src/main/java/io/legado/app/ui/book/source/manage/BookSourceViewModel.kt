@@ -16,8 +16,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun topSource(bookSource: BookSource) {
         execute {
-            val minXh = App.db.bookSourceDao().minOrder
-            bookSource.customOrder = minXh - 1
+            bookSource.customOrder = App.db.bookSourceDao().minOrder - 1
             App.db.bookSourceDao().insert(bookSource)
         }
     }

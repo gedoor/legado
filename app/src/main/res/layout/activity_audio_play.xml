@@ -25,7 +25,7 @@
         android:layout_height="260dp"
         android:layout_gravity="center"
         android:contentDescription="@string/img_cover"
-        android:src="@drawable/img_cover_default"
+        android:src="@drawable/image_cover_default"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
         app:layout_constraintLeft_toLeftOf="parent"

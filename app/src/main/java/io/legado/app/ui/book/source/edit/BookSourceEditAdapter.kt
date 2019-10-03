@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.data.entities.EditEntity
 import kotlinx.android.synthetic.main.item_source_edit.view.*
 
-class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>() {
+class BookSourceEditAdapter : RecyclerView.Adapter<BookSourceEditAdapter.MyViewHolder>() {
 
-    var editEntities: ArrayList<SourceEditActivity.EditEntity> = ArrayList()
+    var editEntities: ArrayList<EditEntity> = ArrayList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -34,7 +35,7 @@ class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>()
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(editEntity: SourceEditActivity.EditEntity) = with(itemView) {
+        fun bind(editEntity: EditEntity) = with(itemView) {
             if (editText.getTag(R.id.tag1) == null) {
                 val listener = object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {

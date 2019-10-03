@@ -46,7 +46,7 @@
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
         <activity
-            android:name=".ui.book.source.edit.SourceEditActivity"
+            android:name=".ui.book.source.edit.BookSourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
@@ -78,7 +78,8 @@
         <activity android:name=".ui.audio.AudioPlayActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
-
+        <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
+        <activity android:name=".ui.rss.article.RssArticlesActivity"/>
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
         <service android:name=".service.UpdateService" />

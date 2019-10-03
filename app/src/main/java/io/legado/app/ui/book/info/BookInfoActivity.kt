@@ -14,7 +14,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.book.source.edit.SourceEditActivity
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.getViewModel
@@ -88,8 +88,8 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             book.getDisplayIntro() // getString(R.string.intro_show, book.getDisplayIntro())
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
-                .placeholder(R.drawable.img_cover_default)
-                .error(R.drawable.img_cover_default)
+                .placeholder(R.drawable.image_cover_default)
+                .error(R.drawable.image_cover_default)
                 .centerCrop()
                 .setAsDrawable(iv_cover)
         }
@@ -183,10 +183,14 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 }
             }
         }
-        tv_loading.onClick { }
+        tv_loading.onClick {
+            viewModel.bookData.value?.let {
+                viewModel.loadBookInfo(it)
+            }
+        }
         tv_origin.onClick {
             viewModel.bookData.value?.let {
-                startActivity<SourceEditActivity>(Pair("data", it.origin))
+                startActivity<BookSourceEditActivity>(Pair("data", it.origin))
             }
         }
         tv_change_source.onClick {
@@ -204,8 +208,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         iv_chapter_top.onClick {
-            adapter.reorder = !adapter.reorder
-            adapter.notifyDataSetChanged()
+            rv_chapter_list.scrollToPosition(0)
+        }
+        iv_chapter_bottom.onClick {
+            rv_chapter_list.scrollToPosition(adapter.itemCount - 1)
         }
     }
 
@@ -226,13 +232,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
     }
 
-    override fun curOrigin(): String? {
-        return viewModel.bookData.value?.origin
-    }
+    override val curOrigin: String?
+        get() = viewModel.bookData.value?.origin
 
-    override fun oldBook(): Book? {
-        return viewModel.bookData.value
-    }
+    override val oldBook: Book?
+        get() = viewModel.bookData.value
 
     override fun changeTo(book: Book) {
         upLoading(true)

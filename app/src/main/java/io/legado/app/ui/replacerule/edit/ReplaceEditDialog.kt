@@ -25,7 +25,7 @@ class ReplaceEditDialog : DialogFragment(),
             val dialog = ReplaceEditDialog()
             id?.let {
                 val bundle = Bundle()
-                bundle.putLong("data", id)
+                bundle.putLong("id", id)
                 dialog.arguments = bundle
             }
             return dialog

@@ -1,11 +1,9 @@
 package io.legado.app.ui.main.bookshelf
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -16,11 +14,13 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.search.SearchActivity
-import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -28,13 +28,14 @@ import org.jetbrains.anko.startActivity
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     SearchView.OnQueryTextListener,
+    GroupManageDialog.CallBack,
     BookshelfAdapter.CallBack {
 
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
 
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
-    private val bookGroups = mutableListOf<BookGroup>().apply { addAll(AppConst.defaultBookGroups) }
+    private val bookGroups = mutableListOf<BookGroup>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -51,6 +52,14 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
             R.id.menu_bookshelf_layout -> selectBookshelfLayout()
+            R.id.menu_group_manage -> GroupManageDialog()
+                .show(childFragmentManager, "groupManageDialog")
+            R.id.menu_add_local -> {
+            }
+            R.id.menu_add_url -> {
+            }
+            R.id.menu_arrange_bookshelf -> {
+            }
         }
     }
 
@@ -75,11 +84,18 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
-            for (index in AppConst.defaultBookGroups.size until bookGroups.size) {
-                bookGroups.removeAt(AppConst.defaultBookGroups.size)
+            synchronized(this) {
+                bookGroups.clear()
+                bookGroups.add(AppConst.bookGroupAll)
+                if (getPrefBoolean("bookGroupLocal", true)) {
+                    bookGroups.add(AppConst.bookGroupLocal)
+                }
+                if (getPrefBoolean("bookGroupAudio", true)) {
+                    bookGroups.add(AppConst.bookGroupAudio)
+                }
+                bookGroups.addAll(it)
+                view_pager_bookshelf.adapter?.notifyDataSetChanged()
             }
-            bookGroups.addAll(it)
-            view_pager_bookshelf.adapter?.notifyDataSetChanged()
         })
     }
 
@@ -92,22 +108,18 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         return false
     }
 
-    @SuppressLint("InflateParams")
-    private fun showGroupInputDialog() {
-        alert(title = "新建分组") {
-            var editText: EditText? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view.apply {
-                        hint = "分组名称"
-                    }
-                }
+    override fun upGroup() {
+        synchronized(this) {
+            bookGroups.remove(AppConst.bookGroupLocal)
+            bookGroups.remove(AppConst.bookGroupAudio)
+            if (getPrefBoolean("bookGroupAudio", true)) {
+                bookGroups.add(1, AppConst.bookGroupAudio)
             }
-            yesButton {
-                viewModel.saveBookGroup(editText?.text?.toString())
+            if (getPrefBoolean("bookGroupLocal", true)) {
+                bookGroups.add(1, AppConst.bookGroupLocal)
             }
-            noButton()
-        }.show().applyTint().requestInputMethod()
+            view_pager_bookshelf.adapter?.notifyDataSetChanged()
+        }
     }
 
     private fun selectBookshelfLayout() {

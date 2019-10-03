@@ -23,7 +23,49 @@ import kotlin.math.min
  * 本地缓存
  */
 class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int) {
-    private lateinit var mCache: ACacheManager
+
+
+    companion object {
+        const val TIME_HOUR = 60 * 60
+        const val TIME_DAY = TIME_HOUR * 24
+        private const val MAX_SIZE = 1000 * 1000 * 50 // 50 mb
+        private const val MAX_COUNT = Integer.MAX_VALUE // 不限制存放数据的数量
+        private val mInstanceMap = HashMap<String, ACache>()
+
+        @JvmOverloads
+        fun get(
+            ctx: Context,
+            cacheName: String = "ACache",
+            maxSize: Long = MAX_SIZE.toLong(),
+            maxCount: Int = MAX_COUNT,
+            cacheDir: Boolean = true
+        ): ACache {
+            val f = if (cacheDir) File(ctx.cacheDir, cacheName) else File(ctx.filesDir, cacheName)
+            return get(f, maxSize, maxCount)
+        }
+
+        @JvmOverloads
+        fun get(
+            cacheDir: File,
+            maxSize: Long = MAX_SIZE.toLong(),
+            maxCount: Int = MAX_COUNT
+        ): ACache {
+            synchronized(this) {
+                var manager = mInstanceMap[cacheDir.absoluteFile.toString() + myPid()]
+                if (manager == null) {
+                    manager = ACache(cacheDir, maxSize, maxCount)
+                    mInstanceMap[cacheDir.absolutePath + myPid()] = manager
+                }
+                return manager
+            }
+        }
+
+        private fun myPid(): String {
+            return "_" + android.os.Process.myPid()
+        }
+    }
+
+    private var mCache: ACacheManager? = null
 
     init {
         try {
@@ -48,12 +90,14 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @param value 保存的String数据
      */
     fun put(key: String, value: String) {
-        try {
-            val file = mCache.newFile(key)
-            file.writeText(value)
-            mCache.put(file)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        mCache?.let { mCache ->
+            try {
+                val file = mCache.newFile(key)
+                file.writeText(value)
+                mCache.put(file)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -74,24 +118,26 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @return String 数据
      */
     fun getAsString(key: String): String? {
-        val file = mCache[key]
-        if (!file.exists())
-            return null
-        var removeFile = false
-        return try {
-            val text = file.readText()
-            if (!Utils.isDue(text)) {
-                Utils.clearDateInfo(text)
-            } else {
-                removeFile = true
-                null
+        mCache?.let { mCache ->
+            val file = mCache[key]
+            if (!file.exists())
+                return null
+            var removeFile = false
+            try {
+                val text = file.readText()
+                if (!Utils.isDue(text)) {
+                    return Utils.clearDateInfo(text)
+                } else {
+                    removeFile = true
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                if (removeFile)
+                    remove(key)
             }
-        } catch (e: IOException) {
-            null
-        } finally {
-            if (removeFile)
-                remove(key)
         }
+        return null
     }
 
     // =======================================
@@ -184,9 +230,11 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @param value 保存的数据
      */
     fun put(key: String, value: ByteArray) {
-        val file = mCache.newFile(key)
-        file.writeBytes(value)
-        mCache.put(file)
+        mCache?.let { mCache ->
+            val file = mCache.newFile(key)
+            file.writeBytes(value)
+            mCache.put(file)
+        }
     }
 
     /**
@@ -206,26 +254,28 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @return byte 数据
      */
     fun getAsBinary(key: String): ByteArray? {
-        var removeFile = false
-        try {
-            val file = mCache[key]
-            if (!file.exists())
-                return null
+        mCache?.let { mCache ->
+            var removeFile = false
+            try {
+                val file = mCache[key]
+                if (!file.exists())
+                    return null
 
-            val byteArray = file.readBytes()
-            return if (!Utils.isDue(byteArray)) {
-                Utils.clearDateInfo(byteArray)
-            } else {
-                removeFile = true
-                null
+                val byteArray = file.readBytes()
+                return if (!Utils.isDue(byteArray)) {
+                    Utils.clearDateInfo(byteArray)
+                } else {
+                    removeFile = true
+                    null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                if (removeFile)
+                    remove(key)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
-        } finally {
-            if (removeFile)
-                remove(key)
         }
+        return null
     }
 
     /**
@@ -269,7 +319,6 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                 return ois.readObject()
             } catch (e: Exception) {
                 e.printStackTrace()
-                return null
             } finally {
                 try {
                     bais?.close()
@@ -371,15 +420,16 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @return value 缓存的文件
      */
     fun file(key: String): File? {
-        try {
-            val f = mCache.newFile(key)
-            if (f.exists()) {
-                return f
+        mCache?.let { mCache ->
+            try {
+                val f = mCache.newFile(key)
+                if (f.exists()) {
+                    return f
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
-
         return null
     }
 
@@ -389,14 +439,14 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @return 是否移除成功
      */
     fun remove(key: String): Boolean {
-        return mCache.remove(key)
+        return mCache?.remove(key) == true
     }
 
     /**
      * 清除所有数据
      */
     fun clear() {
-        mCache.clear()
+        mCache?.clear()
     }
 
     /**
@@ -723,46 +773,6 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
 
         private fun calculateSize(file: File): Long {
             return file.length()
-        }
-    }
-
-    companion object {
-        const val TIME_HOUR = 60 * 60
-        const val TIME_DAY = TIME_HOUR * 24
-        private const val MAX_SIZE = 1000 * 1000 * 50 // 50 mb
-        private const val MAX_COUNT = Integer.MAX_VALUE // 不限制存放数据的数量
-        private val mInstanceMap = HashMap<String, ACache>()
-
-        @JvmOverloads
-        fun get(
-            ctx: Context,
-            cacheName: String = "ACache",
-            maxSize: Long = MAX_SIZE.toLong(),
-            maxCount: Int = MAX_COUNT,
-            cacheDir: Boolean = true
-        ): ACache {
-            val f = if (cacheDir) File(ctx.cacheDir, cacheName) else File(ctx.filesDir, cacheName)
-            return get(f, maxSize, maxCount)
-        }
-
-        @JvmOverloads
-        fun get(
-            cacheDir: File,
-            maxSize: Long = MAX_SIZE.toLong(),
-            maxCount: Int = MAX_COUNT
-        ): ACache {
-            synchronized(this) {
-                var manager = mInstanceMap[cacheDir.absoluteFile.toString() + myPid()]
-                if (manager == null) {
-                    manager = ACache(cacheDir, maxSize, maxCount)
-                    mInstanceMap[cacheDir.absolutePath + myPid()] = manager
-                }
-                return manager
-            }
-        }
-
-        private fun myPid(): String {
-            return "_" + android.os.Process.myPid()
         }
     }
 

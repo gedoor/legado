@@ -28,7 +28,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.service.CheckSourceService
-import io.legado.app.ui.book.source.edit.SourceEditActivity
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.ACache
 import io.legado.app.utils.applyTint
@@ -78,7 +78,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_book_source -> {
-                this.startActivity<SourceEditActivity>()
+                this.startActivity<BookSourceEditActivity>()
             }
             R.id.menu_import_book_source_qr -> {
                 this.startActivityForResult<QrCodeActivity>(qrRequestCode)
@@ -151,12 +151,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }
         bookSourceLiveDate?.observe(this, Observer {
             search_view.queryHint = getString(R.string.search_book_source_num, it.size)
-            val diffResult = DiffUtil.calculateDiff(
-                DiffCallBack(
-                    adapter.getItems(),
-                    it
-                )
-            )
+            val diffResult = DiffUtil
+                .calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItemsNoNotify(it)
             diffResult.dispatchUpdatesTo(adapter)
         })
@@ -232,7 +228,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     override fun edit(bookSource: BookSource) {
-        startActivity<SourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
+        startActivity<BookSourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
     }
 
     override fun upOrder() {

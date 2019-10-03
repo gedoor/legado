@@ -12,18 +12,19 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_book_source_debug.*
+import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
-class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_book_source_debug) {
+class BookSourceDebugActivity :
+    VMBaseActivity<BookSourceDebugModel>(R.layout.activity_source_debug) {
 
-    override val viewModel: SourceDebugModel
-        get() = getViewModel(SourceDebugModel::class.java)
+    override val viewModel: BookSourceDebugModel
+        get() = getViewModel(BookSourceDebugModel::class.java)
 
-    private lateinit var adapter: SourceDebugAdapter
+    private lateinit var adapter: BookSourceDebugAdapter
     private val qrRequestCode = 101
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -42,7 +43,7 @@ class SourceDebugActivity : VMBaseActivity<SourceDebugModel>(R.layout.activity_b
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
-        adapter = SourceDebugAdapter(this)
+        adapter = BookSourceDebugAdapter(this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
         rotate_loading.loadingColor = accentColor

@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import io.legado.app.App
@@ -52,7 +53,11 @@ object ReadBookConfig {
     }
 
     fun upBg() {
-        bg = getConfig().bgDrawable()
+        val resources = App.INSTANCE.resources
+        val dm = resources.displayMetrics
+        val width = dm.widthPixels
+        val height = dm.heightPixels
+        bg = getConfig().bgDrawable(width, height)
     }
 
     fun save() {
@@ -162,20 +167,30 @@ object ReadBookConfig {
             else bgType
         }
 
-        fun bgDrawable(): Drawable {
+        fun bgDrawable(width: Int, height: Int): Drawable {
             var bgDrawable: Drawable? = null
-            kotlin.runCatching {
-                when (bgType()) {
-                    0 -> bgDrawable = ColorDrawable(Color.parseColor(bgStr()))
-                    1 -> bgDrawable =
-                        Drawable.createFromStream(
-                            App.INSTANCE.assets.open("bg" + File.separator + bgStr()),
-                            "bg"
+            val resources = App.INSTANCE.resources
+            try {
+                bgDrawable = when (bgType()) {
+                    0 -> ColorDrawable(Color.parseColor(bgStr()))
+                    1 -> {
+                        BitmapDrawable(
+                            resources,
+                            BitmapUtil.decodeBitmap(
+                                App.INSTANCE,
+                                "bg" + File.separator + bgStr(),
+                                width,
+                                height
+                            )
                         )
-                    else -> runCatching {
-                        bgDrawable = Drawable.createFromPath(bgStr())
                     }
+                    else -> BitmapDrawable(
+                        resources,
+                        BitmapUtil.decodeBitmap(bgStr(), width, height)
+                    )
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
             return bgDrawable ?: ColorDrawable(App.INSTANCE.getCompatColor(R.color.background))
         }

@@ -35,6 +35,7 @@
     <string name="replace_purify_search">替换净化-搜索</string>
     <string name="bookshelf">书架</string>
     <string name="rss">订阅</string>
+    <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
     <string name="last_read">最后阅读</string>
     <string name="read_summary">让阅读成为一种习惯。</string>
@@ -149,9 +150,9 @@
     <string name="add_rss_source">新建订阅源</string>
     <string name="book_file_selector">添加书籍</string>
     <string name="scan_book_source">扫描</string>
-    <string name="copy_source">拷贝书源</string>
-    <string name="paste_source">粘贴书源</string>
-    <string name="source_rule_s">书源规则说明</string>
+    <string name="copy_source">拷贝源</string>
+    <string name="paste_source">粘贴源</string>
+    <string name="source_rule_s">源规则说明</string>
     <string name="check_update">检查更新</string>
     <string name="camera_scan">扫描二维码</string>
     <string name="scan_image">扫描本地图片</string>
@@ -374,6 +375,23 @@
     <string name="rule_content_url_next">正文下一页URL规则(nextContentUrl)</string>
     <!--book source end-->
 
+    <!-- rss source start-->
+    <string name="rss_source_name">名称(sourceName)</string>
+    <string name="rss_source_url">url(sourceUrl)</string>
+    <string name="rss_source_icon">图标(sourceIcon)</string>
+    <string name="rss_source_group">分组(sourceGroup)</string>
+    <string name="rss_rule_articles">列表规则(ruleArticles)</string>
+    <string name="rss_rule_title">标题规则(ruleTitle)</string>
+    <string name="rss_rule_author">作者规则(ruleAuthor)</string>
+    <string name="rss_rule_guid">guid规则(ruleGuid)</string>
+    <string name="rss_rule_date">时间规则(rulePubDate)</string>
+    <string name="rss_rule_categories">类别规则(ruleCategories)</string>
+    <string name="rss_rule_description">描述规则(ruleDescription)</string>
+    <string name="rss_rule_image">图片url规则(ruleImage)</string>
+    <string name="rss_rule_content">内容规则(ruleContent)</string>
+    <string name="rss_rule_link">链接规则(ruleLink)</string>
+    <!-- rss source end-->
+
     <!--error string start-->
     <string name="error_no_source">没有书源</string>
     <string name="error_get_book_info">书籍信息获取失败</string>
@@ -390,7 +408,7 @@
     <!--error string end-->
 
     <string name="source_http_header">header</string>
-    <string name="debug_source">调试书源</string>
+    <string name="debug_source">调试源</string>
     <string name="import_by_qr_code">二维码导入</string>
     <string name="scan_qr_code">扫描二维码</string>
     <string name="click_on_selected_show_menu">选中时点击可弹出菜单</string>
@@ -508,5 +526,6 @@
     <string name="rss_source_edit">编辑订阅源</string>
     <string name="screen">筛选</string>
     <string name="screen_find">筛选发现</string>
+    <string name="dur_pos">当前位置：</string>
 
 </resources>

@@ -20,7 +20,7 @@ import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_read_book.*
+import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -249,7 +249,7 @@ class ReadStyleDialog : DialogFragment() {
             ReadBookConfig.getConfig(i).apply {
                 when (bgType()) {
                     2 -> ImageLoader.load(requireContext(), bgStr()).centerCrop().setAsDrawable(iv)
-                    else -> iv.setImageDrawable(bgDrawable())
+                    else -> iv.setImageDrawable(bgDrawable(100, 150))
                 }
             }
         }

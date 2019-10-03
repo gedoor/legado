@@ -35,7 +35,7 @@ object Backup {
 
     fun autoBackup() {
         doAsync {
-            val path = defaultPath + File.separator + "autoBackup"
+            val path = defaultPath
             backupBookshelf(path)
             backupBookSource(path)
             backupRssSource(path)
@@ -45,27 +45,43 @@ object Backup {
     }
 
     private fun backupBookshelf(path: String) {
-        val json = GSON.toJson(App.db.bookDao().allBooks)
-        val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
-        file.writeText(json)
+        App.db.bookDao().allBooks.let {
+            if (it.isNotEmpty()) {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
+                file.writeText(json)
+            }
+        }
     }
 
     private fun backupBookSource(path: String) {
-        val json = GSON.toJson(App.db.bookSourceDao().all)
-        val file = FileHelp.getFile(path + File.separator + "bookSource.json")
-        file.writeText(json)
+        App.db.bookSourceDao().all.let {
+            if (it.isNotEmpty()) {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(path + File.separator + "bookSource.json")
+                file.writeText(json)
+            }
+        }
     }
 
     private fun backupRssSource(path: String) {
-        val json = GSON.toJson(App.db.rssSourceDao().all)
-        val file = FileHelp.getFile(path + File.separator + "rssSource.json")
-        file.writeText(json)
+        App.db.rssSourceDao().all.let {
+            if (it.isNotEmpty()) {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(path + File.separator + "rssSource.json")
+                file.writeText(json)
+            }
+        }
     }
 
     private fun backupReplaceRule(path: String) {
-        val json = GSON.toJson(App.db.replaceRuleDao().all)
-        val file = FileHelp.getFile(path + File.separator + "replaceRule.json")
-        file.writeText(json)
+        App.db.replaceRuleDao().all.let {
+            if (it.isNotEmpty()) {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(path + File.separator + "replaceRule.json")
+                file.writeText(json)
+            }
+        }
     }
 
     private fun backupPreference(path: String) {

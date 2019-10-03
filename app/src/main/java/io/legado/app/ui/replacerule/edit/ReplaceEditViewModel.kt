@@ -14,7 +14,7 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
     fun initData(bundle: Bundle) {
         execute {
             replaceRuleData.value ?: let {
-                val id = bundle.getLong("data")
+                val id = bundle.getLong("id")
                 if (id > 0) {
                     App.db.replaceRuleDao().findById(id)?.let {
                         replaceRuleData.postValue(it)

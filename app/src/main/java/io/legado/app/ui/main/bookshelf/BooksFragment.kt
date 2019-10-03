@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -20,6 +21,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
 
@@ -52,6 +54,9 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
         }
         initRecyclerView()
         upRecyclerData()
+        observeEvent<String>(Bus.UP_BOOK) {
+            booksAdapter.notification(it)
+        }
     }
 
     private fun initRecyclerView() {
@@ -70,7 +75,6 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
             })
         booksAdapter = BooksAdapter(this)
         rv_bookshelf.adapter = booksAdapter
-
     }
 
     private fun upRecyclerData() {
