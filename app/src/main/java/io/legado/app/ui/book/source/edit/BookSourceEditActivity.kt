@@ -54,7 +54,7 @@ class BookSourceEditActivity :
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)
         })
-        viewModel.setBookSource(intent.getStringExtra("data"))
+        viewModel.initData(intent)
     }
 
     override fun onDestroy() {

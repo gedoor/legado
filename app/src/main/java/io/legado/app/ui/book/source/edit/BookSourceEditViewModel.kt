@@ -3,6 +3,7 @@ package io.legado.app.ui.book.source.edit
 import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
@@ -14,8 +15,9 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
     val sourceLiveData: MutableLiveData<BookSource> = MutableLiveData()
     var oldSourceUrl: String? = null
 
-    fun setBookSource(key: String?) {
+    fun initData(intent: Intent) {
         execute {
+            val key = intent.getStringExtra("data")
             var source: BookSource? = null
             if (key != null) {
                 source = App.db.bookSourceDao().getBookSource(key)
