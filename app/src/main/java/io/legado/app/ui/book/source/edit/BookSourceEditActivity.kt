@@ -54,9 +54,7 @@ class BookSourceEditActivity :
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)
         })
-        intent.getStringExtra("data")?.let {
-            viewModel.setBookSource(it)
-        }
+        viewModel.setBookSource(intent.getStringExtra("data"))
     }
 
     override fun onDestroy() {
@@ -113,7 +111,6 @@ class BookSourceEditActivity :
                 setEditEntities(tab?.position)
             }
         })
-        upRecyclerView(null)
     }
 
     private fun setEditEntities(tabPosition: Int?) {
