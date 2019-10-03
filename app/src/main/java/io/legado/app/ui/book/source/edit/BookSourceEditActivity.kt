@@ -22,7 +22,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.rule.*
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.book.source.debug.SourceDebugActivity
+import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
@@ -32,13 +32,13 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
-class SourceEditActivity :
-    VMBaseActivity<SourceEditViewModel>(R.layout.activity_book_source_edit, false),
+class BookSourceEditActivity :
+    VMBaseActivity<BookSourceEditViewModel>(R.layout.activity_book_source_edit, false),
     KeyboardToolPop.CallBack {
-    override val viewModel: SourceEditViewModel
-        get() = getViewModel(SourceEditViewModel::class.java)
+    override val viewModel: BookSourceEditViewModel
+        get() = getViewModel(BookSourceEditViewModel::class.java)
 
-    private val adapter = SourceEditAdapter()
+    private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
     private val findEntities: ArrayList<EditEntity> = ArrayList()
@@ -55,11 +55,8 @@ class SourceEditActivity :
             upRecyclerView(it)
         })
         if (viewModel.sourceLiveData.value == null) {
-            val sourceID = intent.getStringExtra("data")
-            if (sourceID == null) {
-                upRecyclerView(null)
-            } else {
-                sourceID.let { viewModel.setBookSource(sourceID) }
+            intent.getStringExtra("data")?.let {
+                viewModel.setBookSource(it)
             }
         } else {
             upRecyclerView(viewModel.sourceLiveData.value)
@@ -86,7 +83,7 @@ class SourceEditActivity :
             R.id.menu_debug_source -> {
                 getSource()?.let {
                     viewModel.save(it) {
-                        startActivity<SourceDebugActivity>(Pair("key", it.bookSourceUrl))
+                        startActivity<BookSourceDebugActivity>(Pair("key", it.bookSourceUrl))
                     }
                 }
             }
@@ -120,6 +117,7 @@ class SourceEditActivity :
                 setEditEntities(tab?.position)
             }
         })
+        upRecyclerView(null)
     }
 
     private fun setEditEntities(tabPosition: Int?) {
@@ -358,7 +356,7 @@ class SourceEditActivity :
             val rect = Rect()
             // 获取当前页面窗口的显示范围
             window.decorView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = this@SourceEditActivity.displayMetrics.heightPixels
+            val screenHeight = this@BookSourceEditActivity.displayMetrics.heightPixels
             val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
             val preShowing = mIsSoftKeyBoardShowing
             if (abs(keyboardHeight) > screenHeight / 5) {

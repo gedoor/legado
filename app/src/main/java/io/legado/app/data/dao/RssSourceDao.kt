@@ -34,6 +34,9 @@ interface RssSourceDao {
     @get:Query("select min(customOrder) from rssSources")
     val minOrder: Int
 
+    @get:Query("select max(customOrder) from rssSources")
+    val maxOrder: Int
+
     @Query("delete from rssSources where sourceUrl in (:sourceUrls)")
     fun delSection(vararg sourceUrls: String)
 

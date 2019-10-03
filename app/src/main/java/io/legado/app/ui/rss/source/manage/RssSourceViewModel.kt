@@ -9,8 +9,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
 
     fun topSource(rssSource: RssSource) {
         execute {
-            val minXh = App.db.rssSourceDao().minOrder
-            rssSource.customOrder = minXh - 1
+            rssSource.customOrder = App.db.rssSourceDao().minOrder - 1
             App.db.rssSourceDao().insert(rssSource)
         }
     }

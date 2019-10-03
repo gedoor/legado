@@ -46,7 +46,7 @@
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
         <activity
-            android:name=".ui.book.source.edit.SourceEditActivity"
+            android:name=".ui.book.source.edit.BookSourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
@@ -63,7 +63,7 @@
         <activity android:name=".ui.about.DonateActivity" />
         <activity android:name=".ui.book.info.BookInfoActivity" />
         <activity android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity" />
-        <activity android:name=".ui.book.source.debug.SourceDebugActivity" />
+        <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
         <activity android:name=".ui.book.source.manage.BookSourceActivity" />
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
         <activity android:name=".ui.rss.read.ReadRssActivity" />

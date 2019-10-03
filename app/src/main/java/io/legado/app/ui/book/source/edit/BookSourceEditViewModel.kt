@@ -9,7 +9,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.storage.OldRule
 
-class SourceEditViewModel(application: Application) : BaseViewModel(application) {
+class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
     val sourceLiveData: MutableLiveData<BookSource> = MutableLiveData()
 
@@ -17,14 +17,17 @@ class SourceEditViewModel(application: Application) : BaseViewModel(application)
         execute {
             App.db.bookSourceDao().getBookSource(key)?.let {
                 sourceLiveData.postValue(it)
-            } ?: sourceLiveData.postValue(BookSource())
+            }
         }
     }
 
     fun save(bookSource: BookSource, finally: (() -> Unit)? = null) {
         execute {
-            if (bookSource.customOrder == 0) {
-                bookSource.customOrder = App.db.bookSourceDao().allCount()
+            sourceLiveData.value?.let {
+                bookSource.customOrder = it.customOrder
+                App.db.bookSourceDao().delete(it)
+            } ?: let {
+                bookSource.customOrder = App.db.bookSourceDao().maxOrder + 1
             }
             App.db.bookSourceDao().insert(bookSource)
         }.onFinally {

@@ -50,11 +50,8 @@ class RssSourceEditActivity :
             upRecyclerView(it)
         })
         if (viewModel.sourceLiveData.value == null) {
-            val sourceID = intent.getStringExtra("data")
-            if (sourceID == null) {
-                upRecyclerView(null)
-            } else {
-                sourceID.let { viewModel.setSource(sourceID) }
+            intent.getStringExtra("data")?.let {
+                viewModel.setSource(it)
             }
         } else {
             upRecyclerView(viewModel.sourceLiveData.value)
@@ -105,6 +102,7 @@ class RssSourceEditActivity :
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
+        upRecyclerView(null)
     }
 
     private fun upRecyclerView(rssSource: RssSource?) {

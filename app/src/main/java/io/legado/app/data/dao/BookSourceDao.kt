@@ -67,4 +67,7 @@ interface BookSourceDao {
 
     @get:Query("select min(customOrder) from book_sources")
     val minOrder: Int
+
+    @get:Query("select max(customOrder) from book_sources")
+    val maxOrder: Int
 }

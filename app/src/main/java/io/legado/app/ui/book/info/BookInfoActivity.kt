@@ -14,7 +14,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.book.source.edit.SourceEditActivity
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.getViewModel
@@ -190,7 +190,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
         tv_origin.onClick {
             viewModel.bookData.value?.let {
-                startActivity<SourceEditActivity>(Pair("data", it.origin))
+                startActivity<BookSourceEditActivity>(Pair("data", it.origin))
             }
         }
         tv_change_source.onClick {

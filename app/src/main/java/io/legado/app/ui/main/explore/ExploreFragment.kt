@@ -12,7 +12,7 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.book.source.edit.SourceEditActivity
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.explore.ExploreShowActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.startActivity
@@ -88,7 +88,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
     }
 
     override fun editSource(sourceUrl: String) {
-        startActivity<SourceEditActivity>(Pair("data", sourceUrl))
+        startActivity<BookSourceEditActivity>(Pair("data", sourceUrl))
     }
 
     override fun toTop(source: BookSource) {

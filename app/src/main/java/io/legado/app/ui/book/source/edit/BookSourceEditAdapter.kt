@@ -10,7 +10,7 @@ import io.legado.app.R
 import io.legado.app.data.entities.EditEntity
 import kotlinx.android.synthetic.main.item_source_edit.view.*
 
-class SourceEditAdapter : RecyclerView.Adapter<SourceEditAdapter.MyViewHolder>() {
+class BookSourceEditAdapter : RecyclerView.Adapter<BookSourceEditAdapter.MyViewHolder>() {
 
     var editEntities: ArrayList<EditEntity> = ArrayList()
         set(value) {

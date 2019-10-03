@@ -18,12 +18,18 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         execute {
             App.db.rssSourceDao().getByKey(key)?.let {
                 sourceLiveData.postValue(it)
-            } ?: sourceLiveData.postValue(RssSource())
+            }
         }
     }
 
     fun save(rssSource: RssSource, success: (() -> Unit)) {
         execute {
+            sourceLiveData.value?.let {
+                rssSource.customOrder = it.customOrder
+                App.db.rssSourceDao().delete(it)
+            } ?: let {
+                rssSource.customOrder = App.db.rssSourceDao().maxOrder + 1
+            }
             App.db.rssSourceDao().insert(rssSource)
         }.onSuccess {
             success()
