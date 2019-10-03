@@ -13,6 +13,7 @@
         android:text="@string/app_name"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/tv_text_default"
         android:layout_marginBottom="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
