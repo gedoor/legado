@@ -29,6 +29,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             } ?: let {
                 bookSource.customOrder = App.db.bookSourceDao().maxOrder + 1
             }
+            sourceLiveData.postValue(bookSource)
             App.db.bookSourceDao().insert(bookSource)
         }.onFinally {
             finally?.let { it() }

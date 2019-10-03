@@ -30,6 +30,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             } ?: let {
                 rssSource.customOrder = App.db.rssSourceDao().maxOrder + 1
             }
+            sourceLiveData.postValue(rssSource)
             App.db.rssSourceDao().insert(rssSource)
         }.onSuccess {
             success()
