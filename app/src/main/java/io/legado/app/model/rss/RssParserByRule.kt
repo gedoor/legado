@@ -51,6 +51,7 @@ object RssParserByRule {
                     ruleContent,
                     ruleLink
                 )?.let {
+                    it.origin = rssSource.sourceUrl
                     articleList.add(it)
                 }
             }
