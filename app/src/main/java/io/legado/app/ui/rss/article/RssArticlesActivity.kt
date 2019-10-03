@@ -65,5 +65,6 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
             Pair("description", rssArticle.description),
             Pair("url", rssArticle.link)
         )
+        viewModel.read(rssArticle)
     }
 }

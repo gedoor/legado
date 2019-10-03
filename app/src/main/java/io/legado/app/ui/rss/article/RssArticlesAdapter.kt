@@ -10,6 +10,7 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_rss_article.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.textColorResource
 
 
 class RssArticlesAdapter(context: Context, val callBack: CallBack) :
@@ -28,6 +29,11 @@ class RssArticlesAdapter(context: Context, val callBack: CallBack) :
                 image_view.visible()
                 ImageLoader.load(context, item.image)
                     .setAsBitmap(image_view)
+            }
+            if (item.read) {
+                tv_title.textColorResource = R.color.tv_text_secondary
+            } else {
+                tv_title.textColorResource = R.color.tv_text_default
             }
         }
     }
