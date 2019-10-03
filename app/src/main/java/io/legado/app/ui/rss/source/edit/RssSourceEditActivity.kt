@@ -49,12 +49,8 @@ class RssSourceEditActivity :
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)
         })
-        if (viewModel.sourceLiveData.value == null) {
-            intent.getStringExtra("data")?.let {
-                viewModel.setSource(it)
-            }
-        } else {
-            upRecyclerView(viewModel.sourceLiveData.value)
+        intent.getStringExtra("data")?.let {
+            viewModel.setSource(it)
         }
     }
 

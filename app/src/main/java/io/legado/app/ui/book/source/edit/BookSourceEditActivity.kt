@@ -54,12 +54,8 @@ class BookSourceEditActivity :
         viewModel.sourceLiveData.observe(this, Observer {
             upRecyclerView(it)
         })
-        if (viewModel.sourceLiveData.value == null) {
-            intent.getStringExtra("data")?.let {
-                viewModel.setBookSource(it)
-            }
-        } else {
-            upRecyclerView(viewModel.sourceLiveData.value)
+        intent.getStringExtra("data")?.let {
+            viewModel.setBookSource(it)
         }
     }
 
