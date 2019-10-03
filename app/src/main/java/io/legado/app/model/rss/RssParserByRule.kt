@@ -23,10 +23,9 @@ object RssParserByRule {
             )
         }
 
-        val analyzeRule = AnalyzeRule()
-        analyzeRule.setContent(xml)
-
         rssSource.ruleArticles?.let { ruleArticles ->
+            val analyzeRule = AnalyzeRule()
+            analyzeRule.setContent(xml)
             val collections = analyzeRule.getElements(ruleArticles)
             val ruleGuid = analyzeRule.splitSourceRule(rssSource.ruleGuid ?: "")
             val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle ?: "")
@@ -51,7 +50,9 @@ object RssParserByRule {
                     ruleImage,
                     ruleContent,
                     ruleLink
-                )
+                )?.let {
+                    articleList.add(it)
+                }
             }
         } ?: let {
             return RssParser.parseXML(xml, rssSource.sourceUrl)
@@ -84,6 +85,9 @@ object RssParserByRule {
         rssArticle.image = analyzeRule.getString(ruleImage)
         rssArticle.content = analyzeRule.getString(ruleContent)
         rssArticle.link = analyzeRule.getString(ruleLink)
+        if (rssArticle.title.isNullOrBlank()) {
+            return null
+        }
         return rssArticle
     }
 }
