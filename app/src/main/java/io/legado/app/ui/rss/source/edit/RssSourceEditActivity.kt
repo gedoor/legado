@@ -112,6 +112,7 @@ class RssSourceEditActivity :
             add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.rss_source_url))
             add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.rss_source_icon))
             add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.rss_source_group))
+            add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.rss_rule_articles))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.rss_rule_title))
             add(EditEntity("ruleAuthor", rssSource?.ruleAuthor, R.string.rss_rule_author))
             add(EditEntity("ruleGuid", rssSource?.ruleGuid, R.string.rss_rule_guid))
@@ -145,6 +146,7 @@ class RssSourceEditActivity :
                 "sourceUrl" -> source.sourceUrl = it.value ?: ""
                 "sourceIcon" -> source.sourceIcon = it.value ?: ""
                 "sourceGroup" -> source.sourceGroup = it.value
+                "ruleArticles" -> source.ruleArticles = it.value
                 "ruleTitle" -> source.ruleTitle = it.value
                 "ruleAuthor" -> source.ruleAuthor = it.value
                 "ruleGuid" -> source.ruleGuid = it.value

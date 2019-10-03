@@ -376,19 +376,20 @@
     <!--book source end-->
 
     <!-- rss source start-->
-    <string name="rss_source_name">名称</string>
-    <string name="rss_source_url">url</string>
-    <string name="rss_source_icon">图标</string>
-    <string name="rss_source_group">分组</string>
-    <string name="rss_rule_title">标题</string>
-    <string name="rss_rule_author">作者</string>
-    <string name="rss_rule_guid">guid</string>
-    <string name="rss_rule_date">时间</string>
-    <string name="rss_rule_categories">类别</string>
-    <string name="rss_rule_description">描述</string>
-    <string name="rss_rule_image">图片url</string>
-    <string name="rss_rule_content">内容</string>
-    <string name="rss_rule_link">链接</string>
+    <string name="rss_source_name">名称(sourceName)</string>
+    <string name="rss_source_url">url(sourceUrl)</string>
+    <string name="rss_source_icon">图标(sourceIcon)</string>
+    <string name="rss_source_group">分组(sourceGroup)</string>
+    <string name="rss_rule_articles">列表规则(ruleArticles)</string>
+    <string name="rss_rule_title">标题规则(ruleTitle)</string>
+    <string name="rss_rule_author">作者规则(ruleAuthor)</string>
+    <string name="rss_rule_guid">guid规则(ruleGuid)</string>
+    <string name="rss_rule_date">时间规则(rulePubDate)</string>
+    <string name="rss_rule_categories">类别规则(ruleCategories)</string>
+    <string name="rss_rule_description">描述规则(ruleDescription)</string>
+    <string name="rss_rule_image">图片url规则(ruleImage)</string>
+    <string name="rss_rule_content">内容规则(ruleContent)</string>
+    <string name="rss_rule_link">链接规则(ruleLink)</string>
     <!-- rss source end-->
 
     <!--error string start-->
