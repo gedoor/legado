@@ -132,7 +132,7 @@ class RssSourceEditActivity :
     }
 
     private fun getRssSource(): RssSource? {
-        val source = viewModel.sourceLiveData.value?.copy() ?: RssSource()
+        val source = viewModel.sourceLiveData.value ?: RssSource()
         sourceEntities.forEach {
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
