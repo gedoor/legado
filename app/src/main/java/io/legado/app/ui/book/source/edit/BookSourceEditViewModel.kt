@@ -24,7 +24,9 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
     fun save(bookSource: BookSource, finally: (() -> Unit)? = null) {
         execute {
             sourceLiveData.value?.let {
-                App.db.bookSourceDao().delete(it)
+                if (it.bookSourceUrl != bookSource.bookSourceUrl) {
+                    App.db.bookSourceDao().delete(it)
+                }
             } ?: let {
                 bookSource.customOrder = App.db.bookSourceDao().maxOrder + 1
             }
