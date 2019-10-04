@@ -271,7 +271,7 @@
             android:button="@null"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/page_anim_scroll" />
+            android:text="@string/page_anim_simulation" />
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
             android:id="@+id/rb_scroll_anim"
