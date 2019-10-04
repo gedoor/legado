@@ -89,7 +89,8 @@ class PageView(context: Context, attrs: AttributeSet) :
         pageDelegate = when (context.getPrefInt("pageAnim")) {
             0 -> CoverPageDelegate(this)
             1 -> SlidePageDelegate(this)
-            2 -> ScrollPageDelegate(this)
+            2 -> SimulationPageDelegate(this)
+            3 -> ScrollPageDelegate(this)
             else -> NoAnimPageDelegate(this)
         }
         upContent()
