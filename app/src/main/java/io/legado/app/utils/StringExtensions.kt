@@ -20,18 +20,12 @@ fun String?.isJson(): Boolean = this?.run {
 
 fun String?.isJsonObject(): Boolean = this?.run {
     val str = this.trim()
-    when {
-        str.startsWith("{") && str.endsWith("}") -> true
-        else -> false
-    }
+    str.startsWith("{") && str.endsWith("}")
 } ?: false
 
 fun String?.isJsonArray(): Boolean = this?.run {
     val str = this.trim()
-    when {
-        str.startsWith("[") && str.endsWith("]") -> true
-        else -> false
-    }
+    str.startsWith("[") && str.endsWith("]")
 } ?: false
 
 fun String?.htmlFormat(): String = if (this.isNullOrBlank()) "" else
