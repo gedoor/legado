@@ -23,6 +23,9 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_search.*
 import kotlinx.android.synthetic.main.view_search.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 
@@ -166,6 +169,12 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     override fun searchHistory(key: String) {
-        search_view.setQuery(key, false)
+        launch {
+            if (withContext(IO) { App.db.bookDao().findByName(key).isEmpty() }) {
+                search_view.setQuery(key, true)
+            } else {
+                search_view.setQuery(key, false)
+            }
+        }
     }
 }
