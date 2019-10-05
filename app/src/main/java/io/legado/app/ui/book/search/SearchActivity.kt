@@ -1,5 +1,7 @@
 package io.legado.app.ui.book.search
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
@@ -49,9 +51,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         initSearchView()
         initOtherView()
         initData()
-        intent.getStringExtra("key")?.let {
-            search_view.setQuery(it, true)
-        }
+        initIntent()
+        upHistory()
     }
 
     private fun initSearchView() {
@@ -125,7 +126,25 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             ), 30
         ).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
-        upHistory()
+    }
+
+    private fun initIntent() {
+        if (Intent.ACTION_SEND == intent.action && intent.type == "text/plain") {
+            intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                search_view.setQuery(it, true)
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+            && Intent.ACTION_PROCESS_TEXT == intent.action
+            && intent.type == "text/plain"
+        ) {
+            intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
+                search_view.setQuery(it, true)
+            }
+        } else {
+            intent.getStringExtra("key")?.let {
+                search_view.setQuery(it, true)
+            }
+        }
     }
 
     private fun upHistory(key: String? = null) {

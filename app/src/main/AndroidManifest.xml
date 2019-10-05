@@ -57,7 +57,20 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".ui.config.ConfigActivity" />
         <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
-        <activity android:name="io.legado.app.ui.book.search.SearchActivity" />
+        <activity
+            android:name="io.legado.app.ui.book.search.SearchActivity"
+            android:label="@string/receiving_shared_label">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.about.AboutActivity" />
         <activity android:name=".ui.qrcode.QrCodeActivity" />
         <activity android:name=".ui.about.DonateActivity" />
@@ -66,11 +79,14 @@
         <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
         <activity android:name=".ui.book.source.manage.BookSourceActivity">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <data android:scheme="yuedu" android:host="booksource"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="booksource"
+                    android:scheme="yuedu" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
@@ -79,7 +95,8 @@
         <activity android:name=".ui.explore.ExploreShowActivity" />
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
         <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
-        <activity android:name=".ui.rss.article.RssArticlesActivity"/>
+        <activity android:name=".ui.rss.article.RssArticlesActivity" />
+
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
         <service android:name=".service.UpdateService" />
