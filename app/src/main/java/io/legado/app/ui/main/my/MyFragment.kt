@@ -91,23 +91,20 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         }
 
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-            preference?.let {
-                when (preference.key) {
-                    "bookSourceManage" -> context?.startActivity<BookSourceActivity>()
-                    "replaceManage" -> context?.startActivity<ReplaceRuleActivity>()
-                    "setting" -> context?.startActivity<ConfigActivity>(
-                        Pair("configType", ConfigViewModel.TYPE_CONFIG)
-                    )
-                    "web_dav_setting" -> context?.startActivity<ConfigActivity>(
-                        Pair("configType", ConfigViewModel.TYPE_WEB_DAV_CONFIG)
-                    )
-                    "theme_setting" -> context?.startActivity<ConfigActivity>(
-                        Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
-                    )
-                    "donate" -> context?.startActivity<DonateActivity>()
-                    "about" -> context?.startActivity<AboutActivity>()
-                    else -> null
-                }
+            when (preference?.key) {
+                "bookSourceManage" -> context?.startActivity<BookSourceActivity>()
+                "replaceManage" -> context?.startActivity<ReplaceRuleActivity>()
+                "setting" -> context?.startActivity<ConfigActivity>(
+                    Pair("configType", ConfigViewModel.TYPE_CONFIG)
+                )
+                "web_dav_setting" -> context?.startActivity<ConfigActivity>(
+                    Pair("configType", ConfigViewModel.TYPE_WEB_DAV_CONFIG)
+                )
+                "theme_setting" -> context?.startActivity<ConfigActivity>(
+                    Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
+                )
+                "donate" -> context?.startActivity<DonateActivity>()
+                "about" -> context?.startActivity<AboutActivity>()
             }
             return super.onPreferenceTreeClick(preference)
         }
