@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.Scroller
+import androidx.annotation.CallSuper
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import io.legado.app.ui.widget.page.ContentView
 import io.legado.app.ui.widget.page.PageView
@@ -173,7 +174,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
     /**
      * 触摸事件处理
      */
-    fun onTouch(event: MotionEvent): Boolean {
+    @CallSuper
+    open fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
         if (curPage?.isTextSelected() == true) {
             curPage?.dispatchTouchEvent(event)

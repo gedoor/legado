@@ -95,21 +95,21 @@ public class CurlMesh {
         // There really is no use for 0 splits.
         mMaxCurlSplits = maxCurlSplits < 1 ? 1 : maxCurlSplits;
 
-        mArrScanLines = new Array<Double>(maxCurlSplits + 2);
-        mArrOutputVertices = new Array<Vertex>(7);
-        mArrRotatedVertices = new Array<Vertex>(4);
-        mArrIntersections = new Array<Vertex>(2);
-        mArrTempVertices = new Array<Vertex>(7 + 4);
+        mArrScanLines = new Array<>(maxCurlSplits + 2);
+        mArrOutputVertices = new Array<>(7);
+        mArrRotatedVertices = new Array<>(4);
+        mArrIntersections = new Array<>(2);
+        mArrTempVertices = new Array<>(7 + 4);
         for (int i = 0; i < 7 + 4; ++i) {
             mArrTempVertices.add(new Vertex());
         }
 
         if (DRAW_SHADOW) {
-            mArrSelfShadowVertices = new Array<ShadowVertex>(
+            mArrSelfShadowVertices = new Array<>(
                     (mMaxCurlSplits + 2) * 2);
-            mArrDropShadowVertices = new Array<ShadowVertex>(
+            mArrDropShadowVertices = new Array<>(
                     (mMaxCurlSplits + 2) * 2);
-            mArrTempShadowVertices = new Array<ShadowVertex>(
+            mArrTempShadowVertices = new Array<>(
                     (mMaxCurlSplits + 2) * 2);
             for (int i = 0; i < (mMaxCurlSplits + 2) * 2; ++i) {
                 mArrTempShadowVertices.add(new ShadowVertex());
