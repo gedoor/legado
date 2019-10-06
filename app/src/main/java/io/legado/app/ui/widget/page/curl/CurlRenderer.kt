@@ -18,7 +18,7 @@ class CurlRenderer
 /**
  * Basic constructor.
  */
-    (private val mObserver: CurlRenderer.Observer) : GLSurfaceView.Renderer {
+    (private val mObserver: Observer) : GLSurfaceView.Renderer {
     // Background fill color.
     private var mBackgroundColor: Int = 0
     // Curl meshes used for static and dynamic rendering.
