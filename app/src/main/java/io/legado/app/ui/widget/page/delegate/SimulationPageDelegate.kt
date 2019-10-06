@@ -35,7 +35,7 @@ class SimulationPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     override fun onPageUp() {
         pageView.curlView?.updatePages()
-        pageView.curlView?.invalidate()
+        pageView.curlView?.requestRender()
     }
 
     private inner class PageProvider : CurlView.PageProvider {
