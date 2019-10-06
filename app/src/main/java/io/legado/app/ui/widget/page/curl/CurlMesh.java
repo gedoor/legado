@@ -268,7 +268,7 @@ public class CurlMesh {
         // Also vertices/lines are given in an order first one has x -coordinate
         // at least the latter one. This property is used in getIntersections to
         // see if there is an intersection.
-        int lines[][] = {{0, 1}, {0, 2}, {1, 3}, {2, 3}};
+        int[][] lines = {{0, 1}, {0, 2}, {1, 3}, {2, 3}};
         {
             // TODO: There really has to be more 'easier' way of doing this -
             // not including extensive use of sqrt.
@@ -543,9 +543,9 @@ public class CurlMesh {
         mArrIntersections.clear();
         // Iterate through rectangle lines each re-presented as a pair of
         // vertices.
-        for (int j = 0; j < lineIndices.length; j++) {
-            Vertex v1 = vertices.get(lineIndices[j][0]);
-            Vertex v2 = vertices.get(lineIndices[j][1]);
+        for (int[] lineIndex : lineIndices) {
+            Vertex v1 = vertices.get(lineIndex[0]);
+            Vertex v2 = vertices.get(lineIndex[1]);
             // Here we expect that v1.mPosX >= v2.mPosX and wont do intersection
             // test the opposite way.
             if (v1.mPosX > scanX && v2.mPosX < scanX) {
