@@ -39,8 +39,7 @@ class SimulationPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             get() = 1
 
         override fun updatePage(page: CurlPage, width: Int, height: Int, index: Int) {
-            val front = curPage?.screenshot()
-            page.setTexture(front, CurlPage.SIDE_BOTH)
+            page.setTexture(curPage?.screenshot(), CurlPage.SIDE_BOTH)
         }
     }
 

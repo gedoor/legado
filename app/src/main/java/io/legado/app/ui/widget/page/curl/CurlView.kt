@@ -82,10 +82,7 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
                 if (mAllowLastPageCurl) {
                     min(index, mPageProvider!!.pageCount)
                 } else {
-                    min(
-                        index,
-                        mPageProvider!!.pageCount - 1
-                    )
+                    min(index, mPageProvider!!.pageCount - 1)
                 }
             }
             updatePages()
