@@ -40,10 +40,14 @@ class SimulationPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     private inner class PageProvider : CurlView.PageProvider {
 
         override val pageCount: Int
-            get() = 1
+            get() = 3
 
         override fun updatePage(page: CurlPage, width: Int, height: Int, index: Int) {
-            page.setTexture(curPage?.screenshot(), CurlPage.SIDE_BOTH)
+            when (index) {
+                0 -> page.setTexture(prevPage?.screenshot(), CurlPage.SIDE_BOTH)
+                1 -> page.setTexture(curPage?.screenshot(), CurlPage.SIDE_BOTH)
+                2 -> page.setTexture(nextPage?.screenshot(), CurlPage.SIDE_BOTH)
+            }
         }
     }
 
