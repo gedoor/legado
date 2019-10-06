@@ -15,7 +15,7 @@ class SimulationPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             pageView.addView(pageView.curlView)
             pageView.curlView?.mPageProvider = PageProvider()
             pageView.curlView?.setSizeChangedObserver(SizeChangedObserver())
-            pageView.curlView?.currentIndex = 0
+            pageView.curlView?.currentIndex = 1
         }
     }
 
