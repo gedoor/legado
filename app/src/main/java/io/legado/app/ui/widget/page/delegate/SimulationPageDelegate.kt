@@ -5,7 +5,6 @@ import android.view.MotionEvent
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.curl.CurlPage
 import io.legado.app.ui.widget.page.curl.CurlView
-import io.legado.app.utils.invisible
 import io.legado.app.utils.screenshot
 
 class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
@@ -13,7 +12,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     init {
         pageView.curlView ?: let {
             pageView.curlView = CurlView(pageView.context)
-            pageView.curlView?.invisible()
             pageView.addView(pageView.curlView)
             pageView.curlView?.mPageProvider = PageProvider()
             pageView.curlView?.setSizeChangedObserver(SizeChangedObserver())
