@@ -48,8 +48,6 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
     private var mPageLeft: CurlMesh
     private var mPageRight: CurlMesh
 
-    private var mPageProvider: PageProvider? = null
-
     private val mPointerPos = PointerPosition()
 
     private var mRenderer: CurlRenderer = CurlRenderer(this)
@@ -58,6 +56,14 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
 
     // One page is the default.
     private var mViewMode = SHOW_ONE_PAGE
+
+    var mPageProvider: PageProvider? = null
+        set(value) {
+            field = value
+            mCurrentIndex = 0
+            updatePages()
+            requestRender()
+        }
 
     /**
      * Get current page index. Page indices are zero based values presenting
@@ -408,16 +414,6 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
     }
 
     /**
-     * Update/set page provider.
-     */
-    fun setPageProvider(pageProvider: PageProvider) {
-        mPageProvider = pageProvider
-        mCurrentIndex = 0
-        updatePages()
-        requestRender()
-    }
-
-    /**
      * Setter for whether left side page is rendered. This is useful mostly for
      * situations where right (main) page is aligned to left side of screen and
      * left page is not visible anyway.
@@ -645,7 +641,7 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
     /**
      * Updates bitmaps for page meshes.
      */
-    private fun updatePages() {
+    fun updatePages() {
         if (mPageProvider == null || mPageBitmapWidth <= 0
             || mPageBitmapHeight <= 0
         ) {

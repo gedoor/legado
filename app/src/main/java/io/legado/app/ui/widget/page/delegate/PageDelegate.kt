@@ -209,6 +209,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
     open fun onScroll() {//移动contentView， slidePage
     }
 
+    open fun onPageUp() {
+    }
+
     enum class Direction {
         NONE, PREV, NEXT
     }

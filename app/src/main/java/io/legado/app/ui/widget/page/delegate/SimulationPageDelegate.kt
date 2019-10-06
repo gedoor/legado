@@ -13,7 +13,7 @@ class SimulationPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         pageView.curlView ?: let {
             pageView.curlView = CurlView(pageView.context)
             pageView.addView(pageView.curlView)
-            pageView.curlView?.setPageProvider(PageProvider())
+            pageView.curlView?.mPageProvider = PageProvider()
             pageView.curlView?.setSizeChangedObserver(SizeChangedObserver())
             pageView.curlView?.currentIndex = 0
         }
@@ -31,6 +31,10 @@ class SimulationPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun onScrollStop() {
+    }
+
+    override fun onPageUp() {
+        pageView.curlView?.updatePages()
     }
 
     private inner class PageProvider : CurlView.PageProvider {

@@ -122,6 +122,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                 prevPage?.scrollToBottom()
             }
         }
+        pageDelegate?.onPageUp()
     }
 
     fun moveToPrevPage(noAnim: Boolean = true) {
