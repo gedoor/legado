@@ -5,7 +5,7 @@ import android.graphics.Matrix
 import android.graphics.drawable.GradientDrawable
 import io.legado.app.ui.widget.page.PageView
 
-class CoverPageDelegate(pageView: PageView) : PageDelegate(pageView) {
+class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     private val shadowDrawableR: GradientDrawable
     private val bitmapMatrix = Matrix()

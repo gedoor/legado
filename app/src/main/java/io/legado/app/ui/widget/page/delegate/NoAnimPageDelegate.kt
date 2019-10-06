@@ -3,7 +3,7 @@ package io.legado.app.ui.widget.page.delegate
 import android.graphics.Canvas
 import io.legado.app.ui.widget.page.PageView
 
-class NoAnimPageDelegate(pageView: PageView) : PageDelegate(pageView) {
+class NoAnimPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     override fun onScrollStart() {
         startScroll(touchX.toInt(), 0, 0, 0)
     }

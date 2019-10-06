@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import io.legado.app.ui.widget.page.PageView
 
-class SlidePageDelegate(pageView: PageView) : PageDelegate(pageView) {
+class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     private val bitmapMatrix = Matrix()
 

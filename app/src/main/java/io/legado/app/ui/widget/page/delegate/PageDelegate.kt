@@ -56,8 +56,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
         )
     }
 
-    private var isMoved = false
-    private var noNext = true
+    var isMoved = false
+    var noNext = true
 
     //移动方向
     var direction = Direction.NONE
@@ -212,6 +212,13 @@ abstract class PageDelegate(protected val pageView: PageView) {
     open fun onPageUp() {
     }
 
+    abstract fun onScroll(
+        e1: MotionEvent,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean
+
     enum class Direction {
         NONE, PREV, NEXT
     }
@@ -271,87 +278,17 @@ abstract class PageDelegate(protected val pageView: PageView) {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
-            if (pageView.isScrollDelegate) {
-                if (!isMoved && abs(distanceX) < abs(distanceY)) {
-                    if (distanceY < 0) {
-                        if (atTop) {
-                            val event = e1.toAction(MotionEvent.ACTION_UP)
-                            curPage?.dispatchTouchEvent(event)
-                            event.recycle()
-                            //如果上一页不存在
-                            if (!hasPrev()) {
-                                noNext = true
-                                return true
-                            }
-                            //上一页截图
-                            bitmap = prevPage?.screenshot()
-                        }
-                    } else {
-                        if (atBottom) {
-                            val event = e1.toAction(MotionEvent.ACTION_UP)
-                            curPage?.dispatchTouchEvent(event)
-                            event.recycle()
-                            //如果不存在表示没有下一页了
-                            if (!hasNext()) {
-                                noNext = true
-                                return true
-                            }
-                            //下一页截图
-                            bitmap = nextPage?.screenshot()
-                        }
-                    }
-                    isMoved = true
-                }
-                if ((atTop && direction != Direction.PREV) || (atBottom && direction != Direction.NEXT) || direction == Direction.NONE) {
-                    //传递触摸事件到textView
-                    curPage?.dispatchTouchEvent(e2)
-                }
-            } else if (!isMoved) {
-                val event = e1.toAction(MotionEvent.ACTION_UP)
-                curPage?.dispatchTouchEvent(event)
-                event.recycle()
-                if (abs(distanceX) > abs(distanceY)) {
-                    if (distanceX < 0) {
-                        //如果上一页不存在
-                        if (!hasPrev()) {
-                            noNext = true
-                            return true
-                        }
-                        //上一页截图
-                        bitmap = prevPage?.screenshot()
-                    } else {
-                        //如果不存在表示没有下一页了
-                        if (!hasNext()) {
-                            noNext = true
-                            return true
-                        }
-                        //下一页截图
-                        bitmap = nextPage?.screenshot()
-                    }
-                    isMoved = true
-                }
-            }
-            if (isMoved) {
-                isCancel = if (pageView.isScrollDelegate) {
-                    if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
-                } else {
-                    if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
-                }
-                isRunning = true
-                //设置触摸点
-                setTouchPoint(e2.x, e2.y)
-            }
-            return isMoved
+            return this@PageDelegate.onScroll(e1, e2, distanceX, distanceY)
         }
     }
 
-    private fun hasPrev(): Boolean {
+    fun hasPrev(): Boolean {
         //上一页的参数配置
         direction = Direction.PREV
         return pageView.pageFactory?.hasPrev() == true
     }
 
-    private fun hasNext(): Boolean {
+    fun hasNext(): Boolean {
         //进行下一页的配置
         direction = Direction.NEXT
         return pageView.pageFactory?.hasNext() == true
