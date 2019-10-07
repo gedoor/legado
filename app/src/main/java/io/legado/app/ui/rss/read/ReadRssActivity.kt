@@ -1,6 +1,7 @@
 package io.legado.app.ui.rss.read
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.utils.getViewModel
@@ -12,13 +13,18 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         get() = getViewModel(ReadRssViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val description = intent.getStringExtra("description")
-        val url = intent.getStringExtra("url")
-        if (description.isNullOrBlank()) {
-            webView.loadUrl(url)
-        } else {
-            webView.loadData("<style>img{max-width:100%}</style>$description", "text/html", "utf-8")
-        }
+        initLiveData()
+        viewModel.initData(intent)
+
+    }
+
+    private fun initLiveData() {
+        viewModel.contentLiveData.observe(this, Observer {
+            webView.loadData("<style>img{max-width:100%}</style>$it", "text/html", "utf-8")
+        })
+        viewModel.urlLiveData.observe(this, Observer {
+            webView.loadUrl(it)
+        })
     }
 
 }

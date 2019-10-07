@@ -7,6 +7,9 @@ import io.legado.app.data.entities.RssArticle
 @Dao
 interface RssArticleDao {
 
+    @Query("select * from rssArticles where guid = :key")
+    fun get(key: String): RssArticle?
+
     @Query("select * from rssArticles where origin = :origin order by time desc")
     fun liveByOrigin(origin: String): LiveData<List<RssArticle>>
 
