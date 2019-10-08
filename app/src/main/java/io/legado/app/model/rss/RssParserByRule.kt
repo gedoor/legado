@@ -11,7 +11,6 @@ object RssParserByRule {
 
     @Throws(Exception::class)
     fun parseXML(response: Response<String>, rssSource: RssSource): MutableList<RssArticle> {
-        val articleList = mutableListOf<RssArticle>()
 
         val xml = response.body()
         if (xml.isNullOrBlank()) {
@@ -22,12 +21,19 @@ object RssParserByRule {
                 )
             )
         }
-
-        rssSource.ruleArticles?.let { ruleArticles ->
+        var ruleArticles = rssSource.ruleArticles
+        if (ruleArticles.isNullOrBlank()) {
+            return RssParser.parseXML(xml, rssSource.sourceUrl)
+        } else {
+            val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
             analyzeRule.setContent(xml)
+            var reverse = false
+            if (ruleArticles.startsWith("-")) {
+                reverse = true
+                ruleArticles = ruleArticles.substring(1)
+            }
             val collections = analyzeRule.getElements(ruleArticles)
-            val ruleGuid = analyzeRule.splitSourceRule(rssSource.ruleGuid ?: "")
             val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle ?: "")
             val ruleAuthor = analyzeRule.splitSourceRule(rssSource.ruleAuthor ?: "")
             val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate ?: "")
@@ -41,7 +47,6 @@ object RssParserByRule {
                     item,
                     analyzeRule,
                     index == 0,
-                    ruleGuid,
                     ruleTitle,
                     ruleAuthor,
                     rulePubDate,
@@ -55,17 +60,20 @@ object RssParserByRule {
                     articleList.add(it)
                 }
             }
-        } ?: let {
-            return RssParser.parseXML(xml, rssSource.sourceUrl)
+            if (reverse) {
+                articleList.reverse()
+            }
+            for ((index: Int, item: RssArticle) in articleList.withIndex()) {
+                item.order = System.currentTimeMillis() + index
+            }
+            return articleList
         }
-        return articleList
     }
 
     private fun getItem(
         item: Any,
         analyzeRule: AnalyzeRule,
         printLog: Boolean,
-        ruleGuid: List<AnalyzeRule.SourceRule>,
         ruleTitle: List<AnalyzeRule.SourceRule>,
         ruleAuthor: List<AnalyzeRule.SourceRule>,
         rulePubDate: List<AnalyzeRule.SourceRule>,
@@ -77,7 +85,6 @@ object RssParserByRule {
     ): RssArticle? {
         val rssArticle = RssArticle()
         analyzeRule.setContent(item)
-        rssArticle.guid = analyzeRule.getString(ruleGuid)
         rssArticle.title = analyzeRule.getString(ruleTitle)
         rssArticle.author = analyzeRule.getString(ruleAuthor)
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)

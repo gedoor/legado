@@ -84,8 +84,6 @@ object RssParser {
                         }
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_TIME, true) ->
                         if (insideItem) currentArticle.pubDate = xmlPullParser.nextText()
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_GUID, true) ->
-                        if (insideItem) currentArticle.guid = xmlPullParser.nextText().trim()
                 }
             } else if (eventType == XmlPullParser.END_TAG
                 && xmlPullParser.name.equals("item", true)
@@ -98,6 +96,9 @@ object RssParser {
                 currentArticle = RssArticle()
             }
             eventType = xmlPullParser.next()
+        }
+        for ((index: Int, item: RssArticle) in articleList.withIndex()) {
+            item.order = System.currentTimeMillis() + index
         }
         return articleList
     }
