@@ -28,9 +28,9 @@ object RssParserByRule {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
             analyzeRule.setContent(xml)
-            var reverse = false
+            var reverse = true
             if (ruleArticles.startsWith("-")) {
-                reverse = true
+                reverse = false
                 ruleArticles = ruleArticles.substring(1)
             }
             val collections = analyzeRule.getElements(ruleArticles)
