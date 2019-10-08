@@ -22,7 +22,7 @@ data class RssSource(
     var rulePubDate: String? = null,
     //类别
     var ruleCategories: String? = null,
-    //描述
+    //webView规则
     var ruleDescription: String? = null,
     var ruleImage: String? = null,
     var ruleLink: String? = null,
