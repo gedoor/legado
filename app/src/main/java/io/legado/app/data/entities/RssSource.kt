@@ -25,7 +25,7 @@ data class RssSource(
     //描述
     var ruleDescription: String? = null,
     var ruleImage: String? = null,
-    var ruleContent: String? = null,
     var ruleLink: String? = null,
+    var ruleContent: String? = null,
     var customOrder: Int = 0
 ) : Parcelable
