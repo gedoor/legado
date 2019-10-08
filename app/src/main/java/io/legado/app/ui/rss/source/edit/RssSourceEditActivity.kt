@@ -108,7 +108,6 @@ class RssSourceEditActivity :
             add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.rss_rule_articles))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.rss_rule_title))
             add(EditEntity("ruleAuthor", rssSource?.ruleAuthor, R.string.rss_rule_author))
-            add(EditEntity("ruleGuid", rssSource?.ruleGuid, R.string.rss_rule_guid))
             add(EditEntity("rulePubDate", rssSource?.rulePubDate, R.string.rss_rule_date))
             add(
                 EditEntity(
@@ -142,7 +141,6 @@ class RssSourceEditActivity :
                 "ruleArticles" -> source.ruleArticles = it.value
                 "ruleTitle" -> source.ruleTitle = it.value
                 "ruleAuthor" -> source.ruleAuthor = it.value
-                "ruleGuid" -> source.ruleGuid = it.value
                 "rulePubDate" -> source.rulePubDate = it.value
                 "ruleCategories" -> source.ruleCategories = it.value
                 "ruleDescription" -> source.ruleDescription = it.value
