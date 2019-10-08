@@ -16,8 +16,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
 
     fun initData(intent: Intent) {
         execute {
-            intent.getStringExtra("guid")?.let {
-                val rssArticle = App.db.rssArtivleDao().get(it)
+            val origin = intent.getStringExtra("origin")
+            val title = intent.getStringExtra("title")
+            if (origin != null && title != null) {
+                val rssArticle = App.db.rssArtivleDao().get(origin, title)
                 if (rssArticle != null) {
                     if (!rssArticle.description.isNullOrBlank()) {
                         contentLiveData.postValue(rssArticle.description)

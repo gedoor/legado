@@ -10,7 +10,7 @@ import androidx.room.Ignore
 )
 data class RssArticle(
     var origin: String = "",
-    var title: String? = "",
+    var title: String = "",
     var order: Long = 0,
     var author: String? = null,
     var link: String? = null,
