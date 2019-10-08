@@ -11,7 +11,7 @@ import androidx.room.Ignore
 data class RssArticle(
     var origin: String = "",
     var title: String? = null,
-    var time: Long = System.currentTimeMillis(),
+    var order: Long = 0,
     var author: String? = null,
     var link: String? = null,
     var pubDate: String? = null,
