@@ -20,13 +20,16 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
@@ -65,9 +68,9 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.menu.applyTint(requireContext(), false)
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.findItem(R.id.menu_group_local)
-            .isChecked = getPrefBoolean("bookGroupLocal", true)
+            .isChecked = AppConst.bookGroupLocalShow
         tool_bar.menu.findItem(R.id.menu_group_audio)
-            .isChecked = getPrefBoolean("bookGroupAudio", true)
+            .isChecked = AppConst.bookGroupAudioShow
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(
@@ -88,12 +91,12 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             R.id.menu_add -> addGroup()
             R.id.menu_group_local -> {
                 item.isChecked = !item.isChecked
-                putPrefBoolean("bookGroupLocal", item.isChecked)
+                AppConst.bookGroupLocalShow = item.isChecked
                 callBack?.upGroup()
             }
             R.id.menu_group_audio -> {
                 item.isChecked = !item.isChecked
-                putPrefBoolean("bookGroupAudio", item.isChecked)
+                AppConst.bookGroupAudioShow = item.isChecked
                 callBack?.upGroup()
             }
         }

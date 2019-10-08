@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.putPrefBoolean
 import java.text.SimpleDateFormat
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -41,4 +43,16 @@ object AppConst {
     val bookGroupAll = BookGroup(-1, App.INSTANCE.getString(R.string.all))
     val bookGroupLocal = BookGroup(-2, App.INSTANCE.getString(R.string.local))
     val bookGroupAudio = BookGroup(-3, App.INSTANCE.getString(R.string.audio))
+
+    var bookGroupLocalShow: Boolean
+        get() = App.INSTANCE.getPrefBoolean("bookGroupLocal", false)
+        set(value) {
+            App.INSTANCE.putPrefBoolean("bookGroupLocal", value)
+        }
+
+    var bookGroupAudioShow: Boolean
+        get() = App.INSTANCE.getPrefBoolean("bookGroupAudio", false)
+        set(value) {
+            App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
+        }
 }

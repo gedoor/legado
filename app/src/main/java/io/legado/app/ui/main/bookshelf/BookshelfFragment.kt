@@ -87,10 +87,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             synchronized(this) {
                 bookGroups.clear()
                 bookGroups.add(AppConst.bookGroupAll)
-                if (getPrefBoolean("bookGroupLocal", true)) {
+                if (AppConst.bookGroupLocalShow) {
                     bookGroups.add(AppConst.bookGroupLocal)
                 }
-                if (getPrefBoolean("bookGroupAudio", true)) {
+                if (AppConst.bookGroupAudioShow) {
                     bookGroups.add(AppConst.bookGroupAudio)
                 }
                 bookGroups.addAll(it)
