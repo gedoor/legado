@@ -93,7 +93,7 @@ object RssParserByRule {
         rssArticle.image = analyzeRule.getString(ruleImage)
         rssArticle.link = analyzeRule.getString(ruleLink)
         rssArticle.content = analyzeRule.getString(ruleContent)
-        if (rssArticle.title.isNullOrBlank()) {
+        if (rssArticle.title.isBlank()) {
             return null
         }
         return rssArticle
