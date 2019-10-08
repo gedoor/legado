@@ -8,6 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.NetworkUtils
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application) {
 
@@ -29,22 +30,26 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                             if (!ruleContent.isNullOrBlank()) {
                                 loadContent(rssArticle, ruleContent)
                             } else {
-                                urlLiveData.postValue(rssArticle.link)
+                                loadUrl(rssArticle)
                             }
-                        } ?: let {
-                            urlLiveData.postValue(rssArticle.link)
-                        }
+                        } ?: loadUrl(rssArticle)
                     }
                 }
             }
         }
+    }
 
+    private fun loadUrl(rssArticle: RssArticle) {
+        rssArticle.link?.let {
+            urlLiveData.postValue(NetworkUtils.getAbsoluteURL(rssArticle.origin, it))
+        }
     }
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
         execute {
             rssArticle.link?.let {
-                AnalyzeUrl(it).getResponseAsync().await().body()?.let { body ->
+                AnalyzeUrl(it, baseUrl = rssArticle.origin).getResponseAsync().await().body()
+                    ?.let { body ->
                     AnalyzeRule().apply {
                         setContent(body)
                         getString(ruleContent)?.let { content ->
