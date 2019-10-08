@@ -42,4 +42,10 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun clear(url: String, onFinally: () -> Unit) {
+        execute {
+            App.db.rssArtivleDao().delete(url)
+            loadContent(url, onFinally)
+        }
+    }
 }

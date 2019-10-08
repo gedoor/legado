@@ -18,4 +18,7 @@ interface RssArticleDao {
 
     @Update
     fun update(vararg rssArticle: RssArticle)
+
+    @Query("delete from rssArticles where origin = :origin")
+    fun delete(origin: String)
 }

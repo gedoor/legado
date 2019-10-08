@@ -1,6 +1,8 @@
 package io.legado.app.ui.rss.article
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -36,6 +38,25 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
                 refresh_progress_bar.isAutoLoading = false
             }
         }
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.rss_articles, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_clear -> {
+                intent.getStringExtra("url")?.let {
+                    refresh_progress_bar.isAutoLoading = true
+                    viewModel.loadContent(it) {
+                        refresh_progress_bar.isAutoLoading = false
+                    }
+                }
+            }
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initView() {
