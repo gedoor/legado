@@ -97,6 +97,7 @@ object RssParser {
             }
             eventType = xmlPullParser.next()
         }
+        articleList.reverse()
         for ((index: Int, item: RssArticle) in articleList.withIndex()) {
             item.order = System.currentTimeMillis() + index
         }
