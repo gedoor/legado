@@ -20,7 +20,7 @@ data class RssSource(
     var ruleTitle: String? = null,
     var ruleAuthor: String? = null,
     var rulePubDate: String? = null,
-    //类别
+    //类别规则
     var ruleCategories: String? = null,
     //webView规则
     var ruleDescription: String? = null,
