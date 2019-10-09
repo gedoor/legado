@@ -51,7 +51,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 AnalyzeUrl(it, baseUrl = rssArticle.origin).getResponseAsync().await().body()
                     ?.let { body ->
                         AnalyzeRule().apply {
-                            setContent(body)
+                            setContent(body, NetworkUtils.getAbsoluteURL(rssArticle.origin, it))
                             getString(ruleContent)?.let { content ->
                                 contentLiveData.postValue(content)
                             }

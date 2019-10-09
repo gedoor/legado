@@ -27,7 +27,7 @@ object RssParserByRule {
         } else {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
-            analyzeRule.setContent(xml)
+            analyzeRule.setContent(xml, rssSource.sourceUrl)
             var reverse = true
             if (ruleArticles.startsWith("-")) {
                 reverse = false
