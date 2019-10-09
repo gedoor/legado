@@ -131,7 +131,7 @@ object OldRule {
 
     private fun uaToHeader(ua: String?): String? {
         if (ua.isNullOrEmpty()) return null
-        val map = mapOf(Pair("user_agent", ua))
+        val map = mapOf(Pair("User-Agent", ua))
         return GSON.toJson(map)
     }
 

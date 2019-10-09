@@ -68,7 +68,7 @@ data class BookSource(
 
     fun getHeaderMap(): Map<String, String> {
         val headerMap = HashMap<String, String>()
-        headerMap["user_agent"] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
+        headerMap["User-Agent"] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
         header?.let {
             GSON.fromJsonObject<Map<String, String>>(header)?.let {
                 headerMap.putAll(it)
