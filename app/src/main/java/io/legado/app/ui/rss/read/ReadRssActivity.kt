@@ -20,7 +20,13 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     private fun initLiveData() {
         viewModel.contentLiveData.observe(this, Observer {
-            webView.loadData("<style>img{max-width:100%}</style>$it", "text/html", "utf-8")
+            webView.loadDataWithBaseURL(
+                viewModel.rssArticle?.link,
+                "<style>img{max-width:100%}</style>$it",
+                "text/html",
+                "utf-8",
+                viewModel.rssArticle?.link
+            )
         })
         viewModel.urlLiveData.observe(this, Observer {
             webView.loadUrl(it)

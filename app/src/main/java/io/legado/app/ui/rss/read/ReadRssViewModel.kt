@@ -11,7 +11,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application) {
-
+    var rssArticle: RssArticle? = null
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<String>()
 
@@ -20,8 +20,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
             val origin = intent.getStringExtra("origin")
             val title = intent.getStringExtra("title")
             if (origin != null && title != null) {
-                val rssArticle = App.db.rssArtivleDao().get(origin, title)
-                if (rssArticle != null) {
+                rssArticle = App.db.rssArtivleDao().get(origin, title)
+                rssArticle?.let { rssArticle ->
                     if (!rssArticle.description.isNullOrBlank()) {
                         contentLiveData.postValue(rssArticle.description)
                     } else {
@@ -50,13 +50,13 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
             rssArticle.link?.let {
                 AnalyzeUrl(it, baseUrl = rssArticle.origin).getResponseAsync().await().body()
                     ?.let { body ->
-                    AnalyzeRule().apply {
-                        setContent(body)
-                        getString(ruleContent)?.let { content ->
-                            contentLiveData.postValue(content)
+                        AnalyzeRule().apply {
+                            setContent(body)
+                            getString(ruleContent)?.let { content ->
+                                contentLiveData.postValue(content)
+                            }
                         }
                     }
-                }
             }
         }
     }
