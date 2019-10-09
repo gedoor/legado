@@ -14,8 +14,8 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initLiveData()
+        title = intent.getStringExtra("title")
         viewModel.initData(intent)
-
     }
 
     private fun initLiveData() {
