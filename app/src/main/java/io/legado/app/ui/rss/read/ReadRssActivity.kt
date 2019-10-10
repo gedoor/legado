@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_read.*
 
@@ -19,14 +20,17 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun initLiveData() {
-        viewModel.contentLiveData.observe(this, Observer {
-            webView.loadDataWithBaseURL(
-                viewModel.rssArticle?.link,
-                "<style>img{max-width:100%}</style>$it",
-                "text/html",
-                "utf-8",
-                viewModel.rssArticle?.link
-            )
+        viewModel.contentLiveData.observe(this, Observer { content ->
+            viewModel.rssArticle?.let {
+                val url = NetworkUtils.getAbsoluteURL(it.origin, it.link ?: "")
+                webView.loadDataWithBaseURL(
+                    url,
+                    "<style>img{max-width:100%}</style>$content",
+                    "text/html",
+                    "utf-8",
+                    url
+                )
+            }
         })
         viewModel.urlLiveData.observe(this, Observer {
             webView.loadUrl(it)
