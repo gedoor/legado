@@ -1,6 +1,7 @@
 package io.legado.app.ui.rss.read
 
 import android.os.Bundle
+import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -14,9 +15,14 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         get() = getViewModel(ReadRssViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        initLiveData()
         title = intent.getStringExtra("title")
+        initWebView()
+        initLiveData()
         viewModel.initData(intent)
+    }
+
+    private fun initWebView() {
+        webView.webViewClient = WebViewClient()
     }
 
     private fun initLiveData() {
