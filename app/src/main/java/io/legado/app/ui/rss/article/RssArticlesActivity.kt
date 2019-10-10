@@ -34,7 +34,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         })
         intent.getStringExtra("url")?.let {
             initData(it)
-            viewModel.clear(it) {
+            viewModel.loadContent(it) {
                 refresh_progress_bar.isAutoLoading = false
             }
         }
@@ -50,7 +50,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
             R.id.menu_clear -> {
                 intent.getStringExtra("url")?.let {
                     refresh_progress_bar.isAutoLoading = true
-                    viewModel.loadContent(it) {
+                    viewModel.clear(it) {
                         refresh_progress_bar.isAutoLoading = false
                     }
                 }
