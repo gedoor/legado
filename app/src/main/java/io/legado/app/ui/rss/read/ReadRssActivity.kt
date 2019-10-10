@@ -22,6 +22,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun initWebView() {
+        webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
     }
 
