@@ -15,6 +15,27 @@
         app:fitStatusBar="false"
         app:title="@string/rss_source_edit" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_is_enable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/is_enable" />
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_enable_js"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/is_enable" />
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"

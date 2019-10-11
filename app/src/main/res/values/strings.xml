@@ -492,6 +492,7 @@
     <string name="music">音乐</string>
     <string name="audio">音频</string>
     <string name="is_enable">启用</string>
+    <string name="enable_js">启用JS</string>
     <string name="all_source">全部书源</string>
     <string name="cannot_empty">输入不能为空</string>
     <string name="clear_find_cache">清空发现缓存</string>

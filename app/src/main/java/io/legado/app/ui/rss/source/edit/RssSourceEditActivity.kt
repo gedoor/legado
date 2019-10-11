@@ -24,7 +24,7 @@ import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_book_source_edit.*
+import kotlinx.android.synthetic.main.activity_rss_source_edit.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
@@ -99,6 +99,10 @@ class RssSourceEditActivity :
     }
 
     private fun upRecyclerView(rssSource: RssSource?) {
+        rssSource?.let {
+            cb_is_enable.isChecked = rssSource.enabled
+            cb_enable_js.isChecked = rssSource.enableJs
+        }
         sourceEntities.clear()
         sourceEntities.apply {
             add(EditEntity("sourceName", rssSource?.sourceName, R.string.rss_source_name))
@@ -132,6 +136,8 @@ class RssSourceEditActivity :
 
     private fun getRssSource(): RssSource? {
         val source = viewModel.sourceLiveData.value ?: RssSource()
+        source.enabled = cb_is_enable.isChecked
+        source.enableJs = cb_enable_js.isChecked
         sourceEntities.forEach {
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
