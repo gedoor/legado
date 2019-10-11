@@ -75,7 +75,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
 
     private fun initData(origin: String) {
         rssArticlesData?.removeObservers(this)
-        rssArticlesData = App.db.rssArtivleDao().liveByOrigin(origin)
+        rssArticlesData = App.db.rssArticleDao().liveByOrigin(origin)
         rssArticlesData?.observe(this, Observer {
             adapter?.setItems(it)
         })

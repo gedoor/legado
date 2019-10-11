@@ -25,7 +25,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             Rss.getArticles(rssSource, this)
                 .onSuccess(IO) {
                     it?.let {
-                        App.db.rssArtivleDao().insert(*it.toTypedArray())
+                        App.db.rssArticleDao().insert(*it.toTypedArray())
                     }
                 }.onError {
                     toast(it.localizedMessage)
@@ -38,13 +38,13 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     fun read(rssArticle: RssArticle) {
         execute {
             rssArticle.read = true
-            App.db.rssArtivleDao().update(rssArticle)
+            App.db.rssArticleDao().update(rssArticle)
         }
     }
 
     fun clear(url: String, onFinally: () -> Unit) {
         execute {
-            App.db.rssArtivleDao().delete(url)
+            App.db.rssArticleDao().delete(url)
             loadContent(url, onFinally)
         }
     }

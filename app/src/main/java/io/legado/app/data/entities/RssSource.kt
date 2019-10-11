@@ -27,5 +27,6 @@ data class RssSource(
     var ruleImage: String? = null,
     var ruleLink: String? = null,
     var ruleContent: String? = null,
+    var enableJs: Boolean = false,
     var customOrder: Int = 0
 ) : Parcelable

@@ -6,12 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssArticle
+import io.legado.app.data.entities.RssSource
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     var rssArticle: RssArticle? = null
+    val rssSourceLiveData = MutableLiveData<RssSource>()
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<String>()
 
@@ -19,14 +21,18 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
         execute {
             val origin = intent.getStringExtra("origin")
             val title = intent.getStringExtra("title")
+            val rssSource = App.db.rssSourceDao().getByKey(origin)
+            rssSource?.let {
+                rssSourceLiveData.postValue(it)
+            }
             if (origin != null && title != null) {
-                rssArticle = App.db.rssArtivleDao().get(origin, title)
+                rssArticle = App.db.rssArticleDao().get(origin, title)
                 rssArticle?.let { rssArticle ->
                     if (!rssArticle.description.isNullOrBlank()) {
                         contentLiveData.postValue(rssArticle.description)
                     } else {
-                        App.db.rssSourceDao().getByKey(rssArticle.origin)?.let { source ->
-                            val ruleContent = source.ruleContent
+                        rssSource?.let {
+                            val ruleContent = rssSource.ruleContent
                             if (!ruleContent.isNullOrBlank()) {
                                 loadContent(rssArticle, ruleContent)
                             } else {

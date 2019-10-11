@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.read
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
@@ -16,17 +17,18 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title = intent.getStringExtra("title")
-        initWebView()
+        webView.webViewClient = WebViewClient()
         initLiveData()
         viewModel.initData(intent)
     }
 
-    private fun initWebView() {
-        webView.settings.javaScriptEnabled = true
-        webView.webViewClient = WebViewClient()
-    }
-
+    @SuppressLint("SetJavaScriptEnabled")
     private fun initLiveData() {
+        viewModel.rssSourceLiveData.observe(this, Observer {
+            if (it.enableJs) {
+                webView.settings.javaScriptEnabled = true
+            }
+        })
         viewModel.contentLiveData.observe(this, Observer { content ->
             viewModel.rssArticle?.let {
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link ?: "")
