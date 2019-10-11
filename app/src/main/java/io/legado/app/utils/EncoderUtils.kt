@@ -3,7 +3,7 @@ package io.legado.app.utils
 import android.util.Base64
 import java.nio.charset.StandardCharsets
 
-object Encoder {
+object EncoderUtils {
 
     fun escape(src: String): String {
         val tmp = StringBuilder()

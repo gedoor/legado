@@ -1,7 +1,7 @@
 package io.legado.app.help
 
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.Encoder
+import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.StringUtils
 import java.util.regex.Pattern
 
@@ -27,7 +27,7 @@ class JsExtensions {
      * js实现解码,不能删
      */
     fun base64Decoder(str: String): String {
-        return Encoder.base64Decoder(str)
+        return EncoderUtils.base64Decoder(str)
     }
 
     /**

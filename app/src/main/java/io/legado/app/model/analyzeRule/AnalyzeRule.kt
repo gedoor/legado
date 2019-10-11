@@ -547,7 +547,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * js实现解码,不能删
      */
     fun base64Decoder(str: String): String {
-        return Encoder.base64Decoder(str)
+        return EncoderUtils.base64Decoder(str)
     }
 
     /**

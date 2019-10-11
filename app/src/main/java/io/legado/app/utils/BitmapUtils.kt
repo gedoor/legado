@@ -19,7 +19,7 @@ import kotlin.math.sqrt
 
 
 @Suppress("unused", "WeakerAccess")
-object BitmapUtil {
+object BitmapUtils {
     /**
      * 从path中获取图片信息,在通过BitmapFactory.decodeFile(String path)方法将突破转成Bitmap时，
      * 遇到大一些的图片，我们经常会遇到OOM(Out Of Memory)的问题。所以用到了我们上面提到的BitmapFactory.Options这个类。

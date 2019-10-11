@@ -176,7 +176,7 @@ object ReadBookConfig {
                     1 -> {
                         BitmapDrawable(
                             resources,
-                            BitmapUtil.decodeBitmap(
+                            BitmapUtils.decodeBitmap(
                                 App.INSTANCE,
                                 "bg" + File.separator + bgStr(),
                                 width,
@@ -186,7 +186,7 @@ object ReadBookConfig {
                     }
                     else -> BitmapDrawable(
                         resources,
-                        BitmapUtil.decodeBitmap(bgStr(), width, height)
+                        BitmapUtils.decodeBitmap(bgStr(), width, height)
                     )
                 }
             } catch (e: Exception) {

@@ -179,7 +179,7 @@ class AnalyzeUrl(
                     fieldMap[queryM[0]] = URLEncoder.encode(value, "UTF-8")
                 }
             } else if (charset == "escape") {
-                fieldMap[queryM[0]] = Encoder.escape(value)
+                fieldMap[queryM[0]] = EncoderUtils.escape(value)
             } else {
                 fieldMap[queryM[0]] = URLEncoder.encode(value, charset)
             }
