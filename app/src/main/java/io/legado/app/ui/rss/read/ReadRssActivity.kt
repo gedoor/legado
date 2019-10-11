@@ -2,6 +2,7 @@ package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
 import io.legado.app.R
@@ -17,9 +18,14 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title = intent.getStringExtra("title")
-        webView.webViewClient = WebViewClient()
+        initWebView()
         initLiveData()
         viewModel.initData(intent)
+    }
+
+    private fun initWebView() {
+        webView.webViewClient = WebViewClient()
+        webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
     }
 
     @SuppressLint("SetJavaScriptEnabled")
