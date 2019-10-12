@@ -26,6 +26,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     private fun initWebView() {
         webView.webViewClient = WebViewClient()
         webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        webView.settings.domStorageEnabled = true
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -38,13 +39,21 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         viewModel.contentLiveData.observe(this, Observer { content ->
             viewModel.rssArticle?.let {
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link ?: "")
-                webView.loadDataWithBaseURL(
-                    url,
-                    "<style>img{max-width:100%}</style>$content",
-                    "text/html",
-                    "utf-8",
-                    url
-                )
+                if (viewModel.rssSourceLiveData.value?.loadWithBaseUrl == true) {
+                    webView.loadDataWithBaseURL(
+                        url,
+                        "<style>img{max-width:100%}</style>$content",
+                        "text/html",
+                        "utf-8",
+                        url
+                    )
+                } else {
+                    webView.loadData(
+                        "<style>img{max-width:100%}</style>$content",
+                        "text/html",
+                        "utf-8"
+                    )
+                }
             }
         })
         viewModel.urlLiveData.observe(this, Observer {

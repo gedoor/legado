@@ -18,7 +18,6 @@ data class RssSource(
     //列表规则
     var ruleArticles: String? = null,
     var ruleTitle: String? = null,
-    var ruleAuthor: String? = null,
     var rulePubDate: String? = null,
     //类别规则
     var ruleCategories: String? = null,
@@ -28,5 +27,6 @@ data class RssSource(
     var ruleLink: String? = null,
     var ruleContent: String? = null,
     var enableJs: Boolean = false,
+    var loadWithBaseUrl: Boolean = true,
     var customOrder: Int = 0
 ) : Parcelable

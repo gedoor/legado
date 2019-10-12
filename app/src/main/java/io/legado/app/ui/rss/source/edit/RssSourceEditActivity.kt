@@ -102,6 +102,7 @@ class RssSourceEditActivity :
         rssSource?.let {
             cb_is_enable.isChecked = rssSource.enabled
             cb_enable_js.isChecked = rssSource.enableJs
+            cb_enable_base_url.isChecked = rssSource.loadWithBaseUrl
         }
         sourceEntities.clear()
         sourceEntities.apply {
@@ -111,7 +112,6 @@ class RssSourceEditActivity :
             add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.rss_source_group))
             add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.rss_rule_articles))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.rss_rule_title))
-            add(EditEntity("ruleAuthor", rssSource?.ruleAuthor, R.string.rss_rule_author))
             add(EditEntity("rulePubDate", rssSource?.rulePubDate, R.string.rss_rule_date))
             add(
                 EditEntity(
@@ -138,6 +138,7 @@ class RssSourceEditActivity :
         val source = viewModel.sourceLiveData.value ?: RssSource()
         source.enabled = cb_is_enable.isChecked
         source.enableJs = cb_enable_js.isChecked
+        source.loadWithBaseUrl = cb_enable_base_url.isChecked
         sourceEntities.forEach {
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
@@ -146,7 +147,6 @@ class RssSourceEditActivity :
                 "sourceGroup" -> source.sourceGroup = it.value
                 "ruleArticles" -> source.ruleArticles = it.value
                 "ruleTitle" -> source.ruleTitle = it.value
-                "ruleAuthor" -> source.ruleAuthor = it.value
                 "rulePubDate" -> source.rulePubDate = it.value
                 "ruleCategories" -> source.ruleCategories = it.value
                 "ruleDescription" -> source.ruleDescription = it.value

@@ -35,12 +35,10 @@ object RssParserByRule {
             }
             val collections = analyzeRule.getElements(ruleArticles)
             val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle ?: "")
-            val ruleAuthor = analyzeRule.splitSourceRule(rssSource.ruleAuthor ?: "")
             val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate ?: "")
             val ruleCategories = analyzeRule.splitSourceRule(rssSource.ruleCategories ?: "")
             val ruleDescription = analyzeRule.splitSourceRule(rssSource.ruleDescription ?: "")
             val ruleImage = analyzeRule.splitSourceRule(rssSource.ruleImage ?: "")
-            val ruleContent = analyzeRule.splitSourceRule(rssSource.ruleContent ?: "")
             val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink ?: "")
             for ((index, item) in collections.withIndex()) {
                 getItem(
@@ -48,12 +46,10 @@ object RssParserByRule {
                     analyzeRule,
                     index == 0,
                     ruleTitle,
-                    ruleAuthor,
                     rulePubDate,
                     ruleCategories,
                     ruleDescription,
                     ruleImage,
-                    ruleContent,
                     ruleLink
                 )?.let {
                     it.origin = rssSource.sourceUrl
@@ -75,24 +71,20 @@ object RssParserByRule {
         analyzeRule: AnalyzeRule,
         printLog: Boolean,
         ruleTitle: List<AnalyzeRule.SourceRule>,
-        ruleAuthor: List<AnalyzeRule.SourceRule>,
         rulePubDate: List<AnalyzeRule.SourceRule>,
         ruleCategories: List<AnalyzeRule.SourceRule>,
         ruleDescription: List<AnalyzeRule.SourceRule>,
         ruleImage: List<AnalyzeRule.SourceRule>,
-        ruleContent: List<AnalyzeRule.SourceRule>,
         ruleLink: List<AnalyzeRule.SourceRule>
     ): RssArticle? {
         val rssArticle = RssArticle()
         analyzeRule.setContent(item)
         rssArticle.title = analyzeRule.getString(ruleTitle)
-        rssArticle.author = analyzeRule.getString(ruleAuthor)
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)
         rssArticle.categories = analyzeRule.getString(ruleCategories)
         rssArticle.description = analyzeRule.getString(ruleDescription)
-        rssArticle.image = analyzeRule.getString(ruleImage)
+        rssArticle.image = analyzeRule.getString(ruleImage, true)
         rssArticle.link = analyzeRule.getString(ruleLink)
-        rssArticle.content = analyzeRule.getString(ruleContent)
         if (rssArticle.title.isBlank()) {
             return null
         }
