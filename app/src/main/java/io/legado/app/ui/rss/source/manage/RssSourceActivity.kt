@@ -82,6 +82,9 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
         }
+        if (item.groupId == R.id.source_group) {
+            search_view.setQuery(item.title, true)
+        }
         return super.onCompatOptionsItemSelected(item)
     }
 
@@ -113,6 +116,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                initLiveDataSource(newText)
                 return false
             }
         })
