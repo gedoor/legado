@@ -11,6 +11,7 @@ import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
+import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -93,6 +94,15 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                     }
                 }
                 App.db.bookSourceDao().update(*sources.toTypedArray())
+            }
+        }
+    }
+
+    fun importSourceFromFilePath(path: String) {
+        execute {
+            val file = File(path)
+            if (file.exists()) {
+                importSource(file.readText())
             }
         }
     }

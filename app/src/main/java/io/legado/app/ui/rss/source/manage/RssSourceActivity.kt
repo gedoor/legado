@@ -37,7 +37,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     override val viewModel: RssSourceViewModel
         get() = getViewModel(RssSourceViewModel::class.java)
 
-    private val import_source = 13141
+    private val importSource = 13141
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
@@ -145,13 +145,13 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "text/*"//设置类型
-        startActivityForResult(intent, import_source)
+        startActivityForResult(intent, importSource)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            import_source -> if (resultCode == Activity.RESULT_OK) {
+            importSource -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let {
                     FileUtils.getPath(this, it)?.let { path ->
                         viewModel.importSourceFromFilePath(path)

@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.source.manage
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -19,7 +20,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
-import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
@@ -30,10 +30,7 @@ import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.service.CheckSourceService
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.qrcode.QrCodeActivity
-import io.legado.app.utils.ACache
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
@@ -50,6 +47,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         get() = getViewModel(BookSourceViewModel::class.java)
 
     private val qrRequestCode = 101
+    private val importSource = 13141
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = hashSetOf<String>()
@@ -87,7 +85,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 supportFragmentManager,
                 "groupManage"
             )
-            R.id.menu_import_source_local -> Restore.importYueDuData(this)
+            R.id.menu_import_source_local -> selectFile()
             R.id.menu_select_all -> adapter.selectAll()
             R.id.menu_revert_selection -> adapter.revertSelection()
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
@@ -207,6 +205,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }.show().applyTint()
     }
 
+    private fun selectFile() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "text/*"//设置类型
+        startActivityForResult(intent, importSource)
+    }
 
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let {
@@ -242,10 +246,15 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            qrRequestCode -> {
-                if (resultCode == RESULT_OK) {
-                    data?.getStringExtra("result")?.let {
+            qrRequestCode -> if (resultCode == RESULT_OK) {
+                data?.getStringExtra("result")?.let {
 
+                }
+            }
+            importSource -> if (resultCode == Activity.RESULT_OK) {
+                data?.data?.let {
+                    FileUtils.getPath(this, it)?.let { path ->
+                        viewModel.importSourceFromFilePath(path)
                     }
                 }
             }
