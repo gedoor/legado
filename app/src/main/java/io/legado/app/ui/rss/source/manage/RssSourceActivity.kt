@@ -81,6 +81,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_import_source_local -> selectFile()
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
+            R.id.menu_group_manage -> GroupManageDialog()
+                .show(supportFragmentManager, "rssGroupManage")
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)
