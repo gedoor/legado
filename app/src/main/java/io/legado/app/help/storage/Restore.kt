@@ -76,6 +76,7 @@ object Restore {
                     File(App.INSTANCE.filesDir.absolutePath + File.separator + ReadBookConfig.readConfigFileName)
                 if (file.exists()) {
                     file.copyTo(configFile, true)
+                    ReadBookConfig.upConfig()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
