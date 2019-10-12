@@ -1,5 +1,7 @@
 package io.legado.app.ui.rss.source.manage
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -20,6 +22,7 @@ import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.activity_rss_source.*
@@ -34,6 +37,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     override val viewModel: RssSourceViewModel
         get() = getViewModel(RssSourceViewModel::class.java)
 
+    private val import_source = 13141
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
@@ -66,6 +70,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
+            R.id.menu_import_source_local -> selectFile()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -134,6 +139,26 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             adapter.setItemsNoNotify(it)
             diffResult.dispatchUpdatesTo(adapter)
         })
+    }
+
+    private fun selectFile() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "text/*"//设置类型
+        startActivityForResult(intent, import_source)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            import_source -> if (resultCode == Activity.RESULT_OK) {
+                data?.data?.let {
+                    FileUtils.getPath(this, it)?.let { path ->
+                        viewModel.importSourceFromFilePath(path)
+                    }
+                }
+            }
+        }
     }
 
     override fun del(source: RssSource) {

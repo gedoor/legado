@@ -4,6 +4,9 @@ import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import java.io.File
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -48,5 +51,20 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         execute {
             App.db.rssSourceDao().delSection(*ids.toTypedArray())
         }
+    }
+
+    fun importSourceFromFilePath(path: String) {
+        execute {
+            val file = File(path)
+            if (file.exists()) {
+                GSON.fromJsonArray<RssSource>(file.readText())?.let {
+                    App.db.rssSourceDao().insert(*it.toTypedArray())
+                }
+            }
+        }
+    }
+
+    fun importSource(sourceStr: String) {
+
     }
 }

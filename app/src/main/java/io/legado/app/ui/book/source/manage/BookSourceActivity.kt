@@ -80,22 +80,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_add_book_source -> {
                 this.startActivity<BookSourceEditActivity>()
             }
-            R.id.menu_import_book_source_qr -> {
+            R.id.menu_import_source_qr -> {
                 this.startActivityForResult<QrCodeActivity>(qrRequestCode)
             }
             R.id.menu_group_manage -> GroupManageDialog().show(
                 supportFragmentManager,
                 "groupManage"
             )
-            R.id.menu_import_book_source_local -> Restore.importYueDuData(this)
+            R.id.menu_import_source_local -> Restore.importYueDuData(this)
             R.id.menu_select_all -> adapter.selectAll()
             R.id.menu_revert_selection -> adapter.revertSelection()
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
-            R.id.menu_check_book_source ->
+            R.id.menu_check_source ->
                 startService<CheckSourceService>(Pair("data", adapter.getSelectionIds()))
-            R.id.menu_import_book_source_onLine -> showImportDialog()
+            R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)
