@@ -3,6 +3,7 @@ package io.legado.app.help.storage
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.FileHelp
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import org.jetbrains.anko.defaultSharedPreferences
@@ -25,6 +26,7 @@ object Backup {
             backupBookSource(path)
             backupRssSource(path)
             backupReplaceRule(path)
+            backupReadConfig(path)
             backupPreference(path)
             WebDavHelp.backUpWebDav(path)
             uiThread {
@@ -40,6 +42,8 @@ object Backup {
             backupBookSource(path)
             backupRssSource(path)
             backupReplaceRule(path)
+            backupReadConfig(path)
+            backupPreference(path)
             WebDavHelp.backUpWebDav(path)
         }
     }
@@ -81,6 +85,13 @@ object Backup {
                 val file = FileHelp.getFile(path + File.separator + "replaceRule.json")
                 file.writeText(json)
             }
+        }
+    }
+
+    private fun backupReadConfig(path: String) {
+        GSON.toJson(ReadBookConfig.configList)?.let {
+            FileHelp.getFile(path + File.separator + ReadBookConfig.readConfigFileName)
+                .writeText(it)
         }
     }
 

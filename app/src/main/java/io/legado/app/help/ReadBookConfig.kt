@@ -19,8 +19,8 @@ import java.io.IOException
  * 阅读界面配置
  */
 object ReadBookConfig {
-    private const val fileName = "readConfig.json"
-    private val configList: ArrayList<Config> = arrayListOf<Config>()
+    const val readConfigFileName = "readConfig.json"
+    val configList: ArrayList<Config> = arrayListOf<Config>()
         .apply {
             upConfig(this)
         }
@@ -35,11 +35,12 @@ object ReadBookConfig {
     }
 
     fun upConfig(list: ArrayList<Config> = configList) {
-        val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + fileName)
+        val configFile =
+            File(App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName)
         val json = if (configFile.exists()) {
             String(configFile.readBytes())
         } else {
-            String(App.INSTANCE.assets.open(fileName).readBytes())
+            String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
         }
         try {
             GSON.fromJsonArray<Config>(json)?.let {
@@ -63,7 +64,8 @@ object ReadBookConfig {
     fun save() {
         GlobalScope.launch(IO) {
             val json = GSON.toJson(configList)
-            val configFile = File(App.INSTANCE.filesDir.absolutePath + File.separator + fileName)
+            val configFile =
+                File(App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName)
             //获取流并存储
             try {
                 BufferedWriter(FileWriter(configFile)).use { writer ->
@@ -78,7 +80,7 @@ object ReadBookConfig {
 
     fun reset() {
         try {
-            val json = String(App.INSTANCE.assets.open(fileName).readBytes())
+            val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
             GSON.fromJsonArray<Config>(json)?.let {
                 configList.clear()
                 configList.addAll(it)

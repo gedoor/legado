@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.FileHelp
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.storage.Backup.defaultPath
 import io.legado.app.utils.*
 import org.jetbrains.anko.defaultSharedPreferences
@@ -64,6 +65,17 @@ object Restore {
                 val json = file.readText()
                 GSON.fromJsonArray<ReplaceRule>(json)?.let {
                     App.db.replaceRuleDao().insert(*it.toTypedArray())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            try {
+                val file =
+                    FileHelp.getFile(path + File.separator + ReadBookConfig.readConfigFileName)
+                val configFile =
+                    File(App.INSTANCE.filesDir.absolutePath + File.separator + ReadBookConfig.readConfigFileName)
+                if (file.exists()) {
+                    file.copyTo(configFile, true)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
