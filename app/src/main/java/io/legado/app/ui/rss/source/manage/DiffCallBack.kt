@@ -26,6 +26,7 @@ class DiffCallBack(
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
         return oldItem.sourceName == newItem.sourceName
+                && oldItem.sourceGroup == newItem.sourceGroup
                 && oldItem.enabled == newItem.enabled
     }
 
