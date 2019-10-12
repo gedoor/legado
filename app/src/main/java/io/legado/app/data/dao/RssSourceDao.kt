@@ -51,4 +51,10 @@ interface RssSourceDao {
 
     @Query("delete from rssSources where sourceUrl = :sourceUrl")
     fun delete(sourceUrl: String)
+
+    @get:Query("select * from rssSources where sourceGroup is null or sourceGroup = ''")
+    val noGroup: List<RssSource>
+
+    @Query("select * from rssSources where sourceGroup like '%' || :group || '%'")
+    fun getByGroup(group: String): List<RssSource>
 }
