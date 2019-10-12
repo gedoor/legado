@@ -11,27 +11,29 @@ import kotlinx.coroutines.Dispatchers.IO
 
 
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
-
+    var rssSource: RssSource? = null
     val titleLiveData = MutableLiveData<String>()
 
     fun loadContent(url: String, onFinally: () -> Unit) {
         execute {
-            var rssSource = App.db.rssSourceDao().getByKey(url)
-            if (rssSource == null) {
+            rssSource = App.db.rssSourceDao().getByKey(url)
+            rssSource?.let {
+                titleLiveData.postValue(it.sourceName)
+            } ?: let {
                 rssSource = RssSource(sourceUrl = url)
-            } else {
-                titleLiveData.postValue(rssSource.sourceName)
             }
-            Rss.getArticles(rssSource, this)
-                .onSuccess(IO) {
-                    it?.let {
-                        App.db.rssArticleDao().insert(*it.toTypedArray())
+            rssSource?.let {
+                Rss.getArticles(it, this)
+                    .onSuccess(IO) {
+                        it?.let {
+                            App.db.rssArticleDao().insert(*it.toTypedArray())
+                        }
+                    }.onError {
+                        toast(it.localizedMessage)
+                    }.onFinally {
+                        onFinally()
                     }
-                }.onError {
-                    toast(it.localizedMessage)
-                }.onFinally {
-                    onFinally()
-                }
+            }
         }
     }
 

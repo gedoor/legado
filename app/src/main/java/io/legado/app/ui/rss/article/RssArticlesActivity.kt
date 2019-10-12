@@ -14,9 +14,11 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
+import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 
 class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activity_rss_artivles),
     RssArticlesAdapter.CallBack {
@@ -24,6 +26,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     override val viewModel: RssArticlesViewModel
         get() = getViewModel(RssArticlesViewModel::class.java)
 
+    private val editSource = 12319
     private var adapter: RssArticlesAdapter? = null
     private var rssArticlesData: LiveData<List<RssArticle>>? = null
 
@@ -47,6 +50,9 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
+                startActivityForResult<RssSourceEditActivity>(editSource, Pair("data", it))
+            }
             R.id.menu_clear -> {
                 intent.getStringExtra("url")?.let {
                     refresh_progress_bar.isAutoLoading = true
