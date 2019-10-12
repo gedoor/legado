@@ -75,12 +75,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_add_book_source -> {
-                this.startActivity<BookSourceEditActivity>()
-            }
-            R.id.menu_import_source_qr -> {
-                this.startActivityForResult<QrCodeActivity>(qrRequestCode)
-            }
+            R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
+            R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage -> GroupManageDialog().show(
                 supportFragmentManager,
                 "groupManage"
@@ -248,7 +244,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         when (requestCode) {
             qrRequestCode -> if (resultCode == RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-
+                    viewModel.importSource(it)
                 }
             }
             importSource -> if (resultCode == Activity.RESULT_OK) {

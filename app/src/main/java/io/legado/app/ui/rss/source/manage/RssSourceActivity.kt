@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.source.manage
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -19,16 +20,22 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.cancelButton
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
+import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
@@ -37,6 +44,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     override val viewModel: RssSourceViewModel
         get() = getViewModel(RssSourceViewModel::class.java)
 
+    private val qrRequestCode = 101
     private val importSource = 13141
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
@@ -71,6 +79,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
             R.id.menu_import_source_local -> selectFile()
+            R.id.menu_import_source_onLine -> showImportDialog()
+            R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -141,6 +151,38 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         })
     }
 
+    @SuppressLint("InflateParams")
+    private fun showImportDialog() {
+        val aCache = ACache.get(this, cacheDir = false)
+        val cacheUrls: MutableList<String> = aCache
+            .getAsString("sourceUrl")
+            ?.splitNotBlank(",")
+            ?.toMutableList() ?: mutableListOf()
+        alert(titleResource = R.string.import_book_source_on_line) {
+            var editText: ATEAutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                    edit_view.setFilterValues(cacheUrls) {
+                        cacheUrls.remove(it)
+                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                    }
+                }
+            }
+            okButton {
+                val text = editText?.text?.toString()
+                text?.let {
+                    if (!cacheUrls.contains(it)) {
+                        cacheUrls.add(0, it)
+                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                    }
+                    viewModel.importSource(it)
+                }
+            }
+            cancelButton()
+        }.show().applyTint()
+    }
+
     private fun selectFile() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -156,6 +198,11 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                     FileUtils.getPath(this, it)?.let { path ->
                         viewModel.importSourceFromFilePath(path)
                     }
+                }
+            }
+            qrRequestCode -> if (resultCode == RESULT_OK) {
+                data?.getStringExtra("result")?.let {
+                    viewModel.importSource(it)
                 }
             }
         }
