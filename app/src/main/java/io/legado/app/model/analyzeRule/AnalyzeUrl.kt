@@ -112,7 +112,7 @@ class AnalyzeUrl(
                     ruleStr = ruleStr.substring(4)
                     ruleUrl = evalJS(ruleStr, ruleUrl, page, key, book) as String
                 }
-                else -> ruleUrl = ruleStr
+                else -> ruleUrl = ruleStr.replace("@result", ruleUrl)
             }
         }
     }
