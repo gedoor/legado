@@ -34,7 +34,7 @@ object LogUtils {
         FileHelp.getFolder(logFolder)
         FileHandler(
             logFolder + File.separator + "app.log",
-            2048,
+            10240,
             10
         ).apply {
             formatter = object : Formatter() {
