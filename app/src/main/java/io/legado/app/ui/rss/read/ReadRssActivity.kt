@@ -2,6 +2,8 @@ package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
@@ -21,6 +23,19 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         initWebView()
         initLiveData()
         viewModel.initData(intent)
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.rss_read, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_rss_star -> {
+            }
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initWebView() {
