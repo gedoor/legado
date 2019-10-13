@@ -3,7 +3,6 @@ package io.legado.app.receiver
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.MainActivity
@@ -13,8 +12,8 @@ class SharedReceiverActivity : AppCompatActivity() {
 
     private val receivingType = "text/plain"
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         initIntent()
         finish()
     }
@@ -25,7 +24,6 @@ class SharedReceiverActivity : AppCompatActivity() {
                 if (openUrl(it)) {
                     startActivity<SearchActivity>(Pair("key", it))
                 }
-                finish()
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
             && Intent.ACTION_PROCESS_TEXT == intent.action
@@ -35,7 +33,6 @@ class SharedReceiverActivity : AppCompatActivity() {
                 if (openUrl(it)) {
                     startActivity<SearchActivity>(Pair("key", it))
                 }
-                finish()
             }
         }
     }
