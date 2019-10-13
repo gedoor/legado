@@ -38,7 +38,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         when (item.itemId) {
             R.id.menu_rss_star -> viewModel.rssArticleLiveData.value?.let {
                 it.star = !it.star
-                viewModel.upRssArticle(it)
+                viewModel.upRssArticle(it) { upStarMenu() }
             }
         }
         return super.onCompatOptionsItemSelected(item)

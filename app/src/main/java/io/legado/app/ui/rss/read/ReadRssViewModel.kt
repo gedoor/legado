@@ -67,9 +67,11 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun upRssArticle(rssArticle: RssArticle) {
+    fun upRssArticle(rssArticle: RssArticle, success: () -> Unit) {
         execute {
             App.db.rssArticleDao().update(rssArticle)
+        }.onSuccess {
+            success()
         }
     }
 }
