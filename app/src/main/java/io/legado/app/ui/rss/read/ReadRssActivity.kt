@@ -9,6 +9,8 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.lib.theme.DrawableUtils
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_read.*
@@ -91,5 +93,6 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             starMenuItem?.setIcon(R.drawable.ic_star_border)
             starMenuItem?.setTitle(R.string.w_store_up)
         }
+        DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
     }
 }
