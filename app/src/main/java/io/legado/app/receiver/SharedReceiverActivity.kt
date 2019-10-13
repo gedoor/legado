@@ -48,9 +48,7 @@ class SharedReceiverActivity : AppCompatActivity() {
                 result.append("\n").append(url.trim { it <= ' ' })
         }
         return if (result.length > 1) {
-            val intent = Intent()
-            intent.setClass(this@SharedReceiverActivity, MainActivity::class.java)
-            this.startActivity(intent)
+            startActivity<MainActivity>()
             false
         } else {
             true
