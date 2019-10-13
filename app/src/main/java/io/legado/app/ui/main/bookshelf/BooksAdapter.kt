@@ -38,7 +38,6 @@ class BooksAdapter(private val callBack: CallBack) :
         for (i in 0 until itemCount) {
             getItem(i)?.let {
                 if (it.bookUrl == bookUrl) {
-                    LogUtils.d("up", it.name)
                     notifyItemChanged(i)
                     return
                 }
@@ -82,11 +81,12 @@ class BooksAdapter(private val callBack: CallBack) :
                 callBack.openBookInfo(book)
                 true
             }
-            LogUtils.d(book.name, callBack.isUpdate(book.bookUrl).toString())
             if (book.origin != BookType.local && callBack.isUpdate(book.bookUrl)) {
+                LogUtils.d(book.name, "loading")
                 bv_unread.invisible()
                 rl_loading.show()
             } else {
+                LogUtils.d(book.name, "loadingHide")
                 rl_loading.hide()
                 bv_unread.setBadgeCount(book.getUnreadChapterNum())
                 bv_unread.setHighlight(book.lastCheckCount > 0)
