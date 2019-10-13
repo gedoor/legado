@@ -103,11 +103,16 @@ class AnalyzeUrl(
         }
         for (rule in ruleList) {
             var ruleStr = rule
-            if (ruleStr.startsWith("<js>")) {
-                ruleStr = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
-                ruleUrl = evalJS(ruleStr, ruleUrl, page, key, book) as String
-            } else {
-                ruleUrl = ruleStr.replace("@result", ruleUrl)
+            when {
+                ruleStr.startsWith("<js>") -> {
+                    ruleStr = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
+                    ruleUrl = evalJS(ruleStr, ruleUrl, page, key, book) as String
+                }
+                ruleStr.startsWith("@js", true) -> {
+                    ruleStr = ruleStr.substring(4)
+                    ruleUrl = evalJS(ruleStr, ruleUrl, page, key, book) as String
+                }
+                else -> ruleUrl = ruleStr
             }
         }
     }
