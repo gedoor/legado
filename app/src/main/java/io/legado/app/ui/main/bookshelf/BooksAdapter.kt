@@ -10,9 +10,8 @@ import io.legado.app.R
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.LogUtils
-import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.invisible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -63,11 +62,10 @@ class BooksAdapter(private val callBack: CallBack) :
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         init {
-            itemView.setBackgroundColor(ThemeStore.backgroundColor(itemView.context))
+            ATH.applyBackgroundTint(itemView)
         }
 
         fun bind(book: Book, callBack: CallBack) = with(itemView) {
-            this.setBackgroundColor(context.getCompatColor(R.color.background))
             tv_name.text = book.name
             tv_author.text = book.author
             tv_read.text = book.durChapterTitle
