@@ -82,6 +82,7 @@ class BooksAdapter(private val callBack: CallBack) :
                 callBack.openBookInfo(book)
                 true
             }
+            LogUtils.d(book.name, callBack.isUpdate(book.bookUrl).toString())
             if (book.origin != BookType.local && callBack.isUpdate(book.bookUrl)) {
                 bv_unread.invisible()
                 rl_loading.show()
