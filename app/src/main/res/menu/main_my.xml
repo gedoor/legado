@@ -12,13 +12,13 @@
 
     <item
         android:id="@+id/menu_backup"
-        android:title="@string/help"
+        android:title="@string/backup"
         android:icon="@drawable/ic_backup"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_restore"
-        android:title="@string/help"
+        android:title="@string/restore"
         android:icon="@drawable/ic_restore"
         app:showAsAction="always" />
 
