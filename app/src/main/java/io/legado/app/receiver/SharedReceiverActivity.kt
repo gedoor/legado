@@ -9,7 +9,7 @@ import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.MainActivity
 import org.jetbrains.anko.startActivity
 
-class ReceivingSharedActivity : AppCompatActivity() {
+class SharedReceiverActivity : AppCompatActivity() {
 
     private val receivingType = "text/plain"
 
@@ -51,7 +51,7 @@ class ReceivingSharedActivity : AppCompatActivity() {
         }
         return if (result.length > 1) {
             val intent = Intent()
-            intent.setClass(this@ReceivingSharedActivity, MainActivity::class.java)
+            intent.setClass(this@SharedReceiverActivity, MainActivity::class.java)
             this.startActivity(intent)
             false
         } else {

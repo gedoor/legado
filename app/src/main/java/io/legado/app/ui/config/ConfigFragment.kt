@@ -12,7 +12,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 
@@ -23,7 +23,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     private val packageManager = App.INSTANCE.packageManager
     private val componentName = ComponentName(
         App.INSTANCE,
-        SearchActivity::class.java.name
+        SharedReceiverActivity::class.java.name
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

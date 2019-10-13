@@ -85,7 +85,7 @@
         <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
         <activity android:name=".ui.rss.article.RssArticlesActivity" />
         <activity
-            android:name=".receiver.ReceivingSharedActivity"
+            android:name=".receiver.SharedReceiverActivity"
             android:label="@string/receiving_shared_label">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
