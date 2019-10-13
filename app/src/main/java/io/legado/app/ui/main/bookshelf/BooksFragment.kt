@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.VMBaseFragment
+import io.legado.app.base.BaseFragment
 import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.lib.theme.ATH
@@ -19,14 +19,13 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.getViewModel
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
 
 
-class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
+class BooksFragment : BaseFragment(R.layout.fragment_books),
     BooksAdapter.CallBack {
 
     companion object {
@@ -38,9 +37,6 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
             }
         }
     }
-
-    override val viewModel: BooksViewModel
-        get() = getViewModel(BooksViewModel::class.java)
 
     private lateinit var activityViewModel: MainViewModel
     private lateinit var booksAdapter: BooksAdapter
