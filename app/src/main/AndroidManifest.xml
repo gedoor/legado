@@ -35,7 +35,8 @@
             </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
         </activity>
         <activity android:name=".ui.main.MainActivity" />
         <activity

@@ -35,6 +35,7 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.page.ChapterProvider
@@ -193,11 +194,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
-                if (readAloudStatus == Status.PLAY) {
-                    ReadAloud.pause(this)
-                    toast(R.string.read_aloud_pause)
-                    return true
-                }
+                event?.startTracking()
             }
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 if (volumeKeyPage(PageDelegate.Direction.PREV)) {
@@ -216,11 +213,34 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                page_view.snackbar("转到后台", "确定") {
+                    startActivity<MainActivity>()
+                }
+                return true
+            }
+        }
+        return super.onKeyLongPress(keyCode, event)
+    }
+
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
                 if (volumeKeyPage(PageDelegate.Direction.NONE)) {
                     return true
+                }
+            }
+            KeyEvent.KEYCODE_BACK -> {
+                event?.let {
+                    if ((event.flags and KeyEvent.FLAG_CANCELED_LONG_PRESS == 0)) {
+                        if (readAloudStatus == Status.PLAY) {
+                            ReadAloud.pause(this)
+                            toast(R.string.read_aloud_pause)
+                            return true
+                        }
+                    }
                 }
             }
         }
