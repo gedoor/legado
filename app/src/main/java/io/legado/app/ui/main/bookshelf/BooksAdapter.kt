@@ -11,6 +11,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.invisible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
@@ -38,6 +39,7 @@ class BooksAdapter(private val callBack: CallBack) :
         for (i in 0 until itemCount) {
             getItem(i)?.let {
                 if (it.bookUrl == bookUrl) {
+                    LogUtils.d("up", it.name)
                     notifyItemChanged(i)
                     return
                 }
