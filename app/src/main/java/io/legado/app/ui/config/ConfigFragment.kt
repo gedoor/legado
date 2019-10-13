@@ -15,6 +15,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.putPrefBoolean
 
 
 class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener,
@@ -27,6 +28,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        putPrefBoolean("process_text", isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config)
         bindPreferenceSummaryToValue(findPreference("downloadPath"))
     }
