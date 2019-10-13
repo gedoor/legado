@@ -1,6 +1,8 @@
 package io.legado.app.ui.config
 
+import android.content.ComponentName
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.preference.ListPreference
@@ -10,12 +12,19 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 
 
 class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private val packageManager = App.INSTANCE.packageManager
+    private val componentName = ComponentName(
+        App.INSTANCE,
+        SearchActivity::class.java.name
+    )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config)
@@ -41,6 +50,9 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
         when (key) {
             "downloadPath" -> BookHelp.upDownloadPath()
             "recordLog" -> LogUtils.upLevel()
+            "process_text" -> sharedPreferences?.let {
+                setProcessTextEnable(it.getBoolean("process_text", true))
+            }
         }
     }
 
@@ -77,4 +89,21 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
         }
     }
 
+    private fun isProcessTextEnabled(): Boolean {
+        return packageManager.getComponentEnabledSetting(componentName) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+    }
+
+    private fun setProcessTextEnable(enable: Boolean) {
+        if (enable) {
+            packageManager.setComponentEnabledSetting(
+                componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+            )
+        } else {
+            packageManager.setComponentEnabledSetting(
+                componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
+            )
+        }
+    }
 }

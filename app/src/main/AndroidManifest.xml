@@ -58,20 +58,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".ui.config.ConfigActivity" />
         <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
-        <activity
-            android:name="io.legado.app.ui.book.search.SearchActivity"
-            android:label="@string/receiving_shared_label">
-            <intent-filter>
-                <action android:name="android.intent.action.PROCESS_TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-        </activity>
+        <activity android:name="io.legado.app.ui.book.search.SearchActivity" />
         <activity android:name=".ui.about.AboutActivity" />
         <activity android:name=".ui.qrcode.QrCodeActivity" />
         <activity android:name=".ui.about.DonateActivity" />
@@ -97,6 +84,20 @@
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
         <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
         <activity android:name=".ui.rss.article.RssArticlesActivity" />
+        <activity
+            android:name=".receiver.ReceivingSharedActivity"
+            android:label="@string/receiving_shared_label">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
