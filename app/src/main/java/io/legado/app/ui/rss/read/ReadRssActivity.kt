@@ -18,6 +18,8 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     override val viewModel: ReadRssViewModel
         get() = getViewModel(ReadRssViewModel::class.java)
 
+    private var starMenuItem: MenuItem? = null
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title = intent.getStringExtra("title")
         initWebView()
@@ -27,12 +29,16 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_read, menu)
+        starMenuItem = menu.findItem(R.id.menu_rss_star)
+        upStarMenu()
         return super.onCompatCreateOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_rss_star -> {
+            R.id.menu_rss_star -> viewModel.rssArticleLiveData.value?.let {
+                it.star = !it.star
+                viewModel.upRssArticle(it)
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -46,13 +52,14 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initLiveData() {
+        viewModel.rssArticleLiveData.observe(this, Observer { upStarMenu() })
         viewModel.rssSourceLiveData.observe(this, Observer {
             if (it.enableJs) {
                 webView.settings.javaScriptEnabled = true
             }
         })
         viewModel.contentLiveData.observe(this, Observer { content ->
-            viewModel.rssArticle?.let {
+            viewModel.rssArticleLiveData.value?.let {
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link ?: "")
                 if (viewModel.rssSourceLiveData.value?.loadWithBaseUrl == true) {
                     webView.loadDataWithBaseURL(
@@ -76,4 +83,13 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         })
     }
 
+    private fun upStarMenu() {
+        if (viewModel.rssArticleLiveData.value?.star == true) {
+            starMenuItem?.setIcon(R.drawable.ic_star)
+            starMenuItem?.setTitle(R.string.y_store_up)
+        } else {
+            starMenuItem?.setIcon(R.drawable.ic_star_border)
+            starMenuItem?.setTitle(R.string.w_store_up)
+        }
+    }
 }

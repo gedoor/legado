@@ -35,6 +35,8 @@
     <string name="replace_purify_search">替换净化-搜索</string>
     <string name="bookshelf">书架</string>
     <string name="store_up">收藏</string>
+    <string name="y_store_up">已收藏</string>
+    <string name="w_store_up">未收藏</string>
     <string name="rss">订阅</string>
     <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
