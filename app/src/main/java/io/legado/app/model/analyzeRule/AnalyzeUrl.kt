@@ -5,6 +5,7 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.EXP_PATTERN
+import io.legado.app.constant.Pattern.JS_PATTERN
 import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.data.entities.BaseBook
@@ -72,9 +73,43 @@ class AnalyzeUrl(
         }
         headerMapF?.let { headerMap.putAll(it) }
         //替换参数
+        analyzeJs(key, page, book)
         replaceKeyPageJs(key, page, book)
         //处理URL
         initUrl()
+    }
+
+    private fun analyzeJs(key: String?, page: Int?, book: BaseBook?) {
+        val ruleList = arrayListOf<String>()
+        var start = 0
+        var tmp: String
+        val jsMatcher = JS_PATTERN.matcher(ruleUrl)
+        while (jsMatcher.find()) {
+            if (jsMatcher.start() > start) {
+                tmp =
+                    ruleUrl.substring(start, jsMatcher.start()).replace("\n", "").trim { it <= ' ' }
+                if (!TextUtils.isEmpty(tmp)) {
+                    ruleList.add(tmp)
+                }
+            }
+            ruleList.add(jsMatcher.group())
+            start = jsMatcher.end()
+        }
+        if (ruleUrl.length > start) {
+            tmp = ruleUrl.substring(start).replace("\n", "").trim { it <= ' ' }
+            if (!TextUtils.isEmpty(tmp)) {
+                ruleList.add(tmp)
+            }
+        }
+        for (rule in ruleList) {
+            var ruleStr = rule
+            if (ruleStr.startsWith("<js>")) {
+                ruleStr = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
+                ruleUrl = evalJS(ruleStr, ruleUrl, page, key, book) as String
+            } else {
+                ruleUrl = ruleStr.replace("@result", ruleUrl)
+            }
+        }
     }
 
     /**
@@ -184,6 +219,27 @@ class AnalyzeUrl(
                 fieldMap[queryM[0]] = URLEncoder.encode(value, charset)
             }
         }
+    }
+
+    /**
+     * 执行JS
+     */
+    @Throws(Exception::class)
+    private fun evalJS(
+        jsStr: String,
+        result: Any?,
+        page: Int?,
+        key: String?,
+        book: BaseBook?
+    ): Any {
+        val bindings = SimpleBindings()
+        bindings["java"] = this
+        bindings["page"] = page
+        bindings["key"] = key
+        bindings["book"] = book
+        bindings["result"] = result
+        bindings["baseUrl"] = baseUrl
+        return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
     enum class Method {
