@@ -534,7 +534,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      */
     fun ajax(urlStr: String): String? {
         return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
+            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, baseUrl, book)
             val call = analyzeUrl.getResponse()
             val response = call.execute()
             response.body()

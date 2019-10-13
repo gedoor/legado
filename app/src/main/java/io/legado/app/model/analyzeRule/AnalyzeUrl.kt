@@ -7,7 +7,7 @@ import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.EXP_PATTERN
 import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.api.IHttpPostApi
-import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BaseBook
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.utils.*
 import kotlinx.coroutines.Deferred
@@ -35,7 +35,7 @@ class AnalyzeUrl(
     page: Int? = null,
     headerMapF: Map<String, String>? = null,
     baseUrl: String? = null,
-    book: Book? = null
+    book: BaseBook? = null
 ) {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
@@ -80,7 +80,7 @@ class AnalyzeUrl(
     /**
      * 替换关键字,页数,JS
      */
-    private fun replaceKeyPageJs(key: String?, page: Int?, book: Book?) {
+    private fun replaceKeyPageJs(key: String?, page: Int?, book: BaseBook?) {
         //page
         page?.let {
             val matcher = pagePattern.matcher(ruleUrl)
