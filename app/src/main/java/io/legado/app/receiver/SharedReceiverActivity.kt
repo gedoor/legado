@@ -16,6 +16,7 @@ class SharedReceiverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         initIntent()
+        finish()
     }
 
     private fun initIntent() {
