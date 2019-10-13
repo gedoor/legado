@@ -5,7 +5,7 @@
     <item
         android:id="@+id/menu_rss_star"
         android:title="@string/store_up"
-        android:icon="@drawable/ic_star"
+        android:icon="@drawable/ic_star_border"
         app:showAsAction="always" />
 
 </menu>
