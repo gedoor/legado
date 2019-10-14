@@ -78,15 +78,15 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         when (groupId) {
             -1 -> {
                 bookshelfLiveData =
-                    LivePagedListBuilder(App.db.bookDao().observeAll(), 10).build()
+                    LivePagedListBuilder(App.db.bookDao().observeAll(), 100).build()
             }
             -2 -> {
                 bookshelfLiveData =
-                    LivePagedListBuilder(App.db.bookDao().observeLocal(), 10).build()
+                    LivePagedListBuilder(App.db.bookDao().observeLocal(), 100).build()
             }
             -3 -> {
                 bookshelfLiveData =
-                    LivePagedListBuilder(App.db.bookDao().observeAudio(), 10).build()
+                    LivePagedListBuilder(App.db.bookDao().observeAudio(), 100).build()
             }
             else -> {
                 bookshelfLiveData =

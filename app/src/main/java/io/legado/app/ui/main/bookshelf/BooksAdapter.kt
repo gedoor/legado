@@ -28,9 +28,10 @@ class BooksAdapter(private val callBack: CallBack) :
 
             override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean =
                 oldItem.durChapterTitle == newItem.durChapterTitle
+                        && oldItem.name == newItem.name
+                        && oldItem.getDisplayCover() == newItem.getDisplayCover()
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
-                        && oldItem.durChapterTime == newItem.durChapterTime
-                        && oldItem.lastCheckTime == newItem.lastCheckTime
+                        && oldItem.durChapterTitle == newItem.durChapterTitle
         }
     }
 
@@ -38,7 +39,7 @@ class BooksAdapter(private val callBack: CallBack) :
         for (i in 0 until itemCount) {
             getItem(i)?.let {
                 if (it.bookUrl == bookUrl) {
-                    notifyItemChanged(i)
+                    notifyItemChanged(i, 5)
                     return
                 }
             }
@@ -50,6 +51,16 @@ class BooksAdapter(private val callBack: CallBack) :
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_bookshelf_list, parent, false)
         )
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            currentList?.get(position)?.let {
+                holder.bind(it, callBack, payloads[0])
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -90,6 +101,23 @@ class BooksAdapter(private val callBack: CallBack) :
                 rl_loading.hide()
                 bv_unread.setBadgeCount(book.getUnreadChapterNum())
                 bv_unread.setHighlight(book.lastCheckCount > 0)
+            }
+        }
+
+        fun bind(book: Book, callBack: CallBack, payload: Any) = with(itemView) {
+            when (payload) {
+                5 -> {
+                    if (book.origin != BookType.local && callBack.isUpdate(book.bookUrl)) {
+                        LogUtils.d(book.name, "loading")
+                        bv_unread.invisible()
+                        rl_loading.show()
+                    } else {
+                        LogUtils.d(book.name, "loadingHide")
+                        rl_loading.hide()
+                        bv_unread.setBadgeCount(book.getUnreadChapterNum())
+                        bv_unread.setHighlight(book.lastCheckCount > 0)
+                    }
+                }
             }
         }
     }
