@@ -25,7 +25,6 @@ interface BookChapterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookChapter: BookChapter)
 
-
     @Query("delete from chapters where bookUrl = :bookUrl")
     fun delByBook(bookUrl: String)
 

@@ -32,6 +32,13 @@ class BooksAdapter(private val callBack: CallBack) :
                         && oldItem.getDisplayCover() == newItem.getDisplayCover()
                         && oldItem.latestChapterTitle == newItem.latestChapterTitle
                         && oldItem.durChapterTitle == newItem.durChapterTitle
+
+            override fun getChangePayload(oldItem: Book, newItem: Book): Any? {
+                if (oldItem.bookUrl != newItem.bookUrl) {
+                    return null
+                }
+                return super.getChangePayload(oldItem, newItem)
+            }
         }
     }
 
