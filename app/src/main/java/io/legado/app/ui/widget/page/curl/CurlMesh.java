@@ -830,7 +830,7 @@ public class CurlMesh {
         private int mCapacity;
         private int mSize;
 
-        public Array(int capacity) {
+        Array(int capacity) {
             mCapacity = capacity;
             mArray = new Object[capacity];
         }
@@ -839,9 +839,7 @@ public class CurlMesh {
             if (index < 0 || index > mSize || mSize >= mCapacity) {
                 throw new IndexOutOfBoundsException();
             }
-            for (int i = mSize; i > index; --i) {
-                mArray[i] = mArray[i - 1];
-            }
+            System.arraycopy(mArray, index, mArray, index + 1, mSize - index);
             mArray[index] = item;
             ++mSize;
         }
@@ -880,9 +878,8 @@ public class CurlMesh {
                 throw new IndexOutOfBoundsException();
             }
             T item = (T) mArray[index];
-            for (int i = index; i < mSize - 1; ++i) {
-                mArray[i] = mArray[i + 1];
-            }
+            if (mSize - 1 - index >= 0)
+                System.arraycopy(mArray, index + 1, mArray, index, mSize - 1 - index);
             --mSize;
             return item;
         }
@@ -897,34 +894,34 @@ public class CurlMesh {
      * Holder for shadow vertex information.
      */
     private class ShadowVertex {
-        public double mPenumbraColor;
-        public double mPenumbraX;
-        public double mPenumbraY;
-        public double mPosX;
-        public double mPosY;
-        public double mPosZ;
+        double mPenumbraColor;
+        double mPenumbraX;
+        double mPenumbraY;
+        double mPosX;
+        double mPosY;
+        double mPosZ;
     }
 
     /**
      * Holder for vertex information.
      */
     private class Vertex {
-        public int mColor;
-        public float mColorFactor;
-        public double mPenumbraX;
-        public double mPenumbraY;
-        public double mPosX;
-        public double mPosY;
-        public double mPosZ;
-        public double mTexX;
-        public double mTexY;
+        int mColor;
+        float mColorFactor;
+        double mPenumbraX;
+        double mPenumbraY;
+        double mPosX;
+        double mPosY;
+        double mPosZ;
+        double mTexX;
+        double mTexY;
 
-        public Vertex() {
+        Vertex() {
             mPosX = mPosY = mPosZ = mTexX = mTexY = 0;
             mColorFactor = 1.0f;
         }
 
-        public void rotateZ(double theta) {
+        void rotateZ(double theta) {
             double cos = Math.cos(theta);
             double sin = Math.sin(theta);
             double x = mPosX * cos + mPosY * sin;
