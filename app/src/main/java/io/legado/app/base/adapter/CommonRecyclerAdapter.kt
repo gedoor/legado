@@ -130,7 +130,9 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
             if (items != null) {
                 this.items.addAll(items)
             }
-            notifyDataSetChanged()
+            if (notify) {
+                notifyDataSetChanged()
+            }
         }
     }
 
