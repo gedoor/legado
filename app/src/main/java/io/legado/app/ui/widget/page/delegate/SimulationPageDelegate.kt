@@ -9,15 +9,13 @@ import io.legado.app.utils.screenshot
 
 class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
-    private var pageCount = 0
-
     init {
         pageView.curlView ?: let {
             pageView.curlView = CurlView(pageView.context)
             pageView.addView(pageView.curlView)
             pageView.curlView?.mPageProvider = PageProvider()
             pageView.curlView?.setSizeChangedObserver(SizeChangedObserver())
-            pageView.curlView?.currentIndex = 0
+            pageView.curlView?.currentIndex = 1
         }
     }
 
@@ -43,7 +41,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private inner class PageProvider : CurlView.PageProvider {
 
         override val pageCount: Int
-            get() = this@SimulationPageDelegate.pageCount
+            get() = 3
 
         override fun updatePage(page: CurlPage, width: Int, height: Int, index: Int) {
             when (index) {
