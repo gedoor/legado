@@ -33,13 +33,17 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             }
                             WebBook(bookSource).getChapterList(book)
                                 .onSuccess(IO) {
+                                    synchronized(this) {
+                                        updateList.remove(book.bookUrl)
+                                        postEvent(Bus.UP_BOOK, book.bookUrl)
+                                    }
                                     it?.let {
                                         App.db.bookDao().update(book)
                                         App.db.bookChapterDao().delByBook(book.bookUrl)
                                         App.db.bookChapterDao().insert(*it.toTypedArray())
                                     }
                                 }
-                                .onFinally {
+                                .onError {
                                     synchronized(this) {
                                         updateList.remove(book.bookUrl)
                                         postEvent(Bus.UP_BOOK, book.bookUrl)
