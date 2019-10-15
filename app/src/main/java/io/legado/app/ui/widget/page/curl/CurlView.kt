@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget.page.curl
 
 import android.content.Context
+import android.graphics.PixelFormat
 import android.graphics.PointF
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
@@ -114,6 +115,10 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
      * Initialize method.
      */
     init {
+        setEGLConfigChooser(8, 8, 8, 8, 16, 0)
+        holder.setFormat(PixelFormat.TRANSLUCENT)
+        setZOrderOnTop(true)
+
         setRenderer(mRenderer)
         renderMode = RENDERMODE_WHEN_DIRTY
         setOnTouchListener(this)

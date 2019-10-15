@@ -15,7 +15,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             pageView.addView(pageView.curlView)
             pageView.curlView?.mPageProvider = PageProvider()
             pageView.curlView?.setSizeChangedObserver(SizeChangedObserver())
-            pageView.curlView?.currentIndex = 1
+            pageView.curlView?.currentIndex = 0
         }
     }
 
@@ -54,7 +54,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     // 定义书籍尺寸的变化监听器
     private inner class SizeChangedObserver : CurlView.SizeChangedObserver {
-        override fun onSizeChanged(w: Int, h: Int) {
+        override fun onSizeChanged(width: Int, height: Int) {
             pageView.curlView?.setViewMode(CurlView.SHOW_ONE_PAGE)
             pageView.curlView?.setMargins(0f, 0f, 0f, 0f)
         }
