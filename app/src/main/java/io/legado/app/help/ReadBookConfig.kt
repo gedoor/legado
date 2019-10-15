@@ -20,36 +20,40 @@ import java.io.IOException
  */
 object ReadBookConfig {
     const val readConfigFileName = "readConfig.json"
-    val configList: ArrayList<Config> = arrayListOf<Config>()
-        .apply {
-            upConfig(this)
-        }
+    val configList: ArrayList<Config> = arrayListOf()
 
     var styleSelect
         get() = App.INSTANCE.getPrefInt("readStyleSelect")
         set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
     var bg: Drawable? = null
 
+    init {
+        upConfig()
+    }
+
+    @Synchronized
     fun getConfig(index: Int = styleSelect): Config {
+        if (configList.size < 5) {
+            reset()
+        }
         return configList[index]
     }
 
-    fun upConfig(list: ArrayList<Config> = configList) {
+    fun upConfig() {
         val configFile =
             File(App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName)
         val json = if (configFile.exists()) {
-            String(configFile.readBytes())
+            configFile.readText()
         } else {
             String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
         }
         try {
             GSON.fromJsonArray<Config>(json)?.let {
-                list.clear()
-                list.addAll(it)
-            }
+                configList.clear()
+                configList.addAll(it)
+            } ?: reset()
         } catch (e: Exception) {
-            list.clear()
-            list.addAll(getOnError())
+            reset()
         }
     }
 
@@ -78,27 +82,13 @@ object ReadBookConfig {
         }
     }
 
-    fun reset() {
-        try {
-            val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
-            GSON.fromJsonArray<Config>(json)?.let {
-                configList.clear()
-                configList.addAll(it)
-            }
-        } catch (e: Exception) {
+    private fun reset() {
+        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
+        GSON.fromJsonArray<Config>(json)?.let {
             configList.clear()
-            configList.addAll(getOnError())
+            configList.addAll(it)
         }
-    }
-
-    private fun getOnError(): ArrayList<Config> {
-        val list = arrayListOf<Config>()
-        list.add(Config())
-        list.add(Config())
-        list.add(Config())
-        list.add(Config())
-        list.add(Config())
-        return list
+        save()
     }
 
     data class Config(
