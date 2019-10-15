@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
@@ -86,7 +87,10 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
         bookshelfLiveData?.observe(
             this,
             Observer {
+                val diffResult =
+                    DiffUtil.calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), it))
                 booksAdapter.setItems(it)
+                diffResult.dispatchUpdatesTo(booksAdapter)
             })
     }
 
