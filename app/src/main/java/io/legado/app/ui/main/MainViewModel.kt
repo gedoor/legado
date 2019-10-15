@@ -48,6 +48,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                                         updateList.remove(book.bookUrl)
                                         postEvent(Bus.UP_BOOK, book.bookUrl)
                                     }
+                                    it.printStackTrace()
                                 }
                         }
                     }
