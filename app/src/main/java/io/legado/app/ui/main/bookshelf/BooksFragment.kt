@@ -89,7 +89,7 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
             Observer {
                 val diffResult =
                     DiffUtil.calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), it))
-                booksAdapter.setItems(it)
+                booksAdapter.setItems(it, false)
                 diffResult.dispatchUpdatesTo(booksAdapter)
             })
     }
