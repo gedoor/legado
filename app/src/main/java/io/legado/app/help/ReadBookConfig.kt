@@ -20,6 +20,8 @@ import java.io.IOException
  */
 object ReadBookConfig {
     const val readConfigFileName = "readConfig.json"
+    private val configFilePath =
+        App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName
     val configList: ArrayList<Config> = arrayListOf()
 
     var styleSelect
@@ -40,8 +42,7 @@ object ReadBookConfig {
     }
 
     fun upConfig() {
-        val configFile =
-            File(App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName)
+        val configFile = File(configFilePath)
         val json = if (configFile.exists()) {
             configFile.readText()
         } else {
@@ -68,8 +69,7 @@ object ReadBookConfig {
     fun save() {
         GlobalScope.launch(IO) {
             val json = GSON.toJson(configList)
-            val configFile =
-                File(App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName)
+            val configFile = File(configFilePath)
             //获取流并存储
             try {
                 BufferedWriter(FileWriter(configFile)).use { writer ->
