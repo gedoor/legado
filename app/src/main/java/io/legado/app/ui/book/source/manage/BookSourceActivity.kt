@@ -147,7 +147,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             search_view.queryHint = getString(R.string.search_book_source_num, it.size)
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(adapter.getItems(), it))
-            adapter.setItemsNoNotify(it)
+            adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
         })
     }

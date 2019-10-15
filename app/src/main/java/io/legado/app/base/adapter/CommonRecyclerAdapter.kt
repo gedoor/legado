@@ -122,18 +122,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         }
     }
 
-    fun setItemsNoNotify(items: List<ITEM>?) {
-        synchronized(lock) {
-            if (this.items.isNotEmpty()) {
-                this.items.clear()
-            }
-            if (items != null) {
-                this.items.addAll(items)
-            }
-        }
-    }
-
-    fun setItems(items: List<ITEM>?) {
+    fun setItems(items: List<ITEM>?, notify: Boolean = true) {
         synchronized(lock) {
             if (this.items.isNotEmpty()) {
                 this.items.clear()

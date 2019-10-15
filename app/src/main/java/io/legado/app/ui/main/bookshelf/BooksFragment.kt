@@ -5,8 +5,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
@@ -44,7 +42,7 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
 
     private lateinit var activityViewModel: MainViewModel
     private lateinit var booksAdapter: BooksAdapter
-    private var bookshelfLiveData: LiveData<PagedList<Book>>? = null
+    private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var groupId = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,36 +71,23 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
                     this.setDrawable(it)
                 }
             })
-        booksAdapter = BooksAdapter(this)
+        booksAdapter = BooksAdapter(requireContext(), this)
         rv_bookshelf.adapter = booksAdapter
     }
 
     private fun upRecyclerData() {
         bookshelfLiveData?.removeObservers(this)
-        when (groupId) {
-            -1 -> {
-                bookshelfLiveData =
-                    LivePagedListBuilder(App.db.bookDao().observeAll(), 100).build()
-            }
-            -2 -> {
-                bookshelfLiveData =
-                    LivePagedListBuilder(App.db.bookDao().observeLocal(), 100).build()
-            }
-            -3 -> {
-                bookshelfLiveData =
-                    LivePagedListBuilder(App.db.bookDao().observeAudio(), 100).build()
-            }
-            else -> {
-                bookshelfLiveData =
-                    LivePagedListBuilder(
-                        App.db.bookDao().observeByGroup(groupId),
-                        10
-                    ).build()
-            }
+        bookshelfLiveData = when (groupId) {
+            -1 -> App.db.bookDao().observeAll()
+            -2 -> App.db.bookDao().observeLocal()
+            -3 -> App.db.bookDao().observeAudio()
+            else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(
             this,
-            Observer { pageList -> booksAdapter.submitList(pageList) })
+            Observer {
+                booksAdapter.setItems(it)
+            })
     }
 
     override fun open(book: Book) {

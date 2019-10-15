@@ -104,7 +104,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         }
         replaceRuleLiveData?.observe(this, Observer {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
-            adapter.setItemsNoNotify(it)
+            adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
         })
     }
