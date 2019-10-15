@@ -208,15 +208,8 @@ class RotateLoading : View {
 
     private fun stopAnimator() {
         animate().cancel()
-        animate().scaleX(0.0f)
-            .scaleY(0.0f)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    isStarted = false
-                    visibility = GONE
-                }
-            })
-            .start()
+        isStarted = false
+        visibility = GONE
     }
 
     companion object {
