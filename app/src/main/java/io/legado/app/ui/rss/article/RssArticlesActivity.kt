@@ -103,12 +103,14 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
                         val dY = event.y - durTouchY  //>0下拉
                         durTouchY = event.y
                         if (!refresh_progress_bar.isAutoLoading && refresh_progress_bar.getSecondDurProgress() == refresh_progress_bar.secondFinalProgress) {
-                            if (recycler_view.adapter!!.itemCount > 0) {
-                                if (0 == (recycler_view.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()) {
+                            recycler_view.adapter?.let {
+                                if (it.itemCount > 0) {
+                                    if (0 == (recycler_view.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()) {
+                                        refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
+                                    }
+                                } else {
                                     refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
                                 }
-                            } else {
-                                refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
                             }
                             return refresh_progress_bar.getSecondDurProgress() > 0
                         }
