@@ -50,4 +50,8 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             loadContent(url, onFinally)
         }
     }
+
+    fun loadMore() {
+
+    }
 }

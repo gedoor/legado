@@ -1,9 +1,10 @@
 package io.legado.app.ui.rss.article
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -19,6 +20,8 @@ import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
+import kotlinx.android.synthetic.main.view_load_more.view.*
+import kotlinx.android.synthetic.main.view_refresh_recycler.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 
@@ -32,9 +35,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     private var adapter: RssArticlesAdapter? = null
     private var rssArticlesData: LiveData<List<RssArticle>>? = null
     private var url: String? = null
-
-    private var durTouchX = -1000000f
-    private var durTouchY = -1000000f
+    private lateinit var loadMoreView: View
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -44,10 +45,8 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         url = intent.getStringExtra("url")
         url?.let {
             initData(it)
-            viewModel.loadContent(it) {
-                refresh_progress_bar.isAutoLoading = false
-            }
         }
+        refresh_recycler_view.startLoading()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,7 +71,6 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         return super.onCompatOptionsItemSelected(item)
     }
 
-    @SuppressLint("InflateParams")
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
@@ -84,59 +82,17 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
             })
         adapter = RssArticlesAdapter(this, this)
         recycler_view.adapter = adapter
-        val loadMoreView = LayoutInflater.from(this).inflate(R.layout.view_load_more, null)
+        loadMoreView =
+            LayoutInflater.from(this).inflate(R.layout.view_load_more, recycler_view, false)
         adapter?.addFooterView(loadMoreView)
         refresh_progress_bar.isAutoLoading = true
-        recycler_view.setOnTouchListener(object : View.OnTouchListener {
-            @SuppressLint("ClickableViewAccessibility")
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        durTouchX = event.x
-                        durTouchY = event.y
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        if (durTouchX == -1000000f) {
-                            durTouchX = event.x
-                        }
-                        if (durTouchY == -1000000f)
-                            durTouchY = event.y
-
-                        val dY = event.y - durTouchY  //>0下拉
-                        durTouchY = event.y
-                        if (!refresh_progress_bar.isAutoLoading && refresh_progress_bar.getSecondDurProgress() == refresh_progress_bar.secondFinalProgress) {
-                            recycler_view.adapter?.let {
-                                if (it.itemCount > 0) {
-                                    if (0 == (recycler_view.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()) {
-                                        refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
-                                    }
-                                } else {
-                                    refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
-                                }
-                            }
-                            return refresh_progress_bar.getSecondDurProgress() > 0
-                        }
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        if (!refresh_progress_bar.isAutoLoading && refresh_progress_bar.secondMaxProgress > 0 && refresh_progress_bar.getSecondDurProgress() > 0) {
-                            if (refresh_progress_bar.getSecondDurProgress() >= refresh_progress_bar.secondMaxProgress) {
-                                refresh_progress_bar.isAutoLoading = true
-                                url?.let {
-                                    viewModel.loadContent(it) {
-                                        refresh_progress_bar.isAutoLoading = false
-                                    }
-                                }
-                            } else {
-                                refresh_progress_bar.setSecondDurProgressWithAnim(0)
-                            }
-                        }
-                        durTouchX = -1000000f
-                        durTouchY = -1000000f
-                    }
+        refresh_recycler_view.onRefreshStart = {
+            url?.let {
+                viewModel.loadContent(it) {
+                    refresh_progress_bar.isAutoLoading = false
                 }
-                return false
             }
-        })
+        }
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -156,7 +112,11 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     }
 
     private fun scrollToBottom() {
-        Log.d("xxxxxx", "scrollToBottom")
+        adapter?.let {
+            if (it.getActualItemCount() > 0) {
+                loadMoreView.rotate_loading.show()
+            }
+        }
     }
 
     override fun readRss(rssArticle: RssArticle) {
