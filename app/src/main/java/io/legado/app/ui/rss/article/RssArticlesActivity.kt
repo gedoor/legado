@@ -2,15 +2,14 @@ package io.legado.app.ui.rss.article
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
+import android.util.Log
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -73,6 +72,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         return super.onCompatOptionsItemSelected(item)
     }
 
+    @SuppressLint("InflateParams")
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
@@ -84,6 +84,8 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
             })
         adapter = RssArticlesAdapter(this, this)
         recycler_view.adapter = adapter
+        val loadMoreView = LayoutInflater.from(this).inflate(R.layout.view_load_more, null)
+        adapter?.addFooterView(loadMoreView)
         refresh_progress_bar.isAutoLoading = true
         recycler_view.setOnTouchListener(object : View.OnTouchListener {
             @SuppressLint("ClickableViewAccessibility")
@@ -135,6 +137,14 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
                 return false
             }
         })
+        recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(1)) {
+                    scrollToBottom()
+                }
+            }
+        })
     }
 
     private fun initData(origin: String) {
@@ -143,6 +153,10 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         rssArticlesData?.observe(this, Observer {
             adapter?.setItems(it)
         })
+    }
+
+    private fun scrollToBottom() {
+        Log.d("xxxxxx", "scrollToBottom")
     }
 
     override fun readRss(rssArticle: RssArticle) {
