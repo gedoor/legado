@@ -6,7 +6,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
-import io.legado.app.utils.similarity
+import org.apache.commons.text.similarity.JaccardSimilarity
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -94,13 +94,14 @@ object BookHelp {
         if (chapters.size > index && title == chapters[index].title) {
             return index
         }
-        var similarity = 0F
+        var similarity = 0.0
         var newIndex = index
         val start = max(index - 20, 0)
         val end = min(index + 20, chapters.lastIndex)
+        val jaccardSimilarity = JaccardSimilarity()
         if (start < end) {
             for (i in start..end) {
-                val s = title.similarity(chapters[i].title)
+                val s = jaccardSimilarity.apply(title, chapters[i].title)
                 if (s > similarity) {
                     similarity = s
                     newIndex = i
