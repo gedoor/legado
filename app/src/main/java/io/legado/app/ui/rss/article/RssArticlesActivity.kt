@@ -85,7 +85,6 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         loadMoreView =
             LayoutInflater.from(this).inflate(R.layout.view_load_more, recycler_view, false)
         adapter?.addFooterView(loadMoreView)
-        refresh_progress_bar.isAutoLoading = true
         refresh_recycler_view.onRefreshStart = {
             url?.let {
                 viewModel.loadContent(it) {
