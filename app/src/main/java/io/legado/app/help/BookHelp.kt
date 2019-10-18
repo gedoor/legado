@@ -103,7 +103,7 @@ object BookHelp {
             return index
         } else {
             for (i in 1..50) {
-                if (index - 1 in chapters.indices) {
+                if (index - i in chapters.indices) {
                     jaccardSimilarity.apply(title, chapters[index - i].title).let {
                         if (it > similarity) {
                             similarity = it
@@ -114,7 +114,7 @@ object BookHelp {
                         }
                     }
                 }
-                if (index + 1 in chapters.indices) {
+                if (index + i in chapters.indices) {
                     jaccardSimilarity.apply(title, chapters[index + i].title).let {
                         if (it > similarity) {
                             similarity = it
