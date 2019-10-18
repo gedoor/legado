@@ -21,7 +21,7 @@ class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayou
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_refresh_recycler, this, true)
-        recycler_view.setOnTouchListener(object : View.OnTouchListener {
+        recycler_view.setOnTouchListener(object : OnTouchListener {
             @SuppressLint("ClickableViewAccessibility")
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
