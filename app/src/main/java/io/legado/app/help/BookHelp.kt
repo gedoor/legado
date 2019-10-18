@@ -8,7 +8,6 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import org.apache.commons.text.similarity.JaccardSimilarity
 import java.io.File
-import kotlin.math.max
 import kotlin.math.min
 
 object BookHelp {
@@ -94,17 +93,37 @@ object BookHelp {
         if (chapters.size > index && title == chapters[index].title) {
             return index
         }
-        var similarity = 0.0
-        var newIndex = index
-        val start = max(index - 20, 0)
-        val end = min(index + 20, chapters.lastIndex)
+
+        var newIndex = 0
         val jaccardSimilarity = JaccardSimilarity()
-        if (start < end) {
-            for (i in start..end) {
-                val s = jaccardSimilarity.apply(title, chapters[i].title)
-                if (s > similarity) {
-                    similarity = s
-                    newIndex = i
+        var similarity = if (chapters.size > index) {
+            jaccardSimilarity.apply(title, chapters[index].title)
+        } else 0.0
+        if (similarity == 1.0) {
+            return index
+        } else {
+            for (i in 1..50) {
+                if (index - 1 in chapters.indices) {
+                    jaccardSimilarity.apply(title, chapters[index - i].title).let {
+                        if (it > similarity) {
+                            similarity = it
+                            newIndex = index - i
+                            if (similarity == 1.0) {
+                                return newIndex
+                            }
+                        }
+                    }
+                }
+                if (index + 1 in chapters.indices) {
+                    jaccardSimilarity.apply(title, chapters[index + i].title).let {
+                        if (it > similarity) {
+                            similarity = it
+                            newIndex = index + i
+                            if (similarity == 1.0) {
+                                return newIndex
+                            }
+                        }
+                    }
                 }
             }
         }
