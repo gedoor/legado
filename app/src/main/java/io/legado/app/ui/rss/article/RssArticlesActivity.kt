@@ -1,8 +1,11 @@
 package io.legado.app.ui.rss.article
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -29,13 +32,18 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     private val editSource = 12319
     private var adapter: RssArticlesAdapter? = null
     private var rssArticlesData: LiveData<List<RssArticle>>? = null
+    private var url: String? = null
+
+    private var durTouchX = -1000000f
+    private var durTouchY = -1000000f
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         viewModel.titleLiveData.observe(this, Observer {
             title_bar.title = it
         })
-        intent.getStringExtra("url")?.let {
+        url = intent.getStringExtra("url")
+        url?.let {
             initData(it)
             viewModel.loadContent(it) {
                 refresh_progress_bar.isAutoLoading = false
@@ -77,6 +85,54 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         adapter = RssArticlesAdapter(this, this)
         recycler_view.adapter = adapter
         refresh_progress_bar.isAutoLoading = true
+        recycler_view.setOnTouchListener(object : View.OnTouchListener {
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        durTouchX = event.x
+                        durTouchY = event.y
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (durTouchX == -1000000f) {
+                            durTouchX = event.x
+                        }
+                        if (durTouchY == -1000000f)
+                            durTouchY = event.y
+
+                        val dY = event.y - durTouchY  //>0下拉
+                        durTouchY = event.y
+                        if (!refresh_progress_bar.isAutoLoading && refresh_progress_bar.getSecondDurProgress() == refresh_progress_bar.secondFinalProgress) {
+                            if (recycler_view.adapter!!.itemCount > 0) {
+                                if (0 == (recycler_view.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()) {
+                                    refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
+                                }
+                            } else {
+                                refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
+                            }
+                            return refresh_progress_bar.getSecondDurProgress() > 0
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        if (!refresh_progress_bar.isAutoLoading && refresh_progress_bar.secondMaxProgress > 0 && refresh_progress_bar.getSecondDurProgress() > 0) {
+                            if (refresh_progress_bar.getSecondDurProgress() >= refresh_progress_bar.secondMaxProgress) {
+                                refresh_progress_bar.isAutoLoading = true
+                                url?.let {
+                                    viewModel.loadContent(it) {
+                                        refresh_progress_bar.isAutoLoading = false
+                                    }
+                                }
+                            } else {
+                                refresh_progress_bar.setSecondDurProgressWithAnim(0)
+                            }
+                        }
+                        durTouchX = -1000000f
+                        durTouchY = -1000000f
+                    }
+                }
+                return false
+            }
+        })
     }
 
     private fun initData(origin: String) {

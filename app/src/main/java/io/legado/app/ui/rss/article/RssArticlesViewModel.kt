@@ -22,8 +22,8 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             } ?: let {
                 rssSource = RssSource(sourceUrl = url)
             }
-            rssSource?.let {
-                Rss.getArticles(it, this)
+            rssSource?.let { rssSource ->
+                Rss.getArticles(rssSource, this)
                     .onSuccess(IO) {
                         it?.let {
                             App.db.rssArticleDao().insert(*it.toTypedArray())

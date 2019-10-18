@@ -34,11 +34,8 @@ class RefreshProgressBar @JvmOverloads constructor(
 
     var isAutoLoading: Boolean = false
         set(loading) {
-            if (loading && visibility != VISIBLE) {
-                visibility = VISIBLE
-            }
             field = loading
-            if (!this.isAutoLoading) {
+            if (!loading) {
                 secondDurProgress = 0
                 secondFinalProgress = 0
             }
@@ -134,9 +131,6 @@ class RefreshProgressBar @JvmOverloads constructor(
                     }
                 }
                 this.invalidate()
-            }
-            if (secondDurProgress == 0 && durProgress == 0 && secondFinalProgress == 0 && visibility == VISIBLE) {
-                visibility = INVISIBLE
             }
         }
     }
