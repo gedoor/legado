@@ -20,6 +20,7 @@ class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayou
     var onRefreshStart: (() -> Unit)? = null
 
     init {
+        orientation = VERTICAL
         LayoutInflater.from(context).inflate(R.layout.view_refresh_recycler, this, true)
         recycler_view.setOnTouchListener(object : OnTouchListener {
             @SuppressLint("ClickableViewAccessibility")
