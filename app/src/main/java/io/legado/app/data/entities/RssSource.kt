@@ -17,6 +17,7 @@ data class RssSource(
     var enabled: Boolean = true,
     //列表规则
     var ruleArticles: String? = null,
+    var ruleNextPage: String? = null,
     var ruleTitle: String? = null,
     var rulePubDate: String? = null,
     //类别规则
