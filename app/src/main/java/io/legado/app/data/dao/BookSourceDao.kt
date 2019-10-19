@@ -23,6 +23,9 @@ interface BookSourceDao {
     @Query("select bookSourceGroup from book_sources where bookSourceGroup is not null and bookSourceGroup <> ''")
     fun liveGroup(): LiveData<List<String>>
 
+    @Query("select bookSourceGroup from book_sources where enabled = 1 and bookSourceGroup is not null and bookSourceGroup <> ''")
+    fun liveGroupEnabled(): LiveData<List<String>>
+
     @Query("select distinct  enabled from book_sources where bookSourceName like :searchKey or bookSourceGroup like :searchKey or bookSourceUrl like :searchKey")
     fun searchIsEnable(searchKey: String = ""): List<Boolean>
 

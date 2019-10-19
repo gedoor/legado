@@ -155,7 +155,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             ), 30
         ).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
-        App.db.bookSourceDao().liveGroup().observe(this, Observer {
+        App.db.bookSourceDao().liveGroupEnabled().observe(this, Observer {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(",", ";"))
