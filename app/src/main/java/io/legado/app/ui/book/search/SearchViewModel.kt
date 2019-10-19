@@ -25,9 +25,13 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         start: (() -> Unit)? = null,
         finally: (() -> Unit)? = null
     ) {
-        if (key.isEmpty()) return
         task?.cancel()
-        searchKey = key
+        if (key.isEmpty()) {
+            searchPage++
+        } else {
+            searchKey = key
+        }
+        if (searchKey.isEmpty()) return
         startTime = System.currentTimeMillis()
         start?.invoke()
         task = execute {
@@ -41,7 +45,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(
-                    key,
+                    searchKey,
                     searchPage,
                     scope = this@execute,
                     context = searchPool
