@@ -75,9 +75,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             else -> if (item.groupId == R.id.source_group) {
                 item.isChecked = true
                 if (item.title.toString() == getString(R.string.all_source)) {
-                    putPrefString("sourceGroup", "")
+                    putPrefString("searchGroup", "")
                 } else {
-                    putPrefString("sourceGroup", item.title.toString())
+                    putPrefString("searchGroup", item.title.toString())
                 }
             }
         }
@@ -171,10 +171,17 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     private fun upGroupMenu() {
+        val selectedGroup = getPrefString("searchGroup") ?: ""
         menu?.removeGroup(R.id.source_group)
-        menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+        var item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+        if (selectedGroup == "") {
+            item?.isChecked = true
+        }
         groups.map {
-            menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            if (it == selectedGroup) {
+                item?.isChecked = true
+            }
         }
         menu?.setGroupCheckable(R.id.source_group, true, true)
     }
