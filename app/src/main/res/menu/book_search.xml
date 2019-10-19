@@ -4,7 +4,13 @@
     tools:context=".view.activity.MainActivity">
 
     <item
-        android:id="@+id/action_book_source_manage"
+        android:id="@+id/menu_precision_search"
+        android:title="@string/book_source_manage"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_source_manage"
         android:title="@string/book_source_manage"
         app:showAsAction="never" />
 

@@ -1,6 +1,8 @@
 package io.legado.app.ui.book.search
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -17,10 +19,8 @@ import io.legado.app.data.entities.SearchShow
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.info.BookInfoActivity
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.gone
-import io.legado.app.utils.invisible
-import io.legado.app.utils.visible
+import io.legado.app.ui.book.source.manage.BookSourceActivity
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_search.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -43,6 +43,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var searchBookData: LiveData<PagedList<SearchShow>>? = null
     private var historyData: LiveData<List<SearchKeyword>>? = null
     private var bookData: LiveData<List<Book>>? = null
+    private var precisionSearchMenuItem: MenuItem? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -51,6 +52,24 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         initData()
         initIntent()
         upHistory()
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.book_search, menu)
+        precisionSearchMenuItem = menu.findItem(R.id.menu_precision_search)
+        precisionSearchMenuItem?.isChecked = getPrefBoolean("precisionSearch")
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_precision_search -> {
+                putPrefBoolean("precisionSearch", !getPrefBoolean("precisionSearch"))
+                precisionSearchMenuItem?.isChecked = getPrefBoolean("precisionSearch")
+            }
+            R.id.menu_source_manage -> startActivity<BookSourceActivity>()
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initSearchView() {
