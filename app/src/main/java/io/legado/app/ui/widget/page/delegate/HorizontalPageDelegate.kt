@@ -3,6 +3,7 @@ package io.legado.app.ui.widget.page.delegate
 import android.view.MotionEvent
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.utils.screenshot
+import io.legado.app.utils.snackbar
 import kotlin.math.abs
 
 abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
@@ -22,6 +23,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                     //如果上一页不存在
                     if (!hasPrev()) {
                         noNext = true
+                        pageView.snackbar("没有上一页")
                         return true
                     }
                     //上一页截图
@@ -30,6 +32,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                     //如果不存在表示没有下一页了
                     if (!hasNext()) {
                         noNext = true
+                        pageView.snackbar("没有下一页")
                         return true
                     }
                     //下一页截图
