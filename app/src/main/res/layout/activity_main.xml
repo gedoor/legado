@@ -6,6 +6,7 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
+        android:paddingBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="6dp"

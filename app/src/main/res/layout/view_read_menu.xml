@@ -148,7 +148,7 @@
         <!--底部设置栏-->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="120dp">
 
             <View
                 android:id="@+id/vw_bg"
@@ -212,7 +212,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:paddingBottom="15dp"
+                    android:layout_height="65dp"
                     android:baselineAligned="false"
                     android:orientation="horizontal">
 
