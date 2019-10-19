@@ -7,6 +7,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
+import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
@@ -30,7 +31,12 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         start?.invoke()
         task = execute {
             //onCleared时自动取消
-            val bookSourceList = App.db.bookSourceDao().allEnabled
+            val searchGroup = context.getPrefString("searchGroup") ?: ""
+            val bookSourceList = if (searchGroup.isBlank()) {
+                App.db.bookSourceDao().allEnabled
+            } else {
+                App.db.bookSourceDao().getEnabledByGroup(searchGroup)
+            }
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(
@@ -43,7 +49,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     .onSuccess(Dispatchers.IO) {
                         it?.let { list ->
                             list.map { searchBook ->
-                                if (searchBook.name.contains(key) || searchBook.author.contains(key))
+                                if (searchBook.name.contains(key) || searchBook.author.contains(key)) {
+                                }
                                     App.db.searchBookDao().insert(searchBook)
                             }
                         }
