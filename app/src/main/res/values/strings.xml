@@ -533,5 +533,6 @@
     <string name="screen">筛选</string>
     <string name="screen_find">筛选发现</string>
     <string name="dur_pos">当前位置：</string>
+    <string name="precision_search">精准搜索</string>
 
 </resources>

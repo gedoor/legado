@@ -176,6 +176,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         groups.map {
             menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
         }
+        menu?.setGroupCheckable(R.id.source_group, true, true)
     }
 
     private fun upHistory(key: String? = null) {
