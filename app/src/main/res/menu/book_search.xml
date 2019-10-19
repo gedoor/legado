@@ -14,7 +14,9 @@
         android:title="@string/book_source_manage"
         app:showAsAction="never" />
 
-    <group android:id="@+id/source_group">
+    <group
+        android:id="@+id/source_group"
+        android:checkableBehavior="single">
 
     </group>
 

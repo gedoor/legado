@@ -72,6 +72,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 precisionSearchMenuItem?.isChecked = getPrefBoolean("precisionSearch")
             }
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
+            else -> if (item.groupId == R.id.source_group) {
+                item.isChecked = true
+                if (item.title.toString() == getString(R.string.all_source)) {
+                    putPrefString("sourceGroup", "")
+                } else {
+                    putPrefString("sourceGroup", item.title.toString())
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -164,6 +172,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
     private fun upGroupMenu() {
         menu?.removeGroup(R.id.source_group)
+        menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
         groups.map {
             menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
         }
