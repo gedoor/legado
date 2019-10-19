@@ -43,7 +43,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var searchBookData: LiveData<PagedList<SearchShow>>? = null
     private var historyData: LiveData<List<SearchKeyword>>? = null
     private var bookData: LiveData<List<Book>>? = null
+    private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
+    private var groups = hashSetOf<String>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -58,6 +60,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         menuInflater.inflate(R.menu.book_search, menu)
         precisionSearchMenuItem = menu.findItem(R.id.menu_precision_search)
         precisionSearchMenuItem?.isChecked = getPrefBoolean("precisionSearch")
+        this.menu = menu
+        upGroupMenu()
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -143,11 +147,25 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             ), 30
         ).build()
         searchBookData?.observe(this, Observer { adapter.submitList(it) })
+        App.db.bookSourceDao().liveGroup().observe(this, Observer {
+            groups.clear()
+            it.map { group ->
+                groups.addAll(group.splitNotBlank(",", ";"))
+            }
+            upGroupMenu()
+        })
     }
 
     private fun initIntent() {
         intent.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
+        }
+    }
+
+    private fun upGroupMenu() {
+        menu?.removeGroup(R.id.source_group)
+        groups.map {
+            menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
         }
     }
 
