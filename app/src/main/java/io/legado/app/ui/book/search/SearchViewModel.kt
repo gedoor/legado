@@ -7,6 +7,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -48,11 +49,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     .timeout(30000L)
                     .onSuccess(Dispatchers.IO) {
                         it?.let { list ->
-                            list.map { searchBook ->
-                                if (searchBook.name.contains(key) || searchBook.author.contains(key)) {
-                                }
-                                    App.db.searchBookDao().insert(searchBook)
-                            }
+                            searchSuccess(list)
                         }
                     }
             }
@@ -60,6 +57,17 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
         task?.invokeOnCompletion {
             finally?.invoke()
+        }
+    }
+
+    private fun searchSuccess(searchBooks: List<SearchBook>) {
+        searchBooks.forEach { searchBook ->
+            if (context.getPrefBoolean("precisionSearch")) {
+                if (searchBook.name.contains(searchKey)
+                    || searchBook.author.contains(searchKey)
+                ) App.db.searchBookDao().insert(searchBook)
+            } else
+                App.db.searchBookDao().insert(searchBook)
         }
     }
 
