@@ -121,7 +121,7 @@ class AnalyzeByXPath {
         if (rules.size == 1) {
             val jxNodes = jxNode?.sel(xPath) ?: jxDocument?.selN(xPath)
             jxNodes?.map {
-                result.add(jxNode.toString())
+                result.add(it.asString())
             }
             return result
         } else {
