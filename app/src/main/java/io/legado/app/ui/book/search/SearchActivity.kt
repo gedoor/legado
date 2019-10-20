@@ -53,7 +53,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         initOtherView()
         initData()
         initIntent()
-        upHistory()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -167,6 +166,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private fun initIntent() {
         intent.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
+        } ?: let {
+            search_view.requestFocus()
         }
     }
 
