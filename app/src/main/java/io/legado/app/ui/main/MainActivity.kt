@@ -1,6 +1,7 @@
 package io.legado.app.ui.main
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -33,6 +34,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
+
+    private var pagePosition = 0
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(view_pager_main)
@@ -80,7 +83,24 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     override fun onPageSelected(position: Int) {
+        pagePosition = position
         bottom_navigation_view.menu.getItem(position).isChecked = true
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        event?.let {
+            when (keyCode) {
+                KeyEvent.KEYCODE_BACK -> if (
+                    pagePosition != 0
+                    && event.isTracking
+                    && !event.isCanceled
+                ) {
+                    view_pager_main.currentItem = 0
+                    return true
+                }
+            }
+        }
+        return super.onKeyUp(keyCode, event)
     }
 
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
@@ -98,6 +118,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         override fun getCount(): Int {
             return 4
         }
+
     }
 
     override fun observeLiveBus() {
