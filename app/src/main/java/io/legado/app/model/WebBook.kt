@@ -107,7 +107,7 @@ class WebBook(val bookSource: BookSource) {
                 )
                 analyzeUrl.getResponseAsync().await().body()
             } else {
-                book.tocUrl
+                book.tocHtml
             }
             BookChapterList.analyzeChapterList(this, book, body, bookSource, book.tocUrl)
         }
