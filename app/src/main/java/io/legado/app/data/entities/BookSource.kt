@@ -66,6 +66,7 @@ data class BookSource(
     @IgnoredOnParcel
     var contentRuleV: ContentRule? = null
 
+    @Throws(Exception::class)
     fun getHeaderMap(): Map<String, String> {
         val headerMap = HashMap<String, String>()
         headerMap["User-Agent"] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
@@ -83,7 +84,6 @@ data class BookSource(
         }
         return headerMap
     }
-
 
     fun getSearchRule(): SearchRule {
         searchRuleV ?: let {
