@@ -17,7 +17,7 @@ object BookInfo {
         bookSource: BookSource,
         analyzeUrl: AnalyzeUrl
     ) {
-        val baseUrl = analyzeUrl.url
+        val baseUrl = analyzeUrl.ruleUrl
         body ?: throw Exception(
             App.INSTANCE.getString(
                 R.string.error_get_web_content,
