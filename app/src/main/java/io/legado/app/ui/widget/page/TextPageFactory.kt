@@ -69,35 +69,29 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             getCurrentChapter()?.scrollPage()
         } else {
             getCurrentChapter()?.page(pageIndex)
-        } ?: TextPage(index = pageIndex, title = "index：${pageIndex}")
+        }
     }
 
     override fun nextPage(): TextPage? = with(dataSource) {
         if (isScrollDelegate) {
             return getNextChapter()?.scrollPage()
-                ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
         }
         getCurrentChapter()?.let {
             if (pageIndex < it.pageSize() - 1) {
                 return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
-                    ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
             }
         }
         return getNextChapter()?.page(0)?.removePageAloudSpan()
-            ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
     }
 
     override fun previousPage(): TextPage? = with(dataSource) {
         if (isScrollDelegate) {
             return getPreviousChapter()?.scrollPage()
-                ?: TextPage(index = pageIndex + 1, title = "index：${pageIndex + 1}")
         }
         if (pageIndex > 0) {
             return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
-                ?: TextPage(index = pageIndex - 1, title = "index：${pageIndex - 1}")
         }
         return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
-            ?: TextPage(index = pageIndex - 1, title = "index：${pageIndex - 1}")
     }
 
 
