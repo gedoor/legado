@@ -169,11 +169,11 @@ class BookSourceEditActivity :
                 add(EditEntity("init", infoRule?.init, R.string.rule_book_info_init))
                 add(EditEntity("name", infoRule?.name, R.string.rule_book_name))
                 add(EditEntity("author", infoRule?.author, R.string.rule_book_author))
-                add(EditEntity("coverUrl", infoRule?.coverUrl, R.string.rule_cover_url))
-                add(EditEntity("intro", infoRule?.intro, R.string.rule_book_intro))
                 add(EditEntity("kind", infoRule?.kind, R.string.rule_book_kind))
                 add(EditEntity("wordCount", infoRule?.wordCount, R.string.rule_word_count))
                 add(EditEntity("lastChapter", infoRule?.lastChapter, R.string.rule_last_chapter))
+                add(EditEntity("intro", infoRule?.intro, R.string.rule_book_intro))
+                add(EditEntity("coverUrl", infoRule?.coverUrl, R.string.rule_cover_url))
                 add(EditEntity("tocUrl", infoRule?.tocUrl, R.string.rule_toc_url))
             }
         }
@@ -212,8 +212,8 @@ class BookSourceEditActivity :
                 add(EditEntity("author", exploreRule?.author, R.string.rule_book_author))
                 add(EditEntity("kind", exploreRule?.kind, R.string.rule_book_kind))
                 add(EditEntity("wordCount", exploreRule?.wordCount, R.string.rule_word_count))
-                add(EditEntity("intro", exploreRule?.intro, R.string.rule_book_intro))
                 add(EditEntity("lastChapter", exploreRule?.lastChapter, R.string.rule_last_chapter))
+                add(EditEntity("intro", exploreRule?.intro, R.string.rule_book_intro))
                 add(EditEntity("coverUrl", exploreRule?.coverUrl, R.string.rule_cover_url))
                 add(EditEntity("bookUrl", exploreRule?.bookUrl, R.string.rule_book_url))
             }
