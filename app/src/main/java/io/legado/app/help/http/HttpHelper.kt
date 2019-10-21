@@ -51,6 +51,15 @@ object HttpHelper {
             .build()
     }
 
+    fun getByteRetrofit(baseUrl: String): Retrofit {
+        return Retrofit.Builder().baseUrl(baseUrl)
+            .addConverterFactory(ByteConverter())
+            //增加返回值为Observable<T>的支持
+            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
+            .client(client)
+            .build()
+    }
+
     private fun getHeaderInterceptor(): Interceptor {
         return Interceptor { chain ->
             val request = chain.request()

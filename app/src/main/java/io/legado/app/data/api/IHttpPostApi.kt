@@ -42,4 +42,12 @@ interface IHttpPostApi {
         @Body body: RequestBody,
         @HeaderMap headers: Map<String, String>
     ): Call<String>
+
+    @FormUrlEncoded
+    @POST
+    fun postMapByte(
+        @Url url: String,
+        @FieldMap(encoded = true) fieldMap: Map<String, String>,
+        @HeaderMap headers: Map<String, String>
+    ): Call<ByteArray>
 }

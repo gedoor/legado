@@ -1,6 +1,5 @@
 package io.legado.app.utils
 
-import android.text.TextUtils
 import retrofit2.Response
 import java.net.URL
 import java.util.*
@@ -71,11 +70,12 @@ object NetworkUtils {
     /**
      * 获取绝对地址
      */
-    fun getAbsoluteURL(baseURL: String, relativePath: String): String {
+    fun getAbsoluteURL(baseURL: String?, relativePath: String?): String? {
+        if (baseURL.isNullOrEmpty()) return relativePath
+        if (relativePath.isNullOrEmpty()) return baseURL
         var relativeUrl = relativePath
-        if (TextUtils.isEmpty(baseURL)) return relativePath
         try {
-            val absoluteUrl = URL(baseURL)
+            val absoluteUrl = URL(baseURL.substringBefore(","))
             val parseUrl = URL(absoluteUrl, relativePath)
             relativeUrl = parseUrl.toString()
             return relativeUrl

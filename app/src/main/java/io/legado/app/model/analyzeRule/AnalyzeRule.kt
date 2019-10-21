@@ -42,7 +42,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         if (content == null) throw AssertionError("Content cannot be null")
         isJSON = content.toString().isJson()
         this.content = content
-        this.baseUrl = baseUrl?.split("\n".toRegex(), 1)?.get(0)
+        this.baseUrl = baseUrl
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
@@ -150,19 +150,17 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         if (result is String) {
             result = listOf((result as String).htmlFormat().split("\n"))
         }
-        baseUrl?.let {
-            if (isUrl && !TextUtils.isEmpty(it)) {
-                val urlList = ArrayList<String>()
-                if (result is List<*>) {
-                    for (url in result as List<*>) {
-                        val absoluteURL = NetworkUtils.getAbsoluteURL(it, url.toString())
-                        if (!urlList.contains(absoluteURL)) {
-                            urlList.add(absoluteURL)
-                        }
+        if (isUrl) {
+            val urlList = ArrayList<String>()
+            if (result is List<*>) {
+                for (url in result as List<*>) {
+                    val absoluteURL = NetworkUtils.getAbsoluteURL(baseUrl, url.toString())
+                    if (!absoluteURL.isNullOrEmpty() && !urlList.contains(absoluteURL)) {
+                        urlList.add(absoluteURL)
                     }
                 }
-                return urlList
             }
+            return urlList
         }
         @Suppress("UNCHECKED_CAST")
         return result as? List<String>
@@ -212,11 +210,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 }
             }
         }
-        if (result == null) return ""
-        baseUrl?.let {
-            return if (isUrl) {
-                NetworkUtils.getAbsoluteURL(it, result.toString())
-            } else result.toString()
+        if (result == null) result = ""
+        if (isUrl) {
+            return NetworkUtils.getAbsoluteURL(baseUrl, result.toString()) ?: ""
         }
         return result.toString()
     }

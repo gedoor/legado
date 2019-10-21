@@ -255,23 +255,20 @@ class AnalyzeUrl(
         return when {
             method == Method.POST -> {
                 if (fieldMap.isNotEmpty()) {
-                    HttpHelper.getApiService<IHttpPostApi>(
-                        baseUrl
-                    ).postMap(url, fieldMap, headerMap)
+                    HttpHelper
+                        .getApiService<IHttpPostApi>(baseUrl)
+                        .postMap(url, fieldMap, headerMap)
                 } else {
-                    HttpHelper.getApiService<IHttpPostApi>(
-                        baseUrl
-                    ).postBody(
-                        url,
-                        body,
-                        headerMap
-                    )
+                    HttpHelper
+                        .getApiService<IHttpPostApi>(baseUrl)
+                        .postBody(url, body, headerMap)
                 }
             }
-            fieldMap.isEmpty() -> HttpHelper.getApiService<IHttpGetApi>(
-                baseUrl
-            ).get(url, headerMap)
-            else -> HttpHelper.getApiService<IHttpGetApi>(baseUrl)
+            fieldMap.isEmpty() -> HttpHelper
+                .getApiService<IHttpGetApi>(baseUrl)
+                .get(url, headerMap)
+            else -> HttpHelper
+                .getApiService<IHttpGetApi>(baseUrl)
                 .getMap(url, fieldMap, headerMap)
         }
     }
@@ -280,23 +277,20 @@ class AnalyzeUrl(
         return when {
             method == Method.POST -> {
                 if (fieldMap.isNotEmpty()) {
-                    HttpHelper.getApiService<IHttpPostApi>(
-                        baseUrl
-                    ).postMapAsync(url, fieldMap, headerMap)
+                    HttpHelper
+                        .getApiService<IHttpPostApi>(baseUrl)
+                        .postMapAsync(url, fieldMap, headerMap)
                 } else {
-                    HttpHelper.getApiService<IHttpPostApi>(
-                        baseUrl
-                    ).postBodyAsync(
-                        url,
-                        body,
-                        headerMap
-                    )
+                    HttpHelper
+                        .getApiService<IHttpPostApi>(baseUrl)
+                        .postBodyAsync(url, body, headerMap)
                 }
             }
-            fieldMap.isEmpty() -> HttpHelper.getApiService<IHttpGetApi>(
-                baseUrl
-            ).getAsync(url, headerMap)
-            else -> HttpHelper.getApiService<IHttpGetApi>(baseUrl)
+            fieldMap.isEmpty() -> HttpHelper
+                .getApiService<IHttpGetApi>(baseUrl)
+                .getAsync(url, headerMap)
+            else -> HttpHelper
+                .getApiService<IHttpGetApi>(baseUrl)
                 .getMapAsync(url, fieldMap, headerMap)
         }
     }
