@@ -73,14 +73,18 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<Book> {
         return Coroutine.async(scope, context) {
-            val analyzeUrl = AnalyzeUrl(
-                book = book,
-                ruleUrl = book.bookUrl,
-                baseUrl = sourceUrl,
-                headerMapF = bookSource.getHeaderMap()
-            )
-            val response = analyzeUrl.getResponseAsync().await()
-            BookInfo.analyzeBookInfo(book, response.body(), bookSource, analyzeUrl)
+            val body = if (book.infoHtml.isNullOrEmpty()) {
+                val analyzeUrl = AnalyzeUrl(
+                    book = book,
+                    ruleUrl = book.bookUrl,
+                    baseUrl = sourceUrl,
+                    headerMapF = bookSource.getHeaderMap()
+                )
+                analyzeUrl.getResponseAsync().await().body()
+            } else {
+                book.infoHtml
+            }
+            BookInfo.analyzeBookInfo(book, body, bookSource, book.bookUrl)
             book
         }
     }
@@ -94,14 +98,18 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<BookChapter>> {
         return Coroutine.async(scope, context) {
-            val analyzeUrl = AnalyzeUrl(
-                book = book,
-                ruleUrl = book.tocUrl,
-                baseUrl = book.bookUrl,
-                headerMapF = bookSource.getHeaderMap()
-            )
-            val response = analyzeUrl.getResponseAsync().await()
-            BookChapterList.analyzeChapterList(this, book, response, bookSource, analyzeUrl)
+            val body = if (book.bookUrl == book.tocUrl && book.tocHtml.isNullOrEmpty()) {
+                val analyzeUrl = AnalyzeUrl(
+                    book = book,
+                    ruleUrl = book.tocUrl,
+                    baseUrl = book.bookUrl,
+                    headerMapF = bookSource.getHeaderMap()
+                )
+                analyzeUrl.getResponseAsync().await().body()
+            } else {
+                book.tocUrl
+            }
+            BookChapterList.analyzeChapterList(this, book, body, bookSource, book.tocUrl)
         }
     }
 

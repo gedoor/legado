@@ -24,19 +24,20 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
         @Synchronized
         fun printLog(
             sourceUrl: String?,
-            state: Int,
-            msg: String,
+            msg: String?,
+            state: Int = 1,
             print: Boolean = true,
             isHtml: Boolean = false,
             showTime: Boolean = true
         ) {
             if (debugSource != sourceUrl || callback == null || !print) return
-            var printMsg = msg
+            var printMsg = msg ?: ""
             if (isHtml) {
                 printMsg = printMsg.htmlFormat()
             }
             if (showTime) {
-                printMsg = "${DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))} $printMsg"
+                printMsg =
+                    "${DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))} $printMsg"
             }
             callback?.printLog(state, printMsg)
         }
@@ -64,10 +65,10 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             val book = Book()
             book.origin = webBook.sourceUrl
             book.bookUrl = key
-            printLog(webBook.sourceUrl, 1, "开始访问$key")
+            printLog(webBook.sourceUrl, "开始访问$key")
             infoDebug(book)
         } else {
-            printLog(webBook.sourceUrl, 1, "开始搜索关键字$key")
+            printLog(webBook.sourceUrl, "开始搜索关键字$key")
             searchDebug(key)
         }
     }
@@ -77,65 +78,65 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             .onSuccess { searchBooks ->
                 searchBooks?.let {
                     if (searchBooks.isNotEmpty()) {
-                        printLog(debugSource, 1, "搜索完成")
-                        printLog(debugSource, 1, "", showTime = false)
+                        printLog(debugSource, "搜索完成")
+                        printLog(debugSource, "", showTime = false)
                         infoDebug(searchBooks[0].toBook())
                     } else {
-                        printLog(debugSource, -1, "未获取到书籍")
+                        printLog(debugSource, "未获取到书籍", -1)
                     }
                 }
             }
             .onError {
-                printLog(debugSource, -1, it.localizedMessage)
+                printLog(debugSource, it.localizedMessage, -1)
             }
         tasks.add(search)
     }
 
     private fun infoDebug(book: Book) {
-        printLog(debugSource, 1, "开始获取详情页")
+        printLog(debugSource, "开始获取详情页")
         val info = webBook.getBookInfo(book)
             .onSuccess {
-                printLog(debugSource, 1, "详情页完成")
-                printLog(debugSource, 1, "", showTime = false)
+                printLog(debugSource, "详情页完成")
+                printLog(debugSource, "", showTime = false)
                 tocDebug(book)
             }
             .onError {
-                printLog(debugSource, -1, it.localizedMessage)
+                printLog(debugSource, it.localizedMessage, -1)
             }
         tasks.add(info)
     }
 
     private fun tocDebug(book: Book) {
-        printLog(debugSource, 1, "开始获取目录页")
+        printLog(debugSource, "开始获取目录页")
         val chapterList = webBook.getChapterList(book)
             .onSuccess { chapterList ->
                 chapterList?.let {
                     if (it.isNotEmpty()) {
-                        printLog(debugSource, 1, "目录完成")
-                        printLog(debugSource, 1, "", showTime = false)
+                        printLog(debugSource, "目录完成")
+                        printLog(debugSource, "", showTime = false)
                         val nextChapterUrl = if (it.size > 1) it[1].url else null
                         contentDebug(book, it[0], nextChapterUrl)
                     } else {
-                        printLog(debugSource, -1, "目录列表为空")
+                        printLog(debugSource, "目录列表为空", -1)
                     }
                 }
             }
             .onError {
-                printLog(debugSource, -1, it.localizedMessage)
+                printLog(debugSource, it.localizedMessage, -1)
             }
         tasks.add(chapterList)
     }
 
     private fun contentDebug(book: Book, bookChapter: BookChapter, nextChapterUrl: String?) {
-        printLog(debugSource, 1, "开始获取内容")
+        printLog(debugSource, "开始获取内容")
         val content = webBook.getContent(book, bookChapter, nextChapterUrl)
             .onSuccess { content ->
                 content?.let {
-                    printLog(debugSource, 1000, it)
+                    printLog(debugSource, it, 1000)
                 }
             }
             .onError {
-                printLog(debugSource, -1, it.localizedMessage)
+                printLog(debugSource, it.localizedMessage, -1)
             }
         tasks.add(content)
     }

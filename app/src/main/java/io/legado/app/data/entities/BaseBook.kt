@@ -7,6 +7,9 @@ interface BaseBook {
     var kind: String?
     var wordCount: String?
 
+    var infoHtml: String?
+    var tocHtml: String?
+
     fun putVariable(key: String, value: String)
 
     fun getKindList(): List<String> {

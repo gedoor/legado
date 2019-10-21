@@ -27,9 +27,16 @@ data class SearchBook(
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
     var time: Long = System.currentTimeMillis(),
     var variable: String? = null,
-    var bookInfoHtml: String? = null,
     var originOrder: Int = 0
 ) : Parcelable, BaseBook, Comparable<SearchBook> {
+
+    @Ignore
+    @IgnoredOnParcel
+    override var infoHtml: String? = null
+
+    @Ignore
+    @IgnoredOnParcel
+    override var tocHtml: String? = null
 
     override fun equals(other: Any?): Boolean {
         if (other is SearchBook) {
@@ -72,6 +79,9 @@ data class SearchBook(
             tocUrl = tocUrl,
             originOrder = originOrder,
             variable = variable
-        )
+        ).apply {
+            this.infoHtml = this@SearchBook.infoHtml
+            this.tocUrl = this@SearchBook.tocUrl
+        }
     }
 }

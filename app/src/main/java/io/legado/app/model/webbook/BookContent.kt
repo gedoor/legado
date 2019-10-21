@@ -34,7 +34,7 @@ object BookContent {
                 analyzeUrl.ruleUrl
             )
         )
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:${analyzeUrl.ruleUrl}")
+        SourceDebug.printLog(bookSource.bookSourceUrl, "获取成功:${analyzeUrl.ruleUrl}")
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()

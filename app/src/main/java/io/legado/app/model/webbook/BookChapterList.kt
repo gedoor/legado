@@ -9,30 +9,23 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 object BookChapterList {
 
     suspend fun analyzeChapterList(
         coroutineScope: CoroutineScope,
         book: Book,
-        response: Response<String>,
+        body: String?,
         bookSource: BookSource,
-        analyzeUrl: AnalyzeUrl
+        baseUrl: String
     ): List<BookChapter> {
         var chapterList = arrayListOf<BookChapter>()
-        val baseUrl: String = NetworkUtils.getUrl(response)
-        val body: String? = response.body()
         body ?: throw Exception(
-            App.INSTANCE.getString(
-                R.string.error_get_web_content,
-                analyzeUrl.ruleUrl
-            )
+            App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
         )
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取成功:${analyzeUrl.ruleUrl}")
+        SourceDebug.printLog(bookSource.bookSourceUrl, "获取成功:${baseUrl}")
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
         var reverse = false
@@ -140,7 +133,7 @@ object BookChapterList {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body, baseUrl)
         if (getNextUrl) {
-            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取目录下一页列表", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "获取目录下一页列表", print = printLog)
             analyzeRule.getStringList(tocRule.nextTocUrl ?: "", true)?.let {
                 for (item in it) {
                     if (item != baseUrl) {
@@ -150,16 +143,15 @@ object BookChapterList {
             }
             SourceDebug.printLog(
                 bookSource.bookSourceUrl,
-                1,
                 TextUtils.join(",", nextUrlList),
-                printLog
+                print = printLog
             )
         }
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "解析目录列表", printLog)
+        SourceDebug.printLog(bookSource.bookSourceUrl, "解析目录列表", print = printLog)
         val elements = analyzeRule.getElements(listRule)
-        SourceDebug.printLog(bookSource.bookSourceUrl, 1, "目录数${elements.size}", printLog)
+        SourceDebug.printLog(bookSource.bookSourceUrl, "目录数${elements.size}", print = printLog)
         if (elements.isNotEmpty()) {
-            SourceDebug.printLog(bookSource.bookSourceUrl, 1, "获取目录", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "获取目录", print = printLog)
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName ?: "")
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl ?: "")
             for (item in elements) {
@@ -175,9 +167,8 @@ object BookChapterList {
             }
             SourceDebug.printLog(
                 bookSource.bookSourceUrl,
-                1,
                 "${chapterList[0].title}${chapterList[0].url}",
-                printLog
+                print = printLog
             )
         }
         return ChapterData(chapterList, nextUrlList)

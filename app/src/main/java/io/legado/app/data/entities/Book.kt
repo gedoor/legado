@@ -47,9 +47,17 @@ data class Book(
     var useReplaceRule: Boolean = true,         // 正文使用净化替换规则
     var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
 ) : Parcelable, BaseBook {
-    @IgnoredOnParcel
     @Ignore
+    @IgnoredOnParcel
     override var variableMap: HashMap<String, String> = GSON.fromJsonObject(variable) ?: HashMap()
+
+    @Ignore
+    @IgnoredOnParcel
+    override var infoHtml: String? = null
+
+    @Ignore
+    @IgnoredOnParcel
+    override var tocHtml: String? = null
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 
@@ -77,6 +85,9 @@ data class Book(
             tocUrl = tocUrl,
             originOrder = originOrder,
             variable = variable
-        )
+        ).apply {
+            this.infoHtml = this@Book.infoHtml
+            this.tocHtml = this@Book.tocHtml
+        }
     }
 }
