@@ -70,8 +70,15 @@ data class BookSource(
         val headerMap = HashMap<String, String>()
         headerMap["User-Agent"] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
         header?.let {
-            GSON.fromJsonObject<Map<String, String>>(header)?.let {
-                headerMap.putAll(it)
+            val header1 = when {
+                it.startsWith("@js:", true) ->
+                    AppConst.SCRIPT_ENGINE.eval(it.substring(4)).toString()
+                it.startsWith("<js>", true) ->
+                    AppConst.SCRIPT_ENGINE.eval(it.substring(4, it.lastIndexOf("<"))).toString()
+                else -> it
+            }
+            GSON.fromJsonObject<Map<String, String>>(header1)?.let { headers ->
+                headerMap.putAll(headers)
             }
         }
         return headerMap
