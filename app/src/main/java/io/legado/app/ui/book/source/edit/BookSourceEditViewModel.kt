@@ -13,7 +13,7 @@ import io.legado.app.help.storage.OldRule
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
     val sourceLiveData: MutableLiveData<BookSource> = MutableLiveData()
-    var oldSourceUrl: String? = null
+    private var oldSourceUrl: String? = null
 
     fun initData(intent: Intent) {
         execute {
@@ -33,7 +33,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         }
     }
 
-    fun save(bookSource: BookSource, finally: (() -> Unit)? = null) {
+    fun save(bookSource: BookSource, success: (() -> Unit)? = null) {
         execute {
             oldSourceUrl?.let {
                 if (oldSourceUrl != bookSource.bookSourceUrl) {
@@ -42,9 +42,12 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             }
             oldSourceUrl = bookSource.bookSourceUrl
             App.db.bookSourceDao().insert(bookSource)
-        }.onFinally {
-            finally?.let { it() }
-        } 
+        }.onSuccess {
+            success?.invoke()
+        }.onError {
+            toast(it.localizedMessage)
+            it.printStackTrace()
+        }
     }
 
     fun pasteSource() {

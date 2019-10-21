@@ -14,7 +14,7 @@ import io.legado.app.utils.fromJsonObject
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
     val sourceLiveData: MutableLiveData<RssSource> = MutableLiveData()
-    var oldSourceUrl: String? = null
+    private var oldSourceUrl: String? = null
 
     fun initData(intent: Intent) {
         execute {
@@ -47,6 +47,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             success()
         }.onError {
             toast(it.localizedMessage)
+            it.printStackTrace()
         }
     }
 
