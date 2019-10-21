@@ -8,9 +8,11 @@ import android.view.MotionEvent
 import android.widget.Scroller
 import androidx.annotation.CallSuper
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.ui.widget.page.ContentView
 import io.legado.app.ui.widget.page.PageView
 import io.legado.app.utils.screenshot
+import io.legado.app.utils.snackbar
 import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) {
@@ -41,6 +43,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
     //textView在顶端或低端
     protected var atTop: Boolean = false
     protected var atBottom: Boolean = false
+
+    private var snackbar: Snackbar? = null
 
     private val scroller: Scroller by lazy {
         Scroller(
@@ -285,12 +289,36 @@ abstract class PageDelegate(protected val pageView: PageView) {
     fun hasPrev(): Boolean {
         //上一页的参数配置
         direction = Direction.PREV
-        return pageView.pageFactory?.hasPrev() == true
+        val hasPrev = pageView.pageFactory?.hasPrev() == true
+        if (!hasPrev) {
+            snackbar ?: let {
+                snackbar = pageView.snackbar("没有上一页")
+            }
+            snackbar?.let {
+                if (!it.isShown) {
+                    it.setText("没有上一页")
+                    it.show()
+                }
+            }
+        }
+        return hasPrev
     }
 
     fun hasNext(): Boolean {
         //进行下一页的配置
         direction = Direction.NEXT
-        return pageView.pageFactory?.hasNext() == true
+        val hasNext = pageView.pageFactory?.hasNext() == true
+        if (!hasNext) {
+            snackbar ?: let {
+                snackbar = pageView.snackbar("没有下一页")
+            }
+            snackbar?.let {
+                if (!it.isShown) {
+                    it.setText("没有下一页")
+                    it.show()
+                }
+            }
+        }
+        return hasNext
     }
 }
