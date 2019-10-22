@@ -193,9 +193,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                event?.startTracking()
-            }
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 if (volumeKeyPage(PageDelegate.Direction.PREV)) {
                     return true
@@ -234,7 +231,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             KeyEvent.KEYCODE_BACK -> {
                 event?.let {
-                    if ((event.flags and KeyEvent.FLAG_CANCELED_LONG_PRESS == 0)) {
+                    if ((event.flags and KeyEvent.FLAG_CANCELED_LONG_PRESS == 0)
+                        && event.isTracking
+                        && !event.isCanceled
+                    ) {
                         if (readAloudStatus == Status.PLAY) {
                             ReadAloud.pause(this)
                             toast(R.string.read_aloud_pause)
