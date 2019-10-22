@@ -98,6 +98,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         super.onResume()
         upSystemUiVisibility()
         timeElectricityReceiver = TimeElectricityReceiver.register(this)
+        page_view.upTime()
     }
 
     override fun onPause() {
