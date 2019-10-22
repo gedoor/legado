@@ -66,9 +66,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             loadChapter(it, changeDruChapterIndex)
                         }
                     }.onError {
+                        isLoadingData.postValue(false)
                         toast(R.string.error_get_book_info)
                     }
-            } ?: toast(R.string.error_no_source)
+            } ?: let {
+                isLoadingData.postValue(false)
+                toast(R.string.error_no_source)
+            }
         }
     }
 
@@ -94,13 +98,18 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                     changeDruChapterIndex(it)
                                 }
                             } else {
+                                isLoadingData.postValue(false)
                                 toast(R.string.chapter_list_empty)
                             }
                         }
                     }.onError {
+                        isLoadingData.postValue(false)
                         toast(R.string.error_get_chapter_list)
                     }
-            } ?: toast(R.string.error_no_source)
+            } ?: let {
+                isLoadingData.postValue(false)
+                toast(R.string.error_no_source)
+            }
         }
     }
 
