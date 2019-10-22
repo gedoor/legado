@@ -479,21 +479,25 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         fun makeUpRule(result: Any?) {
             val infoVal = StringBuilder()
             if (ruleParam.isNotEmpty()) {
-                var j = ruleParam.size
-                while (j-- > 0) {
-                    val regType = ruleType[j]
+                var index = ruleParam.size
+                while (index-- > 0) {
+                    val regType = ruleType[index]
                     when {
                         regType > 0 -> {
                             @Suppress("UNCHECKED_CAST")
-                            val resultList = result as List<String?>
-                            if (resultList.size > regType) {
-                                resultList[regType]?.let {
-                                    infoVal.insert(0, resultList[regType])
+                            val resultList = result as? List<String?>
+                            if (resultList != null) {
+                                if (resultList.size > regType) {
+                                    resultList[regType]?.let {
+                                        infoVal.insert(0, resultList[regType])
+                                    }
                                 }
+                            } else {
+                                infoVal.insert(0, ruleParam[index])
                             }
                         }
                         regType == -1 -> {
-                            val jsEval: Any = evalJS(ruleParam[j], result)
+                            val jsEval: Any = evalJS(ruleParam[index], result)
                             if (jsEval is String) {
                                 infoVal.insert(0, jsEval)
                             } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
@@ -503,9 +507,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                             }
                         }
                         regType == -2 -> {
-                            infoVal.insert(0, get(ruleParam[j]))
+                            infoVal.insert(0, get(ruleParam[index]))
                         }
-                        else -> infoVal.insert(0, ruleParam[j])
+                        else -> infoVal.insert(0, ruleParam[index])
                     }
                 }
                 rule = infoVal.toString()
