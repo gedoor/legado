@@ -307,22 +307,6 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     /**
-     * 替换@get
-     */
-    private fun replaceGet(ruleStr: String): String {
-        var vRuleStr = ruleStr
-        val getMatcher = getPattern.matcher(vRuleStr)
-        while (getMatcher.find()) {
-            var value = ""
-            book?.variableMap?.get(getMatcher.group(1))?.let {
-                value = it
-            }
-            vRuleStr = vRuleStr.replace(getMatcher.group(), value)
-        }
-        return vRuleStr
-    }
-
-    /**
      * 正则替换
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
@@ -454,11 +438,41 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             }
             //分离put
             rule = splitPutRule(rule, putMap)
-            //get替换
-            rule = replaceGet(rule)
-            // 拆分表达式替换规则
-            if (mode != Mode.Js) {
-                AnalyzeByRegex.splitRegexRule(rule, ruleParam, ruleType)
+            //get,{{ }},$, 替换
+            var start = 0
+            var tmp: String
+            val evalMatcher = evalPattern.matcher(rule)
+            while (evalMatcher.find()) {
+                if (evalMatcher.start() > start) {
+                    tmp = rule.substring(start, evalMatcher.start())
+                    ruleType.add(0)
+                    ruleParam.add(tmp)
+                }
+                tmp = evalMatcher.group()
+                when {
+                    tmp.startsWith("$") -> {
+                        ruleType.add(tmp.substring(1).toInt())
+                        ruleParam.add(tmp)
+                    }
+                    tmp.startsWith("@get:", true) -> {
+                        ruleType.add(-2)
+                        ruleParam.add(tmp.substring(6, tmp.lastIndex))
+                    }
+                    tmp.startsWith("{{") -> {
+                        ruleType.add(-1)
+                        ruleParam.add(tmp.substring(2, tmp.length - 2))
+                    }
+                    else -> {
+                        ruleType.add(0)
+                        ruleParam.add(tmp)
+                    }
+                }
+                start = evalMatcher.end()
+            }
+            if (rule.length > start) {
+                tmp = rule.substring(start)
+                ruleType.add(0)
+                ruleParam.add(tmp)
             }
         }
 
@@ -468,25 +482,30 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 var j = ruleParam.size
                 while (j-- > 0) {
                     val regType = ruleType[j]
-                    if (regType > 0) {
-                        @Suppress("UNCHECKED_CAST")
-                        val resultList = result as List<String?>
-                        if (resultList.size > regType) {
-                            resultList[regType]?.let {
-                                infoVal.insert(0, resultList[regType])
+                    when {
+                        regType > 0 -> {
+                            @Suppress("UNCHECKED_CAST")
+                            val resultList = result as List<String?>
+                            if (resultList.size > regType) {
+                                resultList[regType]?.let {
+                                    infoVal.insert(0, resultList[regType])
+                                }
                             }
                         }
-                    } else if (regType < 0) {
-                        val jsEval: Any = evalJS(ruleParam[j], result)
-                        if (jsEval is String) {
-                            infoVal.insert(0, jsEval)
-                        } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-                            infoVal.insert(0, String.format("%.0f", jsEval))
-                        } else {
-                            infoVal.insert(0, jsEval.toString())
+                        regType == -1 -> {
+                            val jsEval: Any = evalJS(ruleParam[j], result)
+                            if (jsEval is String) {
+                                infoVal.insert(0, jsEval)
+                            } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
+                                infoVal.insert(0, String.format("%.0f", jsEval))
+                            } else {
+                                infoVal.insert(0, jsEval.toString())
+                            }
                         }
-                    } else {
-                        infoVal.insert(0, ruleParam[j])
+                        regType == -2 -> {
+                            infoVal.insert(0, get(ruleParam[j]))
+                        }
+                        else -> infoVal.insert(0, ruleParam[j])
                     }
                 }
                 rule = infoVal.toString()
@@ -503,8 +522,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         return value
     }
 
-    operator fun get(key: String): String? {
-        return book?.variableMap?.get(key)
+    operator fun get(key: String): String {
+        return book?.variableMap?.get(key) ?: ""
     }
 
     /**
@@ -523,6 +542,10 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     companion object {
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
+        private val evalPattern = Pattern.compile(
+            "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}|\\$\\d{1,2}",
+            Pattern.CASE_INSENSITIVE
+        )
     }
 
     /**

@@ -1,6 +1,5 @@
 package io.legado.app.model.analyzeRule
 
-import android.text.TextUtils
 import java.util.*
 import java.util.regex.Pattern
 
@@ -56,104 +55,5 @@ object AnalyzeByRegex {
             } while (resM.find())
             return getElements(result.toString(), regs, ++vIndex)
         }
-    }
-
-    // 拆分正则表达式替换规则(如:$\d{1,2}或${name}) /*注意:千万别用正则表达式拆分字符串,效率太低了!*/
-    fun splitRegexRule(str: String, ruleParam: MutableList<String>, ruleType: MutableList<Int>) {
-        if (TextUtils.isEmpty(str)) {
-            ruleParam.add("")
-            ruleType.add(0)
-            return
-        }
-        var index = 0
-        var start = 0
-        val len = str.length
-        while (index < len) {
-            if (str[index] == '$') {
-                if (index + 1 >= len) {
-                    break
-                } else if (str[index + 1] == '{') {
-                    if (index > start) {
-                        ruleParam.add(str.substring(start, index))
-                        ruleType.add(0)
-                        start = index
-                    }
-                    index += 2
-                    while (index < len) {
-                        if (str[index] == '}') {
-                            ruleParam.add(str.substring(start + 2, index))
-                            ruleType.add(-1)
-                            start = ++index
-                            break
-                        } else if (str[index] == '$' || str[index] == '@') {
-                            break
-                        }
-                        index++
-                    }
-                } else if (str[index + 1] in '0'..'9') {
-                    if (index > start) {
-                        ruleParam.add(str.substring(start, index))
-                        ruleType.add(0)
-                        start = index
-                    }
-                    if (index + 2 < len && str[index + 2] >= '0' && str[index + 2] <= '9') {
-                        ruleParam.add(str.substring(start, index + 3))
-                        ruleType.add(string2Int(ruleParam[ruleParam.size - 1]))
-                        index += 3
-                        start = index
-                    } else {
-                        ruleParam.add(str.substring(start, index + 2))
-                        ruleType.add(string2Int(ruleParam[ruleParam.size - 1]))
-                        index += 2
-                        start = index
-                    }
-                } else {
-                    index++
-                }
-            } else if (str[index] == '{') {
-                if (index + 1 >= len) {
-                    break
-                } else if (str[index + 1] == '{') {
-                    if (index > start) {
-                        ruleParam.add(str.substring(start, index))
-                        ruleType.add(0)
-                        start = index
-                    }
-                    while (index + 1 < len) {
-                        if (str[index] == '}' && str[index + 1] == '}') {
-                            ruleParam.add(str.substring(start + 2, index))
-                            ruleType.add(-11)
-                            start = index + 2
-                            break
-                        }
-                        index++
-                    }
-                } else {
-                    index++
-                }
-            } else {
-                index++
-            }
-        }
-        if (index > start) {
-            ruleParam.add(str.substring(start, index))
-            ruleType.add(0)
-        }
-    }
-
-    // String数字转int数字的高效方法(利用ASCII值判断)
-    private fun string2Int(s: String): Int {
-        var r = 0
-        var n: Char
-        var i = 0
-        val l = s.length
-        while (i < l) {
-            n = s[i]
-            if (n in '0'..'9') {
-                r = r * 10 + (n.toInt() - 0x30) //'0-9'的ASCII值为0x30-0x39
-            }
-            i++
-        }
-        return r
     }
 }
