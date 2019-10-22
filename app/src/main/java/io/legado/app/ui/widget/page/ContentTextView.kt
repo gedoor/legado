@@ -30,7 +30,6 @@ class ContentTextView : AppCompatTextView {
     private val mViewFling: ViewFling by lazy { ViewFling() }
     private var velocityTracker: VelocityTracker? = null
     private var mScrollState = scrollStateIdle
-    private var mScrollPointerId = -1
     private var mLastTouchY: Int = 0
     private var mTouchSlop: Int = 0
     private var mMinFlingVelocity: Int = 0
@@ -111,7 +110,6 @@ class ContentTextView : AppCompatTextView {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event?.let {
             val action = event.action
-            val actionIndex = event.actionIndex
             val vtEvent = MotionEvent.obtain(event)
 
             if (velocityTracker == null) {
@@ -121,51 +119,35 @@ class ContentTextView : AppCompatTextView {
             when (action) {
                 MotionEvent.ACTION_DOWN -> {
                     setScrollState(scrollStateIdle)
-                    mScrollPointerId = event.getPointerId(0)
                     mLastTouchY = (event.y + 0.5f).toInt()
                 }
-                MotionEvent.ACTION_POINTER_DOWN -> {
-                    mScrollPointerId = event.getPointerId(actionIndex)
-                    mLastTouchY = (event.getY(actionIndex) + 0.5f).toInt()
-                }
                 MotionEvent.ACTION_MOVE -> {
-                    val index = event.findPointerIndex(mScrollPointerId)
-                    if (index > 0) {
-                        val y = (event.getY(index) + 0.5f).toInt()
-                        var dy = mLastTouchY - y
+                    val y = (event.y + 0.5f).toInt()
+                    var dy = mLastTouchY - y
 
-                        if (mScrollState != scrollStateDragging) {
-                            var startScroll = false
+                    if (mScrollState != scrollStateDragging) {
+                        var startScroll = false
 
-                            if (abs(dy) > mTouchSlop) {
-                                if (dy > 0) {
-                                    dy -= mTouchSlop
-                                } else {
-                                    dy += mTouchSlop
-                                }
-                                startScroll = true
+                        if (abs(dy) > mTouchSlop) {
+                            if (dy > 0) {
+                                dy -= mTouchSlop
+                            } else {
+                                dy += mTouchSlop
                             }
-                            if (startScroll) {
-                                setScrollState(scrollStateDragging)
-                            }
+                            startScroll = true
                         }
-
-                        if (mScrollState == scrollStateDragging) {
-                            mLastTouchY = y
+                        if (startScroll) {
+                            setScrollState(scrollStateDragging)
                         }
                     }
-                }
-                MotionEvent.ACTION_POINTER_UP -> {
-                    if (event.getPointerId(actionIndex) == mScrollPointerId) {
-                        // Pick a new pointer to pick up the slack.
-                        val newIndex = if (actionIndex == 0) 1 else 0
-                        mScrollPointerId = event.getPointerId(newIndex)
-                        mLastTouchY = (event.getY(newIndex) + 0.5f).toInt()
+
+                    if (mScrollState == scrollStateDragging) {
+                        mLastTouchY = y
                     }
                 }
                 MotionEvent.ACTION_UP -> {
                     velocityTracker?.computeCurrentVelocity(1000, mMaxFlingVelocity.toFloat())
-                    val yVelocity = velocityTracker?.getYVelocity(mScrollPointerId) ?: 0f
+                    val yVelocity = velocityTracker?.yVelocity ?: 0f
                     if (abs(yVelocity) > mMinFlingVelocity) {
                         mViewFling.fling(-yVelocity.toInt())
                     } else {
