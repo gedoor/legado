@@ -109,14 +109,11 @@ class ContentTextView : AppCompatTextView {
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event?.let {
-            val action = event.action
-            val vtEvent = MotionEvent.obtain(event)
-
             if (velocityTracker == null) {
                 velocityTracker = VelocityTracker.obtain()
             }
             velocityTracker?.addMovement(it)
-            when (action) {
+            when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     setScrollState(scrollStateIdle)
                     mLastTouchY = (event.y + 0.5f).toInt()
@@ -159,7 +156,6 @@ class ContentTextView : AppCompatTextView {
                     resetTouch()
                 }
             }
-            vtEvent.recycle()
         }
         return super.onTouchEvent(event)
     }
