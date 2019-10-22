@@ -121,7 +121,6 @@ class ContentTextView : AppCompatTextView {
                 MotionEvent.ACTION_MOVE -> {
                     val y = (event.y + 0.5f).toInt()
                     var dy = mLastTouchY - y
-
                     if (mScrollState != scrollStateDragging) {
                         var startScroll = false
 
@@ -137,7 +136,6 @@ class ContentTextView : AppCompatTextView {
                             setScrollState(scrollStateDragging)
                         }
                     }
-
                     if (mScrollState == scrollStateDragging) {
                         mLastTouchY = y
                     }
