@@ -1,6 +1,5 @@
 package io.legado.app.utils
 
-import okhttp3.internal.and
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -14,11 +13,11 @@ object MD5Utils {
         if (str == null) return null
         var reStr: String? = null
         try {
-            val md5 = MessageDigest.getInstance("MD5")
-            val bytes = md5.digest(str.toByteArray())
-            val stringBuffer = StringBuilder()
+            val md5:MessageDigest = MessageDigest.getInstance("MD5")
+            val bytes:ByteArray = md5.digest(str.toByteArray())
+            val stringBuffer:StringBuilder = StringBuilder()
             for (b in bytes) {
-                val bt = b and 0xff
+                val bt:Int = b.toInt() and 0xff
                 if (bt < 16) {
                     stringBuffer.append(0)
                 }
