@@ -3,8 +3,6 @@ package io.legado.app.help
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.StringUtils
-import java.util.regex.Pattern
 
 
 @Suppress("unused")
@@ -29,22 +27,6 @@ object JsExtensions {
      */
     fun base64Decoder(str: String): String {
         return EncoderUtils.base64Decoder(str)
-    }
-
-    /**
-     * 章节数转数字
-     */
-    fun toNumChapter(s: String?): String? {
-        if (s == null) {
-            return null
-        }
-        val pattern = Pattern.compile("(第)(.+?)(章)")
-        val matcher = pattern.matcher(s)
-        return if (matcher.find()) {
-            matcher.group(1) + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
-        } else {
-            s
-        }
     }
 
     fun strToMd5By32(str: String?): String? {
