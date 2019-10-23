@@ -438,7 +438,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             }
             //分离put
             rule = splitPutRule(rule, putMap)
-            //get,{{ }},$, 替换
+            //@get,{{ }},$1, 拆分
             var start = 0
             var tmp: String
             val evalMatcher = evalPattern.matcher(rule)
@@ -476,6 +476,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             }
         }
 
+        /**
+         * 替换@get,{{ }},$1,
+         */
         fun makeUpRule(result: Any?) {
             val infoVal = StringBuilder()
             if (ruleParam.isNotEmpty()) {
@@ -543,15 +546,6 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
-    companion object {
-        private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
-        private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
-        private val evalPattern = Pattern.compile(
-            "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}|\\$\\d{1,2}",
-            Pattern.CASE_INSENSITIVE
-        )
-    }
-
     /**
      * js实现跨域访问,不能删
      */
@@ -588,4 +582,14 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             s
         }
     }
+
+    companion object {
+        private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
+        private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
+        private val evalPattern = Pattern.compile(
+            "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}|\\$\\d{1,2}",
+            Pattern.CASE_INSENSITIVE
+        )
+    }
+
 }
