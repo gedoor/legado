@@ -2,8 +2,12 @@ package io.legado.app.service
 
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationCompat
+import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
+import io.legado.app.constant.AppConst
+import io.legado.app.help.IntentHelp
 import org.jetbrains.anko.startService
 
 class WebService : BaseService() {
@@ -28,6 +32,7 @@ class WebService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         isRun = true
+        updateNotification(getString(R.string.service_starting))
     }
 
     override fun onDestroy() {
@@ -40,5 +45,25 @@ class WebService : BaseService() {
             Action.stop -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    /**
+     * 更新通知
+     */
+    private fun updateNotification(content: String) {
+        val builder = NotificationCompat.Builder(this, AppConst.channelIdWeb)
+            .setSmallIcon(R.drawable.ic_web_service_noti)
+            .setOngoing(true)
+            .setContentTitle(getString(R.string.web_service))
+            .setContentText(content)
+        builder.addAction(
+            R.drawable.ic_stop_black_24dp,
+            getString(R.string.cancel),
+            IntentHelp.servicePendingIntent<WebService>(this, Action.stop)
+        )
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        val notification = builder.build()
+        val notificationId = 1122
+        startForeground(notificationId, notification)
     }
 }
