@@ -592,6 +592,14 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         }
     }
 
+    fun strToMd5By32(str: String?): String? {
+        return MD5Utils.strToMd5By32(str)
+    }
+
+    fun strToMd5By16(str: String?): String? {
+        return MD5Utils.strToMd5By16(str)
+    }
+
     companion object {
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
