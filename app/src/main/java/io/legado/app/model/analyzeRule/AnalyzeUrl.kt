@@ -9,6 +9,7 @@ import io.legado.app.constant.Pattern.JS_PATTERN
 import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.data.entities.BaseBook
+import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.utils.*
 import kotlinx.coroutines.Deferred
@@ -139,6 +140,7 @@ class AnalyzeUrl(
             var jsEval: Any
             val sb = StringBuffer(ruleUrl.length)
             val simpleBindings = SimpleBindings()
+            simpleBindings["java"] = JsExtensions
             simpleBindings["baseUrl"] = baseUrl
             simpleBindings["page"] = page
             simpleBindings["key"] = key
@@ -238,7 +240,7 @@ class AnalyzeUrl(
         book: BaseBook?
     ): Any {
         val bindings = SimpleBindings()
-        bindings["java"] = this
+        bindings["java"] = JsExtensions
         bindings["page"] = page
         bindings["key"] = key
         bindings["book"] = book

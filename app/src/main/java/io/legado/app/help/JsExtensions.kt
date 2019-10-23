@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 
 
 @Suppress("unused")
-class JsExtensions {
+object JsExtensions {
 
     /**
      * js实现跨域访问,不能删

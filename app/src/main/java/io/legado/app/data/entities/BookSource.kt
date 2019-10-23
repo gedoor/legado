@@ -137,7 +137,7 @@ data class BookSource(
                         if (a.isBlank()) {
                             val bindings = SimpleBindings()
                             bindings["baseUrl"] = bookSourceUrl
-                            bindings["java"] = JsExtensions()
+                            bindings["java"] = JsExtensions
                             a = AppConst.SCRIPT_ENGINE.eval(
                                 it.substring(4, it.lastIndexOf("<")),
                                 bindings
