@@ -580,11 +580,11 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         return EncoderUtils.base64Encode(str)
     }
 
-    fun strToMd5By32(str: String?): String? {
+    fun strToMd5By32(str: String): String? {
         return MD5Utils.strToMd5By32(str)
     }
 
-    fun strToMd5By16(str: String?): String? {
+    fun strToMd5By16(str: String): String? {
         return MD5Utils.strToMd5By16(str)
     }
 
