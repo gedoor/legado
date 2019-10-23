@@ -1,9 +1,5 @@
 package io.legado.app.utils;
 
-/**
- * Created by newbiechen on 2018/1/1.
- */
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
