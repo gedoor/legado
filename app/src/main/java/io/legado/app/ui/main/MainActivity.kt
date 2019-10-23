@@ -1,69 +1,129 @@
 package io.legado.app.ui.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
+import android.view.KeyEvent
 import android.view.MenuItem
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
-import io.legado.app.ui.search.SearchActivity
-import io.legado.app.utils.getViewModel
+import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.Bus
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.main.bookshelf.BookshelfFragment
+import io.legado.app.ui.main.explore.ExploreFragment
+import io.legado.app.ui.main.my.MyFragment
+import io.legado.app.ui.main.rss.RssFragment
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainActivity : BaseActivity<MainDataBinding, MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
+    BottomNavigationView.OnNavigationItemSelectedListener,
+    ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
+
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
-    override val layoutID: Int
-        get() = R.layout.activity_main
+    private var pagePosition = 0
 
-    override fun onViewModelCreated(viewModel: MainViewModel, savedInstanceState: Bundle?) {
-        fab.setOnClickListener { startActivity(Intent(this, SearchActivity::class.java)) }
-
-        val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, titleBar.toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        nav_view.setNavigationItemSelectedListener(this)
-    }
-
-    override fun onBackPressed() {
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
-    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onCompatOptionsItemSelected(item)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        ATH.applyEdgeEffectColor(view_pager_main)
+        ATH.applyBottomNavigationColor(bottom_navigation_view)
+        view_pager_main.offscreenPageLimit = 3
+        view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
+        view_pager_main.addOnPageChangeListener(this)
+        bottom_navigation_view.setOnNavigationItemSelectedListener(this)
+        importYueDu()
+        upVersion()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_send -> {
+            R.id.menu_bookshelf -> view_pager_main.currentItem = 0
+            R.id.menu_find_book -> view_pager_main.currentItem = 1
+            R.id.menu_rss -> view_pager_main.currentItem = 2
+            R.id.menu_my_config -> view_pager_main.currentItem = 3
+        }
+        return false
+    }
 
+    private fun importYueDu() {
+        launch {
+            if (withContext(IO) { App.db.bookDao().allBookCount == 0 }) {
+                alert(title = "导入") {
+                    message = "是否导入旧版本数据"
+                    yesButton {
+                        PermissionsCompat.Builder(this@MainActivity)
+                            .addPermissions(*Permissions.Group.STORAGE)
+                            .rationale(R.string.tip_perm_request_storage)
+                            .onGranted { viewModel.restore() }
+                            .request()
+                    }
+                    noButton { }
+                }.show().applyTint()
             }
         }
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
+    }
+
+    private fun upVersion() {
+        if (getPrefInt("versionCode") != App.INSTANCE.versionCode) {
+            putPrefInt("versionCode", App.INSTANCE.versionCode)
+        }
+    }
+
+    override fun onPageSelected(position: Int) {
+        pagePosition = position
+        bottom_navigation_view.menu.getItem(position).isChecked = true
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        event?.let {
+            when (keyCode) {
+                KeyEvent.KEYCODE_BACK -> if (
+                    pagePosition != 0
+                    && event.isTracking
+                    && !event.isCanceled
+                ) {
+                    view_pager_main.currentItem = 0
+                    return true
+                }
+            }
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                0 -> BookshelfFragment()
+                1 -> ExploreFragment()
+                2 -> RssFragment()
+                else -> MyFragment()
+            }
+        }
+
+        override fun getCount(): Int {
+            return 4
+        }
+
+    }
+
+    override fun observeLiveBus() {
+        observeEvent<String>(Bus.RECREATE) {
+            recreate()
+        }
     }
 }

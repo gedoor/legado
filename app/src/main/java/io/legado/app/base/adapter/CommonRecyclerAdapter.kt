@@ -53,11 +53,11 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
     }
 
     fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegate(viewType: Int, delegate: DELEGATE) {
-        itemDelegates.put(viewType, delegate)
+        itemDelegates[viewType] = delegate
     }
 
     fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegate(delegate: DELEGATE) {
-        itemDelegates.put(itemDelegates.size, delegate)
+        itemDelegates[itemDelegates.size] = delegate
     }
 
     fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegates(vararg delegates: DELEGATE) {
@@ -122,7 +122,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         }
     }
 
-    fun setItems(items: List<ITEM>?) {
+    fun setItems(items: List<ITEM>?, notify: Boolean = true) {
         synchronized(lock) {
             if (this.items.isNotEmpty()) {
                 this.items.clear()
@@ -130,7 +130,9 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
             if (items != null) {
                 this.items.addAll(items)
             }
-            notifyDataSetChanged()
+            if (notify) {
+                notifyDataSetChanged()
+            }
         }
     }
 
@@ -148,26 +150,15 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val oldSize = getActualItemCount()
             if (this.items.add(item)) {
-                if (oldSize == 0) {
-                    notifyDataSetChanged()
-                } else {
-                    notifyItemInserted(oldSize + getHeaderCount())
-                }
+                notifyItemInserted(oldSize + getHeaderCount())
             }
         }
     }
 
     fun addItems(position: Int, newItems: List<ITEM>) {
         synchronized(lock) {
-            val oldSize = getActualItemCount()
-            if (position in 0 until oldSize) {
-                if (if (oldSize == 0) this.items.addAll(newItems) else this.items.addAll(position, newItems)) {
-                    if (oldSize == 0) {
-                        notifyDataSetChanged()
-                    } else {
-                        notifyItemRangeChanged(position + getHeaderCount(), newItems.size)
-                    }
-                }
+            if (this.items.addAll(position, newItems)) {
+                notifyItemRangeInserted(position + getHeaderCount(), newItems.size)
             }
         }
     }
@@ -176,33 +167,32 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val oldSize = getActualItemCount()
             if (this.items.addAll(newItems)) {
-                if (oldSize == 0) {
-                    notifyDataSetChanged()
-                } else {
-                    notifyItemRangeChanged(oldSize + getHeaderCount(), newItems.size)
-                }
+                notifyItemRangeInserted(oldSize + getHeaderCount(), newItems.size)
             }
         }
     }
 
     fun removeItem(position: Int) {
         synchronized(lock) {
-            if (this.items.removeAt(position) != null)
+            if (this.items.removeAt(position) != null) {
                 notifyItemRemoved(position + getHeaderCount())
+            }
         }
     }
 
     fun removeItem(item: ITEM) {
         synchronized(lock) {
-            if (this.items.remove(item))
+            if (this.items.remove(item)) {
                 notifyItemRemoved(this.items.indexOf(item) + getHeaderCount())
+            }
         }
     }
 
     fun removeItems(items: List<ITEM>) {
         synchronized(lock) {
-            if (this.items.removeAll(items))
+            if (this.items.removeAll(items)) {
                 notifyDataSetChanged()
+            }
         }
     }
 
@@ -210,8 +200,21 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val size = getActualItemCount()
             if (oldPosition in 0 until size && newPosition in 0 until size) {
-                Collections.swap(this.items, oldPosition + getHeaderCount(), newPosition + getHeaderCount())
-                notifyDataSetChanged()
+                val srcPosition = oldPosition + getHeaderCount()
+                val targetPosition = newPosition + getHeaderCount()
+                Collections.swap(this.items, srcPosition, targetPosition)
+                notifyItemChanged(srcPosition)
+                notifyItemChanged(targetPosition)
+            }
+        }
+    }
+
+    fun updateItem(item: ITEM) {
+        synchronized(lock) {
+            val index = this.items.indexOf(item)
+            if (index >= 0) {
+                this.items[index] = item
+                notifyItemChanged(index)
             }
         }
     }
@@ -231,6 +234,13 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
             if (fromPosition in 0 until size && toPosition in 0 until size) {
                 notifyItemRangeChanged(fromPosition + getHeaderCount(), toPosition - fromPosition + 1, payloads)
             }
+        }
+    }
+
+    fun clearItems() {
+        synchronized(lock) {
+            this.items.clear()
+            notifyDataSetChanged()
         }
     }
 
@@ -295,7 +305,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
             }
 
             else -> {
-                val holder = ItemViewHolder(inflater.inflate(itemDelegates.getValue(viewType).layoutID, parent, false))
+                val holder = ItemViewHolder(inflater.inflate(itemDelegates.getValue(viewType).layoutId, parent, false))
 
                 if (itemClickListener != null) {
                     holder.itemView.setOnClickListener {
@@ -324,7 +334,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
 
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int, payloads: MutableList<Any>) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
-            getItem(holder.layoutPosition)?.let {
+            getItem(holder.layoutPosition - getHeaderCount())?.let {
                 itemDelegates.getValue(getItemViewType(holder.layoutPosition))
                     .convert(holder, it, payloads)
             }

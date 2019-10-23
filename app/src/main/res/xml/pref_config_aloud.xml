@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
+        android:title="@string/read_aloud_by_page"
+        android:key="readAloudByPage"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
+        android:title="@string/read_aloud_on_line"
+        android:key="readAloudOnLine"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.ListPreference
+        android:key="ttsSpeechPer"
+        android:title="在线朗读音色"
+        android:defaultValue="0"
+        android:entries="@array/tts_speech_per"
+        android:entryValues="@array/tts_speech_per_value"
+        app:iconSpaceReserved="false" />
+
+</androidx.preference.PreferenceScreen>

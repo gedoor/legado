@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <io.legado.app.ui.widget.page.ContentView
+        android:id="@+id/content_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
+    <io.legado.app.ui.widget.page.PageView
+        android:id="@+id/page_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <io.legado.app.ui.book.read.ReadMenu
+        android:id="@+id/read_menu"
+            android:layout_width="match_parent"
+        android:layout_height="match_parent"
+            android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

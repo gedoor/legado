@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.preference.Preference
+        android:key="isNightTheme"
+        android:title="开发人员"
+        android:summary="gedoor, Invinciblelee, atbest, Antecer, mabDc"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="version"
+        android:title="@string/version"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="update_log"
+        android:title="@string/update_log"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="check_update"
+        android:title="@string/check_update"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="qq"
+        android:title="@string/join_qq_group"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="mail"
+        android:title="@string/send_mail"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="git"
+        android:title="@string/git_hub"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="home_page"
+        android:title="@string/home_page"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="disclaimer"
+        android:title="@string/disclaimer"
+        app:iconSpaceReserved="false" />
+
+</androidx.preference.PreferenceScreen>

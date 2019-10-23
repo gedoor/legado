@@ -8,7 +8,7 @@ import android.view.View
 class AlphaInAnimation @JvmOverloads constructor(private val mFrom: Float = DEFAULT_ALPHA_FROM) : BaseAnimation {
 
     override fun getAnimators(view: View): Array<Animator> =
-            arrayOf(ObjectAnimator.ofFloat(view, "alpha", mFrom, 1f))
+        arrayOf(ObjectAnimator.ofFloat(view, "alpha", mFrom, 1f))
 
     companion object {
 

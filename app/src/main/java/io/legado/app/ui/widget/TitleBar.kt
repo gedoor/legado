@@ -2,6 +2,7 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -9,12 +10,19 @@ import android.view.Menu
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
-import kotlinx.android.synthetic.main.view_titlebar.view.*
+import io.legado.app.lib.theme.DrawableUtils
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.utils.activity
+import io.legado.app.utils.getNavigationBarHeight
+import io.legado.app.utils.getStatusBarHeight
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.bottomPadding
+import org.jetbrains.anko.topPadding
 
 class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
 
@@ -22,32 +30,52 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     val menu: Menu
         get() = toolbar.menu
 
+    var title: CharSequence?
+        get() = toolbar.title
+        set(title) {
+            toolbar.title = title
+        }
+
+    var subtitle: CharSequence?
+        get() = toolbar.subtitle
+        set(subtitle) {
+            toolbar.subtitle = subtitle
+        }
+
+    private val displayHomeAsUp: Boolean
+    private val navigationIconTint: ColorStateList?
+    private val navigationIconTintMode: Int
+    private val attachToActivity: Boolean
+
     init {
-        inflate(context, R.layout.view_titlebar, this)
+        inflate(context, R.layout.view_title_bar, this)
         toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.TitleBar,
             R.attr.titleBarStyle, 0
         )
+        navigationIconTint = a.getColorStateList(R.styleable.TitleBar_navigationIconTint)
+        navigationIconTintMode = a.getInt(R.styleable.TitleBar_navigationIconTintMode, 9)
+        attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
+        displayHomeAsUp = a.getBoolean(R.styleable.TitleBar_displayHomeAsUp, true)
+
         val navigationIcon = a.getDrawable(R.styleable.TitleBar_navigationIcon)
-        val navigationContentDescription = a.getText(R.styleable.TitleBar_navigationContentDescription)
-        val navigationIconTint = a.getColorStateList(R.styleable.TitleBar_navigationIconTint)
-        val navigationIconTintMode = a.getInt(R.styleable.TitleBar_navigationIconTintMode, 9)
-        val showNavigationIcon = a.getBoolean(R.styleable.TitleBar_showNavigationIcon, true)
-        val attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
+        val navigationContentDescription =
+            a.getText(R.styleable.TitleBar_navigationContentDescription)
         val titleText = a.getString(R.styleable.TitleBar_title)
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
-        a.recycle()
 
         toolbar.apply {
-            if(showNavigationIcon){
-                this.navigationIcon = navigationIcon
+            navigationIcon?.let {
+                this.navigationIcon = it
                 this.navigationContentDescription = navigationContentDescription
-                wrapDrawableTint(this.navigationIcon, navigationIconTint, navigationIconTintMode)
             }
 
             if (a.hasValue(R.styleable.TitleBar_titleTextAppearance)) {
-                this.setTitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_titleTextAppearance, 0))
+                this.setTitleTextAppearance(
+                    context,
+                    a.getResourceId(R.styleable.TitleBar_titleTextAppearance, 0)
+                )
             }
 
             if (a.hasValue(R.styleable.TitleBar_titleTextColor)) {
@@ -55,79 +83,126 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
 
             if (a.hasValue(R.styleable.TitleBar_subtitleTextAppearance)) {
-                this.setSubtitleTextAppearance(context, a.getResourceId(R.styleable.TitleBar_subtitleTextAppearance, 0))
+                this.setSubtitleTextAppearance(
+                    context,
+                    a.getResourceId(R.styleable.TitleBar_subtitleTextAppearance, 0)
+                )
             }
 
             if (a.hasValue(R.styleable.TitleBar_subtitleTextColor)) {
                 this.setSubtitleTextColor(a.getColor(R.styleable.TitleBar_subtitleTextColor, -0x1))
             }
 
-            if(!titleText.isNullOrBlank()){
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetLeft)
+                || a.hasValue(R.styleable.TitleBar_contentInsetRight)
+            ) {
+                this.setContentInsetsAbsolute(
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetLeft, 0),
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetRight, 0)
+                )
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetStart)
+                || a.hasValue(R.styleable.TitleBar_contentInsetEnd)
+            ) {
+                this.setContentInsetsRelative(
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetStart, 0),
+                    a.getDimensionPixelSize(R.styleable.TitleBar_contentInsetEnd, 0)
+                )
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetStartWithNavigation)) {
+                this.contentInsetStartWithNavigation = a.getDimensionPixelOffset(
+                    R.styleable.TitleBar_contentInsetStartWithNavigation, 0
+                )
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_contentInsetEndWithActions)) {
+                this.contentInsetEndWithActions = a.getDimensionPixelOffset(
+                    R.styleable.TitleBar_contentInsetEndWithActions, 0
+                )
+            }
+
+            if (!titleText.isNullOrBlank()) {
                 this.title = titleText
             }
 
-            if(!subtitleText.isNullOrBlank()){
+            if (!subtitleText.isNullOrBlank()) {
                 this.subtitle = subtitleText
+            }
+
+            if (a.hasValue(R.styleable.TitleBar_contentLayout)) {
+                inflate(context, a.getResourceId(R.styleable.TitleBar_contentLayout, 0), this)
             }
         }
 
-
-        if (attachToActivity) {
-            attachToActivity(context)
+        if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
+            topPadding = context.getStatusBarHeight()
         }
+
+        if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
+            bottomPadding = context.getNavigationBarHeight()
+        }
+
+        backgroundColor = context.primaryColor
+
+        a.recycle()
     }
 
-    fun setNavigationOnClickListener(clickListener: ((View) -> Unit)){
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        attachToActivity()
+    }
+
+    fun setNavigationOnClickListener(clickListener: ((View) -> Unit)) {
         toolbar.setNavigationOnClickListener(clickListener)
-    }
-
-    fun setTitle(title: CharSequence?) {
-        toolbar.title = title
     }
 
     fun setTitle(titleId: Int) {
         toolbar.setTitle(titleId)
     }
 
-    fun setSubTitle(subtitle: CharSequence?) {
-        toolbar.subtitle = subtitle
-    }
-
     fun setSubTitle(subtitleId: Int) {
         toolbar.setSubtitle(subtitleId)
     }
 
-    fun setTitleTextColor(@ColorInt color: Int){
+    fun setTitleTextColor(@ColorInt color: Int) {
         toolbar.setTitleTextColor(color)
     }
 
-    fun setTitleTextAppearance(@StyleRes resId: Int){
+    fun setTitleTextAppearance(@StyleRes resId: Int) {
         toolbar.setTitleTextAppearance(context, resId)
     }
 
-    fun setSubTitleTextColor(@ColorInt color: Int){
+    fun setSubTitleTextColor(@ColorInt color: Int) {
         toolbar.setSubtitleTextColor(color)
     }
 
-    fun setSubTitleTextAppearance(@StyleRes resId: Int){
+    fun setSubTitleTextAppearance(@StyleRes resId: Int) {
         toolbar.setSubtitleTextAppearance(context, resId)
     }
 
-    private fun attachToActivity(context: Context) {
-        val activity = getCompatActivity(context)
-        activity?.let {
-            activity.setSupportActionBar(toolbar)
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    private fun attachToActivity() {
+        if (attachToActivity) {
+            activity?.let {
+                it.setSupportActionBar(toolbar)
+                it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
+            }
         }
-    }
 
-    private fun getCompatActivity(context: Context?): AppCompatActivity? {
-        if (context == null) return null
-        return when (context) {
-            is AppCompatActivity -> context
-            is androidx.appcompat.view.ContextThemeWrapper -> getCompatActivity(context.baseContext)
-            is android.view.ContextThemeWrapper -> getCompatActivity(context.baseContext)
-            else -> null
+        val primaryTextColor = if (isInEditMode) Color.BLACK else context.primaryTextColor
+        DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
+        toolbar.setTitleTextColor(primaryTextColor)
+
+        if (navigationIconTint != null) {
+            wrapDrawableTint(toolbar.navigationIcon, navigationIconTint, navigationIconTintMode)
+        } else {
+            wrapDrawableTint(
+                toolbar.navigationIcon,
+                ColorStateList.valueOf(primaryTextColor),
+                navigationIconTintMode
+            )
         }
     }
 

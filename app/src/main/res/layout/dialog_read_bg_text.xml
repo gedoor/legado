@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="10dp">
+
+    <io.legado.app.lib.theme.view.ATESwitch
+        android:id="@+id/sw_dark_status_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="@string/dark_status_icon" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="6dp">
+
+        <io.legado.app.lib.theme.view.ATEStrokeTextView
+            android:id="@+id/tv_text_color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:singleLine="true"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="@string/text_color"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+        <io.legado.app.lib.theme.view.ATEStrokeTextView
+            android:id="@+id/tv_bg_color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:singleLine="true"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="@string/bg_color"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+        <io.legado.app.lib.theme.view.ATEStrokeTextView
+            android:id="@+id/tv_default"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:singleLine="true"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="恢复默认"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:padding="6dp"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bg_image" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

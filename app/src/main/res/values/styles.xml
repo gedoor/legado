@@ -1,19 +1,105 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    //**************************************************************Theme******************************************************************************//
+
+    <!-- 亮色主题 -->
+    <style name="AppTheme.Light" parent="Base.AppTheme">
+        <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Light</item>
+    </style>
+
+    <!-- 暗色主题 -->
+    <style name="AppTheme.Dark" parent="Base.AppTheme">
+        <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Dark</item>
+    </style>
+
+    <!-- 透明主题 -->
+    <style name="AppTheme.Transparent" parent="Base.AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <!-- Welcome主题 -->
+    <style name="AppTheme.Welcome" parent="Base.AppTheme">
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+    <style name="Base.AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionOverflowMenuStyle">@style/Style.PopupMenu</item>
+        <item name="android:itemTextAppearance">@style/Style.MenuItemText</item>
+        <item name="android:popupMenuStyle">@style/Style.PopupMenu</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">@color/md_grey_900</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorAccent">@color/md_grey_100</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="overlapAnchor">false</item>
+        <item name="colorAccent">@color/md_grey_900</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert"/>
+
+    //**************************************************************System
+    Style******************************************************************************//
+
+    <style name="Style.NavigationView" parent="android:Widget">
+        <item name="android:listPreferredItemHeightSmall">44dp</item>
+    </style>
+
+    <style name="Style.Toolbar.NoPadding" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="contentInsetStartWithNavigation">0dp</item>
+    </style>
+
+    <style name="Style.MenuItemText" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="android:textColor">@color/menu_color_default</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Style.PopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_popup_menu</item>
+    </style>
+
+
+    <style name="Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    //**************************************************************Widget
+    Style******************************************************************************//
+
+    <style name="Style.Shadow.Top" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/shadow_height</item>
+        <item name="android:background">@drawable/bg_shadow_top</item>
+    </style>
+
+    <style name="Style.Shadow.Bottom" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/shadow_height</item>
+        <item name="android:background">@drawable/bg_shadow_bottom</item>
+    </style>
+
+
+    <style name="Style.Line" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/divider</item>
+    </style>
 
     <style name="Style.Text.Primary.Normal" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>

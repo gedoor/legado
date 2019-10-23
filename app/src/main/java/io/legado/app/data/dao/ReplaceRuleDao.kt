@@ -1,7 +1,6 @@
 package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.*
 import io.legado.app.data.entities.ReplaceRule
 
@@ -10,10 +9,13 @@ import io.legado.app.data.entities.ReplaceRule
 interface ReplaceRuleDao {
 
     @Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
-    fun observeAll(): DataSource.Factory<Int, ReplaceRule>
+    fun liveDataAll(): LiveData<List<ReplaceRule>>
 
-    @Query("SELECT id FROM replace_rules ORDER BY sortOrder ASC")
-    fun observeAllIds(): LiveData<List<Int>>
+    @Query("SELECT * FROM replace_rules where `group` like :key or name like :key ORDER BY sortOrder ASC")
+    fun liveDataSearch(key: String): LiveData<List<ReplaceRule>>
+
+    @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
+    val minOrder: Int
 
     @get:Query("SELECT MAX(sortOrder) FROM replace_rules")
     val maxOrder: Int
@@ -25,25 +27,53 @@ interface ReplaceRuleDao {
     val allEnabled: List<ReplaceRule>
 
     @Query("SELECT * FROM replace_rules WHERE id = :id")
-    fun findById(id: Int): ReplaceRule?
+    fun findById(id: Long): ReplaceRule?
 
     @Query("SELECT * FROM replace_rules WHERE id in (:ids)")
-    fun findByIds(vararg ids: Int): List<ReplaceRule>
+    fun findByIds(vararg ids: Long): List<ReplaceRule>
 
-    @Query("SELECT * FROM replace_rules WHERE isEnabled = 1 AND scope LIKE '%' || :scope || '%'")
+    @Query("update replace_rules set isEnabled = 1 where id in (:ids)")
+    fun enableSection(vararg ids: Long)
+
+    @Query("update replace_rules set isEnabled = 0 where id in (:ids)")
+    fun disableSection(vararg ids: Long)
+
+    @Query("delete from replace_rules where id in (:ids)")
+    fun delSection(vararg ids: Long)
+
+    @Query(
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 
+        AND (scope LIKE '%' || :scope || '%' or scope = null or scope = '')"""
+    )
     fun findEnabledByScope(scope: String): List<ReplaceRule>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg replaceRules: ReplaceRule)
+    @Query(
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 
+        AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope = null or scope = '')"""
+    )
+    fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
+
+    @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
+    fun liveGroup(): LiveData<List<String>>
+
+    @Query("select * from replace_rules where `group` like '%' || :group || '%'")
+    fun getByGroup(group: String): List<ReplaceRule>
+
+    @get:Query("select * from replace_rules where `group` is null or `group` = ''")
+    val noGroup: List<ReplaceRule>
+
+    @get:Query("SELECT COUNT(*) - SUM(isEnabled) FROM replace_rules")
+    val summary: Int
+
+    @Query("UPDATE replace_rules SET isEnabled = :enable")
+    fun enableAll(enable: Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(replaceRule: ReplaceRule): Long
+    fun insert(vararg replaceRule: ReplaceRule): List<Long>
 
     @Update
     fun update(vararg replaceRules: ReplaceRule)
 
     @Delete
     fun delete(vararg replaceRules: ReplaceRule)
-
-
 }

@@ -1,58 +1,98 @@
 package io.legado.app.base
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.ViewModel
+import io.legado.app.R
+import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.ColorUtils
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.disableAutoFill
+import io.legado.app.utils.hideSoftInput
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
-abstract class BaseActivity<BD : ViewDataBinding, VM : ViewModel> : AppCompatActivity() {
 
-    protected lateinit var dataBinding: BD
-        private set
-
-    protected abstract val viewModel: VM
-
-    protected abstract val layoutID: Int
+abstract class BaseActivity(private val layoutID: Int, private val fullScreen: Boolean = true) :
+    AppCompatActivity(),
+    CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.decorView.disableAutoFill()
+        initTheme()
+        setupSystemBar()
         super.onCreate(savedInstanceState)
-        dataBinding = DataBindingUtil.setContentView(this, layoutID)
-        onViewModelCreated(viewModel, savedInstanceState)
+        setContentView(layoutID)
+        onActivityCreated(savedInstanceState)
+        observeLiveBus()
     }
 
-    open fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?){
-
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    abstract fun onActivityCreated(savedInstanceState: Bundle?)
+
+    final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return menu?.let {
+            val bool = onCompatCreateOptionsMenu(it)
+            it.applyTint(this)
+            bool
+        } ?: super.onCreateOptionsMenu(menu)
+    }
+
+
+    open fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    final override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
             if (it.itemId == android.R.id.home) {
                 supportFinishAfterTransition()
                 return true
             }
         }
-        return if (item == null) false else onCompatOptionsItemSelected(item)
+        return item != null && onCompatOptionsItemSelected(item)
     }
 
     open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
-    override fun setTitle(title: CharSequence?) {
-        supportActionBar?.title = title
+    private fun initTheme() {
+        ATH.applyBackgroundTint(window.decorView)
+        if (ColorUtils.isColorLight(primaryColor)) {
+            setTheme(R.style.AppTheme_Light)
+        } else {
+            setTheme(R.style.AppTheme_Dark)
+        }
     }
 
-    override fun setTitle(titleId: Int) {
-        supportActionBar?.setTitle(titleId)
+    private fun setupSystemBar() {
+        if (fullScreen) {
+            window.clearFlags(
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                        or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+            )
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        }
+        ATH.setStatusBarColorAuto(this, fullScreen)
     }
 
-    fun setSubTitle(subtitle: CharSequence?) {
-        supportActionBar?.subtitle = subtitle
+    open fun observeLiveBus() {
     }
 
-    fun setSubTitle(subtitleId: Int) {
-        supportActionBar?.setSubtitle(subtitleId)
+    override fun finish() {
+        currentFocus?.hideSoftInput()
+        super.finish()
     }
 }

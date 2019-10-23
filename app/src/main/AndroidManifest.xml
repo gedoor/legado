@@ -1,45 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="io.legado.app">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.legado.app">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
-            android:name=".App"
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme"
-            tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".ui.search.SearchActivity">
-        </activity>
-        <activity android:name=".ui.about.AboutActivity">
-        </activity>
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.Light"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-                android:name=".ui.main.MainActivity"
-                android:label="@string/app_name"
-                android:theme="@style/AppTheme.NoActionBar">
+            android:name=".ui.welcome.WelcomeActivity"
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <activity android:name=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.book.read.ReadBookActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".help.permission.PermissionActivity"
+            android:theme="@style/Activity.Permission" />
+        <activity
+            android:name=".ui.book.source.edit.BookSourceEditActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.rss.source.edit.RssSourceEditActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name=".ui.config.ConfigActivity" />
+        <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
+        <activity android:name="io.legado.app.ui.book.search.SearchActivity" />
+        <activity android:name=".ui.about.AboutActivity" />
+        <activity android:name=".ui.qrcode.QrCodeActivity" />
+        <activity android:name=".ui.about.DonateActivity" />
+        <activity android:name=".ui.book.info.BookInfoActivity" />
+        <activity android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity" />
+        <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
+        <activity android:name=".ui.book.source.manage.BookSourceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="booksource"
+                    android:scheme="yuedu" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.replacerule.ReplaceRuleActivity"/>
+        <activity android:name=".ui.chapterlist.ChapterListActivity" />
+        <activity android:name=".ui.rss.read.ReadRssActivity" />
+        <activity android:name=".ui.audio.AudioPlayActivity" />
+        <activity android:name=".ui.explore.ExploreShowActivity" />
+        <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
+        <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
+        <activity android:name=".ui.rss.article.RssArticlesActivity" />
+        <activity
+            android:name=".receiver.SharedReceiverActivity"
+            android:label="@string/receiving_shared_label">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".service.CheckSourceService" />
+        <service android:name=".service.DownloadService" />
+        <service android:name=".service.UpdateService" />
+        <service android:name=".service.WebService" />
+        <service android:name=".service.TTSReadAloudService" />
+        <service android:name=".service.HttpReadAloudService" />
+
+        <receiver android:name=".receiver.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

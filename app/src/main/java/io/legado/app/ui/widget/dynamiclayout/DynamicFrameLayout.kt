@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatButton
@@ -59,38 +58,6 @@ class DynamicFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(c
         if (childCount > 2) {
             contentView = getChildAt(2)
         }
-    }
-
-    override fun addView(child: View) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
-
-        super.addView(child)
-    }
-
-    override fun addView(child: View, index: Int) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
-
-        super.addView(child, index)
-    }
-
-    override fun addView(child: View, params: ViewGroup.LayoutParams) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
-
-        super.addView(child, params)
-    }
-
-    override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams) {
-        if (childCount > 2) {
-            throw IllegalStateException("DynamicFrameLayout can host only one direct child")
-        }
-
-        super.addView(child, index, params)
     }
 
     override fun showErrorView(message: CharSequence) {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="menu_edit" type="id" />
+    <item name="menu_del" type="id" />
+    <item name="menu_top" type="id" />
+
+    <item name="tag1" type="id" />
+    <item name="tag2" type="id" />
+
+    <item name="fast_scroller" type="id" />
+</resources>

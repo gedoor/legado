@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/help"
+        android:icon="@drawable/ic_live_help_black_24dp"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_backup"
+        android:title="@string/backup"
+        android:icon="@drawable/ic_backup"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_restore"
+        android:title="@string/restore"
+        android:icon="@drawable/ic_restore"
+        app:showAsAction="always" />
+
+</menu>

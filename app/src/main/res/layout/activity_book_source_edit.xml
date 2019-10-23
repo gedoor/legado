@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:fitStatusBar="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/edit_book_source" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_is_enable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/is_enable" />
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_is_enable_find"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/find" />
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_is_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/audio" />
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/background"
+        android:elevation="3dp">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_base"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_base" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_search" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_find"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_find" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_info" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_toc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_toc" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/item_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_tab_content" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

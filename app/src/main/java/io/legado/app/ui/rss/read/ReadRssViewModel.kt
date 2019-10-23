@@ -1,0 +1,77 @@
+package io.legado.app.ui.rss.read
+
+import android.app.Application
+import android.content.Intent
+import androidx.lifecycle.MutableLiveData
+import io.legado.app.App
+import io.legado.app.base.BaseViewModel
+import io.legado.app.data.entities.RssArticle
+import io.legado.app.data.entities.RssSource
+import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.NetworkUtils
+
+class ReadRssViewModel(application: Application) : BaseViewModel(application) {
+    var rssArticleLiveData = MutableLiveData<RssArticle>()
+    val rssSourceLiveData = MutableLiveData<RssSource>()
+    val contentLiveData = MutableLiveData<String>()
+    val urlLiveData = MutableLiveData<String>()
+
+    fun initData(intent: Intent) {
+        execute {
+            val origin = intent.getStringExtra("origin")
+            val title = intent.getStringExtra("title")
+            val rssSource = App.db.rssSourceDao().getByKey(origin)
+            rssSource?.let {
+                rssSourceLiveData.postValue(it)
+            }
+            if (origin != null && title != null) {
+                App.db.rssArticleDao().get(origin, title)?.let { rssArticle ->
+                    rssArticleLiveData.postValue(rssArticle)
+                    if (!rssArticle.description.isNullOrBlank()) {
+                        contentLiveData.postValue(rssArticle.description)
+                    } else {
+                        rssSource?.let {
+                            val ruleContent = rssSource.ruleContent
+                            if (!ruleContent.isNullOrBlank()) {
+                                loadContent(rssArticle, ruleContent)
+                            } else {
+                                loadUrl(rssArticle)
+                            }
+                        } ?: loadUrl(rssArticle)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadUrl(rssArticle: RssArticle) {
+        rssArticle.link?.let {
+            urlLiveData.postValue(NetworkUtils.getAbsoluteURL(rssArticle.origin, it))
+        }
+    }
+
+    private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
+        execute {
+            rssArticle.link?.let {
+                AnalyzeUrl(it, baseUrl = rssArticle.origin).getResponseAsync().await().body()
+                    ?.let { body ->
+                        AnalyzeRule().apply {
+                            setContent(body, NetworkUtils.getAbsoluteURL(rssArticle.origin, it))
+                            getString(ruleContent)?.let { content ->
+                                contentLiveData.postValue(content)
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    fun upRssArticle(rssArticle: RssArticle, success: () -> Unit) {
+        execute {
+            App.db.rssArticleDao().update(rssArticle)
+        }.onSuccess {
+            success()
+        }
+    }
+}
