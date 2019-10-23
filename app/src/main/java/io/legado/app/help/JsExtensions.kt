@@ -29,6 +29,10 @@ object JsExtensions {
         return EncoderUtils.base64Decoder(str)
     }
 
+    fun base64Encoder(str: String): ByteArray? {
+        return EncoderUtils.base64Encoder(str)
+    }
+
     fun strToMd5By32(str: String?): String? {
         return MD5Utils.strToMd5By32(str)
     }

@@ -32,4 +32,8 @@ object EncoderUtils {
             String(bytes)
         }
     }
+
+    fun base64Encoder(str: String): ByteArray? {
+        return Base64.encode(str.toByteArray(), Base64.DEFAULT)
+    }
 }
