@@ -33,7 +33,7 @@ object EncoderUtils {
         }
     }
 
-    fun base64Encoder(str: String): ByteArray? {
-        return Base64.encode(str.toByteArray(), Base64.DEFAULT)
+    fun base64Encoder(str: String): String? {
+        return Base64.encodeToString(str.toByteArray(), Base64.DEFAULT)
     }
 }

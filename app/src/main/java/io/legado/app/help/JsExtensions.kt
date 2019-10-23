@@ -29,7 +29,7 @@ object JsExtensions {
         return EncoderUtils.base64Decoder(str)
     }
 
-    fun base64Encoder(str: String): ByteArray? {
+    fun base64Encoder(str: String): String? {
         return EncoderUtils.base64Encoder(str)
     }
 
