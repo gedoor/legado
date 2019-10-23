@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileInputStream
+import java.net.URLEncoder
 
 class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnPreparedListener,
@@ -42,7 +43,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         val per = getPrefString("ttsSpeechPer") ?: "0"
         return mapOf(
             Pair("idx", "1"),
-            Pair("tex", contentList[nowSpeak]),
+            Pair("tex", URLEncoder.encode(URLEncoder.encode(contentList[nowSpeak], "UTF-8"), "UTF-8")),
             Pair("cuid", "baidu_speech_demo "),
             Pair("cod", "2"),
             Pair("lan", "zh"),
