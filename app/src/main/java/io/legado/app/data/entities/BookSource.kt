@@ -73,9 +73,9 @@ data class BookSource(
         header?.let {
             val header1 = when {
                 it.startsWith("@js:", true) ->
-                    AppConst.SCRIPT_ENGINE.eval(it.substring(4)).toString()
+                    evalJS(it.substring(4)).toString()
                 it.startsWith("<js>", true) ->
-                    AppConst.SCRIPT_ENGINE.eval(it.substring(4, it.lastIndexOf("<"))).toString()
+                    evalJS(it.substring(4, it.lastIndexOf("<"))).toString()
                 else -> it
             }
             GSON.fromJsonObject<Map<String, String>>(header1)?.let { map ->
@@ -157,6 +157,16 @@ data class BookSource(
             }
         }
         return exploreKinds
+    }
+
+    /**
+     * 执行JS
+     */
+    @Throws(Exception::class)
+    private fun evalJS(jsStr: String): Any {
+        val bindings = SimpleBindings()
+        bindings["java"] = JsExtensions
+        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
     data class ExploreKind(
