@@ -39,18 +39,25 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun getAudioBody(): Map<String, String> {
-        val spd = (getPrefInt("ttsSpeechRate", 25) + 5) / 5
-        val per = getPrefString("ttsSpeechPer") ?: "0"
         return mapOf(
+            Pair(
+                "tex",
+                URLEncoder.encode(
+                    URLEncoder.encode(
+                        contentList[nowSpeak],
+                        "UTF-8"
+                    ),
+                    "UTF-8"
+                )
+            ),
+            Pair("spd", ((getPrefInt("ttsSpeechRate", 25) + 5) / 5).toString()),
+            Pair("per", getPrefString("ttsSpeechPer") ?: "0"),
+            Pair("cuid", "baidu_speech_demo"),
             Pair("idx", "1"),
-            Pair("tex", URLEncoder.encode(URLEncoder.encode(contentList[nowSpeak], "UTF-8"), "UTF-8")),
-            Pair("cuid", "baidu_speech_demo "),
             Pair("cod", "2"),
             Pair("lan", "zh"),
             Pair("ctp", "1"),
             Pair("pdt", "1"),
-            Pair("spd", spd.toString()),
-            Pair("per", per),
             Pair("vol", "5"),
             Pair("pit", "5"),
             Pair("_res_tag_", "audio")
