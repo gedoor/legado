@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="tts_speech_per">
-        <item>普通女声</item>
-        <item>普通男声</item>
+        <item>度小美</item>
+        <item>度小宇</item>
         <item>度逍遥</item>
-        <item>百度丫丫</item>
+        <item>度丫丫</item>
+        <item>度小娇</item>
+        <item>度米朵</item>
+        <item>度博文</item>
+        <item>度小童</item>
+        <item>度小萌</item>
         <item>百度骚男</item>
-        <item>百度暖女</item>
         <item>百度评书</item>
         <item>百度主持</item>
     </string-array>
@@ -16,8 +20,12 @@
         <item>1</item>
         <item>3</item>
         <item>4</item>
-        <item>11</item>
         <item>5</item>
+        <item>103</item>
+        <item>106</item>
+        <item>110</item>
+        <item>111</item>
+        <item>11</item>
         <item>6</item>
         <item>9</item>
     </string-array>
