@@ -24,7 +24,7 @@ object EncoderUtils {
         return tmp.toString()
     }
 
-    fun base64Decoder(str: String): String {
+    fun base64Decode(str: String): String {
         val bytes = Base64.decode(str, Base64.DEFAULT)
         return try {
             String(bytes, StandardCharsets.UTF_8)
@@ -33,7 +33,7 @@ object EncoderUtils {
         }
     }
 
-    fun base64Encoder(str: String): String? {
+    fun base64Encode(str: String): String? {
         return Base64.encodeToString(str.toByteArray(), Base64.DEFAULT)
     }
 }

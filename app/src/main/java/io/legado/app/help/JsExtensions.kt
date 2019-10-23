@@ -25,12 +25,12 @@ object JsExtensions {
     /**
      * js实现解码,不能删
      */
-    fun base64Decoder(str: String): String {
-        return EncoderUtils.base64Decoder(str)
+    fun base64Decode(str: String): String {
+        return EncoderUtils.base64Decode(str)
     }
 
-    fun base64Encoder(str: String): String? {
-        return EncoderUtils.base64Encoder(str)
+    fun base64Encode(str: String): String? {
+        return EncoderUtils.base64Encode(str)
     }
 
     fun strToMd5By32(str: String?): String? {
