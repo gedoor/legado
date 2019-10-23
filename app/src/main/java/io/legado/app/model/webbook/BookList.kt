@@ -4,12 +4,10 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.help.BookHelp
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
-import org.mozilla.javascript.NativeObject
 import retrofit2.Response
 
 object BookList {
@@ -77,31 +75,21 @@ object BookList {
             val ruleWordCount = analyzeRule.splitSourceRule(bookListRule.wordCount ?: "")
             SourceDebug.printLog(bookSource.bookSourceUrl, "列表数为${collections.size}")
             for ((index, item) in collections.withIndex()) {
-                if (item is NativeObject) {
-                    getSearchItemAllInOne(
-                        item,
-                        bookSource,
-                        bookListRule,
-                        baseUrl,
-                        index == 0
-                    )
-                } else {
-                    getSearchItem(
-                        item,
-                        analyzeRule,
-                        bookSource,
-                        baseUrl,
-                        index == 0,
-                        ruleName = ruleName,
-                        ruleBookUrl = ruleBookUrl,
-                        ruleAuthor = ruleAuthor,
-                        ruleCoverUrl = ruleCoverUrl,
-                        ruleIntro = ruleIntro,
-                        ruleKind = ruleKind,
-                        ruleLastChapter = ruleLastChapter,
-                        ruleWordCount = ruleWordCount
-                    )
-                }?.let { searchBook ->
+                getSearchItem(
+                    item,
+                    analyzeRule,
+                    bookSource,
+                    baseUrl,
+                    index == 0,
+                    ruleName = ruleName,
+                    ruleBookUrl = ruleBookUrl,
+                    ruleAuthor = ruleAuthor,
+                    ruleCoverUrl = ruleCoverUrl,
+                    ruleIntro = ruleIntro,
+                    ruleKind = ruleKind,
+                    ruleLastChapter = ruleLastChapter,
+                    ruleWordCount = ruleWordCount
+                )?.let { searchBook ->
                     if (baseUrl == searchBook.bookUrl) {
                         searchBook.infoHtml = body
                     }
@@ -215,47 +203,4 @@ object BookList {
         return null
     }
 
-    private fun getSearchItemAllInOne(
-        item: NativeObject,
-        bookSource: BookSource,
-        bookListRule: BookListRule,
-        baseUrl: String,
-        printLog: Boolean
-    ): SearchBook? {
-        val searchBook = SearchBook()
-        searchBook.origin = bookSource.bookSourceUrl
-        searchBook.originName = bookSource.bookSourceName
-        searchBook.originOrder = bookSource.customOrder
-        SourceDebug.printLog(bookSource.bookSourceUrl, "获取书名", printLog)
-        searchBook.name = item[bookListRule.name]?.toString() ?: ""
-        SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.name, printLog)
-        if (searchBook.name.isNotEmpty()) {
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取书籍Url", printLog)
-            searchBook.bookUrl = item[bookListRule.bookUrl]?.toString() ?: ""
-            if (searchBook.bookUrl.isEmpty()) {
-                searchBook.bookUrl = baseUrl
-            }
-            SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.bookUrl, printLog)
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取作者", printLog)
-            searchBook.author = BookHelp.formatAuthor(item[bookListRule.author]?.toString() ?: "")
-            SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.author, printLog)
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取分类", printLog)
-            searchBook.kind = item[bookListRule.kind]?.toString() ?: ""
-            SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.kind, printLog)
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取简介", printLog)
-            searchBook.intro = item[bookListRule.intro]?.toString() ?: ""
-            SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.intro, printLog, true)
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取字数", printLog)
-            searchBook.wordCount = item[bookListRule.wordCount]?.toString() ?: ""
-            SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.wordCount, printLog)
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取封面Url", printLog)
-            searchBook.coverUrl = item[bookListRule.coverUrl]?.toString() ?: ""
-            SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.coverUrl, printLog)
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取最新章节", printLog)
-            searchBook.latestChapterTitle = item[bookListRule.lastChapter]?.toString() ?: ""
-            SourceDebug.printLog(bookSource.bookSourceUrl, searchBook.latestChapterTitle, printLog)
-            return searchBook
-        }
-        return null
-    }
 }
