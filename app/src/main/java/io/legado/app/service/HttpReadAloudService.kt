@@ -99,6 +99,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                             playAudio(FileInputStream(file).fd)
                         }
                     }
+                } else {
+                    break
                 }
             }
         }
