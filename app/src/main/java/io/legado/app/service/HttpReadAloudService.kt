@@ -162,7 +162,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onCompletion(mp: MediaPlayer?) {
         readAloudNumber += contentList[nowSpeak].length + 1
-        if (nowSpeak < contentList.size) {
+        if (nowSpeak < contentList.lastIndex) {
             nowSpeak++
             play()
         } else {
