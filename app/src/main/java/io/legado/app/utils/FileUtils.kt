@@ -103,11 +103,8 @@ object FileUtils {
                 val id = DocumentsContract.getDocumentId(uri)
                 val split = id.split(":").dropLastWhile { it.isEmpty() }.toTypedArray()
                 val type = split[0]
-                if ("raw".equals(
-                        type,
-                        ignoreCase = true
-                    )
-                ) { //处理某些机型（比如Goole Pixel ）ID是raw:/storage/emulated/0/Download/c20f8664da05ab6b4644913048ea8c83.mp4
+                if ("raw".equals(type, ignoreCase = true)) {
+                    //处理某些机型（比如Google Pixel ）ID是raw:/storage/emulated/0/Download/c20f8664da05ab6b4644913048ea8c83.mp4
                     return split[1]
                 }
 
@@ -135,14 +132,11 @@ object FileUtils {
             }// MediaProvider
             // DownloadsProvider
         } else if ("content".equals(uri.scheme, ignoreCase = true)) {
-
             // Return the remote address
-            return if (isGooglePhotosUri(uri)) uri.lastPathSegment else getDataColumn(
-                context,
-                uri,
-                null,
-                null
-            )
+            return if (isGooglePhotosUri(uri))
+                uri.lastPathSegment
+            else
+                getDataColumn(context, uri, null, null)
 
         } else if ("file".equals(uri.scheme, ignoreCase = true)) {
             return uri.path
