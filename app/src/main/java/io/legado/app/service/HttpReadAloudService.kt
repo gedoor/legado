@@ -97,9 +97,14 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun playAudio(fd: FileDescriptor) {
         if (playingIndex != nowSpeak) {
             playingIndex = nowSpeak
-            mediaPlayer.reset()
-            mediaPlayer.setDataSource(fd)
-            mediaPlayer.prepareAsync()
+            try {
+                mediaPlayer.reset()
+                mediaPlayer.setDataSource(fd)
+                mediaPlayer.prepareAsync()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                toast(e.localizedMessage)
+            }
         }
     }
 
