@@ -24,11 +24,12 @@ class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnCompletionListener {
 
     private val mediaPlayer = MediaPlayer()
-    private val ttsFolder = cacheDir.absolutePath + File.separator + "bdTts"
+    private lateinit var ttsFolder: String
     private var playingIndex = -1
 
     override fun onCreate() {
         super.onCreate()
+        ttsFolder = cacheDir.absolutePath + File.separator + "bdTts"
         mediaPlayer.setOnErrorListener(this)
         mediaPlayer.setOnPreparedListener(this)
         mediaPlayer.setOnCompletionListener(this)
