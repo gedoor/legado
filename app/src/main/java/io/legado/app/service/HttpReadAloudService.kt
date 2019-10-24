@@ -7,6 +7,7 @@ import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.help.FileHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
@@ -187,6 +188,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
+        LogUtils.d("播放完成", contentList[nowSpeak])
         readAloudNumber += contentList[nowSpeak].length + 1
         if (nowSpeak < contentList.lastIndex) {
             nowSpeak++
