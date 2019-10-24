@@ -30,6 +30,10 @@ object JsExtensions {
         return EncoderUtils.base64Decode(str)
     }
 
+    fun base64Encode(str: String): String? {
+        return EncoderUtils.base64Encode(str)
+    }
+
     fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
         return EncoderUtils.base64Encode(str, flags)
     }
