@@ -48,8 +48,8 @@ object FileUtils {
 
             val list = ArrayList<String>()
             for (i in 0 until length) {
-                val storageValume = Array.get(invokeVolumeList, i)//得到StorageVolume对象
-                val path = getPath.invoke(storageValume) as String
+                val storageVolume = Array.get(invokeVolumeList, i)//得到StorageVolume对象
+                val path = getPath.invoke(storageVolume) as String
 
                 list.add(path)
             }
