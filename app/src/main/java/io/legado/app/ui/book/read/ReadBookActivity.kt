@@ -67,7 +67,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         get() = getViewModel(ReadBookViewModel::class.java)
 
     private val requestCodeEditSource = 111
-    private var changeSourceDialog: ChangeSourceDialog? = null
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
     override var readAloudStatus = Status.STOP
 
@@ -83,10 +82,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
         viewModel.chapterListFinish.observe(this, Observer { loadContent() })
         viewModel.initData(intent)
-        savedInstanceState?.let {
-            changeSourceDialog =
-                supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
-        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -152,13 +147,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         when (item.itemId) {
             R.id.menu_change_source -> {
                 read_menu.runMenuOut()
-                if (changeSourceDialog == null) {
-                    viewModel.bookData.value?.let {
-                        changeSourceDialog = ChangeSourceDialog
-                            .newInstance(it.name, it.author)
-                    }
+                viewModel.bookData.value?.let {
+                    ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
                 }
-                changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
             }
             R.id.menu_refresh -> {
                 viewModel.bookData.value?.let {

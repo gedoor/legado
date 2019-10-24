@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,13 +26,15 @@ class ChangeSourceDialog : DialogFragment(),
     companion object {
         const val tag = "changeSourceDialog"
 
-        fun newInstance(name: String, author: String): ChangeSourceDialog {
-            return ChangeSourceDialog().apply {
-                val bundle = Bundle()
-                bundle.putString("name", name)
-                bundle.putString("author", author)
-                arguments = bundle
-            }
+        fun show(manager: FragmentManager, name: String, author: String) {
+            val fragment = (manager.findFragmentByTag(tag) as? ChangeSourceDialog)
+                ?: ChangeSourceDialog().apply {
+                    val bundle = Bundle()
+                    bundle.putString("name", name)
+                    bundle.putString("author", author)
+                    arguments = bundle
+                }
+            fragment.show(manager, tag)
         }
     }
 
