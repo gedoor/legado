@@ -83,6 +83,9 @@
     <string name="about_description">
         \u3000\u3000这是一款开源的阅读软件，你可以fork我们的代码自己编译APK。欢迎提交代码帮助改善应用。\n\u3000\u3000公众号[开源阅读软件]！
     </string>
+    <string name="app_share_description">
+        阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
+    </string>
     <string name="version_name">Version %s</string>
     <string name="pt_auto_refresh">自动刷新</string>
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
@@ -138,6 +141,7 @@
     <string name="scoring">评分</string>
     <string name="send_mail">发送邮件</string>
     <string name="can_not_open">无法打开</string>
+    <string name="can_not_share">分享失败</string>
     <string name="no_chapter">无章节</string>
     <string name="add_url">添加网址</string>
     <string name="add_book_url">添加书籍网址</string>

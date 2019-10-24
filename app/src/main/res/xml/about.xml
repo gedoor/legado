@@ -9,18 +9,13 @@
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
-        android:key="version"
-        android:title="@string/version"
+        android:key="check_update"
+        android:title="@string/check_update"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
         android:key="update_log"
         android:title="@string/update_log"
-        app:iconSpaceReserved="false" />
-
-    <androidx.preference.Preference
-        android:key="check_update"
-        android:title="@string/check_update"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
@@ -41,6 +36,11 @@
     <androidx.preference.Preference
         android:key="home_page"
         android:title="@string/home_page"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="share_app"
+        android:title="@string/share_app"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
