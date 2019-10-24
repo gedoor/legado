@@ -107,7 +107,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun getAudioBody(content: String): Map<String, String> {
         return mapOf(
-            Pair("tex", URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")),
+            Pair("tex", encodeTwo(content)),
             Pair("spd", ((getPrefInt("ttsSpeechRate", 25) + 5) / 5).toString()),
             Pair("per", getPrefString("ttsSpeechPer") ?: "0"),
             Pair("cuid", "baidu_speech_demo"),
@@ -120,6 +120,14 @@ class HttpReadAloudService : BaseReadAloudService(),
             Pair("pit", "5"),
             Pair("_res_tag_", "audio")
         )
+    }
+
+    private fun encodeTwo(content: String): String {
+        return try {
+            URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")
+        } catch (e: Exception) {
+            ""
+        }
     }
 
     override fun pauseReadAloud(pause: Boolean) {
