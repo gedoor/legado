@@ -103,7 +103,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
                 e.printStackTrace()
-                toast(e.localizedMessage)
             }
         }
     }
