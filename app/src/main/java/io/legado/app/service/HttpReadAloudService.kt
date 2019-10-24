@@ -11,11 +11,10 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import java.io.File
+import java.io.FileDescriptor
 import java.io.FileInputStream
 import java.net.URLEncoder
 
@@ -25,6 +24,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnCompletionListener {
 
     private var mediaPlayer = MediaPlayer()
+    private var playingIndex = -1
 
     override fun onCreate() {
         super.onCreate()
@@ -38,18 +38,9 @@ class HttpReadAloudService : BaseReadAloudService(),
         mediaPlayer.release()
     }
 
-    private fun getAudioBody(): Map<String, String> {
+    private fun getAudioBody(content: String): Map<String, String> {
         return mapOf(
-            Pair(
-                "tex",
-                URLEncoder.encode(
-                    URLEncoder.encode(
-                        contentList[nowSpeak],
-                        "UTF-8"
-                    ),
-                    "UTF-8"
-                )
-            ),
+            Pair("tex", URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")),
             Pair("spd", ((getPrefInt("ttsSpeechRate", 25) + 5) / 5).toString()),
             Pair("per", getPrefString("ttsSpeechPer") ?: "0"),
             Pair("cuid", "baidu_speech_demo"),
@@ -66,26 +57,52 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun play() {
         if (contentList.isEmpty()) return
+        if (nowSpeak == 0) {
+            downloadAudio()
+        } else {
+            val file = getSpeakFile(nowSpeak)
+            if (file.exists()) {
+                playAudio(FileInputStream(file).fd)
+            }
+        }
+    }
+
+    private fun downloadAudio() {
         launch(IO) {
-            if (requestFocus()) {
+            FileHelp.deleteFile(cacheDir.absolutePath + File.separator + "bdTts")
+            for (index in 0 until contentList.size) {
                 val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
                     .create(IHttpPostApi::class.java)
-                    .postMapByte("http://tts.baidu.com/text2audio", getAudioBody(), mapOf())
+                    .postMapByte(
+                        "http://tts.baidu.com/text2audio",
+                        getAudioBody(contentList[index]), mapOf()
+                    )
                     .execute().body()
                 if (bytes == null) {
-                    withContext(Main) {
-                        toast("访问失败")
-                    }
+                    toast("访问失败")
                 } else {
-                    val file =
-                        FileHelp.getFile(cacheDir.absolutePath + File.separator + "bdTts.mp3")
+                    val file = getSpeakFile(index)
                     file.writeBytes(bytes)
-                    mediaPlayer.reset()
-                    mediaPlayer.setDataSource(FileInputStream(file).fd)
-                    mediaPlayer.prepareAsync()
+                    if (index == nowSpeak) {
+                        playAudio(FileInputStream(file).fd)
+                    }
                 }
             }
         }
+    }
+
+    @Synchronized
+    private fun playAudio(fd: FileDescriptor) {
+        if (playingIndex != nowSpeak) {
+            playingIndex = nowSpeak
+            mediaPlayer.reset()
+            mediaPlayer.setDataSource(fd)
+            mediaPlayer.prepareAsync()
+        }
+    }
+
+    private fun getSpeakFile(index: Int = nowSpeak): File {
+        return FileHelp.getFile("${cacheDir.absolutePath}${File.separator}bdTts${File.separator}${index}.mp3")
     }
 
     override fun pauseReadAloud(pause: Boolean) {
@@ -143,6 +160,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             nowSpeak++
             play()
         } else {
+            playingIndex = -1
             postEvent(Bus.TTS_TURN_PAGE, 2)
         }
     }
