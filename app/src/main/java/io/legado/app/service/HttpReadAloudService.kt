@@ -23,7 +23,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener {
 
-    private var mediaPlayer = MediaPlayer()
+    private val mediaPlayer = MediaPlayer()
+    private val ttsFolder = cacheDir.absolutePath + File.separator + "bdTts"
     private var playingIndex = -1
 
     override fun onCreate() {
@@ -69,7 +70,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun downloadAudio() {
         launch(IO) {
-            FileHelp.deleteFile(cacheDir.absolutePath + File.separator + "bdTts")
+            FileHelp.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
                 val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
                     .create(IHttpPostApi::class.java)
@@ -102,7 +103,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun getSpeakFile(index: Int = nowSpeak): File {
-        return FileHelp.getFile("${cacheDir.absolutePath}${File.separator}bdTts${File.separator}${index}.mp3")
+        return FileHelp.getFile("${ttsFolder}${File.separator}${index}.mp3")
     }
 
     override fun pauseReadAloud(pause: Boolean) {
