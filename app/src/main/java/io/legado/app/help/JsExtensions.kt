@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import android.util.Base64
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
@@ -29,8 +30,8 @@ object JsExtensions {
         return EncoderUtils.base64Decode(str)
     }
 
-    fun base64Encode(str: String): String? {
-        return EncoderUtils.base64Encode(str)
+    fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
+        return EncoderUtils.base64Encode(str, flags)
     }
 
     fun strToMd5By32(str: String): String? {
