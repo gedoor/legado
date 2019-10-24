@@ -126,7 +126,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         return try {
             URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")
         } catch (e: Exception) {
-            ""
+            " "
         }
     }
 
