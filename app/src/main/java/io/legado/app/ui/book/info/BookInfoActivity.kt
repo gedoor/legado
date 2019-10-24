@@ -32,7 +32,6 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
-    private var changeSourceDialog: ChangeSourceDialog? = null
     private lateinit var adapter: ChapterListAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -49,10 +48,6 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         } ?: viewModel.loadBook(intent)
         initOnClick()
-        savedInstanceState?.let {
-            changeSourceDialog =
-                supportFragmentManager.findFragmentByTag(ChangeSourceDialog.tag) as? ChangeSourceDialog
-        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -194,13 +189,9 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         tv_change_source.onClick {
-            if (changeSourceDialog == null) {
-                viewModel.bookData.value?.let {
-                    changeSourceDialog = ChangeSourceDialog
-                        .newInstance(it.name, it.author)
-                }
+            viewModel.bookData.value?.let {
+                ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
             }
-            changeSourceDialog?.show(supportFragmentManager, ChangeSourceDialog.tag)
         }
         tv_current_chapter_info.onClick {
             viewModel.bookData.value?.let {
