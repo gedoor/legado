@@ -11,6 +11,7 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 import java.io.File
@@ -25,6 +26,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private val mediaPlayer = MediaPlayer()
     private lateinit var ttsFolder: String
+    private var job: Job? = null
     private var playingIndex = -1
 
     override fun onCreate() {
@@ -57,6 +59,12 @@ class HttpReadAloudService : BaseReadAloudService(),
         )
     }
 
+    override fun newReadAloud(dataKey: String?, play: Boolean) {
+        mediaPlayer.reset()
+        job?.cancel()
+        super.newReadAloud(dataKey, play)
+    }
+
     override fun play() {
         if (contentList.isEmpty()) return
         if (nowSpeak == 0) {
@@ -70,7 +78,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun downloadAudio() {
-        launch(IO) {
+        job = launch(IO) {
             FileHelp.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
                 val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")

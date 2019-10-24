@@ -101,7 +101,8 @@ abstract class BaseReadAloudService : BaseService(),
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun newReadAloud(dataKey: String?, play: Boolean) {
+    @CallSuper
+    open fun newReadAloud(dataKey: String?, play: Boolean) {
         dataKey?.let {
             textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
             textChapter?.let { textChapter ->
