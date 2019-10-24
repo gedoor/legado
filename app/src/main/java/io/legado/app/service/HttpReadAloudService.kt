@@ -133,6 +133,13 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun upSpeechRate(reset: Boolean) {
+        job?.cancel()
+        mediaPlayer.reset()
+        for (i in 0 until nowSpeak) {
+            contentList.removeAt(0)
+        }
+        nowSpeak = 0
+        playingIndex = -1
         play()
     }
 
