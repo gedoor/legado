@@ -12,6 +12,7 @@ import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 import java.io.File
@@ -81,20 +82,22 @@ class HttpReadAloudService : BaseReadAloudService(),
         job = launch(IO) {
             FileHelp.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
-                val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
-                    .create(IHttpPostApi::class.java)
-                    .postMapByte(
-                        "http://tts.baidu.com/text2audio",
-                        getAudioBody(contentList[index]), mapOf()
-                    )
-                    .execute().body()
-                if (bytes == null) {
-                    toast("访问失败")
-                } else {
-                    val file = getSpeakFile(index)
-                    file.writeBytes(bytes)
-                    if (index == nowSpeak) {
-                        playAudio(FileInputStream(file).fd)
+                if (isActive) {
+                    val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
+                        .create(IHttpPostApi::class.java)
+                        .postMapByte(
+                            "http://tts.baidu.com/text2audio",
+                            getAudioBody(contentList[index]), mapOf()
+                        )
+                        .execute().body()
+                    if (bytes == null) {
+                        toast("访问失败")
+                    } else {
+                        val file = getSpeakFile(index)
+                        file.writeBytes(bytes)
+                        if (index == nowSpeak) {
+                            playAudio(FileInputStream(file).fd)
+                        }
                     }
                 }
             }
