@@ -42,26 +42,10 @@ class HttpReadAloudService : BaseReadAloudService(),
         mediaPlayer.release()
     }
 
-    private fun getAudioBody(content: String): Map<String, String> {
-        return mapOf(
-            Pair("tex", URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")),
-            Pair("spd", ((getPrefInt("ttsSpeechRate", 25) + 5) / 5).toString()),
-            Pair("per", getPrefString("ttsSpeechPer") ?: "0"),
-            Pair("cuid", "baidu_speech_demo"),
-            Pair("idx", "1"),
-            Pair("cod", "2"),
-            Pair("lan", "zh"),
-            Pair("ctp", "1"),
-            Pair("pdt", "1"),
-            Pair("vol", "5"),
-            Pair("pit", "5"),
-            Pair("_res_tag_", "audio")
-        )
-    }
-
     override fun newReadAloud(dataKey: String?, play: Boolean) {
         mediaPlayer.reset()
         job?.cancel()
+        playingIndex = -1
         super.newReadAloud(dataKey, play)
     }
 
@@ -121,6 +105,23 @@ class HttpReadAloudService : BaseReadAloudService(),
         return FileHelp.getFile("${ttsFolder}${File.separator}${index}.mp3")
     }
 
+    private fun getAudioBody(content: String): Map<String, String> {
+        return mapOf(
+            Pair("tex", URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")),
+            Pair("spd", ((getPrefInt("ttsSpeechRate", 25) + 5) / 5).toString()),
+            Pair("per", getPrefString("ttsSpeechPer") ?: "0"),
+            Pair("cuid", "baidu_speech_demo"),
+            Pair("idx", "1"),
+            Pair("cod", "2"),
+            Pair("lan", "zh"),
+            Pair("ctp", "1"),
+            Pair("pdt", "1"),
+            Pair("vol", "5"),
+            Pair("pit", "5"),
+            Pair("_res_tag_", "audio")
+        )
+    }
+
     override fun pauseReadAloud(pause: Boolean) {
         super.pauseReadAloud(pause)
         mediaPlayer.pause()
@@ -176,7 +177,6 @@ class HttpReadAloudService : BaseReadAloudService(),
             nowSpeak++
             play()
         } else {
-            playingIndex = -1
             postEvent(Bus.TTS_TURN_PAGE, 2)
         }
     }
