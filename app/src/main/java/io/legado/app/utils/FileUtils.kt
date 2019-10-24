@@ -48,8 +48,8 @@ object FileUtils {
 
             val list = ArrayList<String>()
             for (i in 0 until length) {
-                val storageValume = Array.get(invokeVolumeList, i)//得到StorageVolume对象
-                val path = getPath.invoke(storageValume) as String
+                val storageVolume = Array.get(invokeVolumeList, i)//得到StorageVolume对象
+                val path = getPath.invoke(storageVolume) as String
 
                 list.add(path)
             }
@@ -103,11 +103,8 @@ object FileUtils {
                 val id = DocumentsContract.getDocumentId(uri)
                 val split = id.split(":").dropLastWhile { it.isEmpty() }.toTypedArray()
                 val type = split[0]
-                if ("raw".equals(
-                        type,
-                        ignoreCase = true
-                    )
-                ) { //处理某些机型（比如Goole Pixel ）ID是raw:/storage/emulated/0/Download/c20f8664da05ab6b4644913048ea8c83.mp4
+                if ("raw".equals(type, ignoreCase = true)) {
+                    //处理某些机型（比如Google Pixel ）ID是raw:/storage/emulated/0/Download/c20f8664da05ab6b4644913048ea8c83.mp4
                     return split[1]
                 }
 
@@ -122,12 +119,10 @@ object FileUtils {
                 val type = split[0]
 
                 var contentUri: Uri? = null
-                if ("image" == type) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                } else if ("video" == type) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                } else if ("audio" == type) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                when (type) {
+                    "image" -> contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    "video" -> contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    "audio" -> contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 }
 
                 val selection = "_id=?"
@@ -136,21 +131,17 @@ object FileUtils {
                 return getDataColumn(context, contentUri, selection, selectionArgs)
             }// MediaProvider
             // DownloadsProvider
-        } else if ("content".equals(uri.scheme!!, ignoreCase = true)) {
-
+        } else if ("content".equals(uri.scheme, ignoreCase = true)) {
             // Return the remote address
-            return if (isGooglePhotosUri(uri)) uri.lastPathSegment else getDataColumn(
-                context,
-                uri,
-                null,
-                null
-            )
+            return if (isGooglePhotosUri(uri))
+                uri.lastPathSegment
+            else
+                getDataColumn(context, uri, null, null)
 
-        } else if ("file".equals(uri.scheme!!, ignoreCase = true)) {
+        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
             return uri.path
         }// File
         // MediaStore (and general)
-
         return null
     }
 

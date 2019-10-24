@@ -7,15 +7,16 @@ import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.help.FileHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.jetbrains.anko.toast
 import java.io.File
+import java.io.FileDescriptor
 import java.io.FileInputStream
 import java.net.URLEncoder
 
@@ -24,10 +25,14 @@ class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener {
 
-    private var mediaPlayer = MediaPlayer()
+    private val mediaPlayer = MediaPlayer()
+    private lateinit var ttsFolder: String
+    private var job: Job? = null
+    private var playingIndex = -1
 
     override fun onCreate() {
         super.onCreate()
+        ttsFolder = cacheDir.absolutePath + File.separator + "bdTts"
         mediaPlayer.setOnErrorListener(this)
         mediaPlayer.setOnPreparedListener(this)
         mediaPlayer.setOnCompletionListener(this)
@@ -38,18 +43,72 @@ class HttpReadAloudService : BaseReadAloudService(),
         mediaPlayer.release()
     }
 
-    private fun getAudioBody(): Map<String, String> {
+    override fun newReadAloud(dataKey: String?, play: Boolean) {
+        mediaPlayer.reset()
+        job?.cancel()
+        playingIndex = -1
+        super.newReadAloud(dataKey, play)
+    }
+
+    override fun play() {
+        if (contentList.isEmpty()) return
+        if (nowSpeak == 0) {
+            downloadAudio()
+        } else {
+            val file = getSpeakFile(nowSpeak)
+            if (file.exists()) {
+                playAudio(FileInputStream(file).fd)
+            }
+        }
+    }
+
+    private fun downloadAudio() {
+        job = launch(IO) {
+            FileHelp.deleteFile(ttsFolder)
+            for (index in 0 until contentList.size) {
+                if (isActive) {
+                    val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
+                        .create(IHttpPostApi::class.java)
+                        .postMapByteAsync(
+                            "http://tts.baidu.com/text2audio",
+                            getAudioBody(contentList[index]), mapOf()
+                        ).await()
+                        .body()
+                    if (bytes != null && isActive) {
+                        val file = getSpeakFile(index)
+                        file.writeBytes(bytes)
+                        if (index == nowSpeak) {
+                            playAudio(FileInputStream(file).fd)
+                        }
+                    }
+                } else {
+                    break
+                }
+            }
+        }
+    }
+
+    @Synchronized
+    private fun playAudio(fd: FileDescriptor) {
+        if (playingIndex != nowSpeak) {
+            playingIndex = nowSpeak
+            try {
+                mediaPlayer.reset()
+                mediaPlayer.setDataSource(fd)
+                mediaPlayer.prepareAsync()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun getSpeakFile(index: Int = nowSpeak): File {
+        return FileHelp.getFile("${ttsFolder}${File.separator}${index}.mp3")
+    }
+
+    private fun getAudioBody(content: String): Map<String, String> {
         return mapOf(
-            Pair(
-                "tex",
-                URLEncoder.encode(
-                    URLEncoder.encode(
-                        contentList[nowSpeak],
-                        "UTF-8"
-                    ),
-                    "UTF-8"
-                )
-            ),
+            Pair("tex", encodeTwo(content)),
             Pair("spd", ((getPrefInt("ttsSpeechRate", 25) + 5) / 5).toString()),
             Pair("per", getPrefString("ttsSpeechPer") ?: "0"),
             Pair("cuid", "baidu_speech_demo"),
@@ -64,27 +123,11 @@ class HttpReadAloudService : BaseReadAloudService(),
         )
     }
 
-    override fun play() {
-        if (contentList.isEmpty()) return
-        launch(IO) {
-            if (requestFocus()) {
-                val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
-                    .create(IHttpPostApi::class.java)
-                    .postMapByte("http://tts.baidu.com/text2audio", getAudioBody(), mapOf())
-                    .execute().body()
-                if (bytes == null) {
-                    withContext(Main) {
-                        toast("访问失败")
-                    }
-                } else {
-                    val file =
-                        FileHelp.getFile(cacheDir.absolutePath + File.separator + "bdTts.mp3")
-                    file.writeBytes(bytes)
-                    mediaPlayer.reset()
-                    mediaPlayer.setDataSource(FileInputStream(file).fd)
-                    mediaPlayer.prepareAsync()
-                }
-            }
+    private fun encodeTwo(content: String): String {
+        return try {
+            URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")
+        } catch (e: Exception) {
+            " "
         }
     }
 
@@ -99,6 +142,13 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun upSpeechRate(reset: Boolean) {
+        job?.cancel()
+        mediaPlayer.reset()
+        for (i in 0 until nowSpeak) {
+            contentList.removeAt(0)
+        }
+        nowSpeak = 0
+        playingIndex = -1
         play()
     }
 
@@ -138,8 +188,9 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
+        LogUtils.d("播放完成", contentList[nowSpeak])
         readAloudNumber += contentList[nowSpeak].length + 1
-        if (nowSpeak < contentList.size) {
+        if (nowSpeak < contentList.lastIndex) {
             nowSpeak++
             play()
         } else {

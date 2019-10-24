@@ -1,6 +1,7 @@
 package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
+import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.JS_PATTERN
@@ -578,6 +579,10 @@ class AnalyzeRule(private var book: BaseBook? = null) {
 
     fun base64Encode(str: String): String? {
         return EncoderUtils.base64Encode(str)
+    }
+
+    fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
+        return EncoderUtils.base64Encode(str, flags)
     }
 
     fun strToMd5By32(str: String): String? {
