@@ -45,9 +45,9 @@ interface IHttpPostApi {
 
     @FormUrlEncoded
     @POST
-    fun postMapByte(
+    fun postMapByteAsync(
         @Url url: String,
         @FieldMap(encoded = true) fieldMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
-    ): Call<ByteArray>
+    ): Deferred<Response<ByteArray>>
 }

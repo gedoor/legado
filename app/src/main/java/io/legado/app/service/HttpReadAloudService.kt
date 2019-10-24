@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -85,14 +84,12 @@ class HttpReadAloudService : BaseReadAloudService(),
                 if (isActive) {
                     val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
                         .create(IHttpPostApi::class.java)
-                        .postMapByte(
+                        .postMapByteAsync(
                             "http://tts.baidu.com/text2audio",
                             getAudioBody(contentList[index]), mapOf()
-                        )
-                        .execute().body()
-                    if (bytes == null) {
-                        toast("访问失败")
-                    } else {
+                        ).await()
+                        .body()
+                    if (bytes != null && isActive) {
                         val file = getSpeakFile(index)
                         file.writeBytes(bytes)
                         if (index == nowSpeak) {
