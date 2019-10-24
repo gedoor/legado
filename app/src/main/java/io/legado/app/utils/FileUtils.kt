@@ -122,12 +122,10 @@ object FileUtils {
                 val type = split[0]
 
                 var contentUri: Uri? = null
-                if ("image" == type) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                } else if ("video" == type) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                } else if ("audio" == type) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                when (type) {
+                    "image" -> contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    "video" -> contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    "audio" -> contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 }
 
                 val selection = "_id=?"
@@ -136,7 +134,7 @@ object FileUtils {
                 return getDataColumn(context, contentUri, selection, selectionArgs)
             }// MediaProvider
             // DownloadsProvider
-        } else if ("content".equals(uri.scheme!!, ignoreCase = true)) {
+        } else if ("content".equals(uri.scheme, ignoreCase = true)) {
 
             // Return the remote address
             return if (isGooglePhotosUri(uri)) uri.lastPathSegment else getDataColumn(
@@ -146,11 +144,10 @@ object FileUtils {
                 null
             )
 
-        } else if ("file".equals(uri.scheme!!, ignoreCase = true)) {
+        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
             return uri.path
         }// File
         // MediaStore (and general)
-
         return null
     }
 
