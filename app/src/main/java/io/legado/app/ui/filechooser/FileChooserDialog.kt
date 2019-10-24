@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import io.legado.app.R
 
 
 class FileChooserDialog : DialogFragment() {
@@ -26,7 +27,7 @@ class FileChooserDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.dialog_file_chooser, container, true)
     }
 
 }
