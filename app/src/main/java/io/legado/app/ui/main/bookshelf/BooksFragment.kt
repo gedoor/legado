@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.BookType
 import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
@@ -95,7 +97,11 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
     }
 
     override fun open(book: Book) {
-        context?.startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
+        when (book.type) {
+            BookType.audio ->
+                context?.startActivity<AudioPlayActivity>(Pair("bookUrl", book.bookUrl))
+            else -> context?.startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
+        }
     }
 
     override fun openBookInfo(book: Book) {
