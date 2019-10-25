@@ -51,7 +51,12 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "downloadPath" -> fragmentManager?.let { FileChooserDialog.show(it) }
+            "downloadPath" -> fragmentManager?.let {
+                FileChooserDialog.show(
+                    it,
+                    mode = FileChooserDialog.DIRECTORY
+                )
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
