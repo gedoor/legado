@@ -32,6 +32,7 @@ class FileChooserDialog : DialogFragment(),
 
         fun show(
             manager: FragmentManager,
+            requestCode: Int,
             mode: Int = FILE,
             title: String? = null,
             isShowHomeDir: Boolean = false,
@@ -40,11 +41,14 @@ class FileChooserDialog : DialogFragment(),
         ) {
             val fragment = (manager.findFragmentByTag(tag) as? FileChooserDialog)
                 ?: FileChooserDialog().apply {
-                    this.mode = mode
-                    this.title = title
-                    this.isShowHomeDir = isShowHomeDir
-                    this.isShowUpDir = isShowUpDir
-                    this.isShowHideDir = isShowHideDir
+                    val bundle = Bundle()
+                    bundle.putInt("mode", mode)
+                    bundle.putInt("requestCode", requestCode)
+                    bundle.putString("title", title)
+                    bundle.putBoolean("isShowHomeDir", isShowHomeDir)
+                    bundle.putBoolean("isShowUpDir", isShowUpDir)
+                    bundle.putBoolean("isShowHideDir", isShowHideDir)
+                    arguments = bundle
                 }
             fragment.show(manager, tag)
         }
@@ -57,6 +61,7 @@ class FileChooserDialog : DialogFragment(),
     override var isShowUpDir: Boolean = true
     override var isShowHideDir: Boolean = false
 
+    private var requestCode: Int = 0
     var title: String? = null
     private var initPath = FileUtils.getSdCardPath()
     private var mode: Int = FILE
@@ -82,6 +87,14 @@ class FileChooserDialog : DialogFragment(),
         super.onViewCreated(view, savedInstanceState)
         ATH.applyBackgroundTint(view)
         ATH.applyBackgroundTint(rv_path)
+        arguments?.let {
+            requestCode = it.getInt("requestCode")
+            mode = it.getInt("mode", FILE)
+            title = it.getString("title")
+            isShowHomeDir = it.getBoolean("isShowHomeDir")
+            isShowUpDir = it.getBoolean("isShowUpDir")
+            isShowHideDir = it.getBoolean("isShowHideDir")
+        }
         tool_bar.title = title ?: let {
             if (isOnlyListDir) {
                 getString(R.string.folder_chooser)
@@ -110,8 +123,8 @@ class FileChooserDialog : DialogFragment(),
         } else {
             fileItem?.path?.let { path ->
                 if (mode != DIRECTORY) {
-                    (parentFragment as? CallBack)?.onFilePicked(path)
-                    (activity as? CallBack)?.onFilePicked(path)
+                    (parentFragment as? CallBack)?.onFilePicked(requestCode, path)
+                    (activity as? CallBack)?.onFilePicked(requestCode, path)
                     dismiss()
                 }
             }
@@ -145,6 +158,6 @@ class FileChooserDialog : DialogFragment(),
     }
 
     interface CallBack {
-        fun onFilePicked(currentPath: String)
+        fun onFilePicked(requestCode: Int, currentPath: String) {}
     }
 }

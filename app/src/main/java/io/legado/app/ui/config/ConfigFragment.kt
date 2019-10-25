@@ -17,11 +17,15 @@ import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.putPrefString
 
 
-class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener,
+class ConfigFragment : PreferenceFragmentCompat(),
+    FileChooserDialog.CallBack,
+    Preference.OnPreferenceChangeListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private val downloadPath = 25324
     private val packageManager = App.INSTANCE.packageManager
     private val componentName = ComponentName(
         App.INSTANCE,
@@ -54,6 +58,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
             "downloadPath" -> fragmentManager?.let {
                 FileChooserDialog.show(
                     it,
+                    downloadPath,
                     mode = FileChooserDialog.DIRECTORY
                 )
             }
@@ -120,5 +125,10 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
             )
         }
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        super.onFilePicked(requestCode, currentPath)
+        putPrefString("downloadPath", currentPath)
     }
 }
