@@ -2,7 +2,10 @@ package io.legado.app.ui.filechooser
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
@@ -108,9 +111,21 @@ class FileChooserDialog : DialogFragment(),
                 getString(R.string.file_chooser)
             }
         }
-
         initMenu()
+        initContentView()
+        refreshCurrentDirPath(initPath)
+    }
 
+    private fun initMenu() {
+        tool_bar.inflateMenu(R.menu.file_chooser)
+        if (isOnlyListDir) {
+            tool_bar.menu.findItem(R.id.menu_ok).isVisible = true
+        }
+        tool_bar.menu.applyTint(requireContext(), false)
+        tool_bar.setOnMenuItemClickListener(this)
+    }
+
+    private fun initContentView() {
         fileAdapter = FileAdapter(requireContext(), this)
         pathAdapter = PathAdapter(requireContext(), this)
 
@@ -121,20 +136,11 @@ class FileChooserDialog : DialogFragment(),
         rv_path.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
         rv_path.adapter = pathAdapter
 
-        refreshCurrentDirPath(initPath)
-    }
-
-    private fun initMenu() {
-        if (isOnlyListDir) {
-            tool_bar.menu.add(Menu.NONE, R.id.menu_add, Menu.NONE, R.string.ok)
-        }
-        tool_bar.menu.applyTint(requireContext(), false)
-        tool_bar.setOnMenuItemClickListener(this)
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> fileAdapter.currentPath?.let {
+            R.id.menu_ok -> fileAdapter.currentPath?.let {
                 (parentFragment as? CallBack)?.onFilePicked(requestCode, it)
                 (activity as? CallBack)?.onFilePicked(requestCode, it)
                 dismiss()
