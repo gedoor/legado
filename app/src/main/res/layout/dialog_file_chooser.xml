@@ -9,22 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.2dp"
-        android:background="@color/btn_bg_press_2" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_path"
         android:layout_width="match_parent"
         android:layout_height="24dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.2dp"
-        android:background="@color/btn_bg_press_2" />
+        android:paddingRight="10dp"
+        android:background="@color/background"
+        android:elevation="5dp" />
 
     <FrameLayout
         android:layout_width="match_parent"

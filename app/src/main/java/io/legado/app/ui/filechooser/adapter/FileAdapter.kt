@@ -123,7 +123,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         /**
          * 是否仅仅读取目录
          */
-        var isOnlyListDir: Boolean
+        val isOnlyListDir: Boolean
         /**
          * 是否显示返回主目录
          */

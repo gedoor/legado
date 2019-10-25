@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
 import io.legado.app.utils.FileUtils
@@ -29,19 +30,34 @@ class FileChooserDialog : DialogFragment(),
         const val DIRECTORY = 0
         const val FILE = 1
 
-        fun show(manager: FragmentManager) {
-            val fragment =
-                (manager.findFragmentByTag(tag) as? FileChooserDialog) ?: FileChooserDialog()
+        fun show(
+            manager: FragmentManager,
+            mode: Int = FILE,
+            title: String? = null,
+            isShowHomeDir: Boolean = false,
+            isShowUpDir: Boolean = true,
+            isShowHideDir: Boolean = false
+        ) {
+            val fragment = (manager.findFragmentByTag(tag) as? FileChooserDialog)
+                ?: FileChooserDialog().apply {
+                    this.mode = mode
+                    this.title = title
+                    this.isShowHomeDir = isShowHomeDir
+                    this.isShowUpDir = isShowUpDir
+                    this.isShowHideDir = isShowHideDir
+                }
             fragment.show(manager, tag)
         }
     }
 
     override var allowExtensions: Array<String?>? = null
-    override var isOnlyListDir: Boolean = false
+    override val isOnlyListDir: Boolean
+        get() = mode == DIRECTORY
     override var isShowHomeDir: Boolean = false
     override var isShowUpDir: Boolean = true
     override var isShowHideDir: Boolean = false
 
+    var title: String? = null
     private var initPath = FileUtils.getSdCardPath()
     private var mode: Int = FILE
     private lateinit var fileAdapter: FileAdapter
@@ -64,7 +80,15 @@ class FileChooserDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tool_bar.title = "文件选择"
+        ATH.applyBackgroundTint(view)
+        ATH.applyBackgroundTint(rv_path)
+        tool_bar.title = title ?: let {
+            if (isOnlyListDir) {
+                getString(R.string.folder_chooser)
+            } else {
+                getString(R.string.file_chooser)
+            }
+        }
 
         fileAdapter = FileAdapter(requireContext(), this)
         pathAdapter = PathAdapter(requireContext(), this)
