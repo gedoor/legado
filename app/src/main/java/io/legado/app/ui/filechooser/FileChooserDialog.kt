@@ -2,10 +2,9 @@ package io.legado.app.ui.filechooser
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.LinearLayout
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,12 +15,14 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_file_chooser.*
 
 
 class FileChooserDialog : DialogFragment(),
+    Toolbar.OnMenuItemClickListener,
     FileAdapter.CallBack,
     PathAdapter.CallBack {
 
@@ -103,6 +104,8 @@ class FileChooserDialog : DialogFragment(),
             }
         }
 
+        initMenu()
+
         fileAdapter = FileAdapter(requireContext(), this)
         pathAdapter = PathAdapter(requireContext(), this)
 
@@ -114,6 +117,24 @@ class FileChooserDialog : DialogFragment(),
         rv_path.adapter = pathAdapter
 
         refreshCurrentDirPath(initPath)
+    }
+
+    private fun initMenu() {
+        if (isOnlyListDir) {
+            tool_bar.menu.add(Menu.NONE, R.id.menu_add, Menu.NONE, R.string.ok)
+        }
+        tool_bar.menu.applyTint(requireContext(), false)
+        tool_bar.setOnMenuItemClickListener(this)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_add -> fileAdapter.currentPath?.let {
+                (parentFragment as? CallBack)?.onFilePicked(requestCode, it)
+                (activity as? CallBack)?.onFilePicked(requestCode, it)
+            }
+        }
+        return true
     }
 
     override fun onFileClick(position: Int) {
