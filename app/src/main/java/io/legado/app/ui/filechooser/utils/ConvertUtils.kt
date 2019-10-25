@@ -29,7 +29,6 @@ object ConvertUtils {
         } catch (e: NumberFormatException) {
             -1
         }
-
     }
 
     fun toInt(bytes: ByteArray): Int {
@@ -65,8 +64,6 @@ object ConvertUtils {
         if (bytes.isNotEmpty()) {
             try {
                 val options = BitmapFactory.Options()
-                // 不进行图片抖动处理
-                options.inDither = false
                 // 设置让解码器以最佳方式解码
                 options.inPreferredConfig = null
                 if (width > 0 && height > 0) {
@@ -77,12 +74,11 @@ object ConvertUtils {
                 bitmap!!.density = 96// 96 dpi
             } catch (e: Exception) {
             }
-
         }
         return bitmap
     }
 
-    fun toDrawable(bitmap: Bitmap?): Drawable? {
+    private fun toDrawable(bitmap: Bitmap?): Drawable? {
         return if (bitmap == null) null else BitmapDrawable(Resources.getSystem(), bitmap)
     }
 
