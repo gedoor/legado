@@ -4,6 +4,7 @@ import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
 import java.io.*
 import java.nio.charset.Charset
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
@@ -522,7 +523,7 @@ object FileUtils {
     fun getDateTime(file: File, format: String): String {
         val cal = Calendar.getInstance()
         cal.timeInMillis = file.lastModified()
-        return DateUtils.formatDate(cal.time, format)
+        return SimpleDateFormat(format, Locale.PRC).format(cal.time)
     }
 
     /**
