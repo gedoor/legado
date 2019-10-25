@@ -11,7 +11,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.text.DecimalFormat
-import java.util.*
 
 /**
  * 数据类型转换、单位转换
@@ -49,10 +48,6 @@ object ConvertUtils {
         } catch (e: NumberFormatException) {
             -1f
         }
-    }
-
-    fun toString(objects: Array<Any>): String {
-        return Arrays.deepToString(objects)
     }
 
     fun toString(objects: Array<Any>, tag: String): String {

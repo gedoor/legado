@@ -80,7 +80,7 @@ object FileUtils {
         }
         for (dir in dirs) {
             val file = dir.absoluteFile
-            if (!ConvertUtils.toString(excludeDirs).contains(file.name)) {
+            if (!excludeDirs.contentDeepToString().contains(file.name)) {
                 dirList.add(file)
             }
         }
@@ -193,8 +193,8 @@ object FileUtils {
         val file = File(startDirPath)
         return file.listFiles { dir, name ->
             //返回当前目录所有以某些扩展名结尾的文件
-            val extension = FileUtils.getExtension(name)
-            ConvertUtils.toString(allowExtensions).contains(extension)
+            val extension = getExtension(name)
+            allowExtensions.contentDeepToString().contains(extension)
         }
     }
 
