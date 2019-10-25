@@ -375,6 +375,7 @@ class AnalyzeByJSoup {
                     val html = elements.html()
                     textS.add(html)
                 }
+                "all" -> textS.add(elements.html())
                 else -> for (element in elements) {
                     val url = element.attr(lastRule)
                     if (!isEmpty(url) && !textS.contains(url)) {
