@@ -86,14 +86,12 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
             -3 -> App.db.bookDao().observeAudio()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
-        bookshelfLiveData?.observe(
-            this,
-            Observer {
-                val diffResult =
-                    DiffUtil.calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), it))
-                booksAdapter.setItems(it, false)
-                diffResult.dispatchUpdatesTo(booksAdapter)
-            })
+        bookshelfLiveData?.observe(this, Observer {
+            val diffResult =
+                DiffUtil.calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), it))
+            booksAdapter.setItems(it, false)
+            diffResult.dispatchUpdatesTo(booksAdapter)
+        })
     }
 
     override fun open(book: Book) {
