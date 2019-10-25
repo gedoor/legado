@@ -36,6 +36,7 @@ class FileChooserDialog : DialogFragment(),
             requestCode: Int,
             mode: Int = FILE,
             title: String? = null,
+            initPath: String? = null,
             isShowHomeDir: Boolean = false,
             isShowUpDir: Boolean = true,
             isShowHideDir: Boolean = false
@@ -49,6 +50,7 @@ class FileChooserDialog : DialogFragment(),
                     bundle.putBoolean("isShowHomeDir", isShowHomeDir)
                     bundle.putBoolean("isShowUpDir", isShowUpDir)
                     bundle.putBoolean("isShowHideDir", isShowHideDir)
+                    bundle.putString("initPath", initPath)
                     arguments = bundle
                 }
             fragment.show(manager, tag)
@@ -95,6 +97,9 @@ class FileChooserDialog : DialogFragment(),
             isShowHomeDir = it.getBoolean("isShowHomeDir")
             isShowUpDir = it.getBoolean("isShowUpDir")
             isShowHideDir = it.getBoolean("isShowHideDir")
+            it.getString("initPath")?.let { path ->
+                initPath = path
+            }
         }
         tool_bar.title = title ?: let {
             if (isOnlyListDir) {
@@ -132,6 +137,7 @@ class FileChooserDialog : DialogFragment(),
             R.id.menu_add -> fileAdapter.currentPath?.let {
                 (parentFragment as? CallBack)?.onFilePicked(requestCode, it)
                 (activity as? CallBack)?.onFilePicked(requestCode, it)
+                dismiss()
             }
         }
         return true

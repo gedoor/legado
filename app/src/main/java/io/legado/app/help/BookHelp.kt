@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import io.legado.app.App
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
@@ -13,13 +14,13 @@ import kotlin.math.min
 object BookHelp {
 
     private var downloadPath: String =
-        App.INSTANCE.getPrefString("downloadPath")
+        App.INSTANCE.getPrefString(PreferKey.downloadPath)
             ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
             ?: App.INSTANCE.cacheDir.absolutePath
 
     fun upDownloadPath() {
         downloadPath =
-            App.INSTANCE.getPrefString("downloadPath")
+            App.INSTANCE.getPrefString(PreferKey.downloadPath)
                 ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
                         ?: App.INSTANCE.cacheDir.absolutePath
     }
