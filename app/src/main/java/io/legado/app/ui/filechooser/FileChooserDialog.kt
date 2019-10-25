@@ -36,6 +36,12 @@ class FileChooserDialog : DialogFragment(),
         }
     }
 
+    override var allowExtensions: Array<String?>? = null
+    override var isOnlyListDir: Boolean = false
+    override var isShowHomeDir: Boolean = false
+    override var isShowUpDir: Boolean = true
+    override var isShowHideDir: Boolean = false
+
     private var initPath = FileUtils.getSdCardPath()
     private var mode: Int = FILE
     private lateinit var fileAdapter: FileAdapter
@@ -100,10 +106,10 @@ class FileChooserDialog : DialogFragment(),
         }
         fileAdapter.loadData(currentPath)
         var adapterCount = fileAdapter.itemCount
-        if (fileAdapter.isShowHomeDir) {
+        if (isShowHomeDir) {
             adapterCount--
         }
-        if (fileAdapter.isShowUpDir) {
+        if (isShowUpDir) {
             adapterCount--
         }
         if (adapterCount < 1) {

@@ -21,55 +21,10 @@ class FileAdapter(context: Context, val callBack: CallBack) :
     private var rootPath: String? = null
     var currentPath: String? = null
         private set
-    private var allowExtensions: Array<String?>? = null//允许的扩展名
-    /**
-     * 是否仅仅读取目录
-     */
-    var isOnlyListDir = false//是否仅仅读取目录
-    /**
-     * 是否显示返回主目录
-     */
-    var isShowHomeDir = false//是否显示返回主目录
-    /**
-     * 是否显示返回上一级
-     */
-    var isShowUpDir = true//是否显示返回上一级
-    /**
-     * 是否显示隐藏的目录（以“.”开头）
-     */
-    var isShowHideDir = true//是否显示隐藏的目录（以“.”开头）
-    private var itemHeight = 40// dp
     private var homeIcon: Drawable? = null
     private var upIcon: Drawable? = null
     private var folderIcon: Drawable? = null
     private var fileIcon: Drawable? = null
-
-    fun setFileIcon(fileIcon: Drawable) {
-        this.fileIcon = fileIcon
-    }
-
-    fun setFolderIcon(folderIcon: Drawable) {
-        this.folderIcon = folderIcon
-    }
-
-    fun setHomeIcon(homeIcon: Drawable) {
-        this.homeIcon = homeIcon
-    }
-
-    fun setUpIcon(upIcon: Drawable) {
-        this.upIcon = upIcon
-    }
-
-    /**
-     * 允许的扩展名
-     */
-    fun setAllowExtensions(allowExtensions: Array<String?>) {
-        this.allowExtensions = allowExtensions
-    }
-
-    fun setItemHeight(itemHeight: Int) {
-        this.itemHeight = itemHeight
-    }
 
     fun loadData(path: String?) {
         if (path == null) {
@@ -87,12 +42,12 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         if (fileIcon == null) {
             fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFILE())
         }
-        val datas = ArrayList<FileItem>()
+        val data = ArrayList<FileItem>()
         if (rootPath == null) {
             rootPath = path
         }
         currentPath = path
-        if (isShowHomeDir) {
+        if (callBack.isShowHomeDir) {
             //添加“返回主目录”
             val fileRoot = FileItem()
             fileRoot.isDirectory = true
@@ -100,9 +55,9 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             fileRoot.name = DIR_ROOT
             fileRoot.size = 0
             fileRoot.path = rootPath ?: path
-            datas.add(fileRoot)
+            data.add(fileRoot)
         }
-        if (isShowUpDir && path != "/") {
+        if (callBack.isShowUpDir && path != "/") {
             //添加“返回上一级目录”
             val fileParent = FileItem()
             fileParent.isDirectory = true
@@ -110,17 +65,17 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             fileParent.name = DIR_PARENT
             fileParent.size = 0
             fileParent.path = File(path).parent
-            datas.add(fileParent)
+            data.add(fileParent)
         }
         currentPath?.let { currentPath ->
-            val files: Array<File?>? = allowExtensions?.let { allowExtensions ->
-                if (isOnlyListDir) {
+            val files: Array<File?>? = callBack.allowExtensions?.let { allowExtensions ->
+                if (callBack.isOnlyListDir) {
                     FileUtils.listDirs(currentPath, allowExtensions)
                 } else {
                     FileUtils.listDirsAndFiles(currentPath, allowExtensions)
                 }
             } ?: let {
-                if (isOnlyListDir) {
+                if (callBack.isOnlyListDir) {
                     FileUtils.listDirs(currentPath)
                 } else {
                     FileUtils.listDirsAndFiles(currentPath)
@@ -128,7 +83,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             }
             if (files != null) {
                 for (file in files) {
-                    if (file == null || (!isShowHideDir && file.name.startsWith("."))) {
+                    if (file == null || (!callBack.isShowHideDir && file.name.startsWith("."))) {
                         continue
                     }
                     val fileItem = FileItem()
@@ -143,10 +98,10 @@ class FileAdapter(context: Context, val callBack: CallBack) :
                     }
                     fileItem.name = file.name
                     fileItem.path = file.absolutePath
-                    datas.add(fileItem)
+                    data.add(fileItem)
                 }
             }
-            setItems(datas)
+            setItems(data)
         }
 
     }
@@ -163,11 +118,29 @@ class FileAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun onFileClick(position: Int)
+        //允许的扩展名
+        var allowExtensions: Array<String?>?
+        /**
+         * 是否仅仅读取目录
+         */
+        var isOnlyListDir: Boolean
+        /**
+         * 是否显示返回主目录
+         */
+        var isShowHomeDir: Boolean
+        /**
+         * 是否显示返回上一级
+         */
+        var isShowUpDir: Boolean
+        /**
+         * 是否显示隐藏的目录（以“.”开头）
+         */
+        var isShowHideDir: Boolean
     }
 
     companion object {
-        val DIR_ROOT = "."
-        val DIR_PARENT = ".."
+        const val DIR_ROOT = "."
+        const val DIR_PARENT = ".."
     }
 
 }
