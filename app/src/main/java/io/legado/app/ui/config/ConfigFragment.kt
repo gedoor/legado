@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.putPrefBoolean
@@ -46,6 +47,13 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     override fun onPause() {
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         super.onPause()
+    }
+
+    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        when (preference?.key) {
+            "downloadPath" -> fragmentManager?.let { FileChooserDialog.show(it) }
+        }
+        return super.onPreferenceTreeClick(preference)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {

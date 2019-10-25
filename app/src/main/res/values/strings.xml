@@ -535,5 +535,6 @@
     <string name="dur_pos">当前位置：</string>
     <string name="precision_search">精准搜索</string>
     <string name="service_starting">正在启动服务</string>
+    <string name="empty">空</string>
 
 </resources>
