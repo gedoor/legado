@@ -433,9 +433,10 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     else -> rule = ruleStr
                 }
             }
+            //分离put
+            rule = splitPutRule(rule, putMap)
             //分离正则表达式
-            val ruleStrS =
-                rule.trim { it <= ' ' }.split("##")
+            val ruleStrS = rule.trim { it <= ' ' }.split("##")
             rule = ruleStrS[0]
             if (ruleStrS.size > 1) {
                 replaceRegex = ruleStrS[1]
@@ -446,8 +447,6 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             if (ruleStrS.size > 3) {
                 replaceFirst = true
             }
-            //分离put
-            rule = splitPutRule(rule, putMap)
             //@get,{{ }},$1, 拆分
             var start = 0
             var tmp: String
