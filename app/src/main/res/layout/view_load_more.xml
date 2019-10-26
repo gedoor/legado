@@ -11,6 +11,7 @@
         android:layout_height="36dp"
         android:layout_margin="6dp"
         android:layout_gravity="center"
+        android:visibility="gone"
         app:loading_width="2dp" />
 
     <TextView
@@ -18,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp"
         android:background="?attr/selectableItemBackground"

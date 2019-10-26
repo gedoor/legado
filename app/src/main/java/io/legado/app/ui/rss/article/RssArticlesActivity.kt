@@ -122,7 +122,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         viewModel.read(rssArticle)
         startActivity<ReadRssActivity>(
             Pair("origin", rssArticle.origin),
-            Pair("title", rssArticle.title)
+            Pair("link", rssArticle.link)
         )
     }
 }

@@ -10,17 +10,23 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.putPrefString
 
 
-class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener,
+class ConfigFragment : PreferenceFragmentCompat(),
+    FileChooserDialog.CallBack,
+    Preference.OnPreferenceChangeListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private val downloadPath = 25324
     private val packageManager = App.INSTANCE.packageManager
     private val componentName = ComponentName(
         App.INSTANCE,
@@ -30,7 +36,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean("process_text", isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config)
-        bindPreferenceSummaryToValue(findPreference("downloadPath"))
+        bindPreferenceSummaryToValue(findPreference(PreferKey.downloadPath))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,9 +54,24 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
         super.onPause()
     }
 
+    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        when (preference?.key) {
+            PreferKey.downloadPath -> FileChooserDialog.show(
+                childFragmentManager,
+                downloadPath,
+                mode = FileChooserDialog.DIRECTORY,
+                initPath = getPreferenceString(PreferKey.downloadPath)
+            )
+        }
+        return super.onPreferenceTreeClick(preference)
+    }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            "downloadPath" -> BookHelp.upDownloadPath()
+            PreferKey.downloadPath -> {
+                BookHelp.upDownloadPath()
+                findPreference<Preference>(key)?.summary = getPreferenceString(key)
+            }
             "recordLog" -> LogUtils.upLevel()
             "process_text" -> sharedPreferences?.let {
                 setProcessTextEnable(it.getBoolean("process_text", true))
@@ -84,7 +105,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
 
     private fun getPreferenceString(key: String): String {
         return when (key) {
-            "downloadPath" -> getPrefString("downloadPath")
+            PreferKey.downloadPath -> getPrefString(PreferKey.downloadPath)
                 ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
                 ?: App.INSTANCE.cacheDir.absolutePath
             else -> getPrefString(key, "")
@@ -107,5 +128,10 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
             )
         }
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        super.onFilePicked(requestCode, currentPath)
+        putPrefString(PreferKey.downloadPath, currentPath)
     }
 }
