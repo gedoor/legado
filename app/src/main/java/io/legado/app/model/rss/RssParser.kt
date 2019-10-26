@@ -39,8 +39,6 @@ object RssParser {
                         if (insideItem) currentArticle.title = xmlPullParser.nextText().trim()
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_LINK, true) ->
                         if (insideItem) currentArticle.link = xmlPullParser.nextText().trim()
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_AUTHOR, true) ->
-                        if (insideItem) currentArticle.author = xmlPullParser.nextText().trim()
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_CATEGORY, true) ->
                         if (insideItem) currentArticle.categoryList.add(xmlPullParser.nextText().trim())
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_THUMBNAIL, true) ->
