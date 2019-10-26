@@ -86,6 +86,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_revert_selection -> adapter.revertSelection()
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
+            R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelectionIds())
+            R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
             R.id.menu_check_source ->
                 startService<CheckSourceService>(Pair("data", adapter.getSelectionIds()))

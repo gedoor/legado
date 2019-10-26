@@ -52,6 +52,18 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun enableSelectExplore(ids: LinkedHashSet<String>) {
+        execute {
+            App.db.bookSourceDao().enableSectionExplore(*ids.toTypedArray())
+        }
+    }
+
+    fun disableSelectExplore(ids: LinkedHashSet<String>) {
+        execute {
+            App.db.bookSourceDao().disableSectionExplore(*ids.toTypedArray())
+        }
+    }
+
     fun delSelection(ids: LinkedHashSet<String>) {
         execute {
             App.db.bookSourceDao().delSection(*ids.toTypedArray())

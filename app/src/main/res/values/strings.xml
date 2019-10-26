@@ -526,6 +526,8 @@
     <string name="add_group">添加分组</string>
     <string name="add_replace_rule">新建替换</string>
     <string name="group">分组</string>
+    <string name="enable_explore">启用所选发现</string>
+    <string name="disable_explore">禁用所选发现</string>
     <string name="enable_selection">启用所选</string>
     <string name="disable_selection">禁用所选</string>
     <string name="tts">TTS</string>
