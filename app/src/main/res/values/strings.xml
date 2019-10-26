@@ -385,6 +385,7 @@
     <string name="rss_source_icon">图标(sourceIcon)</string>
     <string name="rss_source_group">分组(sourceGroup)</string>
     <string name="rss_rule_articles">列表规则(ruleArticles)</string>
+    <string name="rss_rule_next">列表下一页规则(ruleArticles)</string>
     <string name="rss_rule_title">标题规则(ruleTitle)</string>
     <string name="rss_rule_author">作者规则(ruleAuthor)</string>
     <string name="rss_rule_guid">guid规则(ruleGuid)</string>
