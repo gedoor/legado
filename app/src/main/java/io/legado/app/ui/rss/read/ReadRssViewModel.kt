@@ -20,13 +20,13 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     fun initData(intent: Intent) {
         execute {
             val origin = intent.getStringExtra("origin")
-            val title = intent.getStringExtra("title")
+            val link = intent.getStringExtra("link")
             val rssSource = App.db.rssSourceDao().getByKey(origin)
             rssSource?.let {
                 rssSourceLiveData.postValue(it)
             }
-            if (origin != null && title != null) {
-                App.db.rssArticleDao().get(origin, title)?.let { rssArticle ->
+            if (origin != null && link != null) {
+                App.db.rssArticleDao().get(origin, link)?.let { rssArticle ->
                     rssArticleLiveData.postValue(rssArticle)
                     if (!rssArticle.description.isNullOrBlank()) {
                         contentLiveData.postValue(rssArticle.description)

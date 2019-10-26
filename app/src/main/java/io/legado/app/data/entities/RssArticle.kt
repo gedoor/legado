@@ -6,7 +6,7 @@ import androidx.room.Ignore
 
 @Entity(
     tableName = "rssArticles",
-    primaryKeys = ["origin", "title"]
+    primaryKeys = ["origin", "link"]
 )
 data class RssArticle(
     var origin: String = "",
