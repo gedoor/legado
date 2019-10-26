@@ -124,21 +124,25 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            val analyzeUrl =
-                AnalyzeUrl(
-                    book = book,
-                    ruleUrl = bookChapter.url,
-                    baseUrl = book.tocUrl,
-                    headerMapF = bookSource.getHeaderMap()
-                )
-            val response = analyzeUrl.getResponseAsync().await()
+            val body = if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
+                book.tocHtml
+            } else {
+                val analyzeUrl =
+                    AnalyzeUrl(
+                        book = book,
+                        ruleUrl = bookChapter.url,
+                        baseUrl = book.tocUrl,
+                        headerMapF = bookSource.getHeaderMap()
+                    )
+                analyzeUrl.getResponseAsync().await().body()
+            }
             BookContent.analyzeContent(
                 this,
-                response,
+                body,
                 book,
                 bookChapter,
                 bookSource,
-                analyzeUrl,
+                bookChapter.url,
                 nextChapterUrl
             )
         }

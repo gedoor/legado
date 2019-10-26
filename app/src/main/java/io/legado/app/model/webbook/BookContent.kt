@@ -12,29 +12,26 @@ import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 object BookContent {
 
     @Throws(Exception::class)
     suspend fun analyzeContent(
         coroutineScope: CoroutineScope,
-        response: Response<String>,
+        body: String?,
         book: Book,
         bookChapter: BookChapter,
         bookSource: BookSource,
-        analyzeUrl: AnalyzeUrl,
+        baseUrl: String,
         nextChapterUrlF: String? = null
     ): String {
-        val baseUrl: String = NetworkUtils.getUrl(response)
-        val body: String? = response.body()
         body ?: throw Exception(
             App.INSTANCE.getString(
                 R.string.error_get_web_content,
-                analyzeUrl.ruleUrl
+                baseUrl
             )
         )
-        SourceDebug.printLog(bookSource.bookSourceUrl, "获取成功:${analyzeUrl.ruleUrl}")
+        SourceDebug.printLog(bookSource.bookSourceUrl, "获取成功:${baseUrl}")
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
