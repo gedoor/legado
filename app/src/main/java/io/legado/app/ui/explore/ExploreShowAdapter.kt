@@ -4,6 +4,7 @@ import android.content.Context
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
@@ -65,11 +66,11 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                     .setAsDrawable(iv_cover)
             }
             onClick {
-                callBack.showBookInfo(item.bookUrl)
+                callBack.showBookInfo(item.toBook())
             }
         }
 
     interface CallBack {
-        fun showBookInfo(bookUrl: String)
+        fun showBookInfo(book: Book)
     }
 }

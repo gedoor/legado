@@ -104,7 +104,7 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun newReadAloud(dataKey: String?, play: Boolean) {
         dataKey?.let {
-            textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
+            textChapter = IntentDataHelp.getData<TextChapter>(dataKey)
             textChapter?.let { textChapter ->
                 nowSpeak = 0
                 readAloudNumber = textChapter.getReadLength(pageIndex)

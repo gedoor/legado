@@ -9,6 +9,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -22,30 +23,32 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun loadBook(intent: Intent) {
         execute {
-            intent.getStringExtra("bookUrl")?.let {
+            IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let { book ->
+                inBookshelf = App.db.bookDao().getBook(book.bookUrl) != null
+                setBook(book)
+            } ?: intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
                     inBookshelf = true
-                    durChapterIndex = book.durChapterIndex
-                    bookData.postValue(book)
-                    val chapterList = App.db.bookChapterDao().getChapterList(it)
-                    if (chapterList.isNotEmpty()) {
-                        chapterListData.postValue(chapterList)
-                        isLoadingData.postValue(false)
-                    } else {
-                        loadChapter(book)
-                    }
+                    setBook(book)
                 }
             } ?: intent.getStringExtra("searchBookUrl")?.let {
                 App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
-                    durChapterIndex = book.durChapterIndex
-                    bookData.postValue(book)
-                    if (book.tocUrl.isEmpty()) {
-                        loadBookInfo(book)
-                    } else {
-                        loadChapter(book)
-                    }
+                    inBookshelf = App.db.bookDao().getBook(book.bookUrl) != null
+                    setBook(book)
                 }
             }
+        }
+    }
+
+    private fun setBook(book: Book) {
+        durChapterIndex = book.durChapterIndex
+        bookData.postValue(book)
+        val chapterList = App.db.bookChapterDao().getChapterList(book.bookUrl)
+        if (chapterList.isNotEmpty()) {
+            chapterListData.postValue(chapterList)
+            isLoadingData.postValue(false)
+        } else {
+            loadChapter(book)
         }
     }
 
