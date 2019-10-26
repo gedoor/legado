@@ -14,11 +14,11 @@ class BookAdapter(context: Context, val callBack: CallBack) :
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
             text_view.text = item.name
-            onClick { callBack.showBookInfo(item.bookUrl) }
+            onClick { callBack.showBookInfo(item) }
         }
     }
 
     interface CallBack {
-        fun showBookInfo(url: String)
+        fun showBookInfo(book: Book)
     }
 }

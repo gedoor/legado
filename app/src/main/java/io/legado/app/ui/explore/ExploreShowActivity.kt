@@ -88,7 +88,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
             Pair("searchBookUrl", book.bookUrl),
-            Pair("key", IntentDataHelp.putData(book, System.currentTimeMillis().toString()))
+            Pair("key", IntentDataHelp.putData(book))
         )
     }
 }
