@@ -24,6 +24,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
     private lateinit var adapter: ExploreShowAdapter
     private lateinit var loadMoreView: View
     private var hasMore = true
+    private var isLoading = true
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title_bar.title = intent.getStringExtra("exploreName")
@@ -41,9 +42,26 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
             LayoutInflater.from(this).inflate(R.layout.view_load_more, recycler_view, false)
         adapter.addFooterView(loadMoreView)
         loadMoreView.rotate_loading.show()
+        recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(1)) {
+                    scrollToBottom()
+                }
+            }
+        })
+    }
+
+    private fun scrollToBottom() {
+        adapter.let {
+            if (hasMore && !isLoading) {
+                viewModel.explore()
+            }
+        }
     }
 
     private fun upData(books: List<SearchBook>) {
+        isLoading = false
         if (books.isEmpty() && adapter.isEmpty()) {
             hasMore = false
             loadMoreView.rotate_loading.hide(View.INVISIBLE)

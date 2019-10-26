@@ -167,7 +167,11 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val oldSize = getActualItemCount()
             if (this.items.addAll(newItems)) {
-                notifyItemRangeInserted(oldSize + getHeaderCount(), newItems.size)
+                if (oldSize == 0 && getHeaderCount() == 0) {
+                    notifyDataSetChanged()
+                } else {
+                    notifyItemRangeInserted(oldSize + getHeaderCount(), newItems.size)
+                }
             }
         }
     }

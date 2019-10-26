@@ -29,18 +29,18 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
     }
 
     fun explore() {
-        bookSource?.let { source ->
-            exploreUrl?.let { url ->
-                WebBook(source).exploreBook(url, page, this)
-                    .timeout(30000L)
-                    .onSuccess(IO) { searchBooks ->
-                        searchBooks?.let {
-                            booksData.postValue(searchBooks)
-                            App.db.searchBookDao().insert(*searchBooks.toTypedArray())
-                            page++
-                        }
+        val source = bookSource
+        val url = exploreUrl
+        if (source != null && url != null) {
+            WebBook(source).exploreBook(url, page, this)
+                .timeout(30000L)
+                .onSuccess(IO) { searchBooks ->
+                    searchBooks?.let {
+                        booksData.postValue(searchBooks)
+                        App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+                        page++
                     }
-            }
+                }
         }
     }
 
