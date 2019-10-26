@@ -22,8 +22,8 @@ import kotlin.math.min
 /**
  * 本地缓存
  */
+@Suppress("unused")
 class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int) {
-
 
     companion object {
         const val TIME_HOUR = 60 * 60
