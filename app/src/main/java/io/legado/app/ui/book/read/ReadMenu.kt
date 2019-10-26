@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.utils.*
@@ -197,7 +198,7 @@ class ReadMenu : FrameLayout {
                 vw_menu_bg.onClick { runMenuOut() }
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
                     height =
-                        if (context.getPrefBoolean("hideNavigationBar")
+                        if (context.getPrefBoolean(PreferKey.hideStatusBar)
                             && Help.isNavigationBarExist(activity)
                         ) context.getNavigationBarHeight()
                         else 0

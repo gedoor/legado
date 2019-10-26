@@ -10,6 +10,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
@@ -58,7 +59,7 @@ class ContentView : FrameLayout {
 
     fun upStyle() {
         ReadBookConfig.getConfig().apply {
-            val pt = if (context.getPrefBoolean("hideStatusBar", false)) {
+            val pt = if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
                 top_bar.visible()
                 0
             } else {

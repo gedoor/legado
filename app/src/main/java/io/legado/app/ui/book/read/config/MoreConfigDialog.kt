@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.postEvent
@@ -91,8 +92,8 @@ class MoreConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                "hideStatusBar" -> postEvent(Bus.UP_CONFIG, true)
-                "hideNavigationBar" -> postEvent(Bus.UP_CONFIG, true)
+                PreferKey.hideStatusBar -> postEvent(Bus.UP_CONFIG, true)
+                PreferKey.hideNavigationBar -> postEvent(Bus.UP_CONFIG, true)
             }
         }
 

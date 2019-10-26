@@ -3,6 +3,6 @@ package io.legado.app.constant
 object PreferKey {
 
     const val downloadPath = "downloadPath"
-
-
+    const val hideStatusBar = "hideStatusBar"
+    const val hideNavigationBar = "hideNavigationBar"
 }
