@@ -43,12 +43,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     private fun setBook(book: Book) {
         durChapterIndex = book.durChapterIndex
         bookData.postValue(book)
-        val chapterList = App.db.bookChapterDao().getChapterList(book.bookUrl)
-        if (chapterList.isNotEmpty()) {
-            chapterListData.postValue(chapterList)
-            isLoadingData.postValue(false)
+        if (book.tocUrl.isEmpty()) {
+            loadBookInfo(book)
         } else {
-            loadChapter(book)
+            val chapterList = App.db.bookChapterDao().getChapterList(book.bookUrl)
+            if (chapterList.isNotEmpty()) {
+                chapterListData.postValue(chapterList)
+                isLoadingData.postValue(false)
+            } else {
+                loadChapter(book)
+            }
         }
     }
 
