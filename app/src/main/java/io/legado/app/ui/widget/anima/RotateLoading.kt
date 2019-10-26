@@ -176,20 +176,19 @@ class RotateLoading : View {
         post(shown)
     }
 
-    fun hide() {
+    fun hide(visibility: Int = GONE) {
         removeCallbacks(shown)
         removeCallbacks(hidden)
-        post(hidden)
+        stopInternal(visibility)
     }
 
     private fun startInternal() {
         startAnimator()
-
         isStarted = true
         invalidate()
     }
 
-    private fun stopInternal() {
+    private fun stopInternal(visibility: Int = GONE) {
         stopAnimator()
         invalidate()
     }
@@ -206,10 +205,10 @@ class RotateLoading : View {
             .start()
     }
 
-    private fun stopAnimator() {
+    private fun stopAnimator(visibility: Int = GONE) {
         animate().cancel()
         isStarted = false
-        visibility = GONE
+        this.visibility = visibility
     }
 
     companion object {
