@@ -12,6 +12,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_explore_show.*
 import kotlinx.android.synthetic.main.view_load_more.view.*
 import org.jetbrains.anko.startActivity
@@ -66,14 +67,17 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
             hasMore = false
             loadMoreView.rotate_loading.hide(View.INVISIBLE)
             loadMoreView.tv_text.text = "空"
+            loadMoreView.tv_text.visible()
         } else if (books.isEmpty()) {
             hasMore = false
             loadMoreView.rotate_loading.hide(View.INVISIBLE)
             loadMoreView.tv_text.text = "我是有底线的"
+            loadMoreView.tv_text.visible()
         } else if (adapter.getItems().contains(books.first()) && adapter.getItems().contains(books.last())) {
             hasMore = false
             loadMoreView.rotate_loading.hide(View.INVISIBLE)
             loadMoreView.tv_text.text = "我是有底线的"
+            loadMoreView.tv_text.visible()
         } else {
             adapter.addItems(books)
         }

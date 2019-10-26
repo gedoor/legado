@@ -189,7 +189,7 @@ class RotateLoading : View {
     }
 
     private fun stopInternal(visibility: Int = GONE) {
-        stopAnimator()
+        stopAnimator(visibility)
         invalidate()
     }
 
