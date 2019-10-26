@@ -66,17 +66,17 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         if (books.isEmpty() && adapter.isEmpty()) {
             hasMore = false
             loadMoreView.rotate_loading.hide(View.INVISIBLE)
-            loadMoreView.tv_text.text = "空"
+            loadMoreView.tv_text.setText(R.string.empty)
             loadMoreView.tv_text.visible()
         } else if (books.isEmpty()) {
             hasMore = false
             loadMoreView.rotate_loading.hide(View.INVISIBLE)
-            loadMoreView.tv_text.text = "我是有底线的"
+            loadMoreView.tv_text.setText(R.string.bottom_line)
             loadMoreView.tv_text.visible()
         } else if (adapter.getItems().contains(books.first()) && adapter.getItems().contains(books.last())) {
             hasMore = false
             loadMoreView.rotate_loading.hide(View.INVISIBLE)
-            loadMoreView.tv_text.text = "我是有底线的"
+            loadMoreView.tv_text.setText(R.string.bottom_line)
             loadMoreView.tv_text.visible()
         } else {
             adapter.addItems(books)

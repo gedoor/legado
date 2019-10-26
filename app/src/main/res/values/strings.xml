@@ -538,5 +538,6 @@
     <string name="empty">空</string>
     <string name="file_chooser">文件选择</string>
     <string name="folder_chooser">文件夹选择</string>
+    <string name="bottom_line">我是有底线的</string>
 
 </resources>
