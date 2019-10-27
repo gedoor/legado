@@ -126,8 +126,7 @@ class AnalyzeUrl(
         page?.let {
             val matcher = pagePattern.matcher(ruleUrl)
             while (matcher.find()) {
-                val pages =
-                    matcher.group(1).splitNotBlank(",")
+                val pages = matcher.group(1).split(",")
                 ruleUrl = if (page <= pages.size) {
                     ruleUrl.replace(matcher.group(), pages[page - 1].trim { it <= ' ' })
                 } else {
