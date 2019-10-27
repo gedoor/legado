@@ -10,6 +10,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ReadAloud
 import io.legado.app.model.WebBook
 import io.legado.app.ui.widget.page.TextChapter
@@ -38,35 +39,41 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun initData(intent: Intent) {
         execute {
             inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-            val bookUrl = intent.getStringExtra("bookUrl")
-            val book = if (!bookUrl.isNullOrEmpty()) {
-                App.db.bookDao().getBook(bookUrl)
+            IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let {
+                setBook(it)
+            } ?: intent.getStringExtra("bookUrl")?.let {
+                App.db.bookDao().getBook(it)?.let { book ->
+                    setBook(book)
+                }
+            } ?: App.db.bookDao().lastReadBook?.let {
+                setBook(it)
+            }
+        }
+    }
+
+    private fun setBook(book: Book) {
+        durChapterIndex = book.durChapterIndex
+        durPageIndex = book.durChapterPos
+        isLocalBook = book.origin == BookType.local
+        bookData.postValue(book)
+        App.db.bookSourceDao().getBookSource(book.origin)?.let {
+            webBook = WebBook(it)
+        }
+        val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
+        if (count == 0) {
+            if (book.tocUrl.isEmpty()) {
+                loadBookInfo(book)
             } else {
-                App.db.bookDao().lastReadBook
+                loadChapterList(book)
             }
-            book?.let {
-                durChapterIndex = book.durChapterIndex
-                durPageIndex = book.durChapterPos
-                isLocalBook = book.origin == BookType.local
-                bookData.postValue(book)
-                App.db.bookSourceDao().getBookSource(book.origin)?.let {
-                    webBook = WebBook(it)
-                }
-                val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
-                if (count == 0) {
-                    if (book.tocUrl.isEmpty()) {
-                        loadBookInfo(book)
-                    } else {
-                        loadChapterList(book)
-                    }
-                } else {
-                    if (durChapterIndex > count - 1) {
-                        durChapterIndex = count - 1
-                    }
-                    chapterSize = count
-                    chapterListFinish.postValue(true)
-                }
+        } else {
+            if (durChapterIndex > count - 1) {
+                durChapterIndex = count - 1
             }
+            chapterSize = count
+            chapterListFinish.postValue(true)
+        }
+        if (inBookshelf) {
             saveRead(book)
         }
     }

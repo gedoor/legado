@@ -11,6 +11,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ImageLoader
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
@@ -46,7 +47,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             viewModel.chapterListData.value?.let { chapters ->
                 showChapter(chapters)
             }
-        } ?: viewModel.loadBook(intent)
+        } ?: viewModel.initData(intent)
         initOnClick()
     }
 
@@ -210,17 +211,22 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         if (!viewModel.inBookshelf) {
             viewModel.saveBook {
                 viewModel.saveChapterList {
-                    startActivity<ReadBookActivity>(
-                        Pair("bookUrl", book.bookUrl),
-                        Pair("inBookshelf", false)
-                    )
+                    startReadActivity(book)
                 }
             }
         } else {
             viewModel.saveBook {
-                startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
+                startReadActivity(book)
             }
         }
+    }
+
+    private fun startReadActivity(book: Book) {
+        startActivity<ReadBookActivity>(
+            Pair("bookUrl", book.bookUrl),
+            Pair("inBookshelf", viewModel.inBookshelf),
+            Pair("key", IntentDataHelp.putData(book))
+        )
     }
 
     override val curOrigin: String?

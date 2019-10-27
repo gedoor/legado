@@ -14,6 +14,7 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.BookType
 import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -98,7 +99,10 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
         when (book.type) {
             BookType.audio ->
                 context?.startActivity<AudioPlayActivity>(Pair("bookUrl", book.bookUrl))
-            else -> context?.startActivity<ReadBookActivity>(Pair("bookUrl", book.bookUrl))
+            else -> context?.startActivity<ReadBookActivity>(
+                Pair("bookUrl", book.bookUrl),
+                Pair("key", IntentDataHelp.putData(book))
+            )
         }
     }
 

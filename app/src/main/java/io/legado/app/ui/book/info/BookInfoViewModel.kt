@@ -21,19 +21,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var durChapterIndex = 0
     var inBookshelf = false
 
-    fun loadBook(intent: Intent) {
+    fun initData(intent: Intent) {
         execute {
             IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let { book ->
-                inBookshelf = App.db.bookDao().getBook(book.bookUrl) != null
                 setBook(book)
             } ?: intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
-                    inBookshelf = true
                     setBook(book)
                 }
             } ?: intent.getStringExtra("searchBookUrl")?.let {
                 App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
-                    inBookshelf = App.db.bookDao().getBook(book.bookUrl) != null
                     setBook(book)
                 }
             }
@@ -41,6 +38,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun setBook(book: Book) {
+        inBookshelf = App.db.bookDao().getBook(book.bookUrl) != null
         durChapterIndex = book.durChapterIndex
         bookData.postValue(book)
         if (book.tocUrl.isEmpty()) {
