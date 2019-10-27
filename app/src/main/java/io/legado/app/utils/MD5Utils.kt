@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException
 
 object MD5Utils {
 
-    fun strToMd5By32(str: String?): String? {
+    fun md5Encode(str: String?): String? {
         if (str == null) return null
         var reStr: String? = null
         try {
@@ -31,8 +31,8 @@ object MD5Utils {
         return reStr
     }
 
-    fun strToMd5By16(str: String): String? {
-        var reStr = strToMd5By32(str)
+    fun md5Encode16(str: String): String? {
+        var reStr = md5Encode(str)
         if (reStr != null) {
             reStr = reStr.substring(8, 24)
         }

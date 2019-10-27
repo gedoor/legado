@@ -38,12 +38,12 @@ object JsExtensions {
         return EncoderUtils.base64Encode(str, flags)
     }
 
-    fun strToMd5By32(str: String): String? {
-        return MD5Utils.strToMd5By32(str)
+    fun md5Encode(str: String): String? {
+        return MD5Utils.md5Encode(str)
     }
 
-    fun strToMd5By16(str: String): String? {
-        return MD5Utils.strToMd5By16(str)
+    fun md5Encode16(str: String): String? {
+        return MD5Utils.md5Encode16(str)
     }
 
 }
