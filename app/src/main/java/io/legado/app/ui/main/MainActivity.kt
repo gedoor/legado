@@ -50,10 +50,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_bookshelf -> view_pager_main.currentItem = 0
-            R.id.menu_find_book -> view_pager_main.currentItem = 1
-            R.id.menu_rss -> view_pager_main.currentItem = 2
-            R.id.menu_my_config -> view_pager_main.currentItem = 3
+            R.id.menu_bookshelf -> view_pager_main.setCurrentItem(0, false)
+            R.id.menu_find_book -> view_pager_main.setCurrentItem(1, false)
+            R.id.menu_rss -> view_pager_main.setCurrentItem(2, false)
+            R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
         return false
     }
