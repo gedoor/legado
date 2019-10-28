@@ -71,7 +71,7 @@ data class SearchBook(
 
     fun addOrigin(origin: String) {
         if (origins == null) {
-            origins = linkedSetOf()
+            origins = linkedSetOf(this.origin)
         }
         origins?.add(origin)
     }
