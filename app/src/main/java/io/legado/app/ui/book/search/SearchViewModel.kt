@@ -12,6 +12,7 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -22,7 +23,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var startTime: Long = 0
     var searchPage = 0
     var isLoading = false
-    private val searchBooks = arrayListOf<SearchBook>()
+    private var searchBooks = arrayListOf<SearchBook>()
 
     fun search(
         key: String,
@@ -71,21 +72,74 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun searchSuccess(searchBooks: List<SearchBook>) {
+        val books = arrayListOf<SearchBook>()
         searchBooks.forEach { searchBook ->
             if (context.getPrefBoolean(PreferKey.precisionSearch)) {
                 if (searchBook.name.contains(searchKey)
                     || searchBook.author.contains(searchKey)
-                ) App.db.searchBookDao().insert(searchBook)
+                ) books.add(searchBook)
             } else
-                App.db.searchBookDao().insert(searchBook)
+                books.add(searchBook)
         }
+        App.db.searchBookDao().insert(*books.toTypedArray())
+        addToAdapter(books)
     }
 
     @Synchronized
-    private fun addToAdapter(books: List<SearchBook>) {
-        if (books.isNotEmpty()) {
+    private fun addToAdapter(newDataS: List<SearchBook>) {
+        if (newDataS.isNotEmpty()) {
             val copyDataS = ArrayList(searchBooks)
-
+            val searchBooksAdd = ArrayList<SearchBook>()
+            if (copyDataS.size == 0) {
+                copyDataS.addAll(newDataS)
+            } else {
+                //存在
+                for (temp in newDataS) {
+                    var hasSame = false
+                    var i = 0
+                    val size = copyDataS.size
+                    while (i < size) {
+                        val searchBook = copyDataS[i]
+                        if (temp.name == searchBook.name
+                            && temp.author == searchBook.author
+                        ) {
+                            hasSame = true
+                            searchBook.addOrigin(temp.bookUrl)
+                            break
+                        }
+                        i++
+                    }
+                    if (!hasSame) {
+                        searchBooksAdd.add(temp)
+                    }
+                }
+                //添加
+                for (temp in searchBooksAdd) {
+                    if (searchKey == temp.name) {
+                        for (i in copyDataS.indices) {
+                            val searchBook = copyDataS[i]
+                            if (searchKey != searchBook.name) {
+                                copyDataS.add(i, temp)
+                                break
+                            }
+                        }
+                    } else if (searchKey == temp.author) {
+                        for (i in copyDataS.indices) {
+                            val searchBook = copyDataS[i]
+                            if (searchKey != searchBook.name && searchKey == searchBook.author) {
+                                copyDataS.add(i, temp)
+                                break
+                            }
+                        }
+                    } else {
+                        copyDataS.add(temp)
+                    }
+                }
+            }
+            launch {
+                searchBooks = copyDataS
+                callBack?.adapter?.setItems(searchBooks)
+            }
         }
     }
 
