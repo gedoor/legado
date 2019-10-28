@@ -22,7 +22,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var startTime: Long = 0
     var searchPage = 0
     var isLoading = false
-    private val booksShow = arrayListOf<SearchEntry>()
+    private val booksShow = arrayListOf<SearchEntity>()
 
     fun search(
         key: String,

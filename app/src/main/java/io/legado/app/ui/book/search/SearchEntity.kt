@@ -2,7 +2,7 @@ package io.legado.app.ui.book.search
 
 import io.legado.app.utils.splitNotBlank
 
-data class SearchEntry(
+data class SearchEntity(
     var name: String = "",
     var author: String = "",
     var kind: String? = null,
