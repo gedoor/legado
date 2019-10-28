@@ -1,5 +1,6 @@
 package io.legado.app.help.http
 
+import io.legado.app.utils.UTF8BOMFighter
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -14,7 +15,7 @@ class EncodeConverter(private val encode: String? = null) : Converter.Factory() 
         retrofit: Retrofit?
     ): Converter<ResponseBody, String>? {
         return Converter { value ->
-            val responseBytes = value.bytes()
+            val responseBytes = UTF8BOMFighter.removeUTF8BOM(value.bytes())
             encode?.let { return@Converter String(responseBytes, Charset.forName(encode)) }
 
             var charsetName: String? = null
