@@ -21,6 +21,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import io.legado.app.ui.widget.LoadMoreView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_search.*
 import kotlinx.android.synthetic.main.view_search.*
@@ -41,6 +42,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private lateinit var adapter: SearchAdapter
     private lateinit var bookAdapter: BookAdapter
     private lateinit var historyKeyAdapter: HistoryKeyAdapter
+    private lateinit var loadMoreView: LoadMoreView
     private var searchBookData: LiveData<PagedList<SearchShow>>? = null
     private var historyData: LiveData<List<SearchKeyword>>? = null
     private var bookData: LiveData<List<Book>>? = null
@@ -133,9 +135,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         historyKeyAdapter = HistoryKeyAdapter(this, this)
         rv_history_key.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         rv_history_key.adapter = historyKeyAdapter
-        adapter = SearchAdapter(this)
+        adapter = SearchAdapter(this, this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
+        loadMoreView = LoadMoreView(this)
     }
 
     private fun initOtherView() {
@@ -154,7 +157,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 viewModel.startTime
             ), 30
         ).build()
-        searchBookData?.observe(this, Observer { adapter.submitList(it) })
+        searchBookData?.observe(this, Observer {
+            //ToDo
+        })
         App.db.bookSourceDao().liveGroupEnabled().observe(this, Observer {
             groups.clear()
             it.map { group ->

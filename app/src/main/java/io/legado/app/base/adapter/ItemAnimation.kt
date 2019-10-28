@@ -11,7 +11,7 @@ class ItemAnimation private constructor() {
 
     var itemAnimEnabled = false
     var itemAnimFirstOnly = true
-    var itemAnimation: BaseAnimation = SlideInBottomAnimation()
+    var itemAnimation: BaseAnimation? = null
     var itemAnimInterpolator: Interpolator = LinearInterpolator()
     var itemAnimDuration: Long = 300L
     var itemAnimStartPosition: Int = -1
@@ -31,7 +31,7 @@ class ItemAnimation private constructor() {
         return this
     }
 
-    fun animation(animationType: Int = FADE_IN, animation: BaseAnimation? = null): ItemAnimation {
+    fun animation(animationType: Int = NONE, animation: BaseAnimation? = null): ItemAnimation {
         if (animation != null) {
             itemAnimation = animation
         } else {
@@ -57,7 +57,7 @@ class ItemAnimation private constructor() {
     }
 
     companion object {
-
+        const val NONE: Int = 0x00000000
         /**
          * Use with [.openLoadAnimation]
          */

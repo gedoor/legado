@@ -401,9 +401,11 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
 
 
     protected open fun startAnimation(holder: ItemViewHolder, item: ItemAnimation) {
-        for (anim in item.itemAnimation.getAnimators(holder.itemView)) {
-            anim.setDuration(item.itemAnimDuration).start()
-            anim.interpolator = item.itemAnimInterpolator
+        item.itemAnimation?.let {
+            for (anim in it.getAnimators(holder.itemView)) {
+                anim.setDuration(item.itemAnimDuration).start()
+                anim.interpolator = item.itemAnimInterpolator
+            }
         }
     }
 

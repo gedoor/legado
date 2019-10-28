@@ -17,6 +17,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 class BooksAdapter(context: Context, private val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_bookshelf_list) {
 
+
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) =
         with(holder.itemView) {
         if (payloads.isEmpty()) {
