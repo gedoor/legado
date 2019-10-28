@@ -176,7 +176,7 @@ class RotateLoading : View {
         post(shown)
     }
 
-    fun hide(visibility: Int = GONE) {
+    fun hide(visibility: Int = INVISIBLE) {
         removeCallbacks(shown)
         removeCallbacks(hidden)
         stopInternal(visibility)
@@ -188,7 +188,7 @@ class RotateLoading : View {
         invalidate()
     }
 
-    private fun stopInternal(visibility: Int = GONE) {
+    private fun stopInternal(visibility: Int = INVISIBLE) {
         stopAnimator(visibility)
         invalidate()
     }
@@ -205,7 +205,7 @@ class RotateLoading : View {
             .start()
     }
 
-    private fun stopAnimator(visibility: Int = GONE) {
+    private fun stopAnimator(visibility: Int = INVISIBLE) {
         animate().cancel()
         isStarted = false
         this.visibility = visibility

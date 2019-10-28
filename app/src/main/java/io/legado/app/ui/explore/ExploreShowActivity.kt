@@ -1,8 +1,6 @@
 package io.legado.app.ui.explore
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,8 +11,8 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.ui.widget.LoadMoreView
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_explore_show.*
 import kotlinx.android.synthetic.main.view_load_more.view.*
 import org.jetbrains.anko.startActivity
@@ -25,8 +23,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         get() = getViewModel(ExploreShowViewModel::class.java)
 
     private lateinit var adapter: ExploreShowAdapter
-    private lateinit var loadMoreView: View
-    private var hasMore = true
+    private lateinit var loadMoreView: LoadMoreView
     private var isLoading = true
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -41,8 +38,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(DividerItemDecoration(this, RecyclerView.VERTICAL))
         recycler_view.adapter = adapter
-        loadMoreView =
-            LayoutInflater.from(this).inflate(R.layout.view_load_more, recycler_view, false)
+        loadMoreView = LoadMoreView(this)
         adapter.addFooterView(loadMoreView)
         loadMoreView.rotate_loading.show()
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -57,7 +53,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
 
     private fun scrollToBottom() {
         adapter.let {
-            if (hasMore && !isLoading) {
+            if (loadMoreView.hasMore && !isLoading) {
                 viewModel.explore()
             }
         }
@@ -66,20 +62,11 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
     private fun upData(books: List<SearchBook>) {
         isLoading = false
         if (books.isEmpty() && adapter.isEmpty()) {
-            hasMore = false
-            loadMoreView.rotate_loading.hide(View.INVISIBLE)
-            loadMoreView.tv_text.setText(R.string.empty)
-            loadMoreView.tv_text.visible()
+            loadMoreView.noMore(getString(R.string.empty))
         } else if (books.isEmpty()) {
-            hasMore = false
-            loadMoreView.rotate_loading.hide(View.INVISIBLE)
-            loadMoreView.tv_text.setText(R.string.bottom_line)
-            loadMoreView.tv_text.visible()
+            loadMoreView.noMore()
         } else if (adapter.getItems().contains(books.first()) && adapter.getItems().contains(books.last())) {
-            hasMore = false
-            loadMoreView.rotate_loading.hide(View.INVISIBLE)
-            loadMoreView.tv_text.setText(R.string.bottom_line)
-            loadMoreView.tv_text.visible()
+            loadMoreView.noMore()
         } else {
             adapter.addItems(books)
         }
