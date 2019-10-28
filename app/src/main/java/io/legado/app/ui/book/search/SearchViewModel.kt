@@ -5,6 +5,7 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
+import io.legado.app.data.entities.SearchShow
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.getPrefBoolean
@@ -20,6 +21,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var searchKey: String = ""
     var startTime: Long = 0
     var searchPage = 0
+    var isLoading = false
+    private val booksShow = arrayListOf<SearchShow>()
 
     fun search(
         key: String,
@@ -31,12 +34,13 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchPage++
         } else {
             searchKey = key
+            booksShow.clear()
         }
         if (searchKey.isEmpty()) return
         startTime = System.currentTimeMillis()
         start?.invoke()
         task = execute {
-            //onCleared时自动取消
+            isLoading = true
             val searchGroup = context.getPrefString("searchGroup") ?: ""
             val bookSourceList = if (searchGroup.isBlank()) {
                 App.db.bookSourceDao().allEnabled
@@ -62,6 +66,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
         task?.invokeOnCompletion {
             finally?.invoke()
+            isLoading = false
         }
     }
 
