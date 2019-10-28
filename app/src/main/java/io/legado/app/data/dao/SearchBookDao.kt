@@ -6,19 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.data.entities.SearchShow
 
 @Dao
 interface SearchBookDao {
-
-    @Query(
-        """SELECT name, author, min(time) time, max(kind) kind, max(coverUrl) coverUrl,max(intro) intro, max(wordCount) wordCount, 
-        max(latestChapterTitle) latestChapterTitle, count(origin) originCount 
-        FROM searchBooks where time >= :time
-        group by name, author
-        order by case when name = :key then 1 when author = :key then 2 when name like '%'||:key||'%' then 3 when author like '%'||:key||'%' then 4 else 5 end, time"""
-    )
-    fun observeShow(key: String, time: Long): DataSource.Factory<Int, SearchShow>
 
     @Query("SELECT * FROM searchBooks")
     fun observeAll(): DataSource.Factory<Int, SearchBook>

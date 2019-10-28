@@ -5,7 +5,6 @@ import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.data.entities.SearchShow
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -15,9 +14,9 @@ import kotlinx.android.synthetic.main.item_search.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchShow>(context, R.layout.item_search) {
+    SimpleRecyclerAdapter<SearchEntry>(context, R.layout.item_search) {
 
-    override fun convert(holder: ItemViewHolder, item: SearchShow, payloads: MutableList<Any>) {
+    override fun convert(holder: ItemViewHolder, item: SearchEntry, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) {
             bind(holder.itemView, item)
         } else {
@@ -25,7 +24,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun bind(itemView: View, searchBook: SearchShow) {
+    private fun bind(itemView: View, searchBook: SearchEntry) {
         with(itemView) {
             tv_name.text = searchBook.name
             tv_author.text = context.getString(R.string.author_show, searchBook.author)
@@ -80,7 +79,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun bindChange(itemView: View, searchBook: SearchShow, payloads: MutableList<Any>) {
+    private fun bindChange(itemView: View, searchBook: SearchEntry, payloads: MutableList<Any>) {
         with(itemView) {
             when (payloads[0]) {
                 1 -> bv_originCount.setBadgeCount(searchBook.originCount)

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.IntentDataHelp
@@ -37,7 +38,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override val viewModel: SearchViewModel
         get() = getViewModel(SearchViewModel::class.java)
 
-    private lateinit var adapter: SearchAdapter
+    override lateinit var adapter: SearchAdapter
     private lateinit var bookAdapter: BookAdapter
     private lateinit var historyKeyAdapter: HistoryKeyAdapter
     private lateinit var loadMoreView: LoadMoreView
@@ -59,7 +60,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_search, menu)
         precisionSearchMenuItem = menu.findItem(R.id.menu_precision_search)
-        precisionSearchMenuItem?.isChecked = getPrefBoolean("precisionSearch")
+        precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
         this.menu = menu
         upGroupMenu()
         return super.onCompatCreateOptionsMenu(menu)
@@ -68,8 +69,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_precision_search -> {
-                putPrefBoolean("precisionSearch", !getPrefBoolean("precisionSearch"))
-                precisionSearchMenuItem?.isChecked = getPrefBoolean("precisionSearch")
+                putPrefBoolean(
+                    PreferKey.precisionSearch,
+                    !getPrefBoolean(PreferKey.precisionSearch)
+                )
+                precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
             }
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
             else -> if (item.groupId == R.id.source_group) {

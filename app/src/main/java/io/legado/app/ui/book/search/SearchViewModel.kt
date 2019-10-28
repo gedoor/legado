@@ -3,9 +3,9 @@ package io.legado.app.ui.book.search
 import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.data.entities.SearchShow
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.getPrefBoolean
@@ -22,7 +22,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var startTime: Long = 0
     var searchPage = 0
     var isLoading = false
-    private val booksShow = arrayListOf<SearchShow>()
+    private val booksShow = arrayListOf<SearchEntry>()
 
     fun search(
         key: String,
@@ -72,12 +72,18 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     private fun searchSuccess(searchBooks: List<SearchBook>) {
         searchBooks.forEach { searchBook ->
-            if (context.getPrefBoolean("precisionSearch")) {
+            if (context.getPrefBoolean(PreferKey.precisionSearch)) {
                 if (searchBook.name.contains(searchKey)
                     || searchBook.author.contains(searchKey)
                 ) App.db.searchBookDao().insert(searchBook)
             } else
                 App.db.searchBookDao().insert(searchBook)
+        }
+    }
+
+    private fun addToAdapter(searchBooks: List<SearchBook>) {
+        callBack?.adapter.let { adapter ->
+
         }
     }
 
@@ -113,6 +119,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     interface CallBack {
-
+        var adapter: SearchAdapter
     }
 }
