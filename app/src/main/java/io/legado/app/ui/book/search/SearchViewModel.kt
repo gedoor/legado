@@ -16,6 +16,7 @@ import java.util.concurrent.Executors
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
+    var callBack: CallBack? = null
     var searchKey: String = ""
     var startTime: Long = 0
     var searchPage = 0
@@ -104,5 +105,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     override fun onCleared() {
         super.onCleared()
         searchPool.close()
+    }
+
+    interface CallBack {
+
     }
 }
