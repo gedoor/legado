@@ -22,7 +22,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var startTime: Long = 0
     var searchPage = 0
     var isLoading = false
-    private val booksShow = arrayListOf<SearchEntity>()
+    private val searchBooks = arrayListOf<SearchBook>()
 
     fun search(
         key: String,
@@ -34,7 +34,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchPage++
         } else {
             searchKey = key
-            booksShow.clear()
+            searchBooks.clear()
         }
         if (searchKey.isEmpty()) return
         startTime = System.currentTimeMillis()
@@ -81,8 +81,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun addToAdapter(searchBooks: List<SearchBook>) {
-        callBack?.adapter.let { adapter ->
+    @Synchronized
+    private fun addToAdapter(books: List<SearchBook>) {
+        if (books.isNotEmpty()) {
+            val copyDataS = ArrayList(searchBooks)
 
         }
     }

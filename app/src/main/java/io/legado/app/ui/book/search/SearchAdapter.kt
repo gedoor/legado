@@ -5,6 +5,7 @@ import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -14,9 +15,9 @@ import kotlinx.android.synthetic.main.item_search.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchEntity>(context, R.layout.item_search) {
+    SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_search) {
 
-    override fun convert(holder: ItemViewHolder, item: SearchEntity, payloads: MutableList<Any>) {
+    override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) {
             bind(holder.itemView, item)
         } else {
@@ -24,11 +25,11 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun bind(itemView: View, searchBook: SearchEntity) {
+    private fun bind(itemView: View, searchBook: SearchBook) {
         with(itemView) {
             tv_name.text = searchBook.name
             tv_author.text = context.getString(R.string.author_show, searchBook.author)
-            bv_originCount.setBadgeCount(searchBook.originCount)
+            bv_originCount.setBadgeCount(searchBook.origins?.size ?: 1)
             if (searchBook.latestChapterTitle.isNullOrEmpty()) {
                 tv_lasted.gone()
             } else {
@@ -79,10 +80,10 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun bindChange(itemView: View, searchBook: SearchEntity, payloads: MutableList<Any>) {
+    private fun bindChange(itemView: View, searchBook: SearchBook, payloads: MutableList<Any>) {
         with(itemView) {
             when (payloads[0]) {
-                1 -> bv_originCount.setBadgeCount(searchBook.originCount)
+                1 -> bv_originCount.setBadgeCount(searchBook.origins?.size ?: 1)
                 2 -> searchBook.coverUrl.let {
                     ImageLoader.load(context, it)//Glide自动识别http://和file://
                         .placeholder(R.drawable.image_cover_default)

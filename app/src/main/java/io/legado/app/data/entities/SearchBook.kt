@@ -64,6 +64,10 @@ data class SearchBook(
         variable = GSON.toJson(variableMap)
     }
 
+    @Ignore
+    @IgnoredOnParcel
+    val origins: LinkedHashSet<String>? = null
+
     fun toBook(): Book {
         return Book(
             name = name,

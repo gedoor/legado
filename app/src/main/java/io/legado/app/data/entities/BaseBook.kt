@@ -10,7 +10,7 @@ interface BaseBook {
     var infoHtml: String?
     var tocHtml: String?
 
-    fun putVariable(key: String, value: String)
+    fun putVariable(key: String, value: String) {}
 
     fun getKindList(): List<String> {
         val kindList = arrayListOf<String>()
