@@ -35,7 +35,7 @@ object BookContent {
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
-        var contentData = analyzeContent(body, contentRule, book, baseUrl)
+        var contentData = analyzeContent(body, contentRule, book, bookSource, baseUrl)
         content.append(contentData.content)
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
@@ -55,12 +55,14 @@ object BookContent {
                     headerMapF = bookSource.getHeaderMap()
                 ).getResponseAsync().await()
                     .body()?.let { nextBody ->
-                        contentData = analyzeContent(nextBody, contentRule, book, baseUrl)
+                        contentData =
+                            analyzeContent(nextBody, contentRule, book, bookSource, baseUrl, false)
                         nextUrl =
                             if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
                         content.append(contentData.content)
                     }
             }
+            SourceDebug.printLog(bookSource.bookSourceUrl, "下一页数量${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
             val contentDataList = arrayListOf<ContentData<String>>()
             for (item in contentData.nextUrl) {
@@ -69,18 +71,23 @@ object BookContent {
             }
             for (item in contentDataList) {
                 withContext(coroutineScope.coroutineContext) {
-                    val nextResponse = AnalyzeUrl(
+                    AnalyzeUrl(
                         ruleUrl = item.nextUrl,
                         book = book,
                         headerMapF = bookSource.getHeaderMap()
                     ).getResponseAsync().await()
-                    val nextContentData = analyzeContent(
-                        nextResponse.body() ?: "",
-                        contentRule,
-                        book,
-                        item.nextUrl
-                    )
-                    item.content = nextContentData.content
+                        .body()?.let {
+                            contentData =
+                                analyzeContent(
+                                    it,
+                                    contentRule,
+                                    book,
+                                    bookSource,
+                                    item.nextUrl,
+                                    false
+                                )
+                            item.content = contentData.content
+                        }
                 }
             }
             for (item in contentDataList) {
@@ -102,13 +109,20 @@ object BookContent {
         body: String,
         contentRule: ContentRule,
         book: Book,
-        baseUrl: String
+        bookSource: BookSource,
+        baseUrl: String,
+        printLog: Boolean = true
     ): ContentData<List<String>> {
         val nextUrlList = arrayListOf<String>()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body, baseUrl)
-        analyzeRule.getStringList(contentRule.nextContentUrl ?: "", true)?.let {
-            nextUrlList.addAll(it)
+        val nextUrlRule = contentRule.nextContentUrl
+        if (!nextUrlRule.isNullOrEmpty()) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, "获取下一页URL", printLog)
+            analyzeRule.getStringList(nextUrlRule, true)?.let {
+                nextUrlList.addAll(it)
+            }
+            SourceDebug.printLog(bookSource.bookSourceUrl, nextUrlList.joinToString(","))
         }
         val content = analyzeRule.getString(contentRule.content ?: "")?.htmlFormat() ?: ""
         return ContentData(content, nextUrlList)
