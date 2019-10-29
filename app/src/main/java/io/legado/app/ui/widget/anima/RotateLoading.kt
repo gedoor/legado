@@ -80,7 +80,10 @@ class RotateLoading : View {
             )
             shadowPosition = typedArray.getInt(R.styleable.RotateLoading_shadow_position, DEFAULT_SHADOW_POSITION)
             speedOfDegree = typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
-            hideMode = typedArray.getInt(R.styleable.RotateLoading_hide_mode, GONE)
+            hideMode = when (typedArray.getInt(R.styleable.RotateLoading_hide_mode, 2)) {
+                1 -> INVISIBLE
+                else -> GONE
+            }
             typedArray.recycle()
         }
         speedOfArc = (speedOfDegree / 4).toFloat()
