@@ -150,7 +150,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         }
         if (result == null) return ArrayList()
         if (result is String) {
-            result = listOf((result as String).htmlFormat().split("\n"))
+            result = (result as String).split("\n")
         }
         if (isUrl) {
             val urlList = ArrayList<String>()
