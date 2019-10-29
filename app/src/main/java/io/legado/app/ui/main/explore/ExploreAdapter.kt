@@ -3,7 +3,6 @@ package io.legado.app.ui.main.explore
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.Menu
-import android.view.View
 import android.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -88,11 +87,11 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                         }
                     }
                 }.onFinally {
-                    rotate_loading.hide(View.GONE)
+                    rotate_loading.hide()
                 }
             } else {
                 iv_status.setImageResource(R.drawable.ic_add)
-                rotate_loading.hide(View.GONE)
+                rotate_loading.hide()
                 gl_child.gone()
             }
         }
