@@ -141,6 +141,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(this)
+        recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(1)) {
+                    scrollToBottom()
+                }
+            }
+        })
     }
 
     private fun initOtherView() {
@@ -166,6 +174,12 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             search_view.setQuery(it, true)
         } ?: let {
             search_view.requestFocus()
+        }
+    }
+
+    private fun scrollToBottom() {
+        if (!viewModel.isLoading) {
+            viewModel.search("")
         }
     }
 
