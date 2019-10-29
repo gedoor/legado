@@ -148,7 +148,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 }
             }
         }
-        if (result == null) return ArrayList()
+        if (result == null) return null
         if (result is String) {
             result = (result as String).split("\n")
         }
@@ -509,13 +509,16 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                             }
                         }
                         regType == -1 -> {
-                            val jsEval: Any = evalJS(ruleParam[index], result)
-                            if (jsEval is String) {
-                                infoVal.insert(0, jsEval)
-                            } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-                                infoVal.insert(0, String.format("%.0f", jsEval))
-                            } else {
-                                infoVal.insert(0, jsEval.toString())
+                            val jsEval: Any? = evalJS(ruleParam[index], result)
+                            when {
+                                jsEval == null -> {
+                                }
+                                jsEval is String -> infoVal.insert(0, jsEval)
+                                jsEval is Double && jsEval % 1.0 == 0.0 -> infoVal.insert(
+                                    0,
+                                    String.format("%.0f", jsEval)
+                                )
+                                else -> infoVal.insert(0, jsEval.toString())
                             }
                         }
                         regType == -2 -> {
@@ -546,7 +549,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 执行JS
      */
     @Throws(Exception::class)
-    private fun evalJS(jsStr: String, result: Any?): Any {
+    private fun evalJS(jsStr: String, result: Any?): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["book"] = book
