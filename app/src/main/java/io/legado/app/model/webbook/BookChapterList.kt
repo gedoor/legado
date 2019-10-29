@@ -68,6 +68,7 @@ object BookChapterList {
                         }
                     }
             }
+            SourceDebug.printLog(bookSource.bookSourceUrl, "目录下一页数量${nextUrlList.size}")
         } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
