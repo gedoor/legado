@@ -92,7 +92,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 }
             } else {
                 iv_status.setImageResource(R.drawable.ic_add)
-                rotate_loading.hide()
+                rotate_loading.hide(View.GONE)
                 gl_child.gone()
             }
         }

@@ -64,6 +64,7 @@
             android:layout_height="36dp"
             android:visibility="gone"
             android:layout_gravity="center"
+            app:hide_mode="gone"
             app:loading_width="2dp" />
 
     </FrameLayout>
