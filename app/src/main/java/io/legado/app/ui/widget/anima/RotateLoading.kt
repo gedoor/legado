@@ -49,7 +49,7 @@ class RotateLoading : View {
 
     private val shown = Runnable { this.startInternal() }
 
-    private val hidden = Runnable { this.stopInternal() }
+    private val hidden = Runnable { this.stopInternal(GONE) }
 
     constructor(context: Context) : super(context) {
         initView(context, null)
