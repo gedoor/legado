@@ -8,7 +8,6 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ATH
-import io.legado.app.utils.LogUtils
 import io.legado.app.utils.invisible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -39,11 +38,9 @@ class BooksAdapter(context: Context, private val callBack: CallBack) :
                 true
             }
             if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
-                LogUtils.d(item.name, "loading")
                 bv_unread.invisible()
                 rl_loading.show()
             } else {
-                LogUtils.d(item.name, "loadingHide")
                 rl_loading.hide()
                 bv_unread.setBadgeCount(item.getUnreadChapterNum())
                 bv_unread.setHighlight(item.lastCheckCount > 0)
@@ -52,11 +49,9 @@ class BooksAdapter(context: Context, private val callBack: CallBack) :
             when (payloads[0]) {
                 5 -> {
                     if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
-                        LogUtils.d(item.name, "loading")
                         bv_unread.invisible()
                         rl_loading.show()
                     } else {
-                        LogUtils.d(item.name, "loadingHide")
                         rl_loading.hide()
                         bv_unread.setBadgeCount(item.getUnreadChapterNum())
                         bv_unread.setHighlight(item.lastCheckCount > 0)
