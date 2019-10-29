@@ -132,9 +132,10 @@ object BookChapterList {
         val nextUrlList = arrayListOf<String>()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body, baseUrl)
-        if (getNextUrl) {
+        val nextTocRule = tocRule.nextTocUrl
+        if (getNextUrl && !nextTocRule.isNullOrEmpty()) {
             SourceDebug.printLog(bookSource.bookSourceUrl, "获取目录下一页列表", printLog)
-            analyzeRule.getStringList(tocRule.nextTocUrl ?: "", true)?.let {
+            analyzeRule.getStringList(nextTocRule, true)?.let {
                 for (item in it) {
                     if (item != baseUrl) {
                         nextUrlList.add(item)
