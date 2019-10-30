@@ -171,7 +171,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     private fun scrollToBottom() {
-        if (!viewModel.isLoading) {
+        if (!viewModel.isLoading && viewModel.searchKey.isNotEmpty()) {
             viewModel.search("")
         }
     }

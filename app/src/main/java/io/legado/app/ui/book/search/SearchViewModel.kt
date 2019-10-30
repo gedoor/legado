@@ -27,17 +27,20 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     fun search(key: String) {
         task?.cancel()
-        if (key.isEmpty()) {
+        if (key.isEmpty() && searchKey.isEmpty()) {
+            return
+        } else if (key.isEmpty()) {
+            isLoading = true
             searchPage++
-        } else {
+        } else if (key.isNotEmpty()) {
+            isLoading = true
+            searchPage = 0
             searchKey = key
             searchBooks.clear()
         }
-        if (searchKey.isEmpty()) return
         startTime = System.currentTimeMillis()
         callBack?.startSearch()
         task = execute {
-            isLoading = true
             val searchGroup = context.getPrefString("searchGroup") ?: ""
             val bookSourceList = if (searchGroup.isBlank()) {
                 App.db.bookSourceDao().allEnabled
