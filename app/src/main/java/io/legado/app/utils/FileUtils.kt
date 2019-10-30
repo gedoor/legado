@@ -92,7 +92,7 @@ object FileUtils {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                val split = docId.split(":")
                 val type = split[0]
 
                 if ("primary".equals(type, ignoreCase = true)) {
@@ -101,7 +101,7 @@ object FileUtils {
 
             } else if (isDownloadsDocument(uri)) {
                 val id = DocumentsContract.getDocumentId(uri)
-                val split = id.split(":").dropLastWhile { it.isEmpty() }.toTypedArray()
+                val split = id.split(":")
                 val type = split[0]
                 if ("raw".equals(type, ignoreCase = true)) {
                     //处理某些机型（比如Google Pixel ）ID是raw:/storage/emulated/0/Download/c20f8664da05ab6b4644913048ea8c83.mp4
@@ -115,7 +115,7 @@ object FileUtils {
                 return getDataColumn(context, contentUri, null, null)
             } else if (isMediaDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                val split = docId.split(":".toRegex())
 
                 val contentUri: Uri = when (split[0]) {
                     "image" -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
