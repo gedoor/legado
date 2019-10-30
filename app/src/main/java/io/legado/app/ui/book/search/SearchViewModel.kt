@@ -25,11 +25,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var isLoading = false
     private var searchBooks = arrayListOf<SearchBook>()
 
-    fun search(
-        key: String,
-        start: (() -> Unit)? = null,
-        finally: (() -> Unit)? = null
-    ) {
+    fun search(key: String) {
         task?.cancel()
         if (key.isEmpty()) {
             searchPage++
@@ -39,7 +35,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
         if (searchKey.isEmpty()) return
         startTime = System.currentTimeMillis()
-        start?.invoke()
+        callBack?.startSearch()
         task = execute {
             isLoading = true
             val searchGroup = context.getPrefString("searchGroup") ?: ""
@@ -66,7 +62,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
 
         task?.invokeOnCompletion {
-            finally?.invoke()
+            callBack?.searchFinally()
             isLoading = false
         }
     }
@@ -176,5 +172,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     interface CallBack {
         var adapter: SearchAdapter
+        fun startSearch()
+        fun searchFinally()
     }
 }
