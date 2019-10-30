@@ -116,13 +116,12 @@ object FileUtils {
             } else if (isMediaDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val type = split[0]
 
-                var contentUri: Uri? = null
-                when (type) {
-                    "image" -> contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                    "video" -> contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                    "audio" -> contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                val contentUri: Uri = when (split[0]) {
+                    "image" -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    "video" -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    "audio" -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                    else -> uri
                 }
 
                 val selection = "_id=?"
@@ -137,7 +136,6 @@ object FileUtils {
                 uri.lastPathSegment
             else
                 getDataColumn(context, uri, null, null)
-
         } else if ("file".equals(uri.scheme, ignoreCase = true)) {
             return uri.path
         }// File
@@ -145,8 +143,8 @@ object FileUtils {
         return null
     }
 
-    fun getDataColumn(
-        context: Context, uri: Uri?, selection: String?,
+    private fun getDataColumn(
+        context: Context, uri: Uri, selection: String?,
         selectionArgs: kotlin.Array<String>?
     ): String? {
 
@@ -155,7 +153,7 @@ object FileUtils {
 
         try {
             context.contentResolver.query(
-                uri!!,
+                uri,
                 projection,
                 selection,
                 selectionArgs,
@@ -177,7 +175,7 @@ object FileUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
      */
-    fun isExternalStorageDocument(uri: Uri): Boolean {
+    private fun isExternalStorageDocument(uri: Uri): Boolean {
         return "com.android.externalstorage.documents" == uri.authority
     }
 
@@ -185,7 +183,7 @@ object FileUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is DownloadsProvider.
      */
-    fun isDownloadsDocument(uri: Uri): Boolean {
+    private fun isDownloadsDocument(uri: Uri): Boolean {
         return "com.android.providers.downloads.documents" == uri.authority
     }
 
@@ -193,7 +191,7 @@ object FileUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is MediaProvider.
      */
-    fun isMediaDocument(uri: Uri): Boolean {
+    private fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.authority
     }
 
@@ -201,7 +199,7 @@ object FileUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is Google Photos.
      */
-    fun isGooglePhotosUri(uri: Uri): Boolean {
+    private fun isGooglePhotosUri(uri: Uri): Boolean {
         return "com.google.android.apps.photos.content" == uri.authority
     }
 
