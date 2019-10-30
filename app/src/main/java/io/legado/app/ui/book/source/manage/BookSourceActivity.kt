@@ -249,8 +249,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
             importSource -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let {
-                    FileUtils.getPath(this, it)?.let { path ->
+                    val path = FileUtils.getPath(this, it)
+                    if (path != null) {
                         viewModel.importSourceFromFilePath(path)
+                    } else {
+                        toast(R.string.uri_to_path_fail)
                     }
                 }
             }
