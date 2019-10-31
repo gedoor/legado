@@ -42,19 +42,25 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun enableSelection(ids: LinkedHashSet<String>) {
         execute {
-            App.db.bookSourceDao().enableSection(*ids.toTypedArray())
+            ids.forEach {
+                App.db.bookSourceDao().enableSection(it)
+            }
         }
     }
 
     fun disableSelection(ids: LinkedHashSet<String>) {
         execute {
-            App.db.bookSourceDao().disableSection(*ids.toTypedArray())
+            ids.forEach {
+                App.db.bookSourceDao().disableSection(it)
+            }
         }
     }
 
     fun delSelection(ids: LinkedHashSet<String>) {
         execute {
-            App.db.bookSourceDao().delSection(*ids.toTypedArray())
+            ids.forEach {
+                App.db.bookSourceDao().delSection(it)
+            }
         }
     }
 
@@ -63,8 +69,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             val sources = App.db.bookSourceDao().noGroup
             sources.map { source ->
                 source.bookSourceGroup = group
+                App.db.bookSourceDao().update(source)
             }
-            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
@@ -78,8 +84,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                         it.add(newGroup)
                     source.bookSourceGroup = TextUtils.join(",", it)
                 }
+                App.db.bookSourceDao().update(source)
             }
-            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
@@ -92,8 +98,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                         it.remove(group)
                         source.bookSourceGroup = TextUtils.join(",", it)
                     }
+                    App.db.bookSourceDao().update(source)
                 }
-                App.db.bookSourceDao().update(*sources.toTypedArray())
             }
         }
     }
