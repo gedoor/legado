@@ -89,8 +89,7 @@ object BookChapterList {
                         tocRule,
                         listRule,
                         book,
-                        bookSource,
-                        getNextUrl = false
+                        bookSource
                     )
                     item.chapterList = nextChapterData.chapterList
                 }

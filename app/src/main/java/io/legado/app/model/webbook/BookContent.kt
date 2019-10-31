@@ -122,7 +122,7 @@ object BookContent {
             analyzeRule.getStringList(nextUrlRule, true)?.let {
                 nextUrlList.addAll(it)
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, nextUrlList.joinToString(","))
+            SourceDebug.printLog(bookSource.bookSourceUrl, nextUrlList.joinToString(","), printLog)
         }
         val content = analyzeRule.getString(contentRule.content ?: "")?.htmlFormat() ?: ""
         return ContentData(content, nextUrlList)
