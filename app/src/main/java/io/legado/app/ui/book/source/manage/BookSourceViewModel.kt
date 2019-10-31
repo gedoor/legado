@@ -69,8 +69,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             val sources = App.db.bookSourceDao().noGroup
             sources.map { source ->
                 source.bookSourceGroup = group
-                App.db.bookSourceDao().update(source)
             }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
@@ -84,8 +84,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                         it.add(newGroup)
                     source.bookSourceGroup = TextUtils.join(",", it)
                 }
-                App.db.bookSourceDao().update(source)
             }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
@@ -98,8 +98,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                         it.remove(group)
                         source.bookSourceGroup = TextUtils.join(",", it)
                     }
-                    App.db.bookSourceDao().update(source)
                 }
+                App.db.bookSourceDao().update(*sources.toTypedArray())
             }
         }
     }
