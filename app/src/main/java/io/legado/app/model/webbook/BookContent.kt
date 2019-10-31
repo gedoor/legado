@@ -62,7 +62,7 @@ object BookContent {
                         content.append(contentData.content)
                     }
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, "下一页数量${nextUrlList.size}")
+            SourceDebug.printLog(bookSource.bookSourceUrl, "总页数${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
             val contentDataList = arrayListOf<ContentData<String>>()
             for (item in contentData.nextUrl) {
