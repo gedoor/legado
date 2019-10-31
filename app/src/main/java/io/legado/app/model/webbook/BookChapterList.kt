@@ -58,7 +58,8 @@ object BookChapterList {
                             tocRule,
                             listRule,
                             book,
-                            bookSource
+                            bookSource,
+                            printLog = false
                         )
                         nextUrl = if (chapterData.nextUrl.isNotEmpty())
                             chapterData.nextUrl[0]
