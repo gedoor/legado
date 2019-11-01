@@ -25,7 +25,7 @@ object BookChapterList {
         body ?: throw Exception(
             App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
         )
-        SourceDebug.printLog(bookSource.bookSourceUrl, "获取成功:${baseUrl}")
+        SourceDebug.printLog(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
         var reverse = false
@@ -69,7 +69,7 @@ object BookChapterList {
                         }
                     }
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, "总页数${nextUrlList.size}")
+            SourceDebug.printLog(bookSource.bookSourceUrl, "≡目录总页数:${nextUrlList.size}")
         } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
@@ -135,7 +135,7 @@ object BookChapterList {
         analyzeRule.setContent(body, baseUrl)
         val nextTocRule = tocRule.nextTocUrl
         if (getNextUrl && !nextTocRule.isNullOrEmpty()) {
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取目录下一页列表", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取目录下一页列表", printLog)
             analyzeRule.getStringList(nextTocRule, true)?.let {
                 for (item in it) {
                     if (item != baseUrl) {
@@ -145,15 +145,15 @@ object BookChapterList {
             }
             SourceDebug.printLog(
                 bookSource.bookSourceUrl,
-                TextUtils.join(",", nextUrlList),
+                "└" + TextUtils.join(",\n", nextUrlList),
                 printLog
             )
         }
-        SourceDebug.printLog(bookSource.bookSourceUrl, "解析目录列表", printLog)
+        SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取目录列表", printLog)
         val elements = analyzeRule.getElements(listRule)
-        SourceDebug.printLog(bookSource.bookSourceUrl, "目录数${elements.size}", printLog)
+        SourceDebug.printLog(bookSource.bookSourceUrl, "└列表大小:${elements.size}", printLog)
         if (elements.isNotEmpty()) {
-            SourceDebug.printLog(bookSource.bookSourceUrl, "获取目录", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取首章名称", printLog)
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName ?: "")
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl ?: "")
             for (item in elements) {
@@ -167,11 +167,9 @@ object BookChapterList {
                     chapterList.add(bookChapter)
                 }
             }
-            SourceDebug.printLog(
-                bookSource.bookSourceUrl,
-                "${chapterList[0].title}${chapterList[0].url}",
-                printLog
-            )
+            SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].title}", printLog)
+	        SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取首章链接", printLog)
+	        SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].url}", printLog)
         }
         return ChapterData(chapterList, nextUrlList)
     }
