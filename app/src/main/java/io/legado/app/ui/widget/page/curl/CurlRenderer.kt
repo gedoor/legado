@@ -14,11 +14,7 @@ import javax.microedition.khronos.opengles.GL10
  *
  * @author harism
  */
-class CurlRenderer
-/**
- * Basic constructor.
- */
-    (private val mObserver: Observer) : GLSurfaceView.Renderer {
+class CurlRenderer(private val mObserver: Observer) : GLSurfaceView.Renderer {
     // Background fill color.
     private var mBackgroundColor: Int = 0
     // Curl meshes used for static and dynamic rendering.
