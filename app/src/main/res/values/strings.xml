@@ -540,5 +540,6 @@
     <string name="file_chooser">文件选择</string>
     <string name="folder_chooser">文件夹选择</string>
     <string name="bottom_line">我是有底线的</string>
+    <string name="uri_to_path_fail">Uri转Path失败</string>
 
 </resources>

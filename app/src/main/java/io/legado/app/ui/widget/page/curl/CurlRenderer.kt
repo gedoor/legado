@@ -14,11 +14,7 @@ import javax.microedition.khronos.opengles.GL10
  *
  * @author harism
  */
-class CurlRenderer
-/**
- * Basic constructor.
- */
-    (private val mObserver: Observer) : GLSurfaceView.Renderer {
+class CurlRenderer(private val mObserver: Observer) : GLSurfaceView.Renderer {
     // Background fill color.
     private var mBackgroundColor: Int = 0
     // Curl meshes used for static and dynamic rendering.
@@ -71,10 +67,6 @@ class CurlRenderer
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
         gl.glLoadIdentity()
 
-        if (USE_PERSPECTIVE_PROJECTION) {
-            gl.glTranslatef(0f, 0f, -6f)
-        }
-
         for (i in mCurlMeshes.indices) {
             mCurlMeshes[i].onDrawFrame(gl)
         }
@@ -94,14 +86,10 @@ class CurlRenderer
 
         gl.glMatrixMode(GL10.GL_PROJECTION)
         gl.glLoadIdentity()
-        if (USE_PERSPECTIVE_PROJECTION) {
-            GLU.gluPerspective(gl, 20f, width.toFloat() / height, .1f, 100f)
-        } else {
-            GLU.gluOrtho2D(
-                gl, mViewRect.left, mViewRect.right,
-                mViewRect.bottom, mViewRect.top
-            )
-        }
+        GLU.gluOrtho2D(
+            gl, mViewRect.left, mViewRect.right,
+            mViewRect.bottom, mViewRect.top
+        )
 
         gl.glMatrixMode(GL10.GL_MODELVIEW)
         gl.glLoadIdentity()
@@ -126,29 +114,6 @@ class CurlRenderer
     @Synchronized
     fun removeCurlMesh(mesh: CurlMesh) {
         mCurlMeshes.remove(mesh)
-    }
-
-    /**
-     * Change background/clear color.
-     */
-    fun setBackgroundColor(color: Int) {
-        mBackgroundColor = color
-    }
-
-    /**
-     * Set margins or padding. Note: margins are proportional. Meaning a value
-     * of .1f will produce a 10% margin.
-     */
-    @Synchronized
-    fun setMargins(
-        left: Float, top: Float, right: Float,
-        bottom: Float
-    ) {
-        mMargins.left = left
-        mMargins.top = top
-        mMargins.right = right
-        mMargins.bottom = bottom
-        updatePageRects()
     }
 
     /**
@@ -246,7 +211,5 @@ class CurlRenderer
         // Constants for changing view mode.
         const val SHOW_ONE_PAGE = 1
         const val SHOW_TWO_PAGES = 2
-        // Set to true for checking quickly how perspective projection looks.
-        private const val USE_PERSPECTIVE_PROJECTION = false
     }
 }

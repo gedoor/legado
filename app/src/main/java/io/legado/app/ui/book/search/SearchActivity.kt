@@ -99,14 +99,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 search_view.clearFocus()
                 query?.let {
                     viewModel.saveSearchKey(query)
-                    viewModel.search(it, {
-                        refresh_progress_bar.isAutoLoading = true
-                        initData()
-                        fb_stop.visible()
-                    }, {
-                        refresh_progress_bar.isAutoLoading = false
-                        fb_stop.invisible()
-                    })
+                    viewModel.search(it)
                 }
                 return true
             }
@@ -178,7 +171,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     private fun scrollToBottom() {
-        if (!viewModel.isLoading) {
+        if (!viewModel.isLoading && viewModel.searchKey.isNotEmpty()) {
             viewModel.search("")
         }
     }
@@ -225,6 +218,17 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 App.db.searchKeywordDao().liveDataSearch(key)
             }
         historyData?.observe(this, Observer { historyKeyAdapter.setItems(it) })
+    }
+
+    override fun startSearch() {
+        refresh_progress_bar.isAutoLoading = true
+        initData()
+        fb_stop.visible()
+    }
+
+    override fun searchFinally() {
+        refresh_progress_bar.isAutoLoading = false
+        fb_stop.invisible()
     }
 
     override fun showBookInfo(name: String, author: String) {

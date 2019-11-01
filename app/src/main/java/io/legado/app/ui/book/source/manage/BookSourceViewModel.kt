@@ -42,19 +42,25 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun enableSelection(ids: LinkedHashSet<String>) {
         execute {
-            App.db.bookSourceDao().enableSection(*ids.toTypedArray())
+            ids.forEach {
+                App.db.bookSourceDao().enableSection(it)
+            }
         }
     }
 
     fun disableSelection(ids: LinkedHashSet<String>) {
         execute {
-            App.db.bookSourceDao().disableSection(*ids.toTypedArray())
+            ids.forEach {
+                App.db.bookSourceDao().disableSection(it)
+            }
         }
     }
 
     fun delSelection(ids: LinkedHashSet<String>) {
         execute {
-            App.db.bookSourceDao().delSection(*ids.toTypedArray())
+            ids.forEach {
+                App.db.bookSourceDao().delSection(it)
+            }
         }
     }
 
