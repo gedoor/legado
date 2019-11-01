@@ -411,14 +411,6 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
     }
 
     /**
-     * Set margins (or padding). Note: margins are proportional. Meaning a value
-     * of .1f will produce a 10% margin.
-     */
-    fun setMargins(left: Float, top: Float, right: Float, bottom: Float) {
-        mRenderer.setMargins(left, top, right, bottom)
-    }
-
-    /**
      * Setter for whether left side page is rendered. This is useful mostly for
      * situations where right (main) page is aligned to left side of screen and
      * left page is not visible anyway.

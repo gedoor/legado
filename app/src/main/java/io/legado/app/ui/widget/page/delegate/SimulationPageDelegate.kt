@@ -56,7 +56,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private inner class SizeChangedObserver : CurlView.SizeChangedObserver {
         override fun onSizeChanged(width: Int, height: Int) {
             pageView.curlView?.setViewMode(CurlView.SHOW_ONE_PAGE)
-            pageView.curlView?.setMargins(0f, 0f, 0f, 0f)
         }
     }
 }
