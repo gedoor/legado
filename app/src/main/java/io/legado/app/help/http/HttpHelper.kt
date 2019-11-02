@@ -1,5 +1,7 @@
 package io.legado.app.help.http
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import retrofit2.Retrofit
 import java.util.*
@@ -71,4 +73,25 @@ object HttpHelper {
             chain.proceed(request)
         }
     }
+
+    @ExperimentalCoroutinesApi
+    suspend fun ajax(params: AjaxWebView.AjaxParams): String =
+        suspendCancellableCoroutine { block ->
+            val ajaxWebView = AjaxWebView()
+            ajaxWebView.callback = object : AjaxWebView.Callback() {
+                override fun onResult(result: String) {
+                    block.resume(result) {
+                        ajaxWebView.destroyWebView()
+                    }
+                }
+
+                override fun onError(error: Throwable) {
+                    block.resume(error.localizedMessage) {
+                        ajaxWebView.destroyWebView()
+                    }
+                }
+
+            }
+            ajaxWebView.ajax(params)
+        }
 }
