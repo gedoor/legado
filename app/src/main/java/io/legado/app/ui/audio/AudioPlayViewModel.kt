@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookData = MutableLiveData<Book>()
-    val chapterListFinish = MutableLiveData<Boolean>()
     var chapterSize = 0
     var callBack: ReadBookViewModel.CallBack? = null
     var durChapterIndex = 0
@@ -53,7 +52,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         durChapterIndex = count - 1
                     }
                     chapterSize = count
-                    chapterListFinish.postValue(true)
+                    callBack?.loadContent()
                 }
             }
             saveRead(book)
@@ -83,7 +82,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao().insert(*cList.toTypedArray())
                             chapterSize = cList.size
-                            chapterListFinish.postValue(true)
+                            callBack?.loadContent()
                         } else {
                             changeDruChapterIndex(cList)
                         }
