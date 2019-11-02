@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="选择本地图片" />
+                    android:text="@string/select_local_image" />
 
                 <io.legado.app.lib.theme.view.ATEStrokeTextView
                     android:id="@+id/tv_change_cover"
@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:padding="5dp"
-                    android:text="封面换源"
+                    android:text="@string/change_cover_source"
                     tools:ignore="RtlHardcoded" />
 
                 <io.legado.app.lib.theme.view.ATEStrokeTextView
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:padding="5dp"
-                    android:text="刷新封面"
+                    android:text="@string/refresh_cover"
                     tools:ignore="RtlHardcoded" />
 
             </LinearLayout>
