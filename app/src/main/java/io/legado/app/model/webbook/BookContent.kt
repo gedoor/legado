@@ -62,7 +62,7 @@ object BookContent {
                         content.append(contentData.content)
                     }
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, "≡本章总页数:${nextUrlList.size}")
+            SourceDebug.printLog(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
             val contentDataList = arrayListOf<ContentData<String>>()
             for (item in contentData.nextUrl) {
@@ -95,11 +95,12 @@ object BookContent {
             }
         }
         if (content.isNotEmpty()) {
+            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取章节名称")
+            SourceDebug.printLog(bookSource.bookSourceUrl, "└${bookChapter.title}")
+            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取正文内容")
             if (!content[0].toString().startsWith(bookChapter.title)) {
                 content
-                    .insert(0, "\n")
-                    .insert(0, "\n》正文内容:")
-                    .insert(0, "》章节名称:${bookChapter.title}")
+                    .insert(0, "└\n")
             }
         }
         return content.toString()
@@ -123,7 +124,7 @@ object BookContent {
             analyzeRule.getStringList(nextUrlRule, true)?.let {
                 nextUrlList.addAll(it)
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString(","), printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
         }
         val content = analyzeRule.getString(contentRule.content ?: "")?.htmlFormat() ?: ""
         return ContentData(content, nextUrlList)

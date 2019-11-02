@@ -69,7 +69,7 @@ object BookChapterList {
                         }
                     }
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, "≡目录总页数:${nextUrlList.size}")
+            SourceDebug.printLog(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
         } else if (chapterData.nextUrl.size > 1) {
             val chapterDataList = arrayListOf<ChapterData<String>>()
             for (item in chapterData.nextUrl) {
@@ -145,7 +145,7 @@ object BookChapterList {
             }
             SourceDebug.printLog(
                 bookSource.bookSourceUrl,
-                "└" + TextUtils.join(",\n", nextUrlList),
+                "└" + TextUtils.join("，\n", nextUrlList),
                 printLog
             )
         }
