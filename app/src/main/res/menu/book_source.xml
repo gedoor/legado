@@ -33,6 +33,16 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/menu_enable_explore"
+                android:title="@string/enable_explore"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_disable_explore"
+                android:title="@string/disable_explore"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/menu_del_selection"
                 android:title="@string/del_select"
                 app:showAsAction="never" />

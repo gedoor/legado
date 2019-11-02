@@ -35,6 +35,12 @@ interface BookSourceDao {
     @Query("update book_sources set enabled = 0 where bookSourceUrl = :sourceUrl")
     fun disableSection(sourceUrl: String)
 
+    @Query("update book_sources set enabledExplore = 1 where bookSourceUrl = :sourceUrl")
+    fun enableSectionExplore(sourceUrl: String)
+
+    @Query("update book_sources set enabledExplore = 0 where bookSourceUrl = :sourceUrl")
+    fun disableSectionExplore(sourceUrl: String)
+
     @Query("delete from book_sources where bookSourceUrl = :sourceUrl")
     fun delSection(sourceUrl: String)
 

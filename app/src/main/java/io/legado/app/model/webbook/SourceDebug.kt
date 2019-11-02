@@ -65,15 +65,16 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             val book = Book()
             book.origin = webBook.sourceUrl
             book.bookUrl = key
-            printLog(webBook.sourceUrl, "︾开始访问:$key")
+            printLog(webBook.sourceUrl, "⇒开始访问:$key")
             infoDebug(book)
         } else {
-            printLog(webBook.sourceUrl, "︾开始搜索关键字:$key")
+            printLog(webBook.sourceUrl, "⇒开始搜索关键字:$key")
             searchDebug(key)
         }
     }
 
     private fun searchDebug(key: String) {
+        printLog(debugSource, "︾开始解析搜索页")
         val search = webBook.searchBook(key, 1)
             .onSuccess { searchBooks ->
                 searchBooks?.let {
@@ -93,7 +94,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     }
 
     private fun infoDebug(book: Book) {
-        printLog(debugSource, "︾开始获取详情页")
+        printLog(debugSource, "︾开始解析详情页")
         val info = webBook.getBookInfo(book)
             .onSuccess {
                 printLog(debugSource, "︽详情页解析完成")
@@ -107,7 +108,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     }
 
     private fun tocDebug(book: Book) {
-        printLog(debugSource, "︾开始获取目录页")
+        printLog(debugSource, "︾开始解析目录页")
         val chapterList = webBook.getChapterList(book)
             .onSuccess { chapterList ->
                 chapterList?.let {
@@ -128,12 +129,13 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     }
 
     private fun contentDebug(book: Book, bookChapter: BookChapter, nextChapterUrl: String?) {
-        printLog(debugSource, "︾开始获取正文")
+        printLog(debugSource, "︾开始解析正文页")
         val content = webBook.getContent(book, bookChapter, nextChapterUrl)
             .onSuccess { content ->
                 content?.let {
                     printLog(debugSource, it, state = 1000)
                 }
+                printLog(debugSource, "︽正文页解析完成")
             }
             .onError {
                 printLog(debugSource, it.localizedMessage, state = -1)

@@ -83,6 +83,9 @@
     <string name="about_description">
         \u3000\u3000这是一款开源的阅读软件，你可以fork我们的代码自己编译APK。欢迎提交代码帮助改善应用。\n\u3000\u3000公众号[开源阅读软件]！
     </string>
+    <string name="app_share_description">
+        阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
+    </string>
     <string name="version_name">Version %s</string>
     <string name="pt_auto_refresh">自动刷新</string>
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
@@ -138,6 +141,7 @@
     <string name="scoring">评分</string>
     <string name="send_mail">发送邮件</string>
     <string name="can_not_open">无法打开</string>
+    <string name="can_not_share">分享失败</string>
     <string name="no_chapter">无章节</string>
     <string name="add_url">添加网址</string>
     <string name="add_book_url">添加书籍网址</string>
@@ -361,7 +365,7 @@
     <string name="rule_find_url">发现地址规则(url)</string>
     <string name="rule_book_list">书籍列表规则(bookList)</string>
     <string name="rule_book_name">书名规则(name)</string>
-    <string name="rule_book_url">书籍url规则(bookUrl)</string>
+    <string name="rule_book_url">详情页url规则(bookUrl)</string>
     <string name="rule_book_author">作者规则(author)</string>
     <string name="rule_book_kind">分类规则(kind)</string>
     <string name="rule_book_intro">简介规则(intro)</string>
@@ -412,7 +416,7 @@
     <string name="net_error_10003">数据解析失败</string>
     <!--error string end-->
 
-    <string name="source_http_header">header</string>
+    <string name="source_http_header">请求头(header)</string>
     <string name="debug_source">调试源</string>
     <string name="import_by_qr_code">二维码导入</string>
     <string name="scan_qr_code">扫描二维码</string>
@@ -482,7 +486,7 @@
     <string name="source_tab_find">发现</string>
     <string name="source_tab_info">详情</string>
     <string name="source_tab_toc">目录</string>
-    <string name="source_tab_content">内容</string>
+    <string name="source_tab_content">正文</string>
 
     <string name="e_ink_mode">E-Ink 模式</string>
     <string name="e_ink_mode_detail">去除动画,优化电纸书使用体验</string>
@@ -523,6 +527,8 @@
     <string name="add_group">添加分组</string>
     <string name="add_replace_rule">新建替换</string>
     <string name="group">分组</string>
+    <string name="enable_explore">启用发现</string>
+    <string name="disable_explore">禁用发现</string>
     <string name="enable_selection">启用所选</string>
     <string name="disable_selection">禁用所选</string>
     <string name="tts">TTS</string>
