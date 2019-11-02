@@ -94,4 +94,26 @@ object HttpHelper {
             }
             ajaxWebView.ajax(params)
         }
+
+    @ExperimentalCoroutinesApi
+    suspend fun sniff(params: AjaxWebView.AjaxParams): String =
+        suspendCancellableCoroutine { block ->
+            val ajaxWebView = AjaxWebView()
+            ajaxWebView.callback = object : AjaxWebView.Callback() {
+                override fun onResult(result: String) {
+                    block.resume(result) {
+                        ajaxWebView.destroyWebView()
+                    }
+                }
+
+                override fun onError(error: Throwable) {
+                    block.resume(error.localizedMessage) {
+                        ajaxWebView.destroyWebView()
+                    }
+                }
+
+            }
+            ajaxWebView.sniff(params)
+        }
+
 }
