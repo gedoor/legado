@@ -3,13 +3,11 @@ package io.legado.app.ui.book.read
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
@@ -71,16 +69,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override var readAloudStatus = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            window.attributes = window.attributes.apply {
-                layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            }
-        }
+        Help.uplayoutInDisplayCutoutMode(window)
         setSupportActionBar(toolbar)
         initView()
         viewModel.callBack = this
         viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
-        viewModel.chapterListFinish.observe(this, Observer { loadContent() })
         viewModel.initData(intent)
     }
 
@@ -260,7 +253,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 加载章节内容
      */
-    private fun loadContent() {
+    override fun loadContent() {
         viewModel.bookData.value?.let {
             viewModel.loadContent(it, viewModel.durChapterIndex)
             viewModel.loadContent(it, viewModel.durChapterIndex + 1)

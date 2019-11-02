@@ -23,7 +23,6 @@ import kotlinx.coroutines.withContext
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookData = MutableLiveData<Book>()
-    val chapterListFinish = MutableLiveData<Boolean>()
     var chapterSize = 0
     var callBack: CallBack? = null
     var durChapterIndex = 0
@@ -71,7 +70,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 durChapterIndex = count - 1
             }
             chapterSize = count
-            chapterListFinish.postValue(true)
+            callBack?.loadContent()
         }
         if (inBookshelf) {
             saveRead(book)
@@ -101,7 +100,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao().insert(*cList.toTypedArray())
                             chapterSize = cList.size
-                            chapterListFinish.postValue(true)
+                            callBack?.loadContent()
                         } else {
                             changeDruChapterIndex(cList)
                         }
@@ -276,7 +275,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             chapterSize = chapters.size
-            chapterListFinish.postValue(true)
+            callBack?.loadContent()
         }
     }
 
@@ -289,7 +288,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             durPageIndex = 0
         }
         saveRead()
-        chapterListFinish.postValue(true)
+        callBack?.loadContent()
     }
 
     fun saveRead(book: Book? = bookData.value) {
@@ -342,6 +341,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     interface CallBack {
+        fun loadContent()
         fun contentLoadFinish(bookChapter: BookChapter, content: String)
         fun upContent()
     }

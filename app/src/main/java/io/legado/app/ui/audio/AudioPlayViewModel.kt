@@ -107,4 +107,10 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             }
         }
     }
+
+    interface CallBack {
+        fun loadContent()
+        fun contentLoadFinish(bookChapter: BookChapter, content: String)
+        fun upContent()
+    }
 }
