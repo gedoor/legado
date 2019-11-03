@@ -50,7 +50,7 @@ object BookChapterList {
                     ruleUrl = nextUrl,
                     book = book,
                     headerMapF = bookSource.getHeaderMap()
-                ).getResponseAsync().await()
+                ).getResponseAwait()
                     .body()?.let { nextBody ->
                         chapterData = analyzeChapterList(
                             nextBody,
@@ -82,7 +82,7 @@ object BookChapterList {
                         ruleUrl = item.nextUrl,
                         book = book,
                         headerMapF = bookSource.getHeaderMap()
-                    ).getResponseAsync().await()
+                    ).getResponseAwait()
                     val nextChapterData = analyzeChapterList(
                         nextResponse.body() ?: "",
                         item.nextUrl,

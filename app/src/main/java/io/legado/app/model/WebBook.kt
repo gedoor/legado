@@ -38,7 +38,7 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = sourceUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                val response = analyzeUrl.getResponseAsync().await()
+                val response = analyzeUrl.getResponseAwait()
                 BookList.analyzeBookList(
                     response.body(),
                     bookSource,
@@ -66,7 +66,7 @@ class WebBook(val bookSource: BookSource) {
                 baseUrl = sourceUrl,
                 headerMapF = bookSource.getHeaderMap()
             )
-            val response = analyzeUrl.getResponseAsync().await()
+            val response = analyzeUrl.getResponseAwait()
             BookList.analyzeBookList(
                 response.body(),
                 bookSource,
@@ -93,7 +93,7 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = sourceUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                analyzeUrl.getResponseAsync().await().body()
+                analyzeUrl.getResponseAwait().body()
             } else {
                 book.infoHtml
             }
@@ -120,7 +120,7 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = book.bookUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                analyzeUrl.getResponseAsync().await().body()
+                analyzeUrl.getResponseAwait().body()
             }
             BookChapterList.analyzeChapterList(this, book, body, bookSource, book.tocUrl)
         }
@@ -150,7 +150,7 @@ class WebBook(val bookSource: BookSource) {
                         baseUrl = book.tocUrl,
                         headerMapF = bookSource.getHeaderMap()
                     )
-                analyzeUrl.getResponseAsync().await().body()
+                analyzeUrl.getResponseAwait().body()
             }
             BookContent.analyzeContent(
                 this,

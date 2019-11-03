@@ -14,7 +14,6 @@ import io.legado.app.help.http.AjaxWebView
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.RequestMethod
 import io.legado.app.utils.*
-import kotlinx.coroutines.Deferred
 import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -267,25 +266,29 @@ class AnalyzeUrl(
     }
 
     @Throws(Exception::class)
-    fun getResponseAsync(): Deferred<Response<String>> {
+    suspend fun getResponseAwait(): Response<String> {
         return when {
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
                         .getApiService<IHttpPostApi>(baseUrl)
                         .postMapAsync(url, fieldMap, headerMap)
+                        .await()
                 } else {
                     HttpHelper
                         .getApiService<IHttpPostApi>(baseUrl)
                         .postBodyAsync(url, body!!, headerMap)
+                        .await()
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
                 .getApiService<IHttpGetApi>(baseUrl)
                 .getAsync(url, headerMap)
+                .await()
             else -> HttpHelper
                 .getApiService<IHttpGetApi>(baseUrl)
                 .getMapAsync(url, fieldMap, headerMap)
+                .await()
         }
     }
 
