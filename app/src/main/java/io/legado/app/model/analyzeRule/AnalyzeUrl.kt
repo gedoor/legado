@@ -54,8 +54,9 @@ class AnalyzeUrl(
     private val headerMap = HashMap<String, String>()
     private var charset: String? = null
     private var bodyTxt: String? = null
-    private lateinit var body: RequestBody
+    private var body: RequestBody? = null
     private var method = Method.GET
+    private var webViewJs: String? = null
 
     val postData: ByteArray
         get() {
@@ -178,6 +179,7 @@ class AnalyzeUrl(
                 }
                 options["body"]?.let { bodyTxt = it }
                 options["charset"]?.let { charset = it }
+                options["js"]?.let { webViewJs = it }
             }
         }
         when (method) {
@@ -262,7 +264,7 @@ class AnalyzeUrl(
                 } else {
                     HttpHelper
                         .getApiService<IHttpPostApi>(baseUrl)
-                        .postBody(url, body, headerMap)
+                        .postBody(url, body!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
@@ -284,7 +286,7 @@ class AnalyzeUrl(
                 } else {
                     HttpHelper
                         .getApiService<IHttpPostApi>(baseUrl)
-                        .postBodyAsync(url, body, headerMap)
+                        .postBodyAsync(url, body!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
