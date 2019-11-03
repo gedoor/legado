@@ -136,7 +136,9 @@ object BookHelp {
     var replaceRules: List<ReplaceRule> = arrayListOf()
 
     fun disposeContent(
-        name: String, origin: String?,
+        title: String,
+        name: String,
+        origin: String?,
         content: String,
         enableReplace: Boolean
     ): String {
@@ -149,6 +151,9 @@ object BookHelp {
                     App.db.replaceRuleDao().findEnabledByScope(name, origin)
                 }
             }
+        }
+        if (!content.substringBefore("\n").contains(title)) {
+            c = title + "\n" + c
         }
         for (item in replaceRules) {
             item.pattern.let {

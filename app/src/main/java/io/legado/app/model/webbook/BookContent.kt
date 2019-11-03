@@ -94,15 +94,6 @@ object BookContent {
                 content.append(item.content)
             }
         }
-        if (content.isNotEmpty()) {
-            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取章节名称")
-            SourceDebug.printLog(bookSource.bookSourceUrl, "└${bookChapter.title}")
-            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取正文内容")
-            if (!content[0].toString().startsWith(bookChapter.title)) {
-                content
-                    .insert(0, "└\n")
-            }
-        }
         return content.toString()
     }
 

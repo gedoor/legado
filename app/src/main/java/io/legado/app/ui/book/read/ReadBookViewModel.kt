@@ -225,10 +225,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
                 val c = BookHelp.disposeContent(
-                    bookData.value?.name ?: "",
+                    chapter.title,
+                    bookData.value!!.name,
                     webBook?.bookSource?.bookSourceUrl,
                     content,
-                    bookData.value?.useReplaceRule ?: true
+                    bookData.value!!.useReplaceRule
                 )
                 callBack?.contentLoadFinish(chapter, c)
             }
