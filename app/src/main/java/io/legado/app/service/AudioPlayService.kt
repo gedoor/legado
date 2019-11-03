@@ -30,7 +30,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
-class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener,
+class AudioPlayService : BaseService(),
+    AudioManager.OnAudioFocusChangeListener,
     MediaPlayer.OnPreparedListener,
     MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener {
