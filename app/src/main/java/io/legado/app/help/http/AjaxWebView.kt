@@ -1,7 +1,6 @@
 package io.legado.app.help.http
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.http.SslError
 import android.os.Build
 import android.os.Handler
@@ -9,6 +8,7 @@ import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
 import android.webkit.*
+import io.legado.app.App
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -49,7 +49,7 @@ class AjaxWebView {
 
         @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
         fun createAjaxWebView(params: AjaxParams, handler: Handler): WebView {
-            val webView = WebView(params.context.applicationContext)
+            val webView = WebView(App.INSTANCE)
             val settings = webView.settings
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
@@ -63,7 +63,7 @@ class AjaxWebView {
             }
             when (params.requestMethod) {
                 RequestMethod.POST -> webView.postUrl(params.url, params.postData)
-                RequestMethod.GET, RequestMethod.DEFAULT -> webView.loadUrl(
+                RequestMethod.GET -> webView.loadUrl(
                     params.url,
                     params.headerMap
                 )
@@ -75,29 +75,24 @@ class AjaxWebView {
             mWebView?.destroy()
             mWebView = null
         }
-
-
     }
 
-    fun ajax(params: AjaxParams) {
-        mHandler.obtainMessage(MSG_AJAX_START, params)
-            .sendToTarget()
-    }
-
-    fun sniff(params: AjaxParams) {
-        mHandler.obtainMessage(MSG_SNIFF_START, params)
-            .sendToTarget()
+    fun load(params: AjaxParams) {
+        if (params.audioSuffix != "") {
+            mHandler.obtainMessage(MSG_SNIFF_START, params)
+                .sendToTarget()
+        } else {
+            mHandler.obtainMessage(MSG_AJAX_START, params)
+                .sendToTarget()
+        }
     }
 
     fun destroyWebView() {
         mHandler.obtainMessage(DESTROY_WEB_VIEW)
     }
 
-    class AjaxParams(val context: Context, private val tag: String) {
-        var requestMethod: RequestMethod? = null
-            get() {
-                return field ?: RequestMethod.DEFAULT
-            }
+    class AjaxParams(private val tag: String) {
+        var requestMethod = RequestMethod.GET
         var url: String? = null
         var postData: ByteArray? = null
         var headerMap: Map<String, String>? = null
@@ -111,41 +106,6 @@ class AjaxWebView {
 
         val isSniff: Boolean
             get() = !TextUtils.isEmpty(audioSuffix)
-
-        fun requestMethod(method: RequestMethod): AjaxParams {
-            this.requestMethod = method
-            return this
-        }
-
-        fun url(url: String): AjaxParams {
-            this.url = url
-            return this
-        }
-
-        fun postData(postData: ByteArray): AjaxParams {
-            this.postData = postData
-            return this
-        }
-
-        fun headerMap(headerMap: Map<String, String>): AjaxParams {
-            this.headerMap = headerMap
-            return this
-        }
-
-        fun cookieStore(cookieStore: CookieStore): AjaxParams {
-            this.cookieStore = cookieStore
-            return this
-        }
-
-        fun suffix(suffix: String): AjaxParams {
-            this.audioSuffix = suffix
-            return this
-        }
-
-        fun javaScript(javaScript: String): AjaxParams {
-            this.javaScript = javaScript
-            return this
-        }
 
         fun setCookie(url: String) {
             if (cookieStore != null) {
@@ -298,10 +258,6 @@ class AjaxWebView {
         const val MSG_SUCCESS = 2
         const val MSG_ERROR = 3
         const val DESTROY_WEB_VIEW = 4
-    }
-
-    enum class RequestMethod {
-        GET, POST, DEFAULT
     }
 
     interface CookieStore {

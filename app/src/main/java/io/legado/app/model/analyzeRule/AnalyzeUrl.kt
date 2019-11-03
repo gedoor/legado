@@ -10,7 +10,9 @@ import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.help.JsExtensions
+import io.legado.app.help.http.AjaxWebView
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.http.RequestMethod
 import io.legado.app.utils.*
 import kotlinx.coroutines.Deferred
 import okhttp3.FormBody
@@ -55,7 +57,7 @@ class AnalyzeUrl(
     private var charset: String? = null
     private var bodyTxt: String? = null
     private var body: RequestBody? = null
-    private var method = Method.GET
+    private var method = RequestMethod.GET
     private var webViewJs: String? = null
 
     val postData: ByteArray
@@ -173,7 +175,7 @@ class AnalyzeUrl(
         if (urlArray.size > 1) {
             val options = GSON.fromJsonObject<Map<String, String>>(urlArray[1])
             options?.let {
-                options["method"]?.let { if (it.equals("POST", true)) method = Method.POST }
+                options["method"]?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
                 options["headers"]?.let { headers ->
                     GSON.fromJsonObject<Map<String, String>>(headers)?.let { headerMap.putAll(it) }
                 }
@@ -183,14 +185,14 @@ class AnalyzeUrl(
             }
         }
         when (method) {
-            Method.GET -> {
+            RequestMethod.GET -> {
                 urlArray = url.split("?")
                 url = urlArray[0]
                 if (urlArray.size > 1) {
                     analyzeFields(urlArray[1])
                 }
             }
-            Method.POST -> {
+            RequestMethod.POST -> {
                 bodyTxt?.let {
                     if (it.isJson()) {
                         body = it.toRequestBody(jsonType)
@@ -250,14 +252,10 @@ class AnalyzeUrl(
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
-    enum class Method {
-        GET, POST
-    }
-
     @Throws(Exception::class)
     fun getResponse(): Call<String> {
         return when {
-            method == Method.POST -> {
+            method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
                         .getApiService<IHttpPostApi>(baseUrl)
@@ -280,7 +278,7 @@ class AnalyzeUrl(
     @Throws(Exception::class)
     fun getResponseAsync(): Deferred<Response<String>> {
         return when {
-            method == Method.POST -> {
+            method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
                         .getApiService<IHttpPostApi>(baseUrl)
@@ -298,5 +296,12 @@ class AnalyzeUrl(
                 .getApiService<IHttpGetApi>(baseUrl)
                 .getMapAsync(url, fieldMap, headerMap)
         }
+    }
+
+    suspend fun getResultByWebView(tag: String): String {
+        val params = AjaxWebView.AjaxParams(tag)
+        params.url = url
+        params.requestMethod = method
+        return HttpHelper.ajax(params)
     }
 }
