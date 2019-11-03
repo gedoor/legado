@@ -90,7 +90,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     @Synchronized
     private fun playAudio(fd: FileDescriptor) {
-        if (playingIndex != nowSpeak) {
+        if (playingIndex != nowSpeak && requestFocus()) {
             playingIndex = nowSpeak
             try {
                 mediaPlayer.reset()

@@ -7,7 +7,6 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.annotation.RequiresApi
 import io.legado.app.R
 
 object MediaHelp {
@@ -33,17 +32,43 @@ object MediaHelp {
             or PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE
             or PlaybackStateCompat.ACTION_SET_CAPTIONING_ENABLED)
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequest {
-        val mPlaybackAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_MEDIA)
-            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-            .build()
-        return AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-            .setAudioAttributes(mPlaybackAttributes)
-            .setAcceptsDelayedFocusGain(true)
-            .setOnAudioFocusChangeListener(audioFocusChangeListener)
-            .build()
+    fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequest? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val mPlaybackAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(mPlaybackAttributes)
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener(audioFocusChangeListener)
+                .build()
+        } else {
+            null
+        }
+    }
+
+    /**
+     * @return 音频焦点
+     */
+    fun requestFocus(
+        audioManager: AudioManager,
+        listener: AudioManager.OnAudioFocusChangeListener,
+        focusRequest: AudioFocusRequest?
+    ): Boolean {
+        val request: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            focusRequest?.let {
+                audioManager.requestAudioFocus(focusRequest)
+            } ?: AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.requestAudioFocus(
+                listener,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+        }
+        return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 
     fun playSilentSound(mContext: Context) {

@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.os.Build
 import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -40,7 +39,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     private val handler = Handler()
     private lateinit var audioManager: AudioManager
-    private lateinit var mFocusRequest: AudioFocusRequest
+    private var mFocusRequest: AudioFocusRequest? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var title: String = ""
@@ -57,9 +56,7 @@ abstract class BaseReadAloudService : BaseService(),
         super.onCreate()
         isRun = true
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mFocusRequest = MediaHelp.getFocusRequest(this)
-        }
+        mFocusRequest = MediaHelp.getFocusRequest(this)
         initMediaSession()
         initBroadcastReceiver()
         upNotification()
@@ -190,17 +187,7 @@ abstract class BaseReadAloudService : BaseService(),
      * @return 音频焦点
      */
     fun requestFocus(): Boolean {
-        val request: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioManager.requestAudioFocus(mFocusRequest)
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.requestAudioFocus(
-                this,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN
-            )
-        }
-        return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        return MediaHelp.requestFocus(audioManager, this, mFocusRequest)
     }
 
     /**
