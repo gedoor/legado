@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "cookies")
 data class Cookie(
     @PrimaryKey
-    var url: String,
+    var url: String = "",
     var cookie: String? = null
 )
