@@ -254,6 +254,7 @@ class AnalyzeUrl(
         GET, POST
     }
 
+    @Throws(Exception::class)
     fun getResponse(): Call<String> {
         return when {
             method == Method.POST -> {
@@ -276,6 +277,7 @@ class AnalyzeUrl(
         }
     }
 
+    @Throws(Exception::class)
     fun getResponseAsync(): Deferred<Response<String>> {
         return when {
             method == Method.POST -> {
