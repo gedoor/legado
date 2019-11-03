@@ -33,7 +33,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var nextTextChapter: TextChapter? = null
     var webBook: WebBook? = null
     private val loadingChapters = arrayListOf<Int>()
-    private val loadingLock = "loadingLock"
 
     fun initData(intent: Intent) {
         execute {
@@ -208,7 +207,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun addLoading(index: Int): Boolean {
-        synchronized(loadingLock) {
+        synchronized(this) {
             if (loadingChapters.contains(index)) return false
             loadingChapters.add(index)
             return true
@@ -216,7 +215,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun removeLoading(index: Int) {
-        synchronized(loadingLock) {
+        synchronized(this) {
             loadingChapters.remove(index)
         }
     }
