@@ -73,7 +73,7 @@ object Help {
     /**
      * 适配刘海
      */
-    fun uplayoutInDisplayCutoutMode(window: Window) {
+    fun upLayoutInDisplayCutoutMode(window: Window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes = window.attributes.apply {
                 layoutInDisplayCutoutMode =

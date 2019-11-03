@@ -69,7 +69,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override var readAloudStatus = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        Help.uplayoutInDisplayCutoutMode(window)
+        Help.upLayoutInDisplayCutoutMode(window)
         setSupportActionBar(toolbar)
         initView()
         viewModel.callBack = this
