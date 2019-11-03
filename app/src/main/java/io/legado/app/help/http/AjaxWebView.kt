@@ -246,18 +246,6 @@ class AjaxWebView {
         const val DESTROY_WEB_VIEW = 4
     }
 
-    interface CookieStore {
-        fun setCookie(url: String, cookie: String)
-
-        fun replaceCookie(url: String, cookie: String)
-
-        fun getCookie(url: String): String
-
-        fun removeCookie(url: String)
-
-        fun clearCookies()
-    }
-
     abstract class Callback {
 
         abstract fun onResult(result: String)

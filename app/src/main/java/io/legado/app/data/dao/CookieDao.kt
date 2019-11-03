@@ -1,13 +1,21 @@
 package io.legado.app.data.dao
 
-import androidx.room.Dao
-import androidx.room.Query
+import androidx.room.*
+import io.legado.app.data.entities.Cookie
 
 @Dao
 interface CookieDao {
 
     @Query("select * from cookies where url = :url")
-    fun get(url: String)
+    fun get(url: String): Cookie?
 
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg cookie: Cookie)
+
+    @Update
+    fun update(vararg cookie: Cookie)
+
+    @Query("delete from cookies where url = :url")
+    fun delete(url: String)
 }

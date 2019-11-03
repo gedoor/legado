@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class Cookie(
     @PrimaryKey
     var url: String,
-    var cookie: String
+    var cookie: String? = null
 )

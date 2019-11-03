@@ -13,7 +13,7 @@ import io.legado.app.data.entities.*
 @Database(
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class, ReplaceRule::class,
         SearchBook::class, SearchKeyword::class, SourceCookie::class, RssSource::class, Bookmark::class,
-        RssArticle::class],
+        RssArticle::class, Cookie::class],
     version = 1,
     exportSchema = true
 )
@@ -60,4 +60,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun rssSourceDao(): RssSourceDao
     abstract fun bookmarkDao(): BookmarkDao
     abstract fun rssArticleDao(): RssArticleDao
+    abstract fun cookieDao(): CookieDao
 }
