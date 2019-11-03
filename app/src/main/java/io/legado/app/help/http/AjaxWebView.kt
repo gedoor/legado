@@ -78,7 +78,7 @@ class AjaxWebView {
     }
 
     fun load(params: AjaxParams) {
-        if (params.audioSuffix != "") {
+        if (params.sourceRegex != "") {
             mHandler.obtainMessage(MSG_SNIFF_START, params)
                 .sendToTarget()
         } else {
@@ -97,7 +97,7 @@ class AjaxWebView {
         var postData: ByteArray? = null
         var headerMap: Map<String, String>? = null
         var cookieStore: CookieStore? = null
-        var audioSuffix: String? = null
+        var sourceRegex: String? = null
         var javaScript: String? = null
         private var audioSuffixList: List<String>? = null
 
@@ -105,7 +105,7 @@ class AjaxWebView {
             get() = this.headerMap?.get("User-Agent")
 
         val isSniff: Boolean
-            get() = !TextUtils.isEmpty(audioSuffix)
+            get() = !TextUtils.isEmpty(sourceRegex)
 
         fun setCookie(url: String) {
             if (cookieStore != null) {
@@ -125,7 +125,7 @@ class AjaxWebView {
         fun getAudioSuffixList(): List<String>? {
             if (audioSuffixList == null) {
                 audioSuffixList = if (isSniff) {
-                    audioSuffix?.split("\\|\\|".toRegex())
+                    sourceRegex?.split("\\|\\|".toRegex())
                 } else {
                     Collections.emptyList()
                 }
