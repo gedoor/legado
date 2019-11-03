@@ -61,17 +61,6 @@ class AnalyzeUrl(
     private var webViewJs: String? = null
     private var sourceRegex: String? = null
 
-    val postData: ByteArray
-        get() {
-            val builder = StringBuilder()
-            val keys = fieldMap.keys
-            for (key in keys) {
-                builder.append(String.format("%s=%s&", key, fieldMap[key]))
-            }
-            builder.deleteCharAt(builder.lastIndexOf("&"))
-            return builder.toString().toByteArray()
-        }
-
     init {
         baseUrl?.let {
             this.baseUrl = it.split(",[^\\{]*".toRegex(), 1)[0]
@@ -306,6 +295,8 @@ class AnalyzeUrl(
         params.requestMethod = method
         params.javaScript = webViewJs
         params.sourceRegex = sourceRegex
+        params.postData = bodyTxt?.toByteArray()
         return HttpHelper.ajax(params)
     }
+
 }
