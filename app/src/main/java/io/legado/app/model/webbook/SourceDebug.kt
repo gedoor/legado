@@ -65,12 +65,36 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
             val book = Book()
             book.origin = webBook.sourceUrl
             book.bookUrl = key
-            printLog(webBook.sourceUrl, "⇒开始访问:$key")
+            printLog(webBook.sourceUrl, "⇒开始访问详情页:$key")
             infoDebug(book)
+        } else if (key.contains("::")) {
+            val url = key.substring(key.indexOf("::") + 2)
+            printLog(webBook.sourceUrl, "⇒开始访问发现页:$url")
+            exploreDebug(url)
         } else {
             printLog(webBook.sourceUrl, "⇒开始搜索关键字:$key")
             searchDebug(key)
         }
+    }
+
+    private fun exploreDebug(url: String) {
+        printLog(debugSource, "︾开始解析发现页")
+        val explore = webBook.exploreBook(url, 1)
+            .onSuccess { exploreBooks ->
+                exploreBooks?.let {
+                    if (exploreBooks.isNotEmpty()) {
+                        printLog(debugSource, "︽发现页解析完成")
+                        printLog(debugSource, "", showTime = false)
+                        infoDebug(exploreBooks[0].toBook())
+                    } else {
+                        printLog(debugSource, "︽未获取到书籍", state = -1)
+                    }
+                }
+            }
+            .onError {
+                printLog(debugSource, it.localizedMessage, state = -1)
+            }
+        tasks.add(explore)
     }
 
     private fun searchDebug(key: String) {
