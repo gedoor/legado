@@ -125,6 +125,9 @@
     <string name="read_aloud">朗读</string>
     <string name="read_aloud_t">正在朗读</string>
     <string name="read_aloud_s">点击打开阅读界面</string>
+    <string name="audio_play_t">正在播放</string>
+    <string name="audio_play_s">点击打开播放界面</string>
+    <string name="audio_pause">播放暂停</string>
     <string name="text_return">返回</string>
     <string name="refresh">刷新</string>
     <string name="start">开始</string>

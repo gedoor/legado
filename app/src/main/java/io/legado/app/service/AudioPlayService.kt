@@ -10,6 +10,7 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
+import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
@@ -18,15 +19,23 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.Bus
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.utils.postEvent
 
 
 class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener {
 
+    companion object {
+        var isRun = false
+        var timeMinute: Int = 0
+    }
+
     var pause = false
+    private val handler = Handler()
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
     private var title: String = ""
@@ -35,9 +44,11 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener 
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private var position = 0
+    private val dsRunnable: Runnable? = Runnable { doDs() }
 
     override fun onCreate() {
         super.onCreate()
+        isRun = true
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mFocusRequest = MediaHelp.getFocusRequest(this)
@@ -48,20 +59,82 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener 
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        intent?.action?.let { action ->
+            when (action) {
+                Action.play -> {
+                    title = intent.getStringExtra("title") ?: ""
+                    subtitle = intent.getStringExtra("subtitle") ?: ""
+                    position = intent.getIntExtra("pageIndex", 0)
+                    play(intent.getStringExtra("dataKey"))
+                }
+                Action.pause -> pause(true)
+                Action.resume -> resume()
+                Action.addTimer -> addTimer()
+                Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
+                else -> stopSelf()
+            }
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        isRun = false
         mediaSessionCompat?.release()
     }
 
-    private fun pause() {
+    private fun play(url: String) {
+
+    }
+
+    private fun pause(pause: Boolean) {
+        this.pause = pause
         mediaPlayer.pause()
     }
 
     private fun resume() {
+        pause = false
         mediaPlayer.start()
+    }
+
+
+    private fun setTimer(minute: Int) {
+        timeMinute = minute
+        if (minute > 0) {
+            handler.removeCallbacks(dsRunnable)
+            handler.postDelayed(dsRunnable, 60000)
+        }
+        upNotification()
+    }
+
+    private fun addTimer() {
+        if (timeMinute == 60) {
+            timeMinute = 0
+            handler.removeCallbacks(dsRunnable)
+        } else {
+            timeMinute += 10
+            if (timeMinute > 60) timeMinute = 60
+            handler.removeCallbacks(dsRunnable)
+            handler.postDelayed(dsRunnable, 60000)
+        }
+        postEvent(Bus.TTS_DS, timeMinute)
+        upNotification()
+    }
+
+    /**
+     * 定时
+     */
+    private fun doDs() {
+        if (!pause) {
+            timeMinute--
+            if (timeMinute == 0) {
+                stopSelf()
+            } else if (timeMinute > 0) {
+                handler.postDelayed(dsRunnable, 60000)
+            }
+        }
+        postEvent(Bus.TTS_DS, timeMinute)
+        upNotification()
     }
 
     /**
@@ -126,7 +199,7 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener 
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
-                    pause()
+                    pause(true)
                 }
             }
         }
@@ -148,7 +221,7 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener 
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
-                if (!pause) pause()
+                if (!pause) pause(false)
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
@@ -161,17 +234,18 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener 
      */
     private fun upNotification() {
         var nTitle: String = when {
-            pause -> getString(R.string.read_aloud_pause)
-            BaseReadAloudService.timeMinute in 1..60 -> getString(
+            pause -> getString(R.string.audio_pause)
+            timeMinute in 1..60 -> getString(
                 R.string.read_aloud_timer,
-                BaseReadAloudService.timeMinute
+                timeMinute
             )
-            else -> getString(R.string.read_aloud_t)
+            else -> getString(R.string.audio_play_t)
         }
         nTitle += ": $title"
         var nSubtitle = subtitle
-        if (subtitle.isEmpty())
-            nSubtitle = getString(R.string.read_aloud_s)
+        if (subtitle.isEmpty()) {
+            nSubtitle = getString(R.string.audio_play_s)
+        }
         val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_volume_up)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.icon_read_book))
