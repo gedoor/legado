@@ -10,7 +10,6 @@ import android.text.TextUtils
 import android.webkit.*
 import io.legado.app.App
 import java.lang.ref.WeakReference
-import java.util.*
 
 
 class AjaxWebView {
@@ -99,7 +98,6 @@ class AjaxWebView {
         var cookieStore: CookieStore? = null
         var sourceRegex: String? = null
         var javaScript: String? = null
-        private var audioSuffixList: List<String>? = null
 
         val userAgent: String?
             get() = this.headerMap?.get("User-Agent")
@@ -122,16 +120,6 @@ class AjaxWebView {
             javaScript = null
         }
 
-        fun getAudioSuffixList(): List<String>? {
-            if (audioSuffixList == null) {
-                audioSuffixList = if (isSniff) {
-                    sourceRegex?.split("\\|\\|".toRegex())
-                } else {
-                    Collections.emptyList()
-                }
-            }
-            return audioSuffixList
-        }
     }
 
     class HtmlWebViewClient(
@@ -186,12 +174,10 @@ class AjaxWebView {
     ) : WebViewClient() {
 
         override fun onLoadResource(view: WebView, url: String) {
-            val suffixList = params.getAudioSuffixList()
-            for (suffix in suffixList!!) {
-                if (!TextUtils.isEmpty(suffix) && url.contains(suffix)) {
+            params.sourceRegex?.let {
+                if (url.matches(it.toRegex())) {
                     handler.obtainMessage(MSG_SUCCESS, url)
                         .sendToTarget()
-                    break
                 }
             }
         }
