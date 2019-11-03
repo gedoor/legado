@@ -9,7 +9,7 @@ object CookieStore {
 
     fun setCookie(url: String, cookie: String?) {
         try {
-            val cookieBean = Cookie(url, cookie)
+            val cookieBean = Cookie(url, cookie ?: "")
             App.db.cookieDao().insert(cookieBean)
         } catch (ignore: Exception) {
         }
