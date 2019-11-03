@@ -7,21 +7,18 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.BookHelp
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.NetworkUtils
-import retrofit2.Response
 
 object BookList {
 
     @Throws(Exception::class)
     fun analyzeBookList(
-        response: Response<String>,
+        body: String?,
         bookSource: BookSource,
         analyzeUrl: AnalyzeUrl,
+        baseUrl: String,
         isSearch: Boolean = true
     ): ArrayList<SearchBook> {
         val bookList = ArrayList<SearchBook>()
-        val baseUrl: String = NetworkUtils.getUrl(response)
-        val body: String? = response.body()
         body ?: throw Exception(
             App.INSTANCE.getString(
                 R.string.error_get_web_content,

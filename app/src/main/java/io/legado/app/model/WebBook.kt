@@ -10,6 +10,7 @@ import io.legado.app.model.webbook.BookChapterList
 import io.legado.app.model.webbook.BookContent
 import io.legado.app.model.webbook.BookInfo
 import io.legado.app.model.webbook.BookList
+import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
@@ -38,7 +39,13 @@ class WebBook(val bookSource: BookSource) {
                     headerMapF = bookSource.getHeaderMap()
                 )
                 val response = analyzeUrl.getResponseAsync().await()
-                BookList.analyzeBookList(response, bookSource, analyzeUrl, true)
+                BookList.analyzeBookList(
+                    response.body(),
+                    bookSource,
+                    analyzeUrl,
+                    NetworkUtils.getUrl(response),
+                    true
+                )
             } ?: arrayListOf()
         }
     }
@@ -60,7 +67,13 @@ class WebBook(val bookSource: BookSource) {
                 headerMapF = bookSource.getHeaderMap()
             )
             val response = analyzeUrl.getResponseAsync().await()
-            BookList.analyzeBookList(response, bookSource, analyzeUrl, false)
+            BookList.analyzeBookList(
+                response.body(),
+                bookSource,
+                analyzeUrl,
+                NetworkUtils.getUrl(response),
+                false
+            )
         }
     }
 
