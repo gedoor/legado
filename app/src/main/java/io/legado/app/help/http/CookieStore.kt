@@ -20,14 +20,12 @@ object CookieStore {
             return
         }
         val oldCookie = getCookie(url)
-
         if (TextUtils.isEmpty(oldCookie)) {
             setCookie(url, cookie)
         } else {
             val cookieMap = cookieToMap(oldCookie)
             cookieMap.putAll(cookieToMap(cookie))
             val newCookie = mapToCookie(cookieMap)
-
             setCookie(url, newCookie)
         }
     }
@@ -59,7 +57,7 @@ object CookieStore {
             val key = pairs[0].trim { it <= ' ' }
             val value = pairs[1]
             if (value.isNotBlank() || value.trim { it <= ' ' } == "null") {
-                cookieMap.put(key, value.trim { it <= ' ' })
+                cookieMap[key] = value.trim { it <= ' ' }
             }
         }
         return cookieMap
