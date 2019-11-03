@@ -60,7 +60,6 @@ class AjaxWebView {
                 webView.webViewClient = SnifferWebClient(params, handler)
             } else {
                 webView.webViewClient = HtmlWebViewClient(params, handler)
-                webView.addJavascriptInterface(JavaInjectMethod(handler), "OUTHTML")
             }
             when (params.requestMethod) {
                 RequestMethod.POST -> webView.postUrl(params.url, params.postData)
@@ -94,16 +93,6 @@ class AjaxWebView {
         mHandler.obtainMessage(DESTROY_WEB_VIEW)
     }
 
-    class JavaInjectMethod(private val handler: Handler) {
-
-        @JavascriptInterface
-        fun processHTML(html: String) {
-            handler.obtainMessage(MSG_SUCCESS, html)
-                .sendToTarget()
-        }
-    }
-
-
     class AjaxParams(val context: Context, private val tag: String) {
         var requestMethod: RequestMethod? = null
             get() {
@@ -118,9 +107,7 @@ class AjaxWebView {
         private var audioSuffixList: List<String>? = null
 
         val userAgent: String?
-            get() = if (this.headerMap != null) {
-                this.headerMap!!.get("User-Agent")
-            } else null
+            get() = this.headerMap?.get("User-Agent")
 
         val isSniff: Boolean
             get() = !TextUtils.isEmpty(audioSuffix)
@@ -192,15 +179,14 @@ class AjaxWebView {
         private val handler: Handler
     ) : WebViewClient() {
 
-
         override fun onPageFinished(view: WebView, url: String) {
             params.setCookie(url)
-            evaluateJavascript(view)
-        }
-
-
-        override fun onLoadResource(view: WebView, url: String) {
-            super.onLoadResource(view, url)
+            handler.postDelayed({
+                view.evaluateJavascript("document.documentElement.outerHTML") {
+                    handler.obtainMessage(MSG_SUCCESS, it)
+                        .sendToTarget()
+                }
+            }, 1000)
         }
 
         override fun onReceivedError(
@@ -231,17 +217,6 @@ class AjaxWebView {
 
         override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
             handler.proceed()
-        }
-
-        private fun evaluateJavascript(webView: WebView) {
-            val runnable = ScriptRunnable(webView, OUTER_HTML)
-            handler.postDelayed(runnable, 1000L)
-        }
-
-        companion object {
-
-            const val OUTER_HTML =
-                "window.OUTHTML.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');"
         }
     }
 
