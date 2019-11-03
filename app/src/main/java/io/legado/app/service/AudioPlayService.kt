@@ -308,7 +308,7 @@ class AudioPlayService : BaseService(),
     /**
      * @return 音频焦点
      */
-    fun requestFocus(): Boolean {
+    private fun requestFocus(): Boolean {
         return MediaHelp.requestFocus(audioManager, this, mFocusRequest)
     }
 
