@@ -5,15 +5,12 @@ import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.analyzeRule.AnalyzeRule
-import retrofit2.Response
 
 object RssParserByRule {
 
     @Throws(Exception::class)
-    fun parseXML(response: Response<String>, rssSource: RssSource): MutableList<RssArticle> {
-
-        val xml = response.body()
-        if (xml.isNullOrBlank()) {
+    fun parseXML(body: String?, rssSource: RssSource): MutableList<RssArticle> {
+        if (body.isNullOrBlank()) {
             throw Exception(
                 App.INSTANCE.getString(
                     R.string.error_get_web_content,
@@ -23,11 +20,11 @@ object RssParserByRule {
         }
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
-            return RssParser.parseXML(xml, rssSource.sourceUrl)
+            return RssParser.parseXML(body, rssSource.sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
-            analyzeRule.setContent(xml, rssSource.sourceUrl)
+            analyzeRule.setContent(body, rssSource.sourceUrl)
             var reverse = true
             if (ruleArticles.startsWith("-")) {
                 reverse = false

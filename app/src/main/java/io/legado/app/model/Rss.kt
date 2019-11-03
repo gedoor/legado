@@ -17,8 +17,13 @@ object Rss {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<MutableList<RssArticle>> {
         return Coroutine.async(scope, context) {
-            val response = AnalyzeUrl(rssSource.sourceUrl).getResponseAwait()
-            RssParserByRule.parseXML(response, rssSource)
+            val analyzeUrl = AnalyzeUrl(rssSource.sourceUrl)
+            val body = if (analyzeUrl.useWebView()) {
+                analyzeUrl.getResultByWebView(rssSource.sourceUrl)
+            } else {
+                analyzeUrl.getResponseAwait().body()
+            }
+            RssParserByRule.parseXML(body, rssSource)
         }
     }
 }
