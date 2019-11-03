@@ -86,16 +86,20 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<Book> {
         return Coroutine.async(scope, context) {
-            val body = if (book.infoHtml.isNullOrEmpty()) {
+            val body = if (!book.infoHtml.isNullOrEmpty()) {
+                book.infoHtml
+            } else {
                 val analyzeUrl = AnalyzeUrl(
                     book = book,
                     ruleUrl = book.bookUrl,
                     baseUrl = sourceUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                analyzeUrl.getResponseAwait().body()
-            } else {
-                book.infoHtml
+                if (analyzeUrl.useWebView()) {
+                    analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
+                } else {
+                    analyzeUrl.getResponseAwait().body()
+                }
             }
             BookInfo.analyzeBookInfo(book, body, bookSource, book.bookUrl)
             book
@@ -120,7 +124,11 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = book.bookUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                analyzeUrl.getResponseAwait().body()
+                if (analyzeUrl.useWebView()) {
+                    analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
+                } else {
+                    analyzeUrl.getResponseAwait().body()
+                }
             }
             BookChapterList.analyzeChapterList(this, book, body, bookSource, book.tocUrl)
         }
@@ -150,7 +158,11 @@ class WebBook(val bookSource: BookSource) {
                         baseUrl = book.tocUrl,
                         headerMapF = bookSource.getHeaderMap()
                     )
-                analyzeUrl.getResponseAwait().body()
+                if (analyzeUrl.useWebView()) {
+                    analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
+                } else {
+                    analyzeUrl.getResponseAwait().body()
+                }
             }
             BookContent.analyzeContent(
                 this,

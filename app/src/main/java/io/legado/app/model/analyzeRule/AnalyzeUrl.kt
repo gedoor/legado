@@ -292,6 +292,10 @@ class AnalyzeUrl(
         }
     }
 
+    fun useWebView(): Boolean {
+        return webViewJs != null || sourceRegex != null
+    }
+
     suspend fun getResultByWebView(tag: String): String {
         val params = AjaxWebView.AjaxParams(tag)
         params.url = url
