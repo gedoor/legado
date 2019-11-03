@@ -24,6 +24,10 @@ import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.postEvent
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 
 class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener,
@@ -59,6 +63,12 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener,
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        launch(IO) {
+            while (isActive) {
+                delay(1000)
+                postEvent(Bus.AUDIO_CUR_POS, mediaPlayer.currentPosition)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -84,20 +94,27 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener,
         super.onDestroy()
         isRun = false
         mediaSessionCompat?.release()
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
     }
 
     private fun play(url: String) {
-
+        if (requestFocus()) {
+            mediaPlayer.reset()
+            mediaPlayer.setDataSource(url)
+            mediaPlayer.prepareAsync()
+        }
     }
 
     private fun pause(pause: Boolean) {
         this.pause = pause
         mediaPlayer.pause()
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
     }
 
     private fun resume() {
         pause = false
         mediaPlayer.start()
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
@@ -111,7 +128,7 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener,
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
-
+        postEvent(Bus.AUDIO_NEXT, 1)
     }
 
     private fun setTimer(minute: Int) {
@@ -285,6 +302,13 @@ class AudioPlayService : BaseService(), AudioManager.OnAudioFocusChangeListener,
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(112201, notification)
+    }
+
+    /**
+     * @return 音频焦点
+     */
+    fun requestFocus(): Boolean {
+        return MediaHelp.requestFocus(audioManager, this, mFocusRequest)
     }
 
     private fun thisPendingIntent(action: String): PendingIntent? {
