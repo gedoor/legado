@@ -137,6 +137,9 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
+            if (bookSource.getContentRule().content.isNullOrEmpty()) {
+                return@async bookChapter.url
+            }
             val body = if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
                 book.tocHtml
             } else {
