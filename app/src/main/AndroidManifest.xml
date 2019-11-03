@@ -105,6 +105,7 @@
         <service android:name=".service.WebService" />
         <service android:name=".service.TTSReadAloudService" />
         <service android:name=".service.HttpReadAloudService" />
+        <service android:name=".service.AudioPlayService" />
 
         <receiver android:name=".receiver.MediaButtonReceiver">
             <intent-filter>
