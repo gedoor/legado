@@ -5,6 +5,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import org.apache.commons.text.similarity.JaccardSimilarity
@@ -67,7 +68,7 @@ object BookHelp {
     private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
         val bookFolder = formatFolderName(book.name + book.bookUrl)
         val chapterFile =
-            String.format("%05d-%s", bookChapter.index, formatFolderName(bookChapter.title))
+            String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
         return "$downloadPath${File.separator}book_cache${File.separator}$bookFolder${File.separator}$chapterFile.nb"
     }
 
