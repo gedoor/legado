@@ -23,6 +23,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     override val viewModel: AudioPlayViewModel
         get() = getViewModel(AudioPlayViewModel::class.java)
 
+    private var adjustProgress = false
     private var status = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -55,10 +56,11 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
+                adjustProgress = true
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                adjustProgress = false
                 AudioPlay.upProgress(this@AudioPlayActivity, player_progress.progress)
             }
         })
@@ -97,8 +99,10 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             status = it
         }
         observeEvent<Int>(Bus.AUDIO_PROGRESS) {
-            if (!player_progress.isInTouchMode)
-                player_progress.progress = it
+            if (!adjustProgress) player_progress.progress = it
+        }
+        observeEvent<Int>(Bus.AUDIO_SIZE) {
+            player_progress.max = it
         }
     }
 }
