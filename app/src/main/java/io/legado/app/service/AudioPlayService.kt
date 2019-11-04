@@ -78,6 +78,7 @@ class AudioPlayService : BaseService(),
                 Action.resume -> resume()
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
+                Action.adjustProgress -> adjustProgress(intent.getIntExtra("position", position))
                 else -> stopSelf()
             }
         }
@@ -107,6 +108,7 @@ class AudioPlayService : BaseService(),
 
     private fun pause(pause: Boolean) {
         this.pause = pause
+        position = mediaPlayer.currentPosition
         mediaPlayer.pause()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(Bus.AUDIO_STATE, Status.PAUSE)
@@ -116,14 +118,24 @@ class AudioPlayService : BaseService(),
     private fun resume() {
         pause = false
         mediaPlayer.start()
+        mediaPlayer.seekTo(position)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(Bus.AUDIO_STATE, Status.PLAY)
         upNotification()
     }
 
+    private fun adjustProgress(position: Int) {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.seekTo(position)
+        } else {
+            this.position = position
+        }
+    }
+
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
         mp?.start()
+        mp?.seekTo(position)
         postEvent(Bus.AUDIO_SIZE, mp?.duration)
         handler.post(mpRunnable)
     }

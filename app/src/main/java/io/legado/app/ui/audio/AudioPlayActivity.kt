@@ -66,7 +66,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 adjustProgress = false
-                AudioPlay.upProgress(this@AudioPlayActivity, player_progress.progress)
+                AudioPlay.adjustProgress(this@AudioPlayActivity, player_progress.progress)
             }
         })
     }

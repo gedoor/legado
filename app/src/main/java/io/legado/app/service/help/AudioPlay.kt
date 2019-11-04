@@ -41,10 +41,10 @@ object AudioPlay {
         }
     }
 
-    fun upProgress(context: Context, position: Int) {
+    fun adjustProgress(context: Context, position: Int) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.upProgress
+            intent.action = Action.adjustProgress
             intent.putExtra("position", position)
             context.startService(intent)
         }
