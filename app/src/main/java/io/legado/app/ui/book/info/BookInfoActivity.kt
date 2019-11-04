@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -222,11 +224,17 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     }
 
     private fun startReadActivity(book: Book) {
-        startActivity<ReadBookActivity>(
-            Pair("bookUrl", book.bookUrl),
-            Pair("inBookshelf", viewModel.inBookshelf),
-            Pair("key", IntentDataHelp.putData(book))
-        )
+        when (book.type) {
+            BookType.audio -> startActivity<AudioPlayActivity>(
+                Pair("bookUrl", book.bookUrl),
+                Pair("inBookshelf", viewModel.inBookshelf)
+            )
+            else -> startActivity<ReadBookActivity>(
+                Pair("bookUrl", book.bookUrl),
+                Pair("inBookshelf", viewModel.inBookshelf),
+                Pair("key", IntentDataHelp.putData(book))
+            )
+        }
     }
 
     override val curOrigin: String?
