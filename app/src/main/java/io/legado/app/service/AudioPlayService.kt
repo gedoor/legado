@@ -124,8 +124,8 @@ class AudioPlayService : BaseService(),
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
         mp?.start()
-        postEvent(Bus.AUDIO_PROGRESS, mp?.duration)
-        handler.postDelayed(mpRunnable, 1000)
+        postEvent(Bus.AUDIO_SIZE, mp?.duration)
+        handler.post(mpRunnable)
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
