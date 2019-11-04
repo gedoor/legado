@@ -246,9 +246,7 @@ class AjaxWebView {
     }
 
     abstract class Callback {
-
         abstract fun onResult(result: String)
-
         abstract fun onError(error: Throwable)
     }
 }
