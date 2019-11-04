@@ -9,6 +9,7 @@ import android.os.Message
 import android.text.TextUtils
 import android.webkit.*
 import io.legado.app.App
+import org.apache.commons.text.StringEscapeUtils
 import java.lang.ref.WeakReference
 
 
@@ -131,7 +132,7 @@ class AjaxWebView {
             params.setCookie(url)
             handler.postDelayed({
                 view.evaluateJavascript("document.documentElement.outerHTML") {
-                    handler.obtainMessage(MSG_SUCCESS, it)
+                    handler.obtainMessage(MSG_SUCCESS, StringEscapeUtils.unescapeJson(it))
                         .sendToTarget()
                 }
             }, 1000)
