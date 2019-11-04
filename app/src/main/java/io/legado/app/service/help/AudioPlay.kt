@@ -41,4 +41,12 @@ object AudioPlay {
         }
     }
 
+    fun upProgress(context: Context, position: Int) {
+        if (AudioPlayService.isRun) {
+            val intent = Intent(context, AudioPlayService::class.java)
+            intent.action = Action.upProgress
+            intent.putExtra("position", position)
+            context.startService(intent)
+        }
+    }
 }

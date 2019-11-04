@@ -11,4 +11,5 @@ object Action {
     const val prevParagraph = "prevParagraph"
     const val nextParagraph = "nextParagraph"
     const val upTtsSpeechRate = "upTtsSpeechRate"
+    const val upProgress = "upProgress"
 }

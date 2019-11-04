@@ -1,6 +1,7 @@
 package io.legado.app.ui.audio
 
 import android.os.Bundle
+import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
@@ -29,10 +30,33 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     private fun initView() {
         fab_play_stop.onClick {
-            viewModel.bookData.value?.let {
-                viewModel.loadContent(it, viewModel.durChapterIndex)
+            when (status) {
+                Status.PLAY -> AudioPlay.pause(this)
+                Status.PAUSE -> AudioPlay.resume(this)
+                else -> viewModel.bookData.value?.let {
+                    viewModel.loadContent(it, viewModel.durChapterIndex)
+                }
             }
         }
+        iv_skip_next.onClick {
+
+        }
+        iv_skip_previous.onClick {
+
+        }
+        player_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                AudioPlay.upProgress(this@AudioPlayActivity, player_progress.progress)
+            }
+        })
     }
 
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
