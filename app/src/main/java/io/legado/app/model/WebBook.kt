@@ -85,6 +85,7 @@ class WebBook(val bookSource: BookSource) {
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<Book> {
+        book.type = bookSource.bookSourceType
         return Coroutine.async(scope, context) {
             val body = if (!book.infoHtml.isNullOrEmpty()) {
                 book.infoHtml
@@ -114,6 +115,7 @@ class WebBook(val bookSource: BookSource) {
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<BookChapter>> {
+        book.type = bookSource.bookSourceType
         return Coroutine.async(scope, context) {
             val body = if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
                 book.tocHtml
