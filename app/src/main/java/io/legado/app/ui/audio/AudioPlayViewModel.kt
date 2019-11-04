@@ -11,6 +11,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
+import io.legado.app.service.help.AudioPlay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -180,6 +181,19 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             chapterSize = chapters.size
+        }
+    }
+
+    fun moveToNext() {
+        if (durChapterIndex < chapterSize - 1) {
+            durChapterIndex++
+            bookData.value?.let {
+                it.durChapterIndex = durChapterIndex
+                saveRead(it)
+                loadContent(it, durChapterIndex)
+            }
+        } else {
+            AudioPlay.stop(context)
         }
     }
 

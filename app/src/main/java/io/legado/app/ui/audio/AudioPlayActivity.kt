@@ -95,10 +95,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun observeLiveBus() {
         observeEvent<Int>(Bus.AUDIO_NEXT) {
-            viewModel.durChapterIndex = viewModel.durChapterIndex + 1
-            viewModel.bookData.value?.let {
-                viewModel.loadContent(it, viewModel.durChapterIndex)
-            }
+            viewModel.moveToNext()
         }
         observeEvent<Int>(Bus.AUDIO_STATE) {
             status = it
