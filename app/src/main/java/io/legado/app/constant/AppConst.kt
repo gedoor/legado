@@ -19,6 +19,8 @@ object AppConst {
     const val channelIdReadAloud = "channel_read_aloud"
     const val channelIdWeb = "channel_web"
 
+    const val UA_NAME = "User-Agent"
+
     val userAgent: String by lazy {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"
     }

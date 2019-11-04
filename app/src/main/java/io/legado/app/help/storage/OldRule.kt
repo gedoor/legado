@@ -1,5 +1,6 @@
 package io.legado.app.help.storage
 
+import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.storage.Restore.jsonPath
@@ -131,7 +132,7 @@ object OldRule {
 
     private fun uaToHeader(ua: String?): String? {
         if (ua.isNullOrEmpty()) return null
-        val map = mapOf(Pair("User-Agent", ua))
+        val map = mapOf(Pair(AppConst.UA_NAME, ua))
         return GSON.toJson(map)
     }
 
