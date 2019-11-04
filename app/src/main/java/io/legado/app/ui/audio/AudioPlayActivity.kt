@@ -82,5 +82,9 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         observeEvent<Int>(Bus.AUDIO_STATE) {
             status = it
         }
+        observeEvent<Int>(Bus.AUDIO_PROGRESS) {
+            if (!player_progress.isInTouchMode)
+                player_progress.progress = it
+        }
     }
 }
