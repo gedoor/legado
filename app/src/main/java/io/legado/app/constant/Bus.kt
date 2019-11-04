@@ -14,7 +14,6 @@ object Bus {
     const val OPEN_CHAPTER = "openChapter"
     const val REPLACE = "replace"
     const val AUDIO_NEXT = "audioNext"
-    const val AUDIO_CUR_POS = "audioCurPos"
     const val AUDIO_STATE = "audioState"
     const val AUDIO_PROGRESS = "audioProgress"
 }

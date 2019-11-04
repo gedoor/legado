@@ -67,7 +67,7 @@ class AudioPlayService : BaseService(),
         launch(IO) {
             while (isActive) {
                 delay(1000)
-                postEvent(Bus.AUDIO_CUR_POS, mediaPlayer.currentPosition)
+                postEvent(Bus.AUDIO_PROGRESS, mediaPlayer.currentPosition)
             }
         }
     }
