@@ -87,8 +87,11 @@ class AudioPlayService : BaseService(),
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
+        handler.removeCallbacks(dsRunnable)
+        handler.removeCallbacks(mpRunnable)
         mediaPlayer.release()
         mediaSessionCompat?.release()
+        unregisterReceiver(broadcastReceiver)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         postEvent(Bus.AUDIO_STATE, Status.STOP)
     }
