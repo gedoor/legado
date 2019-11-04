@@ -14,7 +14,6 @@
     <string name="menu_replace_rule">净化替换</string>
     <string name="menu_send">Send</string>
 
-
     <string name="dialog_title">提示</string>
     <string name="dialog_cancel">取消</string>
     <string name="dialog_confirm">确定</string>
@@ -554,5 +553,8 @@
     <string name="refresh_cover">刷新封面</string>
     <string name="change_cover_source">封面换源</string>
     <string name="select_local_image">选择本地图片</string>
+    <string name="book_type">类型:</string>
+    <string name="book_type_text">文本</string>
+    <string name="book_type_audio">音频</string>
 
 </resources>
