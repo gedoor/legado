@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".ui.audio.AudioPlayActivity">
 
     <ImageView
         android:id="@+id/iv_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scaleType="centerCrop"
         tools:ignore="ContentDescription" />
 
     <io.legado.app.ui.widget.TitleBar
@@ -25,11 +27,12 @@
         android:layout_height="260dp"
         android:layout_gravity="center"
         android:contentDescription="@string/img_cover"
+        android:scaleType="centerCrop"
         android:src="@drawable/image_cover_default"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
     <LinearLayout
         android:id="@+id/ll_player_progress"
@@ -77,7 +80,8 @@
             android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/set_timer"
-            android:src="@drawable/ic_timer_black_24dp" />
+            android:src="@drawable/ic_timer_black_24dp"
+            android:tint="@color/md_white_1000" />
 
         <View
             android:layout_width="0dp"
@@ -90,7 +94,8 @@
             android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_previous"
-            android:src="@drawable/ic_skip_previous" />
+            android:src="@drawable/ic_skip_previous"
+            android:tint="@color/md_white_1000" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_play_stop"
@@ -99,8 +104,8 @@
             android:layout_margin="10dp"
             android:contentDescription="@string/audio_play"
             android:src="@drawable/ic_play_24dp"
-            android:tint="@color/tv_text_default"
-            app:backgroundTint="@color/background_menu"
+            android:tint="@color/md_black_1000"
+            app:backgroundTint="@color/md_white_1000"
             app:elevation="2dp"
             app:fabSize="normal"
             app:pressedTranslationZ="2dp" />
@@ -111,7 +116,8 @@
             android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_next"
-            android:src="@drawable/ic_skip_next" />
+            android:src="@drawable/ic_skip_next"
+            android:tint="@color/md_white_1000" />
 
         <View
             android:layout_width="0dp"
@@ -124,6 +130,7 @@
             android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_chapter_list"
+            android:tint="@color/md_white_1000"
             android:contentDescription="@string/chapter_list" />
 
     </LinearLayout>

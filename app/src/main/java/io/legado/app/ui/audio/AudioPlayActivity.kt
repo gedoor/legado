@@ -9,6 +9,7 @@ import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.utils.getViewModel
@@ -72,6 +73,12 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             .error(R.drawable.image_cover_default)
             .centerCrop()
             .setAsDrawable(iv_cover)
+        ImageLoader.load(this, book.getDisplayCover())
+            .placeholder(R.drawable.image_cover_default)
+            .error(R.drawable.image_cover_default)
+            .centerCrop()
+            .bitmapTransform(BlurTransformation(this, 25))
+            .setAsDrawable(iv_bg)
     }
 
     private fun playButton() {

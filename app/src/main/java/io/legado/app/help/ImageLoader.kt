@@ -9,6 +9,7 @@ import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -67,6 +68,11 @@ object ImageLoader {
 
         fun load(source: S): ImageLoadBuilder<S> {
             this.source = source
+            return this
+        }
+
+        fun bitmapTransform(transformation: Transformation<Bitmap>): ImageLoadBuilder<S> {
+            requestOptions = requestOptions.apply(RequestOptions.bitmapTransform(transformation))
             return this
         }
 
