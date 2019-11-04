@@ -4,6 +4,7 @@ import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
+import io.legado.app.constant.Status
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.utils.getViewModel
@@ -17,6 +18,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override val viewModel: AudioPlayViewModel
         get() = getViewModel(AudioPlayViewModel::class.java)
+
+    private var status = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
@@ -47,7 +50,13 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun observeLiveBus() {
         observeEvent<Int>(Bus.AUDIO_NEXT) {
-
+            viewModel.durChapterIndex = viewModel.durChapterIndex + 1
+            viewModel.bookData.value?.let {
+                viewModel.loadContent(it, viewModel.durChapterIndex)
+            }
+        }
+        observeEvent<Int>(Bus.AUDIO_STATE) {
+            status = it
         }
     }
 }
