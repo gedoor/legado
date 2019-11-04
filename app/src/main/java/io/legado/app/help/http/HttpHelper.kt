@@ -82,11 +82,13 @@ object HttpHelper {
             }
             webView.callback = object : AjaxWebView.Callback() {
                 override fun onResult(result: String) {
-                    block.resume(result)
+                    if (!block.isCompleted)
+                        block.resume(result)
                 }
 
                 override fun onError(error: Throwable) {
-                    block.resume(error.localizedMessage)
+                    if (!block.isCompleted)
+                        block.resume(error.localizedMessage)
                 }
             }
             webView.load(params)
