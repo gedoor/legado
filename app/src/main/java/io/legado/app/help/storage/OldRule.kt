@@ -114,6 +114,7 @@ object OldRule {
         }
         url = url.replace("{", "<").replace("}", ">")
         url = url.replace("searchKey", "{{key}}")
+        url = url.replace("<?searchPage([-+]1)>?".toRegex(), "{{page$1}}")
         url = url.replace("searchPage", "{{page}}")
         for ((index, item) in jsList.withIndex()) {
             url = url.replace("$$index", item.replace("searchKey", "key").replace("searchPage", "page"))
