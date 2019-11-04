@@ -25,6 +25,8 @@ import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.postEvent
+import kotlinx.coroutines.launch
+import org.jetbrains.anko.toast
 
 
 class AudioPlayService : BaseService(),
@@ -99,10 +101,16 @@ class AudioPlayService : BaseService(),
 
     private fun play(url: String) {
         if (requestFocus()) {
-            postEvent(Bus.AUDIO_STATE, Status.PLAY)
-            mediaPlayer.reset()
-            mediaPlayer.setDataSource(url)
-            mediaPlayer.prepareAsync()
+            try {
+                postEvent(Bus.AUDIO_STATE, Status.PLAY)
+                mediaPlayer.reset()
+                mediaPlayer.setDataSource(url)
+                mediaPlayer.prepareAsync()
+            } catch (e: Exception) {
+                launch {
+                    toast(e.localizedMessage + " " + url)
+                }
+            }
         }
     }
 
