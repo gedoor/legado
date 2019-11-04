@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:contentDescription="@string/read_aloud"
+            android:contentDescription="@string/audio_play"
             android:src="@drawable/ic_play_24dp"
             android:tint="@color/tv_text_default"
             app:backgroundTint="@color/background_menu"

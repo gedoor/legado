@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.service.help
 
 import android.content.Context
 import android.content.Intent
@@ -28,14 +28,14 @@ object ReadAloud {
         dataKey: String,
         play: Boolean = true
     ) {
-        val readAloudIntent = Intent(context, aloudClass)
-        readAloudIntent.action = Action.play
-        readAloudIntent.putExtra("title", title)
-        readAloudIntent.putExtra("subtitle", subtitle)
-        readAloudIntent.putExtra("pageIndex", pageIndex)
-        readAloudIntent.putExtra("dataKey", dataKey)
-        readAloudIntent.putExtra("play", play)
-        context.startService(readAloudIntent)
+        val intent = Intent(context, aloudClass)
+        intent.action = Action.play
+        intent.putExtra("title", title)
+        intent.putExtra("subtitle", subtitle)
+        intent.putExtra("pageIndex", pageIndex)
+        intent.putExtra("dataKey", dataKey)
+        intent.putExtra("play", play)
+        context.startService(intent)
     }
 
     fun pause(context: Context) {

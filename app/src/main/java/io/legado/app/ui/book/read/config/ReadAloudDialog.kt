@@ -11,8 +11,8 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
-import io.legado.app.help.ReadAloud
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*

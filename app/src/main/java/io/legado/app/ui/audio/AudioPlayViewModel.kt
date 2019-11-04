@@ -85,7 +85,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao().insert(*cList.toTypedArray())
                             chapterSize = cList.size
-                            callBack?.loadContent()
                         } else {
                             changeDruChapterIndex(cList)
                         }
@@ -106,22 +105,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         contentLoadFinish(chapter, it)
                         removeLoading(chapter.index)
                     } ?: download(book, chapter)
-                } ?: removeLoading(index)
-            }.onError {
-                removeLoading(index)
-            }
-        }
-    }
-
-    private fun download(book: Book, index: Int) {
-        if (addLoading(index)) {
-            execute {
-                App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-                    if (BookHelp.hasContent(book, chapter)) {
-                        removeLoading(chapter.index)
-                    } else {
-                        download(book, chapter)
-                    }
                 } ?: removeLoading(index)
             }.onError {
                 removeLoading(index)
@@ -216,8 +199,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     }
 
     interface CallBack {
-        fun loadContent()
         fun contentLoadFinish(bookChapter: BookChapter, content: String)
-        fun upContent()
     }
 }

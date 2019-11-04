@@ -13,9 +13,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.Bus
-import io.legado.app.help.ReadAloud
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
