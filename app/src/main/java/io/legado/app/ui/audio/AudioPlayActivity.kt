@@ -37,13 +37,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     private fun initView() {
         fab_play_stop.onClick {
-            when (status) {
-                Status.PLAY -> AudioPlay.pause(this)
-                Status.PAUSE -> AudioPlay.resume(this)
-                else -> viewModel.bookData.value?.let {
-                    viewModel.loadContent(it, viewModel.durChapterIndex)
-                }
-            }
+            playButton()
         }
         fab_play_stop.onLongClick {
             AudioPlay.stop(this)
@@ -80,6 +74,16 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             .setAsDrawable(iv_cover)
     }
 
+    private fun playButton() {
+        when (status) {
+            Status.PLAY -> AudioPlay.pause(this)
+            Status.PAUSE -> AudioPlay.resume(this)
+            else -> viewModel.bookData.value?.let {
+                viewModel.loadContent(it, viewModel.durChapterIndex)
+            }
+        }
+    }
+
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
         AudioPlay.play(
             this,
@@ -94,6 +98,9 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     }
 
     override fun observeLiveBus() {
+        observeEvent<Boolean>(Bus.AUDIO_PLAY_BUTTON) {
+            playButton()
+        }
         observeEvent<Int>(Bus.AUDIO_NEXT) {
             viewModel.moveToNext()
         }

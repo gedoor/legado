@@ -34,7 +34,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
 
         private fun readAloud(context: Context) {
             if (ActivityHelp.isExist(AudioPlayActivity::class.java)) {
-                postEvent(Bus.READ_ALOUD_BUTTON, true)
+                postEvent(Bus.AUDIO_PLAY_BUTTON, true)
             } else if (!ActivityHelp.isExist(ReadBookActivity::class.java)) {
                 val intent = Intent(context, ReadBookActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
