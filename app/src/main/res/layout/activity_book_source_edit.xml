@@ -33,12 +33,12 @@
             android:checked="true"
             android:text="@string/find" />
 
-        <io.legado.app.lib.theme.view.ATECheckBox
-            android:id="@+id/cb_is_audio"
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/sp_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/audio" />
+            android:entries="@array/book_type"
+            app:theme="@style/Spinner" />
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout

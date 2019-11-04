@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="book_type">
+        <item>文本</item>
+        <item>音频</item>
+    </string-array>
+
     <string-array name="tts_speech_per">
         <item>度小美</item>
         <item>度小宇</item>

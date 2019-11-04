@@ -1,5 +1,7 @@
 <resources>
 
+    <style name="Spinner" parent="android:Theme.Holo" />
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
         <item name="overlapAnchor">false</item>
         <item name="colorAccent">@color/md_grey_100</item>

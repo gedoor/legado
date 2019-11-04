@@ -50,6 +50,8 @@
 
     <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert"/>
 
+    <style name="Spinner" parent="android:Theme.Holo.Light" />
+
     //**************************************************************System
     Style******************************************************************************//
 
