@@ -16,6 +16,7 @@ import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play),
     AudioPlayViewModel.CallBack {
@@ -43,6 +44,10 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
                     viewModel.loadContent(it, viewModel.durChapterIndex)
                 }
             }
+        }
+        fab_play_stop.onLongClick {
+            AudioPlay.stop(this)
+            true
         }
         iv_skip_next.onClick {
 
@@ -97,6 +102,11 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         }
         observeEvent<Int>(Bus.AUDIO_STATE) {
             status = it
+            if (status == Status.PLAY) {
+                fab_play_stop.setImageResource(R.drawable.ic_pause_24dp)
+            } else {
+                fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
+            }
         }
         observeEvent<Int>(Bus.AUDIO_PROGRESS) {
             if (!adjustProgress) player_progress.progress = it
