@@ -64,6 +64,7 @@ class AudioPlayService : BaseService(),
         mediaPlayer.setOnCompletionListener(this)
         initMediaSession()
         initBroadcastReceiver()
+        upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         launch(IO) {
             while (isActive) {
@@ -95,6 +96,7 @@ class AudioPlayService : BaseService(),
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
+        mediaPlayer.release()
         mediaSessionCompat?.release()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         postEvent(Bus.AUDIO_STATE, Status.STOP)
@@ -114,6 +116,7 @@ class AudioPlayService : BaseService(),
         mediaPlayer.pause()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(Bus.AUDIO_STATE, Status.PAUSE)
+        upNotification()
     }
 
     private fun resume() {
@@ -121,6 +124,7 @@ class AudioPlayService : BaseService(),
         mediaPlayer.start()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(Bus.AUDIO_STATE, Status.PLAY)
+        upNotification()
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
