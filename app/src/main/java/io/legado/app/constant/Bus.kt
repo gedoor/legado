@@ -10,6 +10,7 @@ object Bus {
     const val BATTERY_CHANGED = "batteryChanged"
     const val TIME_CHANGED = "timeChanged"
     const val READ_ALOUD_BUTTON = "readAloudButton"
+    const val AUDIO_PLAY_BUTTON = "audioPlayButton"
     const val UP_CONFIG = "upConfig"
     const val OPEN_CHAPTER = "openChapter"
     const val REPLACE = "replace"

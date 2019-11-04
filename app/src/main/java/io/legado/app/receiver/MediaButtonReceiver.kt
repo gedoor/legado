@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.KeyEvent
 import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
+import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.postEvent
 
@@ -32,7 +33,9 @@ class MediaButtonReceiver : BroadcastReceiver() {
         }
 
         private fun readAloud(context: Context) {
-            if (!ActivityHelp.isExist(ReadBookActivity::class.java)) {
+            if (ActivityHelp.isExist(AudioPlayActivity::class.java)) {
+                postEvent(Bus.READ_ALOUD_BUTTON, true)
+            } else if (!ActivityHelp.isExist(ReadBookActivity::class.java)) {
                 val intent = Intent(context, ReadBookActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.putExtra("readAloud", true)
