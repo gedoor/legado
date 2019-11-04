@@ -129,6 +129,7 @@ class BookSourceEditActivity :
         bookSource?.let {
             cb_is_enable.isChecked = it.enabled
             cb_is_enable_find.isChecked = it.enabledExplore
+            sp_type.setSelection(bookSource.bookSourceType)
         }
         //基本信息
         sourceEntities.clear()
@@ -225,6 +226,7 @@ class BookSourceEditActivity :
         val source = viewModel.sourceLiveData.value ?: BookSource()
         source.enabled = cb_is_enable.isChecked
         source.enabledExplore = cb_is_enable_find.isChecked
+        source.bookSourceType = sp_type.selectedItemPosition
         viewModel.sourceLiveData.value?.let {
             source.customOrder = it.customOrder
             source.weight = it.weight
