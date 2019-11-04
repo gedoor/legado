@@ -128,6 +128,7 @@ class AudioPlayService : BaseService(),
         pause = false
         mediaPlayer.start()
         mediaPlayer.seekTo(position)
+        handler.removeCallbacks(mpRunnable)
         handler.postDelayed(mpRunnable, 1000)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(Bus.AUDIO_STATE, Status.PLAY)
@@ -147,6 +148,7 @@ class AudioPlayService : BaseService(),
         mp?.start()
         mp?.seekTo(position)
         postEvent(Bus.AUDIO_SIZE, mp?.duration)
+        handler.removeCallbacks(mpRunnable)
         handler.post(mpRunnable)
     }
 
