@@ -78,6 +78,7 @@ data class Book(
             bookUrl = bookUrl,
             origin = origin,
             originName = originName,
+            type = type,
             wordCount = wordCount,
             latestChapterTitle = latestChapterTitle,
             coverUrl = coverUrl,

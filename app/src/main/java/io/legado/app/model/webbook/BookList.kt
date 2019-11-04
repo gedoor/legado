@@ -110,6 +110,7 @@ object BookList {
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
         searchBook.originOrder = bookSource.customOrder
+        searchBook.type = bookSource.bookSourceType
         analyzeRule.setBook(searchBook)
         with(bookSource.getBookInfoRule()) {
             init?.let {
@@ -164,6 +165,7 @@ object BookList {
         val searchBook = SearchBook()
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
+        searchBook.type = bookSource.bookSourceType
         searchBook.originOrder = bookSource.customOrder
         analyzeRule.setBook(searchBook)
         analyzeRule.setContent(item)
