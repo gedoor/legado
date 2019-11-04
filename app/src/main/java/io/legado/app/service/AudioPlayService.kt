@@ -25,10 +25,6 @@ import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 
 class AudioPlayService : BaseService(),
@@ -52,7 +48,8 @@ class AudioPlayService : BaseService(),
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private var position = 0
-    private val dsRunnable: Runnable? = Runnable { doDs() }
+    private val dsRunnable: Runnable = Runnable { doDs() }
+    private var mpRunnable: Runnable = Runnable { upPlayProgress() }
 
     override fun onCreate() {
         super.onCreate()
@@ -66,12 +63,6 @@ class AudioPlayService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        launch(IO) {
-            while (isActive) {
-                delay(1000)
-                postEvent(Bus.AUDIO_PROGRESS, mediaPlayer.currentPosition)
-            }
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -131,6 +122,7 @@ class AudioPlayService : BaseService(),
         if (pause) return
         mp?.start()
         postEvent(Bus.AUDIO_PROGRESS, mp?.duration)
+        handler.postDelayed(mpRunnable, 1000)
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
@@ -138,6 +130,7 @@ class AudioPlayService : BaseService(),
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
+        handler.removeCallbacks(mpRunnable)
         postEvent(Bus.AUDIO_NEXT, 1)
     }
 
@@ -162,6 +155,11 @@ class AudioPlayService : BaseService(),
         }
         postEvent(Bus.TTS_DS, timeMinute)
         upNotification()
+    }
+
+    private fun upPlayProgress() {
+        postEvent(Bus.AUDIO_PROGRESS, mediaPlayer.currentPosition)
+        handler.postDelayed(mpRunnable, 1000)
     }
 
     /**
