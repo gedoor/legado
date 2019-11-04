@@ -17,49 +17,50 @@ class BooksAdapter(context: Context, private val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_bookshelf_list) {
 
 
-    override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) =
+    override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
-        if (payloads.isEmpty()) {
-            ATH.applyBackgroundTint(this)
-            tv_name.text = item.name
-            tv_author.text = item.author
-            tv_read.text = item.durChapterTitle
-            tv_last.text = item.latestChapterTitle
-            item.getDisplayCover()?.let {
-                ImageLoader.load(context, it)//Glide自动识别http://和file://
-                    .placeholder(R.drawable.image_cover_default)
-                    .error(R.drawable.image_cover_default)
-                    .centerCrop()
-                    .setAsDrawable(iv_cover)
-            }
-            onClick { callBack.open(item) }
-            onLongClick {
-                callBack.openBookInfo(item)
-                true
-            }
-            if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
-                bv_unread.invisible()
-                rl_loading.show()
+            if (payloads.isEmpty()) {
+                ATH.applyBackgroundTint(this)
+                tv_name.text = item.name
+                tv_author.text = item.author
+                tv_read.text = item.durChapterTitle
+                tv_last.text = item.latestChapterTitle
+                item.getDisplayCover()?.let {
+                    ImageLoader.load(context, it)//Glide自动识别http://和file://
+                        .placeholder(R.drawable.image_cover_default)
+                        .error(R.drawable.image_cover_default)
+                        .centerCrop()
+                        .setAsDrawable(iv_cover)
+                }
+                onClick { callBack.open(item) }
+                onLongClick {
+                    callBack.openBookInfo(item)
+                    true
+                }
+                if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
+                    bv_unread.invisible()
+                    rl_loading.show()
+                } else {
+                    rl_loading.hide()
+                    bv_unread.setBadgeCount(item.getUnreadChapterNum())
+                    bv_unread.setHighlight(item.lastCheckCount > 0)
+                }
             } else {
-                rl_loading.hide()
-                bv_unread.setBadgeCount(item.getUnreadChapterNum())
-                bv_unread.setHighlight(item.lastCheckCount > 0)
-            }
-        } else {
-            when (payloads[0]) {
-                5 -> {
-                    if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
-                        bv_unread.invisible()
-                        rl_loading.show()
-                    } else {
-                        rl_loading.hide()
-                        bv_unread.setBadgeCount(item.getUnreadChapterNum())
-                        bv_unread.setHighlight(item.lastCheckCount > 0)
+                when (payloads[0]) {
+                    5 -> {
+                        if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
+                            bv_unread.invisible()
+                            rl_loading.show()
+                        } else {
+                            rl_loading.hide()
+                            bv_unread.setBadgeCount(item.getUnreadChapterNum())
+                            bv_unread.setHighlight(item.lastCheckCount > 0)
+                        }
                     }
                 }
             }
         }
-        }
+    }
 
     fun notification(bookUrl: String) {
         for (i in 0 until itemCount) {

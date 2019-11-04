@@ -11,7 +11,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
-import io.legado.app.ui.book.read.ReadBookViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -19,7 +18,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     var inBookshelf = false
     var bookData = MutableLiveData<Book>()
     var chapterSize = 0
-    var callBack: ReadBookViewModel.CallBack? = null
+    var callBack: CallBack? = null
     var durChapterIndex = 0
     var durPageIndex = 0
     var isLocalBook = true
@@ -55,7 +54,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         durChapterIndex = count - 1
                     }
                     chapterSize = count
-                    callBack?.loadContent()
                 }
             }
             saveRead(book)
@@ -155,7 +153,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 App.db.bookDao().delete(it.bookUrl)
             }
             withContext(Dispatchers.Main) {
-                callBack?.upContent()
+
             }
             App.db.bookDao().insert(book)
             bookData.postValue(book)
@@ -182,7 +180,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             chapterSize = chapters.size
-            callBack?.loadContent()
         }
     }
 

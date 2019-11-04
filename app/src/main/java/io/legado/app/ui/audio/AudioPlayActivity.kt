@@ -2,11 +2,14 @@ package io.legado.app.ui.audio
 
 import android.os.Bundle
 import android.widget.SeekBar
+import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.ImageLoader
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
@@ -24,6 +27,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
+        viewModel.callBack = this
+        viewModel.bookData.observe(this, Observer { upView(it) })
         viewModel.initData(intent)
         initView()
     }
@@ -57,6 +62,15 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
                 AudioPlay.upProgress(this@AudioPlayActivity, player_progress.progress)
             }
         })
+    }
+
+    private fun upView(book: Book) {
+        actionBar?.title = book.name
+        ImageLoader.load(this, book.getDisplayCover())
+            .placeholder(R.drawable.image_cover_default)
+            .error(R.drawable.image_cover_default)
+            .centerCrop()
+            .setAsDrawable(iv_cover)
     }
 
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
