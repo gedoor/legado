@@ -19,6 +19,7 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
+import io.legado.app.constant.Status
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
@@ -96,10 +97,12 @@ class AudioPlayService : BaseService(),
         isRun = false
         mediaSessionCompat?.release()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
+        postEvent(Bus.AUDIO_STATE, Status.STOP)
     }
 
     private fun play(url: String) {
         if (requestFocus()) {
+            postEvent(Bus.AUDIO_STATE, Status.PLAY)
             mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
@@ -110,12 +113,14 @@ class AudioPlayService : BaseService(),
         this.pause = pause
         mediaPlayer.pause()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        postEvent(Bus.AUDIO_STATE, Status.PAUSE)
     }
 
     private fun resume() {
         pause = false
         mediaPlayer.start()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        postEvent(Bus.AUDIO_STATE, Status.PLAY)
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
