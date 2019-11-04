@@ -21,6 +21,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:id="@+id/vw_bg"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_gradient"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/iv_cover"
         android:layout_width="260dp"
