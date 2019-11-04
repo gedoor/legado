@@ -116,6 +116,7 @@ class AudioPlayService : BaseService(),
 
     private fun pause(pause: Boolean) {
         this.pause = pause
+        handler.removeCallbacks(mpRunnable)
         position = mediaPlayer.currentPosition
         mediaPlayer.pause()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
@@ -127,6 +128,7 @@ class AudioPlayService : BaseService(),
         pause = false
         mediaPlayer.start()
         mediaPlayer.seekTo(position)
+        handler.postDelayed(mpRunnable, 1000)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(Bus.AUDIO_STATE, Status.PLAY)
         upNotification()
