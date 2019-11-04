@@ -159,8 +159,7 @@ class AjaxWebView {
                 handler.obtainMessage(
                     MSG_ERROR,
                     Exception(error.description.toString())
-                )
-                    .sendToTarget()
+                ).sendToTarget()
             }
         }
 
@@ -204,8 +203,7 @@ class AjaxWebView {
                 handler.obtainMessage(
                     MSG_ERROR,
                     Exception(error.description.toString())
-                )
-                    .sendToTarget()
+                ).sendToTarget()
             }
         }
 
