@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
-import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -24,7 +23,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     var callBack: CallBack? = null
     var durChapterIndex = 0
     var durPageIndex = 0
-    var isLocalBook = true
     var webBook: WebBook? = null
     private val loadingChapters = arrayListOf<Int>()
 
@@ -42,7 +40,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 coverData.postValue(book.getDisplayCover())
                 durChapterIndex = book.durChapterIndex
                 durPageIndex = book.durChapterPos
-                isLocalBook = book.origin == BookType.local
                 App.db.bookSourceDao().getBookSource(book.origin)?.let {
                     webBook = WebBook(it)
                 }
@@ -220,6 +217,16 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 book.durChapterPos = durPageIndex
                 App.db.bookDao().update(book)
             }
+        }
+    }
+
+    fun removeFromBookshelf(success: (() -> Unit)?) {
+        execute {
+            book?.let {
+                App.db.bookDao().delete(it.bookUrl)
+            }
+        }.onSuccess {
+            success?.invoke()
         }
     }
 

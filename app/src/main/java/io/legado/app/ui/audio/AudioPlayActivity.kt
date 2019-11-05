@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.KeyEvent
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
@@ -15,15 +17,24 @@ import io.legado.app.constant.Status
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
+import io.legado.app.help.storage.Backup
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.main.MainActivity
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.snackbar
 import kotlinx.android.synthetic.main.activity_audio_play.*
+import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 
 class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play),
@@ -136,12 +147,65 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             }
         }
         observeEvent<Int>(Bus.AUDIO_PROGRESS) {
+            viewModel.durPageIndex = it
             if (!adjustProgress) player_progress.progress = it
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
         observeEvent<Int>(Bus.AUDIO_SIZE) {
             player_progress.max = it
             tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+        }
+    }
+
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                page_view.snackbar(R.string.to_backstage, R.string.ok) {
+                    startActivity<MainActivity>()
+                }
+                return true
+            }
+        }
+        return super.onKeyLongPress(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                event?.let {
+                    if ((event.flags and KeyEvent.FLAG_CANCELED_LONG_PRESS == 0)
+                        && event.isTracking
+                        && !event.isCanceled
+                    ) {
+                        if (status == Status.PLAY) {
+                            AudioPlay.pause(this)
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+    override fun finish() {
+        viewModel.book?.let {
+            if (!viewModel.inBookshelf) {
+                this.alert(title = getString(R.string.add_to_shelf)) {
+                    message = getString(R.string.check_add_bookshelf, it.name)
+                    okButton { viewModel.inBookshelf = true }
+                    noButton { viewModel.removeFromBookshelf { super.finish() } }
+                }.show().applyTint()
+            } else {
+                super.finish()
+            }
+        } ?: super.finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!BuildConfig.DEBUG) {
+            Backup.autoBackup()
         }
     }
 

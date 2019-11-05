@@ -556,5 +556,6 @@
     <string name="book_type">类型:</string>
     <string name="book_type_text">文本</string>
     <string name="book_type_audio">音频</string>
+    <string name="to_backstage">转到后台</string>
 
 </resources>

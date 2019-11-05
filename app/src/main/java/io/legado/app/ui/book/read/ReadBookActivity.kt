@@ -199,7 +199,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
-                page_view.snackbar("转到后台", "确定") {
+                page_view.snackbar(R.string.to_backstage, R.string.ok) {
                     startActivity<MainActivity>()
                 }
                 return true
