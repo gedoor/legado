@@ -39,6 +39,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             }
             book?.let { book ->
                 titleData.postValue(book.name)
+                coverData.postValue(book.getDisplayCover())
                 durChapterIndex = book.durChapterIndex
                 durPageIndex = book.durChapterPos
                 isLocalBook = book.origin == BookType.local
