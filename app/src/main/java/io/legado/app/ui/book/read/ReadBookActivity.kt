@@ -74,7 +74,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         setSupportActionBar(toolbar)
         initView()
         viewModel.callBack = this
-        viewModel.bookData.observe(this, Observer { title_bar.title = it.name })
+        viewModel.titleDate.observe(this, Observer { title_bar.title = it })
         viewModel.initData(intent)
     }
 
@@ -141,12 +141,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         when (item.itemId) {
             R.id.menu_change_source -> {
                 read_menu.runMenuOut()
-                viewModel.bookData.value?.let {
+                viewModel.book?.let {
                     ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
                 }
             }
             R.id.menu_refresh -> {
-                viewModel.bookData.value?.let {
+                viewModel.book?.let {
                     viewModel.curTextChapter = null
                     page_view.upContent()
                     viewModel.refreshContent(it)
@@ -255,7 +255,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 加载章节内容
      */
     override fun loadContent() {
-        viewModel.bookData.value?.let {
+        viewModel.book?.let {
             viewModel.loadContent(it, viewModel.durChapterIndex)
             viewModel.loadContent(it, viewModel.durChapterIndex + 1)
             viewModel.loadContent(it, viewModel.durChapterIndex - 1)
@@ -266,7 +266,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 加载章节内容, index章节序号
      */
     override fun loadContent(index: Int) {
-        viewModel.bookData.value?.let {
+        viewModel.book?.let {
             viewModel.loadContent(it, index)
         }
     }
@@ -337,10 +337,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override val curOrigin: String?
-        get() = viewModel.bookData.value?.origin
+        get() = viewModel.book?.origin
 
     override val oldBook: Book?
-        get() = viewModel.bookData.value
+        get() = viewModel.book
 
     override fun changeTo(book: Book) {
         viewModel.changeTo(book)
@@ -436,7 +436,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun openChapterList() {
-        viewModel.bookData.value?.let {
+        viewModel.book?.let {
             startActivityForResult<ChapterListActivity>(
                 requestCodeChapterList,
                 Pair("bookUrl", it.bookUrl)
@@ -475,7 +475,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 朗读
      */
     private fun readAloud(play: Boolean = true) {
-        val book = viewModel.bookData.value
+        val book = viewModel.book
         val textChapter = viewModel.curTextChapter
         if (book != null && textChapter != null) {
             val key = IntentDataHelp.putData(textChapter)
@@ -523,7 +523,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun finish() {
-        viewModel.bookData.value?.let {
+        viewModel.book?.let {
             if (!viewModel.inBookshelf) {
                 this.alert(title = getString(R.string.add_to_shelf)) {
                     message = getString(R.string.check_add_bookshelf, it.name)

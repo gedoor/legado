@@ -21,8 +21,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
+    var titleDate = MutableLiveData<String>()
+    var book: Book? = null
     var inBookshelf = false
-    var bookData = MutableLiveData<Book>()
     var chapterSize = 0
     var callBack: CallBack? = null
     var durChapterIndex = 0
@@ -38,22 +39,23 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let {
-                setBook(it)
+                initBook(it)
             } ?: intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
-                    setBook(book)
+                    initBook(book)
                 }
             } ?: App.db.bookDao().lastReadBook?.let {
-                setBook(it)
+                initBook(it)
             }
         }
     }
 
-    private fun setBook(book: Book) {
+    private fun initBook(book: Book) {
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
-        bookData.postValue(book)
+        this.book = book
+        titleDate.postValue(book.name)
         App.db.bookSourceDao().getBookSource(book.origin)?.let {
             webBook = WebBook(it)
         }
@@ -72,7 +74,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             callBack?.loadContent()
         }
         if (inBookshelf) {
-            saveRead(book)
+            saveRead()
         }
     }
 
@@ -117,7 +119,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         prevTextChapter = curTextChapter
         curTextChapter = nextTextChapter
         nextTextChapter = null
-        bookData.value?.let {
+        book?.let {
             if (curTextChapter == null) {
                 loadContent(it, durChapterIndex)
             } else if (upContent) {
@@ -127,7 +129,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             launch(IO) {
                 for (i in 2..10) {
                     delay(100)
-                    bookData.value?.let { book ->
+                    book?.let { book ->
                         download(book, durChapterIndex + i)
                     }
                 }
@@ -140,7 +142,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         nextTextChapter = curTextChapter
         curTextChapter = prevTextChapter
         prevTextChapter = null
-        bookData.value?.let {
+        book?.let {
             if (curTextChapter == null) {
                 loadContent(it, durChapterIndex)
             } else if (upContent) {
@@ -150,7 +152,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             launch(IO) {
                 for (i in -5..-2) {
                     delay(100)
-                    bookData.value?.let { book ->
+                    book?.let { book ->
                         download(book, durChapterIndex + i)
                     }
                 }
@@ -225,19 +227,19 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
                 val c = BookHelp.disposeContent(
                     chapter.title,
-                    bookData.value!!.name,
+                    book!!.name,
                     webBook?.bookSource?.bookSourceUrl,
                     content,
-                    bookData.value!!.useReplaceRule
+                    book!!.useReplaceRule
                 )
                 callBack?.contentLoadFinish(chapter, c)
             }
         }
     }
 
-    fun changeTo(book: Book) {
+    fun changeTo(book1: Book) {
         execute {
-            bookData.value?.let {
+            book?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
             prevTextChapter = null
@@ -246,15 +248,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             withContext(Main) {
                 callBack?.upContent()
             }
-            App.db.bookDao().insert(book)
-            bookData.postValue(book)
-            App.db.bookSourceDao().getBookSource(book.origin)?.let {
+            App.db.bookDao().insert(book1)
+            book = book1
+            App.db.bookSourceDao().getBookSource(book1.origin)?.let {
                 webBook = WebBook(it)
             }
-            if (book.tocUrl.isEmpty()) {
-                loadBookInfo(book) { upChangeDurChapterIndex(book, it) }
+            if (book1.tocUrl.isEmpty()) {
+                loadBookInfo(book1) { upChangeDurChapterIndex(book1, it) }
             } else {
-                loadChapterList(book) { upChangeDurChapterIndex(book, it) }
+                loadChapterList(book1) { upChangeDurChapterIndex(book1, it) }
             }
         }
     }
@@ -291,7 +293,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         callBack?.loadContent()
     }
 
-    fun saveRead(book: Book? = bookData.value) {
+    fun saveRead() {
         execute {
             book?.let { book ->
                 book.lastCheckCount = 0
@@ -308,7 +310,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
-            bookData.value?.let {
+            book?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
         }.onSuccess {
@@ -318,7 +320,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun upBookSource() {
         execute {
-            bookData.value?.let { book ->
+            book?.let { book ->
                 App.db.bookSourceDao().getBookSource(book.origin)?.let {
                     webBook = WebBook(it)
                 }
