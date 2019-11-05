@@ -2,9 +2,11 @@ package io.legado.app.ui.audio
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -88,11 +90,15 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             .centerCrop()
             .into(iv_cover)
         ImageLoader.load(this, path)
-            .placeholder(R.drawable.image_cover_default)
-            .error(R.drawable.image_cover_default)
+            .thumbnail(defaultCover())
             .centerCrop()
             .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
             .into(iv_bg)
+    }
+
+    private fun defaultCover(): RequestBuilder<Drawable> {
+        return ImageLoader.load(this, R.drawable.image_cover_default)
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
     }
 
     private fun playButton() {
