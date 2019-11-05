@@ -30,7 +30,7 @@ class BooksAdapter(context: Context, private val callBack: CallBack) :
                         .placeholder(R.drawable.image_cover_default)
                         .error(R.drawable.image_cover_default)
                         .centerCrop()
-                        .setAsDrawable(iv_cover)
+                        .into(iv_cover)
                 }
                 onClick { callBack.open(item) }
                 onLongClick {

@@ -72,7 +72,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                     .placeholder(R.drawable.image_cover_default)
                     .error(R.drawable.image_cover_default)
                     .centerCrop()
-                    .setAsDrawable(iv_cover)
+                    .into(iv_cover)
             }
             onClick {
                 callBack.showBookInfo(searchBook.name, searchBook.author)
@@ -89,7 +89,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                         .placeholder(R.drawable.image_cover_default)
                         .error(R.drawable.image_cover_default)
                         .centerCrop()
-                        .setAsDrawable(iv_cover)
+                        .into(iv_cover)
                 }
                 3 -> {
                     val kinds = searchBook.getKindList()
@@ -136,6 +136,8 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                 }
                 5 -> tv_introduce.text =
                     context.getString(R.string.intro_show, searchBook.intro)
+                else -> {
+                }
             }
         }
     }
