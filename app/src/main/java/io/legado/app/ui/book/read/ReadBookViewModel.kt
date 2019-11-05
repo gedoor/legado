@@ -51,11 +51,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun initBook(book: Book) {
+        this.book = book
+        titleDate.postValue(book.name)
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
-        this.book = book
-        titleDate.postValue(book.name)
         App.db.bookSourceDao().getBookSource(book.origin)?.let {
             webBook = WebBook(it)
         }
