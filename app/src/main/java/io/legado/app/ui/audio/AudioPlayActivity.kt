@@ -91,7 +91,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
             .centerCrop()
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 20)))
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
             .into(iv_bg)
     }
 
