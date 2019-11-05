@@ -64,6 +64,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
+    private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
     override var readAloudStatus = Status.STOP
@@ -436,7 +437,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun openChapterList() {
         viewModel.bookData.value?.let {
-            startActivity<ChapterListActivity>(Pair("bookUrl", it.bookUrl))
+            startActivityForResult<ChapterListActivity>(
+                requestCodeChapterList,
+                Pair("bookUrl", it.bookUrl)
+            )
         }
     }
 
@@ -510,6 +514,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 requestCodeEditSource -> viewModel.upBookSource()
+                requestCodeChapterList ->
+                    data?.getIntExtra("index", viewModel.durChapterIndex)?.let {
+                        viewModel.openChapter(it)
+                    }
             }
         }
     }
@@ -552,7 +560,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEvent<BookChapter>(Bus.OPEN_CHAPTER) {
-            viewModel.openChapter(it)
+            viewModel.openChapter(it.index)
             page_view.upContent()
         }
         observeEvent<Boolean>(Bus.READ_ALOUD_BUTTON) {

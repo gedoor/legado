@@ -1,5 +1,7 @@
 package io.legado.app.ui.chapterlist
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -9,11 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
-import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.getViewModelOfActivity
-import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -83,7 +83,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     override fun openChapter(bookChapter: BookChapter) {
-        postEvent(Bus.OPEN_CHAPTER, bookChapter)
+        activity?.setResult(RESULT_OK, Intent().putExtra("index", bookChapter.index))
         activity?.finish()
     }
 
