@@ -17,13 +17,12 @@ import java.security.MessageDigest
 /**
  * 模糊
  */
-class BlurTransformation(context: Context, private val radius: Int) : BitmapTransformation() {
-    private val rs: RenderScript = RenderScript.create(context)
+class BlurTransformation(val context: Context, private val radius: Int) : BitmapTransformation() {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
         val blurredBitmap = toTransform.copy(Bitmap.Config.ARGB_8888, true)
-
+        val rs: RenderScript = RenderScript.create(context)
         // Allocate memory for Renderscript to work with
         //分配用于渲染脚本的内存
         val input = Allocation.createFromBitmap(
@@ -50,6 +49,7 @@ class BlurTransformation(context: Context, private val radius: Int) : BitmapTran
         // Copy the output to the blurred bitmap
         //将输出复制到模糊的位图
         output.copyTo(blurredBitmap)
+        rs.destroy()
 
         return blurredBitmap
     }
