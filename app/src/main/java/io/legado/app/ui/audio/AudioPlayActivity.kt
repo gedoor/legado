@@ -77,8 +77,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         ImageLoader.load(this, book.getDisplayCover())
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
-            .centerCrop()
             .bitmapTransform(BlurTransformation(this, 25))
+            .centerCrop()
             .setAsDrawable(iv_bg)
     }
 
