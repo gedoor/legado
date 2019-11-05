@@ -191,6 +191,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun moveToPrev() {
         if (durChapterIndex > 0) {
             durChapterIndex--
+            durPageIndex = 0
             book?.durChapterIndex = durChapterIndex
             saveRead()
             loadContent(durChapterIndex)
@@ -200,6 +201,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun moveToNext() {
         if (durChapterIndex < chapterSize - 1) {
             durChapterIndex++
+            durPageIndex = 0
             book?.durChapterIndex = durChapterIndex
             saveRead()
             loadContent(durChapterIndex)
@@ -208,7 +210,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun saveRead() {
+    private fun saveRead() {
         execute {
             book?.let { book ->
                 book.lastCheckCount = 0

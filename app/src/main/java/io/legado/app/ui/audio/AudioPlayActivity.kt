@@ -204,6 +204,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun onDestroy() {
         super.onDestroy()
+        AudioPlay.stop(this)
         if (!BuildConfig.DEBUG) {
             Backup.autoBackup()
         }
