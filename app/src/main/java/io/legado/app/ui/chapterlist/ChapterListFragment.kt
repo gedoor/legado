@@ -45,14 +45,13 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initData() {
-        viewModel.bookDate.observe(viewLifecycleOwner, Observer {
-            loadBookFinish(it)
-        })
         viewModel.bookUrl?.let { bookUrl ->
             App.db.bookChapterDao().observeByBook(bookUrl).observe(viewLifecycleOwner, Observer {
                 adapter.setItems(it)
-                viewModel.bookDate.value?.let { book ->
-                    loadBookFinish(book)
+                viewModel.book?.let {
+                    durChapterIndex = it.durChapterIndex
+                    tv_current_chapter_info.text = it.durChapterTitle
+                    recycler_view.scrollToPosition(durChapterIndex)
                 }
             })
         }
@@ -66,16 +65,10 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             }
         }
         tv_current_chapter_info.onClick {
-            viewModel.bookDate.value?.let {
+            viewModel.book?.let {
                 recycler_view.scrollToPosition(it.durChapterIndex)
             }
         }
-    }
-
-    private fun loadBookFinish(book: Book) {
-        durChapterIndex = book.durChapterIndex
-        tv_current_chapter_info.text = book.durChapterTitle
-        recycler_view.scrollToPosition(durChapterIndex)
     }
 
     override fun durChapterIndex(): Int {
@@ -88,6 +81,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     override fun book(): Book? {
-        return viewModel.bookDate.value
+        return viewModel.book
     }
 }

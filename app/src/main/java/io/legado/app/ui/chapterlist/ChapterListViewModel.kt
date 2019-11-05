@@ -2,23 +2,21 @@ package io.legado.app.ui.chapterlist
 
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 
 class ChapterListViewModel(application: Application) : BaseViewModel(application) {
-
-    var bookDate = MutableLiveData<Book>()
     var bookUrl: String? = null
+    var book: Book? = null
 
-    fun loadBook() {
+    fun loadBook(success: () -> Unit) {
         execute {
             bookUrl?.let {
-                App.db.bookDao().getBook(it)?.let { book ->
-                    bookDate.postValue(book)
-                }
+                book = App.db.bookDao().getBook(it)
             }
+        }.onSuccess {
+            success()
         }
     }
 }
