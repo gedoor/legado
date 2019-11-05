@@ -53,4 +53,6 @@ interface BookDao {
     @Query("delete from books where bookUrl = :bookUrl")
     fun delete(bookUrl: String)
 
+    @Query("update books set durChapterPos = :pos where bookUrl = :bookUrl")
+    fun upProgress(bookUrl: String, pos: Int)
 }

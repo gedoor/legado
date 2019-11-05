@@ -248,7 +248,7 @@ class ReadStyleDialog : DialogFragment() {
             }
             ReadBookConfig.getConfig(i).apply {
                 when (bgType()) {
-                    2 -> ImageLoader.load(requireContext(), bgStr()).centerCrop().setAsDrawable(iv)
+                    2 -> ImageLoader.load(requireContext(), bgStr()).centerCrop().into(iv)
                     else -> iv.setImageDrawable(bgDrawable(100, 150))
                 }
             }

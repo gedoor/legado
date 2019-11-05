@@ -13,17 +13,23 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 
 import java.security.MessageDigest
+import kotlin.math.min
+import kotlin.math.roundToInt
+
 
 /**
  * 模糊
+ * @radius: 0..25
  */
 class BlurTransformation(context: Context, private val radius: Int) : BitmapTransformation() {
     private val rs: RenderScript = RenderScript.create(context)
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
-        val blurredBitmap = toTransform.copy(Bitmap.Config.ARGB_8888, true)
-
+        //图片缩小1/2
+        val width = (min(outWidth, toTransform.width) / 2f).roundToInt()
+        val height = (min(outHeight, toTransform.height) / 2f).roundToInt()
+        val blurredBitmap = Bitmap.createScaledBitmap(toTransform, width, height, false);
         // Allocate memory for Renderscript to work with
         //分配用于渲染脚本的内存
         val input = Allocation.createFromBitmap(
@@ -40,7 +46,7 @@ class BlurTransformation(context: Context, private val radius: Int) : BitmapTran
         script.setInput(input)
 
         // Set the blur radius
-        //设置模糊半径
+        //设置模糊半径0..25
         script.setRadius(radius.toFloat())
 
         // Start the ScriptIntrinsicBlur

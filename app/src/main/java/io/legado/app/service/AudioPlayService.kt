@@ -24,6 +24,7 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
@@ -73,7 +74,7 @@ class AudioPlayService : BaseService(),
                 Action.play -> {
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
-                    position = intent.getIntExtra("pageIndex", 0)
+                    position = intent.getIntExtra("position", 0)
                     play(intent.getStringExtra("url"))
                 }
                 Action.pause -> pause(true)
@@ -107,8 +108,10 @@ class AudioPlayService : BaseService(),
                 mediaPlayer.setDataSource(url)
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
+                LogUtils.d("AudioPlayService", e.localizedMessage + " " + url)
                 launch {
                     toast(e.localizedMessage + " " + url)
+                    stopSelf()
                 }
             }
         }
@@ -153,6 +156,9 @@ class AudioPlayService : BaseService(),
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        launch {
+            toast("error: $what $extra")
+        }
         return true
     }
 

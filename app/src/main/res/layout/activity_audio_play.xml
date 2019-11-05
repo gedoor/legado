@@ -33,10 +33,8 @@
         android:id="@+id/iv_cover"
         android:layout_width="260dp"
         android:layout_height="260dp"
-        android:layout_gravity="center"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
-        android:src="@drawable/image_cover_default"
         app:civ_border_width="2dp"
         app:civ_border_color="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
@@ -50,27 +48,33 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         app:layout_constraintBottom_toTopOf="@+id/ll_play_menu">
 
         <TextView
             android:id="@+id/tv_dur_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:ignore="RtlSymmetry" />
+            android:text="00:00"
+            android:textColor="@color/md_white_1000"
+            tools:ignore="HardcodedText,RtlSymmetry" />
 
         <io.legado.app.lib.theme.view.ATESeekBar
             android:id="@+id/player_progress"
             android:layout_width="0dp"
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:progressBackgroundTint="@color/md_dark_secondary" />
 
         <TextView
             android:id="@+id/tv_all_time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/md_white_1000"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
@@ -78,8 +82,8 @@
         android:id="@+id/ll_play_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">

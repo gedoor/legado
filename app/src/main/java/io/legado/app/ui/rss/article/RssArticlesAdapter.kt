@@ -28,7 +28,7 @@ class RssArticlesAdapter(context: Context, val callBack: CallBack) :
             } else {
                 image_view.visible()
                 ImageLoader.load(context, item.image)
-                    .setAsBitmap(image_view)
+                    .into(image_view)
             }
             if (item.read) {
                 tv_title.textColorResource = R.color.tv_text_summary

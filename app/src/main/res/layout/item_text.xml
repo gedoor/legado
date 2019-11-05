@@ -6,12 +6,10 @@
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
     android:background="@drawable/selector_fillet_btn_bg"
-    android:clickable="true"
     android:ellipsize="end"
-    android:focusable="true"
     android:gravity="center"
     android:padding="5dp"
-    android:singleLine="true"
+    android:maxLines="1"
     android:textColor="@color/tv_text_default"
     android:textSize="14sp"
     tools:ignore="UnusedAttribute" />

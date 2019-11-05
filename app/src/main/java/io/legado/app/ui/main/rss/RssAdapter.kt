@@ -19,7 +19,7 @@ class RssAdapter(context: Context, val callBack: CallBack) :
                 .centerCrop()
                 .placeholder(R.drawable.image_rss)
                 .error(R.drawable.image_rss)
-                .setAsBitmap(iv_icon)
+                .into(iv_icon)
             onClick { callBack.openRss(item) }
         }
     }

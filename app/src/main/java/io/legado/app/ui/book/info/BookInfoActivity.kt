@@ -89,7 +89,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 .placeholder(R.drawable.image_cover_default)
                 .error(R.drawable.image_cover_default)
                 .centerCrop()
-                .setAsDrawable(iv_cover)
+                .into(iv_cover)
         }
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {

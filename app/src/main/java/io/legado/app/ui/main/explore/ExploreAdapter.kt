@@ -73,6 +73,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                         kindList.map { kind ->
                             val tv = LayoutInflater.from(context)
                                 .inflate(R.layout.item_text, gl_child, false)
+                            gl_child.addView(tv)
                             tv.text_view.text = kind.title
                             tv.text_view.onClick {
                                 kind.url?.let { kindUrl ->
@@ -83,7 +84,6 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                                     )
                                 }
                             }
-                            gl_child.addView(tv)
                         }
                     }
                 }.onFinally {
