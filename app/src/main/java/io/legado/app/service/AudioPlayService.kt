@@ -154,6 +154,9 @@ class AudioPlayService : BaseService(),
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        launch {
+            toast("error: $what $extra")
+        }
         return true
     }
 
