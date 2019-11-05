@@ -5,11 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
+import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.chapterlist.ChapterListActivity
@@ -89,6 +91,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
             .centerCrop()
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 20)))
             .into(iv_bg)
     }
 
