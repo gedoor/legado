@@ -16,8 +16,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
+    var titleData = MutableLiveData<String>()
+    var coverData = MutableLiveData<String>()
+    var book: Book? = null
     var inBookshelf = false
-    var bookData = MutableLiveData<Book>()
     var chapterSize = 0
     var callBack: CallBack? = null
     var durChapterIndex = 0
@@ -30,16 +32,16 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         execute {
             inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             val bookUrl = intent.getStringExtra("bookUrl")
-            val book = if (!bookUrl.isNullOrEmpty()) {
+            book = if (!bookUrl.isNullOrEmpty()) {
                 App.db.bookDao().getBook(bookUrl)
             } else {
                 App.db.bookDao().lastReadBook
             }
-            book?.let {
+            book?.let { book ->
+                titleData.postValue(book.name)
                 durChapterIndex = book.durChapterIndex
                 durPageIndex = book.durChapterPos
                 isLocalBook = book.origin == BookType.local
-                bookData.postValue(book)
                 App.db.bookSourceDao().getBookSource(book.origin)?.let {
                     webBook = WebBook(it)
                 }
@@ -57,7 +59,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                     chapterSize = count
                 }
             }
-            saveRead(book)
+            saveRead()
         }
     }
 
@@ -148,23 +150,23 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun changeTo(book: Book) {
+    fun changeTo(book1: Book) {
         execute {
-            bookData.value?.let {
+            book?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
             withContext(Dispatchers.Main) {
 
             }
-            App.db.bookDao().insert(book)
-            bookData.postValue(book)
-            App.db.bookSourceDao().getBookSource(book.origin)?.let {
+            App.db.bookDao().insert(book1)
+            book = book1
+            App.db.bookSourceDao().getBookSource(book1.origin)?.let {
                 webBook = WebBook(it)
             }
-            if (book.tocUrl.isEmpty()) {
-                loadBookInfo(book) { upChangeDurChapterIndex(book, it) }
+            if (book1.tocUrl.isEmpty()) {
+                loadBookInfo(book1) { upChangeDurChapterIndex(book1, it) }
             } else {
-                loadChapterList(book) { upChangeDurChapterIndex(book, it) }
+                loadChapterList(book1) { upChangeDurChapterIndex(book1, it) }
             }
         }
     }
@@ -187,9 +189,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun moveToPrev() {
         if (durChapterIndex > 0) {
             durChapterIndex--
-            bookData.value?.let {
-                it.durChapterIndex = durChapterIndex
-                saveRead(it)
+            book?.durChapterIndex = durChapterIndex
+            saveRead()
+            book?.let {
                 loadContent(it, durChapterIndex)
             }
         }
@@ -198,9 +200,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun moveToNext() {
         if (durChapterIndex < chapterSize - 1) {
             durChapterIndex++
-            bookData.value?.let {
+            book?.let {
                 it.durChapterIndex = durChapterIndex
-                saveRead(it)
+                saveRead()
                 loadContent(it, durChapterIndex)
             }
         } else {
@@ -208,7 +210,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun saveRead(book: Book? = bookData.value) {
+    fun saveRead() {
         execute {
             book?.let { book ->
                 book.lastCheckCount = 0

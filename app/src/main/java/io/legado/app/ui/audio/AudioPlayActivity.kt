@@ -7,7 +7,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
@@ -32,7 +31,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         viewModel.callBack = this
-        viewModel.bookData.observe(this, Observer { upView(it) })
+        viewModel.titleData.observe(this, Observer { title_bar.title = it })
+        viewModel.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)
         initView()
     }
@@ -67,14 +67,13 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         })
     }
 
-    private fun upView(book: Book) {
-        title_bar.title = book.name
-        ImageLoader.load(this, book.getDisplayCover())
+    private fun upCover(path: String) {
+        ImageLoader.load(this, path)
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
             .centerCrop()
             .setAsDrawable(iv_cover)
-        ImageLoader.load(this, book.getDisplayCover())
+        ImageLoader.load(this, path)
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
             .bitmapTransform(BlurTransformation(this, 25))
@@ -86,7 +85,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         when (status) {
             Status.PLAY -> AudioPlay.pause(this)
             Status.PAUSE -> AudioPlay.resume(this)
-            else -> viewModel.bookData.value?.let {
+            else -> viewModel.book?.let {
                 viewModel.loadContent(it, viewModel.durChapterIndex)
             }
         }
@@ -95,12 +94,12 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
         AudioPlay.play(
             this,
-            viewModel.bookData.value?.name,
+            viewModel.book?.name,
             bookChapter.title,
             content,
             viewModel.durPageIndex
         )
-        viewModel.bookData.value?.let {
+        viewModel.book?.let {
             viewModel.loadContent(it, viewModel.durChapterIndex + 1)
         }
     }
