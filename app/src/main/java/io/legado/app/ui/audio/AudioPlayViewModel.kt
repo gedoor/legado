@@ -222,6 +222,14 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+    fun saveProgress() {
+        execute {
+            book?.let {
+                App.db.bookDao().upProgress(it.bookUrl, durPageIndex)
+            }
+        }
+    }
+
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
             book?.let {

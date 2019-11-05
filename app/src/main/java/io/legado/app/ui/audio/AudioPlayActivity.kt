@@ -131,32 +131,6 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         viewModel.loadContent(viewModel.durChapterIndex + 1)
     }
 
-    override fun observeLiveBus() {
-        observeEvent<Boolean>(Bus.AUDIO_PLAY_BUTTON) {
-            playButton()
-        }
-        observeEvent<Int>(Bus.AUDIO_NEXT) {
-            viewModel.moveToNext()
-        }
-        observeEvent<Int>(Bus.AUDIO_STATE) {
-            status = it
-            if (status == Status.PLAY) {
-                fab_play_stop.setImageResource(R.drawable.ic_pause_24dp)
-            } else {
-                fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
-            }
-        }
-        observeEvent<Int>(Bus.AUDIO_PROGRESS) {
-            viewModel.durPageIndex = it
-            if (!adjustProgress) player_progress.progress = it
-            tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
-        }
-        observeEvent<Int>(Bus.AUDIO_SIZE) {
-            player_progress.max = it
-            tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
-        }
-    }
-
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
@@ -222,4 +196,32 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             }
         }
     }
+
+    override fun observeLiveBus() {
+        observeEvent<Boolean>(Bus.AUDIO_PLAY_BUTTON) {
+            playButton()
+        }
+        observeEvent<Int>(Bus.AUDIO_NEXT) {
+            viewModel.moveToNext()
+        }
+        observeEvent<Int>(Bus.AUDIO_STATE) {
+            status = it
+            if (status == Status.PLAY) {
+                fab_play_stop.setImageResource(R.drawable.ic_pause_24dp)
+            } else {
+                fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
+            }
+        }
+        observeEvent<Int>(Bus.AUDIO_PROGRESS) {
+            viewModel.durPageIndex = it
+            if (!adjustProgress) player_progress.progress = it
+            tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+            viewModel.saveProgress()
+        }
+        observeEvent<Int>(Bus.AUDIO_SIZE) {
+            player_progress.max = it
+            tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+        }
+    }
+
 }
