@@ -56,7 +56,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             clipboard?.primaryClip?.let {
                 if (it.itemCount > 0) {
-                    val json = it.getItemAt(0).text.toString()
+                    val json = it.getItemAt(0).text.toString().trim()
                     GSON.fromJsonObject<RssSource>(json)?.let { source ->
                         sourceLiveData.postValue(source)
                     } ?: toast("格式不对")
