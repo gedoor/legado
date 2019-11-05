@@ -109,6 +109,7 @@ class AudioPlayService : BaseService(),
             } catch (e: Exception) {
                 launch {
                     toast(e.localizedMessage + " " + url)
+                    stopSelf()
                 }
             }
         }
