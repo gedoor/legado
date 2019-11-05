@@ -38,7 +38,9 @@
                 android:resource="@xml/shortcuts"
                 android:launchMode="singleTask" />
         </activity>
-        <activity android:name=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"

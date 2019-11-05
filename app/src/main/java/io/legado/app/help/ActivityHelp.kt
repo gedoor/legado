@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import android.app.Activity
+import io.legado.app.utils.LogUtils
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -10,6 +11,11 @@ import java.util.*
 object ActivityHelp {
 
     private val activities: MutableList<WeakReference<Activity>> = arrayListOf()
+
+    fun size(): Int {
+        LogUtils.d("xxxx", activities.size.toString())
+        return activities.size
+    }
 
     /**
      * 判断指定Activity是否存在
