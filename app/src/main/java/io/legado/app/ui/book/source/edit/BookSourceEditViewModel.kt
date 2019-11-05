@@ -61,6 +61,8 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                     } ?: toast("格式不对")
                 }
             }
+        }.onError {
+            toast(it.localizedMessage)
         }
     }
 }

@@ -17,12 +17,12 @@ object OldRule {
     fun jsonToBookSource(json: String): BookSource? {
         var source: BookSource? = null
         runCatching {
-            source = GSON.fromJsonObject<BookSource>(json)
+            source = GSON.fromJsonObject<BookSource>(json.trim())
         }
         runCatching {
             if (source == null || source?.searchUrl.isNullOrBlank()) {
                 source = BookSource().apply {
-                    val jsonItem = jsonPath.parse(json)
+                    val jsonItem = jsonPath.parse(json.trim())
                     bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
