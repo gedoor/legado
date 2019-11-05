@@ -255,20 +255,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 加载章节内容
      */
     override fun loadContent() {
-        viewModel.book?.let {
-            viewModel.loadContent(it, viewModel.durChapterIndex)
-            viewModel.loadContent(it, viewModel.durChapterIndex + 1)
-            viewModel.loadContent(it, viewModel.durChapterIndex - 1)
-        }
+        viewModel.loadContent(viewModel.durChapterIndex)
+        viewModel.loadContent(viewModel.durChapterIndex + 1)
+        viewModel.loadContent(viewModel.durChapterIndex - 1)
     }
 
     /**
      * 加载章节内容, index章节序号
      */
     override fun loadContent(index: Int) {
-        viewModel.book?.let {
-            viewModel.loadContent(it, index)
-        }
+        viewModel.loadContent(index)
     }
 
     /**

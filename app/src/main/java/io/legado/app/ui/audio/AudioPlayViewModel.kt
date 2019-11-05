@@ -98,36 +98,40 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun loadContent(book: Book, index: Int) {
-        if (addLoading(index)) {
-            execute {
-                App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-                    BookHelp.getContent(book, chapter)?.let {
-                        contentLoadFinish(chapter, it)
-                        removeLoading(chapter.index)
-                    } ?: download(book, chapter)
-                } ?: removeLoading(index)
-            }.onError {
-                removeLoading(index)
+    fun loadContent(index: Int) {
+        book?.let { book ->
+            if (addLoading(index)) {
+                execute {
+                    App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                        BookHelp.getContent(book, chapter)?.let {
+                            contentLoadFinish(chapter, it)
+                            removeLoading(chapter.index)
+                        } ?: download(chapter)
+                    } ?: removeLoading(index)
+                }.onError {
+                    removeLoading(index)
+                }
             }
         }
     }
 
-    private fun download(book: Book, chapter: BookChapter) {
-        webBook?.getContent(book, chapter, scope = this)
-            ?.onSuccess(Dispatchers.IO) { content ->
-                if (content.isNullOrEmpty()) {
-                    contentLoadFinish(chapter, context.getString(R.string.content_empty))
-                    removeLoading(chapter.index)
-                } else {
-                    BookHelp.saveContent(book, chapter, content)
-                    contentLoadFinish(chapter, content)
+    private fun download(chapter: BookChapter) {
+        book?.let { book ->
+            webBook?.getContent(book, chapter, scope = this)
+                ?.onSuccess(Dispatchers.IO) { content ->
+                    if (content.isNullOrEmpty()) {
+                        contentLoadFinish(chapter, context.getString(R.string.content_empty))
+                        removeLoading(chapter.index)
+                    } else {
+                        BookHelp.saveContent(book, chapter, content)
+                        contentLoadFinish(chapter, content)
+                        removeLoading(chapter.index)
+                    }
+                }?.onError {
+                    contentLoadFinish(chapter, it.localizedMessage)
                     removeLoading(chapter.index)
                 }
-            }?.onError {
-                contentLoadFinish(chapter, it.localizedMessage)
-                removeLoading(chapter.index)
-            }
+        }
     }
 
     private fun addLoading(index: Int): Boolean {
@@ -191,20 +195,16 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             durChapterIndex--
             book?.durChapterIndex = durChapterIndex
             saveRead()
-            book?.let {
-                loadContent(it, durChapterIndex)
-            }
+            loadContent(durChapterIndex)
         }
     }
 
     fun moveToNext() {
         if (durChapterIndex < chapterSize - 1) {
             durChapterIndex++
-            book?.let {
-                it.durChapterIndex = durChapterIndex
-                saveRead()
-                loadContent(it, durChapterIndex)
-            }
+            book?.durChapterIndex = durChapterIndex
+            saveRead()
+            loadContent(durChapterIndex)
         } else {
             AudioPlay.stop(context)
         }

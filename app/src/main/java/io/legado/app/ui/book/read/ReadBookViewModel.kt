@@ -121,17 +121,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         nextTextChapter = null
         book?.let {
             if (curTextChapter == null) {
-                loadContent(it, durChapterIndex)
+                loadContent(durChapterIndex)
             } else if (upContent) {
                 callBack?.upContent()
             }
-            loadContent(it, durChapterIndex.plus(1))
+            loadContent(durChapterIndex.plus(1))
             launch(IO) {
                 for (i in 2..10) {
                     delay(100)
-                    book?.let { book ->
-                        download(book, durChapterIndex + i)
-                    }
+                    download(durChapterIndex + i)
                 }
             }
         }
@@ -144,68 +142,72 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         prevTextChapter = null
         book?.let {
             if (curTextChapter == null) {
-                loadContent(it, durChapterIndex)
+                loadContent(durChapterIndex)
             } else if (upContent) {
                 callBack?.upContent()
             }
-            loadContent(it, durChapterIndex.minus(1))
+            loadContent(durChapterIndex.minus(1))
             launch(IO) {
                 for (i in -5..-2) {
                     delay(100)
-                    book?.let { book ->
-                        download(book, durChapterIndex + i)
-                    }
+                    download(durChapterIndex + i)
                 }
             }
         }
     }
 
-    fun loadContent(book: Book, index: Int) {
-        if (addLoading(index)) {
-            execute {
-                App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-                    BookHelp.getContent(book, chapter)?.let {
-                        contentLoadFinish(chapter, it)
-                        removeLoading(chapter.index)
-                    } ?: download(book, chapter)
-                } ?: removeLoading(index)
-            }.onError {
-                removeLoading(index)
+    fun loadContent(index: Int) {
+        book?.let { book ->
+            if (addLoading(index)) {
+                execute {
+                    App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                        BookHelp.getContent(book, chapter)?.let {
+                            contentLoadFinish(chapter, it)
+                            removeLoading(chapter.index)
+                        } ?: download(chapter)
+                    } ?: removeLoading(index)
+                }.onError {
+                    removeLoading(index)
+                }
             }
         }
     }
 
-    private fun download(book: Book, index: Int) {
-        if (addLoading(index)) {
-            execute {
-                App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-                    if (BookHelp.hasContent(book, chapter)) {
+    private fun download(index: Int) {
+        book?.let { book ->
+            if (addLoading(index)) {
+                execute {
+                    App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                        if (BookHelp.hasContent(book, chapter)) {
+                            removeLoading(chapter.index)
+                        } else {
+                            download(chapter)
+                        }
+                    } ?: removeLoading(index)
+                }.onError {
+                    removeLoading(index)
+                }
+            }
+        }
+    }
+
+    private fun download(chapter: BookChapter) {
+        book?.let { book ->
+            webBook?.getContent(book, chapter, scope = this)
+                ?.onSuccess(IO) { content ->
+                    if (content.isNullOrEmpty()) {
+                        contentLoadFinish(chapter, context.getString(R.string.content_empty))
                         removeLoading(chapter.index)
                     } else {
-                        download(book, chapter)
+                        BookHelp.saveContent(book, chapter, content)
+                        contentLoadFinish(chapter, content)
+                        removeLoading(chapter.index)
                     }
-                } ?: removeLoading(index)
-            }.onError {
-                removeLoading(index)
-            }
-        }
-    }
-
-    private fun download(book: Book, chapter: BookChapter) {
-        webBook?.getContent(book, chapter, scope = this)
-            ?.onSuccess(IO) { content ->
-                if (content.isNullOrEmpty()) {
-                    contentLoadFinish(chapter, context.getString(R.string.content_empty))
-                    removeLoading(chapter.index)
-                } else {
-                    BookHelp.saveContent(book, chapter, content)
-                    contentLoadFinish(chapter, content)
+                }?.onError {
+                    contentLoadFinish(chapter, it.localizedMessage)
                     removeLoading(chapter.index)
                 }
-            }?.onError {
-                contentLoadFinish(chapter, it.localizedMessage)
-                removeLoading(chapter.index)
-            }
+        }
     }
 
     private fun addLoading(index: Int): Boolean {
@@ -332,7 +334,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
                 BookHelp.delContent(book, chapter)
-                loadContent(book, durChapterIndex)
+                loadContent(durChapterIndex)
             }
         }
     }
