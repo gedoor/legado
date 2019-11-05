@@ -57,11 +57,6 @@ class BookSourceEditActivity :
         viewModel.initData(intent)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mSoftKeyboardTool?.dismiss()
-    }
-
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.source_edit, menu)
         return super.onCompatCreateOptionsMenu(menu)
@@ -111,6 +106,15 @@ class BookSourceEditActivity :
                 setEditEntities(tab?.position)
             }
         })
+    }
+
+    override fun finish() {
+        super.finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mSoftKeyboardTool?.dismiss()
     }
 
     private fun setEditEntities(tabPosition: Int?) {
