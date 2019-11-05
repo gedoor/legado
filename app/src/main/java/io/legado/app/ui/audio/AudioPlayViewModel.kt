@@ -184,6 +184,17 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+    fun moveToPrev() {
+        if (durChapterIndex > 0) {
+            durChapterIndex--
+            bookData.value?.let {
+                it.durChapterIndex = durChapterIndex
+                saveRead(it)
+                loadContent(it, durChapterIndex)
+            }
+        }
+    }
+
     fun moveToNext() {
         if (durChapterIndex < chapterSize - 1) {
             durChapterIndex++

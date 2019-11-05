@@ -45,7 +45,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             true
         }
         iv_skip_next.onClick {
-
+            viewModel.moveToNext()
         }
         iv_skip_previous.onClick {
 
