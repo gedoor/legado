@@ -29,7 +29,6 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.snackbar
 import kotlinx.android.synthetic.main.activity_audio_play.*
-import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -134,7 +133,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
-                page_view.snackbar(R.string.to_backstage, R.string.ok) {
+                title_bar.snackbar(R.string.to_backstage, R.string.ok) {
                     startActivity<MainActivity>()
                 }
                 return true
