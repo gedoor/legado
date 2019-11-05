@@ -48,7 +48,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             viewModel.moveToNext()
         }
         iv_skip_previous.onClick {
-
+            viewModel.moveToPrev()
         }
         player_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
