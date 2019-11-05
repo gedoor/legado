@@ -57,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00"
+            android:textColor="@color/md_white_1000"
             tools:ignore="HardcodedText,RtlSymmetry" />
 
         <io.legado.app.lib.theme.view.ATESeekBar
@@ -71,6 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00"
+            android:textColor="@color/md_white_1000"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
