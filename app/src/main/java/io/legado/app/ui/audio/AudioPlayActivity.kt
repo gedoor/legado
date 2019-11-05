@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.KeyEvent
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
@@ -27,7 +26,6 @@ import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
-import io.legado.app.utils.snackbar
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.apache.commons.lang3.time.DateFormatUtils
@@ -130,37 +128,6 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         viewModel.loadContent(viewModel.durChapterIndex + 1)
     }
 
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                title_bar.snackbar(R.string.to_backstage, R.string.ok) {
-                    startActivity<MainActivity>()
-                }
-                return true
-            }
-        }
-        return super.onKeyLongPress(keyCode, event)
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                event?.let {
-                    if ((event.flags and KeyEvent.FLAG_CANCELED_LONG_PRESS == 0)
-                        && event.isTracking
-                        && !event.isCanceled
-                    ) {
-                        if (status == Status.PLAY) {
-                            AudioPlay.pause(this)
-                            return true
-                        }
-                    }
-                }
-            }
-        }
-        return super.onKeyUp(keyCode, event)
-    }
-
     override fun finish() {
         viewModel.book?.let {
             if (!viewModel.inBookshelf) {
@@ -170,7 +137,11 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
                 }.show().applyTint()
             } else {
-                super.finish()
+                if (status == Status.PLAY) {
+                    startActivity<MainActivity>()
+                } else {
+                    super.finish()
+                }
             }
         } ?: super.finish()
     }

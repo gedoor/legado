@@ -38,7 +38,9 @@
                 android:resource="@xml/shortcuts"
                 android:launchMode="singleTask" />
         </activity>
-        <activity android:name=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
@@ -56,12 +58,24 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".ui.config.ConfigActivity" />
-        <activity android:name=".ui.replacerule.ReplaceRuleActivity" />
-        <activity android:name="io.legado.app.ui.book.search.SearchActivity" />
-        <activity android:name=".ui.about.AboutActivity" />
-        <activity android:name=".ui.qrcode.QrCodeActivity" />
-        <activity android:name=".ui.about.DonateActivity" />
+        <activity
+            android:name=".ui.config.ConfigActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.replacerule.ReplaceRuleActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name="io.legado.app.ui.book.search.SearchActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.about.AboutActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.qrcode.QrCodeActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.about.DonateActivity"
+            android:launchMode="singleTask" />
         <activity android:name=".ui.book.info.BookInfoActivity" />
         <activity android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity" />
         <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
@@ -79,7 +93,9 @@
         </activity>
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
         <activity android:name=".ui.rss.read.ReadRssActivity" />
-        <activity android:name=".ui.audio.AudioPlayActivity" />
+        <activity
+            android:name=".ui.audio.AudioPlayActivity"
+            android:launchMode="singleTask" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
         <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
