@@ -50,15 +50,16 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         app:layout_constraintBottom_toTopOf="@+id/ll_play_menu">
 
         <TextView
             android:id="@+id/tv_dur_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:ignore="RtlSymmetry" />
+            android:text="00:00"
+            tools:ignore="HardcodedText,RtlSymmetry" />
 
         <io.legado.app.lib.theme.view.ATESeekBar
             android:id="@+id/player_progress"
@@ -70,7 +71,9 @@
         <TextView
             android:id="@+id/tv_all_time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
@@ -78,8 +81,8 @@
         android:id="@+id/ll_play_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">

@@ -16,6 +16,7 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
@@ -52,7 +53,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         }
         player_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-
+                tv_dur_time.text = DateFormatUtils.format(progress.toLong(), "mm:ss")
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -67,7 +68,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     }
 
     private fun upView(book: Book) {
-        actionBar?.title = book.name
+        title_bar.title = book.name
         ImageLoader.load(this, book.getDisplayCover())
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
@@ -121,9 +122,11 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         }
         observeEvent<Int>(Bus.AUDIO_PROGRESS) {
             if (!adjustProgress) player_progress.progress = it
+            tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
         observeEvent<Int>(Bus.AUDIO_SIZE) {
             player_progress.max = it
+            tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
     }
 }
