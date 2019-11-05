@@ -74,7 +74,7 @@ class AudioPlayService : BaseService(),
                 Action.play -> {
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
-                    position = intent.getIntExtra("pageIndex", 0)
+                    position = intent.getIntExtra("position", 0)
                     play(intent.getStringExtra("url"))
                 }
                 Action.pause -> pause(true)

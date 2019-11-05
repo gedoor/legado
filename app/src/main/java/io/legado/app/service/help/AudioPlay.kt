@@ -13,7 +13,7 @@ object AudioPlay {
         intent.putExtra("title", title)
         intent.putExtra("subtitle", subtitle)
         intent.putExtra("url", url)
-        intent.putExtra("dataKey", position)
+        intent.putExtra("position", position)
         context.startService(intent)
     }
 
