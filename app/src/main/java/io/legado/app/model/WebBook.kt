@@ -96,7 +96,7 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = sourceUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                if (analyzeUrl.useWebView()) {
+                if (analyzeUrl.useWebView) {
                     analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
                 } else {
                     analyzeUrl.getResponseAwait().body()
@@ -126,7 +126,7 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = book.bookUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                if (analyzeUrl.useWebView()) {
+                if (analyzeUrl.useWebView) {
                     analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
                 } else {
                     analyzeUrl.getResponseAwait().body()
@@ -160,7 +160,7 @@ class WebBook(val bookSource: BookSource) {
                         baseUrl = book.tocUrl,
                         headerMapF = bookSource.getHeaderMap()
                     )
-                if (analyzeUrl.useWebView()) {
+                if (analyzeUrl.useWebView) {
                     analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
                 } else {
                     analyzeUrl.getResponseAwait().body()

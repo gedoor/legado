@@ -57,8 +57,8 @@ class AnalyzeUrl(
     private var bodyTxt: String? = null
     private var body: RequestBody? = null
     private var method = RequestMethod.GET
-    private var webViewJs: String? = null
-    private var sourceRegex: String? = null
+    var useWebView: Boolean = false
+        private set
 
     init {
         baseUrl?.let {
@@ -170,8 +170,7 @@ class AnalyzeUrl(
                 }
                 options["body"]?.let { bodyTxt = it }
                 options["charset"]?.let { charset = it }
-                options["js"]?.let { webViewJs = it }
-                options["sourceRegex"]?.let { sourceRegex = it }
+                options["webView"]?.let { if (it.isNotEmpty()) useWebView = true }
             }
         }
         when (method) {
@@ -292,16 +291,16 @@ class AnalyzeUrl(
         }
     }
 
-    fun useWebView(): Boolean {
-        return webViewJs != null || sourceRegex != null
-    }
-
-    suspend fun getResultByWebView(tag: String): String {
+    suspend fun getResultByWebView(
+        tag: String,
+        jsStr: String? = null,
+        sourceRegex: String? = null
+    ): String {
         val params = AjaxWebView.AjaxParams(tag)
         params.url = url
         params.headerMap = headerMap
         params.requestMethod = method
-        params.javaScript = webViewJs
+        params.javaScript = jsStr
         params.sourceRegex = sourceRegex
         params.postData = bodyTxt?.toByteArray()
         return HttpHelper.ajax(params)
