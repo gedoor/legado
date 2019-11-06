@@ -12,7 +12,6 @@ import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -46,10 +45,9 @@ class RssSourceEditActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
-        viewModel.sourceLiveData.observe(this, Observer {
-            upRecyclerView(it)
-        })
-        viewModel.initData(intent)
+        viewModel.initData(intent) {
+            upRecyclerView()
+        }
     }
 
     override fun onDestroy() {
@@ -85,7 +83,7 @@ class RssSourceEditActivity :
                     clipboard?.primaryClip = ClipData.newPlainText(null, sourceStr)
                 }
             }
-            R.id.menu_paste_source -> viewModel.pasteSource()
+            R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView() }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -98,7 +96,8 @@ class RssSourceEditActivity :
         recycler_view.adapter = adapter
     }
 
-    private fun upRecyclerView(rssSource: RssSource?) {
+    private fun upRecyclerView() {
+        val rssSource = viewModel.rssSource
         rssSource?.let {
             cb_is_enable.isChecked = rssSource.enabled
             cb_enable_js.isChecked = rssSource.enableJs
@@ -136,7 +135,7 @@ class RssSourceEditActivity :
     }
 
     private fun getRssSource(): RssSource? {
-        val source = viewModel.sourceLiveData.value ?: RssSource()
+        val source = viewModel.rssSource?.copy() ?: RssSource()
         source.enabled = cb_is_enable.isChecked
         source.enableJs = cb_enable_js.isChecked
         source.loadWithBaseUrl = cb_enable_base_url.isChecked

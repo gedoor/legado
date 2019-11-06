@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
@@ -13,10 +12,10 @@ import io.legado.app.utils.fromJsonObject
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
-    val sourceLiveData: MutableLiveData<RssSource> = MutableLiveData()
+    var rssSource: RssSource? = null
     private var oldSourceUrl: String? = null
 
-    fun initData(intent: Intent) {
+    fun initData(intent: Intent, onFinally: () -> Unit) {
         execute {
             val key = intent.getStringExtra("data")
             var source: RssSource? = null
@@ -25,12 +24,10 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             }
             source?.let {
                 oldSourceUrl = it.sourceUrl
-                sourceLiveData.postValue(it)
-            } ?: let {
-                sourceLiveData.postValue(RssSource().apply {
-                    customOrder = App.db.rssSourceDao().maxOrder + 1
-                })
+                rssSource = it
             }
+        }.onFinally {
+            onFinally()
         }
     }
 
@@ -51,17 +48,21 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }
     }
 
-    fun pasteSource() {
+    fun pasteSource(onSuccess: () -> Unit) {
         execute {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             clipboard?.primaryClip?.let {
                 if (it.itemCount > 0) {
                     val json = it.getItemAt(0).text.toString().trim()
                     GSON.fromJsonObject<RssSource>(json)?.let { source ->
-                        sourceLiveData.postValue(source)
+                        rssSource = source
                     } ?: toast("格式不对")
                 }
             }
+        }.onError {
+            toast(it.localizedMessage)
+        }.onSuccess {
+            onSuccess()
         }
     }
 }

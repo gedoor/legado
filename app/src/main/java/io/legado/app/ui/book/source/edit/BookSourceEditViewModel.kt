@@ -24,10 +24,6 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             source?.let {
                 oldSourceUrl = it.bookSourceUrl
                 bookSource = it
-            } ?: let {
-                bookSource = BookSource().apply {
-                    customOrder = App.db.bookSourceDao().maxOrder + 1
-                }
             }
         }.onFinally {
             onFinally()
