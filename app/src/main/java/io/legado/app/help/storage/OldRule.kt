@@ -31,7 +31,7 @@ object OldRule {
                     customOrder = jsonItem.readInt("serialNumber") ?: 0
                     header = uaToHeader(jsonItem.readString("httpUserAgent"))
                     searchUrl = toNewUrl(jsonItem.readString("ruleSearchUrl"))
-                    exploreUrl = toNewUrl(jsonItem.readString("ruleFindUrl"))
+                    exploreUrl = toNewUrls(jsonItem.readString("ruleFindUrl"))
                     if (exploreUrl.isNullOrBlank()) {
                         enabledExplore = false
                     }
@@ -86,6 +86,19 @@ object OldRule {
         return source
     }
 
+    private fun toNewUrls(oldUrl: String?): String? {
+        if (oldUrl == null) return null
+        if (!oldUrl.contains("\n") && !oldUrl.contains("&&"))
+            return toNewUrl(oldUrl)
+
+        val urls = oldUrl.split("(&&|\n)+".toRegex())
+        var newUrl = ""
+        for (url in urls) {
+            newUrl += toNewUrl(url)?.replace("\\n\\s*".toRegex(),"") + "\n"
+        }
+        return newUrl
+    }
+
     private fun toNewUrl(oldUrl: String?): String? {
         if (oldUrl == null) return null
         var url: String = oldUrl
@@ -114,7 +127,9 @@ object OldRule {
         }
         url = url.replace("{", "<").replace("}", ">")
         url = url.replace("searchKey", "{{key}}")
-        url = url.replace("searchPage", "{{page}}")
+        url = url.replace("<searchPage([-+]1)>".toRegex(), "{{page$1}}")
+                .replace("searchPage([-+]1)".toRegex(), "{{page$1}}")
+                .replace("searchPage", "{{page}}")
         for ((index, item) in jsList.withIndex()) {
             url = url.replace("$$index", item.replace("searchKey", "key").replace("searchPage", "page"))
         }

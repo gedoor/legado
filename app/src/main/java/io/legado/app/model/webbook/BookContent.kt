@@ -94,7 +94,10 @@ object BookContent {
                 content.append(item.content)
             }
         }
-        return content.toString()
+        SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取章节名称")
+        SourceDebug.printLog(bookSource.bookSourceUrl, "└${bookChapter.title}")
+        SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取正文内容")
+        return "└\n" + content.toString()
     }
 
     @Throws(Exception::class)
