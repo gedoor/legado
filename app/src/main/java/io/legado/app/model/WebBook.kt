@@ -38,12 +38,19 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = sourceUrl,
                     headerMapF = bookSource.getHeaderMap()
                 )
-                val response = analyzeUrl.getResponseAwait()
+                var baseUrl = analyzeUrl.ruleUrl
+                val body = if (analyzeUrl.useWebView) {
+                    analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
+                } else {
+                    val res = analyzeUrl.getResponseAwait()
+                    baseUrl = NetworkUtils.getUrl(res)
+                    res.body()
+                }
                 BookList.analyzeBookList(
-                    response.body(),
+                    body,
                     bookSource,
                     analyzeUrl,
-                    NetworkUtils.getUrl(response),
+                    baseUrl,
                     true
                 )
             } ?: arrayListOf()
@@ -66,12 +73,19 @@ class WebBook(val bookSource: BookSource) {
                 baseUrl = sourceUrl,
                 headerMapF = bookSource.getHeaderMap()
             )
-            val response = analyzeUrl.getResponseAwait()
+            var baseUrl = analyzeUrl.ruleUrl
+            val body = if (analyzeUrl.useWebView) {
+                analyzeUrl.getResultByWebView(bookSource.bookSourceUrl)
+            } else {
+                val res = analyzeUrl.getResponseAwait()
+                baseUrl = NetworkUtils.getUrl(res)
+                res.body()
+            }
             BookList.analyzeBookList(
-                response.body(),
+                body,
                 bookSource,
                 analyzeUrl,
-                NetworkUtils.getUrl(response),
+                baseUrl,
                 false
             )
         }
