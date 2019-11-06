@@ -75,8 +75,12 @@ object OldRule {
                         nextTocUrl = jsonItem.readString("ruleChapterUrlNext")
                     )
                     ruleToc = GSON.toJson(chapterRule)
+                    var content = jsonItem.readString("ruleBookContent") ?: ""
+                    if (content.startsWith("$") && !content.startsWith("$.")) {
+                        content = content.substring(1)
+                    }
                     val contentRule = ContentRule(
-                        content = jsonItem.readString("ruleBookContent"),
+                        content = content,
                         nextContentUrl = jsonItem.readString("ruleContentUrlNext")
                     )
                     ruleContent = GSON.toJson(contentRule)
