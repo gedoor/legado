@@ -383,7 +383,9 @@
     <string name="rule_chapter_name">章节名称规则(ruleChapterName)</string>
     <string name="rule_chapter_url">章节URL规则(chapterUrl)</string>
     <string name="rule_book_content">正文规则(content)</string>
-    <string name="rule_content_url_next">正文下一页URL规则(nextContentUrl)</string>
+    <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
+    <string name="rule_web_js">webJs</string>
+    <string name="rule_source_regex">资源正则(sourceRegex)</string>
     <!--book source end-->
 
     <!-- rss source start-->
