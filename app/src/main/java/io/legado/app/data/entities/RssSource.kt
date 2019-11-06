@@ -30,4 +30,29 @@ data class RssSource(
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
     var customOrder: Int = 0
-) : Parcelable
+) : Parcelable {
+
+    fun equal(source: RssSource?): Boolean {
+        if (source == null) {
+            return false
+        } else {
+            return sourceUrl == source.sourceUrl
+                    && sourceName == source.sourceName
+                    && sourceIcon == source.sourceIcon
+                    && enabled == source.enabled
+                    && sourceGroup == source.sourceGroup
+                    && ruleArticles == source.ruleArticles
+                    && ruleNextPage == source.ruleNextPage
+                    && ruleTitle == source.ruleTitle
+                    && rulePubDate == source.rulePubDate
+                    && ruleCategories == source.ruleCategories
+                    && ruleDescription == source.ruleDescription
+                    && ruleLink == source.ruleLink
+                    && ruleContent == source.ruleContent
+                    && enableJs == source.enableJs
+                    && loadWithBaseUrl == source.loadWithBaseUrl
+                    && customOrder == source.customOrder
+        }
+    }
+
+}

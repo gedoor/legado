@@ -117,21 +117,22 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             recreate()
         }
     }
-}
 
-private class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
-    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    override fun getItem(position: Int): Fragment {
-        return when (position) {
-            0 -> BookshelfFragment()
-            1 -> ExploreFragment()
-            2 -> RssFragment()
-            else -> MyFragment()
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                0 -> BookshelfFragment()
+                1 -> ExploreFragment()
+                2 -> RssFragment()
+                else -> MyFragment()
+            }
+        }
+
+        override fun getCount(): Int {
+            return 4
         }
     }
-
-    override fun getCount(): Int {
-        return 4
-    }
 }
+

@@ -18,10 +18,14 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.RssSource
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_source_edit.*
 import org.jetbrains.anko.displayMetrics
@@ -50,6 +54,24 @@ class RssSourceEditActivity :
         }
     }
 
+    override fun finish() {
+        val source = getRssSource()
+        if (!source.equal(viewModel.rssSource)) {
+            alert(R.string.exit_no_save) {
+                yesButton {
+                    if (checkSource(source)) {
+                        viewModel.save(source) {
+                            super.finish()
+                        }
+                    }
+                }
+                noButton { }
+            }.show().applyTint()
+        } else {
+            super.finish()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mSoftKeyboardTool?.dismiss()
@@ -63,17 +85,19 @@ class RssSourceEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> {
-                getRssSource()?.let {
-                    viewModel.save(it) {
+                val source = getRssSource()
+                if (checkSource(source)) {
+                    viewModel.save(source) {
                         setResult(Activity.RESULT_OK)
                         finish()
                     }
                 }
             }
             R.id.menu_debug_source -> {
-                getRssSource()?.let {
-                    viewModel.save(it) {
-                        startActivity<RssSourceDebugActivity>(Pair("key", it.sourceUrl))
+                val source = getRssSource()
+                if (checkSource(source)) {
+                    viewModel.save(source) {
+                        startActivity<RssSourceDebugActivity>(Pair("key", source.sourceUrl))
                     }
                 }
             }
@@ -134,7 +158,7 @@ class RssSourceEditActivity :
         adapter.editEntities = sourceEntities
     }
 
-    private fun getRssSource(): RssSource? {
+    private fun getRssSource(): RssSource {
         val source = viewModel.rssSource?.copy() ?: RssSource()
         source.enabled = cb_is_enable.isChecked
         source.enableJs = cb_enable_js.isChecked
@@ -156,11 +180,15 @@ class RssSourceEditActivity :
                 "ruleContent" -> source.ruleContent = it.value
             }
         }
+        return source
+    }
+
+    private fun checkSource(source: RssSource): Boolean {
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
             toast("名称或url不能为空")
-            return null
+            return false
         }
-        return source
+        return true
     }
 
     override fun sendText(text: String) {

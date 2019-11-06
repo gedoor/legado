@@ -191,9 +191,9 @@ data class BookSource(
                 && ruleToc == source.ruleToc
                 && ruleContent == source.ruleContent
     }
-}
 
-data class ExploreKind(
-    var title: String,
-    var url: String? = null
-)
+    data class ExploreKind(
+        var title: String,
+        var url: String? = null
+    )
+}
