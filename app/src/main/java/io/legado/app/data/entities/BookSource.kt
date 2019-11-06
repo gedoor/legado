@@ -48,23 +48,23 @@ data class BookSource(
 ) : Parcelable {
     @Ignore
     @IgnoredOnParcel
-    var searchRuleV: SearchRule? = null
+    private var searchRuleV: SearchRule? = null
 
     @Ignore
     @IgnoredOnParcel
-    var exploreRuleV: ExploreRule? = null
+    private var exploreRuleV: ExploreRule? = null
 
     @Ignore
     @IgnoredOnParcel
-    var bookInfoRuleV: BookInfoRule? = null
+    private var bookInfoRuleV: BookInfoRule? = null
 
     @Ignore
     @IgnoredOnParcel
-    var tocRuleV: TocRule? = null
+    private var tocRuleV: TocRule? = null
 
     @Ignore
     @IgnoredOnParcel
-    var contentRuleV: ContentRule? = null
+    private var contentRuleV: ContentRule? = null
 
     @Throws(Exception::class)
     fun getHeaderMap(): Map<String, String> {

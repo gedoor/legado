@@ -18,7 +18,7 @@ object Rss {
     ): Coroutine<MutableList<RssArticle>> {
         return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(rssSource.sourceUrl)
-            val body = if (analyzeUrl.useWebView()) {
+            val body = if (analyzeUrl.useWebView) {
                 analyzeUrl.getResultByWebView(rssSource.sourceUrl)
             } else {
                 analyzeUrl.getResponseAwait().body()
