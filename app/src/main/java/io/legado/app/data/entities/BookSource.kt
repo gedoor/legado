@@ -169,8 +169,31 @@ data class BookSource(
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
-    data class ExploreKind(
-        var title: String,
-        var url: String? = null
-    )
+    fun equal(source: BookSource?): Boolean {
+        if (source == null) {
+            return false
+        }
+        return bookSourceName == source.bookSourceName
+                && bookSourceUrl == source.bookSourceUrl
+                && bookSourceGroup == source.bookSourceGroup
+                && bookSourceType == source.bookSourceType
+                && bookUrlPattern == source.bookUrlPattern
+                && enabled == source.enabled
+                && enabledExplore == source.enabledExplore
+                && header == source.header
+                && loginUrl == source.loginUrl
+                && lastUpdateTime == source.lastUpdateTime
+                && exploreUrl == source.exploreUrl
+                && searchUrl == source.searchUrl
+                && ruleSearch == source.ruleSearch
+                && ruleExplore == source.ruleExplore
+                && ruleBookInfo == source.ruleBookInfo
+                && ruleToc == source.ruleToc
+                && ruleContent == source.ruleContent
+    }
 }
+
+data class ExploreKind(
+    var title: String,
+    var url: String? = null
+)

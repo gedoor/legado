@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
@@ -12,10 +11,10 @@ import io.legado.app.help.storage.OldRule
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
-    val sourceLiveData: MutableLiveData<BookSource> = MutableLiveData()
+    var bookSource: BookSource? = null
     private var oldSourceUrl: String? = null
 
-    fun initData(intent: Intent) {
+    fun initData(intent: Intent, onFinally: () -> Unit) {
         execute {
             val key = intent.getStringExtra("data")
             var source: BookSource? = null
@@ -24,12 +23,14 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             }
             source?.let {
                 oldSourceUrl = it.bookSourceUrl
-                sourceLiveData.postValue(it)
+                bookSource = it
             } ?: let {
-                sourceLiveData.postValue(BookSource().apply {
+                bookSource = BookSource().apply {
                     customOrder = App.db.bookSourceDao().maxOrder + 1
-                })
+                }
             }
+        }.onFinally {
+            onFinally()
         }
     }
 
@@ -50,19 +51,21 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         }
     }
 
-    fun pasteSource() {
+    fun pasteSource(onSuccess: () -> Unit) {
         execute {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             clipboard?.primaryClip?.let {
                 if (it.itemCount > 0) {
                     val json = it.getItemAt(0).text.toString()
                     OldRule.jsonToBookSource(json)?.let { source ->
-                        sourceLiveData.postValue(source)
+                        bookSource = source
                     } ?: toast("格式不对")
                 }
             }
         }.onError {
             toast(it.localizedMessage)
+        }.onSuccess {
+            onSuccess()
         }
     }
 }
