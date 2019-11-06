@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
@@ -102,10 +103,16 @@ class ContentView : FrameLayout {
     }
 
     fun setContent(textPage: TextPage?) {
-        content_text_view.text = textPage?.text
-        tv_bottom_left.text = textPage?.title
-        pageSize = textPage?.pageSize ?: 0
-        setPageIndex(textPage?.index)
+        if (textPage != null) {
+            content_text_view.gravity = Gravity.START
+            content_text_view.text = textPage.text
+            tv_bottom_left.text = textPage.title
+            pageSize = textPage.pageSize
+            setPageIndex(textPage.index)
+        } else {
+            content_text_view.gravity = Gravity.CENTER
+            content_text_view.setText(R.string.data_loading)
+        }
     }
 
     @SuppressLint("SetTextI18n")
