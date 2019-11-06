@@ -115,7 +115,7 @@ class BookSourceEditActivity :
     override fun finish() {
         val source = getSource()
         if (!source.equal(viewModel.bookSource)) {
-            alert(title = "是否保存") {
+            alert(R.string.exit_no_save) {
                 yesButton {
                     if (checkSource(source)) {
                         viewModel.save(source) {

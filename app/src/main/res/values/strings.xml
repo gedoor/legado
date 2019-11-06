@@ -59,7 +59,7 @@
     <string name="about">关于</string>
     <string name="donate">捐赠</string>
     <string name="exit">退出</string>
-    <string name="exit_no_save">还未保存,是否继续编辑</string>
+    <string name="exit_no_save">是否保存</string>
     <string name="read_style">阅读样式设置</string>
     <string name="version">版本</string>
     <string name="local">本地</string>
