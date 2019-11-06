@@ -101,6 +101,7 @@ class AudioPlayService : BaseService(),
     }
 
     private fun play(url: String) {
+        upNotification()
         if (requestFocus()) {
             try {
                 postEvent(Bus.AUDIO_STATE, Status.PLAY)
