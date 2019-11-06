@@ -287,6 +287,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
+        callBack?.upContent()
         if (index != durChapterIndex) {
             durChapterIndex = index
             durPageIndex = 0
