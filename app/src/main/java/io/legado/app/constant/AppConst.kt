@@ -55,4 +55,8 @@ object AppConst {
         set(value) {
             App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
         }
+
+    const val notificationIdRead = 12
+    const val notificationIdAudio = 13
+    const val notificationIdWeb = 14
 }

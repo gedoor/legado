@@ -320,7 +320,7 @@ abstract class BaseReadAloudService : BaseService(),
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
-        startForeground(112201, notification)
+        startForeground(AppConst.notificationIdRead, notification)
     }
 
     abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?

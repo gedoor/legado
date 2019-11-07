@@ -343,7 +343,7 @@ class AudioPlayService : BaseService(),
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
-        startForeground(112201, notification)
+        startForeground(AppConst.notificationIdAudio, notification)
     }
 
     /**

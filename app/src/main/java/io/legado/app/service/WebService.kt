@@ -63,7 +63,6 @@ class WebService : BaseService() {
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
-        val notificationId = 1122
-        startForeground(notificationId, notification)
+        startForeground(AppConst.notificationIdWeb, notification)
     }
 }
