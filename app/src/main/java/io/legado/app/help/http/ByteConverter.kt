@@ -5,7 +5,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 
-class ByteConverter() : Converter.Factory() {
+class ByteConverter : Converter.Factory() {
 
     override fun responseBodyConverter(
         type: Type?,
