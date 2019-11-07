@@ -155,10 +155,7 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     private fun contentDebug(book: Book, bookChapter: BookChapter, nextChapterUrl: String?) {
         printLog(debugSource, "︾开始解析正文页")
         val content = webBook.getContent(book, bookChapter, nextChapterUrl)
-            .onSuccess { content ->
-                content?.let {
-                    printLog(debugSource, it, state = 1000)
-                }
+            .onSuccess {
                 printLog(debugSource, "︽正文页解析完成")
             }
             .onError {
