@@ -470,6 +470,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             var tmp: String
             val evalMatcher = evalPattern.matcher(rule)
             while (evalMatcher.find()) {
+                if (mode == Mode.Default) {
+                    mode = Mode.Regex
+                }
                 if (evalMatcher.start() > start) {
                     tmp = rule.substring(start, evalMatcher.start())
                     ruleType.add(0)
