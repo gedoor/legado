@@ -23,7 +23,6 @@ import io.legado.app.constant.Status
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
-import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.launch
@@ -323,7 +322,7 @@ class AudioPlayService : BaseService(),
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(
-                IntentHelp.activityPendingIntent<ReadBookActivity>(this, "activity")
+                IntentHelp.activityPendingIntent<AudioPlayService>(this, "activity")
             )
         if (pause) {
             builder.addAction(
