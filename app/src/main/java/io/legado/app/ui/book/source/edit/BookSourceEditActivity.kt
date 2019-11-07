@@ -84,7 +84,7 @@ class BookSourceEditActivity :
                     clipboard?.primaryClip = ClipData.newPlainText(null, sourceStr)
                 }
             }
-            R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView() }
+            R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -142,8 +142,7 @@ class BookSourceEditActivity :
         recycler_view.scrollToPosition(0)
     }
 
-    private fun upRecyclerView() {
-        val source = viewModel.bookSource
+    private fun upRecyclerView(source: BookSource? = viewModel.bookSource) {
         source?.let {
             cb_is_enable.isChecked = it.enabled
             cb_is_enable_find.isChecked = it.enabledExplore

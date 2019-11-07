@@ -30,15 +30,16 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         }
     }
 
-    fun save(bookSource: BookSource, success: (() -> Unit)? = null) {
+    fun save(source: BookSource, success: (() -> Unit)? = null) {
         execute {
             oldSourceUrl?.let {
-                if (oldSourceUrl != bookSource.bookSourceUrl) {
+                if (oldSourceUrl != source.bookSourceUrl) {
                     App.db.bookSourceDao().delete(it)
                 }
             }
-            oldSourceUrl = bookSource.bookSourceUrl
-            App.db.bookSourceDao().insert(bookSource)
+            oldSourceUrl = source.bookSourceUrl
+            App.db.bookSourceDao().insert(source)
+            bookSource = source
         }.onSuccess {
             success?.invoke()
         }.onError {
@@ -47,21 +48,25 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         }
     }
 
-    fun pasteSource(onSuccess: () -> Unit) {
+    fun pasteSource(onSuccess: (source: BookSource) -> Unit) {
         execute {
+            var source: BookSource? = null
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             clipboard?.primaryClip?.let {
                 if (it.itemCount > 0) {
                     val json = it.getItemAt(0).text.toString()
-                    OldRule.jsonToBookSource(json)?.let { source ->
-                        bookSource = source
-                    } ?: toast("格式不对")
+                    source = OldRule.jsonToBookSource(json)
                 }
             }
+            source
         }.onError {
             toast(it.localizedMessage)
         }.onSuccess {
-            onSuccess()
+            if (it != null) {
+                onSuccess(it)
+            } else {
+                toast("格式不对")
+            }
         }
     }
 }

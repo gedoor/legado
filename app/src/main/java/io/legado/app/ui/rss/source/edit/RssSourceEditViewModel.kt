@@ -31,15 +31,16 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }
     }
 
-    fun save(rssSource: RssSource, success: (() -> Unit)) {
+    fun save(source: RssSource, success: (() -> Unit)) {
         execute {
             oldSourceUrl?.let {
-                if (oldSourceUrl != rssSource.sourceUrl) {
+                if (oldSourceUrl != source.sourceUrl) {
                     App.db.rssSourceDao().delete(it)
                 }
             }
-            oldSourceUrl = rssSource.sourceUrl
-            App.db.rssSourceDao().insert(rssSource)
+            oldSourceUrl = source.sourceUrl
+            App.db.rssSourceDao().insert(source)
+            rssSource = source
         }.onSuccess {
             success()
         }.onError {
@@ -48,21 +49,25 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }
     }
 
-    fun pasteSource(onSuccess: () -> Unit) {
+    fun pasteSource(onSuccess: (source: RssSource) -> Unit) {
         execute {
+            var source: RssSource? = null
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             clipboard?.primaryClip?.let {
                 if (it.itemCount > 0) {
                     val json = it.getItemAt(0).text.toString().trim()
-                    GSON.fromJsonObject<RssSource>(json)?.let { source ->
-                        rssSource = source
-                    } ?: toast("格式不对")
+                    source = GSON.fromJsonObject<RssSource>(json)
                 }
             }
+            source
         }.onError {
             toast(it.localizedMessage)
         }.onSuccess {
-            onSuccess()
+            if (it != null) {
+                onSuccess(it)
+            } else {
+                toast("格式不对")
+            }
         }
     }
 }

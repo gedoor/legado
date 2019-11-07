@@ -102,7 +102,7 @@ class RssSourceEditActivity :
                     clipboard?.primaryClip = ClipData.newPlainText(null, sourceStr)
                 }
             }
-            R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView() }
+            R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -115,8 +115,7 @@ class RssSourceEditActivity :
         recycler_view.adapter = adapter
     }
 
-    private fun upRecyclerView() {
-        val rssSource = viewModel.rssSource
+    private fun upRecyclerView(rssSource: RssSource? = viewModel.rssSource) {
         rssSource?.let {
             cb_is_enable.isChecked = rssSource.enabled
             cb_enable_js.isChecked = rssSource.enableJs
