@@ -169,27 +169,27 @@ data class BookSource(
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
-    fun equal(source: BookSource?): Boolean {
-        if (source == null) {
-            return false
-        }
-        return bookSourceName == source.bookSourceName
-                && bookSourceUrl == source.bookSourceUrl
-                && bookSourceGroup == source.bookSourceGroup
+    fun equal(source: BookSource): Boolean {
+        return equal(bookSourceName, source.bookSourceName)
+                && equal(bookSourceUrl, source.bookSourceUrl)
+                && equal(bookSourceGroup, source.bookSourceGroup)
                 && bookSourceType == source.bookSourceType
-                && bookUrlPattern == source.bookUrlPattern
+                && equal(bookUrlPattern, source.bookUrlPattern)
                 && enabled == source.enabled
                 && enabledExplore == source.enabledExplore
-                && header == source.header
-                && loginUrl == source.loginUrl
-                && lastUpdateTime == source.lastUpdateTime
-                && exploreUrl == source.exploreUrl
-                && searchUrl == source.searchUrl
-                && ruleSearch == source.ruleSearch
-                && ruleExplore == source.ruleExplore
-                && ruleBookInfo == source.ruleBookInfo
-                && ruleToc == source.ruleToc
-                && ruleContent == source.ruleContent
+                && equal(header, source.header)
+                && equal(loginUrl, source.loginUrl)
+                && equal(exploreUrl, source.exploreUrl)
+                && equal(searchUrl, source.searchUrl)
+                && getSearchRule() == source.getSearchRule()
+                && getExploreRule() == source.getExploreRule()
+                && getBookInfoRule() == source.getBookInfoRule()
+                && getTocRule() == source.getTocRule()
+                && getContentRule() == source.getContentRule()
+    }
+
+    private fun equal(a: String?, b: String?): Boolean {
+        return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
 
     data class ExploreKind(

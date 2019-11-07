@@ -19,8 +19,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
@@ -56,16 +54,13 @@ class RssSourceEditActivity :
 
     override fun finish() {
         val source = getRssSource()
-        if (!source.equal(viewModel.rssSource)) {
-            alert(R.string.exit_no_save) {
-                yesButton {
-                    if (checkSource(source)) {
-                        viewModel.save(source) {
-                            super.finish()
-                        }
-                    }
+        if (!source.equal(viewModel.rssSource ?: RssSource())) {
+            alert(R.string.exit) {
+                messageResource = R.string.exit_no_save
+                positiveButton(R.string.yes)
+                negativeButton(R.string.no) {
+                    super.finish()
                 }
-                noButton { }
             }.show().applyTint()
         } else {
             super.finish()
