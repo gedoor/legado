@@ -50,6 +50,7 @@ class AudioPlayService : BaseService(),
     private val mediaPlayer = MediaPlayer()
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
+    private var url: String = ""
     private var position = 0
     private val dsRunnable: Runnable = Runnable { doDs() }
     private var mpRunnable: Runnable = Runnable { upPlayProgress() }
@@ -75,7 +76,8 @@ class AudioPlayService : BaseService(),
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
                     position = intent.getIntExtra("position", 0)
-                    play(intent.getStringExtra("url"))
+                    url = intent.getStringExtra("url")
+                    play()
                 }
                 Action.pause -> pause(true)
                 Action.resume -> resume()
@@ -100,7 +102,7 @@ class AudioPlayService : BaseService(),
         postEvent(Bus.AUDIO_STATE, Status.STOP)
     }
 
-    private fun play(url: String) {
+    private fun play() {
         upNotification()
         if (requestFocus()) {
             try {
@@ -147,6 +149,9 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 加载完成
+     */
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
         mp?.start()
@@ -167,6 +172,9 @@ class AudioPlayService : BaseService(),
         return true
     }
 
+    /**
+     * 播放结束
+     */
     override fun onCompletion(mp: MediaPlayer?) {
         handler.removeCallbacks(mpRunnable)
         postEvent(Bus.AUDIO_NEXT, 1)
