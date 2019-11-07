@@ -2,9 +2,12 @@ package io.legado.app.web.controller
 
 import io.legado.app.App
 import io.legado.app.data.entities.Book
+import io.legado.app.help.BookHelp
+import io.legado.app.model.WebBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.web.utils.ReturnData
+import kotlinx.coroutines.runBlocking
 
 class BookshelfController {
 
@@ -38,7 +41,22 @@ class BookshelfController {
         if (book == null || chapter == null) {
             returnData.setErrorMsg("未找到")
         } else {
-
+            val content = BookHelp.getContent(book, chapter)
+            if (content != null) {
+                returnData.setData(content)
+            } else {
+                runBlocking {
+                    App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
+                        WebBook(source).getContent(book, chapter)
+                            .onSuccess {
+                                returnData.setData(it!!)
+                            }
+                            .onError {
+                                returnData.setErrorMsg(it.localizedMessage)
+                            }
+                    } ?: returnData.setErrorMsg("未找到书源")
+                }
+            }
         }
         return returnData
     }
