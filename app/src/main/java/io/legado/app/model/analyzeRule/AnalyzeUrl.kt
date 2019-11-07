@@ -295,9 +295,8 @@ class AnalyzeUrl(
         tag: String,
         jsStr: String? = null,
         sourceRegex: String? = null
-    ): String {
-        val params = AjaxWebView.AjaxParams(tag)
-        params.url = url
+    ): AjaxWebView.Response {
+        val params = AjaxWebView.AjaxParams(url, tag)
         params.headerMap = headerMap
         params.requestMethod = method
         params.javaScript = jsStr

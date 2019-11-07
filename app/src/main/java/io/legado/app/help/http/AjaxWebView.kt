@@ -38,7 +38,7 @@ class AjaxWebView {
                     mWebView = createAjaxWebView(params, this)
                 }
                 MSG_SUCCESS -> {
-                    ajaxWebView.callback?.onResult(msg.obj as String)
+                    ajaxWebView.callback?.onResult(msg.obj as Response)
                     destroyWebView()
                 }
                 MSG_ERROR -> {
@@ -92,9 +92,8 @@ class AjaxWebView {
         mHandler.obtainMessage(DESTROY_WEB_VIEW)
     }
 
-    class AjaxParams(private val tag: String) {
+    class AjaxParams(val url: String, private val tag: String) {
         var requestMethod = RequestMethod.GET
-        var url: String? = null
         var postData: ByteArray? = null
         var headerMap: Map<String, String>? = null
         var cookieStore: CookieStore? = null
@@ -133,7 +132,8 @@ class AjaxWebView {
             params.setCookie(url)
             handler.postDelayed({
                 view.evaluateJavascript("document.documentElement.outerHTML") {
-                    handler.obtainMessage(MSG_SUCCESS, StringEscapeUtils.unescapeJson(it))
+                    val content = StringEscapeUtils.unescapeJson(it)
+                    handler.obtainMessage(MSG_SUCCESS, Response(url, content))
                         .sendToTarget()
                 }
             }, 1000)
@@ -177,7 +177,7 @@ class AjaxWebView {
         override fun onLoadResource(view: WebView, url: String) {
             params.sourceRegex?.let {
                 if (url.matches(it.toRegex())) {
-                    handler.obtainMessage(MSG_SUCCESS, url)
+                    handler.obtainMessage(MSG_SUCCESS, Response(view.url ?: params.url, url))
                         .sendToTarget()
                 }
             }
@@ -230,13 +230,13 @@ class AjaxWebView {
         webView: WebView,
         private val mJavaScript: String?
     ) : Runnable {
-
         private val mWebView: WeakReference<WebView> = WeakReference(webView)
-
         override fun run() {
             mWebView.get()?.loadUrl("javascript:${mJavaScript ?: ""}")
         }
     }
+
+    data class Response(val url: String, val content: String)
 
     companion object {
         const val MSG_AJAX_START = 0
@@ -247,7 +247,7 @@ class AjaxWebView {
     }
 
     abstract class Callback {
-        abstract fun onResult(result: String)
+        abstract fun onResult(response: Response)
         abstract fun onError(error: Throwable)
     }
 }

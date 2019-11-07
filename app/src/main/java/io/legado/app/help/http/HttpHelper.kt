@@ -74,21 +74,21 @@ object HttpHelper {
         }
     }
 
-    suspend fun ajax(params: AjaxWebView.AjaxParams): String =
+    suspend fun ajax(params: AjaxWebView.AjaxParams): AjaxWebView.Response =
         suspendCancellableCoroutine { block ->
             val webView = AjaxWebView()
             block.invokeOnCancellation {
                 webView.destroyWebView()
             }
             webView.callback = object : AjaxWebView.Callback() {
-                override fun onResult(result: String) {
+                override fun onResult(response: AjaxWebView.Response) {
                     if (!block.isCompleted)
-                        block.resume(result)
+                        block.resume(response)
                 }
 
                 override fun onError(error: Throwable) {
                     if (!block.isCompleted)
-                        block.resume(error.localizedMessage)
+                        block.resume(AjaxWebView.Response(params.url, error.localizedMessage))
                 }
             }
             webView.load(params)
