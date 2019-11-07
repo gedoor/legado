@@ -167,7 +167,7 @@ class AudioPlayService : BaseService(),
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         postEvent(Bus.AUDIO_STATE, Status.STOP)
         launch {
-            toast("error: $what $extra")
+            toast("error: $what $extra $url")
         }
         return true
     }
