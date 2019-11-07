@@ -156,7 +156,11 @@ class AudioPlayService : BaseService(),
         handler.post(mpRunnable)
     }
 
+    /**
+     * 播放出错
+     */
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        postEvent(Bus.AUDIO_STATE, Status.STOP)
         launch {
             toast("error: $what $extra")
         }
