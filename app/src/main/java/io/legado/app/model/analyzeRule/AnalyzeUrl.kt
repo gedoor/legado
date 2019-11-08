@@ -175,10 +175,12 @@ class AnalyzeUrl(
         }
         when (method) {
             RequestMethod.GET -> {
-                urlArray = url.split("?")
-                url = urlArray[0]
-                if (urlArray.size > 1) {
-                    analyzeFields(urlArray[1])
+                if (!useWebView) {
+                    urlArray = url.split("?")
+                    url = urlArray[0]
+                    if (urlArray.size > 1) {
+                        analyzeFields(urlArray[1])
+                    }
                 }
             }
             RequestMethod.POST -> {

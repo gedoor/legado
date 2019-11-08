@@ -2,7 +2,6 @@ package io.legado.app.ui.audio
 
 import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
@@ -11,20 +10,20 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.service.help.AudioPlay
+import io.legado.app.service.help.AudioPlay.book
+import io.legado.app.service.help.AudioPlay.callBack
+import io.legado.app.service.help.AudioPlay.chapterSize
+import io.legado.app.service.help.AudioPlay.coverData
+import io.legado.app.service.help.AudioPlay.durChapterIndex
+import io.legado.app.service.help.AudioPlay.durPageIndex
+import io.legado.app.service.help.AudioPlay.inBookshelf
+import io.legado.app.service.help.AudioPlay.loadingChapters
+import io.legado.app.service.help.AudioPlay.titleData
+import io.legado.app.service.help.AudioPlay.webBook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
-    var titleData = MutableLiveData<String>()
-    var coverData = MutableLiveData<String>()
-    var book: Book? = null
-    var inBookshelf = false
-    private var chapterSize = 0
-    var callBack: CallBack? = null
-    var durChapterIndex = 0
-    var durPageIndex = 0
-    var webBook: WebBook? = null
-    private val loadingChapters = arrayListOf<Int>()
 
     fun initData(intent: Intent) {
         execute {

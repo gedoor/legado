@@ -2,10 +2,24 @@ package io.legado.app.service.help
 
 import android.content.Context
 import android.content.Intent
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.constant.Action
+import io.legado.app.data.entities.Book
+import io.legado.app.model.WebBook
 import io.legado.app.service.AudioPlayService
+import io.legado.app.ui.audio.AudioPlayViewModel
 
 object AudioPlay {
+    var titleData = MutableLiveData<String>()
+    var coverData = MutableLiveData<String>()
+    var book: Book? = null
+    var inBookshelf = false
+    var chapterSize = 0
+    var callBack: AudioPlayViewModel.CallBack? = null
+    var durChapterIndex = 0
+    var durPageIndex = 0
+    var webBook: WebBook? = null
+    val loadingChapters = arrayListOf<Int>()
 
     fun play(context: Context, title: String?, subtitle: String, url: String, position: Int) {
         val intent = Intent(context, AudioPlayService::class.java)

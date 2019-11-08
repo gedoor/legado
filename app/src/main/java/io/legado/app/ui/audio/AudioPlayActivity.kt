@@ -47,9 +47,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
-        viewModel.callBack = this
-        viewModel.titleData.observe(this, Observer { title_bar.title = it })
-        viewModel.coverData.observe(this, Observer { upCover(it) })
+        AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
+        AudioPlay.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)
         initView()
     }
@@ -83,7 +82,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             }
         })
         iv_chapter.onClick {
-            viewModel.book?.let {
+            AudioPlay.book?.let {
                 startActivityForResult<ChapterListActivity>(
                     requestCodeChapter,
                     Pair("bookUrl", it.bookUrl)
@@ -114,27 +113,27 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         when (status) {
             Status.PLAY -> AudioPlay.pause(this)
             Status.PAUSE -> AudioPlay.resume(this)
-            else -> viewModel.loadContent(viewModel.durChapterIndex)
+            else -> viewModel.loadContent(AudioPlay.durChapterIndex)
         }
     }
 
     override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
         AudioPlay.play(
             this,
-            viewModel.book?.name,
+            AudioPlay.book?.name,
             bookChapter.title,
             content,
-            viewModel.durPageIndex
+            AudioPlay.durPageIndex
         )
-        viewModel.loadContent(viewModel.durChapterIndex + 1)
+        viewModel.loadContent(AudioPlay.durChapterIndex + 1)
     }
 
     override fun finish() {
-        viewModel.book?.let {
-            if (!viewModel.inBookshelf) {
+        AudioPlay.book?.let {
+            if (!AudioPlay.inBookshelf) {
                 this.alert(title = getString(R.string.add_to_shelf)) {
                     message = getString(R.string.check_add_bookshelf, it.name)
-                    okButton { viewModel.inBookshelf = true }
+                    okButton { AudioPlay.inBookshelf = true }
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
                 }.show().applyTint()
             } else {
@@ -159,8 +158,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                requestCodeChapter -> data?.getIntExtra("index", viewModel.durChapterIndex)?.let {
-                    if (it != viewModel.durChapterIndex) {
+                requestCodeChapter -> data?.getIntExtra("index", AudioPlay.durChapterIndex)?.let {
+                    if (it != AudioPlay.durChapterIndex) {
                         viewModel.loadContent(it)
                     }
                 }
@@ -184,7 +183,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             }
         }
         observeEventSticky<Int>(Bus.AUDIO_PROGRESS) {
-            viewModel.durPageIndex = it
+            AudioPlay.durPageIndex = it
             if (!adjustProgress) player_progress.progress = it
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
             viewModel.saveProgress()

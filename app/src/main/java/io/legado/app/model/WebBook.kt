@@ -180,7 +180,11 @@ class WebBook(val bookSource: BookSource) {
                         headerMapF = bookSource.getHeaderMap()
                     )
                 if (analyzeUrl.useWebView) {
-                    analyzeUrl.getResultByWebView(bookSource.bookSourceUrl).content
+                    analyzeUrl.getResultByWebView(
+                        bookSource.bookSourceUrl,
+                        jsStr = bookSource.getContentRule().webJs,
+                        sourceRegex = bookSource.getContentRule().sourceRegex
+                    ).content
                 } else {
                     analyzeUrl.getResponseAwait().body()
                 }
