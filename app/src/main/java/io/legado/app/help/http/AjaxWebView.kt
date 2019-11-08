@@ -100,6 +100,15 @@ class AjaxWebView {
         var sourceRegex: String? = null
         var javaScript: String? = null
 
+        fun getJs(): String {
+            javaScript?.let {
+                if (it.isNotEmpty()) {
+                    return it
+                }
+            }
+            return JS
+        }
+
         val userAgent: String?
             get() = this.headerMap?.get(AppConst.UA_NAME)
 
@@ -123,20 +132,15 @@ class AjaxWebView {
 
     }
 
-    class HtmlWebViewClient(
+    private class HtmlWebViewClient(
         private val params: AjaxParams,
         private val handler: Handler
     ) : WebViewClient() {
 
         override fun onPageFinished(view: WebView, url: String) {
             params.setCookie(url)
-            handler.postDelayed({
-                view.evaluateJavascript("document.documentElement.outerHTML") {
-                    val content = StringEscapeUtils.unescapeJson(it)
-                    handler.obtainMessage(MSG_SUCCESS, Response(url, content))
-                        .sendToTarget()
-                }
-            }, 1000)
+            val runnable = EvalJsRunnable(view, url, params.getJs(), handler)
+            handler.postDelayed(runnable, 1000)
         }
 
         override fun onReceivedError(
@@ -169,7 +173,27 @@ class AjaxWebView {
         }
     }
 
-    class SnifferWebClient(
+    private class EvalJsRunnable(
+        webView: WebView,
+        private val url: String,
+        private val mJavaScript: String,
+        private val handler: Handler
+    ) : Runnable {
+        private val mWebView: WeakReference<WebView> = WeakReference(webView)
+        override fun run() {
+            mWebView.get()?.evaluateJavascript(mJavaScript) {
+                if (it.isNotEmpty()) {
+                    val content = StringEscapeUtils.unescapeJson(it)
+                    handler.obtainMessage(MSG_SUCCESS, Response(url, content))
+                        .sendToTarget()
+                    handler.removeCallbacks(this)
+                }
+            }
+            handler.postDelayed(this, 1000)
+        }
+    }
+
+    private class SnifferWebClient(
         private val params: AjaxParams,
         private val handler: Handler
     ) : WebViewClient() {
@@ -221,12 +245,12 @@ class AjaxWebView {
         }
 
         private fun evaluateJavascript(webView: WebView, javaScript: String?) {
-            val runnable = ScriptRunnable(webView, javaScript)
+            val runnable = LoadJsRunnable(webView, javaScript)
             handler.postDelayed(runnable, 1000L)
         }
     }
 
-    class ScriptRunnable(
+    private class LoadJsRunnable(
         webView: WebView,
         private val mJavaScript: String?
     ) : Runnable {
@@ -244,6 +268,7 @@ class AjaxWebView {
         const val MSG_SUCCESS = 2
         const val MSG_ERROR = 3
         const val DESTROY_WEB_VIEW = 4
+        const val JS = "document.documentElement.outerHTML"
     }
 
     abstract class Callback {
