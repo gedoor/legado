@@ -182,7 +182,7 @@ class AjaxWebView {
         private val mWebView: WeakReference<WebView> = WeakReference(webView)
         override fun run() {
             mWebView.get()?.evaluateJavascript(mJavaScript) {
-                if (it.isNotEmpty()) {
+                if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
                     handler.obtainMessage(MSG_SUCCESS, Response(url, content))
                         .sendToTarget()
