@@ -179,6 +179,7 @@ class AjaxWebView {
         private val mJavaScript: String,
         private val handler: Handler
     ) : Runnable {
+        var retry = 0
         private val mWebView: WeakReference<WebView> = WeakReference(webView)
         override fun run() {
             mWebView.get()?.evaluateJavascript(mJavaScript) {
@@ -187,9 +188,17 @@ class AjaxWebView {
                     handler.obtainMessage(MSG_SUCCESS, Response(url, content))
                         .sendToTarget()
                     handler.removeCallbacks(this)
+                    return@evaluateJavascript
                 }
+                if (retry > 30) {
+                    handler.obtainMessage(MSG_ERROR, Exception("time out"))
+                        .sendToTarget()
+                    handler.removeCallbacks(this)
+                    return@evaluateJavascript
+                }
+                retry++
+                handler.postDelayed(this, 1000)
             }
-            handler.postDelayed(this, 1000)
         }
     }
 
