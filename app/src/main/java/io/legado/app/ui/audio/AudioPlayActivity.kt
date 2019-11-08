@@ -26,6 +26,7 @@ import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.observeEventSticky
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.apache.commons.lang3.time.DateFormatUtils
@@ -182,13 +183,13 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
                 fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
             }
         }
-        observeEvent<Int>(Bus.AUDIO_PROGRESS) {
+        observeEventSticky<Int>(Bus.AUDIO_PROGRESS) {
             viewModel.durPageIndex = it
             if (!adjustProgress) player_progress.progress = it
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
             viewModel.saveProgress()
         }
-        observeEvent<Int>(Bus.AUDIO_SIZE) {
+        observeEventSticky<Int>(Bus.AUDIO_SIZE) {
             player_progress.max = it
             tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
