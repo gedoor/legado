@@ -58,6 +58,7 @@ class AudioPlayService : BaseService(),
     private var position = 0
     private val dsRunnable: Runnable = Runnable { doDs() }
     private var mpRunnable: Runnable = Runnable { upPlayProgress() }
+    private var bookChapter: BookChapter? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -165,11 +166,16 @@ class AudioPlayService : BaseService(),
      */
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
-        mp?.start()
-        mp?.seekTo(position)
-        postEvent(Bus.AUDIO_SIZE, mp?.duration)
-        handler.removeCallbacks(mpRunnable)
-        handler.post(mpRunnable)
+        mp?.let {
+            mp.start()
+            mp.seekTo(position)
+            postEvent(Bus.AUDIO_SIZE, mp.duration)
+            bookChapter?.let {
+                it.end = mp.duration.toLong()
+            }
+            handler.removeCallbacks(mpRunnable)
+            handler.post(mpRunnable)
+        }
     }
 
     /**
@@ -231,8 +237,11 @@ class AudioPlayService : BaseService(),
                 launch(IO) {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                         if (index == AudioPlay.durChapterIndex) {
+                            bookChapter = chapter
                             subtitle = chapter.title
                             postEvent(Bus.AUDIO_SUB_TITLE, subtitle)
+                            postEvent(Bus.AUDIO_SIZE, chapter.end?.toInt() ?: 0)
+                            postEvent(Bus.AUDIO_PROGRESS, position)
                         }
                         BookHelp.getContent(book, chapter)?.let {
                             contentLoadFinish(chapter, it)
@@ -285,6 +294,7 @@ class AudioPlayService : BaseService(),
             subtitle = chapter.title
             url = content
             play()
+            loadContent(AudioPlay.durChapterIndex + 1)
         }
     }
 
