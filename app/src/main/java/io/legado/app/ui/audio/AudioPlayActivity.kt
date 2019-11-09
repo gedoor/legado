@@ -158,17 +158,17 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
                 fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
             }
         }
-        observeEventSticky<Int>(Bus.AUDIO_PROGRESS) {
-            AudioPlay.durPageIndex = it
-            if (!adjustProgress) player_progress.progress = it
-            tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+        observeEventSticky<String>(Bus.AUDIO_SUB_TITLE) {
+            tv_sub_title.text = it
         }
         observeEventSticky<Int>(Bus.AUDIO_SIZE) {
             player_progress.max = it
             tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
-        observeEventSticky<String>(Bus.AUDIO_SUB_TITLE) {
-            tv_sub_title.text = it
+        observeEventSticky<Int>(Bus.AUDIO_PROGRESS) {
+            AudioPlay.durPageIndex = it
+            if (!adjustProgress) player_progress.progress = it
+            tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
     }
 
