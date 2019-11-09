@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget.page
 
 import android.text.SpannableStringBuilder
+import kotlin.math.min
 
 data class TextChapter(
     val position: Int,
@@ -53,7 +54,8 @@ data class TextChapter(
 
     fun getReadLength(pageIndex: Int): Int {
         var length = 0
-        for (index in 0 until pageIndex) {
+        val maxIndex = min(pageIndex, pageLines.lastIndex)
+        for (index in 0 until maxIndex) {
             length += pageLengths[index]
         }
         return length
