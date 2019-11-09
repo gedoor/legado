@@ -110,7 +110,6 @@ class AudioPlayService : BaseService(),
     }
 
     private fun play() {
-        postEvent(Bus.AUDIO_SUB_TITLE, subtitle)
         upNotification()
         if (requestFocus()) {
             try {
@@ -230,6 +229,10 @@ class AudioPlayService : BaseService(),
             if (addLoading(index)) {
                 launch(IO) {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                        if (index == AudioPlay.durChapterIndex) {
+                            subtitle = chapter.title
+                            postEvent(Bus.AUDIO_SUB_TITLE, subtitle)
+                        }
                         BookHelp.getContent(book, chapter)?.let {
                             contentLoadFinish(chapter, it)
                             removeLoading(chapter.index)
@@ -285,6 +288,7 @@ class AudioPlayService : BaseService(),
     }
 
     private fun moveTo(index: Int) {
+        mediaPlayer.pause()
         AudioPlay.durChapterIndex = index
         AudioPlay.durPageIndex = 0
         AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
@@ -329,7 +333,7 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    fun saveProgress() {
+    private fun saveProgress() {
         launch(IO) {
             AudioPlay.book?.let {
                 App.db.bookDao().upProgress(it.bookUrl, AudioPlay.durPageIndex)
