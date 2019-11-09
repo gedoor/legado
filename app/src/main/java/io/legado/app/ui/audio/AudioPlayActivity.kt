@@ -8,14 +8,12 @@ import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
-import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
-import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -129,9 +127,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun onDestroy() {
         super.onDestroy()
-        AudioPlay.stop(this)
-        if (!BuildConfig.DEBUG) {
-            Backup.autoBackup()
+        if (status != Status.PLAY) {
+            AudioPlay.stop(this)
         }
     }
 
