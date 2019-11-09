@@ -110,7 +110,7 @@ class ReadAloudDialog : DialogFragment() {
         }
         iv_menu.onLongClick { callBack?.openChapterList(); true }
         iv_stop.onClick { ReadAloud.stop(requireContext()); dismiss() }
-        iv_play_pause.onClick { postEvent(Bus.READ_ALOUD_BUTTON, true) }
+        iv_play_pause.onClick { callBack?.onClickReadAloud() }
         iv_play_prev.onClick { ReadAloud.prevParagraph(requireContext()) }
         iv_play_prev.onLongClick { postEvent(Bus.TTS_TURN_PAGE, -2); true }
         iv_play_next.onClick { ReadAloud.nextParagraph(requireContext()) }
@@ -136,6 +136,7 @@ class ReadAloudDialog : DialogFragment() {
     interface CallBack {
         fun showMenu()
         fun openChapterList()
+        fun onClickReadAloud()
         var readAloudStatus: Int
     }
 }
