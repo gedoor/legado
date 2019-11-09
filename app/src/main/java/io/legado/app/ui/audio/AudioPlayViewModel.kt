@@ -10,16 +10,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.service.help.AudioPlay
-import io.legado.app.service.help.AudioPlay.book
-import io.legado.app.service.help.AudioPlay.callBack
-import io.legado.app.service.help.AudioPlay.chapterSize
-import io.legado.app.service.help.AudioPlay.coverData
-import io.legado.app.service.help.AudioPlay.durChapterIndex
-import io.legado.app.service.help.AudioPlay.durPageIndex
-import io.legado.app.service.help.AudioPlay.inBookshelf
-import io.legado.app.service.help.AudioPlay.loadingChapters
-import io.legado.app.service.help.AudioPlay.titleData
-import io.legado.app.service.help.AudioPlay.webBook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -27,20 +17,20 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
 
     fun initData(intent: Intent) {
         execute {
-            inBookshelf = intent.getBooleanExtra("inBookshelf", true)
+            AudioPlay.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             val bookUrl = intent.getStringExtra("bookUrl")
-            book = if (!bookUrl.isNullOrEmpty()) {
+            AudioPlay.book = if (!bookUrl.isNullOrEmpty()) {
                 App.db.bookDao().getBook(bookUrl)
             } else {
                 App.db.bookDao().lastReadBook
             }
-            book?.let { book ->
-                titleData.postValue(book.name)
-                coverData.postValue(book.getDisplayCover())
-                durChapterIndex = book.durChapterIndex
-                durPageIndex = book.durChapterPos
+            AudioPlay.book?.let { book ->
+                AudioPlay.titleData.postValue(book.name)
+                AudioPlay.coverData.postValue(book.getDisplayCover())
+                AudioPlay.durChapterIndex = book.durChapterIndex
+                AudioPlay.durPageIndex = book.durChapterPos
                 App.db.bookSourceDao().getBookSource(book.origin)?.let {
-                    webBook = WebBook(it)
+                    AudioPlay.webBook = WebBook(it)
                 }
                 val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
                 if (count == 0) {
@@ -50,10 +40,10 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         loadChapterList(book)
                     }
                 } else {
-                    if (durChapterIndex > count - 1) {
-                        durChapterIndex = count - 1
+                    if (AudioPlay.durChapterIndex > count - 1) {
+                        AudioPlay.durChapterIndex = count - 1
                     }
-                    chapterSize = count
+                    AudioPlay.chapterSize = count
                 }
             }
             saveRead()
@@ -65,7 +55,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            webBook?.getBookInfo(book, this)
+            AudioPlay.webBook?.getBookInfo(book, this)
                 ?.onSuccess {
                     loadChapterList(book, changeDruChapterIndex)
                 }
@@ -77,12 +67,12 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            webBook?.getChapterList(book, this)
+            AudioPlay.webBook?.getChapterList(book, this)
                 ?.onSuccess(Dispatchers.IO) { cList ->
                     if (!cList.isNullOrEmpty()) {
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao().insert(*cList.toTypedArray())
-                            chapterSize = cList.size
+                            AudioPlay.chapterSize = cList.size
                         } else {
                             changeDruChapterIndex(cList)
                         }
@@ -95,74 +85,18 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun loadContent(index: Int) {
-        book?.let { book ->
-            if (addLoading(index)) {
-                execute {
-                    App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
-                        BookHelp.getContent(book, chapter)?.let {
-                            contentLoadFinish(chapter, it)
-                            removeLoading(chapter.index)
-                        } ?: download(chapter)
-                    } ?: removeLoading(index)
-                }.onError {
-                    removeLoading(index)
-                }
-            }
-        }
-    }
-
-    private fun download(chapter: BookChapter) {
-        book?.let { book ->
-            webBook?.getContent(book, chapter, scope = this)
-                ?.onSuccess(Dispatchers.IO) { content ->
-                    if (content.isNullOrEmpty()) {
-                        contentLoadFinish(chapter, context.getString(R.string.content_empty))
-                        removeLoading(chapter.index)
-                    } else {
-                        BookHelp.saveContent(book, chapter, content)
-                        contentLoadFinish(chapter, content)
-                        removeLoading(chapter.index)
-                    }
-                }?.onError {
-                    contentLoadFinish(chapter, it.localizedMessage)
-                    removeLoading(chapter.index)
-                }
-        }
-    }
-
-    private fun addLoading(index: Int): Boolean {
-        synchronized(this) {
-            if (loadingChapters.contains(index)) return false
-            loadingChapters.add(index)
-            return true
-        }
-    }
-
-    private fun removeLoading(index: Int) {
-        synchronized(this) {
-            loadingChapters.remove(index)
-        }
-    }
-
-    private fun contentLoadFinish(chapter: BookChapter, content: String) {
-        if (chapter.index == durChapterIndex) {
-            callBack?.contentLoadFinish(chapter, content)
-        }
-    }
-
     fun changeTo(book1: Book) {
         execute {
-            book?.let {
+            AudioPlay.book?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
             withContext(Dispatchers.Main) {
 
             }
             App.db.bookDao().insert(book1)
-            book = book1
+            AudioPlay.book = book1
             App.db.bookSourceDao().getBookSource(book1.origin)?.let {
-                webBook = WebBook(it)
+                AudioPlay.webBook = WebBook(it)
             }
             if (book1.tocUrl.isEmpty()) {
                 loadBookInfo(book1) { upChangeDurChapterIndex(book1, it) }
@@ -174,64 +108,34 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
 
     private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
         execute {
-            durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
+            AudioPlay.durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
                 book.durChapterTitle,
                 book.durChapterIndex,
                 chapters
             )
-            book.durChapterIndex = durChapterIndex
-            book.durChapterTitle = chapters[durChapterIndex].title
+            book.durChapterIndex = AudioPlay.durChapterIndex
+            book.durChapterTitle = chapters[AudioPlay.durChapterIndex].title
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
-            chapterSize = chapters.size
-        }
-    }
-
-    fun moveToPrev() {
-        if (durChapterIndex > 0) {
-            durChapterIndex--
-            durPageIndex = 0
-            book?.durChapterIndex = durChapterIndex
-            saveRead()
-            loadContent(durChapterIndex)
-        }
-    }
-
-    fun moveToNext() {
-        if (durChapterIndex < chapterSize - 1) {
-            durChapterIndex++
-            durPageIndex = 0
-            book?.durChapterIndex = durChapterIndex
-            saveRead()
-            loadContent(durChapterIndex)
-        } else {
-            AudioPlay.stop(context)
+            AudioPlay.chapterSize = chapters.size
         }
     }
 
     private fun saveRead() {
         execute {
-            book?.let { book ->
+            AudioPlay.book?.let { book ->
                 book.lastCheckCount = 0
                 book.durChapterTime = System.currentTimeMillis()
-                book.durChapterIndex = durChapterIndex
-                book.durChapterPos = durPageIndex
+                book.durChapterIndex = AudioPlay.durChapterIndex
+                book.durChapterPos = AudioPlay.durPageIndex
                 App.db.bookDao().update(book)
-            }
-        }
-    }
-
-    fun saveProgress() {
-        execute {
-            book?.let {
-                App.db.bookDao().upProgress(it.bookUrl, durPageIndex)
             }
         }
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
-            book?.let {
+            AudioPlay.book?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
         }.onSuccess {
@@ -239,7 +143,4 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    interface CallBack {
-        fun contentLoadFinish(bookChapter: BookChapter, content: String)
-    }
 }

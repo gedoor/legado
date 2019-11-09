@@ -13,7 +13,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
-import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.storage.Backup
@@ -35,8 +34,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 
-class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play),
-    AudioPlayViewModel.CallBack {
+class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play) {
 
     override val viewModel: AudioPlayViewModel
         get() = getViewModel(AudioPlayViewModel::class.java)
@@ -62,10 +60,10 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             true
         }
         iv_skip_next.onClick {
-            viewModel.moveToNext()
+            AudioPlay.next(this)
         }
         iv_skip_previous.onClick {
-            viewModel.moveToPrev()
+            AudioPlay.prev(this)
         }
         player_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -113,19 +111,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         when (status) {
             Status.PLAY -> AudioPlay.pause(this)
             Status.PAUSE -> AudioPlay.resume(this)
-            else -> viewModel.loadContent(AudioPlay.durChapterIndex)
+            else -> AudioPlay.play(this)
         }
-    }
-
-    override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
-        AudioPlay.play(
-            this,
-            AudioPlay.book?.name,
-            bookChapter.title,
-            content,
-            AudioPlay.durPageIndex
-        )
-        viewModel.loadContent(AudioPlay.durChapterIndex + 1)
     }
 
     override fun finish() {
@@ -160,7 +147,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             when (requestCode) {
                 requestCodeChapter -> data?.getIntExtra("index", AudioPlay.durChapterIndex)?.let {
                     if (it != AudioPlay.durChapterIndex) {
-                        viewModel.loadContent(it)
+                        AudioPlay.moveTo(this, it)
                     }
                 }
             }
@@ -170,9 +157,6 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     override fun observeLiveBus() {
         observeEvent<Boolean>(Bus.AUDIO_PLAY_BUTTON) {
             playButton()
-        }
-        observeEvent<Int>(Bus.AUDIO_NEXT) {
-            viewModel.moveToNext()
         }
         observeEvent<Int>(Bus.AUDIO_STATE) {
             status = it
@@ -186,11 +170,13 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             AudioPlay.durPageIndex = it
             if (!adjustProgress) player_progress.progress = it
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
-            viewModel.saveProgress()
         }
         observeEventSticky<Int>(Bus.AUDIO_SIZE) {
             player_progress.max = it
             tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+        }
+        observeEventSticky<String>(Bus.AUDIO_SUB_TITLE) {
+            tv_sub_title.text = it
         }
     }
 

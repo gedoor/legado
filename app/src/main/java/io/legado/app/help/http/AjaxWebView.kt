@@ -197,6 +197,7 @@ class AjaxWebView {
                     return@evaluateJavascript
                 }
                 retry++
+                handler.removeCallbacks(this)
                 handler.postDelayed(this, 1000)
             }
         }
