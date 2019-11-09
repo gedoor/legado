@@ -104,6 +104,7 @@ class AudioPlayService : BaseService(),
         mediaSessionCompat?.release()
         unregisterReceiver(broadcastReceiver)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
+        AudioPlay.status = Status.STOP
         postEvent(Bus.AUDIO_STATE, Status.STOP)
     }
 
@@ -112,6 +113,7 @@ class AudioPlayService : BaseService(),
         upNotification()
         if (requestFocus()) {
             try {
+                AudioPlay.status = Status.PLAY
                 postEvent(Bus.AUDIO_STATE, Status.PLAY)
                 mediaPlayer.reset()
                 mediaPlayer.setDataSource(url)
@@ -132,6 +134,7 @@ class AudioPlayService : BaseService(),
         position = mediaPlayer.currentPosition
         mediaPlayer.pause()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        AudioPlay.status = Status.PAUSE
         postEvent(Bus.AUDIO_STATE, Status.PAUSE)
         upNotification()
     }
@@ -143,6 +146,7 @@ class AudioPlayService : BaseService(),
         handler.removeCallbacks(mpRunnable)
         handler.postDelayed(mpRunnable, 1000)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        AudioPlay.status = Status.PLAY
         postEvent(Bus.AUDIO_STATE, Status.PLAY)
         upNotification()
     }
@@ -171,6 +175,7 @@ class AudioPlayService : BaseService(),
      * 播放出错
      */
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        AudioPlay.status = Status.STOP
         postEvent(Bus.AUDIO_STATE, Status.STOP)
         launch {
             toast("error: $what $extra $url")
