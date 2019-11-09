@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
+import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,12 +18,14 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
 
     fun initData(intent: Intent) {
         execute {
-            AudioPlay.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-            val bookUrl = intent.getStringExtra("bookUrl")
-            AudioPlay.book = if (!bookUrl.isNullOrEmpty()) {
-                App.db.bookDao().getBook(bookUrl)
-            } else {
-                App.db.bookDao().lastReadBook
+            if (!AudioPlayService.isRun) {
+                AudioPlay.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
+                val bookUrl = intent.getStringExtra("bookUrl")
+                AudioPlay.book = if (!bookUrl.isNullOrEmpty()) {
+                    App.db.bookDao().getBook(bookUrl)
+                } else {
+                    App.db.bookDao().lastReadBook
+                }
             }
             AudioPlay.book?.let { book ->
                 AudioPlay.titleData.postValue(book.name)
