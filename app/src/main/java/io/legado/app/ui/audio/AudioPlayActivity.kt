@@ -21,7 +21,6 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.chapterlist.ChapterListActivity
-import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
@@ -31,7 +30,6 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 
 class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play) {
@@ -124,11 +122,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
                 }.show().applyTint()
             } else {
-                if (status == Status.PLAY) {
-                    startActivity<MainActivity>()
-                } else {
-                    super.finish()
-                }
+                super.finish()
             }
         } ?: super.finish()
     }
