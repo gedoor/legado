@@ -74,6 +74,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                     noButton {
                         viewModel.initRssSource()
                     }
+                    onCancelled {
+                        viewModel.initRssSource()
+                    }
                 }.show().applyTint()
             }
         }
