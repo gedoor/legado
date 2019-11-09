@@ -78,6 +78,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         viewModel.initRssSource()
                     }
                 }.show().applyTint()
+            } else {
+                viewModel.initRssSource()
             }
         }
     }
