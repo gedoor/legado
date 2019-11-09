@@ -86,7 +86,7 @@ class AudioPlayService : BaseService(),
                 Action.resume -> resume()
                 Action.prev -> moveToPrev()
                 Action.next -> moveToNext()
-                Action.moveTo -> loadContent(intent.getIntExtra("index", AudioPlay.durChapterIndex))
+                Action.moveTo -> moveTo(intent.getIntExtra("index", AudioPlay.durChapterIndex))
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 Action.adjustProgress -> adjustProgress(intent.getIntExtra("position", position))
@@ -270,7 +270,7 @@ class AudioPlayService : BaseService(),
     }
 
     /**
-     *
+     * 加载完成
      */
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
         if (chapter.index == AudioPlay.durChapterIndex) {
@@ -280,7 +280,16 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    fun moveToPrev() {
+    private fun moveTo(index: Int) {
+        AudioPlay.durChapterIndex = index
+        AudioPlay.durPageIndex = 0
+        AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
+        saveRead()
+        position = 0
+        loadContent(AudioPlay.durChapterIndex)
+    }
+
+    private fun moveToPrev() {
         if (AudioPlay.durChapterIndex > 0) {
             AudioPlay.durChapterIndex--
             AudioPlay.durPageIndex = 0
@@ -291,7 +300,7 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    fun moveToNext() {
+    private fun moveToNext() {
         if (AudioPlay.durChapterIndex < AudioPlay.chapterSize - 1) {
             AudioPlay.durChapterIndex++
             AudioPlay.durPageIndex = 0
