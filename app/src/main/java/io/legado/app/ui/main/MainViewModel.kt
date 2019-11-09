@@ -5,19 +5,22 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.constant.Bus
+import io.legado.app.data.entities.RssSource
 import io.legado.app.help.storage.Restore
 import io.legado.app.model.WebBook
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
     val updateList = arrayListOf<String>()
 
-    fun restore() {
-        launch(IO) {
+    fun importYueDuData() {
+        execute {
             Restore.importYueDuData(getApplication())
+            initRssSource()
         }
     }
 
@@ -54,6 +57,18 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
                 delay(50)
+            }
+        }
+    }
+
+    fun initRssSource() {
+        execute {
+            if (App.db.rssSourceDao().size == 0) {
+                val json = String(context.assets.open("rssSource.json").readBytes())
+                val sources = GSON.fromJsonArray<RssSource>(json)
+                if (sources != null) {
+                    App.db.rssSourceDao().insert(*sources.toTypedArray())
+                }
             }
         }
     }

@@ -13,6 +13,9 @@ interface RssSourceDao {
     @get:Query("SELECT * FROM rssSources")
     val all: List<RssSource>
 
+    @get:Query("select count(sourceUrl) from rssSources")
+    val size: Int
+
     @Query("SELECT * FROM rssSources order by customOrder")
     fun liveAll(): LiveData<List<RssSource>>
 
