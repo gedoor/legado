@@ -145,7 +145,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     }
 
     override fun observeLiveBus() {
-        observeEvent<Boolean>(Bus.AUDIO_PLAY_BUTTON) {
+        observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
             playButton()
         }
         observeEventSticky<Int>(Bus.AUDIO_STATE) {

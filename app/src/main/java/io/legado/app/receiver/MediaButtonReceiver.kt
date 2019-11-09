@@ -42,9 +42,9 @@ class MediaButtonReceiver : BroadcastReceiver() {
         private fun readAloud(context: Context) {
             when {
                 ActivityHelp.isExist(AudioPlayActivity::class.java) ->
-                    postEvent(Bus.AUDIO_PLAY_BUTTON, true)
+                    postEvent(Bus.MEDIA_BUTTON, true)
                 ActivityHelp.isExist(ReadBookActivity::class.java) ->
-                    postEvent(Bus.READ_ALOUD_BUTTON, true)
+                    postEvent(Bus.MEDIA_BUTTON, true)
                 else -> {
                     GlobalScope.launch(Main) {
                         val lastBook: Book? = withContext(IO) {

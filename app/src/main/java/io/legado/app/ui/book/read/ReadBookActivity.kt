@@ -559,7 +559,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             viewModel.openChapter(it.index)
             page_view.upContent()
         }
-        observeEvent<Boolean>(Bus.READ_ALOUD_BUTTON) {
+        observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
             if (it) {
                 onClickReadAloud()
             } else {
