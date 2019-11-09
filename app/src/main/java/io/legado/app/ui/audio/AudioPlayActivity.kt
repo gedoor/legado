@@ -37,7 +37,6 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     private var requestCodeChapter = 8461
     private var adjustProgress = false
-    private var status = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
@@ -104,7 +103,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     }
 
     private fun playButton() {
-        when (status) {
+        when (AudioPlay.status) {
             Status.PLAY -> AudioPlay.pause(this)
             Status.PAUSE -> AudioPlay.resume(this)
             else -> AudioPlay.play(this)
@@ -127,7 +126,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun onDestroy() {
         super.onDestroy()
-        if (status != Status.PLAY) {
+        if (AudioPlay.status != Status.PLAY) {
             AudioPlay.stop(this)
         }
     }
@@ -149,9 +148,9 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         observeEvent<Boolean>(Bus.AUDIO_PLAY_BUTTON) {
             playButton()
         }
-        observeEvent<Int>(Bus.AUDIO_STATE) {
-            status = it
-            if (status == Status.PLAY) {
+        observeEventSticky<Int>(Bus.AUDIO_STATE) {
+            AudioPlay.status = it
+            if (it == Status.PLAY) {
                 fab_play_stop.setImageResource(R.drawable.ic_pause_24dp)
             } else {
                 fab_play_stop.setImageResource(R.drawable.ic_play_24dp)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.constant.Action
+import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.model.WebBook
 import io.legado.app.service.AudioPlayService
@@ -11,6 +12,7 @@ import io.legado.app.service.AudioPlayService
 object AudioPlay {
     var titleData = MutableLiveData<String>()
     var coverData = MutableLiveData<String>()
+    var status = Status.STOP
     var book: Book? = null
     var inBookshelf = false
     var chapterSize = 0
