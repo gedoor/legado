@@ -299,6 +299,7 @@ class AudioPlayService : BaseService(),
 
     private fun moveToPrev() {
         if (AudioPlay.durChapterIndex > 0) {
+            mediaPlayer.pause()
             AudioPlay.durChapterIndex--
             AudioPlay.durPageIndex = 0
             AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
@@ -310,6 +311,7 @@ class AudioPlayService : BaseService(),
 
     private fun moveToNext() {
         if (AudioPlay.durChapterIndex < AudioPlay.chapterSize - 1) {
+            mediaPlayer.pause()
             AudioPlay.durChapterIndex++
             AudioPlay.durPageIndex = 0
             AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
