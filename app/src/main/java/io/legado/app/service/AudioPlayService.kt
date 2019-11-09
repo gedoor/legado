@@ -86,6 +86,7 @@ class AudioPlayService : BaseService(),
                 Action.resume -> resume()
                 Action.prev -> moveToPrev()
                 Action.next -> moveToNext()
+                Action.moveTo -> loadContent(intent.getIntExtra("index", AudioPlay.durChapterIndex))
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 Action.adjustProgress -> adjustProgress(intent.getIntExtra("position", position))
