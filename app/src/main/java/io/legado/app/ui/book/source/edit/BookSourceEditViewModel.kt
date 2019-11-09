@@ -61,6 +61,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             source
         }.onError {
             toast(it.localizedMessage)
+            it.printStackTrace()
         }.onSuccess {
             if (it != null) {
                 onSuccess(it)
