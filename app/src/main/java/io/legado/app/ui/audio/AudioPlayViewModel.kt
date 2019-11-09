@@ -26,30 +26,30 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 } else {
                     App.db.bookDao().lastReadBook
                 }
-            }
-            AudioPlay.book?.let { book ->
-                AudioPlay.titleData.postValue(book.name)
-                AudioPlay.coverData.postValue(book.getDisplayCover())
-                AudioPlay.durChapterIndex = book.durChapterIndex
-                AudioPlay.durPageIndex = book.durChapterPos
-                App.db.bookSourceDao().getBookSource(book.origin)?.let {
-                    AudioPlay.webBook = WebBook(it)
-                }
-                val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
-                if (count == 0) {
-                    if (book.tocUrl.isEmpty()) {
-                        loadBookInfo(book)
+                AudioPlay.book?.let { book ->
+                    AudioPlay.titleData.postValue(book.name)
+                    AudioPlay.coverData.postValue(book.getDisplayCover())
+                    AudioPlay.durChapterIndex = book.durChapterIndex
+                    AudioPlay.durPageIndex = book.durChapterPos
+                    App.db.bookSourceDao().getBookSource(book.origin)?.let {
+                        AudioPlay.webBook = WebBook(it)
+                    }
+                    val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
+                    if (count == 0) {
+                        if (book.tocUrl.isEmpty()) {
+                            loadBookInfo(book)
+                        } else {
+                            loadChapterList(book)
+                        }
                     } else {
-                        loadChapterList(book)
+                        if (AudioPlay.durChapterIndex > count - 1) {
+                            AudioPlay.durChapterIndex = count - 1
+                        }
+                        AudioPlay.chapterSize = count
                     }
-                } else {
-                    if (AudioPlay.durChapterIndex > count - 1) {
-                        AudioPlay.durChapterIndex = count - 1
-                    }
-                    AudioPlay.chapterSize = count
                 }
+                saveRead()
             }
-            saveRead()
         }
     }
 
