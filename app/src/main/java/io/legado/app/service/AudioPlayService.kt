@@ -215,7 +215,11 @@ class AudioPlayService : BaseService(),
         upNotification()
     }
 
+    /**
+     * 更新播放进度
+     */
     private fun upPlayProgress() {
+        saveProgress()
         postEvent(Bus.AUDIO_PROGRESS, mediaPlayer.currentPosition)
         handler.postDelayed(mpRunnable, 1000)
     }
