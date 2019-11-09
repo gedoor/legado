@@ -10,7 +10,6 @@ import android.widget.SeekBar
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.buttonDisabledColor
@@ -164,7 +163,7 @@ class ReadMenu : FrameLayout {
         //朗读
         ll_read_aloud.onClick {
             runMenuOut {
-                postEvent(Bus.READ_ALOUD_BUTTON, true)
+                callBack?.onClickReadAloud()
             }
         }
         ll_read_aloud.onLongClick {
@@ -254,6 +253,7 @@ class ReadMenu : FrameLayout {
         fun showMoreSetting()
         fun showReadAloudDialog()
         fun upSystemUiVisibility()
+        fun onClickReadAloud()
     }
 
 }

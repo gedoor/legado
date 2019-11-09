@@ -80,6 +80,7 @@ object AudioPlay {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
             intent.action = Action.moveTo
+            intent.putExtra("index", index)
             context.startService(intent)
         }
     }

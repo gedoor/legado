@@ -455,7 +455,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 朗读按钮
      */
-    private fun onClickReadAloud() {
+    override fun onClickReadAloud() {
         if (!BaseReadAloudService.isRun) {
             readAloudStatus = Status.STOP
             SystemUtils.ignoreBatteryOptimization(this)

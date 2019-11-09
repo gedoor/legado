@@ -89,7 +89,7 @@ class ReadAloudConfigDialog : DialogFragment() {
             when (key) {
                 "readAloudByPage" -> {
                     if (BaseReadAloudService.isRun) {
-                        postEvent(Bus.READ_ALOUD_BUTTON, false)
+                        postEvent(Bus.MEDIA_BUTTON, false)
                     }
                 }
                 "readAloudOnLine" -> {
