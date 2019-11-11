@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.info.edit
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,7 +12,8 @@ import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
 import org.jetbrains.anko.toast
 
-class BookInfoEditActivity : VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit) {
+class BookInfoEditActivity :
+    VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit) {
     override val viewModel: BookInfoEditViewModel
         get() = getViewModel(BookInfoEditViewModel::class.java)
 
@@ -50,7 +52,14 @@ class BookInfoEditActivity : VMBaseActivity<BookInfoEditViewModel>(R.layout.acti
             val customCoverUrl = tie_cover_url.text?.toString()
             book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
             book.customIntro = tie_book_intro.text?.toString()
-            viewModel.saveBook(book, success = { finish() }, error = { toast(it) })
+            viewModel.saveBook(book,
+                success = {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                },
+                error = {
+                    toast(it)
+                })
         }
     }
 }

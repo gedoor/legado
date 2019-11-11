@@ -1,5 +1,7 @@
 package io.legado.app.ui.book.info
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -27,6 +29,7 @@ import kotlinx.android.synthetic.main.activity_book_info.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 
 class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info),
@@ -43,13 +46,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.chapterListData.observe(this, Observer { showChapter(it) })
-        viewModel.bookData.value?.let {
-            showBook(it)
-            upLoading(false)
-            viewModel.chapterListData.value?.let { chapters ->
-                showChapter(chapters)
-            }
-        } ?: viewModel.initData(intent)
+        viewModel.initData(intent)
         initOnClick()
     }
 
@@ -65,6 +62,8 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                     viewModel.bookData.value?.let {
                         startActivity<BookInfoEditActivity>(Pair("bookUrl", it.bookUrl))
                     }
+                } else {
+                    toast("未加入书架,不能编辑")
                 }
             }
             R.id.menu_refresh -> {
@@ -260,5 +259,12 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     override fun durChapterIndex(): Int {
         return viewModel.durChapterIndex
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            viewModel.initData(intent)
+        }
     }
 }
