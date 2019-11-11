@@ -35,6 +35,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                                 postEvent(Bus.UP_BOOK, book.bookUrl)
                             }
                             WebBook(bookSource).getChapterList(book)
+                                .timeout(300000)
                                 .onSuccess(IO) {
                                     synchronized(this) {
                                         updateList.remove(book.bookUrl)
