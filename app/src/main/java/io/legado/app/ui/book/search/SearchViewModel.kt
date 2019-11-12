@@ -34,7 +34,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchPage++
         } else if (key.isNotEmpty()) {
             isLoading = true
-            searchPage = 0
+            searchPage = 1
             searchKey = key
             searchBooks.clear()
         }
