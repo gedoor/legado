@@ -47,9 +47,16 @@ data class Book(
     var useReplaceRule: Boolean = true,         // 正文使用净化替换规则
     var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
 ) : Parcelable, BaseBook {
+
     @Ignore
     @IgnoredOnParcel
-    override var variableMap: HashMap<String, String> = GSON.fromJsonObject(variable) ?: HashMap()
+    override var variableMap: HashMap<String, String>? = null
+        get() {
+            if (field == null) {
+                field = GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+            }
+            return field
+        }
 
     @Ignore
     @IgnoredOnParcel
@@ -66,7 +73,7 @@ data class Book(
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
     override fun putVariable(key: String, value: String) {
-        variableMap[key] = value
+        variableMap?.put(key, value)
         variable = GSON.toJson(variableMap)
     }
 

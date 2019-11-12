@@ -56,12 +56,18 @@ data class SearchBook(
         return other.originOrder - this.originOrder
     }
 
-    @IgnoredOnParcel
     @Ignore
-    override var variableMap: HashMap<String, String> = GSON.fromJsonObject(variable) ?: HashMap()
+    @IgnoredOnParcel
+    override var variableMap: HashMap<String, String>? = null
+        get() {
+            if (field == null) {
+                field = GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+            }
+            return field
+        }
 
     override fun putVariable(key: String, value: String) {
-        variableMap[key] = value
+        variableMap?.put(key, value)
         variable = GSON.toJson(variableMap)
     }
 
