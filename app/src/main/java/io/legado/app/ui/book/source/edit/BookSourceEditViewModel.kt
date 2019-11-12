@@ -8,6 +8,7 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.storage.OldRule
+import kotlinx.coroutines.Dispatchers
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
@@ -49,7 +50,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
     }
 
     fun pasteSource(onSuccess: (source: BookSource) -> Unit) {
-        execute {
+        execute(context = Dispatchers.Main) {
             var source: BookSource? = null
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             clipboard?.primaryClip?.let {
