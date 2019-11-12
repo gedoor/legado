@@ -54,5 +54,8 @@ data class BookChapter(
         variable = GSON.toJson(variableMap)
     }
 
+    fun getVariableValue(book: Book, key: String): String? {
+        return variableMap?.get(key) ?: book.variableMap?.get(key)
+    }
 }
 
