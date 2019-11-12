@@ -111,7 +111,7 @@ object BookList {
         searchBook.originName = bookSource.bookSourceName
         searchBook.originOrder = bookSource.customOrder
         searchBook.type = bookSource.bookSourceType
-        analyzeRule.setBook(searchBook)
+        analyzeRule.book = searchBook
         with(bookSource.getBookInfoRule()) {
             init?.let {
                 if (it.isNotEmpty()) {
@@ -167,7 +167,7 @@ object BookList {
         searchBook.originName = bookSource.bookSourceName
         searchBook.type = bookSource.bookSourceType
         searchBook.originOrder = bookSource.customOrder
-        analyzeRule.setBook(searchBook)
+        analyzeRule.book = searchBook
         analyzeRule.setContent(item)
         SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取书名", printLog)
         searchBook.name = analyzeRule.getString(ruleName)

@@ -35,7 +35,7 @@ object BookContent {
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
-        var contentData = analyzeContent(body, contentRule, book, bookSource, baseUrl)
+        var contentData = analyzeContent(body, contentRule, book, bookChapter, bookSource, baseUrl)
         content.append(contentData.content)
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
@@ -56,7 +56,15 @@ object BookContent {
                 ).getResponseAwait()
                     .body()?.let { nextBody ->
                         contentData =
-                            analyzeContent(nextBody, contentRule, book, bookSource, baseUrl, false)
+                            analyzeContent(
+                                nextBody,
+                                contentRule,
+                                book,
+                                bookChapter,
+                                bookSource,
+                                baseUrl,
+                                false
+                            )
                         nextUrl =
                             if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
                         content.append(contentData.content)
@@ -82,6 +90,7 @@ object BookContent {
                                     it,
                                     contentRule,
                                     book,
+                                    bookChapter,
                                     bookSource,
                                     item.nextUrl,
                                     false
@@ -106,6 +115,7 @@ object BookContent {
         body: String,
         contentRule: ContentRule,
         book: Book,
+        chapter: BookChapter,
         bookSource: BookSource,
         baseUrl: String,
         printLog: Boolean = true
@@ -113,6 +123,7 @@ object BookContent {
         val nextUrlList = arrayListOf<String>()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body, baseUrl)
+        analyzeRule.chapter = chapter
         val nextUrlRule = contentRule.nextContentUrl
         if (!nextUrlRule.isNullOrEmpty()) {
             SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取正文下一页链接", printLog)

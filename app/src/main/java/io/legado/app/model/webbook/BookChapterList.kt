@@ -159,6 +159,7 @@ object BookChapterList {
             for (item in elements) {
                 analyzeRule.setContent(item)
                 val bookChapter = BookChapter(bookUrl = book.bookUrl)
+                analyzeRule.chapter = bookChapter
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule, true)
                 if (bookChapter.url.isEmpty()) bookChapter.url = baseUrl
