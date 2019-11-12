@@ -43,7 +43,8 @@ class FileChooserDialog : DialogFragment(),
             isShowHomeDir: Boolean = false,
             isShowUpDir: Boolean = true,
             isShowHideDir: Boolean = false,
-            allowExtensions: Array<String?>? = null
+            allowExtensions: Array<String?>? = null,
+            menus: Array<String>? = null
         ) {
             val fragment = (manager.findFragmentByTag(tag) as? FileChooserDialog)
                 ?: FileChooserDialog().apply {
@@ -56,6 +57,7 @@ class FileChooserDialog : DialogFragment(),
                     bundle.putBoolean("isShowHideDir", isShowHideDir)
                     bundle.putString("initPath", initPath)
                     bundle.putStringArray("allowExtensions", allowExtensions)
+                    bundle.putStringArray("menus", menus)
                     arguments = bundle
                 }
             fragment.show(manager, tag)
@@ -75,6 +77,7 @@ class FileChooserDialog : DialogFragment(),
     private var mode: Int = FILE
     private lateinit var fileAdapter: FileAdapter
     private lateinit var pathAdapter: PathAdapter
+    private var menus: Array<String>? = null
 
     override fun onStart() {
         super.onStart()
@@ -106,6 +109,7 @@ class FileChooserDialog : DialogFragment(),
                 initPath = path
             }
             allowExtensions = it.getStringArray("allowExtensions")
+            menus = it.getStringArray("menus")
         }
         tool_bar.title = title ?: let {
             if (isOnlyListDir) {
@@ -123,6 +127,11 @@ class FileChooserDialog : DialogFragment(),
         tool_bar.inflateMenu(R.menu.file_chooser)
         if (isOnlyListDir) {
             tool_bar.menu.findItem(R.id.menu_ok).isVisible = true
+        }
+        menus?.let {
+            it.forEach { menuTitle ->
+                tool_bar.menu.add(menuTitle)
+            }
         }
         tool_bar.menu.applyTint(requireContext(), false)
         tool_bar.setOnMenuItemClickListener(this)
@@ -147,6 +156,10 @@ class FileChooserDialog : DialogFragment(),
                 (parentFragment as? CallBack)?.onFilePicked(requestCode, it)
                 (activity as? CallBack)?.onFilePicked(requestCode, it)
                 dismiss()
+            }
+            else -> item?.title?.let {
+                (parentFragment as? CallBack)?.onMenuClick(it.toString())
+                (activity as? CallBack)?.onMenuClick(it.toString())
             }
         }
         return true
@@ -195,5 +208,6 @@ class FileChooserDialog : DialogFragment(),
 
     interface CallBack {
         fun onFilePicked(requestCode: Int, currentPath: String)
+        fun onMenuClick(menu: String) {}
     }
 }
