@@ -160,6 +160,7 @@ class FileChooserDialog : DialogFragment(),
             else -> item?.title?.let {
                 (parentFragment as? CallBack)?.onMenuClick(it.toString())
                 (activity as? CallBack)?.onMenuClick(it.toString())
+                dismiss()
             }
         }
         return true
