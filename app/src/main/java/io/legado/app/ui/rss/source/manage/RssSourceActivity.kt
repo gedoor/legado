@@ -27,6 +27,7 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.*
@@ -39,6 +40,7 @@ import org.jetbrains.anko.startActivityForResult
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
+    FileChooserDialog.CallBack,
     RssSourceAdapter.CallBack {
 
     override val viewModel: RssSourceViewModel
@@ -190,10 +192,20 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     private fun selectFile() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "text/*"//设置类型
-        startActivityForResult(intent, importSource)
+        FileChooserDialog.show(
+            supportFragmentManager, importSource,
+            allowExtensions = arrayOf("txt", "json")
+        )
+//        val intent = Intent(Intent.ACTION_GET_CONTENT)
+//        intent.addCategory(Intent.CATEGORY_OPENABLE)
+//        intent.type = "text/*"//设置类型
+//        startActivityForResult(intent, importSource)
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        if (requestCode == importSource) {
+            viewModel.importSourceFromFilePath(currentPath)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

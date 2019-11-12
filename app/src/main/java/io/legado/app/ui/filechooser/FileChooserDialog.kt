@@ -42,7 +42,8 @@ class FileChooserDialog : DialogFragment(),
             initPath: String? = null,
             isShowHomeDir: Boolean = false,
             isShowUpDir: Boolean = true,
-            isShowHideDir: Boolean = false
+            isShowHideDir: Boolean = false,
+            allowExtensions: Array<String?>? = null
         ) {
             val fragment = (manager.findFragmentByTag(tag) as? FileChooserDialog)
                 ?: FileChooserDialog().apply {
@@ -54,6 +55,7 @@ class FileChooserDialog : DialogFragment(),
                     bundle.putBoolean("isShowUpDir", isShowUpDir)
                     bundle.putBoolean("isShowHideDir", isShowHideDir)
                     bundle.putString("initPath", initPath)
+                    bundle.putStringArray("allowExtensions", allowExtensions)
                     arguments = bundle
                 }
             fragment.show(manager, tag)
@@ -103,6 +105,7 @@ class FileChooserDialog : DialogFragment(),
             it.getString("initPath")?.let { path ->
                 initPath = path
             }
+            allowExtensions = it.getStringArray("allowExtensions")
         }
         tool_bar.title = title ?: let {
             if (isOnlyListDir) {
@@ -191,6 +194,6 @@ class FileChooserDialog : DialogFragment(),
     }
 
     interface CallBack {
-        fun onFilePicked(requestCode: Int, currentPath: String) {}
+        fun onFilePicked(requestCode: Int, currentPath: String)
     }
 }

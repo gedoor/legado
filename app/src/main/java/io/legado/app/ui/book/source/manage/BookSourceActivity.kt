@@ -29,6 +29,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.service.CheckSourceService
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
@@ -42,6 +43,7 @@ import org.jetbrains.anko.toast
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     BookSourceAdapter.CallBack,
+    FileChooserDialog.CallBack,
     SearchView.OnQueryTextListener {
     override val viewModel: BookSourceViewModel
         get() = getViewModel(BookSourceViewModel::class.java)
@@ -100,15 +102,14 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun initUriScheme() {
-        intent.data?.let{
-            when(it.path)
-            {
-                "/importonline" -> {
-                    it.getQueryParameter("src")?.let{
-                        viewModel.importSource(it)
-                    }
+        intent.data?.let {
+            when (it.path) {
+                "/importonline" -> it.getQueryParameter("src")?.let { url ->
+                    viewModel.importSource(url)
                 }
-                else -> {toast("格式不对")}
+                else -> {
+                    toast("格式不对")
+                }
             }
         }
     }
@@ -204,10 +205,20 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun selectFile() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "text/*"//设置类型
-        startActivityForResult(intent, importSource)
+        FileChooserDialog.show(
+            supportFragmentManager, importSource,
+            allowExtensions = arrayOf("txt", "json")
+        )
+//        val intent = Intent(Intent.ACTION_GET_CONTENT)
+//        intent.addCategory(Intent.CATEGORY_OPENABLE)
+//        intent.type = "text/*"//设置类型
+//        startActivityForResult(intent, importSource)
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        if (requestCode == importSource) {
+            viewModel.importSourceFromFilePath(currentPath)
+        }
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {

@@ -131,7 +131,6 @@ class ConfigFragment : PreferenceFragmentCompat(),
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
-        super.onFilePicked(requestCode, currentPath)
         putPrefString(PreferKey.downloadPath, currentPath)
     }
 }
