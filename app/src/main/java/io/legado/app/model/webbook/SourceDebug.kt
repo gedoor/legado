@@ -61,19 +61,23 @@ class SourceDebug(private val webBook: WebBook, callback: Callback) {
     fun startDebug(key: String) {
         cancelDebug()
         startTime = System.currentTimeMillis()
-        if (key.isAbsUrl()) {
-            val book = Book()
-            book.origin = webBook.sourceUrl
-            book.bookUrl = key
-            printLog(webBook.sourceUrl, "⇒开始访问详情页:$key")
-            infoDebug(book)
-        } else if (key.contains("::")) {
-            val url = key.substring(key.indexOf("::") + 2)
-            printLog(webBook.sourceUrl, "⇒开始访问发现页:$url")
-            exploreDebug(url)
-        } else {
-            printLog(webBook.sourceUrl, "⇒开始搜索关键字:$key")
-            searchDebug(key)
+        when {
+            key.isAbsUrl() -> {
+                val book = Book()
+                book.origin = webBook.sourceUrl
+                book.bookUrl = key
+                printLog(webBook.sourceUrl, "⇒开始访问详情页:$key")
+                infoDebug(book)
+            }
+            key.contains("::") -> {
+                val url = key.substring(key.indexOf("::") + 2)
+                printLog(webBook.sourceUrl, "⇒开始访问发现页:$url")
+                exploreDebug(url)
+            }
+            else -> {
+                printLog(webBook.sourceUrl, "⇒开始搜索关键字:$key")
+                searchDebug(key)
+            }
         }
     }
 
