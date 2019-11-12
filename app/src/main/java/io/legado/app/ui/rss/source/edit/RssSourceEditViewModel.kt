@@ -9,6 +9,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
+import kotlinx.coroutines.Dispatchers
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
@@ -50,7 +51,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     }
 
     fun pasteSource(onSuccess: (source: RssSource) -> Unit) {
-        execute {
+        execute(context = Dispatchers.Main) {
             var source: RssSource? = null
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             clipboard?.primaryClip?.let {
