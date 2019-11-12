@@ -5,6 +5,7 @@ import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.htmlFormat
 
 object BookInfo {
@@ -62,7 +63,7 @@ object BookInfo {
         
         SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取封面链接")
         analyzeRule.getString(infoRule.coverUrl ?: "")?.let {
-            if (it.isNotEmpty()) book.coverUrl = it
+            if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
         }
         SourceDebug.printLog(bookSource.bookSourceUrl, "└${book.coverUrl}")
         SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取目录链接")
