@@ -194,12 +194,23 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private fun selectFile() {
         FileChooserDialog.show(
             supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json")
+            allowExtensions = arrayOf("txt", "json"),
+            menus = arrayOf(getString(R.string.sys_file_picker))
         )
-//        val intent = Intent(Intent.ACTION_GET_CONTENT)
-//        intent.addCategory(Intent.CATEGORY_OPENABLE)
-//        intent.type = "text/*"//设置类型
-//        startActivityForResult(intent, importSource)
+    }
+
+    private fun selectFileSys() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "text/*"//设置类型
+        startActivityForResult(intent, importSource)
+    }
+
+    override fun onMenuClick(menu: String) {
+        super.onMenuClick(menu)
+        when (menu) {
+            getString(R.string.sys_file_picker) -> selectFileSys()
+        }
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
