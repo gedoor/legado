@@ -7,6 +7,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.BookHelp
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.NetworkUtils
 
 object BookList {
 
@@ -189,7 +190,9 @@ object BookList {
             searchBook.intro = analyzeRule.getString(ruleIntro)
             SourceDebug.printLog(bookSource.bookSourceUrl, "└${searchBook.intro}", printLog, true)
             SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取封面链接", printLog)
-            searchBook.coverUrl = analyzeRule.getString(ruleCoverUrl, true)
+            analyzeRule.getString(ruleCoverUrl).let {
+                if (it.isNotEmpty()) searchBook.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
+            }
             SourceDebug.printLog(bookSource.bookSourceUrl, "└${searchBook.coverUrl}", printLog)
             SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取详情页链接", printLog)
             searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)
