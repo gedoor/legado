@@ -292,7 +292,7 @@ class AnalyzeRule(var book: BaseBook? = null) {
     private fun putRule(map: Map<String, String>) {
         for ((key, value) in map) {
             getString(value)?.let {
-                book?.putVariable(key, it)
+                put(key, it)
             }
         }
     }
@@ -573,7 +573,7 @@ class AnalyzeRule(var book: BaseBook? = null) {
         return value
     }
 
-    operator fun get(key: String): String {
+    fun get(key: String): String {
         return chapter?.variableMap?.get(key)
             ?: book?.variableMap?.get(key)
             ?: ""
