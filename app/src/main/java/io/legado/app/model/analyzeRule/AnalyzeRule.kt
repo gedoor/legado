@@ -172,12 +172,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 获取文本
      */
     @Throws(Exception::class)
-    fun getString(rule: String): String? {
-        return getString(rule, false)
-    }
-
-    @Throws(Exception::class)
-    fun getString(ruleStr: String, isUrl: Boolean): String? {
+    fun getString(ruleStr: String, isUrl: Boolean = false): String? {
         if (TextUtils.isEmpty(ruleStr)) return null
         val ruleList = splitSourceRule(ruleStr)
         return getString(ruleList, isUrl)
