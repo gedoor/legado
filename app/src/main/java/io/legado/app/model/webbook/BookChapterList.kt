@@ -158,12 +158,11 @@ object BookChapterList {
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl ?: "")
             for (item in elements) {
                 analyzeRule.setContent(item)
-                val title = analyzeRule.getString(nameRule)
-                if (title.isNotEmpty()) {
-                    val bookChapter = BookChapter(bookUrl = book.bookUrl)
-                    bookChapter.title = title
-                    bookChapter.url = analyzeRule.getString(urlRule, true)
-                    if (bookChapter.url.isEmpty()) bookChapter.url = baseUrl
+                val bookChapter = BookChapter(bookUrl = book.bookUrl)
+                bookChapter.title = analyzeRule.getString(nameRule)
+                bookChapter.url = analyzeRule.getString(urlRule, true)
+                if (bookChapter.url.isEmpty()) bookChapter.url = baseUrl
+                if (bookChapter.title.isNotEmpty()) {
                     chapterList.add(bookChapter)
                 }
             }
