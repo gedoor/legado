@@ -21,7 +21,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var callBack: CallBack? = null
     var searchKey: String = ""
     var startTime: Long = 0
-    var searchPage = 0
+    var searchPage = 1
     var isLoading = false
     private var searchBooks = arrayListOf<SearchBook>()
 
