@@ -85,7 +85,6 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             book.getDisplayIntro() // getString(R.string.intro_show, book.getDisplayIntro())
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
-                .placeholder(R.drawable.image_cover_default)
                 .error(R.drawable.image_cover_default)
                 .centerCrop()
                 .into(iv_cover)
