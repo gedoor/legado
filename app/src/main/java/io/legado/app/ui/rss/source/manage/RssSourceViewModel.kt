@@ -2,12 +2,14 @@ package io.legado.app.ui.rss.source.manage
 
 import android.app.Application
 import android.text.TextUtils
+import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.storage.Restore.jsonPath
+import io.legado.app.utils.*
 import java.io.File
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
@@ -108,7 +110,67 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun importSource(sourceStr: String, finally: (msg: String) -> Unit) {
+    fun importSource(text: String, finally: (msg: String) -> Unit) {
+        execute {
+            val text1 = text.trim()
+            when {
+                text1.isJsonObject() -> {
+                    val json = JsonPath.parse(text1)
+                    val urls = json.read<List<String>>("$.sourceUrls")
+                    var count = 0
+                    if (!urls.isNullOrEmpty()) {
+                        urls.forEach {
+                            count += importSourceUrl(it)
+                        }
+                    } else {
+                        GSON.fromJsonArray<RssSource>(text1)?.let {
+                            App.db.rssSourceDao().insert(*it.toTypedArray())
+                            count = 1
+                        }
+                    }
+                    "导入${count}条"
+                }
+                text1.isJsonArray() -> {
+                    val rssSources = mutableListOf<RssSource>()
+                    val items: List<Map<String, Any>> = jsonPath.parse(text1).read("$")
+                    for (item in items) {
+                        val jsonItem = jsonPath.parse(item)
+                        GSON.fromJsonObject<RssSource>(jsonItem.jsonString())?.let {
+                            rssSources.add(it)
+                        }
+                    }
+                    App.db.rssSourceDao().insert(*rssSources.toTypedArray())
+                    "导入${rssSources.size}条"
+                }
+                text1.isAbsUrl() -> {
+                    val count = importSourceUrl(text1)
+                    "导入${count}条"
+                }
+                else -> "格式不对"
+            }
+        }.onError {
+            finally(it.localizedMessage)
+        }.onSuccess {
+            finally(it ?: "导入完成")
+        }
+    }
 
+    private fun importSourceUrl(url: String): Int {
+        NetworkUtils.getBaseUrl(url)?.let {
+            val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
+            response.body()?.let { body ->
+                val sources = mutableListOf<RssSource>()
+                val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
+                for (item in items) {
+                    val jsonItem = jsonPath.parse(item)
+                    GSON.fromJsonObject<RssSource>(jsonItem.jsonString())?.let { source ->
+                        sources.add(source)
+                    }
+                }
+                App.db.rssSourceDao().insert(*sources.toTypedArray())
+                return sources.size
+            }
+        }
+        return 0
     }
 }
