@@ -106,7 +106,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         intent.data?.let {
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
-                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                     viewModel.importSource(url) { msg ->
                         title_bar.snackbar(msg)
                     }
@@ -201,7 +201,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                         cacheUrls.add(0, it)
                         aCache.put("sourceUrl", cacheUrls.joinToString(","))
                     }
-                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                     viewModel.importSource(it) { msg ->
                         title_bar.snackbar(msg)
                     }
@@ -235,7 +235,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         if (requestCode == importSource) {
-            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
             viewModel.importSourceFromFilePath(currentPath) { msg ->
                 title_bar.snackbar(msg)
             }
@@ -278,7 +278,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         when (requestCode) {
             qrRequestCode -> if (resultCode == RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                     viewModel.importSource(it) { msg ->
                         title_bar.snackbar(msg)
                     }
@@ -289,6 +289,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     val path = FileUtils.getPath(this, it)
                     if (path != null) {
                         Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                            .show()
                         viewModel.importSourceFromFilePath(path) { msg ->
                             title_bar.snackbar(msg)
                         }
