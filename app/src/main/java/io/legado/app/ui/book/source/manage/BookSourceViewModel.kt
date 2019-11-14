@@ -11,7 +11,6 @@ import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers
 import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
@@ -131,7 +130,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun importSource(text: String) {
-        execute(context = Dispatchers.Main) {
+        execute {
             val text1 = text.trim()
             if (text1.isJsonObject()) {
                 val json = JsonPath.parse(text1)
