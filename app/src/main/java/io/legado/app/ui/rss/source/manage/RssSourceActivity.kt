@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -184,7 +185,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                         cacheUrls.add(0, it)
                         aCache.put("sourceUrl", cacheUrls.joinToString(","))
                     }
-                    viewModel.importSource(it)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    viewModel.importSource(it) { msg ->
+                        title_bar.snackbar(msg)
+                    }
                 }
             }
             cancelButton()
@@ -215,7 +219,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         if (requestCode == importSource) {
-            viewModel.importSourceFromFilePath(currentPath)
+            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+            viewModel.importSourceFromFilePath(currentPath) { msg ->
+                title_bar.snackbar(msg)
+            }
         }
     }
 
@@ -225,13 +232,20 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             importSource -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let {
                     FileUtils.getPath(this, it)?.let { path ->
-                        viewModel.importSourceFromFilePath(path)
+                        Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                            .show()
+                        viewModel.importSourceFromFilePath(path) { msg ->
+                            title_bar.snackbar(msg)
+                        }
                     }
                 }
             }
             qrRequestCode -> if (resultCode == RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-                    viewModel.importSource(it)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                    viewModel.importSource(it) { msg ->
+                        title_bar.snackbar(msg)
+                    }
                 }
             }
         }

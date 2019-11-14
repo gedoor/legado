@@ -97,7 +97,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
     }
 
 
-    fun importSourceFromFilePath(path: String) {
+    fun importSourceFromFilePath(path: String, finally: (msg: String) -> Unit) {
         execute {
             val file = File(path)
             if (file.exists()) {
@@ -108,7 +108,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun importSource(sourceStr: String) {
+    fun importSource(sourceStr: String, finally: (msg: String) -> Unit) {
 
     }
 }
