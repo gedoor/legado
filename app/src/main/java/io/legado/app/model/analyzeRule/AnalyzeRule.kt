@@ -337,10 +337,10 @@ class AnalyzeRule(var book: BaseBook? = null) {
      * 分解规则生成规则列表
      */
     @Throws(Exception::class)
-    fun splitSourceRule(ruleStr: String, mode: Mode = Mode.Default): List<SourceRule> {
+    fun splitSourceRule(ruleStr: String?, mode: Mode = Mode.Default): List<SourceRule> {
         var vRuleStr = ruleStr
         val ruleList = ArrayList<SourceRule>()
-        if (TextUtils.isEmpty(vRuleStr)) return ruleList
+        if (vRuleStr.isNullOrEmpty()) return ruleList
         //检测Mode
         var mMode: Mode = mode
         when {

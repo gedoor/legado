@@ -154,22 +154,30 @@ object BookChapterList {
         SourceDebug.printLog(bookSource.bookSourceUrl, "└列表大小:${elements.size}", printLog)
         if (elements.isNotEmpty()) {
             SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取首章名称", printLog)
-            val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName ?: "")
-            val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl ?: "")
+            val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName)
+            val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl)
+            val vipRule = analyzeRule.splitSourceRule(tocRule.isVip)
+            val update = analyzeRule.splitSourceRule(tocRule.updateTime)
+            var isVip: String?
             for (item in elements) {
                 analyzeRule.setContent(item)
                 val bookChapter = BookChapter(bookUrl = book.bookUrl)
                 analyzeRule.chapter = bookChapter
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule, true)
+                bookChapter.tag = analyzeRule.getString(update)
+                isVip = analyzeRule.getString(vipRule)
                 if (bookChapter.url.isEmpty()) bookChapter.url = baseUrl
                 if (bookChapter.title.isNotEmpty()) {
+                    if (isVip.isNotEmpty()) {
+                        bookChapter.title = "\uD83D\uDD12" + bookChapter.title
+                    }
                     chapterList.add(bookChapter)
                 }
             }
             SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].title}", printLog)
-	        SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取首章链接", printLog)
-	        SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].url}", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取首章链接", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].url}", printLog)
         }
         return ChapterData(chapterList, nextUrlList)
     }
