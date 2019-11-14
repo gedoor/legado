@@ -295,6 +295,8 @@ class BookSourceEditActivity :
                 "chapterName" -> tocRule.chapterName = it.value
                 "chapterUrl" -> tocRule.chapterUrl = it.value
                 "nextTocUrl" -> tocRule.nextTocUrl = it.value
+                "isVip" -> tocRule.isVip = it.value
+                "updateTime" -> tocRule.updateTime = it.value
             }
         }
         contentEntities.forEach {
