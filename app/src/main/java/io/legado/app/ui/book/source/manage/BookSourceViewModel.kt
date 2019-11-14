@@ -120,28 +120,34 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun importSourceFromFilePath(path: String) {
+    fun importSourceFromFilePath(path: String, finally: (msg: String) -> Unit) {
         execute {
             val file = File(path)
             if (file.exists()) {
-                importSource(file.readText())
+                importSource(file.readText(), finally)
+            } else {
+                finally("文件无法打开")
             }
         }
     }
 
-    fun importSource(text: String) {
+    fun importSource(text: String, finally: (msg: String) -> Unit) {
         execute {
             val text1 = text.trim()
             if (text1.isJsonObject()) {
                 val json = JsonPath.parse(text1)
                 val urls = json.read<List<String>>("$.sourceUrls")
                 if (!urls.isNullOrEmpty()) {
-                    urls.forEach { importSourceUrl(it) }
+                    var count = 0
+                    urls.forEach {
+                        count += importSourceUrl(it)
+                    }
+                    finally("导入${count}条")
                 } else {
                     OldRule.jsonToBookSource(text1)?.let {
                         App.db.bookSourceDao().insert(it)
                     }
-                    toast("成功导入1条")
+                    finally("导入1条")
                 }
             } else if (text1.isJsonArray()) {
                 val bookSources = mutableListOf<BookSource>()
@@ -153,9 +159,10 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                     }
                 }
                 App.db.bookSourceDao().insert(*bookSources.toTypedArray())
-                toast("成功导入${bookSources.size}条")
+                finally("导入${bookSources.size}条")
             } else if (text1.isAbsUrl()) {
-                importSourceUrl(text1)
+                val count = importSourceUrl(text1)
+                finally("导入${count}条")
             } else {
                 toast("格式不对")
             }
@@ -164,16 +171,22 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    private fun importSourceUrl(url: String) {
-        execute {
-            NetworkUtils.getBaseUrl(url)?.let {
-                val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
-                response.body()?.let { body ->
-                    importSource(body)
+    private fun importSourceUrl(url: String): Int {
+        NetworkUtils.getBaseUrl(url)?.let {
+            val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
+            response.body()?.let { body ->
+                val bookSources = mutableListOf<BookSource>()
+                val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
+                for (item in items) {
+                    val jsonItem = jsonPath.parse(item)
+                    OldRule.jsonToBookSource(jsonItem.jsonString())?.let { source ->
+                        bookSources.add(source)
+                    }
                 }
+                App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+                return bookSources.size
             }
-        }.onError {
-            toast(it.localizedMessage)
         }
+        return 0
     }
 }

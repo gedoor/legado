@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -105,7 +106,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         intent.data?.let {
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
-                    viewModel.importSource(url)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                    viewModel.importSource(url) { msg ->
+                        title_bar.snackbar(msg)
+                    }
                 }
                 else -> {
                     toast("格式不对")
@@ -197,7 +201,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                         cacheUrls.add(0, it)
                         aCache.put("sourceUrl", cacheUrls.joinToString(","))
                     }
-                    viewModel.importSource(it)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                    viewModel.importSource(it) { msg ->
+                        title_bar.snackbar(msg)
+                    }
                 }
             }
             cancelButton()
@@ -228,7 +235,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         if (requestCode == importSource) {
-            viewModel.importSourceFromFilePath(currentPath)
+            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+            viewModel.importSourceFromFilePath(currentPath) { msg ->
+                title_bar.snackbar(msg)
+            }
         }
     }
 
@@ -268,14 +278,20 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         when (requestCode) {
             qrRequestCode -> if (resultCode == RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-                    viewModel.importSource(it)
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                    viewModel.importSource(it) { msg ->
+                        title_bar.snackbar(msg)
+                    }
                 }
             }
             importSource -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let {
                     val path = FileUtils.getPath(this, it)
                     if (path != null) {
-                        viewModel.importSourceFromFilePath(path)
+                        Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                        viewModel.importSourceFromFilePath(path) { msg ->
+                            title_bar.snackbar(msg)
+                        }
                     } else {
                         toast(R.string.uri_to_path_fail)
                     }
