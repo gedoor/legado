@@ -164,10 +164,10 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 val count = importSourceUrl(text1)
                 finally("导入${count}条")
             } else {
-                toast("格式不对")
+                finally("格式不对")
             }
         }.onError {
-            toast(it.localizedMessage)
+            finally(it.localizedMessage)
         }
     }
 
