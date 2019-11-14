@@ -169,7 +169,7 @@ object BookChapterList {
                 isVip = analyzeRule.getString(vipRule)
                 if (bookChapter.url.isEmpty()) bookChapter.url = baseUrl
                 if (bookChapter.title.isNotEmpty()) {
-                    if (isVip.isNotEmpty()) {
+                    if (isVip.isNotEmpty() && isVip != "null" && isVip != "false" && isVip != "0") {
                         bookChapter.title = "\uD83D\uDD12" + bookChapter.title
                     }
                     chapterList.add(bookChapter)

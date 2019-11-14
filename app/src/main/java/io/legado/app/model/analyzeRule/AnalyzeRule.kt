@@ -190,18 +190,16 @@ class AnalyzeRule(var book: BaseBook? = null) {
                     putRule(sourceRule.putMap)
                     sourceRule.makeUpRule(result)
                     result?.let {
-                        if (sourceRule.rule.isNotBlank()) {
-                            result = when (sourceRule.mode) {
-                                Mode.Js -> evalJS(sourceRule.rule, it)
-                                Mode.Json -> getAnalyzeByJSonPath(it).getString(sourceRule.rule)
-                                Mode.XPath -> getAnalyzeByXPath(it).getString(sourceRule.rule)
-                                Mode.Default -> if (isUrl) {
-                                    getAnalyzeByJSoup(it).getString0(sourceRule.rule)
-                                } else {
-                                    getAnalyzeByJSoup(it).getString(sourceRule.rule)
-                                }
-                                else -> sourceRule.rule
+                        result = when (sourceRule.mode) {
+                            Mode.Js -> evalJS(sourceRule.rule, it)
+                            Mode.Json -> getAnalyzeByJSonPath(it).getString(sourceRule.rule)
+                            Mode.XPath -> getAnalyzeByXPath(it).getString(sourceRule.rule)
+                            Mode.Default -> if (isUrl) {
+                                getAnalyzeByJSoup(it).getString0(sourceRule.rule)
+                            } else {
+                                getAnalyzeByJSoup(it).getString(sourceRule.rule)
                             }
+                            else -> sourceRule.rule
                         }
                         if (sourceRule.replaceRegex.isNotEmpty()) {
                             result = replaceRegex(result.toString(), sourceRule)

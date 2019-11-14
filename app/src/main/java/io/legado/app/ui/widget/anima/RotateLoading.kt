@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.dp
 
 /**
@@ -66,14 +67,15 @@ class RotateLoading : View {
     }
 
     private fun initView(context: Context, attrs: AttributeSet?) {
-        loadingColor = Color.WHITE
+        loadingColor = context.accentColor
         thisWidth = DEFAULT_WIDTH.dp
         shadowPosition = DEFAULT_SHADOW_POSITION.dp
         speedOfDegree = DEFAULT_SPEED_OF_DEGREE
 
         if (null != attrs) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RotateLoading)
-            loadingColor = typedArray.getColor(R.styleable.RotateLoading_loading_color, Color.WHITE)
+            loadingColor =
+                typedArray.getColor(R.styleable.RotateLoading_loading_color, loadingColor)
             thisWidth = typedArray.getDimensionPixelSize(
                 R.styleable.RotateLoading_loading_width,
                 DEFAULT_WIDTH.dp
