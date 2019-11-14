@@ -359,17 +359,17 @@
     <string name="success">成功</string>
     <string name="source_no_login">当前源没有配置登陆地址</string>
 
-    <!-- book source start-->
-    <string name="book_source_name">书源名称(bookSourceName)</string>
-    <string name="book_source_url">书源URL(bookSourceUrl)</string>
-    <string name="book_source_group">书源分组(bookSourceGroup)</string>
-    <string name="book_source_login_url">登录URL(loginUrl)</string>
-    <string name="rule_search_url">搜索地址(url)</string>
-    <string name="rule_find_url">发现地址规则(url)</string>
-    <string name="rule_book_list">书籍列表规则(bookList)</string>
-    <string name="rule_book_name">书名规则(name)</string>
-    <string name="rule_book_url">详情页url规则(bookUrl)</string>
-    <string name="rule_book_author">作者规则(author)</string>
+    <!-- source start-->
+    <string name="source_name">书源名称(bookSourceName)</string>
+    <string name="source_url">书源URL(bookSourceUrl)</string>
+    <string name="source_group">书源分组(bookSourceGroup)</string>
+    <string name="login_url">登录URL(loginUrl)</string>
+    <string name="r_search_url">搜索地址(url)</string>
+    <string name="r_find_url">发现地址规则(url)</string>
+    <string name="r_book_list">书籍列表规则(bookList)</string>
+    <string name="r_book_name">书名规则(name)</string>
+    <string name="r_book_url">详情页url规则(bookUrl)</string>
+    <string name="r_author">作者规则(author)</string>
     <string name="rule_book_kind">分类规则(kind)</string>
     <string name="rule_book_intro">简介规则(intro)</string>
     <string name="rule_cover_url">封面规则(coverUrl)</string>
@@ -388,25 +388,19 @@
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
-    <!--book source end-->
 
-    <!-- rss source start-->
-    <string name="rss_source_name">名称(sourceName)</string>
-    <string name="rss_source_url">url(sourceUrl)</string>
-    <string name="rss_source_icon">图标(sourceIcon)</string>
-    <string name="rss_source_group">分组(sourceGroup)</string>
-    <string name="rss_rule_articles">列表规则(ruleArticles)</string>
-    <string name="rss_rule_next">列表下一页规则(ruleArticles)</string>
-    <string name="rss_rule_title">标题规则(ruleTitle)</string>
-    <string name="rss_rule_author">作者规则(ruleAuthor)</string>
-    <string name="rss_rule_guid">guid规则(ruleGuid)</string>
-    <string name="rss_rule_date">时间规则(rulePubDate)</string>
-    <string name="rss_rule_categories">类别规则(ruleCategories)</string>
-    <string name="rss_rule_description">描述规则(ruleDescription)</string>
-    <string name="rss_rule_image">图片url规则(ruleImage)</string>
-    <string name="rss_rule_content">内容规则(ruleContent)</string>
-    <string name="rss_rule_link">链接规则(ruleLink)</string>
-    <!-- rss source end-->
+    <string name="source_icon">图标(sourceIcon)</string>
+    <string name="r_articles">列表规则(ruleArticles)</string>
+    <string name="r_next">列表下一页规则(ruleArticles)</string>
+    <string name="r_title">标题规则(ruleTitle)</string>
+    <string name="r_guid">guid规则(ruleGuid)</string>
+    <string name="r_date">时间规则(rulePubDate)</string>
+    <string name="r_categories">类别规则(ruleCategories)</string>
+    <string name="r_description">描述规则(ruleDescription)</string>
+    <string name="r_image">图片url规则(ruleImage)</string>
+    <string name="r_content">内容规则(ruleContent)</string>
+    <string name="r_link">链接规则(ruleLink)</string>
+    <!-- source end-->
 
     <!--error string start-->
     <string name="error_no_source">没有书源</string>

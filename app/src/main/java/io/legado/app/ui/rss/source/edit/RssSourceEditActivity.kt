@@ -123,31 +123,19 @@ class RssSourceEditActivity :
         }
         sourceEntities.clear()
         sourceEntities.apply {
-            add(EditEntity("sourceName", rssSource?.sourceName, R.string.rss_source_name))
-            add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.rss_source_url))
-            add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.rss_source_icon))
-            add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.rss_source_group))
-            add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.rss_rule_articles))
-            add(EditEntity("ruleNextPage", rssSource?.ruleNextPage, R.string.rss_rule_next))
-            add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.rss_rule_title))
-            add(EditEntity("rulePubDate", rssSource?.rulePubDate, R.string.rss_rule_date))
-            add(
-                EditEntity(
-                    "ruleCategories",
-                    rssSource?.ruleCategories,
-                    R.string.rss_rule_categories
-                )
-            )
-            add(
-                EditEntity(
-                    "ruleDescription",
-                    rssSource?.ruleDescription,
-                    R.string.rss_rule_description
-                )
-            )
-            add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.rss_rule_image))
-            add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.rss_rule_link))
-            add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.rss_rule_content))
+            add(EditEntity("sourceName", rssSource?.sourceName, R.string.source_name))
+            add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.source_url))
+            add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.source_icon))
+            add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.source_group))
+            add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.r_articles))
+            add(EditEntity("ruleNextPage", rssSource?.ruleNextPage, R.string.r_next))
+            add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.r_title))
+            add(EditEntity("rulePubDate", rssSource?.rulePubDate, R.string.r_date))
+            add(EditEntity("ruleCategories", rssSource?.ruleCategories, R.string.r_categories))
+            add(EditEntity("ruleDescription", rssSource?.ruleDescription, R.string.r_description))
+            add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.r_image))
+            add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.r_link))
+            add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.r_content))
         }
         adapter.editEntities = sourceEntities
     }
