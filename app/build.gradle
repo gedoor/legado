@@ -91,7 +91,7 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     //androidX
-    implementation 'androidx.core:core-ktx:1.2.0-beta01'
+    implementation 'androidx.core:core-ktx:1.2.0-beta02'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.media:media:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'
