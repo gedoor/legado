@@ -18,7 +18,7 @@ import kotlin.math.sqrt
  * @author harism
  */
 class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
-
+    var callBack: CallBack? = null
     private var mAllowLastPageCurl = true
 
     private var mAnimate = false
@@ -133,6 +133,8 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
         mPageRight.setFlipTexture(false)
     }
 
+    override var canDraw: Boolean = false
+
     override fun onDrawFrame() {
         // We are not animating.
         if (!mAnimate) {
@@ -155,7 +157,9 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
                 // If we were curling left page update current index.
                 if (mCurlState == CURL_LEFT) {
                     --mCurrentIndex
+                    callBack?.pageChange(-1)
                 }
+                canDraw = false
             } else if (mAnimationTargetEvent == SET_CURL_TO_LEFT) {
                 // Switch curled page to left.
                 val left = mPageCurl
@@ -172,7 +176,9 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
                 // If we were curling right page update current index.
                 if (mCurlState == CURL_RIGHT) {
                     ++mCurrentIndex
+                    callBack?.pageChange(1)
                 }
+                canDraw = false
             }
             mCurlState = CURL_NONE
             mAnimate = false
@@ -186,6 +192,7 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
             updateCurlPos(mPointerPos)
         }
     }
+
 
     override fun onPageSizeChanged(width: Int, height: Int) {
         mPageBitmapWidth = width
@@ -736,6 +743,10 @@ class CurlView : GLSurfaceView, View.OnTouchListener, CurlRenderer.Observer {
          * Called once CurlView size changes.
          */
         fun onSizeChanged(width: Int, height: Int)
+    }
+
+    interface CallBack {
+        fun pageChange(change: Int)
     }
 
     companion object {

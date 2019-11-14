@@ -17,7 +17,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     ContentView.CallBack,
     DataSource {
 
-    var callback: CallBack? = null
+    var callBack: CallBack? = null
     var pageFactory: TextPageFactory? = null
     private var pageDelegate: PageDelegate? = null
 
@@ -27,7 +27,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     var curlView: CurlView? = null
 
     init {
-        callback = activity as? CallBack
+        callBack = activity as? CallBack
         prevPage = ContentView(context)
         addView(prevPage)
         nextPage = ContentView(context)
@@ -111,7 +111,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                     curPage?.setContent(it.currentPage())
                     nextPage?.setContent(it.nextPage())
                     prevPage?.setContent(it.previousPage())
-                    callback?.let { callback ->
+                    callBack?.let { callback ->
                         if (isScrollDelegate) {
                             curPage?.scrollTo(callback.textChapter()?.getStartLine(callback.durChapterPos()))
                         }
@@ -128,7 +128,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun moveToPrevPage(noAnim: Boolean = true) {
         if (noAnim) {
             if (isScrollDelegate) {
-                callback?.textChapter()?.let {
+                callBack?.textChapter()?.let {
                     curPage?.scrollTo(it.getStartLine(pageIndex - 1))
                 }
             } else {
@@ -140,7 +140,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun moveToNextPage(noAnim: Boolean = true) {
         if (noAnim) {
             if (isScrollDelegate) {
-                callback?.textChapter()?.let {
+                callBack?.textChapter()?.let {
                     curPage?.scrollTo(it.getStartLine(pageIndex + 1))
                 }
             } else {
@@ -180,68 +180,68 @@ class PageView(context: Context, attrs: AttributeSet) :
         get() = pageDelegate is ScrollPageDelegate
 
     override val pageIndex: Int
-        get() = callback?.durChapterPos() ?: 0
+        get() = callBack?.durChapterPos() ?: 0
 
     override fun setPageIndex(pageIndex: Int) {
-        callback?.setPageIndex(pageIndex)
+        callBack?.setPageIndex(pageIndex)
     }
 
     override fun getChapterPosition(): Int {
-        return callback?.durChapterIndex() ?: 0
+        return callBack?.durChapterIndex() ?: 0
     }
 
     override fun getChapter(position: Int): TextChapter? {
-        return callback?.textChapter(position)
+        return callBack?.textChapter(position)
     }
 
     override fun getCurrentChapter(): TextChapter? {
-        return callback?.textChapter(0)
+        return callBack?.textChapter(0)
     }
 
     override fun getNextChapter(): TextChapter? {
-        return callback?.textChapter(1)
+        return callBack?.textChapter(1)
     }
 
     override fun getPreviousChapter(): TextChapter? {
-        return callback?.textChapter(-1)
+        return callBack?.textChapter(-1)
     }
 
     override fun hasNextChapter(): Boolean {
-        callback?.let {
+        callBack?.let {
             return it.durChapterIndex() < it.chapterSize() - 1
         }
         return false
     }
 
     override fun hasPrevChapter(): Boolean {
-        callback?.let {
+        callBack?.let {
             return it.durChapterIndex() > 0
         }
         return false
     }
 
     override fun moveToNextChapter() {
-        callback?.moveToNextChapter(false)
+        callBack?.moveToNextChapter(false)
     }
 
     override fun moveToPrevChapter() {
-        callback?.moveToPrevChapter(false)
+        callBack?.moveToPrevChapter(false)
     }
 
     override fun scrollToLine(line: Int) {
         if (isScrollDelegate) {
-            callback?.textChapter()?.let {
+            callBack?.textChapter()?.let {
                 val pageIndex = it.getPageIndex(line)
                 curPage?.setPageIndex(pageIndex)
-                callback?.setPageIndex(pageIndex)
+                callBack?.setPageIndex(pageIndex)
             }
         }
     }
 
     override fun scrollToLast() {
         if (isScrollDelegate) {
-            callback?.textChapter()?.let {
-                callback?.setPageIndex(it.lastIndex())
+            callBack?.textChapter()?.let {
+                callBack?.setPageIndex(it.lastIndex())
                 curPage?.setPageIndex(it.lastIndex())
             }
         }

@@ -6,21 +6,31 @@ import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.curl.CurlPage
 import io.legado.app.ui.widget.page.curl.CurlView
 import io.legado.app.utils.screenshot
+import kotlin.math.abs
 
-class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
+class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView),
+    CurlView.CallBack {
+
+    var curlView: CurlView? = null
 
     init {
         pageView.curlView ?: let {
-            pageView.curlView = CurlView(pageView.context)
-            pageView.addView(pageView.curlView)
-            pageView.curlView?.mPageProvider = PageProvider()
-            pageView.curlView?.setSizeChangedObserver(SizeChangedObserver())
-            pageView.curlView?.currentIndex = 1
+            curlView = CurlView(pageView.context)
+            pageView.curlView = curlView
+            pageView.addView(curlView)
+            curlView?.mPageProvider = PageProvider()
+            curlView?.setSizeChangedObserver(SizeChangedObserver())
+            curlView?.callBack = this
         }
     }
 
     override fun onTouch(event: MotionEvent): Boolean {
-        pageView.curlView?.dispatchTouchEvent(event)
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                curlView?.currentIndex = 1
+            }
+        }
+        curlView?.dispatchTouchEvent(event)
         return super.onTouch(event)
     }
 
@@ -33,9 +43,64 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun onScrollStop() {
     }
 
+    override fun onScroll(
+        e1: MotionEvent,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        if (!isMoved) {
+            val event = e1.toAction(MotionEvent.ACTION_UP)
+            curPage?.dispatchTouchEvent(event)
+            event.recycle()
+            if (abs(distanceX) > abs(distanceY)) {
+                if (distanceX < 0) {
+                    //如果上一页不存在
+                    if (!hasPrev()) {
+                        noNext = true
+                        return true
+                    }
+                    //上一页截图
+                    bitmap = prevPage?.screenshot()
+                } else {
+                    //如果不存在表示没有下一页了
+                    if (!hasNext()) {
+                        noNext = true
+                        return true
+                    }
+                    //下一页截图
+                    bitmap = nextPage?.screenshot()
+                }
+                isMoved = true
+            }
+        }
+        if (isMoved) {
+            curlView?.canDraw = true
+            isCancel = if (pageView.isScrollDelegate) {
+                if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
+            } else {
+                if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
+            }
+            isRunning = true
+            //设置触摸点
+            setTouchPoint(e2.x, e2.y)
+        }
+        return isMoved
+    }
+
     override fun onPageUp() {
-        pageView.curlView?.updatePages()
-        pageView.curlView?.requestRender()
+        curlView?.updatePages()
+        curlView?.requestRender()
+    }
+
+    override fun pageChange(change: Int) {
+        pageView.post {
+            if (change > 0) {
+                pageView.moveToNextPage()
+            } else {
+                pageView.moveToPrevPage()
+            }
+        }
     }
 
     private inner class PageProvider : CurlView.PageProvider {
@@ -55,7 +120,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     // 定义书籍尺寸的变化监听器
     private inner class SizeChangedObserver : CurlView.SizeChangedObserver {
         override fun onSizeChanged(width: Int, height: Int) {
-            pageView.curlView?.setViewMode(CurlView.SHOW_ONE_PAGE)
+            curlView?.setViewMode(CurlView.SHOW_ONE_PAGE)
         }
     }
 }

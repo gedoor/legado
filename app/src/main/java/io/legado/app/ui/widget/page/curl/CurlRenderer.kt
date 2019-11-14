@@ -67,6 +67,10 @@ class CurlRenderer(private val mObserver: Observer) : GLSurfaceView.Renderer {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
         gl.glLoadIdentity()
 
+        if (!mObserver.canDraw) {
+            return
+        }
+
         for (i in mCurlMeshes.indices) {
             mCurlMeshes[i].onDrawFrame(gl)
         }
@@ -200,6 +204,8 @@ class CurlRenderer(private val mObserver: Observer) : GLSurfaceView.Renderer {
          * what needs to be done when this happens.
          */
         fun onSurfaceCreated()
+
+        var canDraw: Boolean
     }
 
     companion object {

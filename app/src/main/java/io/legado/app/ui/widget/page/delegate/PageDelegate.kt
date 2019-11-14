@@ -253,7 +253,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             val x = e.x
             val y = e.y
             if (centerRectF.contains(x, y)) {
-                pageView.callback?.clickCenter()
+                pageView.callBack?.clickCenter()
                 setTouchPoint(x, y)
             } else {
                 bitmap = if (x > viewWidth / 2) {
