@@ -6,6 +6,5 @@ data class TocRule(
     var chapterUrl: String? = null,
     var isVip: String? = null,
     var updateTime: String? = null,
-    var timeFormat: String? = null,
     var nextTocUrl: String? = null
 )

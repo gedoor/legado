@@ -11,7 +11,6 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import org.apache.commons.lang3.time.DateUtils
 
 object BookChapterList {
 
@@ -160,26 +159,18 @@ object BookChapterList {
             val vipRule = analyzeRule.splitSourceRule(tocRule.isVip)
             val update = analyzeRule.splitSourceRule(tocRule.updateTime)
             var isVip: String?
-            var timeStr: String
             for (item in elements) {
                 analyzeRule.setContent(item)
                 val bookChapter = BookChapter(bookUrl = book.bookUrl)
                 analyzeRule.chapter = bookChapter
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule, true)
-                timeStr = analyzeRule.getString(update)
+                bookChapter.tag = analyzeRule.getString(update)
                 isVip = analyzeRule.getString(vipRule)
                 if (bookChapter.url.isEmpty()) bookChapter.url = baseUrl
                 if (bookChapter.title.isNotEmpty()) {
                     if (isVip.isNotEmpty() && isVip != "null" && isVip != "false" && isVip != "0") {
                         bookChapter.title = "\uD83D\uDD12" + bookChapter.title
-                    }
-                    tocRule.timeFormat?.let {
-                        if (it.isNotEmpty()) {
-                            kotlin.runCatching {
-                                bookChapter.start = DateUtils.parseDate(timeStr, it).time
-                            }
-                        }
                     }
                     chapterList.add(bookChapter)
                 }
