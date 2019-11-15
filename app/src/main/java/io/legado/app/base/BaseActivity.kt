@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.utils.applyOpenTint
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.disableAutoFill
 import io.legado.app.utils.hideSoftInput
@@ -47,6 +48,10 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
         } ?: super.onCreateOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
+        menu?.applyOpenTint(this)
+        return super.onMenuOpened(featureId, menu)
+    }
 
     open fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         return super.onCreateOptionsMenu(menu)
