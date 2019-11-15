@@ -8,25 +8,38 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp" />
+        android:layout_margin="5dp"
+        android:text="@string/custom_page_key_t" />
 
-    <io.legado.app.lib.theme.view.ATEEditText
-        android:id="@+id/et_prev"
+    <io.legado.app.lib.theme.view.ATETextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:completionThreshold="0"
-        android:inputType="number"
-        android:singleLine="true" />
+        android:hint="@string/prev_page_key">
 
-    <io.legado.app.lib.theme.view.ATEEditText
-        android:id="@+id/et_next"
+        <io.legado.app.lib.theme.view.ATEEditText
+            android:id="@+id/et_prev"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:singleLine="true" />
+
+    </io.legado.app.lib.theme.view.ATETextInputLayout>
+
+    <io.legado.app.lib.theme.view.ATETextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:completionThreshold="0"
-        android:inputType="number"
-        android:singleLine="true" />
+        android:hint="@string/next_page_key">
+
+        <io.legado.app.lib.theme.view.ATEEditText
+            android:id="@+id/et_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:singleLine="true" />
+
+    </io.legado.app.lib.theme.view.ATETextInputLayout>
 
     <TextView
         android:id="@+id/tv_ok"
