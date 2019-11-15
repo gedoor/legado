@@ -6,4 +6,6 @@ object PreferKey {
     const val hideStatusBar = "hideStatusBar"
     const val hideNavigationBar = "hideNavigationBar"
     const val precisionSearch = "precisionSearch"
+    const val prevKey = "prevKeyCode"
+    const val nextKey = "nextKeyCode"
 }

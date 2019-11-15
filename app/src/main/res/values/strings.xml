@@ -556,5 +556,6 @@
     <string name="book_type_audio">音频</string>
     <string name="to_backstage">转到后台</string>
     <string name="importing">正在导入</string>
+    <string name="custom_page_key">定义翻页按键</string>
 
 </resources>
