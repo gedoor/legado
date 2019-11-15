@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.Bus
@@ -95,6 +96,13 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.hideStatusBar -> postEvent(Bus.UP_CONFIG, true)
                 PreferKey.hideNavigationBar -> postEvent(Bus.UP_CONFIG, true)
             }
+        }
+
+        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+            when (preference?.key) {
+                "customPageKey" -> PageKeyDialog(requireContext()).show()
+            }
+            return super.onPreferenceTreeClick(preference)
         }
 
     }

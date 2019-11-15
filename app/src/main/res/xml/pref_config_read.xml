@@ -26,4 +26,9 @@
         android:key="volumeKeyPageOnPlay"
         app:iconSpaceReserved="false" />
 
+    <Preference
+        android:key="customPageKey"
+        android:title="@string/custom_page_key"
+        app:iconSpaceReserved="false" />
+
 </androidx.preference.PreferenceScreen>

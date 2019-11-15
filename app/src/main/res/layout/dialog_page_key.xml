@@ -12,7 +12,7 @@
         android:layout_margin="5dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="@string/custom_page_key_t" />
+        android:text="@string/custom_page_key" />
 
     <io.legado.app.lib.theme.view.ATETextInputLayout
         android:layout_width="match_parent"

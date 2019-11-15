@@ -91,10 +91,6 @@
             android:title="@string/book_info"
             app:showAsAction="never" />
 
-        <item
-            android:id="@+id/menu_page_key"
-            android:title="@string/custom_page_key"
-            app:showAsAction="never" />
     </group>
 
 </menu>

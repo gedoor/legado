@@ -152,7 +152,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     viewModel.refreshContent(it)
                 }
             }
-            R.id.menu_page_key -> PageKeyDialog(this).show()
         }
         return super.onCompatOptionsItemSelected(item)
     }
