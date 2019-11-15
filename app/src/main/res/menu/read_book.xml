@@ -30,6 +30,15 @@
 
     </group>
 
+    <group android:id="@+id/menu_group_login">
+        <item
+            android:id="@+id/menu_login"
+            android:icon="@drawable/ic_toc"
+            android:visible="false"
+            android:title="@string/login"
+            app:showAsAction="never" />
+    </group>
+
     <group android:id="@+id/menu_group_text">
         <item
             android:id="@+id/menu_set_regex"
@@ -85,14 +94,6 @@
         <item
             android:id="@+id/menu_page_key"
             android:title="@string/custom_page_key"
-            app:showAsAction="never" />
-    </group>
-
-    <group android:id="@+id/menu_group_login">
-        <item
-            android:id="@+id/menu_login"
-            android:icon="@drawable/ic_toc"
-            android:title="@string/login"
             app:showAsAction="never" />
     </group>
 
