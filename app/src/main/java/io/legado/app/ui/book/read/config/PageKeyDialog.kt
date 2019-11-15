@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.KeyEvent
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefInt
 import kotlinx.android.synthetic.main.dialog_page_key.*
@@ -15,6 +16,8 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
 
     init {
         setContentView(R.layout.dialog_page_key)
+        et_prev.setText(context.getPrefInt(PreferKey.prevKey).toString())
+        et_next.setText(context.getPrefInt(PreferKey.nextKey).toString())
         tv_ok.onClick {
             et_prev.text?.let {
                 context.putPrefInt(PreferKey.prevKey, it.toString().toInt())
@@ -33,6 +36,7 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
             } else if (et_next.hasFocus()) {
                 et_next.setText(keyCode.toString())
             }
+            return true
         }
         return super.onKeyDown(keyCode, event)
     }
