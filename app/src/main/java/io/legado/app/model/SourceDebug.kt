@@ -61,6 +61,7 @@ object SourceDebug {
 
     fun startDebug(webBook: WebBook, key: String) {
         cancelDebug()
+        debugSource = webBook.sourceUrl
         startTime = System.currentTimeMillis()
         when {
             key.isAbsUrl() -> {
