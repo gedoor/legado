@@ -4,6 +4,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.model.SourceDebug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.htmlFormat

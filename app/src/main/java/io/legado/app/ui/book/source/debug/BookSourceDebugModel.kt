@@ -3,8 +3,8 @@ package io.legado.app.ui.book.source.debug
 import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.model.SourceDebug
 import io.legado.app.model.WebBook
-import io.legado.app.model.webbook.SourceDebug
 
 class BookSourceDebugModel(application: Application) : BaseViewModel(application),
     SourceDebug.Callback {
@@ -30,7 +30,8 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     fun startDebug(key: String, start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
         webBook?.let {
             start?.invoke()
-            SourceDebug(it, this).startDebug(key)
+            SourceDebug.callback = this
+            SourceDebug.startDebug(it, key)
         } ?: error?.invoke()
     }
 

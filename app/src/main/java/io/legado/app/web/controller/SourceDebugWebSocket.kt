@@ -5,8 +5,8 @@ import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoWSD
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.model.SourceDebug
 import io.legado.app.model.WebBook
-import io.legado.app.model.webbook.SourceDebug
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.isJson
@@ -56,7 +56,8 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                     return
                 }
                 App.db.bookSourceDao().getBookSource(tag)?.let {
-                    SourceDebug(WebBook(it), this).startDebug(key)
+                    SourceDebug.callback = this
+                    SourceDebug.startDebug(WebBook(it), key)
                 }
             }
         }
