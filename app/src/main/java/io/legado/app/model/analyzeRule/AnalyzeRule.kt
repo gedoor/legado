@@ -13,6 +13,7 @@ import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
 import kotlin.collections.HashMap
+import java.text.SimpleDateFormat
 
 
 /**
@@ -627,6 +628,10 @@ class AnalyzeRule(var book: BaseBook? = null) {
 
     fun md5Encode16(str: String): String? {
         return MD5Utils.md5Encode16(str)
+    }
+
+	fun timeFormat(timestamp: Long): String {
+        return SimpleDateFormat.getDateTimeInstance(3,3).format(timestamp)
     }
 
     /**
