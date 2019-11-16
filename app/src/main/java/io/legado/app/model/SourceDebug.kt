@@ -50,6 +50,7 @@ object SourceDebug {
     }
 
     fun startDebug(rssSource: RssSource) {
+        printLog(debugSource, "︾开始解析RSS")
         Rss.getArticles(rssSource)
             .onSuccess {
                 printLog(debugSource, "︽正文页解析完成", state = 1000)
