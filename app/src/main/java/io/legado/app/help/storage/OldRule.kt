@@ -26,6 +26,7 @@ object OldRule {
                     bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup") ?: ""
+                    bookSourceType = if(jsonItem.readString("bookSourceType") == "AUDIO") { 1 } else { 0 }
                     loginUrl = jsonItem.readString("loginUrl")
                     bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                     customOrder = jsonItem.readInt("serialNumber") ?: 0
