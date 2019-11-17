@@ -24,7 +24,7 @@ object RssParserByRule {
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
             Debug.log(sourceUrl, "列表规则为空, 使用默认规则解析")
-            return RssParser.parseXML(body, rssSource.sourceUrl)
+            return RssParser.parseXML(body, sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
@@ -85,7 +85,9 @@ object RssParserByRule {
         Debug.log(sourceUrl, "┌获取类别", log)
         rssArticle.categories = analyzeRule.getString(ruleCategories)
         Debug.log(sourceUrl, "└${rssArticle.categories}", log)
+        Debug.log(sourceUrl, "┌获取描述", log)
         rssArticle.description = analyzeRule.getString(ruleDescription)
+        Debug.log(sourceUrl, "└${rssArticle.description}", log)
         Debug.log(sourceUrl, "┌获取图片url", log)
         rssArticle.image = analyzeRule.getString(ruleImage, true)
         Debug.log(sourceUrl, "└${rssArticle.image}", log)
