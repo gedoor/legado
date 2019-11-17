@@ -38,7 +38,8 @@ class AnalyzeUrl(
     page: Int? = null,
     headerMapF: Map<String, String>? = null,
     baseUrl: String? = null,
-    book: BaseBook? = null
+    book: BaseBook? = null,
+    var useWebView: Boolean = false
 ) {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
@@ -57,8 +58,6 @@ class AnalyzeUrl(
     private var bodyTxt: String? = null
     private var body: RequestBody? = null
     private var method = RequestMethod.GET
-    var useWebView: Boolean = false
-        private set
 
     init {
         baseUrl?.let {

@@ -15,7 +15,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     var rssArticleLiveData = MutableLiveData<RssArticle>()
     val rssSourceLiveData = MutableLiveData<RssSource>()
     val contentLiveData = MutableLiveData<String>()
-    val urlLiveData = MutableLiveData<String>()
+    val urlLiveData = MutableLiveData<AnalyzeUrl>()
 
     fun initData(intent: Intent) {
         execute {
@@ -46,7 +46,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun loadUrl(rssArticle: RssArticle) {
-        urlLiveData.postValue(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))
+        val analyzeUrl = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin, useWebView = true)
+        urlLiveData.postValue(analyzeUrl)
     }
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {

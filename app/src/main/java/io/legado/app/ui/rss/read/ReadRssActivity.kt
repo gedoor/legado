@@ -48,8 +48,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     private fun initWebView() {
         webView.webViewClient = WebViewClient()
-        webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        webView.settings.domStorageEnabled = true
+        webView.settings.apply {
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            domStorageEnabled = true
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -81,7 +83,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             }
         })
         viewModel.urlLiveData.observe(this, Observer {
-            webView.loadUrl(it)
+            webView.settings.apply {
+
+            }
+            webView.loadUrl(it.url)
         })
     }
 
