@@ -25,16 +25,16 @@ import javax.script.SimpleBindings
     indices = [(Index(value = ["bookSourceUrl"], unique = false))]
 )
 data class BookSource(
-    var bookSourceName: String = "",                    // 名称
-    var bookSourceGroup: String? = null,                // 分组
+    var bookSourceName: String = "",           // 名称
+    var bookSourceGroup: String? = null,       // 分组
     @PrimaryKey
-    var bookSourceUrl: String = "",                  // 地址，包括 http/https
-    var bookSourceType: Int = 0,                        // 类型，0 文本，1 音频
-    var bookUrlPattern: String? = null,
+    var bookSourceUrl: String = "",           // 地址，包括 http/https
+    var bookSourceType: Int = 0,               // 类型，0 文本，1 音频
+    var bookUrlPattern: String? = null,       //详情页url正则
     var customOrder: Int = 0,                 // 手动排序编号
     var enabled: Boolean = true,            // 是否启用
     var enabledExplore: Boolean = true,     //启用发现
-    var header: String? = null,               // header
+    var header: String? = null,
     var loginUrl: String? = null,             // 登录地址
     var lastUpdateTime: Long = 0,             // 最后更新时间，用于排序
     var weight: Int = 0,                      // 智能排序的权重

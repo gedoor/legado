@@ -39,14 +39,13 @@ object RssParserByRule {
             Debug.log(sourceUrl, "└列表大小:${collections.size}")
             val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle)
             val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate)
-            val ruleCategories = analyzeRule.splitSourceRule(rssSource.ruleCategories)
             val ruleDescription = analyzeRule.splitSourceRule(rssSource.ruleDescription)
             val ruleImage = analyzeRule.splitSourceRule(rssSource.ruleImage)
             val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink)
             for ((index, item) in collections.withIndex()) {
                 getItem(
-                    sourceUrl, item, analyzeRule, index == 0, ruleTitle,
-                    rulePubDate, ruleCategories, ruleDescription, ruleImage, ruleLink
+                    sourceUrl, item, analyzeRule, index == 0,
+                    ruleTitle, rulePubDate, ruleDescription, ruleImage, ruleLink
                 )?.let {
                     it.origin = rssSource.sourceUrl
                     articleList.add(it)
@@ -69,7 +68,6 @@ object RssParserByRule {
         log: Boolean,
         ruleTitle: List<AnalyzeRule.SourceRule>,
         rulePubDate: List<AnalyzeRule.SourceRule>,
-        ruleCategories: List<AnalyzeRule.SourceRule>,
         ruleDescription: List<AnalyzeRule.SourceRule>,
         ruleImage: List<AnalyzeRule.SourceRule>,
         ruleLink: List<AnalyzeRule.SourceRule>
@@ -82,9 +80,6 @@ object RssParserByRule {
         Debug.log(sourceUrl, "┌获取时间", log)
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)
         Debug.log(sourceUrl, "└${rssArticle.pubDate}", log)
-        Debug.log(sourceUrl, "┌获取类别", log)
-        rssArticle.categories = analyzeRule.getString(ruleCategories)
-        Debug.log(sourceUrl, "└${rssArticle.categories}", log)
         Debug.log(sourceUrl, "┌获取描述", log)
         rssArticle.description = analyzeRule.getString(ruleDescription)
         Debug.log(sourceUrl, "└${rssArticle.description}", log)

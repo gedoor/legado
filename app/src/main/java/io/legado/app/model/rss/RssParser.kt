@@ -40,8 +40,6 @@ object RssParser {
                         if (insideItem) currentArticle.title = xmlPullParser.nextText().trim()
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_LINK, true) ->
                         if (insideItem) currentArticle.link = xmlPullParser.nextText().trim()
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_CATEGORY, true) ->
-                        if (insideItem) currentArticle.categoryList.add(xmlPullParser.nextText().trim())
                     xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_THUMBNAIL, true) ->
                         if (insideItem) currentArticle.image =
                             xmlPullParser.getAttributeValue(null, RSSKeywords.RSS_ITEM_URL)
@@ -89,7 +87,6 @@ object RssParser {
             ) {
                 // The item is correctly parsed
                 insideItem = false
-                currentArticle.categories = currentArticle.categoryList.joinToString(",")
                 currentArticle.origin = sourceUrl
                 articleList.add(currentArticle)
                 currentArticle = RssArticle()
@@ -104,8 +101,6 @@ object RssParser {
                 Debug.log(sourceUrl, "└${item.title}")
                 Debug.log(sourceUrl, "┌获取时间")
                 Debug.log(sourceUrl, "└${item.pubDate}")
-                Debug.log(sourceUrl, "┌获取类别")
-                Debug.log(sourceUrl, "└${item.categories}")
                 Debug.log(sourceUrl, "┌获取描述")
                 Debug.log(sourceUrl, "└${item.description}")
                 Debug.log(sourceUrl, "┌获取图片url")
