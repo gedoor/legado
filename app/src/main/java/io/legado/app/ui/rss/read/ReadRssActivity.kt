@@ -83,10 +83,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             }
         })
         viewModel.urlLiveData.observe(this, Observer {
-            webView.settings.apply {
-
-            }
-            webView.loadUrl(it.url)
+            webView.loadUrl(it.url, it.headerMap)
         })
     }
 

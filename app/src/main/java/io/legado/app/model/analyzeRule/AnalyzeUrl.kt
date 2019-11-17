@@ -51,9 +51,9 @@ class AnalyzeUrl(
         private set
     var path: String? = null
         private set
+    val headerMap = HashMap<String, String>()
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
-    private val headerMap = HashMap<String, String>()
     private var charset: String? = null
     private var bodyTxt: String? = null
     private var body: RequestBody? = null
