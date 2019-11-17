@@ -46,24 +46,23 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun loadUrl(rssArticle: RssArticle) {
-        rssArticle.link?.let {
-            urlLiveData.postValue(NetworkUtils.getAbsoluteURL(rssArticle.origin, it))
-        }
+        urlLiveData.postValue(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))
     }
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
         execute {
-            rssArticle.link?.let {
-                AnalyzeUrl(it, baseUrl = rssArticle.origin).getResponseAwait().body()
-                    ?.let { body ->
-                        AnalyzeRule().apply {
-                            setContent(body, NetworkUtils.getAbsoluteURL(rssArticle.origin, it))
-                            getString(ruleContent)?.let { content ->
-                                contentLiveData.postValue(content)
-                            }
+            AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin).getResponseAwait().body()
+                ?.let { body ->
+                    AnalyzeRule().apply {
+                        setContent(
+                            body,
+                            NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link)
+                        )
+                        getString(ruleContent).let { content ->
+                            contentLiveData.postValue(content)
                         }
                     }
-            }
+                }
         }
     }
 
