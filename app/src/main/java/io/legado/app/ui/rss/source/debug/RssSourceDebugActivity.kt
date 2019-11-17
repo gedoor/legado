@@ -1,20 +1,16 @@
 package io.legado.app.ui.rss.source.debug
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import kotlinx.android.synthetic.main.activity_source_debug.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
 
@@ -24,7 +20,6 @@ class RssSourceDebugActivity : VMBaseActivity<RssSourceDebugModel>(R.layout.acti
         get() = getViewModel(RssSourceDebugModel::class.java)
 
     private lateinit var adapter: RssSourceDebugAdapter
-    private val qrRequestCode = 101
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -52,20 +47,6 @@ class RssSourceDebugActivity : VMBaseActivity<RssSourceDebugModel>(R.layout.acti
 
     private fun initSearchView() {
         search_view.gone()
-    }
-
-    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.source_debug, menu)
-        return super.onCompatCreateOptionsMenu(menu)
-    }
-
-    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_scan -> {
-                startActivityForResult<QrCodeActivity>(qrRequestCode)
-            }
-        }
-        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun startSearch() {
