@@ -4,12 +4,14 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 
 object RssParserByRule {
 
     @Throws(Exception::class)
     fun parseXML(body: String?, rssSource: RssSource): MutableList<RssArticle> {
+        val sourceUrl = rssSource.sourceUrl
         if (body.isNullOrBlank()) {
             throw Exception(
                 App.INSTANCE.getString(
@@ -18,8 +20,10 @@ object RssParserByRule {
                 )
             )
         }
+        Debug.log(sourceUrl, "≡获取成功:$sourceUrl")
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
+            Debug.log(sourceUrl, "列表规则为空, 使用默认规则解析")
             return RssParser.parseXML(body, rssSource.sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
@@ -30,7 +34,9 @@ object RssParserByRule {
                 reverse = false
                 ruleArticles = ruleArticles.substring(1)
             }
+            Debug.log(sourceUrl, "┌获取列表")
             val collections = analyzeRule.getElements(ruleArticles)
+            Debug.log(sourceUrl, "└列表大小:${collections.size}")
             val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle ?: "")
             val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate ?: "")
             val ruleCategories = analyzeRule.splitSourceRule(rssSource.ruleCategories ?: "")
@@ -39,6 +45,7 @@ object RssParserByRule {
             val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink ?: "")
             for ((index, item) in collections.withIndex()) {
                 getItem(
+                    sourceUrl,
                     item,
                     analyzeRule,
                     index == 0,
@@ -64,9 +71,10 @@ object RssParserByRule {
     }
 
     private fun getItem(
+        sourceUrl: String,
         item: Any,
         analyzeRule: AnalyzeRule,
-        printLog: Boolean,
+        log: Boolean,
         ruleTitle: List<AnalyzeRule.SourceRule>,
         rulePubDate: List<AnalyzeRule.SourceRule>,
         ruleCategories: List<AnalyzeRule.SourceRule>,
@@ -76,7 +84,9 @@ object RssParserByRule {
     ): RssArticle? {
         val rssArticle = RssArticle()
         analyzeRule.setContent(item)
+        Debug.log(sourceUrl, "┌获取标题", log)
         rssArticle.title = analyzeRule.getString(ruleTitle)
+        Debug.log(sourceUrl, "└${rssArticle.title}", log)
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)
         rssArticle.categories = analyzeRule.getString(ruleCategories)
         rssArticle.description = analyzeRule.getString(ruleDescription)

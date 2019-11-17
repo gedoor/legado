@@ -5,7 +5,7 @@ import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoWSD
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.model.SourceDebug
+import io.legado.app.model.Debug
 import io.legado.app.model.WebBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -18,7 +18,7 @@ import java.io.IOException
 class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     NanoWSD.WebSocket(handshakeRequest),
     CoroutineScope by MainScope(),
-    SourceDebug.Callback {
+    Debug.Callback {
 
 
     override fun onOpen() {
@@ -38,7 +38,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
         initiatedByRemote: Boolean
     ) {
         cancel()
-        SourceDebug.cancelDebug(true)
+        Debug.cancelDebug(true)
     }
 
     override fun onMessage(message: NanoWSD.WebSocketFrame) {
@@ -56,8 +56,8 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                     return
                 }
                 App.db.bookSourceDao().getBookSource(tag)?.let {
-                    SourceDebug.callback = this
-                    SourceDebug.startDebug(WebBook(it), key)
+                    Debug.callback = this
+                    Debug.startDebug(WebBook(it), key)
                 }
             }
         }
@@ -68,14 +68,14 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun onException(exception: IOException) {
-        SourceDebug.cancelDebug(true)
+        Debug.cancelDebug(true)
     }
 
     override fun printLog(state: Int, msg: String) {
         kotlin.runCatching {
             send(msg)
             if (state == -1 || state == 1000) {
-                SourceDebug.cancelDebug(true)
+                Debug.cancelDebug(true)
             }
         }
     }

@@ -6,7 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ContentRule
-import io.legado.app.model.SourceDebug
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
@@ -32,7 +32,7 @@ object BookContent {
                 baseUrl
             )
         )
-        SourceDebug.printLog(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+        Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
@@ -71,7 +71,7 @@ object BookContent {
                         content.append(contentData.content)
                     }
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
+            Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
             val contentDataList = arrayListOf<ContentData<String>>()
             for (item in contentData.nextUrl) {
@@ -104,10 +104,10 @@ object BookContent {
                 content.append(item.content)
             }
         }
-        SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取章节名称")
-        SourceDebug.printLog(bookSource.bookSourceUrl, "└${bookChapter.title}")
-        SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取正文内容")
-        SourceDebug.printLog(bookSource.bookSourceUrl, "└\n$content")
+        Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
+        Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
+        Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
+        Debug.log(bookSource.bookSourceUrl, "└\n$content")
         return content.toString()
     }
 
@@ -127,11 +127,11 @@ object BookContent {
         analyzeRule.chapter = chapter
         val nextUrlRule = contentRule.nextContentUrl
         if (!nextUrlRule.isNullOrEmpty()) {
-            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取正文下一页链接", printLog)
+            Debug.log(bookSource.bookSourceUrl, "┌获取正文下一页链接", printLog)
             analyzeRule.getStringList(nextUrlRule, true)?.let {
                 nextUrlList.addAll(it)
             }
-            SourceDebug.printLog(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
+            Debug.log(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
         }
         val content = analyzeRule.getString(contentRule.content).htmlFormat()
         return ContentData(content, nextUrlList)

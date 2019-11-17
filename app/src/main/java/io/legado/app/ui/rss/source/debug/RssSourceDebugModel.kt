@@ -4,10 +4,10 @@ import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
-import io.legado.app.model.SourceDebug
+import io.legado.app.model.Debug
 
 class RssSourceDebugModel(application: Application) : BaseViewModel(application),
-    SourceDebug.Callback {
+    Debug.Callback {
 
     private var rssSource: RssSource? = null
 
@@ -30,8 +30,8 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
     fun startDebug(start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
         rssSource?.let {
             start?.invoke()
-            SourceDebug.callback = this
-            SourceDebug.startDebug(it)
+            Debug.callback = this
+            Debug.startDebug(it)
         } ?: error?.invoke()
     }
 
@@ -41,7 +41,7 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
 
     override fun onCleared() {
         super.onCleared()
-        SourceDebug.cancelDebug(true)
+        Debug.cancelDebug(true)
     }
 
 }

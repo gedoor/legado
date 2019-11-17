@@ -3,11 +3,11 @@ package io.legado.app.ui.book.source.debug
 import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.model.SourceDebug
+import io.legado.app.model.Debug
 import io.legado.app.model.WebBook
 
 class BookSourceDebugModel(application: Application) : BaseViewModel(application),
-    SourceDebug.Callback {
+    Debug.Callback {
 
     private var webBook: WebBook? = null
 
@@ -30,8 +30,8 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     fun startDebug(key: String, start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
         webBook?.let {
             start?.invoke()
-            SourceDebug.callback = this
-            SourceDebug.startDebug(it, key)
+            Debug.callback = this
+            Debug.startDebug(it, key)
         } ?: error?.invoke()
     }
 
@@ -41,7 +41,7 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
 
     override fun onCleared() {
         super.onCleared()
-        SourceDebug.cancelDebug(true)
+        Debug.cancelDebug(true)
     }
 
 }
