@@ -91,17 +91,16 @@ object OldRule {
         return source
     }
 
-    private fun toNewUrls(oldUrl: String?): String? {
-        if (oldUrl == null) return null
-        if (!oldUrl.contains("\n") && !oldUrl.contains("&&"))
-            return toNewUrl(oldUrl)
+    private fun toNewUrls(oldUrls: String?): String? {
+        if (oldUrls == null) return null
+        if (!oldUrls.contains("\n") && !oldUrls.contains("&&"))
+            return toNewUrl(oldUrls)
 
-        val urls = oldUrl.split("(&&|\n)+".toRegex())
-        var newUrl = ""
-        for (url in urls) {
-            newUrl += toNewUrl(url)?.replace("\\n\\s*".toRegex(),"") + "\n"
-        }
-        return newUrl
+        val urls = oldUrls.split("(&&|\n)+".toRegex())
+        val newUrls = urls.map {
+            toNewUrl(it)?.replace("\n\\s*".toRegex(),"")
+        }.joinToString("\n")
+        return newUrls
     }
 
     private fun toNewUrl(oldUrl: String?): String? {
@@ -133,8 +132,8 @@ object OldRule {
         url = url.replace("{", "<").replace("}", ">")
         url = url.replace("searchKey", "{{key}}")
         url = url.replace("<searchPage([-+]1)>".toRegex(), "{{page$1}}")
-                .replace("searchPage([-+]1)".toRegex(), "{{page$1}}")
-                .replace("searchPage", "{{page}}")
+                 .replace("searchPage([-+]1)".toRegex(), "{{page$1}}")
+                 .replace("searchPage", "{{page}}")
         for ((index, item) in jsList.withIndex()) {
             url = url.replace("$$index", item.replace("searchKey", "key").replace("searchPage", "page"))
         }

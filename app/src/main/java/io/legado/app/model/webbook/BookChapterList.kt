@@ -179,6 +179,8 @@ object BookChapterList {
             SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].title}", printLog)
             SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取首章链接", printLog)
             SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].url}", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "┌获取首章信息", printLog)
+            SourceDebug.printLog(bookSource.bookSourceUrl, "└${chapterList[0].tag}", printLog)
         }
         return ChapterData(chapterList, nextUrlList)
     }

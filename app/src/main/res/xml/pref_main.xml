@@ -8,6 +8,11 @@
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
+        android:key="RssSourceManage"
+        android:title="订阅管理"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
         android:key="replaceManage"
         android:title="替换净化"
         app:iconSpaceReserved="false" />
@@ -15,7 +20,7 @@
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="isNightTheme"
-        android:title="暗色主题"
+        android:title="夜间模式"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
@@ -31,7 +36,7 @@
         <androidx.preference.Preference
             android:key="web_dav_setting"
             android:summary="通过WebDav云备份"
-            android:title="云备份设置"
+            android:title="账号同步"
             app:iconSpaceReserved="false" />
 
         <androidx.preference.Preference

@@ -12,7 +12,6 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.article.RssArticlesActivity
-import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_rss.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -35,7 +34,6 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
-            R.id.menu_rss_config -> startActivity<RssSourceActivity>()
             R.id.menu_rss_star -> {
             }
         }

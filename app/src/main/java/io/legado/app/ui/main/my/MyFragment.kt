@@ -26,6 +26,7 @@ import io.legado.app.utils.LogUtils
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
+import io.legado.app.ui.rss.source.manage.RssSourceActivity
 
 class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
@@ -93,6 +94,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
             when (preference?.key) {
                 "bookSourceManage" -> context?.startActivity<BookSourceActivity>()
+                "RssSourceManage" -> context?.startActivity<RssSourceActivity>()
                 "replaceManage" -> context?.startActivity<ReplaceRuleActivity>()
                 "setting" -> context?.startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_CONFIG)
