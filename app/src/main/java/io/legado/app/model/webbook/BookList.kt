@@ -75,19 +75,10 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└列表大小:${collections.size}")
             for ((index, item) in collections.withIndex()) {
                 getSearchItem(
-                    item,
-                    analyzeRule,
-                    bookSource,
-                    baseUrl,
-                    index == 0,
-                    ruleName = ruleName,
-                    ruleBookUrl = ruleBookUrl,
-                    ruleAuthor = ruleAuthor,
-                    ruleCoverUrl = ruleCoverUrl,
-                    ruleIntro = ruleIntro,
-                    ruleKind = ruleKind,
-                    ruleLastChapter = ruleLastChapter,
-                    ruleWordCount = ruleWordCount
+                    item, analyzeRule, bookSource, baseUrl, index == 0,
+                    ruleName = ruleName, ruleBookUrl = ruleBookUrl, ruleAuthor = ruleAuthor,
+                    ruleCoverUrl = ruleCoverUrl, ruleIntro = ruleIntro, ruleKind = ruleKind,
+                    ruleLastChapter = ruleLastChapter, ruleWordCount = ruleWordCount
                 )?.let { searchBook ->
                     if (baseUrl == searchBook.bookUrl) {
                         searchBook.infoHtml = body

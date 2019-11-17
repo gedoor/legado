@@ -45,16 +45,8 @@ object RssParserByRule {
             val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink ?: "")
             for ((index, item) in collections.withIndex()) {
                 getItem(
-                    sourceUrl,
-                    item,
-                    analyzeRule,
-                    index == 0,
-                    ruleTitle,
-                    rulePubDate,
-                    ruleCategories,
-                    ruleDescription,
-                    ruleImage,
-                    ruleLink
+                    sourceUrl, item, analyzeRule, index == 0, ruleTitle,
+                    rulePubDate, ruleCategories, ruleDescription, ruleImage, ruleLink
                 )?.let {
                     it.origin = rssSource.sourceUrl
                     articleList.add(it)
@@ -87,11 +79,19 @@ object RssParserByRule {
         Debug.log(sourceUrl, "┌获取标题", log)
         rssArticle.title = analyzeRule.getString(ruleTitle)
         Debug.log(sourceUrl, "└${rssArticle.title}", log)
+        Debug.log(sourceUrl, "┌获取时间", log)
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)
+        Debug.log(sourceUrl, "└${rssArticle.pubDate}", log)
+        Debug.log(sourceUrl, "┌获取类别", log)
         rssArticle.categories = analyzeRule.getString(ruleCategories)
+        Debug.log(sourceUrl, "└${rssArticle.categories}", log)
         rssArticle.description = analyzeRule.getString(ruleDescription)
+        Debug.log(sourceUrl, "┌获取图片url", log)
         rssArticle.image = analyzeRule.getString(ruleImage, true)
+        Debug.log(sourceUrl, "└${rssArticle.image}", log)
+        Debug.log(sourceUrl, "┌获取文章链接", log)
         rssArticle.link = analyzeRule.getString(ruleLink)
+        Debug.log(sourceUrl, "└${rssArticle.link}", log)
         if (rssArticle.title.isBlank()) {
             return null
         }
