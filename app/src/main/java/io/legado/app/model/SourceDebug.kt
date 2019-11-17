@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object SourceDebug {
-    var debugSource: String? = null
+    private var debugSource: String? = null
     var callback: Callback? = null
     private val tasks: CompositeCoroutine = CompositeCoroutine()
 
@@ -50,6 +50,8 @@ object SourceDebug {
     }
 
     fun startDebug(rssSource: RssSource) {
+        cancelDebug()
+        debugSource = rssSource.sourceUrl
         printLog(debugSource, "︾开始解析RSS")
         Rss.getArticles(rssSource)
             .onSuccess {
@@ -62,6 +64,7 @@ object SourceDebug {
 
     fun startDebug(webBook: WebBook, key: String) {
         cancelDebug()
+        debugSource = webBook.sourceUrl
         startTime = System.currentTimeMillis()
         when {
             key.isAbsUrl() -> {
