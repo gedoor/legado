@@ -20,8 +20,6 @@ data class RssSource(
     var ruleNextPage: String? = null,
     var ruleTitle: String? = null,
     var rulePubDate: String? = null,
-    //类别规则
-    var ruleCategories: String? = null,
     //webView规则
     var ruleDescription: String? = null,
     var ruleImage: String? = null,
@@ -41,7 +39,6 @@ data class RssSource(
                 && equal(ruleNextPage, source.ruleNextPage)
                 && equal(ruleTitle, source.ruleTitle)
                 && equal(rulePubDate, source.rulePubDate)
-                && equal(ruleCategories, source.ruleCategories)
                 && equal(ruleDescription, source.ruleDescription)
                 && equal(ruleLink, source.ruleLink)
                 && equal(ruleContent, source.ruleContent)
