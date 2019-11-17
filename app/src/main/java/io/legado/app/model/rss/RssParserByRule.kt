@@ -37,12 +37,12 @@ object RssParserByRule {
             Debug.log(sourceUrl, "┌获取列表")
             val collections = analyzeRule.getElements(ruleArticles)
             Debug.log(sourceUrl, "└列表大小:${collections.size}")
-            val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle ?: "")
-            val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate ?: "")
-            val ruleCategories = analyzeRule.splitSourceRule(rssSource.ruleCategories ?: "")
-            val ruleDescription = analyzeRule.splitSourceRule(rssSource.ruleDescription ?: "")
-            val ruleImage = analyzeRule.splitSourceRule(rssSource.ruleImage ?: "")
-            val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink ?: "")
+            val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle)
+            val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate)
+            val ruleCategories = analyzeRule.splitSourceRule(rssSource.ruleCategories)
+            val ruleDescription = analyzeRule.splitSourceRule(rssSource.ruleDescription)
+            val ruleImage = analyzeRule.splitSourceRule(rssSource.ruleImage)
+            val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink)
             for ((index, item) in collections.withIndex()) {
                 getItem(
                     sourceUrl, item, analyzeRule, index == 0, ruleTitle,
