@@ -62,6 +62,10 @@ object Debug {
             }
     }
 
+    private fun rssContentDebug() {
+
+    }
+
     fun startDebug(webBook: WebBook, key: String) {
         cancelDebug()
         debugSource = webBook.sourceUrl
