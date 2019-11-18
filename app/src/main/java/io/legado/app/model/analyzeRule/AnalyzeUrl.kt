@@ -272,7 +272,7 @@ class AnalyzeUrl(
         sourceRegex: String? = null
     ): Res {
         if (useWebView) {
-            val params = AjaxWebView.AjaxParams(url, tag)
+            val params = AjaxWebView.AjaxParams(url)
             params.headerMap = headerMap
             params.requestMethod = method
             params.javaScript = jsStr

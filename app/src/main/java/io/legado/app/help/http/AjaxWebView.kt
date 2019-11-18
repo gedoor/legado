@@ -92,7 +92,8 @@ class AjaxWebView {
         mHandler.obtainMessage(DESTROY_WEB_VIEW)
     }
 
-    class AjaxParams(val url: String, private val tag: String?) {
+    class AjaxParams(val url: String) {
+        var tag: String? = null
         var requestMethod = RequestMethod.GET
         var postData: ByteArray? = null
         var headerMap: Map<String, String>? = null
@@ -115,9 +116,9 @@ class AjaxWebView {
             get() = !TextUtils.isEmpty(sourceRegex)
 
         fun setCookie(url: String) {
-            if (tag != null) {
+            tag?.let {
                 val cookie = CookieManager.getInstance().getCookie(url)
-                CookieStore.setCookie(tag, cookie)
+                CookieStore.setCookie(it, cookie)
             }
         }
 
