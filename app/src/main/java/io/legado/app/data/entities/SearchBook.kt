@@ -1,17 +1,23 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity(tableName = "searchBooks", indices = [(Index(value = ["bookUrl"], unique = true))])
+@Entity(
+    tableName = "searchBooks",
+    indices = [(Index(value = ["bookUrl"], unique = true))],
+    foreignKeys = [(ForeignKey(
+        entity = BookSource::class,
+        parentColumns = ["bookSourceUrl"],
+        childColumns = ["origin"],
+        onDelete = ForeignKey.CASCADE
+    ))]
+)
 data class SearchBook(
     @PrimaryKey
     var bookUrl: String = "",

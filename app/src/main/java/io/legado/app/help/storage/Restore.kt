@@ -143,11 +143,6 @@ object Restore {
                     Log.d(AppConst.APP_TAG, "Added ${book.name}")
                 }
                 App.db.bookDao().insert(*books.toTypedArray())
-                val count = books.size
-
-                uiThread {
-                    context.toast(if (count > 0) "成功地导入 $count 本新书和音频" else "没有发现新书或音频")
-                }
             }
         } catch (e: Exception) {
             Log.e(AppConst.APP_TAG, "Failed to import book shelf.", e)
@@ -194,10 +189,6 @@ object Restore {
                     replaceRules.add(rule)
                 }
                 App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
-                val count = replaceRules.size
-                uiThread {
-                    context.toast(if (count > 0) "成功地导入 $count 条净化替换规则" else "没有发现新的净化替换规则")
-                }
             }
         } catch (e: Exception) {
             Log.e(AppConst.APP_TAG, e.localizedMessage)

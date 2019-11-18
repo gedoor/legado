@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
-import io.legado.app.utils.putPrefBoolean
+import io.legado.app.help.storage.Restore
 
 
 @Database(
@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .fallbackToDestructiveMigration()
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
-                        context.putPrefBoolean("dbChange", true)
+                        Restore.restore()
                     }
                 })
                 .build()
