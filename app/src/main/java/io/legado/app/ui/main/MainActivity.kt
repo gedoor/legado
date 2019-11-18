@@ -9,12 +9,14 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.App
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
@@ -115,6 +117,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         if (ActivityHelp.size() > 1) {
             moveTaskToBack(true)
         } else {
+            if (!BuildConfig.DEBUG) {
+                Backup.autoBackup()
+            }
             super.finish()
         }
     }

@@ -11,7 +11,6 @@ import android.view.MenuItem
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
@@ -20,7 +19,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -530,13 +528,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 super.finish()
             }
         } ?: super.finish()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!BuildConfig.DEBUG) {
-            Backup.autoBackup()
-        }
     }
 
     override fun observeLiveBus() {
