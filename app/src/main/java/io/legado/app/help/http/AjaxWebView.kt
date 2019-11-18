@@ -38,7 +38,7 @@ class AjaxWebView {
                     mWebView = createAjaxWebView(params, this)
                 }
                 MSG_SUCCESS -> {
-                    ajaxWebView.callback?.onResult(msg.obj as Response)
+                    ajaxWebView.callback?.onResult(msg.obj as Res)
                     destroyWebView()
                 }
                 MSG_ERROR -> {
@@ -92,11 +92,10 @@ class AjaxWebView {
         mHandler.obtainMessage(DESTROY_WEB_VIEW)
     }
 
-    class AjaxParams(val url: String, private val tag: String) {
+    class AjaxParams(val url: String, private val tag: String?) {
         var requestMethod = RequestMethod.GET
         var postData: ByteArray? = null
         var headerMap: Map<String, String>? = null
-        var cookieStore: CookieStore? = null
         var sourceRegex: String? = null
         var javaScript: String? = null
 
@@ -116,9 +115,9 @@ class AjaxWebView {
             get() = !TextUtils.isEmpty(sourceRegex)
 
         fun setCookie(url: String) {
-            if (cookieStore != null) {
+            if (tag != null) {
                 val cookie = CookieManager.getInstance().getCookie(url)
-                cookieStore?.setCookie(tag, cookie)
+                CookieStore.setCookie(tag, cookie)
             }
         }
 
@@ -185,7 +184,7 @@ class AjaxWebView {
             mWebView.get()?.evaluateJavascript(mJavaScript) {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
-                    handler.obtainMessage(MSG_SUCCESS, Response(url, content))
+                    handler.obtainMessage(MSG_SUCCESS, Res(url, content))
                         .sendToTarget()
                     handler.removeCallbacks(this)
                     return@evaluateJavascript
@@ -211,7 +210,7 @@ class AjaxWebView {
         override fun onLoadResource(view: WebView, url: String) {
             params.sourceRegex?.let {
                 if (url.matches(it.toRegex())) {
-                    handler.obtainMessage(MSG_SUCCESS, Response(view.url ?: params.url, url))
+                    handler.obtainMessage(MSG_SUCCESS, Res(view.url ?: params.url, url))
                         .sendToTarget()
                 }
             }
@@ -270,8 +269,6 @@ class AjaxWebView {
         }
     }
 
-    data class Response(val url: String, val content: String)
-
     companion object {
         const val MSG_AJAX_START = 0
         const val MSG_SNIFF_START = 1
@@ -282,7 +279,7 @@ class AjaxWebView {
     }
 
     abstract class Callback {
-        abstract fun onResult(response: Response)
+        abstract fun onResult(response: Res)
         abstract fun onError(error: Throwable)
     }
 }

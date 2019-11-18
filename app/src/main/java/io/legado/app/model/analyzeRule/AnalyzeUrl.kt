@@ -13,13 +13,13 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.AjaxWebView
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.RequestMethod
+import io.legado.app.help.http.Res
 import io.legado.app.utils.*
 import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
-import retrofit2.Response
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -266,8 +266,21 @@ class AnalyzeUrl(
     }
 
     @Throws(Exception::class)
-    suspend fun getResponseAwait(): Response<String> {
-        return when {
+    suspend fun getResponseAwait(
+        tag: String? = null,
+        jsStr: String? = null,
+        sourceRegex: String? = null
+    ): Res {
+        if (useWebView) {
+            val params = AjaxWebView.AjaxParams(url, tag)
+            params.headerMap = headerMap
+            params.requestMethod = method
+            params.javaScript = jsStr
+            params.sourceRegex = sourceRegex
+            params.postData = bodyTxt?.toByteArray()
+            return HttpHelper.ajax(params)
+        }
+        val res = when {
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
@@ -290,20 +303,7 @@ class AnalyzeUrl(
                 .getMapAsync(url, fieldMap, headerMap)
                 .await()
         }
-    }
-
-    suspend fun getResultByWebView(
-        tag: String,
-        jsStr: String? = null,
-        sourceRegex: String? = null
-    ): AjaxWebView.Response {
-        val params = AjaxWebView.AjaxParams(url, tag)
-        params.headerMap = headerMap
-        params.requestMethod = method
-        params.javaScript = jsStr
-        params.sourceRegex = sourceRegex
-        params.postData = bodyTxt?.toByteArray()
-        return HttpHelper.ajax(params)
+        return Res(NetworkUtils.getUrl(res), res.body())
     }
 
 }

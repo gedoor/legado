@@ -54,19 +54,16 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
         execute {
-            val analyzeUrl = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin)
-            val content = if (analyzeUrl.useWebView) {
-                analyzeUrl.getResultByWebView(rssArticle.origin).content
-            } else analyzeUrl.getResponseAwait().body()
-            content?.let { body ->
-                AnalyzeRule().apply {
-                    setContent(
-                        body,
-                        NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link)
-                    )
-                    getString(ruleContent).let { content ->
-                        contentLiveData.postValue(content)
-                    }
+            val body = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin)
+                .getResponseAwait()
+                .body
+            AnalyzeRule().apply {
+                setContent(
+                    body,
+                    NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link)
+                )
+                getString(ruleContent).let { content ->
+                    contentLiveData.postValue(content)
                 }
             }
         }

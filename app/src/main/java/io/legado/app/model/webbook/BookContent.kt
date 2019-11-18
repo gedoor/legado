@@ -55,16 +55,11 @@ object BookContent {
                     book = book,
                     headerMapF = bookSource.getHeaderMap()
                 ).getResponseAwait()
-                    .body()?.let { nextBody ->
+                    .body?.let { nextBody ->
                         contentData =
                             analyzeContent(
-                                nextBody,
-                                contentRule,
-                                book,
-                                bookChapter,
-                                bookSource,
-                                baseUrl,
-                                false
+                                nextBody, contentRule, book,
+                                bookChapter, bookSource, baseUrl, false
                             )
                         nextUrl =
                             if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
@@ -85,16 +80,11 @@ object BookContent {
                         book = book,
                         headerMapF = bookSource.getHeaderMap()
                     ).getResponseAwait()
-                        .body()?.let {
+                        .body?.let {
                             contentData =
                                 analyzeContent(
-                                    it,
-                                    contentRule,
-                                    book,
-                                    bookChapter,
-                                    bookSource,
-                                    item.nextUrl,
-                                    false
+                                    it, contentRule, book, bookChapter,
+                                    bookSource, item.nextUrl, false
                                 )
                             item.content = contentData.content
                         }
