@@ -5,7 +5,6 @@ import android.database.Cursor
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -27,22 +26,28 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         private const val DATABASE_NAME = "legado.db"
-
-        private val MIGRATION_1_N: Migration = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                backup(database)
-            }
-        }
-
         fun createDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-//                .fallbackToDestructiveMigration()
-                .addMigrations(MIGRATION_1_N)
+                .fallbackToDestructiveMigration()
+                .addCallback(callback)
                 .build()
         }
 
+        val callback = object : Callback() {
+            override fun onOpen(db: SupportSQLiteDatabase) {
+
+            }
+
+            override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+
+            }
+        }
+
         private fun backup(database: SupportSQLiteDatabase) {
-            val forms = arrayOf("books")
+            val forms = arrayOf(
+                "books", "book_groups", "bookmarks", "book_sources", "cookies",
+                "replace_rules", "rssSources", "search_keywords", "rssArticles"
+            )
             forms.forEach { form ->
                 database.query("select * from $form").let {
                     val ja = JsonArray()
@@ -65,6 +70,7 @@ abstract class AppDatabase : RoomDatabase() {
                     FileHelp.getFile(FileHelp.getCachePath() + File.separator + "db" + File.separator + form + ".json")
                         .writeText(GSON.toJson(ja))
                 }
+                database.execSQL("drop table $form")
             }
         }
     }

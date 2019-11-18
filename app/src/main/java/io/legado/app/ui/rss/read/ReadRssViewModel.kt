@@ -12,8 +12,8 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application) {
-    var rssArticleLiveData = MutableLiveData<RssArticle>()
-    val rssSourceLiveData = MutableLiveData<RssSource>()
+    var rssSource: RssSource? = null
+    val rssArticleLiveData = MutableLiveData<RssArticle>()
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<AnalyzeUrl>()
 
@@ -21,10 +21,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
         execute {
             val origin = intent.getStringExtra("origin")
             val link = intent.getStringExtra("link")
-            val rssSource = App.db.rssSourceDao().getByKey(origin)
-            rssSource?.let {
-                rssSourceLiveData.postValue(it)
-            }
+            rssSource = App.db.rssSourceDao().getByKey(origin)
             if (origin != null && link != null) {
                 App.db.rssArticleDao().get(origin, link)?.let { rssArticle ->
                     rssArticleLiveData.postValue(rssArticle)
@@ -32,7 +29,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                         contentLiveData.postValue(rssArticle.description)
                     } else {
                         rssSource?.let {
-                            val ruleContent = rssSource.ruleContent
+                            val ruleContent = it.ruleContent
                             if (!ruleContent.isNullOrBlank()) {
                                 loadContent(rssArticle, ruleContent)
                             } else {
@@ -46,7 +43,12 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun loadUrl(rssArticle: RssArticle) {
-        val analyzeUrl = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin, useWebView = true)
+        val analyzeUrl = AnalyzeUrl(
+            rssArticle.link,
+            baseUrl = rssArticle.origin,
+            useWebView = true,
+            headerMapF = rssSource?.getHeaderMap()
+        )
         urlLiveData.postValue(analyzeUrl)
     }
 
