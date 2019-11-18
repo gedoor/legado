@@ -131,11 +131,11 @@ class RssSourceEditActivity :
             add(EditEntity("ruleNextPage", rssSource?.ruleNextPage, R.string.r_next))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.r_title))
             add(EditEntity("rulePubDate", rssSource?.rulePubDate, R.string.r_date))
-            add(EditEntity("ruleCategories", rssSource?.ruleCategories, R.string.r_categories))
             add(EditEntity("ruleDescription", rssSource?.ruleDescription, R.string.r_description))
             add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.r_image))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.r_link))
             add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.r_content))
+            add(EditEntity("header", rssSource?.header, R.string.source_http_header))
         }
         adapter.editEntities = sourceEntities
     }
@@ -155,11 +155,11 @@ class RssSourceEditActivity :
                 "ruleNextPage" -> source.ruleNextPage = it.value
                 "ruleTitle" -> source.ruleTitle = it.value
                 "rulePubDate" -> source.rulePubDate = it.value
-                "ruleCategories" -> source.ruleCategories = it.value
                 "ruleDescription" -> source.ruleDescription = it.value
                 "ruleImage" -> source.ruleImage = it.value
                 "ruleLink" -> source.ruleLink = it.value
                 "ruleContent" -> source.ruleContent = it.value
+                "header" -> source.header = it.value
             }
         }
         return source

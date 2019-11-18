@@ -64,7 +64,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         })
         viewModel.contentLiveData.observe(this, Observer { content ->
             viewModel.rssArticleLiveData.value?.let {
-                val url = NetworkUtils.getAbsoluteURL(it.origin, it.link ?: "")
+                val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
                 if (viewModel.rssSourceLiveData.value?.loadWithBaseUrl == true) {
                     webView.loadDataWithBaseURL(
                         url,
