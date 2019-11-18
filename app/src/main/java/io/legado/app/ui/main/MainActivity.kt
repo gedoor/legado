@@ -17,7 +17,6 @@ import io.legado.app.help.ActivityHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
@@ -63,25 +62,20 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     private fun restore() {
-        if (getPrefBoolean("dbChange")) {
-            Restore.restore()
-            putPrefBoolean("dbChange", false)
-        } else if (getPrefInt("versionCode") == 0) {
-            launch {
-                if (withContext(IO) { App.db.bookDao().allBookCount == 0 }) {
-                    alert(title = "导入") {
-                        message = "是否导入旧版本数据"
-                        yesButton {
-                            PermissionsCompat.Builder(this@MainActivity)
-                                .addPermissions(*Permissions.Group.STORAGE)
-                                .rationale(R.string.tip_perm_request_storage)
-                                .onGranted { viewModel.importYueDuData() }
-                                .request()
-                        }
-                        noButton {
-                        }
-                    }.show().applyTint()
-                }
+        launch {
+            if (withContext(IO) { App.db.bookDao().allBookCount == 0 }) {
+                alert(title = "导入") {
+                    message = "是否导入旧版本数据"
+                    yesButton {
+                        PermissionsCompat.Builder(this@MainActivity)
+                            .addPermissions(*Permissions.Group.STORAGE)
+                            .rationale(R.string.tip_perm_request_storage)
+                            .onGranted { viewModel.importYueDuData() }
+                            .request()
+                    }
+                    noButton {
+                    }
+                }.show().applyTint()
             }
         }
     }
