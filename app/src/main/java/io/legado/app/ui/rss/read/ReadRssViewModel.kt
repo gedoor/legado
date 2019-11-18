@@ -7,9 +7,8 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
-import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.NetworkUtils
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     var rssSource: RssSource? = null
@@ -53,20 +52,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
-        execute {
-            val body = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin)
-                .getResponseAwait()
-                .body
-            AnalyzeRule().apply {
-                setContent(
-                    body,
-                    NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link)
-                )
-                getString(ruleContent).let { content ->
-                    contentLiveData.postValue(content)
-                }
+        Rss.getContent(rssArticle, ruleContent, this)
+            .onSuccess {
+                contentLiveData.postValue(it)
             }
-        }
     }
 
     fun upRssArticle(rssArticle: RssArticle, success: () -> Unit) {
