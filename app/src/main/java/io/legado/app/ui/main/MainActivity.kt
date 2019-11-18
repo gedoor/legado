@@ -65,6 +65,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private fun restore() {
         if (getPrefBoolean("dbChange")) {
             Restore.restore()
+            putPrefBoolean("dbChange", false)
         } else if (getPrefInt("versionCode") == 0) {
             launch {
                 if (withContext(IO) { App.db.bookDao().allBookCount == 0 }) {
