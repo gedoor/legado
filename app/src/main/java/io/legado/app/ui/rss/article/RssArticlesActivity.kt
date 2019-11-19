@@ -82,14 +82,13 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
             })
         adapter = RssArticlesAdapter(this, this)
         recycler_view.adapter = adapter
-        loadMoreView =
-            LayoutInflater.from(this).inflate(R.layout.view_load_more, recycler_view, false)
-        adapter?.addFooterView(loadMoreView)
         refresh_recycler_view.onRefreshStart = {
             url?.let {
-                viewModel.loadContent(it) {
+                viewModel.loadContent(it, {
                     refresh_progress_bar.isAutoLoading = false
-                }
+                }, {
+                    addLoadMoreView()
+                })
             }
         }
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -100,6 +99,14 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
                 }
             }
         })
+    }
+
+    private fun addLoadMoreView() {
+        if (adapter?.getFooterCount() == 0) {
+            loadMoreView =
+                LayoutInflater.from(this).inflate(R.layout.view_load_more, recycler_view, false)
+            adapter?.addFooterView(loadMoreView)
+        }
     }
 
     private fun initData(origin: String) {

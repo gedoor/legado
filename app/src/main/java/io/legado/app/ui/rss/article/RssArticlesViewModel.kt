@@ -8,13 +8,14 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 
 
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
     var rssSource: RssSource? = null
     val titleLiveData = MutableLiveData<String>()
 
-    fun loadContent(url: String, onFinally: () -> Unit) {
+    fun loadContent(url: String, onFinally: () -> Unit, loadMore: (() -> Unit)? = null) {
         execute {
             rssSource = App.db.rssSourceDao().getByKey(url)
             rssSource?.let {
@@ -24,9 +25,12 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             }
             rssSource?.let { rssSource ->
                 Rss.getArticles(rssSource, this)
-                    .onSuccess(IO) {
+                    .onSuccess {
                         it?.let {
-                            App.db.rssArticleDao().insert(*it.toTypedArray())
+                            withContext(IO) {
+                                App.db.rssArticleDao().insert(*it.toTypedArray())
+                            }
+                            loadMore?.invoke()
                         }
                     }.onError {
                         toast(it.localizedMessage)
