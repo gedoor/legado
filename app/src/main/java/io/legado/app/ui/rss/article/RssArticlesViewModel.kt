@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
     var rssSource: RssSource? = null
     val titleLiveData = MutableLiveData<String>()
+    var page = 1
 
     fun loadContent(url: String, onFinally: () -> Unit, loadMore: (() -> Unit)? = null) {
         execute {
@@ -24,7 +25,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 rssSource = RssSource(sourceUrl = url)
             }
             rssSource?.let { rssSource ->
-                Rss.getArticles(rssSource, this)
+                Rss.getArticles(rssSource, page, this)
                     .onSuccess {
                         it?.let {
                             withContext(IO) {
@@ -51,6 +52,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     fun clear(url: String, onFinally: () -> Unit) {
         execute {
             App.db.rssArticleDao().delete(url)
+            page = 1
             loadContent(url, onFinally)
         }
     }
