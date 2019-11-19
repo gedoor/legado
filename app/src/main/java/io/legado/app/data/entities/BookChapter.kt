@@ -15,10 +15,8 @@ import kotlinx.android.parcel.Parcelize
 @Entity(
     tableName = "chapters",
     primaryKeys = ["url", "bookUrl"],
-    indices = [(Index(value = ["bookUrl"], unique = false)), (Index(
-        value = ["bookUrl", "index"],
-        unique = true
-    ))],
+    indices = [(Index(value = ["bookUrl"], unique = false)),
+        (Index(value = ["bookUrl", "index"], unique = true))],
     foreignKeys = [(ForeignKey(
         entity = Book::class,
         parentColumns = ["bookUrl"],

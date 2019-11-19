@@ -54,7 +54,7 @@ object Debug {
         cancelDebug()
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析RSS")
-        Rss.getArticles(rssSource)
+        Rss.getArticles(rssSource, 1)
             .onSuccess {
                 if (it == null) {
                     log(debugSource, "︽解析失败", state = -1)

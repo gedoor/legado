@@ -10,7 +10,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity(
     tableName = "searchBooks",
-    indices = [(Index(value = ["bookUrl"], unique = true))],
+    indices = [(Index(value = ["bookUrl"], unique = true)),
+        (Index(value = ["bookSourceUrl"], unique = false))],
     foreignKeys = [(ForeignKey(
         entity = BookSource::class,
         parentColumns = ["bookSourceUrl"],
