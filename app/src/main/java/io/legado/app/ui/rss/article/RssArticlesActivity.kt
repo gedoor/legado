@@ -101,6 +101,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     }
 
     override fun loadFinally() {
+        refresh_recycler_view.stopLoading()
         if (viewModel.hasMore) {
             loadMoreView.startLoad()
         } else {

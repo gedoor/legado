@@ -75,4 +75,7 @@ class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayou
         onRefreshStart?.invoke()
     }
 
+    fun stopLoading() {
+        refresh_progress_bar.isAutoLoading = false
+    }
 }
