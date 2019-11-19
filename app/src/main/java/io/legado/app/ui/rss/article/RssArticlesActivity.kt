@@ -39,7 +39,9 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
             title_bar.title = it
         })
         initView()
-        refresh_recycler_view.startLoading()
+        viewModel.initData(intent) {
+            refresh_recycler_view.startLoading()
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

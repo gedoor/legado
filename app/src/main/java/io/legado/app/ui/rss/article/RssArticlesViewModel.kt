@@ -20,7 +20,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     var page = 1
     var hasMore = true
 
-    fun initData(intent: Intent) {
+    fun initData(intent: Intent, finally: () -> Unit) {
         execute {
             url = intent.getStringExtra("url")
             url?.let { url ->
@@ -31,6 +31,8 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     rssSource = RssSource(sourceUrl = url)
                 }
             }
+        }.onFinally {
+            finally()
         }
     }
 
