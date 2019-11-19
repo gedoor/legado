@@ -171,7 +171,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     private fun scrollToBottom() {
-        if (!viewModel.isLoading && viewModel.searchKey.isNotEmpty()) {
+        if (!viewModel.isLoading && viewModel.searchKey.isNotEmpty() && loadMoreView.hasMore) {
             viewModel.search("")
         }
     }
@@ -228,6 +228,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
     override fun searchFinally() {
         refresh_progress_bar.isAutoLoading = false
+        loadMoreView.startLoad()
         fb_stop.invisible()
     }
 

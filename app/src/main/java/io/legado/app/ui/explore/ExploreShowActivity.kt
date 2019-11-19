@@ -14,7 +14,6 @@ import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.LoadMoreView
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_explore_show.*
-import kotlinx.android.synthetic.main.view_load_more.view.*
 import org.jetbrains.anko.startActivity
 
 class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activity_explore_show),
@@ -40,7 +39,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(this)
         adapter.addFooterView(loadMoreView)
-        loadMoreView.rotate_loading.show()
+        loadMoreView.startLoad()
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
