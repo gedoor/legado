@@ -108,7 +108,7 @@ class ConfigFragment : PreferenceFragmentCompat(),
             PreferKey.downloadPath -> getPrefString(PreferKey.downloadPath)
                 ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
                 ?: App.INSTANCE.cacheDir.absolutePath
-            else -> getPrefString(key, "")
+            else -> getPrefString(key) ?: ""
         }
     }
 

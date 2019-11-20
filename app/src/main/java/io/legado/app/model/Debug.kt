@@ -54,16 +54,16 @@ object Debug {
         cancelDebug()
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析RSS")
-        Rss.getArticles(rssSource, 1)
+        Rss.getArticles(rssSource, null)
             .onSuccess {
                 if (it == null) {
                     log(debugSource, "︽解析失败", state = -1)
                 } else {
                     val ruleContent = rssSource.ruleContent
-                    if (it.isNotEmpty() && it[0].description.isNullOrEmpty() && !ruleContent.isNullOrEmpty()) {
+                    if (it.articles.isNotEmpty() && it.articles[0].description.isNullOrEmpty() && !ruleContent.isNullOrEmpty()) {
                         log(debugSource, "︽解析完成")
                         log(debugSource, showTime = false)
-                        rssContentDebug(it[0], ruleContent)
+                        rssContentDebug(it.articles[0], ruleContent)
                     } else {
                         log(debugSource, "︽解析完成", state = 1000)
                     }

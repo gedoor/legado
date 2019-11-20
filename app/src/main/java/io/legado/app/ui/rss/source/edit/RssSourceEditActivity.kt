@@ -98,8 +98,8 @@ class RssSourceEditActivity :
             }
             R.id.menu_copy_source -> {
                 GSON.toJson(getRssSource())?.let { sourceStr ->
-                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                    clipboard?.primaryClip = ClipData.newPlainText(null, sourceStr)
+                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                    clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
                 }
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }

@@ -32,7 +32,7 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
             val clipboard = this.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
             val clipData = ClipData.newPlainText(null, "开源阅读软件")
             clipboard?.let {
-                clipboard.primaryClip = clipData
+                clipboard.setPrimaryClip(clipData)
                 toast(R.string.copy_complete)
             }
         }
@@ -47,7 +47,7 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
         val clipData = ClipData.newPlainText(null, "537954522")
         clipboard?.let {
-            clipboard.primaryClip = clipData
+            clipboard.setPrimaryClip(clipData)
             Toast.makeText(context, "高级功能已开启\n红包码已复制\n支付宝首页搜索“537954522” 立即领红包", Toast.LENGTH_LONG)
                 .show()
         }
