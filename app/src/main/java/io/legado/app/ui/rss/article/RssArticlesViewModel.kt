@@ -8,6 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
+import kotlinx.coroutines.Dispatchers.IO
 
 
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
@@ -15,10 +16,8 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     var url: String? = null
     var rssSource: RssSource? = null
     val titleLiveData = MutableLiveData<String>()
-    private val articles = linkedSetOf<RssArticle>()
     var isLoading = true
-    var page = 1
-    var hasMore = true
+    var order = System.currentTimeMillis()
 
     fun initData(intent: Intent, finally: () -> Unit) {
         execute {
@@ -39,17 +38,16 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     fun loadContent() {
         isLoading = true
         rssSource?.let { rssSource ->
-            Rss.getArticles(rssSource, page, this)
-                .onSuccess {
+            Rss.getArticles(rssSource, null)
+                .onSuccess(IO) {
                     it?.let {
-                        val oldSize = articles.size
-                        articles.addAll(it)
-                        if (articles.size == oldSize) {
-                            hasMore = false
-                        } else {
-                            callBack?.adapter?.setItems(articles.toList())
+                        it.forEach { rssArticle ->
+                            rssArticle.order = order--
                         }
-                        page++
+                        App.db.rssArticleDao().insert(*it.toTypedArray())
+                        if (!rssSource.ruleNextPage.isNullOrEmpty()) {
+                            App.db.rssArticleDao().clearOld(url!!, order)
+                        }
                         isLoading = false
                     }
                 }.onError {
@@ -66,9 +64,14 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     }
 
     fun clear() {
-        page = 1
-        articles.clear()
-        loadContent()
+        execute {
+            url?.let {
+                App.db.rssArticleDao().delete(it)
+            }
+            order = System.currentTimeMillis()
+        }.onSuccess {
+            loadContent()
+        }
     }
 
     interface CallBack {

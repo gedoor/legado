@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssArticle
@@ -32,6 +34,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     override lateinit var adapter: RssArticlesAdapter
     private val editSource = 12319
     private lateinit var loadMoreView: LoadMoreView
+    private var rssArticlesData: LiveData<List<RssArticle>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
@@ -40,6 +43,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         })
         initView()
         viewModel.initData(intent) {
+            initData()
             refresh_recycler_view.startLoading()
         }
     }
@@ -90,6 +94,16 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
                 }
             }
         })
+    }
+
+    private fun initData() {
+        viewModel.url?.let {
+            rssArticlesData?.removeObservers(this)
+            rssArticlesData = App.db.rssArticleDao().liveByOrigin(it)
+            rssArticlesData?.observe(this, Observer { list ->
+                adapter.setItems(list)
+            })
+        }
     }
 
     private fun scrollToBottom() {

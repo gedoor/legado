@@ -15,12 +15,12 @@ object Rss {
 
     fun getArticles(
         rssSource: RssSource,
-        page: Int,
+        pageUrl: String? = null,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<MutableList<RssArticle>> {
         return Coroutine.async(scope, context) {
-            val analyzeUrl = AnalyzeUrl(rssSource.sourceUrl, page = page)
+            val analyzeUrl = AnalyzeUrl(pageUrl ?: rssSource.sourceUrl)
             val body = analyzeUrl.getResponseAwait(rssSource.sourceUrl).body
             RssParserByRule.parseXML(body, rssSource)
         }
