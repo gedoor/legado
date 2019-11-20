@@ -93,20 +93,17 @@ object RssParser {
             }
             eventType = xmlPullParser.next()
         }
-        for ((index: Int, item: RssArticle) in articleList.withIndex()) {
-            item.order = System.currentTimeMillis() - index
-            if (index == 0) {
-                Debug.log(sourceUrl, "┌获取标题")
-                Debug.log(sourceUrl, "└${item.title}")
-                Debug.log(sourceUrl, "┌获取时间")
-                Debug.log(sourceUrl, "└${item.pubDate}")
-                Debug.log(sourceUrl, "┌获取描述")
-                Debug.log(sourceUrl, "└${item.description}")
-                Debug.log(sourceUrl, "┌获取图片url")
-                Debug.log(sourceUrl, "└${item.image}")
-                Debug.log(sourceUrl, "┌获取文章链接")
-                Debug.log(sourceUrl, "└${item.link}")
-            }
+        articleList.firstOrNull()?.let {
+            Debug.log(sourceUrl, "┌获取标题")
+            Debug.log(sourceUrl, "└${it.title}")
+            Debug.log(sourceUrl, "┌获取时间")
+            Debug.log(sourceUrl, "└${it.pubDate}")
+            Debug.log(sourceUrl, "┌获取描述")
+            Debug.log(sourceUrl, "└${it.description}")
+            Debug.log(sourceUrl, "┌获取图片url")
+            Debug.log(sourceUrl, "└${it.image}")
+            Debug.log(sourceUrl, "┌获取文章链接")
+            Debug.log(sourceUrl, "└${it.link}")
         }
         return articleList
     }

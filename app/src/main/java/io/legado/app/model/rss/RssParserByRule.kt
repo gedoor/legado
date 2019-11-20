@@ -54,9 +54,6 @@ object RssParserByRule {
             if (reverse) {
                 articleList.reverse()
             }
-            for ((index: Int, item: RssArticle) in articleList.withIndex()) {
-                item.order = System.currentTimeMillis() - index
-            }
             return articleList
         }
     }
