@@ -93,9 +93,8 @@ object RssParser {
             }
             eventType = xmlPullParser.next()
         }
-        articleList.reverse()
         for ((index: Int, item: RssArticle) in articleList.withIndex()) {
-            item.order = System.currentTimeMillis() + index
+            item.order = System.currentTimeMillis() - index
             if (index == 0) {
                 Debug.log(sourceUrl, "┌获取标题")
                 Debug.log(sourceUrl, "└${item.title}")

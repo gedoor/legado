@@ -29,9 +29,9 @@ object RssParserByRule {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
             analyzeRule.setContent(body, rssSource.sourceUrl)
-            var reverse = true
+            var reverse = false
             if (ruleArticles.startsWith("-")) {
-                reverse = false
+                reverse = true
                 ruleArticles = ruleArticles.substring(1)
             }
             Debug.log(sourceUrl, "┌获取列表")
@@ -55,7 +55,7 @@ object RssParserByRule {
                 articleList.reverse()
             }
             for ((index: Int, item: RssArticle) in articleList.withIndex()) {
-                item.order = System.currentTimeMillis() + index
+                item.order = System.currentTimeMillis() - index
             }
             return articleList
         }
