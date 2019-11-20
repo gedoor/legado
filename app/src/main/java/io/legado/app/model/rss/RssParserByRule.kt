@@ -6,12 +6,14 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.utils.NetworkUtils
 
 object RssParserByRule {
 
     @Throws(Exception::class)
-    fun parseXML(body: String?, rssSource: RssSource): MutableList<RssArticle> {
+    fun parseXML(body: String?, rssSource: RssSource): Result {
         val sourceUrl = rssSource.sourceUrl
+        var nextUrl: String? = null
         if (body.isNullOrBlank()) {
             throw Exception(
                 App.INSTANCE.getString(
@@ -37,6 +39,14 @@ object RssParserByRule {
             Debug.log(sourceUrl, "┌获取列表")
             val collections = analyzeRule.getElements(ruleArticles)
             Debug.log(sourceUrl, "└列表大小:${collections.size}")
+            if (!rssSource.ruleNextPage.isNullOrEmpty()) {
+                Debug.log(sourceUrl, "┌获取下一页Url")
+                nextUrl = analyzeRule.getString(rssSource.ruleNextPage)
+                if (nextUrl.isNotEmpty()) {
+                    nextUrl = NetworkUtils.getAbsoluteURL(sourceUrl, nextUrl)
+                }
+                Debug.log(sourceUrl, "└获取下一页Url:$nextUrl")
+            }
             val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle)
             val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate)
             val ruleDescription = analyzeRule.splitSourceRule(rssSource.ruleDescription)
@@ -54,7 +64,7 @@ object RssParserByRule {
             if (reverse) {
                 articleList.reverse()
             }
-            return articleList
+            return Result(articleList, nextUrl)
         }
     }
 

@@ -9,6 +9,8 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 
 
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
@@ -18,6 +20,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     val titleLiveData = MutableLiveData<String>()
     var isLoading = true
     var order = System.currentTimeMillis()
+    var nextPageUrl: String? = null
 
     fun initData(intent: Intent, finally: () -> Unit) {
         execute {
@@ -40,19 +43,49 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         rssSource?.let { rssSource ->
             Rss.getArticles(rssSource, null)
                 .onSuccess(IO) {
-                    it?.let {
-                        it.forEach { rssArticle ->
+                    nextPageUrl = it?.nextPageUrl
+                    it?.articles?.let { list ->
+                        list.forEach { rssArticle ->
                             rssArticle.order = order--
                         }
-                        App.db.rssArticleDao().insert(*it.toTypedArray())
+                        App.db.rssArticleDao().insert(*list.toTypedArray())
                         if (!rssSource.ruleNextPage.isNullOrEmpty()) {
                             App.db.rssArticleDao().clearOld(url!!, order)
+                            withContext(Main) {
+                                callBack?.loadFinally(true)
+                            }
+                        } else {
+                            withContext(Main) {
+                                callBack?.loadFinally(false)
+                            }
                         }
                         isLoading = false
+
                     }
                 }.onError {
                     toast(it.localizedMessage)
                 }
+        }
+    }
+
+    fun loadMore() {
+        isLoading = true
+        val source = rssSource
+        val pageUrl = nextPageUrl
+        if (source != null && pageUrl != null) {
+            Rss.getArticles(source, pageUrl)
+                .onSuccess(IO) {
+                    nextPageUrl = it?.nextPageUrl
+                    it?.articles?.let { list ->
+                        list.forEach { rssArticle ->
+                            rssArticle.order = order--
+                        }
+                        App.db.rssArticleDao().insert(*list.toTypedArray())
+                        isLoading = false
+                    }
+                }
+        } else {
+            callBack?.loadFinally(false)
         }
     }
 
@@ -76,6 +109,6 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
 
     interface CallBack {
         var adapter: RssArticlesAdapter
-        fun loadFinally()
+        fun loadFinally(hasMore: Boolean)
     }
 }

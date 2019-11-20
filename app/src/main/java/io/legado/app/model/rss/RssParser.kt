@@ -12,7 +12,7 @@ import java.io.StringReader
 object RssParser {
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun parseXML(xml: String, sourceUrl: String): MutableList<RssArticle> {
+    fun parseXML(xml: String, sourceUrl: String): Result {
 
         val articleList = mutableListOf<RssArticle>()
         var currentArticle = RssArticle()
@@ -105,7 +105,7 @@ object RssParser {
             Debug.log(sourceUrl, "┌获取文章链接")
             Debug.log(sourceUrl, "└${it.link}")
         }
-        return articleList
+        return Result(articleList, null)
     }
 
     /**

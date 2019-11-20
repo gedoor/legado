@@ -5,6 +5,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.rss.Result
 import io.legado.app.model.rss.RssParserByRule
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +19,7 @@ object Rss {
         pageUrl: String? = null,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
-    ): Coroutine<MutableList<RssArticle>> {
+    ): Coroutine<Result> {
         return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(pageUrl ?: rssSource.sourceUrl)
             val body = analyzeUrl.getResponseAwait(rssSource.sourceUrl).body
