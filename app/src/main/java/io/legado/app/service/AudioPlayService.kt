@@ -266,7 +266,7 @@ class AudioPlayService : BaseService(),
                         removeLoading(chapter.index)
                     }
                 }?.onError {
-                    contentLoadFinish(chapter, it.localizedMessage)
+                    contentLoadFinish(chapter, it.localizedMessage ?: toString())
                     removeLoading(chapter.index)
                 }
         }

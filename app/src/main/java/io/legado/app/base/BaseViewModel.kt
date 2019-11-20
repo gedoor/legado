@@ -45,9 +45,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    open fun toast(message: CharSequence) {
+    open fun toast(message: CharSequence?) {
         launch {
-            context.toast(message)
+            context.toast(message ?: toString())
         }
     }
 
@@ -57,9 +57,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    open fun longToast(message: CharSequence) {
+    open fun longToast(message: CharSequence?) {
         launch {
-            context.toast(message)
+            context.toast(message ?: toString())
         }
     }
 }

@@ -20,7 +20,7 @@ class ReturnData {
         return errorMsg
     }
 
-    fun setErrorMsg(errorMsg: String): ReturnData {
+    fun setErrorMsg(errorMsg: String?): ReturnData {
         this.isSuccess = false
         this.errorMsg = errorMsg
         return this
