@@ -20,14 +20,14 @@ import io.legado.app.help.storage.Restore
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
-        var DestructiveMigration = false
+
         private const val DATABASE_NAME = "legado.db"
+
         fun createDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
-                        DestructiveMigration = true
                         Restore.restore()
                     }
                 })
