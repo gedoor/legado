@@ -25,7 +25,7 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
-        android:title="设置"
+        android:title="@string/setting"
         app:iconSpaceReserved="false">
 
         <androidx.preference.Preference
@@ -37,7 +37,7 @@
         <androidx.preference.Preference
             android:key="theme_setting"
             android:summary="与界面/颜色相关的一些设置"
-            android:title="主题设置"
+            android:title="@string/theme_setting"
             app:iconSpaceReserved="false" />
 
         <androidx.preference.Preference
