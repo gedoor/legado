@@ -14,22 +14,17 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.putPrefInt
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
@@ -58,26 +53,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
         return false
-    }
-
-    private fun restore() {
-
-        launch {
-            if (withContext(IO) { App.db.bookDao().allBookCount == 0 }) {
-                alert(title = "导入") {
-                    message = "是否导入旧版本数据"
-                    yesButton {
-                        PermissionsCompat.Builder(this@MainActivity)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted { viewModel.importYueDuData() }
-                            .request()
-                    }
-                    noButton {
-                    }
-                }.show().applyTint()
-            }
-        }
     }
 
     private fun upVersion() {
