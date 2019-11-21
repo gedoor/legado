@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <!--实现应用背景颜色渐变-->
     <gradient
-        android:startColor="#FF5722"
+        android:startColor="#A7A7A7"
         android:endColor="#FDFCFC"
         android:angle="90" />
 </shape>
