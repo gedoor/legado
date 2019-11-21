@@ -34,7 +34,7 @@ object AppConst {
     }
 
     val DATE_FORMAT: SimpleDateFormat by lazy {
-        SimpleDateFormat("YY-MM-DD HH:mm")
+        SimpleDateFormat("yy/MM/dd HH:mm")
     }
 
     val keyboardToolChars: List<String> by lazy {
