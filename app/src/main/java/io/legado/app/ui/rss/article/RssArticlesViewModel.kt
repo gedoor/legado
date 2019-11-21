@@ -72,17 +72,27 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         isLoading = true
         val source = rssSource
         val pageUrl = nextPageUrl
-        if (source != null && pageUrl != null) {
+        if (source != null && !pageUrl.isNullOrEmpty()) {
             Rss.getArticles(source, pageUrl)
                 .onSuccess(IO) {
                     nextPageUrl = it?.nextPageUrl
                     it?.articles?.let { list ->
-                        list.forEach { rssArticle ->
-                            rssArticle.order = order--
+                        if (list.isEmpty()) {
+                            callBack?.loadFinally(false)
+                            return@let
                         }
-                        App.db.rssArticleDao().insert(*list.toTypedArray())
-                        isLoading = false
+                        callBack?.adapter?.getItems()?.let { adapterItems ->
+                            if (adapterItems.contains(list.first())) {
+                                callBack?.loadFinally(false)
+                            } else {
+                                list.forEach { rssArticle ->
+                                    rssArticle.order = order--
+                                }
+                                App.db.rssArticleDao().insert(*list.toTypedArray())
+                            }
+                        }
                     }
+                    isLoading = false
                 }
         } else {
             callBack?.loadFinally(false)
