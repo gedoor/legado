@@ -17,4 +17,18 @@ data class RssArticle(
     var content: String? = null,
     var image: String? = null,
     var read: Boolean = false
-)
+) {
+
+    fun toStar(): RssStar {
+        return RssStar(
+            origin = origin,
+            title = title,
+            starTime = System.currentTimeMillis(),
+            link = link,
+            pubDate = pubDate,
+            description = description,
+            content = content,
+            image = image
+        )
+    }
+}

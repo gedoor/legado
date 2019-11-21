@@ -21,4 +21,7 @@ interface RssStarDao {
 
     @Query("delete from rssStars where origin = :origin")
     fun delete(origin: String)
+
+    @Query("delete from rssStars where origin = :origin and link = :link")
+    fun delete(origin: String, link: String)
 }

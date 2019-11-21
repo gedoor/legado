@@ -15,6 +15,5 @@ data class RssStar(
     var pubDate: String? = null,
     var description: String? = null,
     var content: String? = null,
-    var image: String? = null,
-    var read: Boolean = false
+    var image: String? = null
 )

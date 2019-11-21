@@ -11,8 +11,9 @@ import io.legado.app.model.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application) {
+    var callBack: CallBack? = null
     var rssSource: RssSource? = null
-    val rssArticleLiveData = MutableLiveData<RssArticle>()
+    var rssArticle: RssArticle? = null
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<AnalyzeUrl>()
     var star = false
@@ -24,8 +25,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
             if (origin != null && link != null) {
                 rssSource = App.db.rssSourceDao().getByKey(origin)
                 star = App.db.rssStarDao().get(origin, link) != null
-                App.db.rssArticleDao().get(origin, link)?.let { rssArticle ->
-                    rssArticleLiveData.postValue(rssArticle)
+                rssArticle = App.db.rssArticleDao().get(origin, link)
+                rssArticle?.let { rssArticle ->
                     if (!rssArticle.description.isNullOrBlank()) {
                         contentLiveData.postValue(rssArticle.description)
                     } else {
@@ -40,6 +41,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
             }
+        }.onFinally {
+            callBack?.upStarMenu()
         }
     }
 
@@ -62,9 +65,19 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
 
     fun star() {
         execute {
-            if (star) {
-
+            rssArticle?.let {
+                if (star) {
+                    App.db.rssStarDao().delete(it.origin, it.link)
+                } else {
+                    App.db.rssStarDao().insert(it.toStar())
+                }
             }
+        }.onSuccess {
+            callBack?.upStarMenu()
         }
+    }
+
+    interface CallBack {
+        fun upStarMenu()
     }
 }
