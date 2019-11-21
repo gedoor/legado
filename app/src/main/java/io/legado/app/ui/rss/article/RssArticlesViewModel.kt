@@ -20,7 +20,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     val titleLiveData = MutableLiveData<String>()
     var isLoading = true
     var order = System.currentTimeMillis()
-    var nextPageUrl: String? = null
+    private var nextPageUrl: String? = null
 
     fun initData(intent: Intent, finally: () -> Unit) {
         execute {
