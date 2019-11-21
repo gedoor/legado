@@ -4,24 +4,24 @@
 
     <androidx.preference.Preference
         android:key="bookSourceManage"
-        android:title="书源管理"
+        android:title="@string/book_source_manage"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
         android:key="replaceManage"
-        android:title="替换净化"
+        android:title="@string/replace_purify"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="isNightTheme"
-        android:title="暗色主题"
+        android:title="@string/dark_theme"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="webService"
-        android:title="Web服务"
+        android:title="@string/web_service"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATEPreferenceCategory

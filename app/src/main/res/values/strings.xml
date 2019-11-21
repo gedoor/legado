@@ -72,7 +72,7 @@
     <string name="import_books_count">共%s个Text文件</string>
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
-    <string name="web_service">web服务</string>
+    <string name="web_service">Web服务</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%s:%d</string>
     <string name="download_offline">离线下载</string>
@@ -195,7 +195,7 @@
     <string name="replace_rule_summary">替换规则名称</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
-    <string name="night_theme">夜间模式</string>
+    <string name="dark_theme">暗色主题</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>
     <string name="download_cancel">取消下载</string>
