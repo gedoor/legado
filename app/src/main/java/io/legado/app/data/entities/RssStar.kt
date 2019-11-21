@@ -4,13 +4,13 @@ import androidx.room.Entity
 
 
 @Entity(
-    tableName = "rssArticles",
+    tableName = "rssStars",
     primaryKeys = ["origin", "link"]
 )
-data class RssArticle(
+data class RssStar(
     var origin: String = "",
     var title: String = "",
-    var order: Long = 0,
+    var starTime: Long = 0,
     var link: String = "",
     var pubDate: String? = null,
     var description: String? = null,

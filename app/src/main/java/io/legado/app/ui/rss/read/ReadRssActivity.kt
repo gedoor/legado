@@ -38,10 +38,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_rss_star -> viewModel.rssArticleLiveData.value?.let {
-                it.star = !it.star
-                viewModel.upRssArticle(it) { upStarMenu() }
-            }
+            R.id.menu_rss_star -> viewModel.star()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -92,7 +89,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun upStarMenu() {
-        if (viewModel.rssArticleLiveData.value?.star == true) {
+        if (viewModel.star) {
             starMenuItem?.setIcon(R.drawable.ic_star)
             starMenuItem?.setTitle(R.string.y_store_up)
         } else {

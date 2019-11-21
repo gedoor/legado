@@ -15,13 +15,15 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     val rssArticleLiveData = MutableLiveData<RssArticle>()
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<AnalyzeUrl>()
+    var star = false
 
     fun initData(intent: Intent) {
         execute {
             val origin = intent.getStringExtra("origin")
             val link = intent.getStringExtra("link")
-            rssSource = App.db.rssSourceDao().getByKey(origin)
             if (origin != null && link != null) {
+                rssSource = App.db.rssSourceDao().getByKey(origin)
+                star = App.db.rssStarDao().get(origin, link) != null
                 App.db.rssArticleDao().get(origin, link)?.let { rssArticle ->
                     rssArticleLiveData.postValue(rssArticle)
                     if (!rssArticle.description.isNullOrBlank()) {
@@ -58,11 +60,11 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
             }
     }
 
-    fun upRssArticle(rssArticle: RssArticle, success: () -> Unit) {
+    fun star() {
         execute {
-            App.db.rssArticleDao().update(rssArticle)
-        }.onSuccess {
-            success()
+            if (star) {
+
+            }
         }
     }
 }
