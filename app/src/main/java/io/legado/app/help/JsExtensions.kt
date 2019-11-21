@@ -1,13 +1,15 @@
 package io.legado.app.help
 
 import android.util.Base64
+import io.legado.app.constant.AppConst.DATE_FORMAT
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
+import java.util.*
 
 
 @Suppress("unused")
-object JsExtensions {
+interface JsExtensions {
 
     /**
      * js实现跨域访问,不能删
@@ -46,4 +48,7 @@ object JsExtensions {
         return MD5Utils.md5Encode16(str)
     }
 
+    fun timeFormat(time: Long): String {
+        return DATE_FORMAT.format(Date(time))
+    }
 }

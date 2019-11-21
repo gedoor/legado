@@ -37,7 +37,7 @@ data class RssSource(
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
     var customOrder: Int = 0
-) : Parcelable {
+) : Parcelable, JsExtensions {
 
     @Throws(Exception::class)
     fun getHeaderMap(): Map<String, String> {
@@ -64,7 +64,7 @@ data class RssSource(
     @Throws(Exception::class)
     private fun evalJS(jsStr: String): Any {
         val bindings = SimpleBindings()
-        bindings["java"] = JsExtensions
+        bindings["java"] = this
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 

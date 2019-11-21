@@ -45,7 +45,7 @@ data class BookSource(
     var ruleBookInfo: String? = null,         // 书籍信息页规则
     var ruleToc: String? = null,          // 目录页规则
     var ruleContent: String? = null           // 正文页规则
-) : Parcelable {
+) : Parcelable, JsExtensions {
     @Ignore
     @IgnoredOnParcel
     private var searchRuleV: SearchRule? = null
@@ -137,7 +137,7 @@ data class BookSource(
                         if (a.isBlank()) {
                             val bindings = SimpleBindings()
                             bindings["baseUrl"] = bookSourceUrl
-                            bindings["java"] = JsExtensions
+                            bindings["java"] = this
                             a = AppConst.SCRIPT_ENGINE.eval(
                                 it.substring(4, it.lastIndexOf("<")),
                                 bindings
@@ -165,7 +165,7 @@ data class BookSource(
     @Throws(Exception::class)
     private fun evalJS(jsStr: String): Any {
         val bindings = SimpleBindings()
-        bindings["java"] = JsExtensions
+        bindings["java"] = this
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 

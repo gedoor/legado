@@ -40,7 +40,7 @@ class AnalyzeUrl(
     baseUrl: String? = null,
     book: BaseBook? = null,
     var useWebView: Boolean = false
-) {
+) : JsExtensions {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val jsonType = "application/json; charset=utf-8".toMediaTypeOrNull()
@@ -130,7 +130,7 @@ class AnalyzeUrl(
             var jsEval: Any
             val sb = StringBuffer(ruleUrl.length)
             val simpleBindings = SimpleBindings()
-            simpleBindings["java"] = JsExtensions
+            simpleBindings["java"] = this
             simpleBindings["baseUrl"] = baseUrl
             simpleBindings["page"] = page
             simpleBindings["key"] = key
@@ -233,7 +233,7 @@ class AnalyzeUrl(
         book: BaseBook?
     ): Any {
         val bindings = SimpleBindings()
-        bindings["java"] = JsExtensions
+        bindings["java"] = this
         bindings["page"] = page
         bindings["key"] = key
         bindings["book"] = book
