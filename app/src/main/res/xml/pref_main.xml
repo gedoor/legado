@@ -36,14 +36,14 @@
 
         <androidx.preference.Preference
             android:key="theme_setting"
-            android:summary="与界面/颜色相关的一些设置"
+            android:summary="@string/theme_setting_s"
             android:title="@string/theme_setting"
             app:iconSpaceReserved="false" />
 
         <androidx.preference.Preference
             android:key="setting"
-            android:summary="与功能相关的一些设置"
-            android:title="其它设置"
+            android:summary="@string/other_setting_s"
+            android:title="@string/other_setting"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
