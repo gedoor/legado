@@ -30,8 +30,8 @@
 
         <androidx.preference.Preference
             android:key="web_dav_setting"
-            android:summary="通过WebDav云备份"
-            android:title="云备份设置"
+            android:summary="@string/web_dav_set_import_old"
+            android:title="@string/backup_restore"
             app:iconSpaceReserved="false" />
 
         <androidx.preference.Preference

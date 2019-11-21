@@ -19,7 +19,7 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
 
         when (viewModel.configType) {
             ConfigViewModel.TYPE_CONFIG -> {
-                title_bar.title = "设置"
+                title_bar.title = getString(R.string.setting)
                 val fTag = "configFragment"
                 var configFragment = supportFragmentManager.findFragmentByTag(fTag)
                 if (configFragment == null) configFragment = ConfigFragment()
@@ -28,7 +28,7 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
                     .commit()
             }
             ConfigViewModel.TYPE_THEME_CONFIG -> {
-                title_bar.title = "主题设置"
+                title_bar.title = getString(R.string.theme_setting)
                 val fTag = "themeConfigFragment"
                 var configFragment = supportFragmentManager.findFragmentByTag(fTag)
                 if (configFragment == null) configFragment = ThemeConfigFragment()
@@ -37,7 +37,7 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
                     .commit()
             }
             ConfigViewModel.TYPE_WEB_DAV_CONFIG -> {
-                title_bar.title = "WebDav设置"
+                title_bar.title = getString(R.string.backup_restore)
                 val fTag = "webDavFragment"
                 var configFragment = supportFragmentManager.findFragmentByTag(fTag)
                 if (configFragment == null) configFragment = WebDavConfigFragment()

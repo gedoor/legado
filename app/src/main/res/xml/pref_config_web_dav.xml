@@ -30,4 +30,9 @@
         android:title="恢复"
         app:iconSpaceReserved="false" />
 
+    <androidx.preference.Preference
+        android:key="import_old"
+        android:title="导入旧版本数据"
+        app:iconSpaceReserved="false" />
+
 </androidx.preference.PreferenceScreen>
