@@ -13,7 +13,7 @@ interface RssArticleDao {
     @Query("select * from rssArticles where origin = :origin order by `order` desc")
     fun liveByOrigin(origin: String): LiveData<List<RssArticle>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rssArticle: RssArticle)
 
     @Query("delete from rssArticles where origin = :origin and `order` < :order")
