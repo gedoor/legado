@@ -14,8 +14,11 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup.defaultPath
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -98,13 +101,13 @@ object Restore {
     }
 
     fun importYueDuData(context: Context) {
-        val file = File(FileUtils.getSdCardPath(), "YueDu")
+        Coroutine.async {
+            val file = File(FileUtils.getSdCardPath(), "YueDu")
 
-        // 导入书架
-        val shelfFile = File(file, "myBookShelf.json")
-        val books = mutableListOf<Book>()
-        if (shelfFile.exists()) try {
-            doAsync {
+            // 导入书架
+            val shelfFile = File(file, "myBookShelf.json")
+            val books = mutableListOf<Book>()
+            if (shelfFile.exists()) try {
                 val items: List<Map<String, Any>> = jsonPath.parse(shelfFile.readText()).read("$")
                 val existingBooks = App.db.bookDao().allBookUrls.toSet()
                 for (item in items) {
@@ -140,20 +143,22 @@ object Restore {
                     book.useReplaceRule = jsonItem.readBool("$.useReplaceRule") == true
                     book.variable = jsonItem.readString("$.variable")
                     books.add(book)
-                    Log.d(AppConst.APP_TAG, "Added ${book.name}")
                 }
                 App.db.bookDao().insert(*books.toTypedArray())
+                withContext(IO) {
+                    context.toast("成功导入书籍${books.size}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(IO) {
+                    context.toast("导入书籍失败\n${e.localizedMessage}")
+                }
             }
-        } catch (e: Exception) {
-            Log.e(AppConst.APP_TAG, "Failed to import book shelf.", e)
-            context.toast("Unable to import books:\n${e.localizedMessage}")
-        }
 
-        // Book source
-        val sourceFile = File(file, "myBookSource.json")
-        val bookSources = mutableListOf<BookSource>()
-        if (sourceFile.exists()) try {
-            doAsync {
+            // Book source
+            val sourceFile = File(file, "myBookSource.json")
+            val bookSources = mutableListOf<BookSource>()
+            if (sourceFile.exists()) try {
                 val items: List<Map<String, Any>> = jsonPath.parse(sourceFile.readText()).read("$")
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
@@ -162,16 +167,20 @@ object Restore {
                     }
                 }
                 App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+                withContext(IO) {
+                    context.toast("成功导入书源${bookSources.size}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(IO) {
+                    context.toast("导入源失败\n${e.localizedMessage}")
+                }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
-        // Replace rules
-        val ruleFile = File(file, "myBookReplaceRule.json")
-        val replaceRules = mutableListOf<ReplaceRule>()
-        if (ruleFile.exists()) try {
-            doAsync {
+            // Replace rules
+            val ruleFile = File(file, "myBookReplaceRule.json")
+            val replaceRules = mutableListOf<ReplaceRule>()
+            if (ruleFile.exists()) try {
                 val items: List<Map<String, Any>> = jsonPath.parse(ruleFile.readText()).read("$")
                 val existingRules = App.db.replaceRuleDao().all.map { it.pattern }.toSet()
                 for ((index: Int, item: Map<String, Any>) in items.withIndex()) {
@@ -188,10 +197,16 @@ object Restore {
                     rule.order = jsonItem.readInt("$.serialNumber") ?: index
                     replaceRules.add(rule)
                 }
-                App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
+                withContext(IO) {
+                    context.toast("成功导入替换规则${replaceRules.size}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(IO) {
+                    context.toast("导入替换规则失败\n${e.localizedMessage}")
+                }
             }
-        } catch (e: Exception) {
-            Log.e(AppConst.APP_TAG, e.localizedMessage)
+
         }
     }
 }
