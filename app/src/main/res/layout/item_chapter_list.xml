@@ -12,5 +12,12 @@
         android:layout_height="wrap_content"
         android:singleLine="true" />
 
+    <TextView
+        android:id="@+id/tv_tag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:singleLine="true" />
 
 </LinearLayout>
