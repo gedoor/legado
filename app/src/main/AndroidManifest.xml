@@ -25,6 +25,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
+        android:requestLegacyExternalStorage="false"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
             android:name=".ui.welcome.WelcomeActivity"

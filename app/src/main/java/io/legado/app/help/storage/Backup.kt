@@ -56,6 +56,7 @@ object Backup {
         App.db.bookDao().allBooks.let {
             if (it.isNotEmpty()) {
                 val json = GSON.toJson(it)
+
                 val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
                 file.writeText(json)
             }
