@@ -1,6 +1,7 @@
 package io.legado.app.help.storage
 
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.storage.Restore.jsonPath
@@ -32,6 +33,8 @@ object OldRule {
                     header = uaToHeader(jsonItem.readString("httpUserAgent"))
                     searchUrl = toNewUrl(jsonItem.readString("ruleSearchUrl"))
                     exploreUrl = toNewUrls(jsonItem.readString("ruleFindUrl"))
+                    bookSourceType =
+                        if (jsonItem.readString("bookSourceType") == "AUDIO") BookType.audio else BookType.default
                     if (exploreUrl.isNullOrBlank()) {
                         enabledExplore = false
                     }
@@ -98,7 +101,7 @@ object OldRule {
         val urls = oldUrl.split("(&&|\n)+".toRegex())
         var newUrl = ""
         for (url in urls) {
-            newUrl += toNewUrl(url)?.replace("\\n\\s*".toRegex(),"") + "\n"
+            newUrl += toNewUrl(url)?.replace("\\n\\s*".toRegex(), "") + "\n"
         }
         return newUrl
     }
@@ -132,10 +135,13 @@ object OldRule {
         url = url.replace("{", "<").replace("}", ">")
         url = url.replace("searchKey", "{{key}}")
         url = url.replace("<searchPage([-+]1)>".toRegex(), "{{page$1}}")
-                .replace("searchPage([-+]1)".toRegex(), "{{page$1}}")
-                .replace("searchPage", "{{page}}")
+            .replace("searchPage([-+]1)".toRegex(), "{{page$1}}")
+            .replace("searchPage", "{{page}}")
         for ((index, item) in jsList.withIndex()) {
-            url = url.replace("$$index", item.replace("searchKey", "key").replace("searchPage", "page"))
+            url = url.replace(
+                "$$index",
+                item.replace("searchKey", "key").replace("searchPage", "page")
+            )
         }
         urlList = url.split("@")
         url = urlList[0]
