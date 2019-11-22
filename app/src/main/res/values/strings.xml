@@ -466,7 +466,6 @@
     <string name="check_host_cookie">正在打开首页，成功自动返回主界面</string>
     <string name="click_check_after_success">登录成功后请点击右上角图标进行首页访问测试</string>
     <string name="chapter">章</string>
-    <string name="chapter_s">章节:</string>
     <string name="to">至</string>
     <string name="use_regex">使用正则表达式</string>
     <string name="text_indent">缩进</string>
@@ -533,6 +532,8 @@
     <string name="add_group">添加分组</string>
     <string name="add_replace_rule">新建替换</string>
     <string name="group">分组</string>
+    <string name="group_s">分组: %s</string>
+    <string name="toc_s">目录: %s</string>
     <string name="enable_explore">启用发现</string>
     <string name="disable_explore">禁用发现</string>
     <string name="enable_selection">启用所选</string>
