@@ -41,7 +41,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.chapterListData.observe(this, Observer { showChapter(it) })
         viewModel.groupData.observe(this, Observer {
-            tv_group.text = getString(R.string.group_s, it.groupName)
+            if (it == null) {
+                tv_group.text = getString(R.string.group_s, getString(R.string.no_group))
+            } else {
+                tv_group.text = getString(R.string.group_s, it.groupName)
+            }
         })
         viewModel.initData(intent)
         initOnClick()
