@@ -18,6 +18,7 @@ import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
+import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -39,6 +40,9 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.chapterListData.observe(this, Observer { showChapter(it) })
+        viewModel.groupData.observe(this, Observer {
+            tv_group.text = getString(R.string.group_s, it.groupName)
+        })
         viewModel.initData(intent)
         initOnClick()
     }
@@ -56,7 +60,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                         startActivity<BookInfoEditActivity>(Pair("bookUrl", it.bookUrl))
                     }
                 } else {
-                    toast("未加入书架,不能编辑")
+                    toast(R.string.after_add_bookshelf)
                 }
             }
             R.id.menu_refresh -> {
@@ -74,6 +78,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         tv_author.text = getString(R.string.author_show, book.author)
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
+        tv_toc.text = getString(R.string.toc_s, book.latestChapterTitle)
         tv_intro.text =
             book.getDisplayIntro() // getString(R.string.intro_show, book.getDisplayIntro())
         book.getDisplayCover()?.let {
@@ -117,9 +122,9 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     private fun showChapter(chapterList: List<BookChapter>) {
         viewModel.bookData.value?.let {
             if (it.durChapterIndex < chapterList.size) {
-                tv_chapter.text = chapterList[it.durChapterIndex].title
+                tv_toc.text = chapterList[it.durChapterIndex].title
             } else {
-                tv_chapter.text = chapterList.last().title
+                tv_toc.text = chapterList.last().title
             }
         }
         upLoading(false)
@@ -170,8 +175,16 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        tv_chapter.onClick {
-
+        tv_toc.onClick {
+            if (!viewModel.inBookshelf) {
+                toast(R.string.after_add_bookshelf)
+                return@onClick
+            }
+            viewModel.bookData.value?.let {
+                startActivity<ChapterListActivity>(
+                    Pair("bookUrl", it.bookUrl)
+                )
+            }
         }
         tv_group.onClick {
 

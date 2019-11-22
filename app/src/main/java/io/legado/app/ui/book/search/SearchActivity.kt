@@ -14,7 +14,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.info.BookInfoActivity
@@ -235,15 +234,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
-                startActivity<BookInfoActivity>(Pair("searchBookUrl", it.bookUrl))
+                startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
             }
         }
     }
 
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
-            Pair("bookUrl", book.bookUrl),
-            Pair("key", IntentDataHelp.putData(book))
+            Pair("bookUrl", book.bookUrl)
         )
     }
 

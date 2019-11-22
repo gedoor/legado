@@ -9,7 +9,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.LoadMoreView
 import io.legado.app.utils.getViewModel
@@ -73,8 +72,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
 
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
-            Pair("searchBookUrl", book.bookUrl),
-            Pair("key", IntentDataHelp.putData(book))
+            Pair("bookUrl", book.bookUrl)
         )
     }
 }

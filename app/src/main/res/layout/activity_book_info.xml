@@ -194,12 +194,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:text="@string/group_s"
+            android:text="@string/group"
             android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/tv_chapter"
+            android:id="@+id/tv_toc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"

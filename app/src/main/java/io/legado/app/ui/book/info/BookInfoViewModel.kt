@@ -8,8 +8,8 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.BookHelp
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -20,17 +20,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val isLoadingData = MutableLiveData<Boolean>()
     var durChapterIndex = 0
     var inBookshelf = false
+    var groupData = MutableLiveData<BookGroup>()
 
     fun initData(intent: Intent) {
         execute {
-            IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let { book ->
-                setBook(book)
-            } ?: intent.getStringExtra("bookUrl")?.let {
+            intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
+                    groupData.postValue(App.db.bookGroupDao().getByID(book.group))
+                    inBookshelf = true
                     setBook(book)
-                }
-            } ?: intent.getStringExtra("searchBookUrl")?.let {
-                App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
+                } ?: App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
                     setBook(book)
                 }
             }
@@ -38,7 +37,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun setBook(book: Book) {
-        inBookshelf = App.db.bookDao().getBook(book.bookUrl) != null
         durChapterIndex = book.durChapterIndex
         bookData.postValue(book)
         if (book.tocUrl.isEmpty()) {

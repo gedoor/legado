@@ -7,6 +7,9 @@ import io.legado.app.data.entities.BookGroup
 @Dao
 interface BookGroupDao {
 
+    @Query("select * from book_groups where groupId = :id")
+    fun getByID(id: Int): BookGroup?
+
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun liveDataAll(): LiveData<List<BookGroup>>
 
