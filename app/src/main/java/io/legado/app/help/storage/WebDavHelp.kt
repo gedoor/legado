@@ -73,7 +73,7 @@ object WebDavHelp {
             getWebDavUrl()?.let {
                 val file = WebDav(it + "legado/" + name)
                 file.downloadTo(zipFilePath, true)
-                ZipUtils.unzipFile(zipFilePath, Backup.defaultPath)
+                ZipUtils.unzipFile(zipFilePath, Backup.legadoPath)
                 Restore.restore()
             }
         }
