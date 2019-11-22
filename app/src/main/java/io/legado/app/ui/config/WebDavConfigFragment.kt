@@ -7,9 +7,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
@@ -22,8 +20,6 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
 
@@ -103,24 +99,20 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
     }
 
     private fun importOld() {
-        Coroutine.async {
-            if (withContext(Dispatchers.IO) { App.db.bookDao().allBookCount == 0 }) {
-                alert(title = "导入") {
-                    message = "是否导入旧版本数据"
-                    yesButton {
-                        PermissionsCompat.Builder(this@WebDavConfigFragment)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted {
-                                Restore.importYueDuData(requireContext())
-                            }
-                            .request()
+        alert(title = "导入") {
+            message = "是否导入旧版本数据"
+            yesButton {
+                PermissionsCompat.Builder(this@WebDavConfigFragment)
+                    .addPermissions(*Permissions.Group.STORAGE)
+                    .rationale(R.string.tip_perm_request_storage)
+                    .onGranted {
+                        Restore.importYueDuData(requireContext())
                     }
-                    noButton {
-                    }
-                }.show().applyTint()
+                    .request()
             }
-        }
+            noButton {
+            }
+        }.show().applyTint()
     }
 
 }
