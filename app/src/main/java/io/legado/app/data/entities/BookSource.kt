@@ -152,7 +152,7 @@ data class BookSource(
                             exploreKinds.add(ExploreKind(d[0], d[1]))
                     }
                 } catch (e: Exception) {
-                    exploreKinds.add(ExploreKind(e.localizedMessage))
+                    exploreKinds.add(ExploreKind(e.localizedMessage ?: ""))
                 }
             }
         }

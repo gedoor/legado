@@ -204,7 +204,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         removeLoading(chapter.index)
                     }
                 }?.onError {
-                    contentLoadFinish(chapter, it.localizedMessage)
+                    contentLoadFinish(chapter, it.localizedMessage ?: "未知错误")
                     removeLoading(chapter.index)
                 }
         }

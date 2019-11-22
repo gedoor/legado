@@ -27,7 +27,6 @@ import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.audio.AudioPlayActivity
-import io.legado.app.utils.LogUtils
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -121,9 +120,8 @@ class AudioPlayService : BaseService(),
                 mediaPlayer.setDataSource(url)
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
-                LogUtils.d("AudioPlayService", e.localizedMessage + " " + url)
                 launch {
-                    toast(e.localizedMessage + " " + url)
+                    toast("$url ${e.localizedMessage}")
                     stopSelf()
                 }
             }
