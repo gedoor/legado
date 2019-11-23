@@ -11,6 +11,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -30,8 +31,10 @@ import org.jetbrains.anko.toast
 
 
 class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info),
+    GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack {
+
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
@@ -191,7 +194,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
             }
         }
         tv_group.onClick {
-
+            GroupSelectDialog.show(supportFragmentManager)
         }
     }
 
@@ -246,6 +249,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     override fun durChapterIndex(): Int {
         return viewModel.durChapterIndex
+    }
+
+    override fun upGroup(group: BookGroup) {
+        viewModel.groupData.postValue(group)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

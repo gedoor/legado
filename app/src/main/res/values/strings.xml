@@ -528,6 +528,7 @@
     <string name="text_color">文字颜色</string>
     <string name="select_image">选择图片</string>
     <string name="group_manage">分组管理</string>
+    <string name="group_select">分组选择</string>
     <string name="group_edit">编辑分组</string>
     <string name="add_group">添加分组</string>
     <string name="add_replace_rule">新建替换</string>
