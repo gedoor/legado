@@ -253,6 +253,10 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     override fun upGroup(group: BookGroup) {
         viewModel.groupData.postValue(group)
+        viewModel.bookData.value?.group = group.groupId
+        if (viewModel.inBookshelf) {
+            viewModel.saveBook { }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
