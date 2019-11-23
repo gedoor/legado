@@ -76,6 +76,7 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="@string/change_origin"
+                android:textSize="16sp"
                 app:abt_radius="2dp" />
 
         </LinearLayout>
@@ -97,7 +98,7 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -108,7 +109,7 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -120,7 +121,7 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 app:abt_radius="2dp" />
 
         </LinearLayout>

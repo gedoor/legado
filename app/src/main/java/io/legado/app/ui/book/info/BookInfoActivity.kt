@@ -126,9 +126,9 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
     private fun showChapter(chapterList: List<BookChapter>) {
         viewModel.bookData.value?.let {
             if (it.durChapterIndex < chapterList.size) {
-                tv_toc.text = chapterList[it.durChapterIndex].title
+                tv_toc.text = getString(R.string.toc_s, chapterList[it.durChapterIndex].title)
             } else {
-                tv_toc.text = chapterList.last().title
+                tv_toc.text = getString(R.string.toc_s, chapterList.last().title)
             }
         }
         upLoading(false)
