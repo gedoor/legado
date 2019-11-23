@@ -86,8 +86,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tv_toc.text = getString(R.string.toc_s, book.latestChapterTitle)
-        tv_intro.text =
-            book.getDisplayIntro() // getString(R.string.intro_show, book.getDisplayIntro())
+        tv_intro.text = book.getDisplayIntro()
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
                 .error(R.drawable.image_cover_default)
