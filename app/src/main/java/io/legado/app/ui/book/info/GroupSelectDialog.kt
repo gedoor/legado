@@ -154,6 +154,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 tv_del.onClick { viewModel.delGroup(item) }
                 this.onClick {
                     callBack?.upGroup(item)
+                    dismiss()
                 }
             }
         }
