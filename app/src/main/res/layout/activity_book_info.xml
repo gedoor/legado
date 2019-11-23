@@ -15,8 +15,8 @@
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
-        android:layout_width="86dp"
-        android:layout_height="120dp"
+        android:layout_width="110dp"
+        android:layout_height="160dp"
         android:layout_margin="10dp"
         android:scaleType="centerCrop"
         android:src="@drawable/image_cover_default"
@@ -31,6 +31,7 @@
         android:layout_marginRight="12dp"
         android:minHeight="115dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_cover"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/iv_cover">
@@ -50,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:singleLine="true"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 tools:ignore="NestedWeights" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -96,7 +97,7 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -107,7 +108,7 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 app:abt_radius="2dp" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -119,7 +120,7 @@
                 android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 app:abt_radius="2dp" />
 
         </LinearLayout>
@@ -130,7 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:singleLine="true"
-            android:textSize="14sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_cover"
             app:layout_constraintLeft_toLeftOf="@+id/tv_name"
             app:layout_constraintRight_toRightOf="@id/tv_name" />
@@ -156,6 +157,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:text="@string/book_intro"
+            android:textStyle="bold"
             android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
@@ -170,7 +172,7 @@
             android:minHeight="100dp"
             android:scrollbars="vertical"
             android:textIsSelectable="true"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <View
             android:layout_width="match_parent"
