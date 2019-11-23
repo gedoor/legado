@@ -148,7 +148,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun saveBook(success: (() -> Unit)?) {
+    fun saveBook(success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let { book ->
                 App.db.bookDao().insert(book)

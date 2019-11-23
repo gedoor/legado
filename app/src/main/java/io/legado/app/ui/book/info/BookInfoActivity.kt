@@ -255,7 +255,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         viewModel.groupData.postValue(group)
         viewModel.bookData.value?.group = group.groupId
         if (viewModel.inBookshelf) {
-            viewModel.saveBook { }
+            viewModel.saveBook()
         }
     }
 
