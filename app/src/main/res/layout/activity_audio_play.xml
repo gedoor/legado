@@ -46,6 +46,10 @@
         android:id="@+id/tv_sub_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:textColor="@color/md_white_1000"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress" />
@@ -111,6 +115,20 @@
             android:layout_weight="1" />
 
         <ImageView
+            android:id="@+id/iv_fast_rewind"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/skip_previous"
+            android:src="@drawable/ic_fast_rewind"
+            android:tint="@color/md_white_1000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
             android:id="@+id/iv_skip_previous"
             android:layout_width="36dp"
             android:layout_height="36dp"
@@ -139,6 +157,20 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_next"
             android:src="@drawable/ic_skip_next"
+            android:tint="@color/md_white_1000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_fast_forward"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/skip_next"
+            android:src="@drawable/ic_fast_forward"
             android:tint="@color/md_white_1000" />
 
         <View
