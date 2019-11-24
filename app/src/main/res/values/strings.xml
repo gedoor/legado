@@ -501,6 +501,8 @@
     <string name="qr_share">二维码分享</string>
     <string name="wifi_share">wifi分享</string>
     <string name="please_grant_storage_permission">请给于存储权限</string>
+    <string name="fast_rewind">减速</string>
+    <string name="fast_forward">加速</string>
     <string name="skip_previous">上一个</string>
     <string name="skip_next">下一个</string>
     <string name="music">音乐</string>
