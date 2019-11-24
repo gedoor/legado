@@ -33,6 +33,8 @@
         android:id="@+id/tv_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/shape_fillet_btn_press"
+        android:textColor="@color/md_white_1000"
         app:layout_constraintTop_toBottomOf="@id/title_bar"
         app:layout_constraintRight_toRightOf="parent" />
 
