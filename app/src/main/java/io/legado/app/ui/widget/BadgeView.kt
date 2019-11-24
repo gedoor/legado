@@ -23,7 +23,7 @@ import io.legado.app.utils.visible
 /**
  * Created by milad heydari on 5/6/2016.
  */
-class BadgeView(
+class BadgeView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = android.R.attr.textViewStyle
