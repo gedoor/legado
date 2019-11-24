@@ -180,7 +180,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
         observeEventSticky<Float>(Bus.AUDIO_SPEED) {
-            tv_speed.text = String.format("%.1f", it)
+            tv_speed.text = String.format("%.1fX", it)
+            tv_speed.visible()
         }
     }
 
