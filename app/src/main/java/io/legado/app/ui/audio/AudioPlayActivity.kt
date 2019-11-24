@@ -87,20 +87,10 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             iv_fast_forward.invisible()
         }
         iv_fast_forward.onClick {
-            AudioPlay.speed = AudioPlay.speed + 0.1f
-            tv_speed.text = AudioPlay.speed.toString()
-            if (AudioPlay.speed == 1f) {
-                tv_speed.invisible()
-            } else {
-                tv_speed.visible()
-            }
-            AudioPlay.adjustSpeed(this)
+            AudioPlay.adjustSpeed(this, 0.1f)
         }
         iv_fast_rewind.onClick {
-            if (AudioPlay.speed > 0.5f) {
-                AudioPlay.speed = AudioPlay.speed - 0.1f
-            }
-            AudioPlay.adjustSpeed(this)
+            AudioPlay.adjustSpeed(this, -0.1f)
         }
     }
 

@@ -163,9 +163,12 @@ class AudioPlayService : BaseService(),
     }
 
     private fun upSpeed() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(AudioPlay.speed)
+        kotlin.runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.playbackParams =
+                        mediaPlayer.playbackParams.setSpeed(AudioPlay.speed)
+                }
             }
         }
     }
