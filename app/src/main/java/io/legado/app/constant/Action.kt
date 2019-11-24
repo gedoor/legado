@@ -12,6 +12,7 @@ object Action {
     const val nextParagraph = "nextParagraph"
     const val upTtsSpeechRate = "upTtsSpeechRate"
     const val adjustProgress = "adjustProgress"
+    const val adjustSpeed = "adjustSpeed"
     const val prev = "prev"
     const val next = "next"
     const val moveTo = "moveTo"

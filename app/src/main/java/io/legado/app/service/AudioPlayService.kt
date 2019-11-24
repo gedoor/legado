@@ -88,6 +88,7 @@ class AudioPlayService : BaseService(),
                 Action.resume -> resume()
                 Action.prev -> moveToPrev()
                 Action.next -> moveToNext()
+                Action.adjustSpeed -> upSpeed()
                 Action.moveTo -> moveTo(intent.getIntExtra("index", AudioPlay.durChapterIndex))
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
@@ -160,12 +161,12 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    private fun changeplayerSpeed(speed: Float) {
+    private fun upSpeed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (mediaPlayer.isPlaying) {
-                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(speed)
+                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(AudioPlay.speed)
             } else {
-                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(speed)
+                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(AudioPlay.speed)
                 mediaPlayer.pause()
             }
         }
@@ -179,6 +180,7 @@ class AudioPlayService : BaseService(),
         mp?.let {
             mp.start()
             mp.seekTo(position)
+            upSpeed()
             postEvent(Bus.AUDIO_SIZE, mp.duration)
             bookChapter?.let {
                 it.end = mp.duration.toLong()
