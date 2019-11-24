@@ -17,4 +17,5 @@ object Bus {
     const val AUDIO_STATE = "audioState"
     const val AUDIO_PROGRESS = "audioProgress"
     const val AUDIO_SIZE = "audioSize"
+    const val AUDIO_SPEED = "audioSpeed"
 }

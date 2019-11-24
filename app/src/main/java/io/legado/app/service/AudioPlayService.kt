@@ -88,7 +88,7 @@ class AudioPlayService : BaseService(),
                 Action.resume -> resume()
                 Action.prev -> moveToPrev()
                 Action.next -> moveToNext()
-                Action.adjustSpeed -> upSpeed()
+                Action.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
                 Action.moveTo -> moveTo(intent.getIntExtra("index", AudioPlay.durChapterIndex))
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
@@ -145,7 +145,6 @@ class AudioPlayService : BaseService(),
         pause = false
         mediaPlayer.start()
         mediaPlayer.seekTo(position)
-        upSpeed()
         handler.removeCallbacks(mpRunnable)
         handler.postDelayed(mpRunnable, 1000)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
@@ -162,12 +161,14 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    private fun upSpeed() {
+    private fun upSpeed(adjust: Float) {
         kotlin.runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (mediaPlayer.isPlaying) {
-                    mediaPlayer.playbackParams =
-                        mediaPlayer.playbackParams.setSpeed(AudioPlay.speed)
+                with(mediaPlayer) {
+                    if (isPlaying) {
+                        playbackParams = playbackParams.apply { speed += adjust }
+                    }
+                    postEvent(Bus.AUDIO_SPEED, playbackParams.speed)
                 }
             }
         }
@@ -181,7 +182,6 @@ class AudioPlayService : BaseService(),
         mp?.let {
             mp.start()
             mp.seekTo(position)
-            upSpeed()
             postEvent(Bus.AUDIO_SIZE, mp.duration)
             bookChapter?.let {
                 it.end = mp.duration.toLong()

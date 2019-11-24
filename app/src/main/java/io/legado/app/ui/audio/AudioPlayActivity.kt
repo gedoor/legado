@@ -46,7 +46,6 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     }
 
     private fun initView() {
-        tv_speed.text = AudioPlay.speed.toString()
         fab_play_stop.onClick {
             playButton()
         }
@@ -179,6 +178,9 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             AudioPlay.durPageIndex = it
             if (!adjustProgress) player_progress.progress = it
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+        }
+        observeEventSticky<Float>(Bus.AUDIO_SPEED) {
+            tv_speed.text = String.format("%.1f", it)
         }
     }
 
