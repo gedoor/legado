@@ -18,6 +18,7 @@ object AudioPlay {
     var chapterSize = 0
     var durChapterIndex = 0
     var durPageIndex = 0
+    var speed: Float = 1f
     var webBook: WebBook? = null
     val loadingChapters = arrayListOf<Int>()
 
