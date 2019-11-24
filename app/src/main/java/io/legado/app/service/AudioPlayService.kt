@@ -145,6 +145,7 @@ class AudioPlayService : BaseService(),
         pause = false
         mediaPlayer.start()
         mediaPlayer.seekTo(position)
+        upSpeed()
         handler.removeCallbacks(mpRunnable)
         handler.postDelayed(mpRunnable, 1000)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
@@ -165,9 +166,6 @@ class AudioPlayService : BaseService(),
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(AudioPlay.speed)
-            } else {
-                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(AudioPlay.speed)
-                mediaPlayer.pause()
             }
         }
     }
