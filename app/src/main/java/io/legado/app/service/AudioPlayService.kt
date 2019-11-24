@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -156,6 +157,17 @@ class AudioPlayService : BaseService(),
             mediaPlayer.seekTo(position)
         } else {
             this.position = position
+        }
+    }
+
+    private fun changeplayerSpeed(speed: Float) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(speed)
+            } else {
+                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(speed)
+                mediaPlayer.pause()
+            }
         }
     }
 

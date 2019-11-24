@@ -30,6 +30,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 import org.jetbrains.anko.startActivityForResult
 
+
 class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play) {
 
     override val viewModel: AudioPlayViewModel
@@ -81,6 +82,12 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
                     Pair("bookUrl", it.bookUrl)
                 )
             }
+        }
+        iv_fast_forward.onClick {
+
+        }
+        iv_fast_rewind.onClick {
+
         }
     }
 
