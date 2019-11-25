@@ -5,7 +5,6 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.constant.Bus
-import io.legado.app.help.storage.Restore
 import io.legado.app.model.WebBook
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
@@ -13,12 +12,6 @@ import kotlinx.coroutines.delay
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
     val updateList = arrayListOf<String>()
-
-    fun importYueDuData() {
-        execute {
-            Restore.importYueDuData(getApplication())
-        }
-    }
 
     fun upChapterList() {
         execute {
