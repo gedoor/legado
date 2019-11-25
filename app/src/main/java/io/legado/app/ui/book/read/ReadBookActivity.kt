@@ -40,7 +40,6 @@ import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
-import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -272,7 +271,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         when (bookChapter.index) {
             viewModel.durChapterIndex -> launch {
                 viewModel.curTextChapter = ChapterProvider
-                    .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
+                    .getTextChapter(bookChapter, content, viewModel.chapterSize)
                 page_view.upContent()
                 curChapterChanged()
                 if (intent.getBooleanExtra("readAloud", false)) {
@@ -282,12 +281,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             viewModel.durChapterIndex - 1 -> launch {
                 viewModel.prevTextChapter = ChapterProvider
-                    .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
+                    .getTextChapter(bookChapter, content, viewModel.chapterSize)
                 page_view.upContent(-1)
             }
             viewModel.durChapterIndex + 1 -> launch {
                 viewModel.nextTextChapter = ChapterProvider
-                    .getTextChapter(content_text_view, bookChapter, content, viewModel.chapterSize)
+                    .getTextChapter(bookChapter, content, viewModel.chapterSize)
                 page_view.upContent(1)
             }
         }
@@ -560,7 +559,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         observeEvent<Boolean>(Bus.UP_CONFIG) {
             upSystemUiVisibility()
             page_view.upBg()
-            content_view.upStyle()
             page_view.upStyle()
             if (it) {
                 loadContent()

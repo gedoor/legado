@@ -97,6 +97,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         observeEvent<String>(Bus.RECREATE) {
             recreate()
         }
+        observeEvent<Boolean>(Bus.UP_CONFIG) {
+            content_view.upStyle()
+        }
     }
 
     private class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
