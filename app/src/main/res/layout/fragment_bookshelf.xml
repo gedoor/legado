@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         app:attachToActivity="false"
         app:title="@string/bookshelf"
-        app:contentLayout="@layout/view_tab_layout"
+        app:contentLayout="@layout/view_tab_layout_min"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager2.widget.ViewPager2
