@@ -20,11 +20,13 @@ import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
+import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.putPrefInt
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.view_book_page.*
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
@@ -36,6 +38,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private var pagePosition = 0
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        ChapterProvider.textView = content_text_view
         ATH.applyEdgeEffectColor(view_pager_main)
         ATH.applyBottomNavigationColor(bottom_navigation_view)
         view_pager_main.offscreenPageLimit = 3
