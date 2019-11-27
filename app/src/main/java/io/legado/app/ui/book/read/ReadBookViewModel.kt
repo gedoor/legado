@@ -115,21 +115,24 @@ object ReadBookViewModel {
     }
 
     fun moveToNextChapter(upContent: Boolean) {
-        durChapterIndex++
-        prevTextChapter = curTextChapter
-        curTextChapter = nextTextChapter
-        nextTextChapter = null
-        book?.let {
-            if (curTextChapter == null) {
-                loadContent(durChapterIndex)
-            } else if (upContent) {
-                callBack?.upContent()
-            }
-            loadContent(durChapterIndex.plus(1))
-            GlobalScope.launch(IO) {
-                for (i in 2..10) {
-                    delay(100)
-                    download(durChapterIndex + i)
+        if (durChapterIndex < chapterSize - 1) {
+            durPageIndex = 0
+            durChapterIndex++
+            prevTextChapter = curTextChapter
+            curTextChapter = nextTextChapter
+            nextTextChapter = null
+            book?.let {
+                if (curTextChapter == null) {
+                    loadContent(durChapterIndex)
+                } else if (upContent) {
+                    callBack?.upContent()
+                }
+                loadContent(durChapterIndex.plus(1))
+                GlobalScope.launch(IO) {
+                    for (i in 2..10) {
+                        delay(100)
+                        download(durChapterIndex + i)
+                    }
                 }
             }
         }

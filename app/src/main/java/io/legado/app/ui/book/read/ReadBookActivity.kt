@@ -375,7 +375,6 @@ class ReadBookActivity : BaseActivity(R.layout.activity_book_read),
      */
     override fun moveToNextChapter(upContent: Boolean): Boolean {
         return if (ReadBookViewModel.durChapterIndex < ReadBookViewModel.chapterSize - 1) {
-            ReadBookViewModel.durPageIndex = 0
             ReadBookViewModel.moveToNextChapter(upContent)
             ReadBookViewModel.saveRead()
             curChapterChanged()
