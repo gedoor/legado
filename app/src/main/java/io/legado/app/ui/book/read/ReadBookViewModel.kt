@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 
-class ReadBookViewModel {
+object ReadBookViewModel {
     var titleDate = MutableLiveData<String>()
     var book: Book? = null
     var inBookshelf = false
