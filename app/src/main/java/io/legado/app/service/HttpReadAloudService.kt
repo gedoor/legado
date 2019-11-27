@@ -194,7 +194,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             nowSpeak++
             play()
         } else {
-            postEvent(Bus.TTS_TURN_PAGE, 2)
+            nextChapter()
         }
     }
 

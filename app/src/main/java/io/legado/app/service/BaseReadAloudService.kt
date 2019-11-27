@@ -325,4 +325,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?
 
+    open fun nextChapter() {
+        postEvent(Bus.TTS_TURN_PAGE, 2)
+    }
 }

@@ -164,7 +164,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             readAloudNumber += contentList[nowSpeak].length + 1
             nowSpeak++
             if (nowSpeak >= contentList.size) {
-                postEvent(Bus.TTS_TURN_PAGE, 2)
+                nextChapter()
             }
         }
 
