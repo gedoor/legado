@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read
 
 import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
@@ -13,7 +12,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.ui.widget.page.TextChapter
+import io.legado.app.service.help.ReadBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -21,23 +20,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
-    var titleDate = MutableLiveData<String>()
-    var book: Book? = null
-    var inBookshelf = false
-    var chapterSize = 0
-    var callBack: CallBack? = null
-    var durChapterIndex = 0
-    var durPageIndex = 0
-    var isLocalBook = true
-    var prevTextChapter: TextChapter? = null
-    var curTextChapter: TextChapter? = null
-    var nextTextChapter: TextChapter? = null
-    var webBook: WebBook? = null
-    private val loadingChapters = arrayListOf<Int>()
 
     fun initData(intent: Intent) {
         execute {
-            inBookshelf = intent.getBooleanExtra("inBookshelf", true)
+            ReadBook.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let {
                 initBook(it)
             } ?: intent.getStringExtra("bookUrl")?.let {
@@ -51,13 +37,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun initBook(book: Book) {
-        this.book = book
-        titleDate.postValue(book.name)
-        durChapterIndex = book.durChapterIndex
-        durPageIndex = book.durChapterPos
-        isLocalBook = book.origin == BookType.local
+        ReadBook.book = book
+        ReadBook.titleDate.postValue(book.name)
+        ReadBook.durChapterIndex = book.durChapterIndex
+        ReadBook.durPageIndex = book.durChapterPos
+        ReadBook.isLocalBook = book.origin == BookType.local
         App.db.bookSourceDao().getBookSource(book.origin)?.let {
-            webBook = WebBook(it)
+            ReadBook.webBook = WebBook(it)
         }
         val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
         if (count == 0) {
@@ -67,13 +53,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 loadChapterList(book)
             }
         } else {
-            if (durChapterIndex > count - 1) {
-                durChapterIndex = count - 1
+            if (ReadBook.durChapterIndex > count - 1) {
+                ReadBook.durChapterIndex = count - 1
             }
-            chapterSize = count
-            callBack?.loadContent()
+            ReadBook.chapterSize = count
+            ReadBook.callBack?.loadContent()
         }
-        if (inBookshelf) {
+        if (ReadBook.inBookshelf) {
             saveRead()
         }
     }
@@ -83,7 +69,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            webBook?.getBookInfo(book, this)
+            ReadBook.webBook?.getBookInfo(book, this)
                 ?.onSuccess {
                     loadChapterList(book, changeDruChapterIndex)
                 }
@@ -95,13 +81,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            webBook?.getChapterList(book, this)
+            ReadBook.webBook?.getChapterList(book, this)
                 ?.onSuccess(IO) { cList ->
                     if (!cList.isNullOrEmpty()) {
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao().insert(*cList.toTypedArray())
-                            chapterSize = cList.size
-                            callBack?.loadContent()
+                            ReadBook.chapterSize = cList.size
+                            ReadBook.callBack?.loadContent()
                         } else {
                             changeDruChapterIndex(cList)
                         }
@@ -115,49 +101,49 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun moveToNextChapter(upContent: Boolean) {
-        durChapterIndex++
-        prevTextChapter = curTextChapter
-        curTextChapter = nextTextChapter
-        nextTextChapter = null
-        book?.let {
-            if (curTextChapter == null) {
-                loadContent(durChapterIndex)
+        ReadBook.durChapterIndex++
+        ReadBook.prevTextChapter = ReadBook.curTextChapter
+        ReadBook.curTextChapter = ReadBook.nextTextChapter
+        ReadBook.nextTextChapter = null
+        ReadBook.book?.let {
+            if (ReadBook.curTextChapter == null) {
+                loadContent(ReadBook.durChapterIndex)
             } else if (upContent) {
-                callBack?.upContent()
+                ReadBook.callBack?.upContent()
             }
-            loadContent(durChapterIndex.plus(1))
+            loadContent(ReadBook.durChapterIndex.plus(1))
             launch(IO) {
                 for (i in 2..10) {
                     delay(100)
-                    download(durChapterIndex + i)
+                    download(ReadBook.durChapterIndex + i)
                 }
             }
         }
     }
 
     fun moveToPrevChapter(upContent: Boolean) {
-        durChapterIndex--
-        nextTextChapter = curTextChapter
-        curTextChapter = prevTextChapter
-        prevTextChapter = null
-        book?.let {
-            if (curTextChapter == null) {
-                loadContent(durChapterIndex)
+        ReadBook.durChapterIndex--
+        ReadBook.nextTextChapter = ReadBook.curTextChapter
+        ReadBook.curTextChapter = ReadBook.prevTextChapter
+        ReadBook.prevTextChapter = null
+        ReadBook.book?.let {
+            if (ReadBook.curTextChapter == null) {
+                loadContent(ReadBook.durChapterIndex)
             } else if (upContent) {
-                callBack?.upContent()
+                ReadBook.callBack?.upContent()
             }
-            loadContent(durChapterIndex.minus(1))
+            loadContent(ReadBook.durChapterIndex.minus(1))
             launch(IO) {
                 for (i in -5..-2) {
                     delay(100)
-                    download(durChapterIndex + i)
+                    download(ReadBook.durChapterIndex + i)
                 }
             }
         }
     }
 
     fun loadContent(index: Int) {
-        book?.let { book ->
+        ReadBook.book?.let { book ->
             if (addLoading(index)) {
                 execute {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
@@ -174,7 +160,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun download(index: Int) {
-        book?.let { book ->
+        ReadBook.book?.let { book ->
             if (addLoading(index)) {
                 execute {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
@@ -192,8 +178,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun download(chapter: BookChapter) {
-        book?.let { book ->
-            webBook?.getContent(book, chapter, scope = this)
+        ReadBook.book?.let { book ->
+            ReadBook.webBook?.getContent(book, chapter, scope = this)
                 ?.onSuccess(IO) { content ->
                     if (content.isNullOrEmpty()) {
                         contentLoadFinish(chapter, context.getString(R.string.content_empty))
@@ -212,48 +198,48 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun addLoading(index: Int): Boolean {
         synchronized(this) {
-            if (loadingChapters.contains(index)) return false
-            loadingChapters.add(index)
+            if (ReadBook.loadingChapters.contains(index)) return false
+            ReadBook.loadingChapters.add(index)
             return true
         }
     }
 
     private fun removeLoading(index: Int) {
         synchronized(this) {
-            loadingChapters.remove(index)
+            ReadBook.loadingChapters.remove(index)
         }
     }
 
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
         execute {
-            if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
+            if (chapter.index in ReadBook.durChapterIndex - 1..ReadBook.durChapterIndex + 1) {
                 val c = BookHelp.disposeContent(
                     chapter.title,
-                    book!!.name,
-                    webBook?.bookSource?.bookSourceUrl,
+                    ReadBook.book!!.name,
+                    ReadBook.webBook?.bookSource?.bookSourceUrl,
                     content,
-                    book!!.useReplaceRule
+                    ReadBook.book!!.useReplaceRule
                 )
-                callBack?.contentLoadFinish(chapter, c)
+                ReadBook.callBack?.contentLoadFinish(chapter, c)
             }
         }
     }
 
     fun changeTo(book1: Book) {
         execute {
-            book?.let {
+            ReadBook.book?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
-            prevTextChapter = null
-            curTextChapter = null
-            nextTextChapter = null
+            ReadBook.prevTextChapter = null
+            ReadBook.curTextChapter = null
+            ReadBook.nextTextChapter = null
             withContext(Main) {
-                callBack?.upContent()
+                ReadBook.callBack?.upContent()
             }
             App.db.bookDao().insert(book1)
-            book = book1
+            ReadBook.book = book1
             App.db.bookSourceDao().getBookSource(book1.origin)?.let {
-                webBook = WebBook(it)
+                ReadBook.webBook = WebBook(it)
             }
             if (book1.tocUrl.isEmpty()) {
                 loadBookInfo(book1) { upChangeDurChapterIndex(book1, it) }
@@ -269,41 +255,41 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
         execute {
-            durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
+            ReadBook.durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
                 book.durChapterTitle,
                 book.durChapterIndex,
                 chapters
             )
-            book.durChapterIndex = durChapterIndex
-            book.durChapterTitle = chapters[durChapterIndex].title
+            book.durChapterIndex = ReadBook.durChapterIndex
+            book.durChapterTitle = chapters[ReadBook.durChapterIndex].title
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
-            chapterSize = chapters.size
-            callBack?.loadContent()
+            ReadBook.chapterSize = chapters.size
+            ReadBook.callBack?.loadContent()
         }
     }
 
     fun openChapter(index: Int) {
-        prevTextChapter = null
-        curTextChapter = null
-        nextTextChapter = null
-        callBack?.upContent()
-        if (index != durChapterIndex) {
-            durChapterIndex = index
-            durPageIndex = 0
+        ReadBook.prevTextChapter = null
+        ReadBook.curTextChapter = null
+        ReadBook.nextTextChapter = null
+        ReadBook.callBack?.upContent()
+        if (index != ReadBook.durChapterIndex) {
+            ReadBook.durChapterIndex = index
+            ReadBook.durPageIndex = 0
         }
         saveRead()
-        callBack?.loadContent()
+        ReadBook.callBack?.loadContent()
     }
 
     fun saveRead() {
         execute {
-            book?.let { book ->
+            ReadBook.book?.let { book ->
                 book.lastCheckCount = 0
                 book.durChapterTime = System.currentTimeMillis()
-                book.durChapterIndex = durChapterIndex
-                book.durChapterPos = durPageIndex
-                curTextChapter?.let {
+                book.durChapterIndex = ReadBook.durChapterIndex
+                book.durChapterPos = ReadBook.durPageIndex
+                ReadBook.curTextChapter?.let {
                     book.durChapterTitle = it.title
                 }
                 App.db.bookDao().update(book)
@@ -313,7 +299,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
-            book?.let {
+            ReadBook.book?.let {
                 App.db.bookDao().delete(it.bookUrl)
             }
         }.onSuccess {
@@ -323,9 +309,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun upBookSource() {
         execute {
-            book?.let { book ->
+            ReadBook.book?.let { book ->
                 App.db.bookSourceDao().getBookSource(book.origin)?.let {
-                    webBook = WebBook(it)
+                    ReadBook.webBook = WebBook(it)
                 }
             }
         }
@@ -333,9 +319,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun refreshContent(book: Book) {
         execute {
-            App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+            App.db.bookChapterDao().getChapter(book.bookUrl, ReadBook.durChapterIndex)
+                ?.let { chapter ->
                 BookHelp.delContent(book, chapter)
-                loadContent(durChapterIndex)
+                    loadContent(ReadBook.durChapterIndex)
             }
         }
     }
