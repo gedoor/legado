@@ -50,7 +50,7 @@ abstract class BaseReadAloudService : BaseService(),
     var readAloudNumber: Int = 0
     var textChapter: TextChapter? = null
     var pageIndex = 0
-    private val dsRunnable: Runnable? = Runnable { doDs() }
+    private val dsRunnable: Runnable = Runnable { doDs() }
 
     override fun onCreate() {
         super.onCreate()
