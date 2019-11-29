@@ -24,6 +24,7 @@ import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.utils.getPrefBoolean
@@ -326,6 +327,8 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?
 
     open fun nextChapter() {
-        postEvent(Bus.TTS_TURN_PAGE, 2)
+        if (!ReadBook.moveToNextChapter(true)) {
+            stopSelf()
+        }
     }
 }

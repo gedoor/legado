@@ -253,16 +253,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 加载章节内容
      */
     override fun loadContent() {
-        viewModel.loadContent(ReadBook.durChapterIndex)
-        viewModel.loadContent(ReadBook.durChapterIndex + 1)
-        viewModel.loadContent(ReadBook.durChapterIndex - 1)
+        ReadBook.loadContent(ReadBook.durChapterIndex)
+        ReadBook.loadContent(ReadBook.durChapterIndex + 1)
+        ReadBook.loadContent(ReadBook.durChapterIndex - 1)
     }
 
     /**
      * 加载章节内容, index章节序号
      */
     override fun loadContent(index: Int) {
-        viewModel.loadContent(index)
+        ReadBook.loadContent(index)
     }
 
     /**
@@ -297,7 +297,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         page_view.upContent()
     }
 
-    private fun curChapterChanged() {
+    override fun curChapterChanged() {
         ReadBook.curTextChapter?.let {
             tv_chapter_name.text = it.title
             tv_chapter_name.visible()
@@ -353,7 +353,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun setPageIndex(pageIndex: Int) {
         ReadBook.durPageIndex = pageIndex
-        viewModel.saveRead()
+        ReadBook.saveRead()
         curPageChanged()
     }
 
@@ -373,15 +373,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 下一页
      */
     override fun moveToNextChapter(upContent: Boolean): Boolean {
-        return if (ReadBook.durChapterIndex < ReadBook.chapterSize - 1) {
-            ReadBook.durPageIndex = 0
-            viewModel.moveToNextChapter(upContent)
-            viewModel.saveRead()
-            curChapterChanged()
-            true
-        } else {
-            false
-        }
+        return ReadBook.moveToNextChapter(upContent)
     }
 
     /**
@@ -391,7 +383,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return if (ReadBook.durChapterIndex > 0) {
             ReadBook.durPageIndex = if (last) ReadBook.prevTextChapter?.lastIndex() ?: 0 else 0
             viewModel.moveToPrevChapter(upContent)
-            viewModel.saveRead()
+            ReadBook.saveRead()
             curChapterChanged()
             true
         } else {
@@ -419,7 +411,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         ReadBook.durPageIndex = page
         page_view.upContent()
         curPageChanged()
-        viewModel.saveRead()
+        ReadBook.saveRead()
     }
 
     override fun openReplaceRule() {
@@ -583,10 +575,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     } else {
                         ReadBook.durPageIndex = ReadBook.durPageIndex + 1
                         page_view.upContent()
-                        viewModel.saveRead()
+                        ReadBook.saveRead()
                     }
                 }
-                2 -> if (!moveToNextChapter(true)) ReadAloud.stop(this)
                 -1 -> {
                     if (ReadBook.durPageIndex > 0) {
                         if (page_view.isScrollDelegate) {
@@ -594,7 +585,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         } else {
                             ReadBook.durPageIndex = ReadBook.durPageIndex - 1
                             page_view.upContent()
-                            viewModel.saveRead()
+                            ReadBook.saveRead()
                         }
                     } else {
                         moveToPrevChapter(true)
