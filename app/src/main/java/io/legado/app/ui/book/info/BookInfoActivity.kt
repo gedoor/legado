@@ -225,9 +225,6 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         }
     }
 
-    override val curOrigin: String?
-        get() = viewModel.bookData.value?.origin
-
     override val oldBook: Book?
         get() = viewModel.bookData.value
 

@@ -135,16 +135,14 @@ class ChangeSourceDialog : DialogFragment(),
         dismiss()
     }
 
-    override fun curOrigin(): String {
-        return callBack?.curOrigin ?: ""
-    }
+    override val bookUrl: String?
+        get() = callBack?.oldBook?.bookUrl
 
     override fun adapter(): ChangeSourceAdapter {
         return changeSourceAdapter
     }
 
     interface CallBack {
-        val curOrigin: String?
         val oldBook: Book?
         fun changeTo(book: Book)
     }
