@@ -6,8 +6,10 @@ import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
+import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.ReadBookViewModel
 import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +58,7 @@ object ReadBook {
             }
             saveRead()
             callBack?.curChapterChanged()
+            curPageChanged()
             return true
         } else {
             return false
@@ -85,9 +88,36 @@ object ReadBook {
             }
             saveRead()
             callBack?.curChapterChanged()
+            curPageChanged()
             return true
         } else {
             return false
+        }
+    }
+
+    fun curPageChanged() {
+        callBack?.upPageProgress()
+        if (BaseReadAloudService.isRun) {
+            readAloud(!BaseReadAloudService.pause)
+        }
+    }
+
+    /**
+     * 朗读
+     */
+    fun readAloud(play: Boolean = true) {
+        val book = book
+        val textChapter = curTextChapter
+        if (book != null && textChapter != null) {
+            val key = IntentDataHelp.putData(textChapter)
+            ReadAloud.play(
+                App.INSTANCE,
+                book.name,
+                textChapter.title,
+                durPageIndex,
+                key,
+                play
+            )
         }
     }
 

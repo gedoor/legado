@@ -17,7 +17,6 @@ import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
@@ -275,9 +274,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     .getTextChapter(bookChapter, content, ReadBook.chapterSize)
                 page_view.upContent()
                 curChapterChanged()
+                ReadBook.curPageChanged()
                 if (intent.getBooleanExtra("readAloud", false)) {
                     intent.removeExtra("readAloud")
-                    readAloud()
+                    ReadBook.readAloud()
                 }
             }
             ReadBook.durChapterIndex - 1 -> launch {
@@ -308,18 +308,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             seek_read_page.max = it.pageSize().minus(1)
             tv_pre.isEnabled = ReadBook.durChapterIndex != 0
             tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
-            curPageChanged()
         }
     }
 
-    private fun curPageChanged() {
+    override fun upPageProgress() {
         seek_read_page.progress = ReadBook.durPageIndex
-        when (readAloudStatus) {
-            Status.PLAY -> readAloud()
-            Status.PAUSE -> {
-                readAloud(false)
-            }
-        }
     }
 
     override fun showMenu() {
@@ -354,7 +347,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun setPageIndex(pageIndex: Int) {
         ReadBook.durPageIndex = pageIndex
         ReadBook.saveRead()
-        curPageChanged()
+        ReadBook.curPageChanged()
     }
 
     /**
@@ -402,7 +395,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun skipToPage(page: Int) {
         ReadBook.durPageIndex = page
         page_view.upContent()
-        curPageChanged()
+        ReadBook.curPageChanged()
         ReadBook.saveRead()
     }
 
@@ -440,28 +433,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             SystemUtils.ignoreBatteryOptimization(this)
         }
         when (readAloudStatus) {
-            Status.STOP -> readAloud()
+            Status.STOP -> ReadBook.readAloud()
             Status.PLAY -> ReadAloud.pause(this)
             Status.PAUSE -> ReadAloud.resume(this)
-        }
-    }
-
-    /**
-     * 朗读
-     */
-    private fun readAloud(play: Boolean = true) {
-        val book = ReadBook.book
-        val textChapter = ReadBook.curTextChapter
-        if (book != null && textChapter != null) {
-            val key = IntentDataHelp.putData(textChapter)
-            ReadAloud.play(
-                this,
-                book.name,
-                textChapter.title,
-                ReadBook.durPageIndex,
-                key,
-                play
-            )
         }
     }
 
@@ -535,7 +509,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             if (it) {
                 onClickReadAloud()
             } else {
-                readAloud(readAloudStatus == Status.PLAY)
+                ReadBook.readAloud(readAloudStatus == Status.PLAY)
             }
         }
         observeEvent<Boolean>(Bus.UP_CONFIG) {

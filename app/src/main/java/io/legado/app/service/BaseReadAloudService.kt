@@ -36,6 +36,7 @@ abstract class BaseReadAloudService : BaseService(),
     companion object {
         var isRun = false
         var timeMinute: Int = 0
+        var pause = false
     }
 
     private val handler = Handler()
@@ -45,7 +46,6 @@ abstract class BaseReadAloudService : BaseService(),
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var title: String = ""
     private var subtitle: String = ""
-    var pause = false
     val contentList = arrayListOf<String>()
     var nowSpeak: Int = 0
     var readAloudNumber: Int = 0
@@ -128,7 +128,7 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun pauseReadAloud(pause: Boolean) {
         postEvent(Bus.ALOUD_STATE, Status.PAUSE)
-        this.pause = pause
+        BaseReadAloudService.pause = pause
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
     }

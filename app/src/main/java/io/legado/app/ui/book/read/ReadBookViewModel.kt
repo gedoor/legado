@@ -195,5 +195,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         fun contentLoadFinish(bookChapter: BookChapter, content: String)
         fun upContent()
         fun curChapterChanged()
+        fun upPageProgress()
     }
 }
