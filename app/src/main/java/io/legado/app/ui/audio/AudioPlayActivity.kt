@@ -94,18 +94,16 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     }
 
     private fun upCover(path: String?) {
-        path?.let {
-            ImageLoader.load(this, it)
-                .placeholder(R.drawable.image_cover_default)
-                .error(R.drawable.image_cover_default)
-                .centerCrop()
-                .into(iv_cover)
-            ImageLoader.load(this, it)
-                .thumbnail(defaultCover())
-                .centerCrop()
-                .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
-                .into(iv_bg)
-        }
+        ImageLoader.load(this, path)
+            .placeholder(R.drawable.image_cover_default)
+            .error(R.drawable.image_cover_default)
+            .centerCrop()
+            .into(iv_cover)
+        ImageLoader.load(this, path)
+            .thumbnail(defaultCover())
+            .centerCrop()
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
+            .into(iv_bg)
     }
 
     private fun defaultCover(): RequestBuilder<Drawable> {
