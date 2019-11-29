@@ -35,6 +35,7 @@ object ReadBook {
 
     fun moveToNextChapter(upContent: Boolean): Boolean {
         if (durChapterIndex < chapterSize - 1) {
+            durPageIndex = 0
             durChapterIndex++
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
@@ -48,6 +49,35 @@ object ReadBook {
                 loadContent(durChapterIndex.plus(1))
                 GlobalScope.launch(Dispatchers.IO) {
                     for (i in 2..10) {
+                        delay(100)
+                        download(durChapterIndex + i)
+                    }
+                }
+            }
+            saveRead()
+            callBack?.curChapterChanged()
+            return true
+        } else {
+            return false
+        }
+    }
+
+    fun moveToPrevChapter(upContent: Boolean, toLast: Boolean): Boolean {
+        if (durChapterIndex > 0) {
+            durPageIndex = if (toLast) prevTextChapter?.lastIndex() ?: 0 else 0
+            durChapterIndex--
+            nextTextChapter = curTextChapter
+            curTextChapter = prevTextChapter
+            prevTextChapter = null
+            book?.let {
+                if (curTextChapter == null) {
+                    loadContent(durChapterIndex)
+                } else if (upContent) {
+                    callBack?.upContent()
+                }
+                loadContent(durChapterIndex.minus(1))
+                GlobalScope.launch(Dispatchers.IO) {
+                    for (i in -5..-2) {
                         delay(100)
                         download(durChapterIndex + i)
                     }

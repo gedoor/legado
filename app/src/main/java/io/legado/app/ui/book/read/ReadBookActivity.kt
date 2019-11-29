@@ -380,15 +380,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 上一页
      */
     override fun moveToPrevChapter(upContent: Boolean, last: Boolean): Boolean {
-        return if (ReadBook.durChapterIndex > 0) {
-            ReadBook.durPageIndex = if (last) ReadBook.prevTextChapter?.lastIndex() ?: 0 else 0
-            viewModel.moveToPrevChapter(upContent)
-            ReadBook.saveRead()
-            curChapterChanged()
-            true
-        } else {
-            false
-        }
+        return ReadBook.moveToPrevChapter(upContent, last)
     }
 
     override fun clickCenter() {

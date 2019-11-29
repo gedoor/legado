@@ -15,8 +15,6 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
@@ -97,27 +95,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }?.onError {
                     toast(R.string.error_load_toc)
                 } ?: autoChangeSource()
-        }
-    }
-
-    fun moveToPrevChapter(upContent: Boolean) {
-        ReadBook.durChapterIndex--
-        ReadBook.nextTextChapter = ReadBook.curTextChapter
-        ReadBook.curTextChapter = ReadBook.prevTextChapter
-        ReadBook.prevTextChapter = null
-        ReadBook.book?.let {
-            if (ReadBook.curTextChapter == null) {
-                ReadBook.loadContent(ReadBook.durChapterIndex)
-            } else if (upContent) {
-                ReadBook.callBack?.upContent()
-            }
-            ReadBook.loadContent(ReadBook.durChapterIndex.minus(1))
-            launch(IO) {
-                for (i in -5..-2) {
-                    delay(100)
-                    ReadBook.download(ReadBook.durChapterIndex + i)
-                }
-            }
         }
     }
 
