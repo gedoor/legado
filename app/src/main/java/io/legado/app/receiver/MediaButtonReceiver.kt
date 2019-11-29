@@ -29,11 +29,19 @@ class MediaButtonReceiver : BroadcastReceiver() {
 
         fun handleIntent(context: Context, intent: Intent): Boolean {
             val intentAction = intent.action
-            val keyEventAction = intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)?.action
             if (Intent.ACTION_MEDIA_BUTTON == intentAction) {
-                if (keyEventAction == KeyEvent.ACTION_DOWN) {
-                    readAloud(context)
-                    return true
+                val keyEvent =
+                    intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT) ?: return false
+                val keycode: Int = keyEvent.keyCode
+                val action: Int = keyEvent.action
+                if (action == KeyEvent.ACTION_DOWN) {
+                    when (keycode) {
+                        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+                        }
+                        KeyEvent.KEYCODE_MEDIA_NEXT -> {
+                        }
+                        else -> readAloud(context)
+                    }
                 }
             }
             return false
