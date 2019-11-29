@@ -11,7 +11,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
-import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -183,11 +182,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.loadContent(ReadBook.durChapterIndex)
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        ReadAloud.stop(context)
     }
 
     interface CallBack {
