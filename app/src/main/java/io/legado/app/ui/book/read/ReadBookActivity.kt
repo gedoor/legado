@@ -63,7 +63,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
-    override var readAloudStatus = Status.STOP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Help.upLayoutInDisplayCutoutMode(window)
@@ -215,7 +214,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         && event.isTracking
                         && !event.isCanceled
                     ) {
-                        if (readAloudStatus == Status.PLAY) {
+                        if (!BaseReadAloudService.pause) {
                             ReadAloud.pause(this)
                             toast(R.string.read_aloud_pause)
                             return true
@@ -231,7 +230,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         if (!read_menu.isVisible) {
             if (getPrefBoolean("volumeKeyPage", true)) {
                 if (getPrefBoolean("volumeKeyPageOnPlay")
-                    || readAloudStatus != Status.PLAY
+                    || BaseReadAloudService.pause
                 ) {
                     when (direction) {
                         PageDelegate.Direction.PREV -> page_view.moveToPrevPage()
@@ -374,7 +373,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun clickCenter() {
-        if (readAloudStatus != Status.STOP) {
+        if (BaseReadAloudService.isRun) {
             showReadAloudDialog()
         } else {
             read_menu.runMenuIn()
@@ -426,13 +425,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun onClickReadAloud() {
         if (!BaseReadAloudService.isRun) {
-            readAloudStatus = Status.STOP
             SystemUtils.ignoreBatteryOptimization(this)
         }
-        when (readAloudStatus) {
-            Status.STOP -> ReadBook.readAloud()
-            Status.PLAY -> ReadAloud.pause(this)
-            Status.PAUSE -> ReadAloud.resume(this)
+        when {
+            !BaseReadAloudService.isRun -> ReadBook.readAloud()
+            BaseReadAloudService.pause -> ReadAloud.resume(this)
+            else -> ReadAloud.pause(this)
         }
     }
 
@@ -485,7 +483,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<Int>(Bus.ALOUD_STATE) {
-            readAloudStatus = it
             if (it == Status.STOP || it == Status.PAUSE) {
                 ReadBook.curTextChapter?.let { textChapter ->
                     val page = textChapter.page(ReadBook.durPageIndex)
@@ -506,7 +503,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             if (it) {
                 onClickReadAloud()
             } else {
-                ReadBook.readAloud(readAloudStatus == Status.PLAY)
+                ReadBook.readAloud(!BaseReadAloudService.pause)
             }
         }
         observeEvent<Boolean>(Bus.UP_CONFIG) {

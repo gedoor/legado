@@ -10,7 +10,6 @@ import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
-import io.legado.app.constant.Status
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.Help
@@ -57,11 +56,9 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun initData() {
-        observeEvent<Int>(Bus.ALOUD_STATE) { upPlayState(it) }
+        observeEvent<Int>(Bus.ALOUD_STATE) { upPlayState() }
         observeEvent<Int>(Bus.TTS_DS) { seek_timer.progress = it }
-        callBack?.readAloudStatus?.let {
-            upPlayState(it)
-        }
+        upPlayState()
         seek_timer.progress = BaseReadAloudService.timeMinute
         tv_timer.text =
             requireContext().getString(R.string.timer_m, BaseReadAloudService.timeMinute)
@@ -117,8 +114,8 @@ class ReadAloudDialog : DialogFragment() {
         iv_play_next.onLongClick { postEvent(Bus.TTS_TURN_PAGE, 2); true }
     }
 
-    private fun upPlayState(state: Int) {
-        if (state == Status.PLAY) {
+    private fun upPlayState() {
+        if (!BaseReadAloudService.pause) {
             iv_play_pause.setImageResource(R.drawable.ic_pause_24dp)
         } else {
             iv_play_pause.setImageResource(R.drawable.ic_play_24dp)
@@ -127,7 +124,7 @@ class ReadAloudDialog : DialogFragment() {
 
     private fun upTtsSpeechRate() {
         ReadAloud.upTtsSpeechRate(requireContext())
-        if (callBack?.readAloudStatus == Status.PLAY) {
+        if (!BaseReadAloudService.pause) {
             ReadAloud.pause(requireContext())
             ReadAloud.resume(requireContext())
         }
@@ -137,6 +134,5 @@ class ReadAloudDialog : DialogFragment() {
         fun showMenu()
         fun openChapterList()
         fun onClickReadAloud()
-        var readAloudStatus: Int
     }
 }
