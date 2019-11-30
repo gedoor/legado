@@ -37,6 +37,10 @@ abstract class BaseReadAloudService : BaseService(),
         var isRun = false
         var timeMinute: Int = 0
         var pause = false
+
+        fun isPlay(): Boolean {
+            return isRun && !pause
+        }
     }
 
     private val handler = Handler()

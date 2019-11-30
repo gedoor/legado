@@ -214,7 +214,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         && event.isTracking
                         && !event.isCanceled
                     ) {
-                        if (!BaseReadAloudService.pause) {
+                        if (BaseReadAloudService.isPlay()) {
                             ReadAloud.pause(this)
                             toast(R.string.read_aloud_pause)
                             return true
