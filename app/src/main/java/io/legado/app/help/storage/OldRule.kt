@@ -102,7 +102,9 @@ object OldRule {
     private fun toNewRule(oldRule: String?): String? {
         if (oldRule.isNullOrBlank()) return null
         var newRule = oldRule
+        var reverse = false
         if (oldRule.startsWith("-")) {
+            reverse = true
             newRule = oldRule.substring(1)
         }
         if (!newRule.startsWith("@CSS:", true) &&
@@ -116,8 +118,12 @@ object OldRule {
             }
             if (newRule.contains("|") && !newRule.contains("||")) {
                 if (newRule.contains("##")) {
-                    if (newRule.split("##")[0].contains("|")) {
-                        newRule = newRule.replace("|", "||")
+                    var list = newRule.split("##")
+                    if (list[0].contains("|")) {
+                        newRule = list[0].replace("|", "||")
+                        for (i in 1 until list.size - 1) {
+                            newRule += "##" + list[i]
+                        }
                     }
                 } else {
                     newRule = newRule.replace("|", "||")
@@ -126,6 +132,9 @@ object OldRule {
             if (newRule.contains("&") && !newRule.contains("&&")) {
                 newRule = newRule.replace("&", "&&")
             }
+        }
+        if (reverse) {
+            newRule += "-"
         }
         return newRule
     }
