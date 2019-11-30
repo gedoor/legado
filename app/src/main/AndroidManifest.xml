@@ -41,7 +41,7 @@
         </activity>
         <activity
             android:name=".ui.main.MainActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:alwaysRetainTaskState="true" />
         <activity
             android:name=".ui.book.read.ReadBookActivity"
