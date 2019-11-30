@@ -218,21 +218,18 @@ object ReadBook {
                 )
                 when (chapter.index) {
                     durChapterIndex -> withContext(Main) {
-                        curTextChapter = ChapterProvider
-                            .getTextChapter(chapter, c, chapterSize)
+                        curTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent()
                         callBack?.curChapterChanged()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
                     durChapterIndex - 1 -> withContext(Main) {
-                        prevTextChapter = ChapterProvider
-                            .getTextChapter(chapter, c, chapterSize)
+                        prevTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent(-1)
                     }
                     durChapterIndex + 1 -> withContext(Main) {
-                        nextTextChapter = ChapterProvider
-                            .getTextChapter(chapter, c, chapterSize)
+                        nextTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent(1)
                     }
                 }
