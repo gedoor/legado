@@ -73,13 +73,12 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         event?.let {
             when (keyCode) {
-                KeyEvent.KEYCODE_BACK -> if (
-                    pagePosition != 0
-                    && event.isTracking
-                    && !event.isCanceled
-                ) {
-                    view_pager_main.currentItem = 0
-                    return true
+                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled) {
+                    if (pagePosition != 0) {
+                        view_pager_main.currentItem = 0
+                        return true
+                    }
+
                 }
             }
         }
