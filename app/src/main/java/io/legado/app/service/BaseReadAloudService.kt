@@ -36,7 +36,7 @@ abstract class BaseReadAloudService : BaseService(),
     companion object {
         var isRun = false
         var timeMinute: Int = 0
-        var pause = false
+        var pause = true
 
         fun isPlay(): Boolean {
             return isRun && !pause
@@ -126,6 +126,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     open fun play() {
+        pause = false
         postEvent(Bus.ALOUD_STATE, Status.PLAY)
         upNotification()
     }
