@@ -67,6 +67,7 @@ abstract class BaseReadAloudService : BaseService(),
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
+        pause = true
         unregisterReceiver(broadcastReceiver)
         postEvent(Bus.ALOUD_STATE, Status.STOP)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
