@@ -22,15 +22,6 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 class ReadAloudDialog : DialogFragment() {
     var callBack: CallBack? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        callBack = activity as? CallBack
-        return inflater.inflate(R.layout.dialog_read_aloud, container)
-    }
-
     override fun onStart() {
         super.onStart()
         val dm = DisplayMetrics()
@@ -47,6 +38,15 @@ class ReadAloudDialog : DialogFragment() {
             it.attributes = attr
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        callBack = activity as? CallBack
+        return inflater.inflate(R.layout.dialog_read_aloud, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
