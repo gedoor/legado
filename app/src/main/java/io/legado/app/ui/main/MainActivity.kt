@@ -16,6 +16,7 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
@@ -94,6 +95,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             }
             super.finish()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ReadAloud.stop(this)
     }
 
     override fun observeLiveBus() {
