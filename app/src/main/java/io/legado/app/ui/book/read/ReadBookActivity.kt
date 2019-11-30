@@ -554,7 +554,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         moveToPrevChapter(true)
                     }
                 }
-                -2 -> moveToPrevChapter(false)
             }
         }
         observeEvent<String>(Bus.REPLACE) {
