@@ -46,7 +46,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     private fun shareText(title: String, text: String) {
         try {
             val textIntent = Intent(Intent.ACTION_SEND)
-            textIntent.setType("text/plain")
+            textIntent.type = "text/plain"
             textIntent.putExtra(Intent.EXTRA_TEXT, text)
             startActivity(Intent.createChooser(textIntent, title))
         } catch (e: Exception) {

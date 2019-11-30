@@ -29,7 +29,6 @@ class UpdateLog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tool_bar.setTitle(R.string.update_log)
         text_view.post {
             Markwon.create(requireContext())
                 .setMarkdown(
