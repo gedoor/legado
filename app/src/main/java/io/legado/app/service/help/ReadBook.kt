@@ -3,6 +3,7 @@ package io.legado.app.service.help
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -34,6 +35,20 @@ object ReadBook {
     var webBook: WebBook? = null
     private val loadingChapters = arrayListOf<Int>()
 
+    fun resetData(book: Book) {
+        this.book = book
+        titleDate.postValue(book.name)
+        durChapterIndex = book.durChapterIndex
+        durPageIndex = book.durChapterPos
+        isLocalBook = book.origin == BookType.local
+        App.db.bookSourceDao().getBookSource(book.origin)?.let {
+            webBook = WebBook(it)
+        }
+        chapterSize = 0
+        prevTextChapter = null
+        curTextChapter = null
+        nextTextChapter = null
+    }
 
     fun moveToNextChapter(upContent: Boolean): Boolean {
         if (durChapterIndex < chapterSize - 1) {
@@ -138,7 +153,7 @@ object ReadBook {
         }
     }
 
-    fun download(index: Int) {
+    private fun download(index: Int) {
         book?.let { book ->
             if (addLoading(index)) {
                 Coroutine.async {
@@ -156,7 +171,7 @@ object ReadBook {
         }
     }
 
-    fun download(chapter: BookChapter) {
+    private fun download(chapter: BookChapter) {
         book?.let { book ->
             webBook?.getContent(book, chapter)
                 ?.onSuccess(Dispatchers.IO) { content ->

@@ -5,7 +5,6 @@ import android.content.Intent
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
-import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -34,30 +33,38 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun initBook(book: Book) {
-        ReadBook.book = book
-        ReadBook.titleDate.postValue(book.name)
-        ReadBook.durChapterIndex = book.durChapterIndex
-        ReadBook.durPageIndex = book.durChapterPos
-        ReadBook.isLocalBook = book.origin == BookType.local
-        App.db.bookSourceDao().getBookSource(book.origin)?.let {
-            ReadBook.webBook = WebBook(it)
-        }
-        val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
-        if (count == 0) {
-            if (book.tocUrl.isEmpty()) {
-                loadBookInfo(book)
+        if (ReadBook.book?.bookUrl != book.bookUrl) {
+            ReadBook.resetData(book)
+            val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
+            if (count == 0) {
+                if (book.tocUrl.isEmpty()) {
+                    loadBookInfo(book)
+                } else {
+                    loadChapterList(book)
+                }
             } else {
-                loadChapterList(book)
+                if (ReadBook.durChapterIndex > count - 1) {
+                    ReadBook.durChapterIndex = count - 1
+                }
+                ReadBook.chapterSize = count
+                ReadBook.callBack?.loadContent()
+            }
+            if (ReadBook.inBookshelf) {
+                ReadBook.saveRead()
             }
         } else {
-            if (ReadBook.durChapterIndex > count - 1) {
-                ReadBook.durChapterIndex = count - 1
+            ReadBook.titleDate.postValue(book.name)
+            if (ReadBook.chapterSize == 0) {
+                if (book.tocUrl.isEmpty()) {
+                    loadBookInfo(book)
+                } else {
+                    loadChapterList(book)
+                }
+            } else {
+                if (ReadBook.curTextChapter != null) {
+                    ReadBook.callBack?.upContent()
+                }
             }
-            ReadBook.chapterSize = count
-            ReadBook.callBack?.loadContent()
-        }
-        if (ReadBook.inBookshelf) {
-            ReadBook.saveRead()
         }
     }
 
