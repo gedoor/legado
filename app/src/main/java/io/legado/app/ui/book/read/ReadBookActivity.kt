@@ -254,43 +254,24 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     /**
+     * 内容加载完成
+     */
+    override fun contentLoadFinish() {
+        if (intent.getBooleanExtra("readAloud", false)) {
+            intent.removeExtra("readAloud")
+            ReadBook.readAloud()
+        }
+    }
+
+    /**
      * 加载章节内容, index章节序号
      */
     override fun loadContent(index: Int) {
         ReadBook.loadContent(index)
     }
 
-    /**
-     * 内容加载完成
-     */
-    override fun contentLoadFinish(bookChapter: BookChapter, content: String) {
-        when (bookChapter.index) {
-            ReadBook.durChapterIndex -> launch {
-                ReadBook.curTextChapter = ChapterProvider
-                    .getTextChapter(bookChapter, content, ReadBook.chapterSize)
-                page_view.upContent()
-                curChapterChanged()
-                ReadBook.curPageChanged()
-                if (intent.getBooleanExtra("readAloud", false)) {
-                    intent.removeExtra("readAloud")
-                    ReadBook.readAloud()
-                }
-            }
-            ReadBook.durChapterIndex - 1 -> launch {
-                ReadBook.prevTextChapter = ChapterProvider
-                    .getTextChapter(bookChapter, content, ReadBook.chapterSize)
-                page_view.upContent(-1)
-            }
-            ReadBook.durChapterIndex + 1 -> launch {
-                ReadBook.nextTextChapter = ChapterProvider
-                    .getTextChapter(bookChapter, content, ReadBook.chapterSize)
-                page_view.upContent(1)
-            }
-        }
-    }
-
-    override fun upContent() {
-        page_view.upContent()
+    override fun upContent(position: Int) {
+        page_view.upContent(position)
     }
 
     override fun curChapterChanged() {

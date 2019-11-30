@@ -12,6 +12,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.ReadBookViewModel
+import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -204,6 +205,9 @@ object ReadBook {
         }
     }
 
+    /**
+     * 内容加载完成
+     */
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
         Coroutine.async {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
@@ -214,7 +218,26 @@ object ReadBook {
                     content,
                     book!!.useReplaceRule
                 )
-                callBack?.contentLoadFinish(chapter, c)
+                when (chapter.index) {
+                    durChapterIndex -> launch {
+                        curTextChapter = ChapterProvider
+                            .getTextChapter(chapter, c, chapterSize)
+                        callBack?.upContent()
+                        callBack?.curChapterChanged()
+                        curPageChanged()
+                        callBack?.contentLoadFinish()
+                    }
+                    durChapterIndex - 1 -> launch {
+                        prevTextChapter = ChapterProvider
+                            .getTextChapter(chapter, c, chapterSize)
+                        callBack?.upContent(-1)
+                    }
+                    durChapterIndex + 1 -> launch {
+                        nextTextChapter = ChapterProvider
+                            .getTextChapter(chapter, c, chapterSize)
+                        callBack?.upContent(1)
+                    }
+                }
             }
         }
     }
