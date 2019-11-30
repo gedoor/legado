@@ -23,18 +23,6 @@ import io.legado.app.utils.postEvent
 class ReadAloudConfigDialog : DialogFragment() {
     private val readAloudPreferTag = "readAloudPreferTag"
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = LinearLayout(context)
-        view.setBackgroundResource(R.color.background)
-        view.id = R.id.tag1
-        container?.addView(view)
-        return view
-    }
-
     override fun onStart() {
         super.onStart()
         val dm = DisplayMetrics()
@@ -46,6 +34,18 @@ class ReadAloudConfigDialog : DialogFragment() {
             it.setBackgroundDrawableResource(R.color.transparent)
             it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = LinearLayout(context)
+        view.setBackgroundResource(R.color.background)
+        view.id = R.id.tag1
+        container?.addView(view)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

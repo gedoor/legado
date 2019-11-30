@@ -43,14 +43,6 @@ class BgTextConfigDialog : DialogFragment() {
     private val resultSelectBg = 123
     private lateinit var adapter: BgAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_read_bg_text, container)
-    }
-
     override fun onStart() {
         super.onStart()
         val dm = DisplayMetrics()
@@ -67,6 +59,14 @@ class BgTextConfigDialog : DialogFragment() {
             it.attributes = attr
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.dialog_read_bg_text, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

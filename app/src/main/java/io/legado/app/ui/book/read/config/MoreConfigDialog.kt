@@ -19,20 +19,7 @@ import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.postEvent
 
 class MoreConfigDialog : DialogFragment() {
-
     private val readPreferTag = "readPreferenceFragment"
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = LinearLayout(context)
-        view.setBackgroundResource(R.color.background)
-        view.id = R.id.tag1
-        container?.addView(view)
-        return view
-    }
 
     override fun onStart() {
         super.onStart()
@@ -50,6 +37,18 @@ class MoreConfigDialog : DialogFragment() {
             it.attributes = attr
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = LinearLayout(context)
+        view.setBackgroundResource(R.color.background)
+        view.id = R.id.tag1
+        container?.addView(view)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

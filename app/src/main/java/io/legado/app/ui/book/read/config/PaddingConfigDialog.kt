@@ -18,14 +18,6 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class PaddingConfigDialog : DialogFragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_read_padding, container)
-    }
-
     override fun onStart() {
         super.onStart()
         val dm = DisplayMetrics()
@@ -41,6 +33,14 @@ class PaddingConfigDialog : DialogFragment() {
             it.attributes = attr
             it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.dialog_read_padding, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
