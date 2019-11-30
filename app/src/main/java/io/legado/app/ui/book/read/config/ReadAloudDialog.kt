@@ -86,7 +86,6 @@ class ReadAloudDialog : DialogFragment() {
                 requireContext().putPrefInt("ttsSpeechRate", seek_tts_SpeechRate.progress)
                 upTtsSpeechRate()
             }
-
         })
         seek_timer.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
