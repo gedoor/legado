@@ -497,13 +497,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 page_view.upContent()
             }
         }
-        observeEvent<Int>(Bus.TTS_START) { chapterStart ->
+        observeEventSticky<Int>(Bus.TTS_START) { chapterStart ->
             launch(IO) {
-                ReadBook.curTextChapter?.let {
-                    val pageStart = chapterStart - it.getReadLength(ReadBook.durPageIndex)
-                    it.page(ReadBook.durPageIndex)?.upPageAloudSpan(pageStart)
-                    withContext(Main) {
-                        page_view.upContent()
+                if (BaseReadAloudService.isPlay()) {
+                    ReadBook.curTextChapter?.let {
+                        val pageStart = chapterStart - it.getReadLength(ReadBook.durPageIndex)
+                        it.page(ReadBook.durPageIndex)?.upPageAloudSpan(pageStart)
+                        withContext(Main) {
+                            page_view.upContent()
+                        }
                     }
                 }
             }
