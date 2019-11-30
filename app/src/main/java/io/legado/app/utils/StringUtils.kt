@@ -1,16 +1,15 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
-import android.text.TextUtils
 import android.text.TextUtils.isEmpty
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.abs
 
 object StringUtils {
-    private val TAG = "StringUtils"
     private const val HOUR_OF_DAY = 24
     private const val DAY_OF_YESTERDAY = 2
     private const val TIME_UNIT = 60
@@ -55,7 +54,7 @@ object StringUtils {
             val curTime = calendar.timeInMillis
             calendar.time = date
             //将MISC 转换成 sec
-            val difSec = Math.abs((curTime - date.time) / 1000)
+            val difSec = abs((curTime - date.time) / 1000)
             val difMin = difSec / 60
             val difHour = difMin / 60
             val difDate = difHour / 60
@@ -153,26 +152,31 @@ object StringUtils {
         try {
             for (i in cn.indices) {
                 val tmpNum = ChnMap[cn[i]]!!
-                if (tmpNum == 100000000) {
-                    result += tmp
-                    result *= tmpNum
-                    billion = billion * 100000000 + result
-                    result = 0
-                    tmp = 0
-                } else if (tmpNum == 10000) {
-                    result += tmp
-                    result *= tmpNum
-                    tmp = 0
-                } else if (tmpNum >= 10) {
-                    if (tmp == 0)
-                        tmp = 1
-                    result += tmpNum * tmp
-                    tmp = 0
-                } else {
-                    tmp = if (i >= 2 && i == cn.size - 1 && ChnMap[cn[i - 1]]!! > 10)
-                        tmpNum * ChnMap[cn[i - 1]]!! / 10
-                    else
-                        tmp * 10 + tmpNum
+                when {
+                    tmpNum == 100000000 -> {
+                        result += tmp
+                        result *= tmpNum
+                        billion = billion * 100000000 + result
+                        result = 0
+                        tmp = 0
+                    }
+                    tmpNum == 10000 -> {
+                        result += tmp
+                        result *= tmpNum
+                        tmp = 0
+                    }
+                    tmpNum >= 10 -> {
+                        if (tmp == 0)
+                            tmp = 1
+                        result += tmpNum * tmp
+                        tmp = 0
+                    }
+                    else -> {
+                        tmp = if (i >= 2 && i == cn.size - 1 && ChnMap[cn[i - 1]]!! > 10)
+                            tmpNum * ChnMap[cn[i - 1]]!! / 10
+                        else
+                            tmp * 10 + tmpNum
+                    }
                 }
             }
             result += tmp + billion
@@ -246,7 +250,10 @@ object StringUtils {
     }
 
     fun formatHtml(html: String): String {
-        return if (TextUtils.isEmpty(html)) "" else html.replace("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>".toRegex(), "\n")// 替换特定标签为换行符
+        return if (isEmpty(html)) "" else html.replace(
+            "(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>".toRegex(),
+            "\n"
+        )// 替换特定标签为换行符
                 .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
                 .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
                 .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
