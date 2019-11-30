@@ -7,6 +7,7 @@ import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.help.FileHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
@@ -177,7 +178,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         textChapter?.let {
             if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
                 pageIndex++
-                postEvent(Bus.TTS_TURN_PAGE, 1)
+                ReadBook.moveToNextPage()
             }
         }
         postEvent(Bus.TTS_START, readAloudNumber + 1)

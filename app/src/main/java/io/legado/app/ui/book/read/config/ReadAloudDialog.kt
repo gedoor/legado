@@ -12,6 +12,7 @@ import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
@@ -109,9 +110,14 @@ class ReadAloudDialog : DialogFragment() {
         iv_stop.onClick { ReadAloud.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { callBack?.onClickReadAloud() }
         iv_play_prev.onClick { ReadAloud.prevParagraph(requireContext()) }
-        iv_play_prev.onLongClick { postEvent(Bus.TTS_TURN_PAGE, -2); true }
+        iv_play_prev.onLongClick {
+            ReadBook.moveToPrevChapter(
+                upContent = true,
+                toLast = false
+            ); true
+        }
         iv_play_next.onClick { ReadAloud.nextParagraph(requireContext()) }
-        iv_play_next.onLongClick { postEvent(Bus.TTS_TURN_PAGE, 2); true }
+        iv_play_next.onLongClick { ReadBook.moveToNextChapter(true); true }
     }
 
     private fun upPlayState() {

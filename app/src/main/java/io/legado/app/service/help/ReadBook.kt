@@ -49,6 +49,11 @@ object ReadBook {
         nextTextChapter = null
     }
 
+    fun moveToNextPage() {
+        durPageIndex++
+        callBack?.upContent()
+    }
+
     fun moveToNextChapter(upContent: Boolean): Boolean {
         if (durChapterIndex < chapterSize - 1) {
             durPageIndex = 0

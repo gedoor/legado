@@ -508,32 +508,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
         }
-        observeEvent<Int>(Bus.TTS_TURN_PAGE) {
-            when (it) {
-                1 -> {
-                    if (page_view.isScrollDelegate) {
-                        page_view.moveToNextPage()
-                    } else {
-                        ReadBook.durPageIndex = ReadBook.durPageIndex + 1
-                        page_view.upContent()
-                        ReadBook.saveRead()
-                    }
-                }
-                -1 -> {
-                    if (ReadBook.durPageIndex > 0) {
-                        if (page_view.isScrollDelegate) {
-                            page_view.moveToPrevPage()
-                        } else {
-                            ReadBook.durPageIndex = ReadBook.durPageIndex - 1
-                            page_view.upContent()
-                            ReadBook.saveRead()
-                        }
-                    } else {
-                        moveToPrevChapter(true)
-                    }
-                }
-            }
-        }
         observeEvent<String>(Bus.REPLACE) {
             ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
         }
