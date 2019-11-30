@@ -37,7 +37,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="上一句"
+            android:contentDescription="@string/prev_sentence"
             android:src="@drawable/ic_skip_previous"
             android:tint="@color/tv_text_default" />
 
@@ -48,7 +48,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="播放/暂停"
+            android:contentDescription="@string/audio_play"
             android:src="@drawable/ic_play_24dp"
             android:tint="@color/tv_text_default" />
 
@@ -70,7 +70,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="下一句"
+            android:contentDescription="@string/next_sentence"
             android:src="@drawable/ic_skip_next"
             android:tint="@color/tv_text_default" />
 
@@ -86,7 +86,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="其它设置"
+            android:contentDescription="@string/other_setting"
             android:src="@drawable/ic_settings"
             android:tint="@color/tv_text_default" />
 

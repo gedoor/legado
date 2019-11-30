@@ -570,5 +570,7 @@
     <string name="next_page_key">下一页按键</string>
     <string name="after_add_bookshelf">先将书籍加入书架</string>
     <string name="no_group">未分组</string>
+    <string name="prev_sentence">上一句</string>
+    <string name="next_sentence">下一句</string>
 
 </resources>
