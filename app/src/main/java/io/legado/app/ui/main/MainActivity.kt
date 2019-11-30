@@ -18,6 +18,7 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.ui.about.UpdateLog
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
@@ -63,6 +64,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private fun upVersion() {
         if (getPrefInt("versionCode") != App.INSTANCE.versionCode) {
             putPrefInt("versionCode", App.INSTANCE.versionCode)
+            if (!BuildConfig.DEBUG) {
+                UpdateLog().show(supportFragmentManager, "updateLog")
+            }
         }
     }
 

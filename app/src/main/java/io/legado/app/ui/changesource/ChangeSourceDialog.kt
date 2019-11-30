@@ -42,6 +42,13 @@ class ChangeSourceDialog : DialogFragment(),
     private lateinit var viewModel: ChangeSourceViewModel
     private lateinit var changeSourceAdapter: ChangeSourceAdapter
 
+    override fun onStart() {
+        super.onStart()
+        val dm = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,13 +78,6 @@ class ChangeSourceDialog : DialogFragment(),
         initSearchView()
         viewModel.initData()
         viewModel.search()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
-        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 
     private fun showTitle() {
