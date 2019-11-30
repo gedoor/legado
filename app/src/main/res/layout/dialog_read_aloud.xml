@@ -3,168 +3,226 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_menu"
-    android:orientation="vertical"
-    android:padding="10dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/iv_menu"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/menu"
-            android:src="@drawable/ic_chapter_list"
-            android:tint="@color/tv_text_default" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/iv_play_prev"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/prev_sentence"
-            android:src="@drawable/ic_skip_previous"
-            android:tint="@color/tv_text_default" />
-
-        <ImageView
-            android:id="@+id/iv_play_pause"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/audio_play"
-            android:src="@drawable/ic_play_24dp"
-            android:tint="@color/tv_text_default" />
-
-        <ImageView
-            android:id="@+id/iv_stop"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/stop"
-            android:src="@drawable/ic_stop_black_24dp"
-            android:tint="@color/tv_text_default" />
-
-        <ImageView
-            android:id="@+id/iv_play_next"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/next_sentence"
-            android:src="@drawable/ic_skip_next"
-            android:tint="@color/tv_text_default" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/iv_other_config"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/other_setting"
-            android:src="@drawable/ic_settings"
-            android:tint="@color/tv_text_default" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_time_add_24dp"
-            android:tint="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_timer"
+        <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="60" />
+            android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/tv_timer"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabToc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/timer_m" />
+            android:layout_margin="10dp"
+            android:contentDescription="@string/chapter_list"
+            android:src="@drawable/ic_toc"
+            android:tint="@color/tv_text_default"
+            android:tooltipText="@string/auto_next_page"
+            app:backgroundTint="@color/background_menu"
+            app:elevation="2dp"
+            app:fabSize="mini"
+            app:pressedTranslationZ="2dp"
+            tools:ignore="UnusedAttribute" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/to_backstage"
+            android:src="@drawable/ic_visibility_off"
+            android:tint="@color/tv_text_default"
+            android:tooltipText="@string/replace_rule_title"
+            app:backgroundTint="@color/background_menu"
+            app:elevation="2dp"
+            app:fabSize="mini"
+            app:pressedTranslationZ="2dp"
+            tools:ignore="UnusedAttribute" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"
-        android:background="@color/divider" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/background_menu"
+        android:padding="16dp"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/ll_tts_SpeechRate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_menu"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/menu"
+                android:src="@drawable/ic_menu"
+                android:tint="@color/tv_text_default" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_play_prev"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/prev_sentence"
+                android:src="@drawable/ic_skip_previous"
+                android:tint="@color/tv_text_default" />
+
+            <ImageView
+                android:id="@+id/iv_play_pause"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/audio_play"
+                android:src="@drawable/ic_play_24dp"
+                android:tint="@color/tv_text_default" />
+
+            <ImageView
+                android:id="@+id/iv_stop"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/stop"
+                android:src="@drawable/ic_stop_black_24dp"
+                android:tint="@color/tv_text_default" />
+
+            <ImageView
+                android:id="@+id/iv_play_next"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/next_sentence"
+                android:src="@drawable/ic_skip_next"
+                android:tint="@color/tv_text_default" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_other_config"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/other_setting"
+                android:src="@drawable/ic_settings"
+                android:tint="@color/tv_text_default" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_time_add_24dp"
+                android:tint="@color/tv_text_default" />
+
+            <io.legado.app.lib.theme.view.ATESeekBar
+                android:id="@+id/seek_timer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="@string/read_aloud_speed"
-                android:textColor="@color/tv_text_default"
-                android:textSize="14sp" />
+                android:max="60" />
 
-            <io.legado.app.lib.theme.view.ATESwitch
-                android:id="@+id/cb_tts_follow_sys"
+            <TextView
+                android:id="@+id/tv_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/flow_sys"
-                android:text="@string/flow_sys"
-                tools:ignore="RtlHardcoded" />
+                android:text="@string/timer_m" />
+
         </LinearLayout>
 
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_tts_SpeechRate"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:max="45" />
+            android:layout_height="0.8dp"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ll_tts_SpeechRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="@string/read_aloud_speed"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="14sp" />
+
+                <io.legado.app.lib.theme.view.ATESwitch
+                    android:id="@+id/cb_tts_follow_sys"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/flow_sys"
+                    android:text="@string/flow_sys"
+                    tools:ignore="RtlHardcoded" />
+            </LinearLayout>
+
+            <io.legado.app.lib.theme.view.ATESeekBar
+                android:id="@+id/seek_tts_SpeechRate"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:max="45" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

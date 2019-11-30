@@ -238,7 +238,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:contentDescription="@string/chapter_list"
-                            android:src="@drawable/ic_chapter_list"
+                            android:src="@drawable/ic_toc"
                             app:tint="@color/tv_text_default"
                             tools:ignore="NestedWeights" />
 

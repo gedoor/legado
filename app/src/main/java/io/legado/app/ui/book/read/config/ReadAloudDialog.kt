@@ -105,7 +105,6 @@ class ReadAloudDialog : DialogFragment() {
         iv_other_config.onClick {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
-        iv_menu.onLongClick { callBack?.openChapterList(); true }
         iv_stop.onClick { ReadAloud.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { callBack?.onClickReadAloud() }
         iv_play_prev.onClick { ReadAloud.prevParagraph(requireContext()) }
@@ -115,6 +114,8 @@ class ReadAloudDialog : DialogFragment() {
         }
         iv_play_next.onClick { ReadAloud.nextParagraph(requireContext()) }
         iv_play_next.onLongClick { ReadBook.moveToNextChapter(true); true }
+        fabToc.onClick { callBack?.openChapterList() }
+        fabBack.onClick { callBack?.finish() }
     }
 
     private fun upPlayState() {
@@ -137,5 +138,6 @@ class ReadAloudDialog : DialogFragment() {
         fun showMenu()
         fun openChapterList()
         fun onClickReadAloud()
+        fun finish()
     }
 }
