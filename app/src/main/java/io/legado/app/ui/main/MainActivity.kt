@@ -16,6 +16,7 @@ import io.legado.app.constant.Bus
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
+import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
@@ -78,7 +79,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         view_pager_main.currentItem = 0
                         return true
                     }
-
+                    if (!BaseReadAloudService.pause) {
+                        moveTaskToBack(true)
+                        return true
+                    }
                 }
             }
         }
