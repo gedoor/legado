@@ -51,8 +51,7 @@ class ReadAloudConfigDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var preferenceFragment = childFragmentManager.findFragmentByTag(readAloudPreferTag)
-        if (preferenceFragment == null) preferenceFragment =
-            ReadAloudPreferenceFragment()
+        if (preferenceFragment == null) preferenceFragment = ReadAloudPreferenceFragment()
         childFragmentManager.beginTransaction()
             .replace(view.id, preferenceFragment, readAloudPreferTag)
             .commit()
