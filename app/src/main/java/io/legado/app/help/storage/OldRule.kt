@@ -121,7 +121,7 @@ object OldRule {
                     var list = newRule.split("##")
                     if (list[0].contains("|")) {
                         newRule = list[0].replace("|", "||")
-                        for (i in 1 until list.size - 1) {
+                        for (i in 1 until list.size) {
                             newRule += "##" + list[i]
                         }
                     }
