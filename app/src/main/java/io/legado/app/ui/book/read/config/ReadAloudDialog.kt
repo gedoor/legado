@@ -110,10 +110,8 @@ class ReadAloudDialog : DialogFragment() {
         iv_play_pause.onClick { callBack?.onClickReadAloud() }
         iv_play_prev.onClick { ReadAloud.prevParagraph(requireContext()) }
         iv_play_prev.onLongClick {
-            ReadBook.moveToPrevChapter(
-                upContent = true,
-                toLast = false
-            ); true
+            ReadBook.moveToPrevChapter(upContent = true, toLast = false)
+            true
         }
         iv_play_next.onClick { ReadAloud.nextParagraph(requireContext()) }
         iv_play_next.onLongClick { ReadBook.moveToNextChapter(true); true }
