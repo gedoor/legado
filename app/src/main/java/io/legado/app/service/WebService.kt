@@ -78,7 +78,7 @@ class WebService : BaseService() {
                 updateNotification(getString(R.string.http_ip, address.hostAddress, port))
             } catch (e: IOException) {
                 launch {
-                    toast(e.localizedMessage)
+                    toast(e.localizedMessage ?: "")
                     stopSelf()
                 }
             }
