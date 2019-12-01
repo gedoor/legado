@@ -81,9 +81,15 @@ class App : Application() {
                 .apply()
         } else {
             ThemeStore.editTheme(this)
-                .primaryColor(getPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500)))
-                .accentColor(getPrefInt("colorAccent", getCompatColor(R.color.md_pink_800)))
-                .backgroundColor(getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100)))
+                .primaryColor(
+                    getPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
+                )
+                .accentColor(
+                    getPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
+                )
+                .backgroundColor(
+                    getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
+                )
                 .apply()
         }
         ChapterProvider.upReadAloudSpan()
