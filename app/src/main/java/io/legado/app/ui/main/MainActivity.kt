@@ -13,6 +13,7 @@ import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
@@ -45,7 +46,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
-        bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
+        upShowRss()
         upVersion()
     }
 
@@ -57,6 +58,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
         return false
+    }
+
+    private fun upShowRss() {
+        bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
+        view_pager_main.adapter?.notifyDataSetChanged()
     }
 
     private fun upVersion() {
@@ -121,6 +127,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
         observeEvent<Boolean>(Bus.UP_CONFIG) {
             content_view.upStyle()
+        }
+        observeEvent<String>(PreferKey.showRss) {
+            upShowRss()
         }
     }
 

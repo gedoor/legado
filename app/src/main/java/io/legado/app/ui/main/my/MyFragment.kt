@@ -87,7 +87,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                 "isNightTheme" -> App.INSTANCE.applyDayNight()
                 "recordLog" -> LogUtils.upLevel()
                 "downloadPath" -> BookHelp.upDownloadPath()
-                "showRss" -> activity?.recreate()
             }
         }
 

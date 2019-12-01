@@ -15,10 +15,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.getPrefString
-import io.legado.app.utils.putPrefBoolean
-import io.legado.app.utils.putPrefString
+import io.legado.app.utils.*
 
 
 class ConfigFragment : PreferenceFragmentCompat(),
@@ -76,6 +73,7 @@ class ConfigFragment : PreferenceFragmentCompat(),
             "process_text" -> sharedPreferences?.let {
                 setProcessTextEnable(it.getBoolean("process_text", true))
             }
+            PreferKey.showRss -> postEvent(PreferKey.showRss, PreferKey.showRss)
         }
     }
 
