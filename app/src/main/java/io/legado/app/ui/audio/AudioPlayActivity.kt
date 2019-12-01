@@ -57,8 +57,8 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_change_source -> {
-
+            R.id.menu_change_source -> AudioPlay.book?.let {
+                ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
         return super.onCompatOptionsItemSelected(item)
