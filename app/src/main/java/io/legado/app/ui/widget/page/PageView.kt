@@ -245,11 +245,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         fun textChapter(chapterOnDur: Int = 0): TextChapter?
 
         /**
-         * 加载章节内容, index章节序号
-         */
-        fun loadContent(index: Int)
-
-        /**
          * 保存页数
          */
         fun setPageIndex(pageIndex: Int)

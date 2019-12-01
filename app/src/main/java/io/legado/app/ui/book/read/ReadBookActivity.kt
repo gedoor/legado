@@ -263,13 +263,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
-    /**
-     * 加载章节内容, index章节序号
-     */
-    override fun loadContent(index: Int) {
-        ReadBook.loadContent(index)
-    }
-
     override fun upContent(position: Int) {
         page_view.upContent(position)
     }
