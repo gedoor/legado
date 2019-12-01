@@ -77,13 +77,12 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun onPageSelected(position: Int) {
         pagePosition = position
         when (position) {
-            0, 1 -> bottom_navigation_view.menu.getItem(position).isChecked = true
+            0, 1, 3 -> bottom_navigation_view.menu.getItem(position).isChecked = true
             2 -> if (showRss()) {
                 bottom_navigation_view.menu.getItem(position).isChecked = true
             } else {
                 bottom_navigation_view.menu.getItem(3).isChecked = true
             }
-            else -> MyFragment()
         }
     }
 
