@@ -157,6 +157,18 @@ object ReadBook {
         return durPageIndex
     }
 
+    /**
+     * chapterOnDur: 0为当前页,1为下一页,-1为上一页
+     */
+    fun textChapter(chapterOnDur: Int = 0): TextChapter? {
+        return when (chapterOnDur) {
+            0 -> curTextChapter
+            1 -> nextTextChapter
+            -1 -> prevTextChapter
+            else -> null
+        }
+    }
+
     fun loadContent(index: Int) {
         book?.let { book ->
             if (addLoading(index)) {

@@ -112,10 +112,8 @@ class PageView(context: Context, attrs: AttributeSet) :
                     curPage?.setContent(it.currentPage())
                     nextPage?.setContent(it.nextPage())
                     prevPage?.setContent(it.previousPage())
-                    callBack?.let { callback ->
-                        if (isScrollDelegate) {
-                            curPage?.scrollTo(callback.textChapter()?.getStartLine(ReadBook.durChapterPos()))
-                        }
+                    if (isScrollDelegate) {
+                        curPage?.scrollTo(ReadBook.textChapter()?.getStartLine(ReadBook.durChapterPos()))
                     }
                 }
             }
@@ -129,7 +127,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun moveToPrevPage(noAnim: Boolean = true) {
         if (noAnim) {
             if (isScrollDelegate) {
-                callBack?.textChapter()?.let {
+                ReadBook.textChapter()?.let {
                     curPage?.scrollTo(it.getStartLine(pageIndex - 1))
                 }
             } else {
@@ -141,7 +139,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun moveToNextPage(noAnim: Boolean = true) {
         if (noAnim) {
             if (isScrollDelegate) {
-                callBack?.textChapter()?.let {
+                ReadBook.textChapter()?.let {
                     curPage?.scrollTo(it.getStartLine(pageIndex + 1))
                 }
             } else {
@@ -192,19 +190,19 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun getChapter(position: Int): TextChapter? {
-        return callBack?.textChapter(position)
+        return ReadBook.textChapter(position)
     }
 
     override fun getCurrentChapter(): TextChapter? {
-        return callBack?.textChapter(0)
+        return ReadBook.textChapter(0)
     }
 
     override fun getNextChapter(): TextChapter? {
-        return callBack?.textChapter(1)
+        return ReadBook.textChapter(1)
     }
 
     override fun getPreviousChapter(): TextChapter? {
-        return callBack?.textChapter(-1)
+        return ReadBook.textChapter(-1)
     }
 
     override fun hasNextChapter(): Boolean {
@@ -220,7 +218,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun scrollToLine(line: Int) {
         if (isScrollDelegate) {
-            callBack?.textChapter()?.let {
+            ReadBook.textChapter()?.let {
                 val pageIndex = it.getPageIndex(line)
                 curPage?.setPageIndex(pageIndex)
                 callBack?.setPageIndex(pageIndex)
@@ -230,7 +228,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun scrollToLast() {
         if (isScrollDelegate) {
-            callBack?.textChapter()?.let {
+            ReadBook.textChapter()?.let {
                 callBack?.setPageIndex(it.lastIndex())
                 curPage?.setPageIndex(it.lastIndex())
             }
@@ -238,11 +236,6 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     interface CallBack {
-
-        /**
-         * chapterOnDur: 0为当前页,1为下一页,-1为上一页
-         */
-        fun textChapter(chapterOnDur: Int = 0): TextChapter?
 
         /**
          * 保存页数

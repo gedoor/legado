@@ -35,7 +35,6 @@ import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.PageView
-import io.legado.app.ui.widget.page.TextChapter
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
@@ -300,18 +299,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         ReadBook.durPageIndex = pageIndex
         ReadBook.saveRead()
         ReadBook.curPageChanged()
-    }
-
-    /**
-     * chapterOnDur: 0为当前页,1为下一页,-1为上一页
-     */
-    override fun textChapter(chapterOnDur: Int): TextChapter? {
-        return when (chapterOnDur) {
-            0 -> ReadBook.curTextChapter
-            1 -> ReadBook.nextTextChapter
-            -1 -> ReadBook.prevTextChapter
-            else -> null
-        }
     }
 
     override fun clickCenter() {
