@@ -3,6 +3,7 @@ package io.legado.app.ui.main
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -37,12 +38,14 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         get() = getViewModel(MainViewModel::class.java)
 
     private var pagePosition = 0
+    private val fragmentList = arrayListOf<Fragment>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ChapterProvider.textView = content_text_view
         ATH.applyEdgeEffectColor(view_pager_main)
         ATH.applyBottomNavigationColor(bottom_navigation_view)
         view_pager_main.offscreenPageLimit = 3
+        upFragmentList()
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
@@ -58,6 +61,21 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
         return false
+    }
+
+    private fun upFragmentList() {
+        if (fragmentList.isEmpty()) {
+            fragmentList.add(BookshelfFragment())
+            fragmentList.add(ExploreFragment())
+            fragmentList.add(RssFragment())
+            fragmentList.add(MyFragment())
+        }
+        if (showRss() && fragmentList.size < 4) {
+            fragmentList.add(2, RssFragment())
+        }
+        if (!showRss() && fragmentList.size == 4) {
+            fragmentList.removeAt(2)
+        }
     }
 
     private fun upVersion() {
@@ -124,6 +142,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
         observeEvent<String>(PreferKey.showRss) {
             bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
+            upFragmentList()
             view_pager_main.adapter?.notifyDataSetChanged()
         }
     }
@@ -135,21 +154,21 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
+
         override fun getItem(position: Int): Fragment {
-            return when (position) {
-                0 -> BookshelfFragment()
-                1 -> ExploreFragment()
-                2 -> if (showRss()) {
-                    RssFragment()
-                } else {
-                    MyFragment()
-                }
-                else -> MyFragment()
-            }
+            return fragmentList[position]
         }
 
         override fun getCount(): Int {
             return if (showRss()) 4 else 3
+        }
+
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            super.destroyItem(container, position, `object`)
+            container.removeView(fragmentList[position].view)
         }
     }
 }
