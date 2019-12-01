@@ -5,5 +5,7 @@
     <item
         android:id="@+id/menu_change_source"
         android:title="@string/change_origin"
+        android:icon="@drawable/ic_exchange"
         app:showAsAction="always" />
+
 </menu>
