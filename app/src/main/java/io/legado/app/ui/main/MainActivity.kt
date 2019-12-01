@@ -143,6 +143,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
             upFragmentList()
             view_pager_main.adapter?.notifyDataSetChanged()
+            bottom_navigation_view.menu.getItem(3).isChecked = true
         }
     }
 
