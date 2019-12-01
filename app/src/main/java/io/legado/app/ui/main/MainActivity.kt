@@ -123,7 +123,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             content_view.upStyle()
         }
         observeEvent<String>(PreferKey.showRss) {
-            recreate()
+            bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
+            view_pager_main.adapter?.notifyDataSetChanged()
         }
     }
 
