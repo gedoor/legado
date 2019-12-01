@@ -45,7 +45,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
-        upRssShow()
+        bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
         upVersion()
     }
 
@@ -57,11 +57,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
         return false
-    }
-
-    private fun upRssShow() {
-        bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
-        view_pager_main.adapter?.notifyDataSetChanged()
     }
 
     private fun upVersion() {
