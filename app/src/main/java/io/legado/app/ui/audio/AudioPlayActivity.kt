@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
@@ -13,12 +15,14 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
+import io.legado.app.data.entities.Book
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.service.help.AudioPlay
+import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_audio_play.*
@@ -29,7 +33,8 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 import org.jetbrains.anko.startActivityForResult
 
 
-class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play) {
+class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play),
+    ChangeSourceDialog.CallBack {
 
     override val viewModel: AudioPlayViewModel
         get() = getViewModel(AudioPlayViewModel::class.java)
@@ -43,6 +48,20 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
         AudioPlay.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)
         initView()
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.audio_play, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_change_source -> {
+
+            }
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initView() {
@@ -117,6 +136,13 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             Status.PAUSE -> AudioPlay.resume(this)
             else -> AudioPlay.play(this)
         }
+    }
+
+    override val oldBook: Book?
+        get() = AudioPlay.book
+
+    override fun changeTo(book: Book) {
+        viewModel.changeTo(book)
     }
 
     override fun finish() {
