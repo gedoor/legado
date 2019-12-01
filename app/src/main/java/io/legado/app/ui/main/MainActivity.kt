@@ -24,10 +24,7 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.page.ChapterProvider
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.observeEvent
-import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_book_page.*
 
@@ -48,6 +45,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
+        upRssShow()
         upVersion()
     }
 
@@ -61,6 +59,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         return false
     }
 
+    private fun upRssShow() {
+        bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()
+        view_pager_main.adapter?.notifyDataSetChanged()
+    }
+
     private fun upVersion() {
         if (getPrefInt("versionCode") != App.INSTANCE.versionCode) {
             putPrefInt("versionCode", App.INSTANCE.versionCode)
@@ -72,7 +75,15 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     override fun onPageSelected(position: Int) {
         pagePosition = position
-        bottom_navigation_view.menu.getItem(position).isChecked = true
+        when (position) {
+            0, 1 -> bottom_navigation_view.menu.getItem(position).isChecked = true
+            2 -> if (showRss()) {
+                bottom_navigation_view.menu.getItem(position).isChecked = true
+            } else {
+                bottom_navigation_view.menu.getItem(3).isChecked = true
+            }
+            else -> MyFragment()
+        }
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
@@ -118,20 +129,28 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
     }
 
-    private class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+    private fun showRss(): Boolean {
+        return getPrefBoolean("showRss", true)
+    }
+
+    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> BookshelfFragment()
                 1 -> ExploreFragment()
-                2 -> RssFragment()
+                2 -> if (showRss()) {
+                    RssFragment()
+                } else {
+                    MyFragment()
+                }
                 else -> MyFragment()
             }
         }
 
         override fun getCount(): Int {
-            return 4
+            return if (showRss()) 4 else 3
         }
     }
 }

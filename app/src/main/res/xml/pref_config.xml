@@ -16,6 +16,11 @@
         android:title="@string/pt_default_read"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="true"
+        android:key="showRss"
+        android:title="显示订阅"
+        app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="true"
