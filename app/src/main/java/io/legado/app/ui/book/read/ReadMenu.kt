@@ -132,7 +132,7 @@ class ReadMenu : FrameLayout {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                callBack?.skipToPage(seekBar.progress)
+                ReadBook.skipToPage(seekBar.progress)
             }
         })
 
@@ -245,7 +245,6 @@ class ReadMenu : FrameLayout {
 
     interface CallBack {
         fun autoPage()
-        fun skipToPage(page: Int)
         fun openReplaceRule()
         fun openChapterList()
         fun showReadStyle()

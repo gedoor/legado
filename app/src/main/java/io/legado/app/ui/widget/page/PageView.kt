@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.page.curl.CurlView
 import io.legado.app.ui.widget.page.delegate.*
 import io.legado.app.utils.activity
@@ -113,7 +114,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                     prevPage?.setContent(it.previousPage())
                     callBack?.let { callback ->
                         if (isScrollDelegate) {
-                            curPage?.scrollTo(callback.textChapter()?.getStartLine(callback.durChapterPos()))
+                            curPage?.scrollTo(callback.textChapter()?.getStartLine(ReadBook.durChapterPos()))
                         }
                     }
                 }
@@ -180,14 +181,14 @@ class PageView(context: Context, attrs: AttributeSet) :
         get() = pageDelegate is ScrollPageDelegate
 
     override val pageIndex: Int
-        get() = callBack?.durChapterPos() ?: 0
+        get() = ReadBook.durChapterPos()
 
     override fun setPageIndex(pageIndex: Int) {
         callBack?.setPageIndex(pageIndex)
     }
 
     override fun getChapterPosition(): Int {
-        return callBack?.durChapterIndex() ?: 0
+        return ReadBook.durChapterIndex
     }
 
     override fun getChapter(position: Int): TextChapter? {
@@ -207,15 +208,12 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun hasNextChapter(): Boolean {
-        callBack?.let {
-            return it.durChapterIndex() < it.chapterSize() - 1
-        }
-        return false
+        return ReadBook.durChapterIndex < ReadBook.chapterSize - 1
     }
 
     override fun hasPrevChapter(): Boolean {
         callBack?.let {
-            return it.durChapterIndex() > 0
+            return ReadBook.durChapterIndex > 0
         }
         return false
     }
@@ -240,9 +238,6 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     interface CallBack {
-        fun chapterSize(): Int
-        fun durChapterIndex(): Int
-        fun durChapterPos(): Int
 
         /**
          * chapterOnDur: 0为当前页,1为下一页,-1为上一页

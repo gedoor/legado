@@ -296,29 +296,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         read_menu.runMenuIn()
     }
 
-    override fun chapterSize(): Int {
-        return ReadBook.chapterSize
-    }
-
     override val oldBook: Book?
         get() = ReadBook.book
 
     override fun changeTo(book: Book) {
         viewModel.changeTo(book)
-    }
-
-    override fun durChapterIndex(): Int {
-        return ReadBook.durChapterIndex
-    }
-
-    override fun durChapterPos(): Int {
-        ReadBook.curTextChapter?.let {
-            if (ReadBook.durPageIndex < it.pageSize()) {
-                return ReadBook.durPageIndex
-            }
-            return it.pageSize() - 1
-        }
-        return ReadBook.durPageIndex
     }
 
     override fun setPageIndex(pageIndex: Int) {
@@ -353,13 +335,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun autoPage() {
 
-    }
-
-    override fun skipToPage(page: Int) {
-        ReadBook.durPageIndex = page
-        page_view.upContent()
-        ReadBook.curPageChanged()
-        ReadBook.saveRead()
     }
 
     override fun openReplaceRule() {

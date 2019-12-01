@@ -114,6 +114,13 @@ object ReadBook {
         }
     }
 
+    fun skipToPage(page: Int) {
+        durPageIndex = page
+        callBack?.upContent()
+        curPageChanged()
+        saveRead()
+    }
+
     fun curPageChanged() {
         callBack?.upPageProgress()
         if (BaseReadAloudService.isRun) {
@@ -138,6 +145,16 @@ object ReadBook {
                 play
             )
         }
+    }
+
+    fun durChapterPos(): Int {
+        curTextChapter?.let {
+            if (durPageIndex < it.pageSize()) {
+                return durPageIndex
+            }
+            return it.pageSize() - 1
+        }
+        return durPageIndex
     }
 
     fun loadContent(index: Int) {
