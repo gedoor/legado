@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.buttonDisabledColor
+import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -148,10 +149,10 @@ class ReadMenu : FrameLayout {
         }
 
         //上一章
-        tv_pre.onClick { callBack?.moveToPrevChapter(upContent = true, last = false) }
+        tv_pre.onClick { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
 
         //下一章
-        tv_next.onClick { callBack?.moveToNextChapter(true) }
+        tv_next.onClick { ReadBook.moveToNextChapter(true) }
 
         //目录
         ll_catalog.onClick {
@@ -245,8 +246,6 @@ class ReadMenu : FrameLayout {
     interface CallBack {
         fun autoPage()
         fun skipToPage(page: Int)
-        fun moveToPrevChapter(upContent: Boolean, last: Boolean): Boolean
-        fun moveToNextChapter(upContent: Boolean): Boolean
         fun openReplaceRule()
         fun openChapterList()
         fun showReadStyle()

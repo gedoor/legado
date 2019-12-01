@@ -85,7 +85,7 @@ object ReadBook {
         }
     }
 
-    fun moveToPrevChapter(upContent: Boolean, toLast: Boolean): Boolean {
+    fun moveToPrevChapter(upContent: Boolean, toLast: Boolean = true): Boolean {
         if (durChapterIndex > 0) {
             durPageIndex = if (toLast) prevTextChapter?.lastIndex() ?: 0 else 0
             durChapterIndex--

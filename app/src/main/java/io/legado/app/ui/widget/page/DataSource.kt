@@ -21,8 +21,4 @@ interface DataSource {
 
     fun hasPrevChapter(): Boolean
 
-    fun moveToNextChapter()
-
-    fun moveToPrevChapter()
-
 }

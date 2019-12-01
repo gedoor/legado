@@ -1,5 +1,7 @@
 package io.legado.app.ui.widget.page
 
+import io.legado.app.service.help.ReadBook
+
 class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
 
     override fun hasPrev(): Boolean = with(dataSource) {
@@ -43,7 +45,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             if (getCurrentChapter()?.isLastIndex(pageIndex) == true
                 || isScrollDelegate
             ) {
-                moveToNextChapter()
+                ReadBook.moveToNextChapter(false)
             } else {
                 setPageIndex(pageIndex.plus(1))
             }
@@ -55,7 +57,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     override fun moveToPrevious(): Boolean = with(dataSource) {
         return if (hasPrev()) {
             if (pageIndex <= 0 || isScrollDelegate) {
-                moveToPrevChapter()
+                ReadBook.moveToPrevChapter(false)
             } else {
                 setPageIndex(pageIndex.minus(1))
             }

@@ -339,20 +339,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
-    /**
-     * 下一页
-     */
-    override fun moveToNextChapter(upContent: Boolean): Boolean {
-        return ReadBook.moveToNextChapter(upContent)
-    }
-
-    /**
-     * 上一页
-     */
-    override fun moveToPrevChapter(upContent: Boolean, last: Boolean): Boolean {
-        return ReadBook.moveToPrevChapter(upContent, last)
-    }
-
     override fun clickCenter() {
         if (BaseReadAloudService.isRun) {
             showReadAloudDialog()
