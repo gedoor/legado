@@ -52,6 +52,7 @@ object ReadBook {
     fun moveToNextPage() {
         durPageIndex++
         callBack?.upContent()
+        saveRead()
     }
 
     fun moveToNextChapter(upContent: Boolean): Boolean {
