@@ -55,7 +55,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
-    ReadBookViewModel.CallBack,
+    ReadBook.CallBack,
     ColorPickerDialogListener {
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
@@ -274,7 +274,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         page_view.upContent(position)
     }
 
-    override fun curChapterChanged() {
+    override fun upView() {
         ReadBook.curTextChapter?.let {
             tv_chapter_name.text = it.title
             tv_chapter_name.visible()

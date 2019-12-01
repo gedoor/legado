@@ -200,11 +200,4 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    interface CallBack {
-        fun loadContent()
-        fun upContent(position: Int = 0)
-        fun curChapterChanged()
-        fun upPageProgress()
-        fun contentLoadFinish()
-    }
 }

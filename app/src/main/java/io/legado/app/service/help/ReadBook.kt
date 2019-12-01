@@ -11,7 +11,6 @@ import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.ui.book.read.ReadBookViewModel
 import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.ui.widget.page.TextChapter
 import kotlinx.coroutines.*
@@ -24,7 +23,7 @@ object ReadBook {
     var book: Book? = null
     var inBookshelf = false
     var chapterSize = 0
-    var callBack: ReadBookViewModel.CallBack? = null
+    var callBack: CallBack? = null
     var durChapterIndex = 0
     var durPageIndex = 0
     var isLocalBook = true
@@ -77,7 +76,7 @@ object ReadBook {
                 }
             }
             saveRead()
-            callBack?.curChapterChanged()
+            callBack?.upView()
             curPageChanged()
             return true
         } else {
@@ -107,7 +106,7 @@ object ReadBook {
                 }
             }
             saveRead()
-            callBack?.curChapterChanged()
+            callBack?.upView()
             curPageChanged()
             return true
         } else {
@@ -226,7 +225,7 @@ object ReadBook {
                     durChapterIndex -> withContext(Main) {
                         curTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent()
-                        callBack?.curChapterChanged()
+                        callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
@@ -258,4 +257,11 @@ object ReadBook {
         }
     }
 
+    interface CallBack {
+        fun loadContent()
+        fun upContent(position: Int = 0)
+        fun upView()
+        fun upPageProgress()
+        fun contentLoadFinish()
+    }
 }
