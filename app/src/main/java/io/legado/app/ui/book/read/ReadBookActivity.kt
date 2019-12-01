@@ -244,15 +244,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     /**
-     * 加载章节内容
-     */
-    override fun loadContent() {
-        ReadBook.loadContent(ReadBook.durChapterIndex)
-        ReadBook.loadContent(ReadBook.durChapterIndex + 1)
-        ReadBook.loadContent(ReadBook.durChapterIndex - 1)
-    }
-
-    /**
      * 内容加载完成
      */
     override fun contentLoadFinish() {
@@ -433,7 +424,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             page_view.upBg()
             page_view.upStyle()
             if (it) {
-                loadContent()
+                ReadBook.loadContent()
             } else {
                 page_view.upContent()
             }

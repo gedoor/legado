@@ -169,6 +169,15 @@ object ReadBook {
         }
     }
 
+    /**
+     * 加载章节内容
+     */
+    fun loadContent() {
+        loadContent(durChapterIndex)
+        loadContent(durChapterIndex + 1)
+        loadContent(durChapterIndex - 1)
+    }
+
     fun loadContent(index: Int) {
         book?.let { book ->
             if (addLoading(index)) {
@@ -287,7 +296,6 @@ object ReadBook {
     }
 
     interface CallBack {
-        fun loadContent()
         fun upContent(position: Int = 0)
         fun upView()
         fun upPageProgress()

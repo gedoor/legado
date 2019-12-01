@@ -49,7 +49,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.durChapterIndex = count - 1
                 }
                 ReadBook.chapterSize = count
-                ReadBook.callBack?.loadContent()
+                ReadBook.loadContent()
             }
             if (ReadBook.inBookshelf) {
                 ReadBook.saveRead()
@@ -93,7 +93,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao().insert(*cList.toTypedArray())
                             ReadBook.chapterSize = cList.size
-                            ReadBook.callBack?.loadContent()
+                            ReadBook.loadContent()
                         } else {
                             changeDruChapterIndex(cList)
                         }
@@ -146,7 +146,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             ReadBook.chapterSize = chapters.size
-            ReadBook.callBack?.loadContent()
+            ReadBook.loadContent()
         }
     }
 
@@ -160,7 +160,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.durPageIndex = 0
         }
         ReadBook.saveRead()
-        ReadBook.callBack?.loadContent()
+        ReadBook.loadContent()
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
