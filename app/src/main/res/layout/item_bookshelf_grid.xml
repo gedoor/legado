@@ -28,7 +28,6 @@
         android:id="@+id/fl_has_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
         app:layout_constraintRight_toRightOf="@id/iv_cover"
         app:layout_constraintTop_toTopOf="@id/iv_cover">
 
