@@ -1,7 +1,7 @@
 package io.legado.app.constant
 
 object BookType {
-    const val default = 0           // 0 ÎÄ±¾
-    const val audio = 1             // 1 ÒôÆµ
+    const val default = 0           // 0 æ–‡æœ¬
+    const val audio = 1             // 1 éŸ³é¢‘
     const val local = "loc_book"
 }
