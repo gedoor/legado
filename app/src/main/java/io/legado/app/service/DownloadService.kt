@@ -18,6 +18,7 @@ class DownloadService : BaseService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
+                Action.start -> download()
                 Action.stop -> stopSelf()
             }
         }
@@ -26,6 +27,10 @@ class DownloadService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    private fun download() {
+
     }
 
     /**

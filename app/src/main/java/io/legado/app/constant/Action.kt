@@ -1,7 +1,7 @@
 package io.legado.app.constant
 
 object Action {
-
+    const val start = "start"
     const val play = "play"
     const val stop = "stop"
     const val resume = "resume"
