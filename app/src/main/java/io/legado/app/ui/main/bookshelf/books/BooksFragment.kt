@@ -70,18 +70,13 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
             activityViewModel.upChapterList()
         }
         val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
-        rv_bookshelf.layoutManager =
-            if (bookshelfLayout == 0) {
-                LinearLayoutManager(context)
-            } else {
-                GridLayoutManager(context, bookshelfLayout)
-            }
-        booksAdapter =
-            if (bookshelfLayout == 0) {
-                BooksAdapterList(requireContext(), this)
-            } else {
-                BooksAdapterGrid(requireContext(), this)
-            }
+        if (bookshelfLayout == 0) {
+            rv_bookshelf.layoutManager = LinearLayoutManager(context)
+            booksAdapter = BooksAdapterList(requireContext(), this)
+        } else {
+            rv_bookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout)
+            booksAdapter = BooksAdapterGrid(requireContext(), this)
+        }
         rv_bookshelf.adapter = booksAdapter
     }
 
