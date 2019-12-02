@@ -198,7 +198,7 @@ class ReadMenu : FrameLayout {
                 vw_menu_bg.onClick { runMenuOut() }
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
                     height =
-                        if (context.getPrefBoolean(PreferKey.hideStatusBar)
+                        if (context.getPrefBoolean(PreferKey.hideNavigationBar)
                             && Help.isNavigationBarExist(activity)
                         ) context.getNavigationBarHeight()
                         else 0
