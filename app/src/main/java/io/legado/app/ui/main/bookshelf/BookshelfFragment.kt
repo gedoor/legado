@@ -131,6 +131,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             items = resources.getStringArray(R.array.bookshelf_layout).toList()
         ) { _, index ->
             putPrefInt(PreferKey.bookshelfLayout, index)
+            activity?.recreate()
         }
     }
 }
