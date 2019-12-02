@@ -7,8 +7,11 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
 import io.legado.app.help.IntentHelp
+import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.Executors
 
 class DownloadService : BaseService() {
+    private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
 
     override fun onCreate() {
         super.onCreate()
@@ -27,6 +30,7 @@ class DownloadService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        searchPool.close()
     }
 
     private fun download() {
