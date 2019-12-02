@@ -43,10 +43,10 @@ class BadgeView @JvmOverloads constructor(
                 return null
             }
             val text = text.toString()
-            try {
-                return Integer.parseInt(text)
+            return try {
+                Integer.parseInt(text)
             } catch (e: NumberFormatException) {
-                return null
+                null
             }
 
         }

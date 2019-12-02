@@ -12,7 +12,7 @@
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="100dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
         android:src="@drawable/image_cover_default"
