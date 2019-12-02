@@ -24,10 +24,8 @@ import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
-import io.legado.app.ui.widget.page.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.view_book_page.*
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
@@ -40,7 +38,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private val fragmentList = arrayListOf<Fragment>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        ChapterProvider.textView = content_text_view
         ATH.applyEdgeEffectColor(view_pager_main)
         ATH.applyBottomNavigationColor(bottom_navigation_view)
         view_pager_main.offscreenPageLimit = 3
@@ -135,9 +132,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun observeLiveBus() {
         observeEvent<String>(Bus.RECREATE) {
             recreate()
-        }
-        observeEvent<Boolean>(Bus.UP_CONFIG) {
-            content_view.upStyle()
         }
         observeEvent<String>(PreferKey.showRss) {
             bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = showRss()

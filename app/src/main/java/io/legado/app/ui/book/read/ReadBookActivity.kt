@@ -38,6 +38,7 @@ import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
+import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -97,6 +98,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 初始化View
      */
     private fun initView() {
+        ChapterProvider.textView = content_text_view
         tv_chapter_name.onClick {
             ReadBook.webBook?.let {
                 startActivityForResult<BookSourceEditActivity>(
@@ -421,6 +423,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
         observeEvent<Boolean>(Bus.UP_CONFIG) {
             upSystemUiVisibility()
+            content_view.upStyle()
             page_view.upBg()
             page_view.upStyle()
             if (it) {
