@@ -2,17 +2,17 @@ package io.legado.app.ui.main.bookshelf.books
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.BookType
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
@@ -21,6 +21,7 @@ import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
@@ -68,17 +69,19 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
             refresh_layout.isRefreshing = false
             activityViewModel.upChapterList()
         }
-        rv_bookshelf.layoutManager = LinearLayoutManager(context)
-        rv_bookshelf.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL).apply {
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_divider)?.let {
-                    this.setDrawable(it)
-                }
-            })
-        booksAdapter = BooksAdapter(
-            requireContext(),
-            this
-        )
+        val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
+        rv_bookshelf.layoutManager =
+            if (bookshelfLayout == 0) {
+                LinearLayoutManager(context)
+            } else {
+                GridLayoutManager(requireContext(), bookshelfLayout)
+            }
+        booksAdapter =
+            if (bookshelfLayout == 0) {
+                BooksAdapterList(requireContext(), this)
+            } else {
+                BooksAdapterGrid(requireContext(), this)
+            }
         rv_bookshelf.adapter = booksAdapter
     }
 

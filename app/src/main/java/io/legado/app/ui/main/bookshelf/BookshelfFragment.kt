@@ -13,6 +13,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
@@ -129,7 +130,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             title = "选择书架布局",
             items = resources.getStringArray(R.array.bookshelf_layout).toList()
         ) { _, index ->
-            putPrefInt("bookshelf", index)
+            putPrefInt(PreferKey.bookshelfLayout, index)
         }
     }
 }
