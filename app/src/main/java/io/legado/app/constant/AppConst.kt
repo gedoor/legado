@@ -60,7 +60,8 @@ object AppConst {
             App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
         }
 
-    const val notificationIdRead = 12
-    const val notificationIdAudio = 13
-    const val notificationIdWeb = 14
+    const val notificationIdRead = 1144771
+    const val notificationIdAudio = 1144772
+    const val notificationIdWeb = 1144773
+    const val notificationIdDownload = 1144774
 }
