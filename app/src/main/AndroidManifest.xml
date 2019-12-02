@@ -119,7 +119,6 @@
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
-        <service android:name=".service.UpdateService" />
         <service android:name=".service.WebService" />
         <service android:name=".service.TTSReadAloudService" />
         <service android:name=".service.HttpReadAloudService" />
