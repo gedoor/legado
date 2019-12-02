@@ -10,6 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.ActivityHelp
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -59,10 +60,17 @@ class MediaButtonReceiver : BroadcastReceiver() {
                             App.db.bookDao().lastReadBook
                         }
                         lastBook?.let {
-                            val intent = Intent(context, ReadBookActivity::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            intent.putExtra("readAloud", true)
-                            context.startActivity(intent)
+                            if (!ActivityHelp.isExist(MainActivity::class.java)) {
+                                Intent(context, MainActivity::class.java).let {
+                                    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    context.startActivity(it)
+                                }
+                            }
+                            Intent(context, ReadBookActivity::class.java).let {
+                                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                it.putExtra("readAloud", true)
+                                context.startActivity(it)
+                            }
                         }
                     }
                 }
