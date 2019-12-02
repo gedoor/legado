@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:padding="12dp"
     android:clickable="true"
     android:focusable="true"
     tools:ignore="UnusedAttribute">
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
-        android:layout_width="100dp"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
