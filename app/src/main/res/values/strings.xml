@@ -49,6 +49,8 @@
     <string name="layout_list">列表视图</string>
     <string name="layout_grid3">网格视图三列</string>
     <string name="layout_grid4">网格视图四列</string>
+    <string name="layout_grid5">网格视图五列</string>
+    <string name="layout_grid6">网格视图六列</string>
     <string name="bookshelf_layout">书架布局</string>
     <string name="book_library">书城</string>
     <string name="book_local">添加本地</string>
