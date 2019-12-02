@@ -74,7 +74,7 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
             if (bookshelfLayout == 0) {
                 LinearLayoutManager(context)
             } else {
-                GridLayoutManager(requireContext(), bookshelfLayout)
+                GridLayoutManager(context, bookshelfLayout)
             }
         booksAdapter =
             if (bookshelfLayout == 0) {
