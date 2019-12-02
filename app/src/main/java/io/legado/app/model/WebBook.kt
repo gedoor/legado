@@ -138,7 +138,7 @@ class WebBook(val bookSource: BookSource) {
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
             if (bookSource.getContentRule().content.isNullOrEmpty()) {
-                Debug.log(sourceUrl, "内容规则为空,直接返回目录Url:${bookChapter.url}")
+                Debug.log(sourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
                 return@async bookChapter.url
             }
             val body = if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {

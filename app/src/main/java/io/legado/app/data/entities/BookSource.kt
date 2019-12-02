@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 import io.legado.app.App
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.userAgent
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.JsExtensions
 import io.legado.app.utils.ACache
@@ -25,26 +26,26 @@ import javax.script.SimpleBindings
     indices = [(Index(value = ["bookSourceUrl"], unique = false))]
 )
 data class BookSource(
-    var bookSourceName: String = "",           // 名称
-    var bookSourceGroup: String? = null,       // 分组
+    var bookSourceName: String = "",                // 名称
+    var bookSourceGroup: String? = null,            // 分组
     @PrimaryKey
-    var bookSourceUrl: String = "",           // 地址，包括 http/https
-    var bookSourceType: Int = 0,               // 类型，0 文本，1 音频
-    var bookUrlPattern: String? = null,       //详情页url正则
-    var customOrder: Int = 0,                 // 手动排序编号
-    var enabled: Boolean = true,            // 是否启用
-    var enabledExplore: Boolean = true,     //启用发现
-    var header: String? = null,
-    var loginUrl: String? = null,             // 登录地址
-    var lastUpdateTime: Long = 0,             // 最后更新时间，用于排序
-    var weight: Int = 0,                      // 智能排序的权重
-    var exploreUrl: String? = null,           //发现url
-    var ruleExplore: String? = null,          // 发现规则
-    var searchUrl: String? = null,            //搜索url
-    var ruleSearch: String? = null,           // 搜索规则
-    var ruleBookInfo: String? = null,         // 书籍信息页规则
-    var ruleToc: String? = null,          // 目录页规则
-    var ruleContent: String? = null           // 正文页规则
+    var bookSourceUrl: String = "",                 // 地址，包括 http/https
+    var bookSourceType: Int = BookType.default,     // 类型，0 文本，1 音频
+    var bookUrlPattern: String? = null,             // 详情页url正则
+    var customOrder: Int = 0,                       // 手动排序编号
+    var enabled: Boolean = true,                    // 是否启用
+    var enabledExplore: Boolean = true,             // 启用发现
+    var header: String? = null,                     // 请求头
+    var loginUrl: String? = null,                   // 登录地址
+    var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
+    var weight: Int = 0,                            // 智能排序的权重
+    var exploreUrl: String? = null,                 // 发现url
+    var ruleExplore: String? = null,                // 发现规则
+    var searchUrl: String? = null,                  // 搜索url
+    var ruleSearch: String? = null,                 // 搜索规则
+    var ruleBookInfo: String? = null,               // 书籍信息页规则
+    var ruleToc: String? = null,                    // 目录页规则
+    var ruleContent: String? = null                 // 正文页规则
 ) : Parcelable, JsExtensions {
     @Ignore
     @IgnoredOnParcel

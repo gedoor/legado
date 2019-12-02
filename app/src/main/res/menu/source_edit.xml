@@ -40,6 +40,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_share_str"
+        android:title="@string/str_share"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_share_wifi"
         android:title="@string/wifi_share"
         app:showAsAction="never" />

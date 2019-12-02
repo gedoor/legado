@@ -47,6 +47,11 @@
                 android:title="@string/del_select"
                 app:showAsAction="never" />
 
+            <item
+                android:id="@+id/menu_export_selection"
+                android:title="@string/export_selection"
+                app:showAsAction="never" />
+
         </menu>
 
     </item>
