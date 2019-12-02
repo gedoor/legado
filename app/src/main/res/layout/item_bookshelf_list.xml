@@ -46,7 +46,6 @@
             android:layout_height="26dp"
             android:layout_gravity="right"
             android:visibility="invisible"
-            app:loading_color="@color/colorAccent"
             app:loading_width="2dp"
             tools:ignore="RtlHardcoded" />
     </FrameLayout>
