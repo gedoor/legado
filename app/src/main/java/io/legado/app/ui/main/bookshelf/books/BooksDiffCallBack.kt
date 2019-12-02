@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.bookshelf
+package io.legado.app.ui.main.bookshelf.books
 
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.Book

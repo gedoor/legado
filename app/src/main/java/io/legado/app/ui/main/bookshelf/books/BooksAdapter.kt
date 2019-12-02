@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.bookshelf
+package io.legado.app.ui.main.bookshelf.books
 
 import android.content.Context
 import io.legado.app.R
@@ -15,7 +15,6 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class BooksAdapter(context: Context, private val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_bookshelf_list) {
-
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {

@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.bookshelf
+package io.legado.app.ui.main.bookshelf.books
 
 import android.app.Application
 import io.legado.app.base.BaseViewModel

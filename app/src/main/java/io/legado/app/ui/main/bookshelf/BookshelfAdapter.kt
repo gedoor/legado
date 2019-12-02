@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.ui.main.bookshelf.books.BooksFragment
 
 
 class BookshelfAdapter(fragment: Fragment, val callBack: CallBack) :

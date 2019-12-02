@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.bookshelf
+package io.legado.app.ui.main.bookshelf.books
 
 import android.os.Bundle
 import android.view.View
@@ -75,7 +75,10 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
                     this.setDrawable(it)
                 }
             })
-        booksAdapter = BooksAdapter(requireContext(), this)
+        booksAdapter = BooksAdapter(
+            requireContext(),
+            this
+        )
         rv_bookshelf.adapter = booksAdapter
     }
 
@@ -89,7 +92,12 @@ class BooksFragment : VMBaseFragment<BooksViewModel>(R.layout.fragment_books),
         }
         bookshelfLiveData?.observe(this, Observer {
             val diffResult =
-                DiffUtil.calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), it))
+                DiffUtil.calculateDiff(
+                    BooksDiffCallBack(
+                        booksAdapter.getItems(),
+                        it
+                    )
+                )
             booksAdapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(booksAdapter)
         })
