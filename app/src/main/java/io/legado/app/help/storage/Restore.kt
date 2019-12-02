@@ -187,6 +187,7 @@ object Restore {
                 rule.order = jsonItem.readInt("$.serialNumber") ?: index
                 replaceRules.add(rule)
             }
+            App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
             replaceRules
         }.onSuccess {
             context.toast("成功导入替换规则${it?.size}")
