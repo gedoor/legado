@@ -46,8 +46,8 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        postEvent(Bus.UP_CONFIG, true)
         pageDelegate?.setViewSize(w, h)
+        postEvent(Bus.UP_CONFIG, true)
     }
 
     override fun dispatchDraw(canvas: Canvas) {
