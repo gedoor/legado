@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
@@ -26,6 +27,7 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
+        tab_layout.setSelectedTabIndicatorColor(accentColor)
         viewModel.bookUrl = intent.getStringExtra("bookUrl")
         viewModel.loadBook {
             view_pager.adapter = TabFragmentPageAdapter(supportFragmentManager)

@@ -16,6 +16,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getViewModel
@@ -73,6 +74,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private fun initRecyclerView() {
         tab_layout.isTabIndicatorFullWidth = false
         tab_layout.tabMode = TabLayout.MODE_SCROLLABLE
+        tab_layout.setSelectedTabIndicatorColor(requireContext().accentColor)
         ATH.applyEdgeEffectColor(view_pager_bookshelf)
         view_pager_bookshelf.adapter = BookshelfAdapter(this, this)
         TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->
