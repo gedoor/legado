@@ -30,7 +30,9 @@ import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 
 
@@ -256,10 +258,7 @@ class AudioPlayService : BaseService(),
                             postEvent(Bus.AUDIO_SIZE, chapter.end?.toInt() ?: 0)
                             postEvent(Bus.AUDIO_PROGRESS, position)
                         }
-                        BookHelp.getContent(book, chapter)?.let {
-                            contentLoadFinish(chapter, it)
-                            removeLoading(chapter.index)
-                        } ?: download(chapter)
+                        download(chapter)
                     } ?: removeLoading(index)
                 }
             }
@@ -271,7 +270,9 @@ class AudioPlayService : BaseService(),
             AudioPlay.webBook?.getContent(book, chapter, scope = this)
                 ?.onSuccess(IO) { content ->
                     if (content.isNullOrEmpty()) {
-                        contentLoadFinish(chapter, getString(R.string.content_empty))
+                        withContext(Main) {
+                            toast("未获取到资源链接")
+                        }
                         removeLoading(chapter.index)
                     } else {
                         BookHelp.saveContent(book, chapter, content)
@@ -307,7 +308,6 @@ class AudioPlayService : BaseService(),
             subtitle = chapter.title
             url = content
             play()
-            loadContent(AudioPlay.durChapterIndex + 1)
         }
     }
 
