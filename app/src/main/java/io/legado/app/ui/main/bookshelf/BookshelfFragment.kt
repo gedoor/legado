@@ -62,6 +62,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             }
             R.id.menu_arrange_bookshelf -> {
             }
+            R.id.menu_download_all -> viewModel.downloadAll()
         }
     }
 

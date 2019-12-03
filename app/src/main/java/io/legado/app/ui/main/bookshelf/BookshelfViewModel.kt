@@ -31,4 +31,8 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             App.db.bookGroupDao().delete(*bookGroup)
         }
     }
+
+    fun downloadAll() {
+
+    }
 }
