@@ -2,12 +2,17 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
+import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
+import io.legado.app.model.WebBook
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 class DownloadService : BaseService() {
@@ -39,7 +44,25 @@ class DownloadService : BaseService() {
 
     private fun download(bookUrl: String?, start: Int, end: Int) {
         if (bookUrl == null) return
-
+        launch(IO) {
+            val book = App.db.bookDao().getBook(bookUrl) ?: return@launch
+            val bookSource = App.db.bookSourceDao().getBookSource(book.origin) ?: return@launch
+            val webBook = WebBook(bookSource)
+            for (index in start..end) {
+                App.db.bookChapterDao().getChapter(bookUrl, index)?.let { chapter ->
+                    webBook.getContent(book, chapter, scope = this, context = searchPool)
+                        .onStart {
+                            updateNotification("${chapter.title}开始下载")
+                        }
+                        .onSuccess { content ->
+                            content?.let {
+                                BookHelp.saveContent(book, chapter, content)
+                            }
+                            updateNotification("${chapter.title}下载完成")
+                        }
+                }
+            }
+        }
     }
 
     /**
