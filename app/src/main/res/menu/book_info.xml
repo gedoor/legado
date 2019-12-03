@@ -13,5 +13,9 @@
         android:title="@string/refresh"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_can_update"
+        android:title="禁止更新"
+        app:showAsAction="never" />
 
 </menu>
