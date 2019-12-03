@@ -79,7 +79,7 @@ class DownloadService : BaseService() {
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<WebService>(this, Action.stop)
+            IntentHelp.servicePendingIntent<DownloadService>(this, Action.stop)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
