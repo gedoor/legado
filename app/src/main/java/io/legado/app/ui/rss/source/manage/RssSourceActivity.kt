@@ -81,6 +81,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
+            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
             R.id.menu_import_source_local -> selectFile()
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)

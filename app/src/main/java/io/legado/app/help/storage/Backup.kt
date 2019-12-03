@@ -23,6 +23,10 @@ object Backup {
         defaultPath + File.separator + "legadoBackUp"
     }
 
+    val exportPath by lazy {
+        legadoPath + File.separator + "Export"
+    }
+
     fun backup() {
         doAsync {
             val path = legadoPath

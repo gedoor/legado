@@ -53,18 +53,26 @@ object Debug {
     fun startDebug(rssSource: RssSource) {
         cancelDebug()
         debugSource = rssSource.sourceUrl
-        log(debugSource, "︾开始解析RSS")
+        log(debugSource, "︾开始解析")
         Rss.getArticles(rssSource, null)
             .onSuccess {
                 if (it == null) {
                     log(debugSource, "︽解析失败", state = -1)
+                } else if(it.articles.isEmpty()) {
+                    log(debugSource, "⇒列表页解析成功，为空")
+                    log(debugSource, "︽解析完成", state = 1000)
                 } else {
                     val ruleContent = rssSource.ruleContent
-                    if (it.articles.isNotEmpty() && it.articles[0].description.isNullOrEmpty() && !ruleContent.isNullOrEmpty()) {
-                        log(debugSource, "︽解析完成")
+                    if (!rssSource.ruleArticles.isNullOrBlank() && rssSource.ruleDescription.isNullOrBlank()) {
+                        log(debugSource, "︽列表页解析完成")
                         log(debugSource, showTime = false)
-                        rssContentDebug(it.articles[0], ruleContent)
+                        if (ruleContent.isNullOrEmpty()) {
+                            log(debugSource, "⇒内容规则为空，默认获取整个网页", state = 1000)
+                        } else {
+                            rssContentDebug(it.articles[0], ruleContent)
+                        }
                     } else {
+                        log(debugSource, "⇒存在描述规则，不解析内容页")
                         log(debugSource, "︽解析完成", state = 1000)
                     }
                 }
@@ -75,11 +83,11 @@ object Debug {
     }
 
     private fun rssContentDebug(rssArticle: RssArticle, ruleContent: String) {
-        log(debugSource, "︾开始解析内容")
+        log(debugSource, "︾开始解析内容页")
         Rss.getContent(rssArticle, ruleContent)
             .onSuccess {
                 log(debugSource, it)
-                log(debugSource, "︽解析完成", state = 1000)
+                log(debugSource, "︽内容页解析完成", state = 1000)
             }
             .onError {
                 log(debugSource, it.localizedMessage, state = -1)

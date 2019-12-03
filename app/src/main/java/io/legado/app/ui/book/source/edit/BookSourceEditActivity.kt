@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
@@ -85,6 +87,27 @@ class BookSourceEditActivity :
                 }
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
+            R.id.menu_share_str -> {
+                GSON.toJson(getSource())?.let { sourceStr ->
+                    try {
+                        val textIntent = Intent(Intent.ACTION_SEND)
+                        textIntent.setType("text/plain")
+                        textIntent.putExtra(Intent.EXTRA_TEXT, sourceStr)
+                        startActivity(Intent.createChooser(textIntent, "Source Share"))
+                    } catch (e: Exception) {
+                        toast(R.string.can_not_share)
+                    }
+                }
+            }
+            R.id.menu_rule_summary -> {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(getString(R.string.source_rule_url))
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    toast(R.string.can_not_open)
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }

@@ -5,7 +5,12 @@ import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.FileHelp
+import io.legado.app.help.storage.Backup
+import io.legado.app.utils.GSON
 import io.legado.app.utils.splitNotBlank
+import org.jetbrains.anko.toast
+import java.io.File
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
 
@@ -54,6 +59,22 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
     fun delSelection(ids: LinkedHashSet<Long>) {
         execute {
             App.db.replaceRuleDao().delSection(*ids.toLongArray())
+        }
+    }
+
+    fun exportSelection(ids: LinkedHashSet<Long>) {
+        execute {
+            ids.map {
+                App.db.replaceRuleDao().findById(it)
+            }.let {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(Backup.exportPath + File.separator + "exportReplaceRule.json")
+                file.writeText(json)
+            }
+        }.onSuccess {
+            context.toast("成功导出至\n${Backup.exportPath}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
         }
     }
 

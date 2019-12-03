@@ -10,6 +10,9 @@ interface RssSourceDao {
     @Query("select * from rssSources where sourceUrl = :key")
     fun getByKey(key: String): RssSource?
 
+    @Query("select * from rssSources where sourceUrl in (:sourceUrls)")
+    fun getRssSources(vararg sourceUrls: String):List<RssSource>
+
     @get:Query("SELECT * FROM rssSources")
     val all: List<RssSource>
 
