@@ -21,7 +21,11 @@ class DownloadService : BaseService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
-                Action.start -> download()
+                Action.start -> download(
+                    intent.getStringExtra("bookUrl"),
+                    intent.getIntExtra("start", 0),
+                    intent.getIntExtra("end", 0)
+                )
                 Action.stop -> stopSelf()
             }
         }
@@ -33,7 +37,8 @@ class DownloadService : BaseService() {
         searchPool.close()
     }
 
-    private fun download() {
+    private fun download(bookUrl: String?, start: Int, end: Int) {
+        if (bookUrl == null) return
 
     }
 
