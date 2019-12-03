@@ -35,7 +35,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
 
     fun downloadAll() {
         execute {
-            App.db.bookDao().webBooks.forEach { book ->
+            App.db.bookDao().hasUpdateBooks.forEach { book ->
                 Download.start(context, book.bookUrl, book.durChapterIndex, book.totalChapterNum)
             }
         }
