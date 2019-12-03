@@ -50,16 +50,18 @@ class DownloadService : BaseService() {
             val webBook = WebBook(bookSource)
             for (index in start..end) {
                 App.db.bookChapterDao().getChapter(bookUrl, index)?.let { chapter ->
-                    webBook.getContent(book, chapter, scope = this, context = searchPool)
-                        .onStart {
-                            updateNotification("${chapter.title}开始下载")
-                        }
-                        .onSuccess { content ->
-                            content?.let {
-                                BookHelp.saveContent(book, chapter, content)
+                    if (!BookHelp.hasContent(book, chapter)) {
+                        webBook.getContent(book, chapter, scope = this, context = searchPool)
+                            .onStart {
+                                updateNotification("${chapter.title}开始下载")
                             }
-                            updateNotification("${chapter.title}下载完成")
-                        }
+                            .onSuccess { content ->
+                                content?.let {
+                                    BookHelp.saveContent(book, chapter, content)
+                                }
+                                updateNotification("${chapter.title}下载完成")
+                            }
+                    }
                 }
             }
         }
