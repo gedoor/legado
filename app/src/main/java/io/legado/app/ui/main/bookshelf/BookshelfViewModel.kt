@@ -33,6 +33,10 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     }
 
     fun downloadAll() {
+        execute {
+            App.db.bookDao().allBooks.forEach { book ->
 
+            }
+        }
     }
 }
