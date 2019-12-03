@@ -11,6 +11,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 
@@ -55,7 +56,7 @@ class DownloadService : BaseService() {
                             .onStart {
                                 updateNotification(chapter.title)
                             }
-                            .onSuccess { content ->
+                            .onSuccess(IO) { content ->
                                 content?.let {
                                     BookHelp.saveContent(book, chapter, content)
                                 }
