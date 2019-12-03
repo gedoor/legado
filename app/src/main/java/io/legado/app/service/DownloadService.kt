@@ -53,13 +53,12 @@ class DownloadService : BaseService() {
                     if (!BookHelp.hasContent(book, chapter)) {
                         webBook.getContent(book, chapter, scope = this, context = searchPool)
                             .onStart {
-                                updateNotification("${chapter.title}开始下载")
+                                updateNotification(chapter.title)
                             }
                             .onSuccess { content ->
                                 content?.let {
                                     BookHelp.saveContent(book, chapter, content)
                                 }
-                                updateNotification("${chapter.title}下载完成")
                             }
                     }
                 }
