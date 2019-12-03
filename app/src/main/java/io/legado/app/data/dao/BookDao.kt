@@ -32,7 +32,7 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE bookUrl = :bookUrl")
     fun getBook(bookUrl: String): Book?
 
-    @get:Query("SELECT * FROM books where origin <> '${BookType.local}'")
+    @get:Query("SELECT * FROM books where origin <> '${BookType.local}' and canUpdate = 1")
     val hasUpdateBooks: List<Book>
 
     @get:Query("SELECT * FROM books")
