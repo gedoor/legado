@@ -6,14 +6,12 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import io.legado.app.constant.Bus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.page.curl.CurlView
 import io.legado.app.ui.widget.page.delegate.*
 import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.postEvent
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -47,7 +45,9 @@ class PageView(context: Context, attrs: AttributeSet) :
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         pageDelegate?.setViewSize(w, h)
-        postEvent(Bus.UP_CONFIG, true)
+        if (oldw != 0 && oldh != 0) {
+            ReadBook.loadContent()
+        }
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -248,5 +248,6 @@ class PageView(context: Context, attrs: AttributeSet) :
          * 点击屏幕中间
          */
         fun clickCenter()
+
     }
 }
