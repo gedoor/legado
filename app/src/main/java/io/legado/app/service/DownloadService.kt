@@ -40,12 +40,13 @@ class DownloadService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        tasks.clear()
         searchPool.close()
     }
 
     private fun download(bookUrl: String?, start: Int, end: Int) {
         if (bookUrl == null) return
-        val task = Coroutine.async {
+        val task = Coroutine.async(this) {
             val book = App.db.bookDao().getBook(bookUrl) ?: return@async
             val bookSource = App.db.bookSourceDao().getBookSource(book.origin) ?: return@async
             val webBook = WebBook(bookSource)
