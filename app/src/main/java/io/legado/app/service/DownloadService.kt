@@ -9,14 +9,14 @@ import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 class DownloadService : BaseService() {
     private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
+    private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
 
     override fun onCreate() {
         super.onCreate()
@@ -44,9 +44,9 @@ class DownloadService : BaseService() {
 
     private fun download(bookUrl: String?, start: Int, end: Int) {
         if (bookUrl == null) return
-        launch(IO) {
-            val book = App.db.bookDao().getBook(bookUrl) ?: return@launch
-            val bookSource = App.db.bookSourceDao().getBookSource(book.origin) ?: return@launch
+        val task = Coroutine.async {
+            val book = App.db.bookDao().getBook(bookUrl) ?: return@async
+            val bookSource = App.db.bookSourceDao().getBookSource(book.origin) ?: return@async
             val webBook = WebBook(bookSource)
             for (index in start..end) {
                 App.db.bookChapterDao().getChapter(bookUrl, index)?.let { chapter ->
@@ -62,6 +62,13 @@ class DownloadService : BaseService() {
                             }
                     }
                 }
+            }
+        }
+        tasks.add(task)
+        task.invokeOnCompletion {
+            tasks.remove(task)
+            if (tasks.isEmpty()) {
+                stopSelf()
             }
         }
     }
