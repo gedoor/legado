@@ -25,7 +25,7 @@ object RssParserByRule {
         Debug.log(sourceUrl, "≡获取成功:$sourceUrl")
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
-            Debug.log(sourceUrl, "列表规则为空, 使用默认规则解析")
+            Debug.log(sourceUrl, "⇒列表规则为空, 使用默认规则解析")
             return RssParser.parseXML(body, sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
@@ -40,12 +40,12 @@ object RssParserByRule {
             val collections = analyzeRule.getElements(ruleArticles)
             Debug.log(sourceUrl, "└列表大小:${collections.size}")
             if (!rssSource.ruleNextPage.isNullOrEmpty()) {
-                Debug.log(sourceUrl, "┌获取下一页Url")
+                Debug.log(sourceUrl, "┌获取下一页链接")
                 nextUrl = analyzeRule.getString(rssSource.ruleNextPage)
                 if (nextUrl.isNotEmpty()) {
                     nextUrl = NetworkUtils.getAbsoluteURL(sourceUrl, nextUrl)
                 }
-                Debug.log(sourceUrl, "└获取下一页Url:$nextUrl")
+                Debug.log(sourceUrl, "└$nextUrl")
             }
             val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle)
             val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate)
@@ -88,8 +88,13 @@ object RssParserByRule {
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)
         Debug.log(sourceUrl, "└${rssArticle.pubDate}", log)
         Debug.log(sourceUrl, "┌获取描述", log)
-        rssArticle.description = analyzeRule.getString(ruleDescription)
-        Debug.log(sourceUrl, "└${rssArticle.description}", log)
+        if (ruleDescription.isNullOrEmpty()) {
+            rssArticle.description = null
+            Debug.log(sourceUrl, "└描述规则为空，将会解析内容页", log)
+        } else {
+            rssArticle.description = analyzeRule.getString(ruleDescription)
+            Debug.log(sourceUrl, "└${rssArticle.description}", log)
+        }
         Debug.log(sourceUrl, "┌获取图片url", log)
         rssArticle.image = analyzeRule.getString(ruleImage, true)
         Debug.log(sourceUrl, "└${rssArticle.image}", log)

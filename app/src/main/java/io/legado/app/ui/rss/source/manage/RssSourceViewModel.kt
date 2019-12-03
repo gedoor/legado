@@ -7,9 +7,12 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.FileHelp
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
+import org.jetbrains.anko.toast
 import java.io.File
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
@@ -57,6 +60,19 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+   fun exportSelection(ids: LinkedHashSet<String>) {
+       execute {
+               App.db.rssSourceDao().getRssSources(*ids.toTypedArray()).let {
+               val json = GSON.toJson(it)
+               val file = FileHelp.getFile(Backup.exportPath + File.separator + "exportRssSource.json")
+               file.writeText(json)
+           }
+       }.onSuccess {
+           context.toast("成功导出至\n${Backup.exportPath}")
+       }.onError {
+           context.toast("导出失败\n${it.localizedMessage}")
+       }
+   }
 
     fun addGroup(group: String) {
         execute {

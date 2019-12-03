@@ -118,7 +118,7 @@ object OldRule {
             }
             if (newRule.contains("|") && !newRule.contains("||")) {
                 if (newRule.contains("##")) {
-                    var list = newRule.split("##")
+                    val list = newRule.split("##")
                     if (list[0].contains("|")) {
                         newRule = list[0].replace("|", "||")
                         for (i in 1 until list.size) {

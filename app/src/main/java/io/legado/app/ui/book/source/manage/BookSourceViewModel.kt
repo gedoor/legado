@@ -7,12 +7,15 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.FileHelp
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
@@ -79,6 +82,22 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             ids.forEach {
                 App.db.bookSourceDao().delSection(it)
             }
+        }
+    }
+
+    fun exportSelection(ids: LinkedHashSet<String>) {
+        execute {
+            ids.map {
+                App.db.bookSourceDao().getBookSource(it)
+            }.let {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(Backup.exportPath + File.separator + "exportBookSource.json")
+                file.writeText(json)
+            }
+        }.onSuccess {
+            context.toast("成功导出至\n${Backup.exportPath}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
         }
     }
 

@@ -367,9 +367,9 @@
     <string name="source_no_login">当前源没有配置登陆地址</string>
 
     <!-- source start-->
-    <string name="source_name">书源名称(bookSourceName)</string>
-    <string name="source_url">书源URL(bookSourceUrl)</string>
-    <string name="source_group">书源分组(bookSourceGroup)</string>
+    <string name="source_name">源名称(sourceName)</string>
+    <string name="source_url">源URL(sourceUrl)</string>
+    <string name="source_group">源分组(sourceGroup)</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
@@ -389,8 +389,8 @@
     <string name="rule_chapter_list">目录列表规则(chapterList)</string>
     <string name="rule_chapter_name">章节名称规则(ChapterName)</string>
     <string name="rule_chapter_url">章节URL规则(chapterUrl)</string>
-    <string name="rule_is_vip">是否VIP(isVip)</string>
-    <string name="rule_update_time">更新时间(updateTime)</string>
+    <string name="rule_is_vip">VIP标识(isVip)</string>
+    <string name="rule_update_time">章节信息(ChapterInfo)</string>
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
@@ -501,6 +501,7 @@
     <string name="web_port_title">web端口</string>
     <string name="web_port_summary">当前端口 %s</string>
     <string name="qr_share">二维码分享</string>
+    <string name="str_share">字符串分享</string>
     <string name="wifi_share">wifi分享</string>
     <string name="please_grant_storage_permission">请给于存储权限</string>
     <string name="fast_rewind">减速</string>
@@ -543,6 +544,7 @@
     <string name="disable_explore">禁用发现</string>
     <string name="enable_selection">启用所选</string>
     <string name="disable_selection">禁用所选</string>
+    <string name="export_selection">导出所选</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
     <string name="web_dav_url_s">输入你的服务器地址</string>

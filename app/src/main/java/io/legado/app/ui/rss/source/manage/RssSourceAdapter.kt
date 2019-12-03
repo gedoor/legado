@@ -38,7 +38,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
 
     fun getSelectionIds(): LinkedHashSet<String> {
         val selection = linkedSetOf<String>()
-        getItems().map {
+        getItems().forEach {
             if (selectedIds.contains(it.sourceUrl)) {
                 selection.add(it.sourceUrl)
             }
