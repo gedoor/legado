@@ -15,7 +15,8 @@
 
     <item
         android:id="@+id/menu_can_update"
-        android:title="禁止更新"
+        android:title="允许更新"
+        android:checkable="true"
         app:showAsAction="never" />
 
 </menu>

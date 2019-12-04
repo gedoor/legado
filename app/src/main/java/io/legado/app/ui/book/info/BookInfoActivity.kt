@@ -76,8 +76,19 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                     viewModel.loadBookInfo(it)
                 }
             }
+            R.id.menu_can_update -> {
+                viewModel.bookData.value?.let {
+                    it.canUpdate = !it.canUpdate
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
+        menu?.findItem(R.id.menu_can_update)?.isChecked =
+            viewModel.bookData.value?.canUpdate ?: true
+        return super.onMenuOpened(featureId, menu)
     }
 
     private fun showBook(book: Book) {
