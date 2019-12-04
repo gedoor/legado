@@ -1,6 +1,9 @@
 package io.legado.app.ui.config
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.InputType
 import android.view.View
 import androidx.preference.EditTextPreference
@@ -99,6 +102,27 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
     }
 
     private fun importOld() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            val haveInstallPermission = context!!.packageManager.canRequestPackageInstalls()
+            if (haveInstallPermission) {
+                startImport()
+            } else { //没有安装外部来源应用的权限
+                alert(title = "开启权限提示") {
+                    message = "还需要打开「安装外部来源应用」权限才能导入旧版数据，请去设置中开启"
+                    yesButton {
+                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                        startActivityForResult(intent, 666)
+                    }
+                    noButton {
+                    }
+                }.show().applyTint()
+            }
+        } else {
+            startImport()
+        }
+    }
+
+    private fun startImport() {
         alert(title = "导入") {
             message = "是否导入旧版本数据"
             yesButton {
