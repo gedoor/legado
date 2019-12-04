@@ -108,7 +108,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                 startImport()
             } else { //没有安装外部来源应用的权限
                 alert(title = "开启权限提示") {
-                    message = "还需要打开「安装外部来源应用」权限才能导入旧版数据，请去设置中开启"
+                    message = "需要打开「安装外部来源应用」权限才能导入旧版数据，请去设置中开启"
                     yesButton {
                         val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
                         startActivityForResult(intent, 666)
