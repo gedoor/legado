@@ -46,7 +46,6 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
@@ -62,6 +61,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
+    private val requestCodeReplace = 31242
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -310,10 +310,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     }
 
+    /**
+     * 替换
+     */
     override fun openReplaceRule() {
-        startActivity<ReplaceRuleActivity>()
+        startActivityForResult<ReplaceRuleActivity>(requestCodeReplace)
     }
 
+    /**
+     * 打开目录
+     */
     override fun openChapterList() {
         ReadBook.book?.let {
             startActivityForResult<ChapterListActivity>(
@@ -377,6 +383,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     data?.getIntExtra("index", ReadBook.durChapterIndex)?.let {
                         viewModel.openChapter(it)
                     }
+                requestCodeReplace -> ReadBook.loadContent()
             }
         }
     }
