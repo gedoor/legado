@@ -37,13 +37,13 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var replaceRuleLiveData: LiveData<List<ReplaceRule>>? = null
+    private var dataInit = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
         observeReplaceRuleData()
         observeGroupData()
-        setResult(Activity.RESULT_OK)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -100,15 +100,20 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
     private fun observeReplaceRuleData(key: String? = null) {
         replaceRuleLiveData?.removeObservers(this)
+        dataInit = false
         replaceRuleLiveData = if (key.isNullOrEmpty()) {
             App.db.replaceRuleDao().liveDataAll()
         } else {
             App.db.replaceRuleDao().liveDataSearch(key)
         }
         replaceRuleLiveData?.observe(this, Observer {
+            if (dataInit) {
+                setResult(Activity.RESULT_OK)
+            }
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
+            dataInit = true
         })
     }
 
