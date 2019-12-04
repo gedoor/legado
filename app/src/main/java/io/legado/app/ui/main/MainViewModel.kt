@@ -15,7 +15,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upChapterList() {
         execute {
-            App.db.bookDao().allBooks.forEach { book ->
+            App.db.bookDao().hasUpdateBooks.forEach { book ->
                 if (book.origin != BookType.local) {
                     if (!updateList.contains(book.bookUrl)) {
                         App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
