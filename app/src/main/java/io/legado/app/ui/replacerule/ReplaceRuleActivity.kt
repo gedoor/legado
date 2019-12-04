@@ -1,5 +1,6 @@
 package io.legado.app.ui.replacerule
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -42,6 +43,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         initSearchView()
         observeReplaceRuleData()
         observeGroupData()
+        setResult(Activity.RESULT_OK)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
