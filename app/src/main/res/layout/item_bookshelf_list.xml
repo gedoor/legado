@@ -13,7 +13,9 @@
         android:id="@+id/iv_cover"
         android:layout_width="60dp"
         android:layout_height="80dp"
-        android:layout_margin="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
         android:src="@drawable/image_cover_default"
@@ -27,9 +29,9 @@
         android:id="@+id/fl_has_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/iv_cover">
 
         <io.legado.app.ui.widget.BadgeView
             android:id="@+id/bv_unread"
@@ -162,8 +164,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp" />
 
     <View
         android:id="@+id/vw_select"
