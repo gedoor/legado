@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
 class ChangeCoverDialog : DialogFragment() {
@@ -30,5 +32,10 @@ class ChangeCoverDialog : DialogFragment() {
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        tool_bar.setTitle(R.string.change_cover_source)
+        recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
+    }
 
 }
