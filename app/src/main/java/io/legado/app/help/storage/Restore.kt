@@ -149,7 +149,9 @@ object Restore {
                     context.toast("成功导入书籍${books.size}")
                 }
             } catch (e: Exception) {
-                context.toast("导入书籍失败\n${e.localizedMessage}")
+                withContext(Main) {
+                    context.toast("导入书籍失败\n${e.localizedMessage}")
+                }
             }
 
             try {// Book source
@@ -168,7 +170,9 @@ object Restore {
                     context.toast("成功导入书源${bookSources.size}")
                 }
             } catch (e: Exception) {
-                context.toast("导入源失败\n${e.localizedMessage}")
+                withContext(Main) {
+                    context.toast("导入源失败\n${e.localizedMessage}")
+                }
             }
 
             try {// Replace rules
@@ -196,7 +200,9 @@ object Restore {
                     context.toast("成功导入替换规则${replaceRules.size}")
                 }
             } catch (e: Exception) {
-                context.toast("导入替换规则失败\n${e.localizedMessage}")
+                withContext(Main) {
+                    context.toast("导入替换规则失败\n${e.localizedMessage}")
+                }
             }
         }
     }
