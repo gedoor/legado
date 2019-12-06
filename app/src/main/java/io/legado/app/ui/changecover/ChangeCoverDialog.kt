@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.dialog_change_source.*
 class ChangeCoverDialog : DialogFragment() {
 
     private lateinit var viewModel: ChangeCoverViewModel
+    private lateinit var adapter: CoverAdapter
 
     override fun onStart() {
         super.onStart()
@@ -36,6 +37,8 @@ class ChangeCoverDialog : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         tool_bar.setTitle(R.string.change_cover_source)
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
+        adapter = CoverAdapter(requireContext())
+        recycler_view.adapter = adapter
     }
 
 }
