@@ -47,7 +47,7 @@ object FileHelp {
 
         if (file.isDirectory) {
             val files = file.listFiles()
-            for (subFile in files) {
+            files?.forEach { subFile ->
                 val path = subFile.path
                 deleteFile(path)
             }
