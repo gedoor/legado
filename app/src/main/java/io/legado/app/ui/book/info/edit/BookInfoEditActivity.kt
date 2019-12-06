@@ -8,11 +8,11 @@ import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.help.ImageLoader
 import io.legado.app.ui.changecover.ChangeCoverDialog
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.toast
 
 class BookInfoEditActivity :
     VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit),
@@ -55,6 +55,15 @@ class BookInfoEditActivity :
         tie_book_author.setText(book.author)
         tie_cover_url.setText(book.getDisplayCover())
         tie_book_intro.setText(book.getDisplayIntro())
+        upCover()
+    }
+
+    private fun upCover() {
+        viewModel.book?.getDisplayCover()?.let {
+            ImageLoader.load(this, it)
+                .centerCrop()
+                .into(iv_cover)
+        }
     }
 
     private fun saveData() {
@@ -64,18 +73,16 @@ class BookInfoEditActivity :
             val customCoverUrl = tie_cover_url.text?.toString()
             book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
             book.customIntro = tie_book_intro.text?.toString()
-            viewModel.saveBook(book,
-                success = {
-                    setResult(Activity.RESULT_OK)
-                    finish()
-                },
-                error = {
-                    toast(it)
-                })
+            viewModel.saveBook(book) {
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
         }
     }
 
     override fun coverChangeTo(coverUrl: String) {
-
+        viewModel.book?.customCoverUrl = coverUrl
+        tie_cover_url.setText(coverUrl)
+        upCover()
     }
 }
