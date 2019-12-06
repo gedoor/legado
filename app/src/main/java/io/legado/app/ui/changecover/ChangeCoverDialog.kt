@@ -30,6 +30,7 @@ class ChangeCoverDialog : DialogFragment() {
         }
     }
 
+    private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeCoverViewModel
     private lateinit var adapter: CoverAdapter
 
@@ -51,10 +52,22 @@ class ChangeCoverDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        callBack = activity as? CallBack
         tool_bar.setTitle(R.string.change_cover_source)
+        arguments?.let { bundle ->
+            bundle.getString("name")?.let {
+                viewModel.name = it
+            }
+            bundle.getString("author")?.let {
+                viewModel.author = it
+            }
+        }
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = CoverAdapter(requireContext())
         recycler_view.adapter = adapter
     }
 
+    interface CallBack {
+
+    }
 }

@@ -15,7 +15,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
 
 class BookInfoEditActivity :
-    VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit) {
+    VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit),
+    ChangeCoverDialog.CallBack {
     override val viewModel: BookInfoEditViewModel
         get() = getViewModel(BookInfoEditViewModel::class.java)
 
