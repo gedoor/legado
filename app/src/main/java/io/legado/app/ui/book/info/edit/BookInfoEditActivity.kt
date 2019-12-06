@@ -43,7 +43,9 @@ class BookInfoEditActivity :
 
     private fun initEvent() {
         tv_change_cover.onClick {
-            ChangeCoverDialog().show(supportFragmentManager, "changeCoverDialog")
+            viewModel.bookData.value?.let {
+                ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
+            }
         }
     }
 

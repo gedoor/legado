@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.utils.getViewModel
@@ -13,6 +14,21 @@ import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
 class ChangeCoverDialog : DialogFragment() {
+
+    companion object {
+        const val tag = "changeCoverDialog"
+
+        fun show(manager: FragmentManager, name: String, author: String) {
+            val fragment = (manager.findFragmentByTag(tag) as? ChangeCoverDialog)
+                ?: ChangeCoverDialog().apply {
+                    val bundle = Bundle()
+                    bundle.putString("name", name)
+                    bundle.putString("author", author)
+                    arguments = bundle
+                }
+            fragment.show(manager, tag)
+        }
+    }
 
     private lateinit var viewModel: ChangeCoverViewModel
     private lateinit var adapter: CoverAdapter
