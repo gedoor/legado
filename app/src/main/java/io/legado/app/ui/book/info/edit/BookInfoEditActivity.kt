@@ -67,7 +67,7 @@ class BookInfoEditActivity :
     }
 
     private fun saveData() {
-        viewModel.bookData.value?.let { book ->
+        viewModel.book?.let { book ->
             book.name = tie_book_name.text?.toString() ?: ""
             book.author = tie_book_author.text?.toString() ?: ""
             val customCoverUrl = tie_cover_url.text?.toString()
