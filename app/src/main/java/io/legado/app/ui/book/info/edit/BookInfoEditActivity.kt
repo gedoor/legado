@@ -8,8 +8,10 @@ import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.ui.changecover.ChangeCoverDialog
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
 
 class BookInfoEditActivity :
@@ -24,6 +26,7 @@ class BookInfoEditActivity :
                 viewModel.loadBook(it)
             }
         }
+        initEvent()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -36,6 +39,12 @@ class BookInfoEditActivity :
             R.id.menu_save -> saveData()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private fun initEvent() {
+        tv_change_cover.onClick {
+            ChangeCoverDialog().show(supportFragmentManager, "changeCoverDialog")
+        }
     }
 
     private fun upView(book: Book) {
