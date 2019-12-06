@@ -74,4 +74,8 @@ class BookInfoEditActivity :
                 })
         }
     }
+
+    override fun coverChangeTo(coverUrl: String) {
+
+    }
 }

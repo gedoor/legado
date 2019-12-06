@@ -68,6 +68,6 @@ class ChangeCoverDialog : DialogFragment() {
     }
 
     interface CallBack {
-
+        fun coverChangeTo(coverUrl: String)
     }
 }
