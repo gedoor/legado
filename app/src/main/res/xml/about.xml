@@ -5,7 +5,7 @@
     <androidx.preference.Preference
         android:key="isNightTheme"
         android:title="开发人员"
-        android:summary="gedoor, Invinciblelee, atbest, Antecer, mabDc"
+        android:summary="gedoor, Invinciblelee, atbest, Antecer, mabDc, Ca1e"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
