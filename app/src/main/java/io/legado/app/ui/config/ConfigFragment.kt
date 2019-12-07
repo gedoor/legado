@@ -12,6 +12,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
+import io.legado.app.help.FileHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -59,6 +60,11 @@ class ConfigFragment : PreferenceFragmentCompat(),
                 mode = FileChooserDialog.DIRECTORY,
                 initPath = getPreferenceString(PreferKey.downloadPath)
             )
+            PreferKey.cleanCache -> {
+                LogUtils.d("xxx","cleancaches")
+                FileHelp.deleteFile(getPreferenceString(PreferKey.downloadPath))
+                toast("成功清理缓存")
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -69,8 +75,8 @@ class ConfigFragment : PreferenceFragmentCompat(),
                 BookHelp.upDownloadPath()
                 findPreference<Preference>(key)?.summary = getPreferenceString(key)
             }
-            "recordLog" -> LogUtils.upLevel()
-            "process_text" -> sharedPreferences?.let {
+            PreferKey.recordLog -> LogUtils.upLevel()
+            PreferKey.processText -> sharedPreferences?.let {
                 setProcessTextEnable(it.getBoolean("process_text", true))
             }
             PreferKey.showRss -> postEvent(PreferKey.showRss, PreferKey.showRss)
