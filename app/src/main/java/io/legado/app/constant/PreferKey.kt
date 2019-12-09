@@ -10,4 +10,7 @@ object PreferKey {
     const val nextKey = "nextKeyCode"
     const val showRss = "showRss"
     const val bookshelfLayout = "bookshelfLayout"
+    const val recordLog = "recordLog"
+    const val processText = "process_text"
+    const val cleanCache = "cleanCache"
 }
