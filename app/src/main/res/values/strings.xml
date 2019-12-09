@@ -202,7 +202,7 @@
     <string name="replace_rule_summary">替换规则名称</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
-    <string name="dark_theme">暗色主题</string>
+    <string name="dark_theme">深色模式</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>
     <string name="download_cancel">取消下载</string>

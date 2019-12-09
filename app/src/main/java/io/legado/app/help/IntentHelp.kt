@@ -21,6 +21,17 @@ object IntentHelp {
         }
     }
 
+    fun toInstallUnknown(context: Context) {
+        try {
+            val intent = Intent()
+            intent.action = "android.settings.MANAGE_UNKNOWN_APP_SOURCES"
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+        } catch (ignored: Exception) {
+            context.toast("无法打开设置")
+        }
+    }
+
     inline fun <reified T> servicePendingIntent(context: Context, action: String): PendingIntent? {
         return PendingIntent.getService(
             context,

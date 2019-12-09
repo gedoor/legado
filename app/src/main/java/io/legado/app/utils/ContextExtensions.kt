@@ -7,10 +7,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.defaultSharedPreferences
-
-fun Context.isOnline() = connectivityManager.activeNetworkInfo?.isConnected == true
+import java.util.function.BinaryOperator
 
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)

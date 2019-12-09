@@ -57,7 +57,7 @@
         app:iconSpaceReserved="false">
 
         <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_blue_grey_600"
+            android:defaultValue="@color/md_grey_900"
             android:key="colorPrimaryNight"
             android:summary="夜间，主色调"
             android:title="主色调"
@@ -73,7 +73,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_grey_800"
+            android:defaultValue="@color/md_black_1000"
             android:key="colorBackgroundNight"
             android:summary="夜间，背景色"
             android:title="背景色"
