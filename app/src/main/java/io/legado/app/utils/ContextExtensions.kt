@@ -8,7 +8,6 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import org.jetbrains.anko.defaultSharedPreferences
-import java.util.function.BinaryOperator
 
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)
