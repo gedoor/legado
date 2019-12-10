@@ -100,18 +100,14 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                         .setMessage("是否确认恢复？")
                         .setPositiveButton(R.string.ok) { _, _ ->
                             preferenceManager.sharedPreferences.edit()
+                                    // light mode
                                 .putInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
                                 .putInt("colorAccent", getCompatColor(R.color.md_pink_800))
                                 .putInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                                .putInt(
-                                    "colorPrimaryNight",
-                                    getCompatColor(R.color.md_blue_grey_600)
-                                )
-                                .putInt(
-                                    "colorAccentNight",
-                                    getCompatColor(R.color.md_deep_orange_800)
-                                )
-                                .putInt("colorBackgroundNight", getCompatColor(R.color.md_grey_800))
+                                    // dark mode
+                                .putInt("colorPrimaryNight", getCompatColor(R.color.md_grey_900))
+                                .putInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
+                                .putInt("colorBackgroundNight", getCompatColor(R.color.md_black_1000))
                                 .apply()
                             App.INSTANCE.applyTheme()
                             recreateActivities()

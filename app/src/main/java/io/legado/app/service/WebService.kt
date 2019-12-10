@@ -34,7 +34,6 @@ class WebService : BaseService() {
                 context.startService(intent)
             }
         }
-
     }
 
     private var httpServer: HttpServer? = null

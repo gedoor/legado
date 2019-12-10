@@ -16,6 +16,7 @@ import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
+import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -23,7 +24,9 @@ import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
@@ -79,12 +82,18 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             super.onPause()
         }
 
-        override fun onSharedPreferenceChanged(
-            sharedPreferences: SharedPreferences?,
-            key: String?
-        ) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             when (key) {
                 "isNightTheme" -> App.INSTANCE.applyDayNight()
+                "webService" -> {
+                    if (requireContext().getPrefBoolean("webService")) {
+                        WebService.start(requireContext())
+                        toast("正在启动服务\n具体信息查看通知栏")
+                    }else{
+                        WebService.stop(requireContext())
+                        toast("服务已停止")
+                    }
+                }
                 "recordLog" -> LogUtils.upLevel()
                 "downloadPath" -> BookHelp.upDownloadPath()
             }

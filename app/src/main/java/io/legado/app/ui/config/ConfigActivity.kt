@@ -19,7 +19,7 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
 
         when (viewModel.configType) {
             ConfigViewModel.TYPE_CONFIG -> {
-                title_bar.title = getString(R.string.setting)
+                title_bar.title = getString(R.string.other_setting)
                 val fTag = "configFragment"
                 var configFragment = supportFragmentManager.findFragmentByTag(fTag)
                 if (configFragment == null) configFragment = ConfigFragment()
