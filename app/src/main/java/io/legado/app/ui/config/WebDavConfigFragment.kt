@@ -1,6 +1,5 @@
 package io.legado.app.ui.config
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -106,7 +105,22 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                     WebDavHelp.showRestoreDialog(requireContext())
                 }
                 .request()
-            "import_old" -> needInstallApps { importOld() }
+            "import_old" -> needInstallApps {
+                alert(title = "导入") {
+                    message = "是否导入旧版本数据"
+                    yesButton {
+                        PermissionsCompat.Builder(this@WebDavConfigFragment)
+                            .addPermissions(*Permissions.Group.STORAGE)
+                            .rationale(R.string.tip_perm_request_storage)
+                            .onGranted {
+                                Restore.importYueDuData(requireContext())
+                            }
+                            .request()
+                    }
+                    noButton {
+                    }
+                }.show().applyTint()
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -132,22 +146,5 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
             LogUtils.d("xxx","import old")
             callback()
         }
-    }
-
-    private fun importOld() {
-        alert(title = "导入") {
-            message = "是否导入旧版本数据"
-            yesButton {
-                PermissionsCompat.Builder(this@WebDavConfigFragment)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted {
-                        Restore.importYueDuData(requireContext())
-                    }
-                    .request()
-            }
-            noButton {
-            }
-        }.show().applyTint()
     }
 }

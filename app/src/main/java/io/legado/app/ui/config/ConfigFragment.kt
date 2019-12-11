@@ -61,8 +61,10 @@ class ConfigFragment : PreferenceFragmentCompat(),
                 initPath = getPreferenceString(PreferKey.downloadPath)
             )
             PreferKey.cleanCache -> {
-                LogUtils.d("xxx","cleancaches")
-                FileHelp.deleteFile(getPreferenceString(PreferKey.downloadPath))
+                getPreferenceString(PreferKey.downloadPath).let {
+                    FileHelp.deleteFile(it)
+                    FileHelp.getFolder(it)
+                }
                 toast("成功清理缓存")
             }
         }
