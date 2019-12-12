@@ -20,19 +20,23 @@
         android:summary="@string/web_dav_pw_s"
         app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="web_dav_backup"
-        android:title="备份"
-        app:iconSpaceReserved="false" />
+    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory app:iconSpaceReserved="false">
 
-    <androidx.preference.Preference
-        android:key="web_dav_restore"
-        android:title="恢复"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.Preference
+            android:key="web_dav_backup"
+            android:title="备份"
+            app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="import_old"
-        android:title="导入旧版本数据"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.Preference
+            android:key="web_dav_restore"
+            android:title="恢复"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="import_old"
+            android:title="导入旧版本数据"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

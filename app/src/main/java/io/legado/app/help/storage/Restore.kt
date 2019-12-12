@@ -7,6 +7,7 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
@@ -14,8 +15,6 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.storage.Backup.defaultPath
-import io.legado.app.help.storage.Backup.legadoPath
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -37,7 +36,7 @@ object Restore {
         )
     }
 
-    fun restore(path: String = legadoPath) {
+    fun restore(path: String = Backup.legadoPath) {
         doAsync {
             try {
                 val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
@@ -99,14 +98,14 @@ object Restore {
                 }
                 edit.commit()
             }
-            uiThread { App.INSTANCE.toast("恢复完成") }
+            uiThread { App.INSTANCE.toast(R.string.restore_success) }
         }
     }
 
     fun importYueDuData(context: Context) {
         GlobalScope.launch(IO) {
             try {// 导入书架
-                val shelfFile = FileHelp.getFile(defaultPath + File.separator + "myBookShelf.json")
+                val shelfFile = FileHelp.getFile(Backup.defaultPath + File.separator + "myBookShelf.json")
                 val books = mutableListOf<Book>()
                 val items: List<Map<String, Any>> = jsonPath.parse(shelfFile.readText()).read("$")
                 val existingBooks = App.db.bookDao().allBookUrls.toSet()
@@ -156,7 +155,7 @@ object Restore {
 
             try {// Book source
                 val sourceFile =
-                    FileHelp.getFile(defaultPath + File.separator + "myBookSource.json")
+                    FileHelp.getFile(Backup.defaultPath + File.separator + "myBookSource.json")
                 val bookSources = mutableListOf<BookSource>()
                 val items: List<Map<String, Any>> = jsonPath.parse(sourceFile.readText()).read("$")
                 for (item in items) {
@@ -177,7 +176,7 @@ object Restore {
 
             try {// Replace rules
                 val ruleFile =
-                    FileHelp.getFile(defaultPath + File.separator + "myBookReplaceRule.json")
+                    FileHelp.getFile(Backup.defaultPath + File.separator + "myBookReplaceRule.json")
                 val replaceRules = mutableListOf<ReplaceRule>()
                 val items: List<Map<String, Any>> = jsonPath.parse(ruleFile.readText()).read("$")
                 val existingRules = App.db.replaceRuleDao().all.map { it.pattern }.toSet()

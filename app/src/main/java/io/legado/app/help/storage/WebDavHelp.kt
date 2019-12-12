@@ -18,6 +18,9 @@ import kotlin.math.min
 
 object WebDavHelp {
     private val zipFilePath = FileHelp.getCachePath() + "/backup" + ".zip"
+    private val unzipFilesPath by lazy {
+        FileHelp.getCachePath()
+    }
 
     private fun getWebDavUrl(): String? {
         var url = App.INSTANCE.getPrefString("web_dav_url")
@@ -73,8 +76,8 @@ object WebDavHelp {
             getWebDavUrl()?.let {
                 val file = WebDav(it + "legado/" + name)
                 file.downloadTo(zipFilePath, true)
-                ZipUtils.unzipFile(zipFilePath, Backup.legadoPath)
-                Restore.restore()
+                ZipUtils.unzipFile(zipFilePath, unzipFilesPath)
+                Restore.restore(unzipFilesPath)
             }
         }
     }

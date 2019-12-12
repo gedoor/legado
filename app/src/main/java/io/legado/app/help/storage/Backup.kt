@@ -20,23 +20,26 @@ object Backup {
     }
 
     val legadoPath by lazy {
-        defaultPath + File.separator + "legadoBackUp"
+        FileUtils.getSdCardPath() + File.separator + "YueDu3.0"
     }
 
     val exportPath by lazy {
         legadoPath + File.separator + "Export"
     }
 
+    private fun pbackup(path :String = legadoPath){
+        backupBookshelf(path)
+        backupBookSource(path)
+        backupRssSource(path)
+        backupReplaceRule(path)
+        backupReadConfig(path)
+        backupPreference(path)
+        WebDavHelp.backUpWebDav(path)
+    }
+
     fun backup() {
         doAsync {
-            val path = legadoPath
-            backupBookshelf(path)
-            backupBookSource(path)
-            backupRssSource(path)
-            backupReplaceRule(path)
-            backupReadConfig(path)
-            backupPreference(path)
-            WebDavHelp.backUpWebDav(path)
+            pbackup()
             uiThread {
                 App.INSTANCE.toast(R.string.backup_success)
             }
@@ -45,14 +48,7 @@ object Backup {
 
     fun autoBackup() {
         doAsync {
-            val path = legadoPath
-            backupBookshelf(path)
-            backupBookSource(path)
-            backupRssSource(path)
-            backupReplaceRule(path)
-            backupReadConfig(path)
-            backupPreference(path)
-            WebDavHelp.backUpWebDav(path)
+            pbackup()
         }
     }
 
