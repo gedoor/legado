@@ -10,6 +10,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
 import io.legado.app.help.FileHelp
@@ -65,7 +66,7 @@ class ConfigFragment : PreferenceFragmentCompat(),
                     FileHelp.deleteFile(it)
                     FileHelp.getFolder(it)
                 }
-                toast("成功清理缓存")
+                toast(R.string.clear_cache_success)
             }
         }
         return super.onPreferenceTreeClick(preference)
@@ -81,7 +82,7 @@ class ConfigFragment : PreferenceFragmentCompat(),
             PreferKey.processText -> sharedPreferences?.let {
                 setProcessTextEnable(it.getBoolean("process_text", true))
             }
-            PreferKey.showRss -> postEvent(PreferKey.showRss, PreferKey.showRss)
+            PreferKey.showRss -> postEvent(Bus.SHOW_RSS, "unused")
         }
     }
 

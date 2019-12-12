@@ -160,6 +160,7 @@
     <string name="author_show">作者:%s</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_cache">清除缓存</string>
+    <string name="clear_cache_success">成功清理缓存</string>
     <string name="action_save">保存</string>
     <string name="edit_source">编辑源</string>
     <string name="edit_book_source">编辑书源</string>
