@@ -182,7 +182,7 @@ class ReadStyleDialog : DialogFragment() {
                     requireContext().putPrefInt("pageAnim", i)
                     val activity = activity
                     if (activity is ReadBookActivity) {
-                        activity.page_view.upPageAnim()
+                        activity.page_view.upPageAnim(i)
                     }
                     break
                 }
