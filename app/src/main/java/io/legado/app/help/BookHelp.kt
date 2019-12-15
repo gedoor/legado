@@ -26,6 +26,15 @@ object BookHelp {
                         ?: App.INSTANCE.cacheDir.absolutePath
     }
 
+    private fun getBookCachePath(): String {
+        return "$downloadPath${File.separator}book_cache"
+    }
+
+    fun clearCache() {
+        FileHelp.deleteFile(getBookCachePath())
+        FileHelp.getFolder(getBookCachePath())
+    }
+
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
         val filePath = getChapterPath(book, bookChapter)
@@ -69,7 +78,7 @@ object BookHelp {
         val bookFolder = formatFolderName(book.name + book.bookUrl)
         val chapterFile =
             String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
-        return "$downloadPath${File.separator}book_cache${File.separator}$bookFolder${File.separator}$chapterFile.nb"
+        return "${getBookCachePath()}${File.separator}$bookFolder${File.separator}$chapterFile.nb"
     }
 
     private fun formatFolderName(folderName: String): String {
