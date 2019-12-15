@@ -13,7 +13,6 @@ import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
-import io.legado.app.help.FileHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -62,10 +61,7 @@ class ConfigFragment : PreferenceFragmentCompat(),
                 initPath = getPreferenceString(PreferKey.downloadPath)
             )
             PreferKey.cleanCache -> {
-                getPreferenceString(PreferKey.downloadPath).let {
-                    FileHelp.deleteFile(it)
-                    FileHelp.getFolder(it)
-                }
+                BookHelp.clearCache()
                 toast(R.string.clear_cache_success)
             }
         }
