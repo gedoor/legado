@@ -70,13 +70,13 @@ class App : Application() {
         if (isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
+                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_grey_900))
                 )
                 .accentColor(
                     getPrefInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
                 )
                 .backgroundColor(
-                    getPrefInt("colorBackgroundNight", getCompatColor(R.color.md_grey_800))
+                    getPrefInt("colorBackgroundNight", getCompatColor(R.color.md_black_1000))
                 )
                 .apply()
         } else {
@@ -101,7 +101,6 @@ class App : Application() {
         initNightTheme()
     }
 
-
     private fun initNightTheme() {
         val targetMode = if (isNightTheme) {
             AppCompatDelegate.MODE_NIGHT_YES
@@ -110,7 +109,6 @@ class App : Application() {
         }
         AppCompatDelegate.setDefaultNightMode(targetMode)
     }
-
 
     /**
      * 创建通知ID

@@ -103,7 +103,9 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
         kotlin.runCatching {
             for (field in fields) {
                 field.isAccessible = true
-                paramsMap[field.name] = field.get(null).toString()
+                field.get(null)?.toString()?.let {
+                    paramsMap[field.name] = it
+                }
             }
         }
     }

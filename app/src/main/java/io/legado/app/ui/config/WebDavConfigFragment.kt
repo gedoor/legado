@@ -1,9 +1,7 @@
 package io.legado.app.ui.config
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.text.InputType
 import android.view.View
 import androidx.preference.EditTextPreference
@@ -11,6 +9,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
+import io.legado.app.help.IntentHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
@@ -21,12 +20,22 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 
 class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        fun bindPreferenceSummaryToValue(preference: Preference?) {
+            preference?.apply {
+                onPreferenceChangeListener = this@WebDavConfigFragment
+                onPreferenceChange(
+                    this,
+                    context.getPrefString(key)
+                )
+            }
+        }
         addPreferencesFromResource(R.xml.pref_config_web_dav)
         findPreference<EditTextPreference>("web_dav_url")?.let {
             it.setOnBindEditTextListener { editText ->
@@ -82,61 +91,60 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
         return true
     }
 
-    private fun bindPreferenceSummaryToValue(preference: Preference?) {
-        preference?.apply {
-            onPreferenceChangeListener = this@WebDavConfigFragment
-            onPreferenceChange(
-                this,
-                context.getPrefString(key)
-            )
-        }
-    }
-
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "web_dav_backup" -> Backup.backup()
-            "web_dav_restore" -> WebDavHelp.showRestoreDialog(requireContext())
-            "import_old" -> importOld()
-        }
-        return super.onPreferenceTreeClick(preference)
-    }
-
-    private fun importOld() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            val haveInstallPermission = context!!.packageManager.canRequestPackageInstalls()
-            if (haveInstallPermission) {
-                startImport()
-            } else { //没有安装外部来源应用的权限
-                alert(title = "开启权限提示") {
-                    message = "需要打开「安装外部来源应用」权限才能导入旧版数据，请去设置中开启"
+            "web_dav_backup" -> PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted { Backup.backup() }
+                .request()
+            "web_dav_restore" -> PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted {
+                    WebDavHelp.showRestoreDialog(requireContext())
+                }
+                .request()
+            "import_old" -> needInstallApps {
+                alert(title = "导入") {
+                    message = "是否导入旧版本数据"
                     yesButton {
-                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
-                        startActivityForResult(intent, 666)
+                        PermissionsCompat.Builder(this@WebDavConfigFragment)
+                            .addPermissions(*Permissions.Group.STORAGE)
+                            .rationale(R.string.tip_perm_request_storage)
+                            .onGranted {
+                                Restore.importYueDuData(requireContext())
+                            }
+                            .request()
                     }
                     noButton {
                     }
                 }.show().applyTint()
             }
+        }
+        return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun needInstallApps(callback: () -> Unit) {
+
+        fun canRequestPackageInstalls() :Boolean {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                return requireContext().packageManager.canRequestPackageInstalls()
+            }
+            return true
+        }
+        if (!canRequestPackageInstalls()) {
+            alert(title = "开启权限提示") {
+                message = "需要打开「安装外部来源应用」权限才能导入旧版数据，请去设置中开启"
+                yesButton {
+                    IntentHelp.toInstallUnknown(requireContext())
+                }
+                noButton {
+                }
+            }.show().applyTint()
         } else {
-            startImport()
+            LogUtils.d("xxx","import old")
+            callback()
         }
     }
-
-    private fun startImport() {
-        alert(title = "导入") {
-            message = "是否导入旧版本数据"
-            yesButton {
-                PermissionsCompat.Builder(this@WebDavConfigFragment)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted {
-                        Restore.importYueDuData(requireContext())
-                    }
-                    .request()
-            }
-            noButton {
-            }
-        }.show().applyTint()
-    }
-
 }

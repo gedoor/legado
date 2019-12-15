@@ -11,7 +11,6 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.page.curl.CurlView
 import io.legado.app.ui.widget.page.delegate.*
 import io.legado.app.utils.activity
-import io.legado.app.utils.getPrefInt
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -89,13 +88,13 @@ class PageView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    fun upPageAnim() {
+    fun upPageAnim(pageAnim: Int = 0) {
         if (curlView != null) {
             removeView(curlView)
             curlView = null
         }
         pageDelegate = null
-        pageDelegate = when (context.getPrefInt("pageAnim")) {
+        pageDelegate = when (pageAnim) {
             0 -> CoverPageDelegate(this)
             1 -> SlidePageDelegate(this)
             2 -> SimulationPageDelegate(this)

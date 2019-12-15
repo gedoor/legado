@@ -34,7 +34,6 @@ class WebService : BaseService() {
                 context.startService(intent)
             }
         }
-
     }
 
     private var httpServer: HttpServer? = null
@@ -49,6 +48,12 @@ class WebService : BaseService() {
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
+        if (httpServer?.isAlive == true) {
+            httpServer?.stop()
+        }
+        if (webSocketServer?.isAlive == true) {
+            webSocketServer?.stop()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

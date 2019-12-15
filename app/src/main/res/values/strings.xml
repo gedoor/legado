@@ -160,6 +160,7 @@
     <string name="author_show">作者:%s</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_cache">清除缓存</string>
+    <string name="clear_cache_success">成功清理缓存</string>
     <string name="action_save">保存</string>
     <string name="edit_source">编辑源</string>
     <string name="edit_book_source">编辑书源</string>
@@ -202,7 +203,7 @@
     <string name="replace_rule_summary">替换规则名称</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
-    <string name="dark_theme">暗色主题</string>
+    <string name="dark_theme">深色模式</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>
     <string name="download_cancel">取消下载</string>
@@ -313,6 +314,7 @@
     <string name="use_to">替换范围，选填书名或者源名</string>
     <string name="menu_action_group">分组</string>
     <string name="download_path">内容缓存路径</string>
+    <string name="cleancache">清理缓存</string>
     <string name="sys_file_picker">系统文件选择器</string>
     <string name="new_version">新版本</string>
     <string name="download_update">下载更新</string>

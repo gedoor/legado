@@ -39,4 +39,8 @@
         android:key="recordLog"
         android:title="记录日志"
         app:iconSpaceReserved="false" />
+    <Preference
+        android:key="cleanCache"
+        android:title="@string/cleancache"
+        app:iconSpaceReserved="false" />
 </androidx.preference.PreferenceScreen>
