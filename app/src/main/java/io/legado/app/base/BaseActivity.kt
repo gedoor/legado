@@ -19,8 +19,11 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity(private val layoutID: Int, private val fullScreen: Boolean = true) :
-    AppCompatActivity(),
+abstract class BaseActivity(
+    private val layoutID: Int,
+    private val fullScreen: Boolean = true,
+    private val initTheme: Boolean = true
+) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,10 +76,12 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
 
     private fun initTheme() {
         ATH.applyBackgroundTint(window.decorView)
-        if (ColorUtils.isColorLight(primaryColor)) {
-            setTheme(R.style.AppTheme_Light)
-        } else {
-            setTheme(R.style.AppTheme_Dark)
+        if (initTheme) {
+            if (ColorUtils.isColorLight(primaryColor)) {
+                setTheme(R.style.AppTheme_Light)
+            } else {
+                setTheme(R.style.AppTheme_Dark)
+            }
         }
     }
 

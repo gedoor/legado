@@ -25,7 +25,7 @@
 
     <!-- BookInfo主题 -->
     <style name="AppTheme.BookInfo" parent="Base.AppTheme">
-        <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Light</item>
+        <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Dark</item>
         <item name="elevation">0dp</item><!--去掉toolbar阴影，去线留白-->
     </style>
 

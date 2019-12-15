@@ -36,7 +36,8 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 
-class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info),
+class BookInfoActivity :
+    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, initTheme = false),
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack {
