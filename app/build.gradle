@@ -160,8 +160,6 @@ dependencies {
     //MarkDown
     implementation 'ru.noties.markwon:core:3.0.2'
 
-    //高斯模糊
-    implementation 'jp.wasabeef:glide-transformations:4.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
