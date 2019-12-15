@@ -13,4 +13,5 @@ object PreferKey {
     const val recordLog = "recordLog"
     const val processText = "process_text"
     const val cleanCache = "cleanCache"
+    const val lastGroup = "lastGroup"
 }

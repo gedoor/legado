@@ -13,7 +13,6 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.ACache
 import kotlinx.android.synthetic.main.activity_donate.*
-import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.toast
 import java.net.URLEncoder
 
@@ -25,7 +24,6 @@ import java.net.URLEncoder
 class DonateActivity : BaseActivity(R.layout.activity_donate) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
         ATH.applyEdgeEffectColor(scroll_view)
         vw_zfb_tz.setOnClickListener { aliDonate(this) }
         cv_wx_gzh.setOnClickListener {

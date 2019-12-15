@@ -121,6 +121,7 @@ class ChangeSourceDialog : DialogFragment(),
     override fun changeTo(searchBook: SearchBook) {
         val book = searchBook.toBook()
         callBack?.oldBook?.let { oldBook ->
+            book.group = oldBook.group
             book.durChapterIndex = oldBook.durChapterIndex
             book.durChapterPos = oldBook.durChapterPos
             book.durChapterTitle = oldBook.durChapterTitle
