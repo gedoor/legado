@@ -256,7 +256,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun upContent(position: Int) {
-        page_view.upContent(position)
+        launch {
+            page_view.upContent(position)
+        }
     }
 
     override fun upView() {

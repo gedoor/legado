@@ -55,7 +55,7 @@ data class TextChapter(
     fun getReadLength(pageIndex: Int): Int {
         var length = 0
         val maxIndex = min(pageIndex, pageLines.lastIndex)
-        for (index in 0 until maxIndex) {
+        for (index in 0..maxIndex) {
             length += pageLengths[index]
         }
         return length
