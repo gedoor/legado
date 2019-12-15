@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.preference.Preference
-        android:key="isNightTheme"
+        android:key="contributors"
         android:title="开发人员"
-        android:summary="gedoor, Invinciblelee, atbest, Antecer, mabDc, Ca1e"
+        android:summary="gedoor,Invinciblelee等, 详情请在github中查看"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
