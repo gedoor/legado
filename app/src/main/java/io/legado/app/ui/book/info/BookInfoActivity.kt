@@ -36,7 +36,7 @@ import org.jetbrains.anko.toast
 
 
 class BookInfoActivity :
-    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, initTheme = false),
+    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, theme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack {

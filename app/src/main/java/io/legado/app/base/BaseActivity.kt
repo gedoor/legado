@@ -22,7 +22,7 @@ import kotlinx.coroutines.cancel
 abstract class BaseActivity(
     private val layoutID: Int,
     private val fullScreen: Boolean = true,
-    private val initTheme: Boolean = true
+    private val theme: Theme = Theme.Auto
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
@@ -76,8 +76,10 @@ abstract class BaseActivity(
 
     private fun initTheme() {
         ATH.applyBackgroundTint(window.decorView)
-        if (initTheme) {
-            if (ColorUtils.isColorLight(primaryColor)) {
+        when (theme) {
+            Theme.Dark -> setTheme(R.style.AppTheme_Dark)
+            Theme.Light -> setTheme(R.style.AppTheme_Light)
+            else -> if (ColorUtils.isColorLight(primaryColor)) {
                 setTheme(R.style.AppTheme_Light)
             } else {
                 setTheme(R.style.AppTheme_Dark)
@@ -104,5 +106,9 @@ abstract class BaseActivity(
     override fun finish() {
         currentFocus?.hideSoftInput()
         super.finish()
+    }
+
+    enum class Theme {
+        Dark, Light, Auto
     }
 }

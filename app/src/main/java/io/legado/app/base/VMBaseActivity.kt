@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 abstract class VMBaseActivity<VM : ViewModel>(
     layoutID: Int,
     fullScreen: Boolean = true,
-    initTheme: Boolean = true
-) : BaseActivity(layoutID, fullScreen, initTheme) {
+    theme: Theme = Theme.Auto
+) : BaseActivity(layoutID, fullScreen, theme) {
 
     protected abstract val viewModel: VM
 

@@ -23,12 +23,6 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <!-- BookInfo主题 -->
-    <style name="AppTheme.BookInfo" parent="Base.AppTheme">
-        <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Dark</item>
-        <item name="elevation">0dp</item><!--去掉toolbar阴影，去线留白-->
-    </style>
-
     <!-- Base application theme. -->
     <style name="Base.AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -39,6 +33,7 @@
         <item name="android:popupMenuStyle">@style/Style.PopupMenu</item>
         <item name="android:statusBarColor">@color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light">
