@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
@@ -23,6 +26,7 @@ import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_book_info.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -40,6 +44,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
+        title_bar.getBackground().setAlpha(0)
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.chapterListData.observe(this, Observer { showChapter(it) })
@@ -103,6 +108,12 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
                 .error(R.drawable.image_cover_default)
                 .centerCrop()
                 .into(iv_cover)
+            Glide.with(this).load(it)
+                .transition(DrawableTransitionOptions.withCrossFade(1500))
+                .error(R.drawable.image_cover_default)
+                .centerCrop()
+                .apply(bitmapTransform(BlurTransformation(125, 6)))
+                .into(bg_book)  //模糊、渐变、缩小效果
         }
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {

@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/bg_book"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        app:layout_constraintBottom_toTopOf="@+id/view_info"
+        android:scaleType="centerCrop" />
+
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
