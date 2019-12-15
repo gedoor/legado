@@ -2,15 +2,12 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
-import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
 import io.legado.app.lib.theme.primaryColor
@@ -189,34 +186,4 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
     }
 
-    private fun wrapDrawableTint(drawable: Drawable?, tintList: ColorStateList?, tintMode: Int) {
-        if (drawable == null || tintList == null) return
-        val wrappedDrawable = DrawableCompat.wrap(drawable.mutate())
-        DrawableCompat.setTintList(wrappedDrawable, tintList)
-        DrawableCompat.setTintMode(wrappedDrawable, intToMode(tintMode))
-    }
-
-    private fun intToMode(`val`: Int): PorterDuff.Mode {
-        when (`val`) {
-            0 -> return PorterDuff.Mode.CLEAR
-            1 -> return PorterDuff.Mode.SRC
-            2 -> return PorterDuff.Mode.DST
-            3 -> return PorterDuff.Mode.SRC_OVER
-            4 -> return PorterDuff.Mode.DST_OVER
-            5 -> return PorterDuff.Mode.SRC_IN
-            6 -> return PorterDuff.Mode.DST_IN
-            7 -> return PorterDuff.Mode.SRC_OUT
-            8 -> return PorterDuff.Mode.DST_OUT
-            9 -> return PorterDuff.Mode.SRC_ATOP
-            10 -> return PorterDuff.Mode.DST_ATOP
-            11 -> return PorterDuff.Mode.XOR
-            16 -> return PorterDuff.Mode.DARKEN
-            17 -> return PorterDuff.Mode.LIGHTEN
-            13 -> return PorterDuff.Mode.MULTIPLY
-            14 -> return PorterDuff.Mode.SCREEN
-            12 -> return PorterDuff.Mode.ADD
-            15 -> return PorterDuff.Mode.OVERLAY
-            else -> return PorterDuff.Mode.CLEAR
-        }
-    }
 }
