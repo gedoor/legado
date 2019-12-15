@@ -23,7 +23,7 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "contributors" -> openIntent(Intent.ACTION_VIEW, getString(R.string.this_github_url))
+            "contributors" -> openIntent(Intent.ACTION_VIEW, getString(R.string.contributors_url))
             "update_log" -> UpdateLog().show(childFragmentManager, "update_log")
             "check_update" -> openIntent(Intent.ACTION_VIEW, getString(R.string.latest_release_url))
             "mail" -> openIntent(Intent.ACTION_SENDTO, "mailto:kunfei.ge@gmail.com")

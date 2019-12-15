@@ -20,7 +20,7 @@
 
     <string name="source_rule_url">https://gitee.com/alanskycn/yuedu/blob/master/Rule/README.md</string>
     <string name="this_github_url">https://github.com/gedoor/legado</string>
-    <string name="contributors">https://github.com/gedoor/legado/graphs/contributors</string>
+    <string name="contributors_url">https://github.com/gedoor/legado/graphs/contributors</string>
     <string name="disclaimer_url">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
     <string name="home_page_url">https://gedoor.github.io/MyBookshelf/</string>
     <string name="latest_release_url">https://github.com/gedoor/legado/releases/latest</string>
