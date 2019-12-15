@@ -2,7 +2,6 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -14,9 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
-import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.activity
 import io.legado.app.utils.getNavigationBarHeight
 import io.legado.app.utils.getStatusBarHeight
@@ -189,20 +186,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
                 it.setSupportActionBar(toolbar)
                 it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
             }
-        }
-
-        val primaryTextColor = if (isInEditMode) Color.BLACK else context.primaryTextColor
-        DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
-        toolbar.setTitleTextColor(primaryTextColor)
-
-        if (navigationIconTint != null) {
-            wrapDrawableTint(toolbar.navigationIcon, navigationIconTint, navigationIconTintMode)
-        } else {
-            wrapDrawableTint(
-                toolbar.navigationIcon,
-                ColorStateList.valueOf(primaryTextColor),
-                navigationIconTintMode
-            )
         }
     }
 

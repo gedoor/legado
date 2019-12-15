@@ -26,7 +26,6 @@ import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_audio_play.*
-import kotlinx.android.synthetic.main.view_title_bar.*
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -43,7 +42,6 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     private var adjustProgress = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
         AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
         AudioPlay.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)

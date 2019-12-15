@@ -17,7 +17,6 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_chapter_list.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
-import kotlinx.android.synthetic.main.view_title_bar.*
 
 class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activity_chapter_list) {
     override val viewModel: ChapterListViewModel
@@ -26,7 +25,6 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
     private var searchView: SearchView? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
         tab_layout.setSelectedTabIndicatorColor(accentColor)
         viewModel.bookUrl = intent.getStringExtra("bookUrl")
         viewModel.loadBook {
