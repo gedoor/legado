@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -117,6 +118,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             .centerCrop()
             .into(iv_cover)
         ImageLoader.load(this, path)
+            .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
             .centerCrop()
             .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
