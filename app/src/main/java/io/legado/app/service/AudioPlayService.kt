@@ -45,10 +45,10 @@ class AudioPlayService : BaseService(),
 
     companion object {
         var isRun = false
+        var pause = false
         var timeMinute: Int = 0
     }
 
-    var pause = false
     private val handler = Handler()
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
@@ -92,7 +92,6 @@ class AudioPlayService : BaseService(),
                 Action.prev -> moveToPrev()
                 Action.next -> moveToNext()
                 Action.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
-                Action.moveTo -> moveTo(intent.getIntExtra("index", AudioPlay.durChapterIndex))
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 Action.adjustProgress -> adjustProgress(intent.getIntExtra("position", position))
@@ -135,7 +134,7 @@ class AudioPlayService : BaseService(),
     }
 
     private fun pause(pause: Boolean) {
-        this.pause = pause
+        AudioPlayService.pause = pause
         handler.removeCallbacks(mpRunnable)
         position = mediaPlayer.currentPosition
         mediaPlayer.pause()
@@ -311,16 +310,6 @@ class AudioPlayService : BaseService(),
             url = content
             play()
         }
-    }
-
-    private fun moveTo(index: Int) {
-        mediaPlayer.pause()
-        AudioPlay.durChapterIndex = index
-        AudioPlay.durPageIndex = 0
-        AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
-        saveRead()
-        position = 0
-        loadContent(AudioPlay.durChapterIndex)
     }
 
     private fun moveToPrev() {

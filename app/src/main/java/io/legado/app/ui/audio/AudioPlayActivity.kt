@@ -22,6 +22,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
+import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
@@ -172,7 +173,16 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             when (requestCode) {
                 requestCodeChapter -> data?.getIntExtra("index", AudioPlay.durChapterIndex)?.let {
                     if (it != AudioPlay.durChapterIndex) {
-                        AudioPlay.moveTo(this, it)
+                        val isPlay = !AudioPlayService.pause
+                        AudioPlay.pause(this)
+                        AudioPlay.status = Status.STOP
+                        AudioPlay.durChapterIndex = it
+                        AudioPlay.durPageIndex = 0
+                        AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
+                        viewModel.saveRead()
+                        if (isPlay) {
+                            AudioPlay.play(this)
+                        }
                     }
                 }
             }
