@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
@@ -44,10 +45,10 @@ class AudioPlayService : BaseService(),
 
     companion object {
         var isRun = false
+        var pause = false
         var timeMinute: Int = 0
     }
 
-    var pause = false
     private val handler = Handler()
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
@@ -91,7 +92,6 @@ class AudioPlayService : BaseService(),
                 Action.prev -> moveToPrev()
                 Action.next -> moveToNext()
                 Action.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
-                Action.moveTo -> moveTo(intent.getIntExtra("index", AudioPlay.durChapterIndex))
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 Action.adjustProgress -> adjustProgress(intent.getIntExtra("position", position))
@@ -121,7 +121,8 @@ class AudioPlayService : BaseService(),
                 AudioPlay.status = Status.PLAY
                 postEvent(Bus.AUDIO_STATE, Status.PLAY)
                 mediaPlayer.reset()
-                mediaPlayer.setDataSource(url)
+                val uri = Uri.parse(url)
+                mediaPlayer.setDataSource(this, uri, AudioPlay.headers())
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
                 launch {
@@ -133,7 +134,7 @@ class AudioPlayService : BaseService(),
     }
 
     private fun pause(pause: Boolean) {
-        this.pause = pause
+        AudioPlayService.pause = pause
         handler.removeCallbacks(mpRunnable)
         position = mediaPlayer.currentPosition
         mediaPlayer.pause()
@@ -311,16 +312,6 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    private fun moveTo(index: Int) {
-        mediaPlayer.pause()
-        AudioPlay.durChapterIndex = index
-        AudioPlay.durPageIndex = 0
-        AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
-        saveRead()
-        position = 0
-        loadContent(AudioPlay.durChapterIndex)
-    }
-
     private fun moveToPrev() {
         if (AudioPlay.durChapterIndex > 0) {
             mediaPlayer.pause()
@@ -354,6 +345,7 @@ class AudioPlayService : BaseService(),
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = AudioPlay.durChapterIndex
                 book.durChapterPos = AudioPlay.durPageIndex
+                book.durChapterTitle = subtitle
                 App.db.bookDao().update(book)
             }
         }

@@ -21,6 +21,10 @@ object AudioPlay {
     var webBook: WebBook? = null
     val loadingChapters = arrayListOf<Int>()
 
+    fun headers(): Map<String, String>? {
+        return webBook?.bookSource?.getHeaderMap()
+    }
+
     fun play(context: Context) {
         val intent = Intent(context, AudioPlayService::class.java)
         intent.action = Action.play
@@ -85,12 +89,4 @@ object AudioPlay {
         }
     }
 
-    fun moveTo(context: Context, index: Int) {
-        if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.moveTo
-            intent.putExtra("index", index)
-            context.startService(intent)
-        }
-    }
 }

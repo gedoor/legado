@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -21,6 +22,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
+import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
@@ -117,6 +119,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             .centerCrop()
             .into(iv_cover)
         ImageLoader.load(this, path)
+            .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
             .centerCrop()
             .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
@@ -170,7 +173,16 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
             when (requestCode) {
                 requestCodeChapter -> data?.getIntExtra("index", AudioPlay.durChapterIndex)?.let {
                     if (it != AudioPlay.durChapterIndex) {
-                        AudioPlay.moveTo(this, it)
+                        val isPlay = !AudioPlayService.pause
+                        AudioPlay.pause(this)
+                        AudioPlay.status = Status.STOP
+                        AudioPlay.durChapterIndex = it
+                        AudioPlay.durPageIndex = 0
+                        AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
+                        viewModel.saveRead()
+                        if (isPlay) {
+                            AudioPlay.play(this)
+                        }
                     }
                 }
             }
