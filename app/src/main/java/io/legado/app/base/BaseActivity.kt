@@ -99,6 +99,11 @@ abstract class BaseActivity(
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
         ATH.setStatusBarColorAuto(this, fullScreen)
+        if (theme == Theme.Dark) {
+            ATH.setLightStatusBar(this, false)
+        } else if (theme == Theme.Light) {
+            ATH.setLightStatusBar(this, true)
+        }
     }
 
     open fun observeLiveBus() {
