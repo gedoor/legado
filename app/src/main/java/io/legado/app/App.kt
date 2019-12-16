@@ -70,22 +70,22 @@ class App : Application() {
         if (isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_grey_900))
+                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
                 )
                 .accentColor(
-                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
+                    getPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
                 )
                 .backgroundColor(
-                    getPrefInt("colorBackgroundNight", getCompatColor(R.color.md_black_1000))
+                    getPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
                 )
                 .apply()
         } else {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
+                    getPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
                 )
                 .accentColor(
-                    getPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
+                    getPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
                 )
                 .backgroundColor(
                     getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
