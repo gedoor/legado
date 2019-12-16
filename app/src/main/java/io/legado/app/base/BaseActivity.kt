@@ -7,6 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
+import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.primaryColor
@@ -46,7 +47,7 @@ abstract class BaseActivity(
     final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {
             val bool = onCompatCreateOptionsMenu(it)
-            it.applyTint(this)
+            it.applyTint(this, theme)
             bool
         } ?: super.onCreateOptionsMenu(menu)
     }
@@ -106,9 +107,5 @@ abstract class BaseActivity(
     override fun finish() {
         currentFocus?.hideSoftInput()
         super.finish()
-    }
-
-    enum class Theme {
-        Dark, Light, Auto
     }
 }

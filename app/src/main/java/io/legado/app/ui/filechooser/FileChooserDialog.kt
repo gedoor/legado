@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
@@ -133,7 +134,7 @@ class FileChooserDialog : DialogFragment(),
                 tool_bar.menu.add(menuTitle)
             }
         }
-        tool_bar.menu.applyTint(requireContext(), false)
+        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
     }
 

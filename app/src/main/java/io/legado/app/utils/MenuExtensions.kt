@@ -1,32 +1,36 @@
 package io.legado.app.utils
 
 import android.content.Context
-import android.graphics.PorterDuff
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.forEach
 import io.legado.app.R
+import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import java.lang.reflect.Method
 import java.util.*
 
-fun Menu.applyTint(context: Context, inPrimary: Boolean = true): Menu = this.let { menu ->
+fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let { menu ->
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)
     }
     val primaryTextColor = context.primaryTextColor
     val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
+    val tintColor = when (theme) {
+        Theme.Dark -> context.getCompatColor(R.color.md_white_1000)
+        Theme.Light -> context.getCompatColor(R.color.md_black_1000)
+        else -> primaryTextColor
+    }
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
             //overflow：展开的item
             DrawableUtils.setTint(
                 impl.icon,
-                if (!inPrimary) defaultTextColor
-                else if (impl.requiresOverflow()) defaultTextColor
-                else primaryTextColor
+                if (impl.requiresOverflow()) defaultTextColor
+                else tintColor
             )
         }
     }
@@ -47,14 +51,10 @@ fun Menu.applyOpenTint(context: Context) {
             if (menuItems is ArrayList<*>) {
                 for (menuItem in menuItems) {
                     if (menuItem is MenuItem) {
-                        val drawable = menuItem.icon
-                        if (drawable != null) {
-                            drawable.mutate()
-                            drawable.setColorFilter(
-                                defaultTextColor,
-                                PorterDuff.Mode.SRC_ATOP
-                            )
-                        }
+                        DrawableUtils.setTint(
+                            menuItem.icon,
+                            defaultTextColor
+                        )
                     }
                 }
             }

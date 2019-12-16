@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
+import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup

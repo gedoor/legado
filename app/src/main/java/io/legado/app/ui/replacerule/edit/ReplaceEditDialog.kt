@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import io.legado.app.R
+import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
@@ -53,7 +54,7 @@ class ReplaceEditDialog : DialogFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tool_bar.inflateMenu(R.menu.replace_edit)
-        tool_bar.menu.applyTint(requireContext(), false)
+        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
         viewModel.replaceRuleData.observe(this, Observer {
             upReplaceView(it)
