@@ -48,9 +48,9 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         viewModel.bookUrl?.let { bookUrl ->
             App.db.bookChapterDao().observeByBook(bookUrl).observe(viewLifecycleOwner, Observer {
                 adapter.setItems(it)
-                viewModel.book?.let {
-                    durChapterIndex = it.durChapterIndex
-                    tv_current_chapter_info.text = it.durChapterTitle
+                viewModel.book?.let { book ->
+                    durChapterIndex = book.durChapterIndex
+                    tv_current_chapter_info.text = book.durChapterTitle
                     recycler_view.scrollToPosition(durChapterIndex)
                 }
             })

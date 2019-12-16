@@ -356,6 +356,7 @@ class AudioPlayService : BaseService(),
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = AudioPlay.durChapterIndex
                 book.durChapterPos = AudioPlay.durPageIndex
+                book.durChapterTitle = subtitle
                 App.db.bookDao().update(book)
             }
         }
