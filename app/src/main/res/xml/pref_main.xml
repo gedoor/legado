@@ -14,6 +14,12 @@
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
+        android:key="isNightTheme"
+        android:title="@string/night_theme"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="false"
         android:key="webService"
         android:title="@string/web_service"
         app:iconSpaceReserved="false" />
