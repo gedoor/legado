@@ -258,14 +258,14 @@ class AudioPlayService : BaseService(),
                             postEvent(Bus.AUDIO_SIZE, chapter.end?.toInt() ?: 0)
                             postEvent(Bus.AUDIO_PROGRESS, position)
                         }
-                        download(chapter)
+                        loadContent(chapter)
                     } ?: removeLoading(index)
                 }
             }
         }
     }
 
-    private fun download(chapter: BookChapter) {
+    private fun loadContent(chapter: BookChapter) {
         AudioPlay.book?.let { book ->
             AudioPlay.webBook?.getContent(book, chapter, scope = this)
                 ?.onSuccess(IO) { content ->
