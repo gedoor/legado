@@ -25,7 +25,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
-        title = intent.getStringExtra("title")
+        title_bar.title = intent.getStringExtra("title")
         initWebView()
         initLiveData()
         viewModel.initData(intent)
