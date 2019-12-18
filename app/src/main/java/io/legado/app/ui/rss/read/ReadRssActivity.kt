@@ -60,19 +60,9 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 upJavaScriptEnable()
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    webView.loadDataWithBaseURL(
-                        url,
-                        "<style>img{max-width:100%}</style>$content",
-                        "text/html",
-                        "utf-8",
-                        url
-                    )
+                    webView.loadDataWithBaseURL(url, content, "text/html", "utf-8", url)
                 } else {
-                    webView.loadData(
-                        "<style>img{max-width:100%}</style>$content",
-                        "text/html",
-                        "utf-8"
-                    )
+                    webView.loadData(content, "text/html", "utf-8")
                 }
             }
         })
