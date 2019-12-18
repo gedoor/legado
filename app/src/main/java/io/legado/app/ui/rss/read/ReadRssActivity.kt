@@ -59,10 +59,11 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             viewModel.rssArticle?.let {
                 upJavaScriptEnable()
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
+                val html = viewModel.clHtml(content)
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    webView.loadDataWithBaseURL(url, content, "text/html", "utf-8", url)
+                    webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
                 } else {
-                    webView.loadData(content, "text/html", "utf-8")
+                    webView.loadData(html, "text/html", "utf-8")
                 }
             }
         })
