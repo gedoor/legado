@@ -4,6 +4,8 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.lib.theme.accentColor
@@ -17,7 +19,9 @@ object ChapterProvider {
 
     fun getTextChapter(
         bookChapter: BookChapter,
-        content: String, chapterSize: Int
+        content: String,
+        chapterSize: Int,
+        isHtml: Boolean = false
     ): TextChapter {
         textView?.let {
             val textPages = arrayListOf<TextPage>()
@@ -26,7 +30,15 @@ object ChapterProvider {
             var surplusText = content
             var pageIndex = 0
             while (surplusText.isNotEmpty()) {
-                val spannableStringBuilder = SpannableStringBuilder(surplusText)
+                val spannableStringBuilder =
+                    if (isHtml) {
+                        HtmlCompat.fromHtml(
+                            surplusText,
+                            FROM_HTML_MODE_COMPACT
+                        ) as SpannableStringBuilder
+                    } else {
+                        SpannableStringBuilder(surplusText)
+                    }
                 if (pageIndex == 0) {
                     val end = surplusText.indexOf("\n")
                     if (end > 0) {

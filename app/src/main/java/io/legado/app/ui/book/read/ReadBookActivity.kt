@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +9,7 @@ import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
@@ -18,11 +20,10 @@ import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.service.help.Download
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.*
@@ -38,6 +39,7 @@ import io.legado.app.ui.widget.page.PageView
 import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
+import kotlinx.android.synthetic.main.dialog_download_choice.view.*
 import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -131,6 +133,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 菜单
      */
+    @SuppressLint("InflateParams")
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> {
@@ -145,6 +148,26 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     page_view.upContent()
                     viewModel.refreshContent(it)
                 }
+            }
+            R.id.menu_download -> ReadBook.book?.let { book ->
+                alert(titleResource = R.string.download_offline) {
+                    var view: View? = null
+                    customView {
+                        layoutInflater.inflate(R.layout.dialog_download_choice, null).apply {
+                            view = this
+                            edit_start.setText(book.durChapterIndex.toString())
+                            edit_end.setText(book.totalChapterNum.toString())
+                        }
+                    }
+                    yesButton {
+                        view?.apply {
+                            val start = edit_start?.text?.toString()?.toInt() ?: 0
+                            val end = edit_end?.text?.toString()?.toInt() ?: book.totalChapterNum
+                            Download.start(this@ReadBookActivity, book.bookUrl, start, end)
+                        }
+                    }
+                    noButton()
+                }.show().applyTint()
             }
         }
         return super.onCompatOptionsItemSelected(item)

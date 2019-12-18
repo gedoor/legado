@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -115,7 +114,7 @@ class BookInfoActivity :
                 .error(R.drawable.image_cover_default)
                 .centerCrop()
                 .into(iv_cover)
-            Glide.with(this).load(it)
+            ImageLoader.load(this, it)
                 .transition(DrawableTransitionOptions.withCrossFade(1500))
                 .thumbnail(defaultCover())
                 .centerCrop()

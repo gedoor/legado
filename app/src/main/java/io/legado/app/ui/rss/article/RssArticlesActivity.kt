@@ -126,6 +126,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     override fun readRss(rssArticle: RssArticle) {
         viewModel.read(rssArticle)
         startActivity<ReadRssActivity>(
+            Pair("title", rssArticle.title),
             Pair("origin", rssArticle.origin),
             Pair("link", rssArticle.link)
         )
