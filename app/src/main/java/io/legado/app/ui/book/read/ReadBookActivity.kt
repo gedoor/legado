@@ -169,6 +169,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     noButton()
                 }.show().applyTint()
             }
+            R.id.menu_add_bookmark -> {
+
+            }
+            R.id.menu_copy_text -> {
+
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
