@@ -92,6 +92,16 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
     }
 
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                finish()
+                return true
+            }
+        }
+        return super.onKeyLongPress(keyCode, event)
+    }
+
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         event?.let {
             when (keyCode) {
