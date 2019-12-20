@@ -128,6 +128,7 @@ object OldRule {
             if (newRule.contains("&")
                 && !newRule.contains("&&")
                 && !newRule.contains("http")
+                && !newRule.startsWith("/")
             ) {
                 newRule = newRule.replace("&", "&&")
             }
