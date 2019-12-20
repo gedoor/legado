@@ -13,7 +13,6 @@ import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
-import io.legado.app.help.ActivityHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -113,14 +112,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     override fun finish() {
-        if (ActivityHelp.size() > 1) {
-            moveTaskToBack(true)
-        } else {
-            if (!BuildConfig.DEBUG) {
-                Backup.autoBackup()
-            }
-            super.finish()
+        if (!BuildConfig.DEBUG) {
+            Backup.autoBackup()
         }
+        super.finish()
     }
 
     override fun onDestroy() {

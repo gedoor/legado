@@ -2,6 +2,7 @@ package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebSettings
@@ -89,5 +90,19 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             starMenuItem?.setTitle(R.string.w_store_up)
         }
         DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        event?.let {
+            when (keyCode) {
+                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled && webView.canGoBack()) {
+                    if (webView.copyBackForwardList().size > 1) {
+                        webView.goBack()
+                        return true
+                    }
+                }
+            }
+        }
+        return super.onKeyUp(keyCode, event)
     }
 }
