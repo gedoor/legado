@@ -111,7 +111,6 @@ class BookInfoActivity :
         tv_intro.text = book.getDisplayIntro()
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
-                .error(R.drawable.image_cover_default)
                 .centerCrop()
                 .into(iv_cover)
             ImageLoader.load(this, it)
