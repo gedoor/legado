@@ -49,6 +49,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = hashSetOf<String>()
+    private var queryText: String? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
@@ -107,8 +108,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrBlank()) viewModel.stop()
-                upHistory(newText)
+                queryText = newText
+                if (queryText.isNullOrBlank()) viewModel.stop()
+                upHistory(queryText)
                 return false
             }
         })
@@ -180,7 +182,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
     private fun openOrCloseHistory(open: Boolean) {
         if (open) {
-            upHistory("")
+            upHistory(queryText)
             ll_history.visibility = VISIBLE
         } else {
             ll_history.visibility = GONE
