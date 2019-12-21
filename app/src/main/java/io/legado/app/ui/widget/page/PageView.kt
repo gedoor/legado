@@ -190,10 +190,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         return ReadBook.durChapterIndex
     }
 
-    override fun getChapter(position: Int): TextChapter? {
-        return ReadBook.textChapter(position)
-    }
-
     override fun getCurrentChapter(): TextChapter? {
         return ReadBook.textChapter(0)
     }

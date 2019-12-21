@@ -21,11 +21,6 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
         }
     }
 
-    override fun pageAt(index: Int): TextPage {
-        return dataSource.getCurrentChapter()?.page(index)
-            ?: TextPage(index = index, title = "index：$index")
-    }
-
     override fun moveToFirst() {
         dataSource.setPageIndex(0)
     }

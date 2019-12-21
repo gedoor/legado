@@ -9,8 +9,6 @@ interface DataSource {
 
     fun getChapterPosition(): Int
 
-    fun getChapter(position: Int): TextChapter?
-
     fun getCurrentChapter(): TextChapter?
 
     fun getNextChapter(): TextChapter?
