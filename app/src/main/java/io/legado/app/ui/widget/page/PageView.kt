@@ -190,20 +190,16 @@ class PageView(context: Context, attrs: AttributeSet) :
         return ReadBook.durChapterIndex
     }
 
-    override fun getChapter(position: Int): TextChapter? {
-        return ReadBook.textChapter(position)
-    }
-
     override fun getCurrentChapter(): TextChapter? {
-        return ReadBook.textChapter(0)
+        return if (callBack?.isInitFinish == true) ReadBook.textChapter(0) else null
     }
 
     override fun getNextChapter(): TextChapter? {
-        return ReadBook.textChapter(1)
+        return if (callBack?.isInitFinish == true) ReadBook.textChapter(1) else null
     }
 
     override fun getPreviousChapter(): TextChapter? {
-        return ReadBook.textChapter(-1)
+        return if (callBack?.isInitFinish == true) ReadBook.textChapter(-1) else null
     }
 
     override fun hasNextChapter(): Boolean {
@@ -248,5 +244,6 @@ class PageView(context: Context, attrs: AttributeSet) :
          */
         fun clickCenter()
 
+        val isInitFinish: Boolean
     }
 }
