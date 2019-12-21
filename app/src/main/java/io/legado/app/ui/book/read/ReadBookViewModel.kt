@@ -19,6 +19,8 @@ import kotlinx.coroutines.withContext
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
+    var isInitFinish = false
+
     fun initData(intent: Intent) {
         execute {
             ReadBook.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
@@ -37,6 +39,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
             ReadBook.resetData(book)
+            isInitFinish = true
             val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
             if (count == 0) {
                 if (book.tocUrl.isEmpty()) {
@@ -55,6 +58,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.saveRead()
             }
         } else {
+            isInitFinish = true
             ReadBook.titleDate.postValue(book.name)
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
