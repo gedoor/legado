@@ -180,7 +180,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
     private fun openOrCloseHistory(open: Boolean) {
         if (open) {
-            upHistory("")
+            upHistory(search_view.query.toString())
             ll_history.visibility = VISIBLE
         } else {
             ll_history.visibility = GONE
