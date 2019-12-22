@@ -102,6 +102,7 @@
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
         <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
         <activity android:name=".ui.rss.article.RssArticlesActivity" />
+        <activity android:name=".ui.download.DownloadActivity" />
         <activity
             android:name=".receiver.SharedReceiverActivity"
             android:label="@string/receiving_shared_label">
