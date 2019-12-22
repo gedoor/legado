@@ -29,7 +29,7 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
     private fun initLiveData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData?.observe(this, Observer {
-
+            adapter.setItems(it)
         })
     }
 }
