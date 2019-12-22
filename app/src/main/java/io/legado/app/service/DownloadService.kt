@@ -39,9 +39,9 @@ class DownloadService : BaseService() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         tasks.clear()
         searchPool.close()
+        super.onDestroy()
     }
 
     private fun download(bookUrl: String?, start: Int, end: Int) {
