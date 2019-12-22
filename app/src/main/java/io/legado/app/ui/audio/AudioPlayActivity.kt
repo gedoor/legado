@@ -16,6 +16,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.Status
+import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
@@ -34,7 +35,8 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 import org.jetbrains.anko.startActivityForResult
 
 
-class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play),
+class AudioPlayActivity :
+    VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play, theme = Theme.Dark),
     ChangeSourceDialog.CallBack {
 
     override val viewModel: AudioPlayViewModel
@@ -44,6 +46,7 @@ class AudioPlayActivity : VMBaseActivity<AudioPlayViewModel>(R.layout.activity_a
     private var adjustProgress = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        title_bar.background.alpha = 0
         AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
         AudioPlay.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)
