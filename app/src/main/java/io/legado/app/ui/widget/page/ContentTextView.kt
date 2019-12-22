@@ -241,4 +241,5 @@ class ContentTextView : AppCompatTextView {
             }
         }
     }
+
 }
