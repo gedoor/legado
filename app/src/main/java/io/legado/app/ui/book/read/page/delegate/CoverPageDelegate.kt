@@ -1,9 +1,9 @@
-package io.legado.app.ui.widget.page.delegate
+package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.drawable.GradientDrawable
-import io.legado.app.ui.widget.page.PageView
+import io.legado.app.ui.book.read.page.PageView
 
 class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 

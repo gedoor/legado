@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.page.delegate
+package io.legado.app.ui.book.read.page.delegate
 
 import android.view.MotionEvent
 

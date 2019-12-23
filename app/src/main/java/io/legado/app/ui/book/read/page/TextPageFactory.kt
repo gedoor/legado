@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.page
+package io.legado.app.ui.book.read.page
 
 import io.legado.app.service.help.ReadBook
 

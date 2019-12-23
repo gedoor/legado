@@ -29,14 +29,14 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
+import io.legado.app.ui.book.read.page.ChapterProvider
+import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
-import io.legado.app.ui.widget.page.ChapterProvider
-import io.legado.app.ui.widget.page.PageView
-import io.legado.app.ui.widget.page.delegate.PageDelegate
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_download_choice.view.*

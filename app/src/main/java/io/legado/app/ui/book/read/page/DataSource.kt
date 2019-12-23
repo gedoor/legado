@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.page
+package io.legado.app.ui.book.read.page
 
 interface DataSource {
     val isScrollDelegate: Boolean

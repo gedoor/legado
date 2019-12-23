@@ -1,10 +1,10 @@
-package io.legado.app.ui.widget.page.delegate
+package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
 import android.view.MotionEvent
-import io.legado.app.ui.widget.page.PageView
-import io.legado.app.ui.widget.page.curl.CurlPage
-import io.legado.app.ui.widget.page.curl.CurlView
+import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.curl.CurlPage
+import io.legado.app.ui.book.read.page.curl.CurlView
 import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
