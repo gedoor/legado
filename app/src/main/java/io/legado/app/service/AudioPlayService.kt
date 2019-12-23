@@ -157,6 +157,7 @@ class AudioPlayService : BaseService(),
     }
 
     private fun adjustProgress(position: Int) {
+        if (isM3U8()) return
         if (mediaPlayer.isPlaying) {
             mediaPlayer.seekTo(position)
         } else {
@@ -177,21 +178,25 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    private fun isM3U8(): Boolean {
+        return url.endsWith("m3u8")
+    }
+
     /**
      * 加载完成
      */
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
-        mp?.let {
-            mp.start()
-            mp.seekTo(position)
-            postEvent(Bus.AUDIO_SIZE, mp.duration)
-            bookChapter?.let {
-                it.end = mp.duration.toLong()
-            }
-            handler.removeCallbacks(mpRunnable)
-            handler.post(mpRunnable)
+        mediaPlayer.start()
+        if (!isM3U8()) {
+            mediaPlayer.seekTo(position)
         }
+        postEvent(Bus.AUDIO_SIZE, mediaPlayer.duration)
+        bookChapter?.let {
+            it.end = mediaPlayer.duration.toLong()
+        }
+        handler.removeCallbacks(mpRunnable)
+        handler.post(mpRunnable)
     }
 
     /**
