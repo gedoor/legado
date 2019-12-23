@@ -157,7 +157,6 @@ class AudioPlayService : BaseService(),
     }
 
     private fun adjustProgress(position: Int) {
-        if (isM3U8()) return
         if (mediaPlayer.isPlaying) {
             mediaPlayer.seekTo(position)
         } else {
@@ -178,19 +177,13 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    private fun isM3U8(): Boolean {
-        return url.endsWith("m3u8")
-    }
-
     /**
      * 加载完成
      */
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
         mediaPlayer.start()
-        if (!isM3U8()) {
-            mediaPlayer.seekTo(position)
-        }
+        mediaPlayer.seekTo(position)
         postEvent(Bus.AUDIO_SIZE, mediaPlayer.duration)
         bookChapter?.let {
             it.end = mediaPlayer.duration.toLong()
@@ -203,10 +196,10 @@ class AudioPlayService : BaseService(),
      * 播放出错
      */
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
-        AudioPlay.status = Status.STOP
-        postEvent(Bus.AUDIO_STATE, Status.STOP)
-        launch {
-            toast("error: $what $extra $url")
+        if (!mediaPlayer.isPlaying) {
+            AudioPlay.status = Status.STOP
+            postEvent(Bus.AUDIO_STATE, Status.STOP)
+            launch { toast("error: $what $extra $url") }
         }
         return true
     }
