@@ -14,4 +14,5 @@ object PreferKey {
     const val processText = "process_text"
     const val cleanCache = "cleanCache"
     const val lastGroup = "lastGroup"
+    const val pageAnim = "pageAnim"
 }

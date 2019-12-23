@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.page
+package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -133,7 +133,9 @@ class ContentView : FrameLayout {
     fun scrollTo(pos: Int?) {
         if (pos != null) {
             content_text_view.post {
-                content_text_view.scrollTo(0, content_text_view.layout.getLineTop(pos))
+                if (content_text_view.layout.lineCount >= pos) {
+                    content_text_view.scrollTo(0, content_text_view.layout.getLineTop(pos))
+                }
             }
         }
     }

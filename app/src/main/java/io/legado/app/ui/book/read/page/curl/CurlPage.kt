@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.page.curl
+package io.legado.app.ui.book.read.page.curl
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

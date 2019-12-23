@@ -11,6 +11,7 @@ import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
@@ -66,7 +67,7 @@ class ReadStyleDialog : DialogFragment() {
     }
 
     private fun initData() {
-        requireContext().getPrefInt("pageAnim").let {
+        requireContext().getPrefInt(PreferKey.pageAnim).let {
             if (it >= 0 && it < rg_page_anim.childCount) {
                 rg_page_anim.check(rg_page_anim[it].id)
             }
@@ -179,7 +180,7 @@ class ReadStyleDialog : DialogFragment() {
         rg_page_anim.onCheckedChange { _, checkedId ->
             for (i in 0 until rg_page_anim.childCount) {
                 if (checkedId == rg_page_anim[i].id) {
-                    requireContext().putPrefInt("pageAnim", i)
+                    requireContext().putPrefInt(PreferKey.pageAnim, i)
                     val activity = activity
                     if (activity is ReadBookActivity) {
                         activity.page_view.upPageAnim(i)

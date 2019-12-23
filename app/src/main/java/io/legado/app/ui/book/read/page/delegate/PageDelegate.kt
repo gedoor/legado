@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.page.delegate
+package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -9,8 +9,8 @@ import android.widget.Scroller
 import androidx.annotation.CallSuper
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.ui.widget.page.ContentView
-import io.legado.app.ui.widget.page.PageView
+import io.legado.app.ui.book.read.page.ContentView
+import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.screenshot
 import io.legado.app.utils.snackbar
 import kotlin.math.abs

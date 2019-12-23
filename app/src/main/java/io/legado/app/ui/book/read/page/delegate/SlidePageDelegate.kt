@@ -1,8 +1,8 @@
-package io.legado.app.ui.widget.page.delegate
+package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import io.legado.app.ui.widget.page.PageView
+import io.legado.app.ui.book.read.page.PageView
 
 class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
