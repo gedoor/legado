@@ -134,14 +134,18 @@ class AudioPlayService : BaseService(),
     }
 
     private fun pause(pause: Boolean) {
-        AudioPlayService.pause = pause
-        handler.removeCallbacks(mpRunnable)
-        position = mediaPlayer.currentPosition
-        mediaPlayer.pause()
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
-        AudioPlay.status = Status.PAUSE
-        postEvent(Bus.AUDIO_STATE, Status.PAUSE)
-        upNotification()
+        if (url.contains(".m3u8", false)) {
+            stopSelf()
+        } else {
+            AudioPlayService.pause = pause
+            handler.removeCallbacks(mpRunnable)
+            position = mediaPlayer.currentPosition
+            mediaPlayer.pause()
+            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+            AudioPlay.status = Status.PAUSE
+            postEvent(Bus.AUDIO_STATE, Status.PAUSE)
+            upNotification()
+        }
     }
 
     private fun resume() {
