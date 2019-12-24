@@ -18,4 +18,5 @@ object Bus {
     const val AUDIO_SIZE = "audioSize"
     const val AUDIO_SPEED = "audioSpeed"
     const val SHOW_RSS = "showRss"
+    const val WEB_SERVICE_STOP = "webServiceStop"
 }

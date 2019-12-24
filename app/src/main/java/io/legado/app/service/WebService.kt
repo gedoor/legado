@@ -8,9 +8,11 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.Bus
 import io.legado.app.help.IntentHelp
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.postEvent
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
 import kotlinx.coroutines.launch
@@ -54,6 +56,7 @@ class WebService : BaseService() {
         if (webSocketServer?.isAlive == true) {
             webSocketServer?.stop()
         }
+        postEvent(Bus.WEB_SERVICE_STOP, true)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
