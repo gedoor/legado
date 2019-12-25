@@ -26,6 +26,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -121,8 +122,10 @@ class AudioPlayService : BaseService(),
                 AudioPlay.status = Status.PLAY
                 postEvent(Bus.AUDIO_STATE, Status.PLAY)
                 mediaPlayer.reset()
-                val uri = Uri.parse(url)
-                mediaPlayer.setDataSource(this, uri, AudioPlay.headers())
+                val analyzeUrl =
+                    AnalyzeUrl(url, headerMapF = AudioPlay.headers(), useWebView = true)
+                val uri = Uri.parse(analyzeUrl.url)
+                mediaPlayer.setDataSource(this, uri, analyzeUrl.headerMap)
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
                 launch {
