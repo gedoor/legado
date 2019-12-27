@@ -45,7 +45,7 @@
     <string name="receiving_shared_label">阅读·搜索</string>
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
-    <string name="action_download">下载任务</string>
+    <string name="action_download">下载</string>
     <string name="layout_list">列表视图</string>
     <string name="layout_grid3">网格视图三列</string>
     <string name="layout_grid4">网格视图四列</string>
