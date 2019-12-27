@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.Book
@@ -28,6 +29,7 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     private fun initLiveData() {
         bookshelfLiveData?.removeObservers(this)
+        bookshelfLiveData = App.db.bookDao().observeWeb()
         bookshelfLiveData?.observe(this, Observer {
             adapter.setItems(it)
         })

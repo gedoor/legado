@@ -17,6 +17,9 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
     fun observeLocal(): LiveData<List<Book>>
 
+    @Query("SELECT * FROM books WHERE origin <> '${BookType.local}' order by durChapterTime desc")
+    fun observeWeb(): LiveData<List<Book>>
+
     @Query("SELECT * FROM books WHERE `group` = :group")
     fun observeByGroup(group: Int): LiveData<List<Book>>
 

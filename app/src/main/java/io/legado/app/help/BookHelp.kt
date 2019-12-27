@@ -35,8 +35,15 @@ object BookHelp {
         FileHelp.getFolder(getBookCachePath())
     }
 
+    @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
+        FileHelp.getFolder(getBookFolder(book)).listFiles()?.forEach {
+            if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
+                it.delete()
+                return@forEach
+            }
+        }
         val filePath = getChapterPath(book, bookChapter)
         val file = FileHelp.getFile(filePath)
         file.writeText(content)
@@ -74,11 +81,15 @@ object BookHelp {
         }
     }
 
-    private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
+    private fun getBookFolder(book: Book): String {
         val bookFolder = formatFolderName(book.name + book.bookUrl)
+        return "${getBookCachePath()}${File.separator}$bookFolder"
+    }
+
+    private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
         val chapterFile =
             String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
-        return "${getBookCachePath()}${File.separator}$bookFolder${File.separator}$chapterFile.nb"
+        return "${getBookFolder(book)}${File.separator}$chapterFile.nb"
     }
 
     private fun formatFolderName(folderName: String): String {
