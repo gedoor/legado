@@ -1,6 +1,8 @@
 package io.legado.app.ui.download
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +21,18 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initLiveData()
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.download, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initRecyclerView() {
