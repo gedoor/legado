@@ -30,7 +30,9 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_download_start -> {
 
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }

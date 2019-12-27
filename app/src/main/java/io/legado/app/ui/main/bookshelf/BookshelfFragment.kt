@@ -19,6 +19,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.putPrefInt
@@ -62,7 +63,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             }
             R.id.menu_arrange_bookshelf -> {
             }
-            R.id.menu_download_all -> viewModel.downloadAll()
+            R.id.menu_download -> startActivity<DownloadActivity>()
         }
     }
 
