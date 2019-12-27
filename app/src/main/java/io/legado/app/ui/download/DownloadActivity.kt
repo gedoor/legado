@@ -10,7 +10,10 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.service.help.Download
 import kotlinx.android.synthetic.main.activity_download.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 
 class DownloadActivity : BaseActivity(R.layout.activity_download) {
@@ -30,8 +33,15 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_download_start -> {
-
+            R.id.menu_download_start -> launch(IO) {
+                App.db.bookDao().webBooks.forEach { book ->
+                    Download.start(
+                        this@DownloadActivity,
+                        book.bookUrl,
+                        book.durChapterIndex,
+                        book.totalChapterNum
+                    )
+                }
             }
         }
         return super.onCompatOptionsItemSelected(item)
