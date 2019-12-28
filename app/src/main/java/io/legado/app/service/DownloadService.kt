@@ -32,7 +32,7 @@ class DownloadService : BaseService() {
                     intent.getIntExtra("start", 0),
                     intent.getIntExtra("end", 0)
                 )
-                Action.stop -> stopSelf()
+                Action.stop -> stopDownload()
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -73,6 +73,11 @@ class DownloadService : BaseService() {
                 stopSelf()
             }
         }
+    }
+
+    private fun stopDownload() {
+        tasks.clear()
+        stopSelf()
     }
 
     /**
