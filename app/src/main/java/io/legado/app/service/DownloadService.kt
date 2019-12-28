@@ -23,6 +23,18 @@ class DownloadService : BaseService() {
     private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
     private val handler = Handler()
     private var runnable: Runnable = Runnable { upDownload() }
+    private val notificationBuilder by lazy {
+        val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
+            .setSmallIcon(R.drawable.ic_download)
+            .setOngoing(true)
+            .setContentTitle(getString(R.string.download_offline))
+        builder.addAction(
+            R.drawable.ic_stop_black_24dp,
+            getString(R.string.cancel),
+            IntentHelp.servicePendingIntent<DownloadService>(this, Action.stop)
+        )
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -97,17 +109,8 @@ class DownloadService : BaseService() {
      * 更新通知
      */
     private fun updateNotification(content: String) {
-        val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
-            .setSmallIcon(R.drawable.ic_download)
-            .setOngoing(true)
-            .setContentTitle(getString(R.string.download_offline))
-            .setContentText(content)
-        builder.addAction(
-            R.drawable.ic_stop_black_24dp,
-            getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<DownloadService>(this, Action.stop)
-        )
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        val builder = notificationBuilder
+        builder.setContentText(content)
         val notification = builder.build()
         startForeground(AppConst.notificationIdDownload, notification)
     }
