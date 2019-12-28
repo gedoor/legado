@@ -9,10 +9,7 @@ import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
-import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookSource
-import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.data.entities.RssSource
+import io.legado.app.data.entities.*
 import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
@@ -43,6 +40,15 @@ object Restore {
                 val json = file.readText()
                 GSON.fromJsonArray<Book>(json)?.let {
                     App.db.bookDao().insert(*it.toTypedArray())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            try {
+                val file = FileHelp.getFile(path + File.separator + "bookGroup.json")
+                val json = file.readText()
+                GSON.fromJsonArray<BookGroup>(json)?.let {
+                    App.db.bookGroupDao().insert(*it.toTypedArray())
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
