@@ -55,7 +55,7 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     private fun initLiveData() {
         bookshelfLiveData?.removeObservers(this)
-        bookshelfLiveData = App.db.bookDao().observeWeb()
+        bookshelfLiveData = App.db.bookDao().observeDownload()
         bookshelfLiveData?.observe(this, Observer {
             adapter.setItems(it)
         })
