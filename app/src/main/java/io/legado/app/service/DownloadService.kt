@@ -23,6 +23,7 @@ class DownloadService : BaseService() {
     private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
     private val handler = Handler()
     private var runnable: Runnable = Runnable { upDownload() }
+    private var notificationContent = "正在启动下载"
     private val notificationBuilder by lazy {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
@@ -38,7 +39,7 @@ class DownloadService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
-        updateNotification("正在启动下载")
+        updateNotification(notificationContent)
         handler.postDelayed(runnable, 1000)
     }
 
@@ -74,7 +75,7 @@ class DownloadService : BaseService() {
                     if (!BookHelp.hasContent(book, chapter)) {
                         webBook.getContent(book, chapter, scope = this, context = searchPool)
                             .onStart {
-                                updateNotification(chapter.title)
+                                notificationContent = chapter.title
                             }
                             .onSuccess(IO) { content ->
                                 content?.let {
@@ -100,6 +101,7 @@ class DownloadService : BaseService() {
     }
 
     private fun upDownload() {
+        updateNotification(notificationContent)
         postEvent(Bus.UP_DOWNLOAD, true)
         handler.removeCallbacks(runnable)
         handler.postDelayed(runnable, 1000)
