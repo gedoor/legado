@@ -49,6 +49,10 @@ object BookHelp {
         file.writeText(content)
     }
 
+    fun getChapterCount(book: Book): Int {
+        return FileHelp.getFolder(getBookFolder(book)).list()?.size ?: 0
+    }
+
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
         val filePath = getChapterPath(book, bookChapter)
         runCatching {

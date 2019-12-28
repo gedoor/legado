@@ -208,6 +208,7 @@
     <string name="download_start">开始下载</string>
     <string name="download_cancel">取消下载</string>
     <string name="no_download">暂无任务</string>
+    <string name="download_count">已下载 %d/%d</string>
     <string name="import_select_book">导入选择书籍</string>
     <string name="update_search_threads_num">更新和搜索线程数,如感觉卡顿请减小线程数,量力而行</string>
     <string name="change_icon">切换图标</string>
