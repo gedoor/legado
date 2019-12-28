@@ -87,13 +87,13 @@ class ReadStyleDialog : DialogFragment() {
         }
         tv_text_font.onClick {
             FontSelectDialog(requireContext()).apply {
-                curPath = requireContext().getPrefString("readBookFont")
+                curPath = requireContext().getPrefString(PreferKey.readBookFont)
                 defaultFont = {
-                    requireContext().putPrefString("readBookFont", "")
+                    requireContext().putPrefString(PreferKey.readBookFont, "")
                     postEvent(Bus.UP_CONFIG, true)
                 }
                 selectFile = {
-                    requireContext().putPrefString("readBookFont", it)
+                    requireContext().putPrefString(PreferKey.readBookFont, it)
                     postEvent(Bus.UP_CONFIG, true)
                 }
             }.show()
