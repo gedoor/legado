@@ -614,7 +614,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         val pattern = Pattern.compile("(第)(.+?)(章)")
         val matcher = pattern.matcher(s)
         return if (matcher.find()) {
-            matcher.group(1) + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
+            matcher.group(1)!! + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
         } else {
             s
         }
