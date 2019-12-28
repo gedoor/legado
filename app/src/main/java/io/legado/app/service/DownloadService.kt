@@ -1,16 +1,19 @@
 package io.legado.app.service
 
 import android.content.Intent
+import android.os.Handler
 import androidx.core.app.NotificationCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.Bus
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
+import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
@@ -18,10 +21,13 @@ import java.util.concurrent.Executors
 class DownloadService : BaseService() {
     private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
     private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
+    private val handler = Handler()
+    private var runnable: Runnable = Runnable { upDownload() }
 
     override fun onCreate() {
         super.onCreate()
         updateNotification("正在启动下载")
+        handler.postDelayed(runnable, 1000)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -41,6 +47,7 @@ class DownloadService : BaseService() {
     override fun onDestroy() {
         tasks.clear()
         searchPool.close()
+        handler.removeCallbacks(runnable)
         super.onDestroy()
     }
 
@@ -78,6 +85,12 @@ class DownloadService : BaseService() {
     private fun stopDownload() {
         tasks.clear()
         stopSelf()
+    }
+
+    private fun upDownload() {
+        postEvent(Bus.UP_DOWNLOAD, true)
+        handler.removeCallbacks(runnable)
+        handler.postDelayed(runnable, 1000)
     }
 
     /**
