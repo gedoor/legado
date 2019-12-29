@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -58,6 +59,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initView() {
+        ll_chapter_base_info.setBackgroundColor(backgroundColor)
         iv_chapter_top.onClick { recycler_view.scrollToPosition(0) }
         iv_chapter_bottom.onClick {
             if (adapter.itemCount > 0) {
