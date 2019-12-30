@@ -2,16 +2,22 @@ package io.legado.app.ui.book.info
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
+import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -24,13 +30,13 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_info.*
-import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 
-class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info),
+class BookInfoActivity :
+    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, theme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack {
@@ -39,7 +45,7 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         get() = getViewModel(BookInfoViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
+        title_bar.background.alpha = 0
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
         viewModel.chapterListData.observe(this, Observer { showChapter(it) })
@@ -91,6 +97,11 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         return super.onMenuOpened(featureId, menu)
     }
 
+    private fun defaultCover(): RequestBuilder<Drawable> {
+        return ImageLoader.load(this, R.drawable.image_cover_default)
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
+    }
+
     private fun showBook(book: Book) {
         tv_name.text = book.name
         tv_author.text = getString(R.string.author_show, book.author)
@@ -100,9 +111,14 @@ class BookInfoActivity : VMBaseActivity<BookInfoViewModel>(R.layout.activity_boo
         tv_intro.text = book.getDisplayIntro()
         book.getDisplayCover()?.let {
             ImageLoader.load(this, it)
-                .error(R.drawable.image_cover_default)
                 .centerCrop()
                 .into(iv_cover)
+            ImageLoader.load(this, it)
+                .transition(DrawableTransitionOptions.withCrossFade(1500))
+                .thumbnail(defaultCover())
+                .centerCrop()
+                .apply(bitmapTransform(BlurTransformation(this, 25)))
+                .into(bg_book)  //模糊、渐变、缩小效果
         }
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {

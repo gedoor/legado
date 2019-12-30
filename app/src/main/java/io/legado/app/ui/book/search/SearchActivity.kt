@@ -3,6 +3,8 @@ package io.legado.app.ui.book.search
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -27,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
+
 
 class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_search),
     SearchViewModel.CallBack,
@@ -110,10 +113,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             }
         })
         search_view.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                ll_history.visible()
+            if (!hasFocus && search_view.query.toString().trim().isEmpty()) {
+                finish()
             } else {
-                ll_history.invisible()
+                openOrCloseHistory(hasFocus)
             }
         }
     }
@@ -175,6 +178,15 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
+    private fun openOrCloseHistory(open: Boolean) {
+        if (open) {
+            upHistory(search_view.query.toString())
+            ll_history.visibility = VISIBLE
+        } else {
+            ll_history.visibility = GONE
+        }
+    }
+
     private fun upGroupMenu() {
         val selectedGroup = getPrefString("searchGroup") ?: ""
         menu?.removeGroup(R.id.source_group)
@@ -216,7 +228,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             } else {
                 App.db.searchKeywordDao().liveDataSearch(key)
             }
-        historyData?.observe(this, Observer { historyKeyAdapter.setItems(it) })
+        historyData?.observe(this, Observer { historyKeyAdapter.setItems(it)
+            if (it.isEmpty()) {
+                tv_clear_history.invisible()
+            } else {
+                tv_clear_history.visible()
+            }
+        })
     }
 
     override fun startSearch() {

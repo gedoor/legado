@@ -20,8 +20,12 @@ import io.legado.app.utils.*
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    val items = arrayOf("极简","曜夜","经典")
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
+
+        findPreference<Preference>("defaultTheme")?.summary = "${items[getPrefInt("default_theme", 0)]}"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,23 +100,34 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             "defaultTheme" -> {
                 activity?.let {
                     AlertDialog.Builder(it)
-                        .setTitle("恢复默认主题")
-                        .setMessage("是否确认恢复？")
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            preferenceManager.sharedPreferences.edit()
-                                    // light mode
-                                .putInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
-                                .putInt("colorAccent", getCompatColor(R.color.md_pink_800))
-                                .putInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                                    // dark mode
-                                .putInt("colorPrimaryNight", getCompatColor(R.color.md_grey_900))
-                                .putInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
-                                .putInt("colorBackgroundNight", getCompatColor(R.color.md_black_1000))
-                                .apply()
-                            App.INSTANCE.applyTheme()
+                        .setTitle("切换默认主题")
+                        .setItems(items){
+                                _,which ->
+                            preference.summary = "${items[which]}"
+                            putPrefInt("default_theme", which)
+                            when (which) {
+                                0 -> {
+                                    putPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
+                                    putPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
+                                    putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
+                                    putPrefBoolean("isNightTheme", false)
+                                }
+                                1 -> {
+                                    putPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
+                                    putPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
+                                    putPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
+                                    putPrefBoolean("isNightTheme", true)
+                                }
+                                2 -> {
+                                    putPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
+                                    putPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
+                                    putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
+                                    putPrefBoolean("isNightTheme", false)
+                                }
+                            }
+                            App.INSTANCE.applyDayNight()
                             recreateActivities()
                         }
-                        .setNegativeButton(R.string.cancel, null)
                         .show().applyTint()
                 }
             }

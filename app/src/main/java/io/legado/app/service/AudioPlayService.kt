@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
@@ -25,6 +26,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -44,10 +46,10 @@ class AudioPlayService : BaseService(),
 
     companion object {
         var isRun = false
+        var pause = false
         var timeMinute: Int = 0
     }
 
-    var pause = false
     private val handler = Handler()
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
@@ -91,7 +93,6 @@ class AudioPlayService : BaseService(),
                 Action.prev -> moveToPrev()
                 Action.next -> moveToNext()
                 Action.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
-                Action.moveTo -> moveTo(intent.getIntExtra("index", AudioPlay.durChapterIndex))
                 Action.addTimer -> addTimer()
                 Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 Action.adjustProgress -> adjustProgress(intent.getIntExtra("position", position))
@@ -121,7 +122,10 @@ class AudioPlayService : BaseService(),
                 AudioPlay.status = Status.PLAY
                 postEvent(Bus.AUDIO_STATE, Status.PLAY)
                 mediaPlayer.reset()
-                mediaPlayer.setDataSource(url)
+                val analyzeUrl =
+                    AnalyzeUrl(url, headerMapF = AudioPlay.headers(), useWebView = true)
+                val uri = Uri.parse(analyzeUrl.url)
+                mediaPlayer.setDataSource(this, uri, analyzeUrl.headerMap)
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
                 launch {
@@ -133,14 +137,18 @@ class AudioPlayService : BaseService(),
     }
 
     private fun pause(pause: Boolean) {
-        this.pause = pause
-        handler.removeCallbacks(mpRunnable)
-        position = mediaPlayer.currentPosition
-        mediaPlayer.pause()
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
-        AudioPlay.status = Status.PAUSE
-        postEvent(Bus.AUDIO_STATE, Status.PAUSE)
-        upNotification()
+        if (url.contains(".m3u8", false)) {
+            stopSelf()
+        } else {
+            AudioPlayService.pause = pause
+            handler.removeCallbacks(mpRunnable)
+            position = mediaPlayer.currentPosition
+            mediaPlayer.pause()
+            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+            AudioPlay.status = Status.PAUSE
+            postEvent(Bus.AUDIO_STATE, Status.PAUSE)
+            upNotification()
+        }
     }
 
     private fun resume() {
@@ -181,26 +189,24 @@ class AudioPlayService : BaseService(),
      */
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
-        mp?.let {
-            mp.start()
-            mp.seekTo(position)
-            postEvent(Bus.AUDIO_SIZE, mp.duration)
-            bookChapter?.let {
-                it.end = mp.duration.toLong()
-            }
-            handler.removeCallbacks(mpRunnable)
-            handler.post(mpRunnable)
+        mediaPlayer.start()
+        mediaPlayer.seekTo(position)
+        postEvent(Bus.AUDIO_SIZE, mediaPlayer.duration)
+        bookChapter?.let {
+            it.end = mediaPlayer.duration.toLong()
         }
+        handler.removeCallbacks(mpRunnable)
+        handler.post(mpRunnable)
     }
 
     /**
      * 播放出错
      */
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
-        AudioPlay.status = Status.STOP
-        postEvent(Bus.AUDIO_STATE, Status.STOP)
-        launch {
-            toast("error: $what $extra $url")
+        if (!mediaPlayer.isPlaying) {
+            AudioPlay.status = Status.STOP
+            postEvent(Bus.AUDIO_STATE, Status.STOP)
+            launch { toast("error: $what $extra $url") }
         }
         return true
     }
@@ -258,14 +264,14 @@ class AudioPlayService : BaseService(),
                             postEvent(Bus.AUDIO_SIZE, chapter.end?.toInt() ?: 0)
                             postEvent(Bus.AUDIO_PROGRESS, position)
                         }
-                        download(chapter)
+                        loadContent(chapter)
                     } ?: removeLoading(index)
                 }
             }
         }
     }
 
-    private fun download(chapter: BookChapter) {
+    private fun loadContent(chapter: BookChapter) {
         AudioPlay.book?.let { book ->
             AudioPlay.webBook?.getContent(book, chapter, scope = this)
                 ?.onSuccess(IO) { content ->
@@ -311,16 +317,6 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    private fun moveTo(index: Int) {
-        mediaPlayer.pause()
-        AudioPlay.durChapterIndex = index
-        AudioPlay.durPageIndex = 0
-        AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
-        saveRead()
-        position = 0
-        loadContent(AudioPlay.durChapterIndex)
-    }
-
     private fun moveToPrev() {
         if (AudioPlay.durChapterIndex > 0) {
             mediaPlayer.pause()
@@ -354,6 +350,7 @@ class AudioPlayService : BaseService(),
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = AudioPlay.durChapterIndex
                 book.durChapterPos = AudioPlay.durPageIndex
+                book.durChapterTitle = subtitle
                 App.db.bookDao().update(book)
             }
         }

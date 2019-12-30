@@ -35,7 +35,6 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
-import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 
@@ -55,7 +54,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
         initRecyclerView()
         initSearchView()
         initLiveDataGroup()

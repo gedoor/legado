@@ -71,7 +71,9 @@ class SourceController {
     fun deleteSources(postData: String?): ReturnData {
         kotlin.runCatching {
             GSON.fromJsonArray<BookSource>(postData)?.let {
-                App.db.bookSourceDao().delete(*it.toTypedArray())
+                it.forEach { source ->
+                    App.db.bookSourceDao().delete(source)
+                }
             }
         }
         return ReturnData().setData("已执行"/*okSources*/)

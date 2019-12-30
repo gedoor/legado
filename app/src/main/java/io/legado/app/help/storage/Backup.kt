@@ -27,8 +27,9 @@ object Backup {
         legadoPath + File.separator + "Export"
     }
 
-    private fun pbackup(path :String = legadoPath){
+    private fun pBackup(path: String = legadoPath) {
         backupBookshelf(path)
+        backupBookGroup(path)
         backupBookSource(path)
         backupRssSource(path)
         backupReplaceRule(path)
@@ -39,7 +40,7 @@ object Backup {
 
     fun backup() {
         doAsync {
-            pbackup()
+            pBackup()
             uiThread {
                 App.INSTANCE.toast(R.string.backup_success)
             }
@@ -48,7 +49,7 @@ object Backup {
 
     fun autoBackup() {
         doAsync {
-            pbackup()
+            pBackup()
         }
     }
 
@@ -56,8 +57,17 @@ object Backup {
         App.db.bookDao().allBooks.let {
             if (it.isNotEmpty()) {
                 val json = GSON.toJson(it)
-
                 val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
+                file.writeText(json)
+            }
+        }
+    }
+
+    private fun backupBookGroup(path: String) {
+        App.db.bookGroupDao().all().let {
+            if (it.isNotEmpty()) {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(path + File.separator + "bookGroup.json")
                 file.writeText(json)
             }
         }

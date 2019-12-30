@@ -21,6 +21,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.constant.Theme
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
@@ -76,7 +77,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private fun initData() {
         tool_bar.title = getString(R.string.group_select)
         tool_bar.inflateMenu(R.menu.book_group_manage)
-        tool_bar.menu.applyTint(requireContext(), false)
+        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.findItem(R.id.menu_group_local).isVisible = false
         tool_bar.menu.findItem(R.id.menu_group_audio).isVisible = false

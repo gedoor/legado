@@ -7,6 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
+import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.primaryColor
@@ -19,8 +20,11 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity(private val layoutID: Int, private val fullScreen: Boolean = true) :
-    AppCompatActivity(),
+abstract class BaseActivity(
+    private val layoutID: Int,
+    private val fullScreen: Boolean = true,
+    private val theme: Theme = Theme.Auto
+) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +47,7 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
     final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {
             val bool = onCompatCreateOptionsMenu(it)
-            it.applyTint(this)
+            it.applyTint(this, theme)
             bool
         } ?: super.onCreateOptionsMenu(menu)
     }
@@ -73,10 +77,14 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
 
     private fun initTheme() {
         ATH.applyBackgroundTint(window.decorView)
-        if (ColorUtils.isColorLight(primaryColor)) {
-            setTheme(R.style.AppTheme_Light)
-        } else {
-            setTheme(R.style.AppTheme_Dark)
+        when (theme) {
+            Theme.Dark -> setTheme(R.style.AppTheme_Dark)
+            Theme.Light -> setTheme(R.style.AppTheme_Light)
+            else -> if (ColorUtils.isColorLight(primaryColor)) {
+                setTheme(R.style.AppTheme_Light)
+            } else {
+                setTheme(R.style.AppTheme_Dark)
+            }
         }
     }
 
@@ -91,6 +99,11 @@ abstract class BaseActivity(private val layoutID: Int, private val fullScreen: B
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
         ATH.setStatusBarColorAuto(this, fullScreen)
+        if (theme == Theme.Dark) {
+            ATH.setLightStatusBar(this, false)
+        } else if (theme == Theme.Light) {
+            ATH.setLightStatusBar(this, true)
+        }
     }
 
     open fun observeLiveBus() {

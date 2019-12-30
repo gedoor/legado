@@ -7,9 +7,11 @@ import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
+import io.legado.app.constant.Bus
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -23,10 +25,7 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.startActivity
-import io.legado.app.utils.toast
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
@@ -64,7 +63,17 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            if (WebService.isRun) {
+                putPrefBoolean("webService", true)
+            } else {
+                putPrefBoolean("webService", false)
+            }
             addPreferencesFromResource(R.xml.pref_main)
+            observeEvent<Boolean>(Bus.WEB_SERVICE_STOP) {
+                findPreference<SwitchPreference>("webService")?.let {
+                    it.isChecked = false
+                }
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

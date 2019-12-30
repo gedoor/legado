@@ -6,6 +6,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/bg_book"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/bg_image"
+        app:layout_constraintBottom_toTopOf="@+id/view_info"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/vw_bg"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#50000000"
+        app:layout_constraintBottom_toTopOf="@+id/view_info"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
@@ -42,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
             android:singleLine="true"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/md_white_1000"
             android:textSize="18sp" />
 
         <TextView
@@ -51,6 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:singleLine="true"
+            android:textColor="@color/md_white_1000"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -66,6 +84,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:textSize="16sp"
+                android:textColor="@color/md_white_1000"
                 tools:ignore="NestedWeights" />
 
             <io.legado.app.lib.theme.view.ATEAccentBgTextView
@@ -133,6 +152,7 @@
             android:layout_marginBottom="4dp"
             android:singleLine="true"
             android:textSize="16sp"
+            android:textColor="@color/md_white_1000"
             app:layout_constraintBottom_toBottomOf="@+id/iv_cover"
             app:layout_constraintLeft_toLeftOf="@+id/tv_name"
             app:layout_constraintRight_toRightOf="@id/tv_name" />
@@ -145,8 +165,8 @@
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/iv_cover"
-        app:layout_constraintBottom_toTopOf="@+id/view_other">
+        app:layout_constraintBottom_toTopOf="@+id/view_other"
+        app:layout_constraintTop_toBottomOf="@+id/iv_cover">
 
         <View
             android:layout_width="match_parent"
@@ -189,8 +209,8 @@
         android:orientation="vertical"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/view_info"
-        app:layout_constraintBottom_toTopOf="@+id/fl_action">
+        app:layout_constraintBottom_toTopOf="@+id/fl_action"
+        app:layout_constraintTop_toBottomOf="@+id/view_info">
 
         <TextView
             android:id="@+id/tv_group"
