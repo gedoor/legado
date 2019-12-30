@@ -4,6 +4,24 @@
 * 先在旧版阅读(2.x)中进行备份，然后在新版阅读(3.x)【我的】->【备份与恢复】，选择【导入旧版本数据】，提示存储权限，选择允许即可导入成功。
 * 注意：由于安卓10更改了权限策略，还需要给「允许安装其他应用」的权限才能导入源。MIUI11也需要此权限。
 
+**2019/12/30**
+* 修改书源调试
+  - 调试搜索>>输入关键字，如：`系统`
+  - 调试发现>>输入发现URL，如：`月票榜::https://www.qidian.com/rank/yuepiao?page={{page}}`
+  - 调试详情页>>输入详情页URL，如：`https://m.qidian.com/book/1015609210`
+  - 调试目录页>>输入目录页URL，如：`++https://www.zhaishuyuan.com/read/30394`
+  - 调试正文页>>输入正文页URL，如：`--https://www.zhaishuyuan.com/chapter/30394/20940996`
+  
+* 修改订阅中自动添加style的情景
+  订阅源的内容规则中存在`<style>`或`style=`时，直接显示内容规则的原始内容,否则会在前面加以下内容
+  ```
+  <style>
+  	img{max-width:100% !important; width:auto; height:auto;}
+  	video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
+  	body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
+  </style>
+  ```
+
 **2019/12/28**
 * 添加下载界面
 * 添加分组备份
