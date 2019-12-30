@@ -130,13 +130,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         bitmap?.let {
             if (direction === Direction.NEXT) {
                 calcPoints()
-                drawCurrentPageArea(canvas, it, mPath0!!) //绘制翻页时的正面页
+                drawCurrentPageArea(canvas, it, mPath0) //绘制翻页时的正面页
 //                drawNextPageAreaAndShadow(canvas, it)
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, it)
             } else {
                 calcPoints()
-                drawCurrentPageArea(canvas, it, mPath0!!)
+                drawCurrentPageArea(canvas, it, mPath0)
 //                drawNextPageAreaAndShadow(canvas, it)
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, it)
@@ -218,7 +218,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             }
         } catch (ignored: Exception) {
         }
-        mPaint!!.colorFilter = mColorMatrixFilter
+        mPaint.colorFilter = mColorMatrixFilter
         val dis = hypot(
             mCornerX - mBezierControl1.x.toDouble(),
             mBezierControl2.y - mCornerY.toDouble()
