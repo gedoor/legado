@@ -434,15 +434,15 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      * 计算拖拽点对应的拖拽脚
      */
     private fun calcCornerXY(x: Float, y: Float) {
-        if (x <= pageView.width / 2.0) {
-            mCornerX = 0
+        mCornerX = if (x <= pageView.width / 2.0) {
+            0
         } else {
-            mCornerX = pageView.width
+            pageView.width
         }
-        if (y <= pageView.height / 2.0) {
-            mCornerY = 0
+        mCornerY = if (y <= pageView.height / 2.0) {
+            0
         } else {
-            mCornerY = pageView.height
+            pageView.height
         }
         mIsRT_LB = (mCornerX == 0 && mCornerY == pageView.height
                 || mCornerX == pageView.width && mCornerY == 0)
