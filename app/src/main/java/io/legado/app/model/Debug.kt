@@ -111,6 +111,24 @@ object Debug {
                 log(webBook.sourceUrl, "⇒开始访问发现页:$url")
                 exploreDebug(webBook, url)
             }
+            key.startsWith("++")-> {
+                val url = key.substring(2)
+                val book = Book()
+                book.origin = webBook.sourceUrl
+                book.tocUrl = url
+                log(webBook.sourceUrl, "⇒开始访目录页:$url")
+                tocDebug(webBook, book)
+            }
+            key.startsWith("--")-> {
+                val url = key.substring(2)
+                val book = Book()
+                book.origin = webBook.sourceUrl
+                log(webBook.sourceUrl, "⇒开始访正文页:$url")
+                val chapter = BookChapter()
+                chapter.title = "调试"
+                chapter.url = url
+                contentDebug(webBook, book, chapter, null)
+            }
             else -> {
                 log(webBook.sourceUrl, "⇒开始搜索关键字:$key")
                 searchDebug(webBook, key)
