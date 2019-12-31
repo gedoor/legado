@@ -131,13 +131,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             if (direction === Direction.NEXT) {
                 calcPoints()
                 drawCurrentPageArea(canvas, it, mPath0) //绘制翻页时的正面页
-//                drawNextPageAreaAndShadow(canvas, it)
+                drawNextPageAreaAndShadow(canvas, it)
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, it)
             } else {
                 calcPoints()
                 drawCurrentPageArea(canvas, it, mPath0)
-//                drawNextPageAreaAndShadow(canvas, it)
+                drawNextPageAreaAndShadow(canvas, it)
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, it)
             }
