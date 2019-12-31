@@ -194,7 +194,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 else -> "格式不对"
             }
         }.onError {
-            finally(it.localizedMessage)
+            finally(it.localizedMessage ?: "")
         }.onSuccess {
             finally(it ?: "导入完成")
         }
