@@ -96,6 +96,7 @@
     <string name="pt_auto_download">自动下载最新章节</string>
     <string name="ps_auto_download">更新书籍时自动下载最新章节</string>
     <string name="backup_restore">备份与恢复</string>
+    <string name="web_dav_set">WebDav设置</string>
     <string name="web_dav_set_import_old">WebDav设置/导入旧版本数据</string>
     <string name="backup">备份</string>
     <string name="restore">恢复</string>
