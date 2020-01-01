@@ -5,6 +5,7 @@
     <item
         android:id="@+id/menu_download_start"
         android:title="@string/action_download"
+        android:icon="@drawable/ic_play_24dp"
         app:showAsAction="ifRoom" />
 
 </menu>
