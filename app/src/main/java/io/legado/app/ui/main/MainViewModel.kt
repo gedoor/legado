@@ -59,7 +59,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         execute {
             val url = "https://gitee.com/alanskycn/yuedu/raw/master/JS/RSS/rssSource"
             NetworkUtils.getBaseUrl(url)?.let {
-                val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
+                val response =
+                    HttpHelper.getApiService<IHttpGetApi>(it).getAsync(url, mapOf()).await()
                 response.body()?.let { body ->
                     val sources = mutableListOf<RssSource>()
                     val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
