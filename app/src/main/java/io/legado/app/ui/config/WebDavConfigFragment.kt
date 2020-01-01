@@ -1,5 +1,6 @@
 package io.legado.app.ui.config
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -164,8 +165,10 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            oldDataRequestCode -> {
+            oldDataRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let {
 
+                }
             }
         }
     }
