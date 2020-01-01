@@ -91,7 +91,7 @@ class BookSourceEditActivity :
                 GSON.toJson(getSource())?.let { sourceStr ->
                     try {
                         val textIntent = Intent(Intent.ACTION_SEND)
-                        textIntent.setType("text/plain")
+                        textIntent.type = "text/plain"
                         textIntent.putExtra(Intent.EXTRA_TEXT, sourceStr)
                         startActivity(Intent.createChooser(textIntent, "Source Share"))
                     } catch (e: Exception) {
