@@ -62,6 +62,7 @@ class DownloadService : BaseService() {
         searchPool.close()
         handler.removeCallbacks(runnable)
         super.onDestroy()
+        postEvent(Bus.UP_DOWNLOAD, false)
     }
 
     private fun download(bookUrl: String?, start: Int, end: Int) {

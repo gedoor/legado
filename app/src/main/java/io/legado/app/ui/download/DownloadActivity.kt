@@ -12,6 +12,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.data.entities.Book
 import io.legado.app.service.help.Download
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,6 +23,7 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     lateinit var adapter: DownloadAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
+    private var menu: Menu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -30,12 +32,13 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.download, menu)
+        this.menu = menu
         return super.onCompatCreateOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_download_start -> launch(IO) {
+            R.id.menu_download -> launch(IO) {
                 App.db.bookDao().webBooks.forEach { book ->
                     Download.start(
                         this@DownloadActivity,
@@ -65,7 +68,14 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     override fun observeLiveBus() {
         observeEvent<Boolean>(Bus.UP_DOWNLOAD) {
-            adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
+            if (it) {
+                menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_stop_black_24dp)
+                menu?.applyTint(this)
+                adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
+            } else {
+                menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_play_24dp)
+                menu?.applyTint(this)
+            }
         }
     }
 }
