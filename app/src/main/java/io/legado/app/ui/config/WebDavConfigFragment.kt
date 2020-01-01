@@ -23,6 +23,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
@@ -142,7 +143,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
 
     private fun needInstallApps(callback: () -> Unit) {
 
-        fun canRequestPackageInstalls() :Boolean {
+        fun canRequestPackageInstalls(): Boolean {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 return requireContext().packageManager.canRequestPackageInstalls()
             }
@@ -158,7 +159,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                 }
             }.show().applyTint()
         } else {
-            LogUtils.d("xxx","import old")
+            LogUtils.d("xxx", "import old")
             callback()
         }
     }
@@ -166,13 +167,25 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            oldDataRequestCode -> if (resultCode == RESULT_OK) {
-                data?.data?.let {
-                    DocumentFile.fromTreeUri(requireContext(), it)?.listFiles()?.forEach {
-
+            oldDataRequestCode -> if (resultCode == RESULT_OK) data?.data?.let { uri ->
+                DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach {
+                    when (it.name) {
+                        "myBookShelf.json" ->
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                Restore.importOldBookshelf(json)
+                            }
+                        "myBookSource.json" ->
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                Restore.importOldSource(json)
+                            }
+                        "myBookReplaceRule.json" ->
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                Restore.importOldReplaceRule(json)
+                            }
                     }
                 }
             }
+
         }
     }
 }
