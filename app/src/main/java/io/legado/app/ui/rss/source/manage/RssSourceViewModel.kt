@@ -60,19 +60,20 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-   fun exportSelection(ids: LinkedHashSet<String>) {
-       execute {
-               App.db.rssSourceDao().getRssSources(*ids.toTypedArray()).let {
-               val json = GSON.toJson(it)
-               val file = FileHelp.getFile(Backup.exportPath + File.separator + "exportRssSource.json")
-               file.writeText(json)
-           }
-       }.onSuccess {
-           context.toast("成功导出至\n${Backup.exportPath}")
-       }.onError {
-           context.toast("导出失败\n${it.localizedMessage}")
-       }
-   }
+    fun exportSelection(ids: LinkedHashSet<String>) {
+        execute {
+            App.db.rssSourceDao().getRssSources(*ids.toTypedArray()).let {
+                val json = GSON.toJson(it)
+                val file =
+                    FileHelp.getFile(Backup.exportPath + File.separator + "exportRssSource.json")
+                file.writeText(json)
+            }
+        }.onSuccess {
+            context.toast("成功导出至\n${Backup.exportPath}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
+        }
+    }
 
     fun addGroup(group: String) {
         execute {
@@ -165,7 +166,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                 else -> "格式不对"
             }
         }.onError {
-            finally(it.localizedMessage)
+            finally(it.localizedMessage ?: "")
         }.onSuccess {
             finally(it ?: "导入完成")
         }
