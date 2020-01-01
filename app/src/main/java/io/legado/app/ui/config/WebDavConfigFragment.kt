@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -167,7 +168,9 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
         when (requestCode) {
             oldDataRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let {
+                    DocumentFile.fromTreeUri(requireContext(), it)?.listFiles()?.forEach {
 
+                    }
                 }
             }
         }
