@@ -149,9 +149,11 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 importSource(file.readText(), finally)
             } else {
                 withContext(Dispatchers.Main) {
-                    finally("文件无法打开")
+                    finally("打开文件出错")
                 }
             }
+        }.onError {
+            finally(it.localizedMessage ?: "打开文件出错")
         }
     }
 
