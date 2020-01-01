@@ -5,6 +5,23 @@ import android.net.Uri
 
 object DocumentUtils {
 
+    fun writeText(context: Context, data: String, fileUri: Uri): Boolean {
+        return writeBytes(context, data.toByteArray(), fileUri)
+    }
+
+    fun writeBytes(context: Context, data: ByteArray, fileUri: Uri): Boolean {
+        try {
+            context.contentResolver.openOutputStream(fileUri)?.let {
+                it.write(data)
+                it.close()
+                return true
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
     fun readText(context: Context, uri: Uri): String? {
         readBytes(context, uri)?.let {
             return String(it)
