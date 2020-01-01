@@ -1,5 +1,6 @@
 package io.legado.app.ui.config
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -25,6 +26,8 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 
 class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+
+    private val oldDataRequestCode = 23156
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         fun bindPreferenceSummaryToValue(preference: Preference?) {
@@ -105,7 +108,18 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                     WebDavHelp.showRestoreDialog(requireContext())
                 }
                 .request()
-            "import_old" -> needInstallApps {
+            "import_old" -> importOldData()
+        }
+        return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun importOldData() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, oldDataRequestCode)
+        } catch (e: Exception) {
+            needInstallApps {
                 alert(title = "导入") {
                     message = "是否导入旧版本数据"
                     yesButton {
@@ -122,7 +136,6 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                 }.show().applyTint()
             }
         }
-        return super.onPreferenceTreeClick(preference)
     }
 
     private fun needInstallApps(callback: () -> Unit) {
@@ -145,6 +158,15 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
         } else {
             LogUtils.d("xxx","import old")
             callback()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            oldDataRequestCode -> {
+
+            }
         }
     }
 }
