@@ -18,10 +18,21 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.FileHelp
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.dialog_font_select.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.coroutines.CoroutineContext
 
-class FontSelectDialog : DialogFragment(), FontAdapter.CallBack {
+class FontSelectDialog : DialogFragment(),
+    CoroutineScope,
+    FontAdapter.CallBack {
+    lateinit var job: Job
     private val fontFolderRequestCode = 35485
     private lateinit var adapter: FontAdapter
     var curPath: String? = null
@@ -29,6 +40,8 @@ class FontSelectDialog : DialogFragment(), FontAdapter.CallBack {
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
     var defaultFont: (() -> Unit)? = null
     var selectFile: ((path: String) -> Unit)? = null
+    override val coroutineContext: CoroutineContext
+        get() = job + Main
 
     override fun onStart() {
         super.onStart()
@@ -42,6 +55,7 @@ class FontSelectDialog : DialogFragment(), FontAdapter.CallBack {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        job = Job()
         return inflater.inflate(R.layout.dialog_font_select, container)
     }
 
@@ -64,26 +78,33 @@ class FontSelectDialog : DialogFragment(), FontAdapter.CallBack {
         }
     }
 
-    @SuppressLint("DefaultLocale")
-    private fun getFontFiles(uri: Uri) {
-        DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach { file ->
-            if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
-                DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
-                    FileHelp.getFile(fontFolder + file.name).writeBytes(it)
-                }
-            }
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     @SuppressLint("DefaultLocale")
-    private fun getFontFiles(): Array<File>? {
-        return try {
-            val file = File(fontFolder)
-            file.listFiles { pathName ->
-                pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
+    private fun getFontFiles(uri: Uri) {
+        launch(IO) {
+            DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach { file ->
+                if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
+                    DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
+                        FileHelp.getFile(fontFolder + file.name).writeBytes(it)
+                    }
+                }
             }
-        } catch (e: Exception) {
-            null
+            try {
+                val file = File(fontFolder)
+                file.listFiles { pathName ->
+                    pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
+                }?.let {
+                    withContext(Main) {
+                        adapter.setItems(it.toList())
+                    }
+                }
+            } catch (e: Exception) {
+                toast(e.localizedMessage ?: "")
+            }
         }
     }
 
