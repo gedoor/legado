@@ -16,4 +16,5 @@ object PreferKey {
     const val lastGroup = "lastGroup"
     const val pageAnim = "pageAnim"
     const val readBookFont = "readBookFont"
+    const val fontFolder = "fontFolder"
 }

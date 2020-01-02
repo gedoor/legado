@@ -1,68 +1,83 @@
 package io.legado.app.ui.widget.font
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.os.Environment
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import android.view.ViewGroup
+import androidx.documentfile.provider.DocumentFile
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.lib.dialogs.AlertBuilder
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.invisible
-import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.dialog_font_select.view.*
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.FileHelp
+import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.getPrefString
+import kotlinx.android.synthetic.main.dialog_font_select.*
 import java.io.File
 
-class FontSelectDialog(context: Context) : FontAdapter.CallBack {
-
-    private val defaultFolder =
-        Environment.getExternalStorageDirectory().absolutePath + File.separator + "Fonts"
+class FontSelectDialog : DialogFragment(), FontAdapter.CallBack {
+    private val fontFolderRequestCode = 35485
     private lateinit var adapter: FontAdapter
-    private var builder: AlertBuilder<AlertDialog>
-    private var dialog: AlertDialog? = null
-    @SuppressLint("InflateParams")
-    private var view: View = LayoutInflater.from(context).inflate(R.layout.dialog_font_select, null)
     var curPath: String? = null
-    var fontFolder: String? = null
+    val fontFolder = App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
     var defaultFont: (() -> Unit)? = null
     var selectFile: ((path: String) -> Unit)? = null
 
-    init {
-        builder = context.alert(title = context.getString(R.string.select_font)) {
-            customView = view
-            positiveButton(R.string.default_font) { defaultFont?.invoke() }
-            negativeButton(R.string.cancel)
-        }
-        initData()
+    override fun onStart() {
+        super.onStart()
+        val dm = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 
-    fun show() {
-        dialog = builder.show().applyTint()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.dialog_font_select, container)
     }
 
-    private fun initData() = with(view) {
-        adapter = FontAdapter(context, this@FontSelectDialog)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        tool_bar.setTitle(R.string.select_font)
+        adapter = FontAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.adapter = adapter
-        val files = getFontFiles()
-        if (files.isNullOrEmpty()) {
-            tv_no_data.visible()
-        } else {
-            tv_no_data.invisible()
-            adapter.setItems(files.toList())
+
+        val fontPath = getPrefString(PreferKey.fontFolder)
+        if (fontPath.isNullOrEmpty()) {
+            try {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                startActivityForResult(intent, fontFolderRequestCode)
+            } catch (e: java.lang.Exception) {
+
+            }
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun getFontFiles(uri: Uri) {
+        DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach { file ->
+            if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
+                DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
+                    FileHelp.getFile(fontFolder + file.name).writeBytes(it)
+                }
+            }
         }
     }
 
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(): Array<File>? {
-        val path = if (fontFolder.isNullOrEmpty()) {
-            defaultFolder
-        } else fontFolder
         return try {
-            val file = File(path)
+            val file = File(fontFolder)
             file.listFiles { pathName ->
                 pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
             }
@@ -82,5 +97,20 @@ class FontSelectDialog(context: Context) : FontAdapter.CallBack {
 
     override fun curFilePath(): String {
         return curPath ?: ""
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            fontFolderRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    getFontFiles(uri)
+                }
+            }
+        }
+    }
+
+    interface CallBack {
+        fun selectFile(uri: Uri)
     }
 }

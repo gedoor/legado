@@ -5,10 +5,12 @@ import android.net.Uri
 
 object DocumentUtils {
 
+    @JvmStatic
     fun writeText(context: Context, data: String, fileUri: Uri): Boolean {
         return writeBytes(context, data.toByteArray(), fileUri)
     }
 
+    @JvmStatic
     fun writeBytes(context: Context, data: ByteArray, fileUri: Uri): Boolean {
         try {
             context.contentResolver.openOutputStream(fileUri)?.let {
@@ -22,6 +24,7 @@ object DocumentUtils {
         return false
     }
 
+    @JvmStatic
     fun readText(context: Context, uri: Uri): String? {
         readBytes(context, uri)?.let {
             return String(it)
@@ -29,6 +32,7 @@ object DocumentUtils {
         return null
     }
 
+    @JvmStatic
     fun readBytes(context: Context, uri: Uri): ByteArray? {
         try {
             context.contentResolver.openInputStream(uri)?.let {

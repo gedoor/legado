@@ -11,8 +11,8 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
-import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -28,17 +28,22 @@ import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
+import kotlin.coroutines.CoroutineContext
 
-class WebDavConfigFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener {
-
+class WebDavConfigFragment : PreferenceFragmentCompat(),
+    Preference.OnPreferenceChangeListener,
+    CoroutineScope {
+    lateinit var job: Job
     private val oldDataRequestCode = 23156
 
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        job = Job()
         fun bindPreferenceSummaryToValue(preference: Preference?) {
             preference?.apply {
                 onPreferenceChangeListener = this@WebDavConfigFragment
@@ -74,6 +79,11 @@ class WebDavConfigFragment : BasePreferenceFragment(), Preference.OnPreferenceCh
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ATH.applyEdgeEffectColor(listView)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {

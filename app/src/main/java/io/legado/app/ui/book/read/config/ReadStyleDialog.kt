@@ -20,7 +20,10 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.progressAdd
+import io.legado.app.utils.putPrefInt
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -86,17 +89,7 @@ class ReadStyleDialog : DialogFragment() {
             postEvent(Bus.UP_CONFIG, false)
         }
         tv_text_font.onClick {
-            FontSelectDialog(requireContext()).apply {
-                curPath = requireContext().getPrefString(PreferKey.readBookFont)
-                defaultFont = {
-                    requireContext().putPrefString(PreferKey.readBookFont, "")
-                    postEvent(Bus.UP_CONFIG, true)
-                }
-                selectFile = {
-                    requireContext().putPrefString(PreferKey.readBookFont, it)
-                    postEvent(Bus.UP_CONFIG, true)
-                }
-            }.show()
+            FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
         }
         tv_text_indent.onClick {
             selector(
