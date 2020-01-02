@@ -25,7 +25,8 @@ class FontSelectDialog : DialogFragment(), FontAdapter.CallBack {
     private val fontFolderRequestCode = 35485
     private lateinit var adapter: FontAdapter
     var curPath: String? = null
-    val fontFolder = App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
+    private val fontFolder =
+        App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
     var defaultFont: (() -> Unit)? = null
     var selectFile: ((path: String) -> Unit)? = null
 
