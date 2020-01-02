@@ -2,6 +2,7 @@ package io.legado.app.ui.config
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -10,8 +11,8 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
+import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -27,8 +28,13 @@ import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 
-class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+class WebDavConfigFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener {
 
     private val oldDataRequestCode = 23156
 
@@ -141,6 +147,54 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
         }
     }
 
+    private fun importOldData(uri: Uri) {
+        launch(IO) {
+            DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach {
+                when (it.name) {
+                    "myBookShelf.json" ->
+                        try {
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                val importCount = Restore.importOldBookshelf(json)
+                                withContext(Dispatchers.Main) {
+                                    requireContext().toast("成功导入书籍${importCount}")
+                                }
+                            }
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                requireContext().toast("导入书籍失败\n${e.localizedMessage}")
+                            }
+                        }
+                    "myBookSource.json" ->
+                        try {
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                val importCount = Restore.importOldSource(json)
+                                withContext(Dispatchers.Main) {
+                                    requireContext().toast("成功导入书源${importCount}")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                requireContext().toast("导入源失败\n${e.localizedMessage}")
+                            }
+                        }
+                    "myBookReplaceRule.json" ->
+                        try {
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                val importCount = Restore.importOldReplaceRule(json)
+                                withContext(Dispatchers.Main) {
+                                    requireContext().toast("成功导入替换规则${importCount}")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                requireContext().toast("导入替换规则失败\n${e.localizedMessage}")
+                            }
+                        }
+                }
+            }
+        }
+    }
+
     private fun needInstallApps(callback: () -> Unit) {
 
         fun canRequestPackageInstalls(): Boolean {
@@ -167,24 +221,10 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            oldDataRequestCode -> if (resultCode == RESULT_OK) data?.data?.let { uri ->
-                DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach {
-                    when (it.name) {
-                        "myBookShelf.json" ->
-                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
-                                Restore.importOldBookshelf(json)
-                            }
-                        "myBookSource.json" ->
-                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
-                                Restore.importOldSource(json)
-                            }
-                        "myBookReplaceRule.json" ->
-                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
-                                Restore.importOldReplaceRule(json)
-                            }
-                    }
+            oldDataRequestCode ->
+                if (resultCode == RESULT_OK) data?.data?.let { uri ->
+                    importOldData(uri)
                 }
-            }
 
         }
     }
