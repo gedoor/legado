@@ -70,26 +70,34 @@ class FontSelectDialog : DialogFragment(),
 
         val fontPath = getPrefString(PreferKey.fontFolder)
         if (fontPath.isNullOrEmpty()) {
-            try {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                startActivityForResult(intent, fontFolderRequestCode)
-            } catch (e: java.lang.Exception) {
-                PermissionsCompat.Builder(this)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted { getFontFilesOld() }
-                    .request()
-            }
+            openFolder()
         } else {
             val uri = Uri.parse(fontPath)
-            getFontFiles(uri)
+            if (DocumentFile.fromTreeUri(requireContext(), uri)?.canRead() == true) {
+                getFontFiles(uri)
+            } else {
+                openFolder()
+            }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    private fun openFolder() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, fontFolderRequestCode)
+        } catch (e: java.lang.Exception) {
+            PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted { getFontFilesOld() }
+                .request()
+        }
     }
 
     @SuppressLint("DefaultLocale")
