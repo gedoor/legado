@@ -224,13 +224,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 return true
             }
             getPrefInt(PreferKey.prevKey) -> {
-                if (keyCode != 0) {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
                     page_view.moveToPrevPage()
                     return true
                 }
             }
             getPrefInt(PreferKey.nextKey) -> {
-                if (keyCode != 0) {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
                     page_view.moveToNextPage()
                     return true
                 }
