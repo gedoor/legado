@@ -16,6 +16,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -220,6 +221,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             KeyEvent.KEYCODE_SPACE -> {
                 page_view.moveToNextPage()
+                return true
+            }
+            getPrefInt(PreferKey.prevKey) -> {
+                if (keyCode != 0) {
+                    page_view.moveToPrevPage()
+                    return true
+                }
+            }
+            getPrefInt(PreferKey.nextKey) -> {
+                if (keyCode != 0) {
+                    page_view.moveToNextPage()
+                    return true
+                }
             }
         }
         return super.onKeyDown(keyCode, event)
