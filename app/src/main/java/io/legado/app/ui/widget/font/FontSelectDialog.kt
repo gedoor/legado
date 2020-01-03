@@ -38,10 +38,8 @@ class FontSelectDialog : DialogFragment(),
     lateinit var job: Job
     private val fontFolderRequestCode = 35485
     private lateinit var adapter: FontAdapter
-    var curPath: String? = null
     private val fontFolder =
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
-    var selectFile: ((path: String) -> Unit)? = null
     override val coroutineContext: CoroutineContext
         get() = job + Main
 
@@ -141,15 +139,32 @@ class FontSelectDialog : DialogFragment(),
 
     override fun onClick(file: File) {
         file.absolutePath.let {
-            if (it != curPath) {
-                selectFile?.invoke(it)
-                dialog?.dismiss()
+            val pf = parentFragment
+            if (pf is CallBack) {
+                if (it != pf.curPath) {
+                    pf.selectFile(it)
+                }
+            }
+            val activity = activity
+            if (activity is CallBack) {
+                if (it != activity.curPath) {
+                    activity.selectFile(it)
+                }
             }
         }
+        dialog?.dismiss()
     }
 
     override fun curFilePath(): String {
-        return curPath ?: ""
+        val pf = parentFragment
+        if (pf is CallBack) {
+            return pf.curPath
+        }
+        val activity = activity
+        if (activity is CallBack) {
+            return activity.curPath
+        }
+        return ""
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -169,6 +184,7 @@ class FontSelectDialog : DialogFragment(),
     }
 
     interface CallBack {
-        fun selectFile(uri: Uri)
+        fun selectFile(path: String)
+        val curPath: String
     }
 }
