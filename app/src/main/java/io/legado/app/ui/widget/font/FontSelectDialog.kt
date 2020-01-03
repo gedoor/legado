@@ -7,8 +7,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,6 +35,7 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class FontSelectDialog : DialogFragment(),
+    Toolbar.OnMenuItemClickListener,
     CoroutineScope,
     FontAdapter.CallBack {
     lateinit var job: Job
@@ -62,6 +65,8 @@ class FontSelectDialog : DialogFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tool_bar.setTitle(R.string.select_font)
+        tool_bar.inflateMenu(R.menu.font_select)
+        tool_bar.setOnMenuItemClickListener(this)
         adapter = FontAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.adapter = adapter
@@ -77,6 +82,27 @@ class FontSelectDialog : DialogFragment(),
                 openFolder()
             }
         }
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_default -> {
+                val pf = parentFragment
+                if (pf is CallBack) {
+                    if ("" != pf.curFontPath) {
+                        pf.selectFile("")
+                    }
+                }
+                val activity = activity
+                if (activity is CallBack) {
+                    if ("" != activity.curFontPath) {
+                        activity.selectFile("")
+                    }
+                }
+                dismiss()
+            }
+        }
+        return true
     }
 
     override fun onDestroy() {

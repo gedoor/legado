@@ -578,5 +578,6 @@
     <string name="no_group">未分组</string>
     <string name="prev_sentence">上一句</string>
     <string name="next_sentence">下一句</string>
+    <string name="other_folder">其它目录</string>
 
 </resources>
