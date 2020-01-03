@@ -76,7 +76,7 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
     private fun aliDonate(context: Context) {
         try {
             val qrCode = URLEncoder.encode(
-                "https://qr.alipay.com/fkx03463i8oppupkpsoo1f?_s=Dweb-other",
+                "https://qr.alipay.com/tsx06677nwdk3javroq4ef0?_s=Dweb-other",
                 "utf-8"
             )
             val aliPayQr =
