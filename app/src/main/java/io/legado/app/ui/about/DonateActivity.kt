@@ -34,10 +34,10 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
                 toast(R.string.copy_complete)
             }
         }
-        vw_zfb_hb.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/zfbhbrwm.png") }
-        vw_zfb_rwm.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/zfbskrwm.jpg") }
-        vw_wx_rwm.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/wxskrwm.jpg") }
-        vw_qq_rwm.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/qqskrwm.jpg") }
+        vw_zfb_hb.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/zfbhbrwm.png") }
+        vw_zfb_rwm.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/zfbskrwm.jpg") }
+        vw_wx_rwm.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/wxskrwm.jpg") }
+        vw_qq_rwm.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/qqskrwm.jpg") }
         vw_zfb_hb_ssm.setOnClickListener { getZfbHb(this) }
     }
 
