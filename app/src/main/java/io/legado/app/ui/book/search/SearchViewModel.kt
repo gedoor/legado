@@ -93,9 +93,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 //存在
                 for (temp in newDataS) {
                     var hasSame = false
-                    var i = 0
-                    val size = copyDataS.size
-                    while (i < size) {
+                    for (i in copyDataS.indices) {
                         val searchBook = copyDataS[i]
                         if (temp.name == searchBook.name
                             && temp.author == searchBook.author
@@ -104,7 +102,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                             searchBook.addOrigin(temp.bookUrl)
                             break
                         }
-                        i++
                     }
                     if (!hasSame) {
                         searchBooksAdd.add(temp)
