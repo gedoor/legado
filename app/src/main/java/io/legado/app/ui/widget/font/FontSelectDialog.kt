@@ -16,6 +16,8 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.FileHelp
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.putPrefString
@@ -73,7 +75,11 @@ class FontSelectDialog : DialogFragment(),
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 startActivityForResult(intent, fontFolderRequestCode)
             } catch (e: java.lang.Exception) {
-
+                PermissionsCompat.Builder(this)
+                    .addPermissions(*Permissions.Group.STORAGE)
+                    .rationale(R.string.tip_perm_request_storage)
+                    .onGranted { getFontFilesOld() }
+                    .request()
             }
         } else {
             val uri = Uri.parse(fontPath)
@@ -108,6 +114,20 @@ class FontSelectDialog : DialogFragment(),
             } catch (e: Exception) {
                 toast(e.localizedMessage ?: "")
             }
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun getFontFilesOld() {
+        try {
+            val file = File(fontFolder)
+            file.listFiles { pathName ->
+                pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
+            }?.let {
+                adapter.setItems(it.toList())
+            }
+        } catch (e: Exception) {
+            toast(e.localizedMessage ?: "")
         }
     }
 
