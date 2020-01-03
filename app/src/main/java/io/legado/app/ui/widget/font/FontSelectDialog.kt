@@ -18,6 +18,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.FileHelp
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.putPrefString
 import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.dialog_font_select.*
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +39,6 @@ class FontSelectDialog : DialogFragment(),
     var curPath: String? = null
     private val fontFolder =
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
-    var defaultFont: (() -> Unit)? = null
     var selectFile: ((path: String) -> Unit)? = null
     override val coroutineContext: CoroutineContext
         get() = job + Main
@@ -75,6 +75,9 @@ class FontSelectDialog : DialogFragment(),
             } catch (e: java.lang.Exception) {
 
             }
+        } else {
+            val uri = Uri.parse(fontPath)
+            getFontFiles(uri)
         }
     }
 
@@ -126,6 +129,11 @@ class FontSelectDialog : DialogFragment(),
         when (requestCode) {
             fontFolderRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
+                    putPrefString(PreferKey.fontFolder, uri.toString())
+                    context?.contentResolver?.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
                     getFontFiles(uri)
                 }
             }
