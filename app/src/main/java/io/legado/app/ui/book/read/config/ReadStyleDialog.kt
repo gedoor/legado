@@ -20,17 +20,14 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.progressAdd
-import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadStyleDialog : DialogFragment() {
+class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     override fun onStart() {
         super.onStart()
@@ -262,5 +259,13 @@ class ReadStyleDialog : DialogFragment() {
             4 -> bg4.borderColor = requireContext().accentColor
             else -> bg0.borderColor = requireContext().accentColor
         }
+    }
+
+    override val curFontPath: String
+        get() = requireContext().getPrefString(PreferKey.readBookFont) ?: ""
+
+    override fun selectFile(path: String) {
+        requireContext().putPrefString(PreferKey.readBookFont, path)
+        postEvent(Bus.UP_CONFIG, true)
     }
 }

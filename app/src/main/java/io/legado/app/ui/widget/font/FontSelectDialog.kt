@@ -141,13 +141,13 @@ class FontSelectDialog : DialogFragment(),
         file.absolutePath.let {
             val pf = parentFragment
             if (pf is CallBack) {
-                if (it != pf.curPath) {
+                if (it != pf.curFontPath) {
                     pf.selectFile(it)
                 }
             }
             val activity = activity
             if (activity is CallBack) {
-                if (it != activity.curPath) {
+                if (it != activity.curFontPath) {
                     activity.selectFile(it)
                 }
             }
@@ -158,11 +158,11 @@ class FontSelectDialog : DialogFragment(),
     override fun curFilePath(): String {
         val pf = parentFragment
         if (pf is CallBack) {
-            return pf.curPath
+            return pf.curFontPath
         }
         val activity = activity
         if (activity is CallBack) {
-            return activity.curPath
+            return activity.curFontPath
         }
         return ""
     }
@@ -185,6 +185,6 @@ class FontSelectDialog : DialogFragment(),
 
     interface CallBack {
         fun selectFile(path: String)
-        val curPath: String
+        val curFontPath: String
     }
 }
