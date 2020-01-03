@@ -75,9 +75,10 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
 
     private fun aliDonate(context: Context) {
         try {
-            val qrCode = URLEncoder.encode("tsx06677nwdk3javroq4ef0", "utf-8")
-            val aliPayQr =
-                "alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/$qrCode"
+            var qrCode = URLEncoder.encode("https://qr.alipay.com/tsx06677nwdk3javroq4ef0", "utf-8")
+            qrCode = "qrcode=$qrCode%3F_s%3Dweb-other"
+            qrCode = "saId=10000007&$qrCode&_t=${System.currentTimeMillis()}"
+            val aliPayQr = "alipayqr://platformapi/startapp?$qrCode"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(aliPayQr))
             context.startActivity(intent)
         } catch (e: Exception) {
