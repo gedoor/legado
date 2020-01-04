@@ -1,5 +1,8 @@
 package io.legado.app.help.storage
 
+import android.content.Context
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.FileHelp
@@ -25,6 +28,34 @@ object Backup {
 
     val exportPath by lazy {
         legadoPath + File.separator + "Export"
+    }
+
+    fun backup(context: Context, uri: Uri) {
+        DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach { doc ->
+            when (doc.name) {
+                "bookshelf.json" -> {
+
+                }
+                "bookGroup.json" -> {
+
+                }
+                "bookSource.json" -> {
+
+                }
+                "rssSource.json" -> {
+
+                }
+                "replaceRule.json" -> {
+
+                }
+                ReadBookConfig.readConfigFileName -> {
+
+                }
+                "config.xml" -> {
+
+                }
+            }
+        }
     }
 
     private fun pBackup(path: String = legadoPath) {

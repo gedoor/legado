@@ -18,7 +18,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
@@ -156,37 +155,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             val uri = Uri.parse(backupPath)
             val doc = DocumentFile.fromTreeUri(this, uri)
             if (doc?.canWrite() == true) {
-                backup(uri)
+                Backup.backup(this, uri)
             } else {
                 selectBackupFolder()
-            }
-        }
-    }
-
-    private fun backup(uri: Uri) {
-        DocumentFile.fromTreeUri(this, uri)?.listFiles()?.forEach { doc ->
-            when (doc.name) {
-                "bookshelf.json" -> {
-
-                }
-                "bookGroup.json" -> {
-
-                }
-                "bookSource.json" -> {
-
-                }
-                "rssSource.json" -> {
-
-                }
-                "replaceRule.json" -> {
-
-                }
-                ReadBookConfig.readConfigFileName -> {
-
-                }
-                "config.xml" -> {
-
-                }
             }
         }
     }
@@ -240,7 +211,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-                    backup(uri)
+                    Backup.backup(this, uri)
                 }
             }
             restoreSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
