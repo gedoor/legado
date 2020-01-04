@@ -7,6 +7,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import org.jetbrains.anko.defaultSharedPreferences
@@ -33,23 +34,38 @@ object Backup {
     fun backup(context: Context, uri: Uri) {
         DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach { doc ->
             when (doc.name) {
-                "bookshelf.json" -> {
-
+                "bookshelf.json" -> App.db.bookDao().allBooks.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
                 }
-                "bookGroup.json" -> {
-
+                "bookGroup.json" -> App.db.bookGroupDao().all().let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
                 }
-                "bookSource.json" -> {
-
+                "bookSource.json" -> App.db.bookSourceDao().all.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
                 }
-                "rssSource.json" -> {
-
+                "rssSource.json" -> App.db.rssSourceDao().all.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
                 }
-                "replaceRule.json" -> {
-
+                "replaceRule.json" -> App.db.replaceRuleDao().all.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
                 }
-                ReadBookConfig.readConfigFileName -> {
-
+                ReadBookConfig.readConfigFileName -> GSON.toJson(ReadBookConfig.configList)?.let {
+                    DocumentUtils.writeText(context, it, doc.uri)
                 }
                 "config.xml" -> {
 

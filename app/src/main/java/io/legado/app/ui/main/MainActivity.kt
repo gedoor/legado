@@ -211,6 +211,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
+                    putPrefString(PreferKey.backupPath, uri.toString())
                     Backup.backup(this, uri)
                 }
             }
@@ -220,7 +221,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-
+                    putPrefString(PreferKey.backupPath, uri.toString())
                 }
             }
         }
