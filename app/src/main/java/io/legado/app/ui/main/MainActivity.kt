@@ -18,9 +18,11 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
+import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -162,7 +164,31 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     private fun backup(uri: Uri) {
+        DocumentFile.fromTreeUri(this, uri)?.listFiles()?.forEach { doc ->
+            when (doc.name) {
+                "bookshelf.json" -> {
 
+                }
+                "bookGroup.json" -> {
+
+                }
+                "bookSource.json" -> {
+
+                }
+                "rssSource.json" -> {
+
+                }
+                "replaceRule.json" -> {
+
+                }
+                ReadBookConfig.readConfigFileName -> {
+
+                }
+                "config.xml" -> {
+
+                }
+            }
+        }
     }
 
     fun restore() {
@@ -171,6 +197,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             .rationale(R.string.tip_perm_request_storage)
             .onGranted { WebDavHelp.showRestoreDialog(this) }
             .request()
+    }
+
+    fun restore(uri: Uri) {
+
     }
 
     private fun selectBackupFolder() {
@@ -183,6 +213,20 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
                 .onGranted { Backup.backup() }
+                .request()
+        }
+    }
+
+    private fun selectRestoreFolder() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, restoreSelectRequestCode)
+        } catch (e: java.lang.Exception) {
+            PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted { Restore.restore() }
                 .request()
         }
     }
