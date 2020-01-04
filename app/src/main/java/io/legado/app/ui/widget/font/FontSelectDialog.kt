@@ -101,6 +101,9 @@ class FontSelectDialog : DialogFragment(),
                 }
                 dismiss()
             }
+            R.id.menu_other -> {
+                openFolder()
+            }
         }
         return true
     }
