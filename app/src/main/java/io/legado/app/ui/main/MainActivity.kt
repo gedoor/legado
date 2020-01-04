@@ -1,5 +1,7 @@
 package io.legado.app.ui.main
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -13,6 +15,7 @@ import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
@@ -31,7 +34,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
-
+    private val backupSelectRequestCode = 4567489
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
@@ -141,6 +144,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     fun backup() {
+        val backupPath = getPrefString(PreferKey.backupPath)
+        if (backupPath?.isEmpty() == null) {
+
+        }
         PermissionsCompat.Builder(this)
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
@@ -154,6 +161,30 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             .rationale(R.string.tip_perm_request_storage)
             .onGranted { WebDavHelp.showRestoreDialog(this) }
             .request()
+    }
+
+    fun selectBackupFolder() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, backupSelectRequestCode)
+        } catch (e: java.lang.Exception) {
+
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            backupSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
+                data?.data?.let { uri ->
+                    contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                }
+            }
+        }
     }
 
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
