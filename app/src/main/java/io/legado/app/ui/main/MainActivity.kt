@@ -13,7 +13,10 @@ import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
+import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -137,6 +140,22 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
     }
 
+    fun backup() {
+        PermissionsCompat.Builder(this)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted { Backup.backup() }
+            .request()
+    }
+
+    fun restore() {
+        PermissionsCompat.Builder(this)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted { WebDavHelp.showRestoreDialog(this) }
+            .request()
+    }
+
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
@@ -154,4 +173,3 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     }
 }
-

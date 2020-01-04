@@ -13,10 +13,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.Bus
 import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -24,6 +20,7 @@ import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
+import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -46,16 +43,14 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
             R.id.menu_help -> startActivity<AboutActivity>()
-            R.id.menu_backup -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup() }
-                .request()
-            R.id.menu_restore -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { WebDavHelp.showRestoreDialog(requireContext()) }
-                .request()
+            R.id.menu_backup -> {
+                val activity = activity as? MainActivity
+                activity?.backup()
+            }
+            R.id.menu_restore -> {
+                val activity = activity as? MainActivity
+                activity?.restore()
+            }
         }
     }
 
