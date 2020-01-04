@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -155,7 +156,8 @@ class FontSelectDialog : DialogFragment(),
     @SuppressLint("DefaultLocale")
     private fun getFontFilesOld() {
         try {
-            val file = File(fontFolder)
+            val file =
+                File(Environment.getExternalStorageDirectory().absolutePath + File.separator + "Fonts")
             file.listFiles { pathName ->
                 pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
             }?.let {

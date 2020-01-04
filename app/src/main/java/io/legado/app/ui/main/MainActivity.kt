@@ -2,9 +2,11 @@ package io.legado.app.ui.main
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -35,6 +37,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
     private val backupSelectRequestCode = 4567489
+    private val restoreSelectRequestCode = 654872
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
@@ -145,14 +148,21 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     fun backup() {
         val backupPath = getPrefString(PreferKey.backupPath)
-        if (backupPath?.isEmpty() == null) {
-
+        if (backupPath?.isEmpty() == true) {
+            selectBackupFolder()
+        } else {
+            val uri = Uri.parse(backupPath)
+            val doc = DocumentFile.fromTreeUri(this, uri)
+            if (doc?.canWrite() == true) {
+                backup(uri)
+            } else {
+                selectBackupFolder()
+            }
         }
-        PermissionsCompat.Builder(this)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted { Backup.backup() }
-            .request()
+    }
+
+    private fun backup(uri: Uri) {
+
     }
 
     fun restore() {
@@ -163,13 +173,17 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             .request()
     }
 
-    fun selectBackupFolder() {
+    private fun selectBackupFolder() {
         try {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivityForResult(intent, backupSelectRequestCode)
         } catch (e: java.lang.Exception) {
-
+            PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted { Backup.backup() }
+                .request()
         }
     }
 
@@ -182,6 +196,16 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
+                    backup(uri)
+                }
+            }
+            restoreSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
+                data?.data?.let { uri ->
+                    contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+
                 }
             }
         }
