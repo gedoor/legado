@@ -29,7 +29,7 @@ object Backup {
         legadoPath + File.separator + "Export"
     }
 
-    val backupFileNames by lazy {
+    private val backupFileNames by lazy {
         arrayOf(
             "bookshelf.json",
             "bookGroup.json",
