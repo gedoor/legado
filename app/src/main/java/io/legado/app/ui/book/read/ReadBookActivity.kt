@@ -16,6 +16,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -203,6 +204,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.dispatchKeyEvent(event)
     }
 
+    /**
+     * 按键事件
+     */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
@@ -217,11 +221,27 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             KeyEvent.KEYCODE_SPACE -> {
                 page_view.moveToNextPage()
+                return true
+            }
+            getPrefInt(PreferKey.prevKey) -> {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    page_view.moveToPrevPage()
+                    return true
+                }
+            }
+            getPrefInt(PreferKey.nextKey) -> {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    page_view.moveToNextPage()
+                    return true
+                }
             }
         }
         return super.onKeyDown(keyCode, event)
     }
 
+    /**
+     * 长按事件
+     */
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
@@ -232,6 +252,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.onKeyLongPress(keyCode, event)
     }
 
+    /**
+     * 松开按键事件
+     */
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
@@ -257,6 +280,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.onKeyUp(keyCode, event)
     }
 
+    /**
+     * 音量键翻页
+     */
     private fun volumeKeyPage(direction: PageDelegate.Direction): Boolean {
         if (!read_menu.isVisible) {
             if (getPrefBoolean("volumeKeyPage", true)) {

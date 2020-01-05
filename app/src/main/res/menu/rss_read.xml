@@ -8,4 +8,10 @@
         android:icon="@drawable/ic_star_border"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/menu_share_it"
+        android:title="@string/share"
+        android:icon="@drawable/ic_menu_share"
+        app:showAsAction="ifRoom" />
+
 </menu>

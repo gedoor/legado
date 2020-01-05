@@ -15,4 +15,7 @@ object PreferKey {
     const val cleanCache = "cleanCache"
     const val lastGroup = "lastGroup"
     const val pageAnim = "pageAnim"
+    const val readBookFont = "readBookFont"
+    const val fontFolder = "fontFolder"
+    const val backupPath = "backupUri"
 }

@@ -1,9 +1,13 @@
 package io.legado.app.ui.config
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -20,13 +24,26 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import org.jetbrains.anko.toast
+import kotlin.coroutines.CoroutineContext
 
-class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+class WebDavConfigFragment : PreferenceFragmentCompat(),
+    Preference.OnPreferenceChangeListener,
+    CoroutineScope {
+    lateinit var job: Job
+    private val oldDataRequestCode = 23156
+
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        job = Job()
         fun bindPreferenceSummaryToValue(preference: Preference?) {
             preference?.apply {
                 onPreferenceChangeListener = this@WebDavConfigFragment
@@ -62,6 +79,11 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ATH.applyEdgeEffectColor(listView)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
@@ -105,7 +127,18 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                     WebDavHelp.showRestoreDialog(requireContext())
                 }
                 .request()
-            "import_old" -> needInstallApps {
+            "import_old" -> importOldData()
+        }
+        return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun importOldData() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, oldDataRequestCode)
+        } catch (e: Exception) {
+            needInstallApps {
                 alert(title = "导入") {
                     message = "是否导入旧版本数据"
                     yesButton {
@@ -122,12 +155,59 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                 }.show().applyTint()
             }
         }
-        return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun importOldData(uri: Uri) {
+        launch(IO) {
+            DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach {
+                when (it.name) {
+                    "myBookShelf.json" ->
+                        try {
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                val importCount = Restore.importOldBookshelf(json)
+                                withContext(Dispatchers.Main) {
+                                    requireContext().toast("成功导入书籍${importCount}")
+                                }
+                            }
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                requireContext().toast("导入书籍失败\n${e.localizedMessage}")
+                            }
+                        }
+                    "myBookSource.json" ->
+                        try {
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                val importCount = Restore.importOldSource(json)
+                                withContext(Dispatchers.Main) {
+                                    requireContext().toast("成功导入书源${importCount}")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                requireContext().toast("导入源失败\n${e.localizedMessage}")
+                            }
+                        }
+                    "myBookReplaceRule.json" ->
+                        try {
+                            DocumentUtils.readText(requireContext(), it.uri)?.let { json ->
+                                val importCount = Restore.importOldReplaceRule(json)
+                                withContext(Dispatchers.Main) {
+                                    requireContext().toast("成功导入替换规则${importCount}")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                requireContext().toast("导入替换规则失败\n${e.localizedMessage}")
+                            }
+                        }
+                }
+            }
+        }
     }
 
     private fun needInstallApps(callback: () -> Unit) {
 
-        fun canRequestPackageInstalls() :Boolean {
+        fun canRequestPackageInstalls(): Boolean {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 return requireContext().packageManager.canRequestPackageInstalls()
             }
@@ -143,8 +223,19 @@ class WebDavConfigFragment : PreferenceFragmentCompat(), Preference.OnPreference
                 }
             }.show().applyTint()
         } else {
-            LogUtils.d("xxx","import old")
+            LogUtils.d("xxx", "import old")
             callback()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            oldDataRequestCode ->
+                if (resultCode == RESULT_OK) data?.data?.let { uri ->
+                    importOldData(uri)
+                }
+
         }
     }
 }

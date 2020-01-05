@@ -27,7 +27,7 @@ import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadStyleDialog : DialogFragment() {
+class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     override fun onStart() {
         super.onStart()
@@ -86,17 +86,7 @@ class ReadStyleDialog : DialogFragment() {
             postEvent(Bus.UP_CONFIG, false)
         }
         tv_text_font.onClick {
-            FontSelectDialog(requireContext()).apply {
-                curPath = requireContext().getPrefString("readBookFont")
-                defaultFont = {
-                    requireContext().putPrefString("readBookFont", "")
-                    postEvent(Bus.UP_CONFIG, true)
-                }
-                selectFile = {
-                    requireContext().putPrefString("readBookFont", it)
-                    postEvent(Bus.UP_CONFIG, true)
-                }
-            }.show()
+            FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
         }
         tv_text_indent.onClick {
             selector(
@@ -269,5 +259,13 @@ class ReadStyleDialog : DialogFragment() {
             4 -> bg4.borderColor = requireContext().accentColor
             else -> bg0.borderColor = requireContext().accentColor
         }
+    }
+
+    override val curFontPath: String
+        get() = requireContext().getPrefString(PreferKey.readBookFont) ?: ""
+
+    override fun selectFile(path: String) {
+        requireContext().putPrefString(PreferKey.readBookFont, path)
+        postEvent(Bus.UP_CONFIG, true)
     }
 }

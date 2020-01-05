@@ -78,16 +78,17 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun clHtml(content: String): String {
-        return """
-            <html>
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-                <style>img{max-width:100% !important; width:auto; height:auto;}</style>
-            </head>
-            <body style:"height:auto;max-width: 100%; width:auto;">
-                $content
-            </body></html>
-        """
+        return if (content.contains("<style>|style=".toRegex())) {
+            content
+        } else {
+            """
+                <style>
+                    img{max-width:100% !important; width:auto; height:auto;}
+                    video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
+                    body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
+                </style>$content
+             """
+        }
     }
 
     interface CallBack {

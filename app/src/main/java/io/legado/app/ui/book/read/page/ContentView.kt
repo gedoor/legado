@@ -81,7 +81,7 @@ class ContentView : FrameLayout {
                 tv_bottom_right.setTextColor(it)
             }
         }
-        context.getPrefString("readBookFont")?.let {
+        context.getPrefString(PreferKey.readBookFont)?.let {
             if (it.isNotEmpty()) {
                 content_text_view.typeface = Typeface.createFromFile(it)
             } else {

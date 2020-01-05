@@ -109,11 +109,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             curPage?.dispatchTouchEvent(e2)
         }
         if (isMoved) {
-            isCancel = if (pageView.isScrollDelegate) {
-                if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
-            } else {
-                if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
-            }
+            isCancel = if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
             isRunning = true
             //设置触摸点
             setTouchPoint(e2.x, e2.y)

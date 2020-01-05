@@ -45,7 +45,7 @@
     <string name="receiving_shared_label">阅读·搜索</string>
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
-    <string name="action_download">下载任务</string>
+    <string name="action_download">下载</string>
     <string name="layout_list">列表视图</string>
     <string name="layout_grid3">网格视图三列</string>
     <string name="layout_grid4">网格视图四列</string>
@@ -96,6 +96,7 @@
     <string name="pt_auto_download">自动下载最新章节</string>
     <string name="ps_auto_download">更新书籍时自动下载最新章节</string>
     <string name="backup_restore">备份与恢复</string>
+    <string name="web_dav_set">WebDav设置</string>
     <string name="web_dav_set_import_old">WebDav设置/导入旧版本数据</string>
     <string name="backup">备份</string>
     <string name="restore">恢复</string>
@@ -208,6 +209,7 @@
     <string name="download_start">开始下载</string>
     <string name="download_cancel">取消下载</string>
     <string name="no_download">暂无任务</string>
+    <string name="download_count">已下载 %d/%d</string>
     <string name="import_select_book">导入选择书籍</string>
     <string name="update_search_threads_num">更新和搜索线程数,如感觉卡顿请减小线程数,量力而行</string>
     <string name="change_icon">切换图标</string>
@@ -576,5 +578,6 @@
     <string name="no_group">未分组</string>
     <string name="prev_sentence">上一句</string>
     <string name="next_sentence">下一句</string>
+    <string name="other_folder">其它目录</string>
 
 </resources>

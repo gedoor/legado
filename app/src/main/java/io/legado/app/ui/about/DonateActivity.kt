@@ -34,10 +34,10 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
                 toast(R.string.copy_complete)
             }
         }
-        vw_zfb_hb.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/zfbhbrwm.png") }
-        vw_zfb_rwm.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/zfbskrwm.jpg") }
-        vw_wx_rwm.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/wxskrwm.jpg") }
-        vw_qq_rwm.setOnClickListener { openActionViewIntent("https://gedoor.github.io/MyBookshelf/qqskrwm.jpg") }
+        vw_zfb_hb.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/zfbhbrwm.png") }
+        vw_zfb_rwm.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/zfbskrwm.jpg") }
+        vw_wx_rwm.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/wxskrwm.jpg") }
+        vw_qq_rwm.setOnClickListener { openActionViewIntent("https://gitee.com/gekunfei/Donate/raw/master/qqskrwm.jpg") }
         vw_zfb_hb_ssm.setOnClickListener { getZfbHb(this) }
     }
 
@@ -75,9 +75,12 @@ class DonateActivity : BaseActivity(R.layout.activity_donate) {
 
     private fun aliDonate(context: Context) {
         try {
-            val qrCode = URLEncoder.encode("tsx06677nwdk3javroq4ef0", "utf-8")
+            val qrCode = URLEncoder.encode(
+                "https://qr.alipay.com/tsx06677nwdk3javroq4ef0?_s=Dweb-other",
+                "utf-8"
+            )
             val aliPayQr =
-                "alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/$qrCode"
+                "alipayqr://platformapi/startapp?saId=10000007&qrcode=$qrCode&_t=${System.currentTimeMillis()}"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(aliPayQr))
             context.startActivity(intent)
         } catch (e: Exception) {
