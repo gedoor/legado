@@ -25,6 +25,7 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
     private var searchView: SearchView? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        tab_layout.isTabIndicatorFullWidth = false
         tab_layout.setSelectedTabIndicatorColor(accentColor)
         viewModel.bookUrl = intent.getStringExtra("bookUrl")
         viewModel.loadBook {
