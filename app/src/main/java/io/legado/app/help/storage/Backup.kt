@@ -15,7 +15,7 @@ import java.io.File
 
 object Backup {
 
-    val backupPath = App.INSTANCE.filesDir.absolutePath + File.separator + "backup"
+    private val backupPath = App.INSTANCE.filesDir.absolutePath + File.separator + "backup"
 
     val defaultPath by lazy {
         FileUtils.getSdCardPath() + File.separator + "YueDu"
@@ -27,6 +27,18 @@ object Backup {
 
     val exportPath by lazy {
         legadoPath + File.separator + "Export"
+    }
+
+    val backupFileNames by lazy {
+        arrayOf(
+            "bookshelf.json",
+            "bookGroup.json",
+            "bookSource.json",
+            "rssSource.json",
+            "replaceRule.json",
+            ReadBookConfig.readConfigFileName,
+            "config.xml"
+        )
     }
 
     fun backup(context: Context, uri: Uri?) {
@@ -81,21 +93,14 @@ object Backup {
         WebDavHelp.backUpWebDav(backupPath)
         if (uri != null) {
             copyBackup(context, uri)
+        } else {
+            copyBackup()
         }
     }
 
     private fun copyBackup(context: Context, uri: Uri) {
         DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
-            val fileNames = arrayOf(
-                "bookshelf.json",
-                "bookGroup.json",
-                "bookSource.json",
-                "rssSource.json",
-                "replaceRule.json",
-                ReadBookConfig.readConfigFileName,
-                "config.xml"
-            )
-            for (fileName in fileNames) {
+            for (fileName in backupFileNames) {
                 treeDoc.createFile("text/plain", fileName)?.let { doc ->
                     DocumentUtils.writeText(
                         context,
@@ -107,4 +112,10 @@ object Backup {
         }
     }
 
+    private fun copyBackup() {
+        for (fileName in backupFileNames) {
+            FileHelp.getFile(backupPath + File.separator + "bookshelf.json")
+                .copyTo(FileHelp.getFile(legadoPath + File.separator + "bookshelf.json"))
+        }
+    }
 }
