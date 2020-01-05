@@ -45,16 +45,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     override fun onInit(status: Int) {
         launch {
             if (status == TextToSpeech.SUCCESS) {
-                val result = textToSpeech?.setLanguage(Locale.CHINA)
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    toast(R.string.tts_fix)
-                    IntentHelp.toTTSSetting(this@TTSReadAloudService)
-                    stopSelf()
-                } else {
-                    textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
-                    ttsIsSuccess = true
-                    play()
-                }
+                textToSpeech?.language = Locale.CHINA
+                textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
+                ttsIsSuccess = true
+                play()
             } else {
                 toast(R.string.tts_init_failed)
             }

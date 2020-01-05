@@ -16,6 +16,9 @@ interface BookGroupDao {
     @get:Query("SELECT MAX(groupId) FROM book_groups")
     val maxId: Int
 
+    @Query("SELECT * FROM book_groups ORDER BY `order`")
+    fun all(): List<BookGroup>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookGroup: BookGroup)
 

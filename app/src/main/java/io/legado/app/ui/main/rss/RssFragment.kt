@@ -11,8 +11,10 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.rss.article.RssArticlesActivity
 import io.legado.app.ui.rss.source.manage.RssSourceActivity
+import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_rss.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -50,6 +52,9 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
 
     private fun initData() {
         App.db.rssSourceDao().liveEnabled().observe(viewLifecycleOwner, Observer {
+            if (it.isEmpty()) {
+                getViewModelOfActivity(MainViewModel::class.java).initRss()
+            }
             adapter.setItems(it)
         })
     }

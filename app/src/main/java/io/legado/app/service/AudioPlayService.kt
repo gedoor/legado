@@ -26,6 +26,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -121,8 +122,10 @@ class AudioPlayService : BaseService(),
                 AudioPlay.status = Status.PLAY
                 postEvent(Bus.AUDIO_STATE, Status.PLAY)
                 mediaPlayer.reset()
-                val uri = Uri.parse(url)
-                mediaPlayer.setDataSource(this, uri, AudioPlay.headers())
+                val analyzeUrl =
+                    AnalyzeUrl(url, headerMapF = AudioPlay.headers(), useWebView = true)
+                val uri = Uri.parse(analyzeUrl.url)
+                mediaPlayer.setDataSource(this, uri, analyzeUrl.headerMap)
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
                 launch {
@@ -134,14 +137,18 @@ class AudioPlayService : BaseService(),
     }
 
     private fun pause(pause: Boolean) {
-        AudioPlayService.pause = pause
-        handler.removeCallbacks(mpRunnable)
-        position = mediaPlayer.currentPosition
-        mediaPlayer.pause()
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
-        AudioPlay.status = Status.PAUSE
-        postEvent(Bus.AUDIO_STATE, Status.PAUSE)
-        upNotification()
+        if (url.contains(".m3u8", false)) {
+            stopSelf()
+        } else {
+            AudioPlayService.pause = pause
+            handler.removeCallbacks(mpRunnable)
+            position = mediaPlayer.currentPosition
+            mediaPlayer.pause()
+            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+            AudioPlay.status = Status.PAUSE
+            postEvent(Bus.AUDIO_STATE, Status.PAUSE)
+            upNotification()
+        }
     }
 
     private fun resume() {
@@ -182,26 +189,24 @@ class AudioPlayService : BaseService(),
      */
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
-        mp?.let {
-            mp.start()
-            mp.seekTo(position)
-            postEvent(Bus.AUDIO_SIZE, mp.duration)
-            bookChapter?.let {
-                it.end = mp.duration.toLong()
-            }
-            handler.removeCallbacks(mpRunnable)
-            handler.post(mpRunnable)
+        mediaPlayer.start()
+        mediaPlayer.seekTo(position)
+        postEvent(Bus.AUDIO_SIZE, mediaPlayer.duration)
+        bookChapter?.let {
+            it.end = mediaPlayer.duration.toLong()
         }
+        handler.removeCallbacks(mpRunnable)
+        handler.post(mpRunnable)
     }
 
     /**
      * 播放出错
      */
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
-        AudioPlay.status = Status.STOP
-        postEvent(Bus.AUDIO_STATE, Status.STOP)
-        launch {
-            toast("error: $what $extra $url")
+        if (!mediaPlayer.isPlaying) {
+            AudioPlay.status = Status.STOP
+            postEvent(Bus.AUDIO_STATE, Status.STOP)
+            launch { toast("error: $what $extra $url") }
         }
         return true
     }

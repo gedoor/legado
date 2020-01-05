@@ -9,7 +9,6 @@ import android.widget.FrameLayout
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
-import io.legado.app.ui.book.read.page.curl.CurlView
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
@@ -26,7 +25,6 @@ class PageView(context: Context, attrs: AttributeSet) :
     var prevPage: ContentView? = null
     var curPage: ContentView? = null
     var nextPage: ContentView? = null
-    var curlView: CurlView? = null
 
     init {
         callBack = activity as? CallBack
@@ -91,10 +89,6 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun upPageAnim(pageAnim: Int) {
-        if (curlView != null) {
-            removeView(curlView)
-            curlView = null
-        }
         pageDelegate = null
         pageDelegate = when (pageAnim) {
             0 -> CoverPageDelegate(this)

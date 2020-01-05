@@ -9,7 +9,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.ACache
 import io.legado.app.utils.gone
@@ -29,7 +28,6 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
         with(holder.itemView) {
             if (payloads.isEmpty()) {
-                ATH.applyBackgroundTint(ll_title)
                 tv_name.text = item.bookSourceName
                 ll_title.onClick {
                     val oldEx = exIndex

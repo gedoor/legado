@@ -69,7 +69,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     var isRunning = false
     var isStarted = false
 
-    protected fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
+    open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
 
@@ -78,7 +78,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
         }
     }
 
-    protected fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
+    open fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
         touchX = x
         touchY = y
 

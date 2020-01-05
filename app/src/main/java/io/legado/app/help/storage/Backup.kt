@@ -1,9 +1,13 @@
 package io.legado.app.help.storage
 
+import android.content.Context
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import org.jetbrains.anko.defaultSharedPreferences
@@ -27,8 +31,52 @@ object Backup {
         legadoPath + File.separator + "Export"
     }
 
-    private fun pbackup(path :String = legadoPath){
+    fun backup(context: Context, uri: Uri) {
+        DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach { doc ->
+            when (doc.name) {
+                "bookshelf.json" -> App.db.bookDao().allBooks.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
+                }
+                "bookGroup.json" -> App.db.bookGroupDao().all().let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
+                }
+                "bookSource.json" -> App.db.bookSourceDao().all.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
+                }
+                "rssSource.json" -> App.db.rssSourceDao().all.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
+                }
+                "replaceRule.json" -> App.db.replaceRuleDao().all.let {
+                    if (it.isNotEmpty()) {
+                        val json = GSON.toJson(it)
+                        DocumentUtils.writeText(context, json, doc.uri)
+                    }
+                }
+                ReadBookConfig.readConfigFileName -> GSON.toJson(ReadBookConfig.configList)?.let {
+                    DocumentUtils.writeText(context, it, doc.uri)
+                }
+                "config.xml" -> {
+
+                }
+            }
+        }
+    }
+
+    private fun pBackup(path: String = legadoPath) {
         backupBookshelf(path)
+        backupBookGroup(path)
         backupBookSource(path)
         backupRssSource(path)
         backupReplaceRule(path)
@@ -39,7 +87,7 @@ object Backup {
 
     fun backup() {
         doAsync {
-            pbackup()
+            pBackup()
             uiThread {
                 App.INSTANCE.toast(R.string.backup_success)
             }
@@ -48,7 +96,7 @@ object Backup {
 
     fun autoBackup() {
         doAsync {
-            pbackup()
+            pBackup()
         }
     }
 
@@ -56,8 +104,17 @@ object Backup {
         App.db.bookDao().allBooks.let {
             if (it.isNotEmpty()) {
                 val json = GSON.toJson(it)
-
                 val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
+                file.writeText(json)
+            }
+        }
+    }
+
+    private fun backupBookGroup(path: String) {
+        App.db.bookGroupDao().all().let {
+            if (it.isNotEmpty()) {
+                val json = GSON.toJson(it)
+                val file = FileHelp.getFile(path + File.separator + "bookGroup.json")
                 file.writeText(json)
             }
         }

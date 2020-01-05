@@ -18,11 +18,9 @@
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
         android:layout_margin="4dp"
-        android:background="@color/background"
-        android:elevation="3dp"
+        android:background="@color/btn_bg_press"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        tools:ignore="UseCompoundDrawables">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tv_name"
