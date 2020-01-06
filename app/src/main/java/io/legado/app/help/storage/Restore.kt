@@ -1,6 +1,7 @@
 package io.legado.app.help.storage
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
@@ -31,6 +32,10 @@ object Restore {
                 .options(Option.SUPPRESS_EXCEPTIONS)
                 .build()
         )
+    }
+
+    fun restore(context: Context, uri: Uri) {
+
     }
 
     fun restore(path: String = Backup.defaultPath) {

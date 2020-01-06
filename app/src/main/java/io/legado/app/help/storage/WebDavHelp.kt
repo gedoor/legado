@@ -8,9 +8,10 @@ import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
 import io.legado.app.utils.ZipUtils
 import io.legado.app.utils.getPrefString
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.selector
-import org.jetbrains.anko.uiThread
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,20 +55,17 @@ object WebDavHelp {
         return names
     }
 
-    fun showRestoreDialog(context: Context) {
-        doAsync {
-            val names = getWebDavFileNames()
-            if (names.isNotEmpty()) {
-                uiThread {
-                    context.selector(title = "选择恢复文件", items = names) { _, index ->
-                        if (index in 0 until names.size) {
-                            restoreWebDav(names[index])
-                        }
-                    }
+    suspend fun showRestoreDialog(context: Context): Boolean {
+        val names = withContext(IO) { getWebDavFileNames() }
+        return if (names.isNotEmpty()) {
+            context.selector(title = "选择恢复文件", items = names) { _, index ->
+                if (index in 0 until names.size) {
+                    restoreWebDav(names[index])
                 }
-            } else {
-                Restore.restore()
             }
+            true
+        } else {
+            false
         }
     }
 

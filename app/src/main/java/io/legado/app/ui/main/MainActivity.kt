@@ -172,15 +172,22 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     fun restore() {
-        PermissionsCompat.Builder(this)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted { WebDavHelp.showRestoreDialog(this) }
-            .request()
-    }
-
-    fun restore(uri: Uri) {
-
+        launch {
+            if (!WebDavHelp.showRestoreDialog(this@MainActivity)) {
+                val backupPath = getPrefString(PreferKey.backupPath)
+                if (backupPath?.isEmpty() == true) {
+                    selectRestoreFolder()
+                } else {
+                    val uri = Uri.parse(backupPath)
+                    val doc = DocumentFile.fromTreeUri(this@MainActivity, uri)
+                    if (doc?.canWrite() == true) {
+                        Restore.restore(this@MainActivity, uri)
+                    } else {
+                        selectBackupFolder()
+                    }
+                }
+            }
+        }
     }
 
     private fun selectBackupFolder() {
@@ -206,7 +213,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Restore.restore() }
+                .onGranted { Restore.restore(Backup.legadoPath) }
                 .request()
         }
     }
@@ -231,6 +238,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
+                    Restore.restore(this, uri)
                 }
             }
         }
