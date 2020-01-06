@@ -33,9 +33,7 @@ import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
@@ -128,9 +126,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun finish() {
         if (!BuildConfig.DEBUG) {
             launch {
-                withContext(IO) {
-                    backup()
-                }
+                backup()
                 super.finish()
             }
         } else {
@@ -165,7 +161,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             val uri = Uri.parse(backupPath)
             val doc = DocumentFile.fromTreeUri(this, uri)
             if (doc?.canWrite() == true) {
-                Backup.backup(this, uri)
+                launch {
+                    Backup.backup(this@MainActivity, uri)
+                }
             } else {
                 selectBackupFolder()
             }
@@ -201,7 +199,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup(this, null) }
+                .onGranted {
+                    launch {
+                        Backup.backup(this@MainActivity, null)
+                    }
+                }
                 .request()
         }
     }
@@ -235,7 +237,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
-                    Backup.backup(this, uri)
+                    launch {
+                        Backup.backup(this@MainActivity, uri)
+                    }
                 }
             }
             restoreSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
