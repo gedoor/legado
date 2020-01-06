@@ -45,7 +45,7 @@ object Restore {
                 }
             }
         }
-        restore(Backup.defaultPath)
+        restore(Backup.backupPath)
     }
 
     suspend fun restore(path: String) {
