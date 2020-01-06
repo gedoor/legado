@@ -162,6 +162,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
                     val doc = DocumentFile.fromTreeUri(requireContext(), uri)
                     if (doc?.canWrite() == true) {
                         Restore.restore(requireContext(), uri)
+                        toast(R.string.restore_success)
                     } else {
                         selectBackupFolder()
                     }
@@ -179,7 +180,12 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Restore.restore(Backup.legadoPath) }
+                .onGranted {
+                    launch {
+                        Restore.restore(Backup.legadoPath)
+                        toast(R.string.restore_success)
+                    }
+                }
                 .request()
         }
     }
@@ -304,7 +310,10 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
-                    Restore.restore(requireContext(), uri)
+                    launch {
+                        Restore.restore(requireContext(), uri)
+                        toast(R.string.restore_success)
+                    }
                 }
             }
         }

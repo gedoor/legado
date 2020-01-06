@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
@@ -182,6 +183,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                     val doc = DocumentFile.fromTreeUri(this@MainActivity, uri)
                     if (doc?.canWrite() == true) {
                         Restore.restore(this@MainActivity, uri)
+                        toast(R.string.restore_success)
                     } else {
                         selectBackupFolder()
                     }
@@ -213,7 +215,12 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Restore.restore(Backup.legadoPath) }
+                .onGranted {
+                    launch {
+                        Restore.restore(Backup.legadoPath)
+                        toast(R.string.restore_success)
+                    }
+                }
                 .request()
         }
     }
@@ -238,7 +245,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
-                    Restore.restore(this, uri)
+                    launch {
+                        Restore.restore(this@MainActivity, uri)
+                        toast(R.string.restore_success)
+                    }
                 }
             }
         }

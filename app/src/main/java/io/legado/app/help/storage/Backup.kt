@@ -15,7 +15,7 @@ import java.io.File
 
 object Backup {
 
-    private val backupPath = App.INSTANCE.filesDir.absolutePath + File.separator + "backup"
+    val backupPath = App.INSTANCE.filesDir.absolutePath + File.separator + "backup"
 
     val defaultPath by lazy {
         FileUtils.getSdCardPath() + File.separator + "YueDu"
@@ -29,7 +29,7 @@ object Backup {
         legadoPath + File.separator + "Export"
     }
 
-    private val backupFileNames by lazy {
+    val backupFileNames by lazy {
         arrayOf(
             "bookshelf.json",
             "bookGroup.json",

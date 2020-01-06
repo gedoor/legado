@@ -4,13 +4,13 @@ import android.content.Context
 import io.legado.app.App
 import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
 import io.legado.app.utils.ZipUtils
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.selector
 import java.io.File
 import java.text.SimpleDateFormat
@@ -70,10 +70,11 @@ object WebDavHelp {
     }
 
     private fun restoreWebDav(name: String) {
-        doAsync {
+        Coroutine.async {
             getWebDavUrl()?.let {
                 val file = WebDav(it + "legado/" + name)
                 file.downloadTo(zipFilePath, true)
+                @Suppress("BlockingMethodInNonBlockingContext")
                 ZipUtils.unzipFile(zipFilePath, unzipFilesPath)
                 Restore.restore(unzipFilesPath)
             }
