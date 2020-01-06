@@ -13,6 +13,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -24,10 +25,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getPrefString
+import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import org.jetbrains.anko.toast
@@ -38,6 +36,8 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
     CoroutineScope {
     lateinit var job: Job
     private val oldDataRequestCode = 23156
+    private val backupSelectRequestCode = 4567489
+    private val restoreSelectRequestCode = 654872
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -115,11 +115,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "web_dav_backup" -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup() }
-                .request()
+            "web_dav_backup" -> backup()
             "web_dav_restore" -> PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
@@ -130,6 +126,35 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
             "import_old" -> importOldData()
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun backup() {
+        val backupPath = getPrefString(PreferKey.backupPath)
+        if (backupPath?.isEmpty() == true) {
+            selectBackupFolder()
+        } else {
+            val uri = Uri.parse(backupPath)
+            val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+            if (doc?.canWrite() == true) {
+                Backup.backup(requireContext(), uri)
+            } else {
+                selectBackupFolder()
+            }
+        }
+    }
+
+    private fun selectBackupFolder() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, backupSelectRequestCode)
+        } catch (e: java.lang.Exception) {
+            PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted { Backup.backup(requireContext(), null) }
+                .request()
+        }
     }
 
     private fun importOldData() {
@@ -235,7 +260,16 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
                 if (resultCode == RESULT_OK) data?.data?.let { uri ->
                     importOldData(uri)
                 }
-
+            backupSelectRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    putPrefString(PreferKey.backupPath, uri.toString())
+                    Backup.backup(requireContext(), uri)
+                }
+            }
         }
     }
 }

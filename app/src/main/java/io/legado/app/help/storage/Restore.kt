@@ -33,7 +33,7 @@ object Restore {
         )
     }
 
-    fun restore(path: String = Backup.legadoPath) {
+    fun restore(path: String = Backup.defaultPath) {
         doAsync {
             try {
                 val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
