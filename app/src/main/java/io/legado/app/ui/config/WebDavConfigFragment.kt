@@ -124,9 +124,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
 
     private fun backup() {
         val backupPath = getPrefString(PreferKey.backupPath)
-        if (backupPath?.isEmpty() == true) {
-            selectBackupFolder()
-        } else {
+        if (backupPath?.isNotEmpty() == true) {
             val uri = Uri.parse(backupPath)
             val doc = DocumentFile.fromTreeUri(requireContext(), uri)
             if (doc?.canWrite() == true) {
@@ -136,6 +134,8 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
             } else {
                 selectBackupFolder()
             }
+        } else {
+            selectBackupFolder()
         }
     }
 
@@ -161,9 +161,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
         launch {
             if (!WebDavHelp.showRestoreDialog(requireContext())) {
                 val backupPath = getPrefString(PreferKey.backupPath)
-                if (backupPath?.isEmpty() == true) {
-                    selectRestoreFolder()
-                } else {
+                if (backupPath?.isNotEmpty() == true) {
                     val uri = Uri.parse(backupPath)
                     val doc = DocumentFile.fromTreeUri(requireContext(), uri)
                     if (doc?.canWrite() == true) {
@@ -172,6 +170,8 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
                     } else {
                         selectBackupFolder()
                     }
+                } else {
+                    selectRestoreFolder()
                 }
             }
         }
