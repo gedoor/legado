@@ -33,6 +33,9 @@ import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
@@ -123,9 +126,15 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     override fun finish() {
         if (!BuildConfig.DEBUG) {
-            Backup.autoBackup()
+            launch {
+                withContext(IO) {
+                    backup()
+                }
+                super.finish()
+            }
+        } else {
+            super.finish()
         }
-        super.finish()
     }
 
     override fun onDestroy() {
@@ -183,7 +192,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup() }
+                .onGranted { Backup.backup(this, null) }
                 .request()
         }
     }
