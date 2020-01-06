@@ -130,7 +130,9 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
             val uri = Uri.parse(backupPath)
             val doc = DocumentFile.fromTreeUri(requireContext(), uri)
             if (doc?.canWrite() == true) {
-                Backup.backup(requireContext(), uri)
+                launch {
+                    Backup.backup(requireContext(), uri)
+                }
             } else {
                 selectBackupFolder()
             }
@@ -146,7 +148,11 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup(requireContext(), null) }
+                .onGranted {
+                    launch {
+                        Backup.backup(requireContext(), null)
+                    }
+                }
                 .request()
         }
     }
@@ -300,7 +306,9 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
-                    Backup.backup(requireContext(), uri)
+                    launch {
+                        Backup.backup(requireContext(), uri)
+                    }
                 }
             }
             restoreSelectRequestCode -> if (resultCode == RESULT_OK) {
