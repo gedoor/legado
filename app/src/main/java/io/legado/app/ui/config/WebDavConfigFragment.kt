@@ -34,10 +34,10 @@ import kotlin.coroutines.CoroutineContext
 class WebDavConfigFragment : PreferenceFragmentCompat(),
     Preference.OnPreferenceChangeListener,
     CoroutineScope {
-    lateinit var job: Job
-    private val oldDataRequestCode = 23156
-    private val backupSelectRequestCode = 4567489
-    private val restoreSelectRequestCode = 654872
+    private lateinit var job: Job
+    private val oldDataRequestCode = 11
+    private val backupSelectRequestCode = 22
+    private val restoreSelectRequestCode = 33
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main

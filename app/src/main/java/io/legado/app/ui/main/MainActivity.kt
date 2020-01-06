@@ -39,8 +39,8 @@ import org.jetbrains.anko.toast
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
-    private val backupSelectRequestCode = 4567489
-    private val restoreSelectRequestCode = 654872
+    private val backupSelectRequestCode = 11
+    private val restoreSelectRequestCode = 22
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
@@ -195,7 +195,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivityForResult(intent, backupSelectRequestCode)
-        } catch (e: java.lang.Exception) {
+        } catch (e: Exception) {
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
