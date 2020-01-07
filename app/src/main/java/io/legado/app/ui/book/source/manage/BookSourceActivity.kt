@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
@@ -49,7 +50,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         get() = getViewModel(BookSourceViewModel::class.java)
 
     private val qrRequestCode = 101
-    private val importSource = 13141
+    private val importSource = 132
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = hashSetOf<String>()
@@ -82,7 +83,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 supportFragmentManager,
                 "groupManage"
             )
-            R.id.menu_import_source_local -> selectFile()
+            R.id.menu_import_source_local -> selectFileSys()
             R.id.menu_select_all -> adapter.selectAll()
             R.id.menu_revert_selection -> adapter.revertSelection()
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
@@ -219,10 +220,15 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun selectFileSys() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "text/*"//设置类型
-        startActivityForResult(intent, importSource)
+        try {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.type = "text/*"//设置类型
+            startActivityForResult(intent, importSource)
+        } catch (e: Exception) {
+            selectFile()
+        }
     }
 
     override fun onMenuClick(menu: String) {
@@ -284,16 +290,24 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
             }
             importSource -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let {
-                    val path = FileUtils.getPath(this, it)
-                    if (path != null) {
-                        Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
-                            .show()
-                        viewModel.importSourceFromFilePath(path) { msg ->
-                            title_bar.snackbar(msg)
-                        }
+                data?.data?.let { uri ->
+                    if (DocumentFile.isDocumentUri(this, uri)) {
+                        DocumentUtils.readText(this, uri)?.let {
+                            viewModel.importSource(it) { msg ->
+                                title_bar.snackbar(msg)
+                            }
+                        } ?: toast("读取文件失败")
                     } else {
-                        toast(R.string.uri_to_path_fail)
+                        val path = FileUtils.getPath(this, uri)
+                        if (path != null) {
+                            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                                .show()
+                            viewModel.importSourceFromFilePath(path) { msg ->
+                                title_bar.snackbar(msg)
+                            }
+                        } else {
+                            toast(R.string.uri_to_path_fail)
+                        }
                     }
                 }
             }
