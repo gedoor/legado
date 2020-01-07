@@ -1,8 +1,10 @@
 package io.legado.app.ui.main
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -13,6 +15,8 @@ import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -28,8 +32,6 @@ import kotlinx.coroutines.launch
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
-    private val backupSelectRequestCode = 11
-    private val restoreSelectRequestCode = 22
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
@@ -115,10 +117,24 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun finish() {
         if (!BuildConfig.DEBUG) {
             launch {
+                backup()
                 super.finish()
             }
         } else {
             super.finish()
+        }
+    }
+
+    private suspend fun backup() {
+        val backupPath = getPrefString(PreferKey.backupPath)
+        if (backupPath?.isNotEmpty() == true) {
+            val uri = Uri.parse(backupPath)
+            val doc = DocumentFile.fromTreeUri(this, uri)
+            if (doc?.canWrite() == true) {
+                Backup.backup(this@MainActivity, uri)
+            }
+        } else {
+            Backup.backup(this@MainActivity, null)
         }
     }
 

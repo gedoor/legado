@@ -120,9 +120,13 @@ object Backup {
     }
 
     private fun copyBackup() {
-        for (fileName in backupFileNames) {
-            FileHelp.getFile(backupPath + File.separator + "bookshelf.json")
-                .copyTo(FileHelp.getFile(legadoPath + File.separator + "bookshelf.json"), true)
+        try {
+            for (fileName in backupFileNames) {
+                FileHelp.getFile(backupPath + File.separator + "bookshelf.json")
+                    .copyTo(FileHelp.getFile(legadoPath + File.separator + "bookshelf.json"), true)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
