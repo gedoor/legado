@@ -6,25 +6,24 @@ import android.net.Uri
 object DocumentUtils {
 
     @JvmStatic
+    @Throws(Exception::class)
     fun writeText(context: Context, data: String, fileUri: Uri): Boolean {
         return writeBytes(context, data.toByteArray(), fileUri)
     }
 
     @JvmStatic
+    @Throws(Exception::class)
     fun writeBytes(context: Context, data: ByteArray, fileUri: Uri): Boolean {
-        try {
-            context.contentResolver.openOutputStream(fileUri)?.let {
-                it.write(data)
-                it.close()
-                return true
-            }
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+        context.contentResolver.openOutputStream(fileUri)?.let {
+            it.write(data)
+            it.close()
+            return true
         }
         return false
     }
 
     @JvmStatic
+    @Throws(Exception::class)
     fun readText(context: Context, uri: Uri): String? {
         readBytes(context, uri)?.let {
             return String(it)
@@ -33,17 +32,14 @@ object DocumentUtils {
     }
 
     @JvmStatic
+    @Throws(Exception::class)
     fun readBytes(context: Context, uri: Uri): ByteArray? {
-        try {
-            context.contentResolver.openInputStream(uri)?.let {
-                val len: Int = it.available()
-                val buffer = ByteArray(len)
-                it.read(buffer)
-                it.close()
-                return buffer
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        context.contentResolver.openInputStream(uri)?.let {
+            val len: Int = it.available()
+            val buffer = ByteArray(len)
+            it.read(buffer)
+            it.close()
+            return buffer
         }
         return null
     }
