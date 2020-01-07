@@ -18,6 +18,7 @@ import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_chapter_list.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 
+
 class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activity_chapter_list) {
     override val viewModel: ChapterListViewModel
         get() = getViewModel(ChapterListViewModel::class.java)
@@ -52,6 +53,11 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
+                if (tab_layout.selectedTabPosition == 1) {
+
+                } else {
+                    viewModel.startChapterListSearch(newText)
+                }
                 return false
             }
         })

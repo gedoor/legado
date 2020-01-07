@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 class ChapterListViewModel(application: Application) : BaseViewModel(application) {
     var bookUrl: String? = null
     var book: Book? = null
+    var callBack: CallBack? = null
 
     fun loadBook(success: () -> Unit) {
         execute {
@@ -18,5 +19,13 @@ class ChapterListViewModel(application: Application) : BaseViewModel(application
         }.onSuccess {
             success()
         }
+    }
+
+    fun startChapterListSearch(newText: String?) {
+        callBack?.startSearch(newText)
+    }
+
+    interface CallBack {
+        fun startSearch(newText: String?)
     }
 }

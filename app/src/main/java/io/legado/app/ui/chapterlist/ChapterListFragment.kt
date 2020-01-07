@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,11 +20,13 @@ import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
-    ChapterListAdapter.Callback {
+    ChapterListAdapter.Callback,
+    ChapterListViewModel.CallBack {
     override val viewModel: ChapterListViewModel
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
     lateinit var adapter: ChapterListAdapter
+    private var chapterData: LiveData<List<BookChapter>>? = null
     private var durChapterIndex = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,6 +73,20 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             viewModel.book?.let {
                 recycler_view.scrollToPosition(it.durChapterIndex)
             }
+        }
+        viewModel.callBack = this
+    }
+
+    override fun startSearch(newText: String?) {
+        chapterData?.removeObservers(this)
+        if (newText.isNullOrBlank()) {
+            initData()
+        } else {
+            chapterData = App.db.bookChapterDao().liveDataSearch(newText)
+            chapterData?.observe(viewLifecycleOwner, Observer {
+                adapter.setItems(it)
+            })
+            recycler_view.scrollToPosition(0)
         }
     }
 
