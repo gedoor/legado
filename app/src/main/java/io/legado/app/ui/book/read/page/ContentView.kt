@@ -88,6 +88,8 @@ class ContentView : FrameLayout {
                 if (file.exists()) {
                     content_text_view.typeface = Typeface.createFromFile(it)
                     return@let
+                } else {
+                    context.putPrefString(PreferKey.readBookFont, "")
                 }
             }
             content_text_view.typeface = Typeface.DEFAULT
