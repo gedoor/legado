@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
@@ -291,23 +290,16 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
             importSource -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    if (DocumentFile.isDocumentUri(this, uri)) {
-                        DocumentUtils.readText(this, uri)?.let {
-                            viewModel.importSource(it) { msg ->
-                                title_bar.snackbar(msg)
-                            }
-                        } ?: toast("读取文件失败")
-                    } else {
-                        val path = FileUtils.getPath(this, uri)
-                        if (path != null) {
+                    try {
+                        uri.readText(this)?.let {
                             Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                                 .show()
-                            viewModel.importSourceFromFilePath(path) { msg ->
-                                title_bar.snackbar(msg)
+                            viewModel.importSource(it) { msg ->
+                                toast(msg)
                             }
-                        } else {
-                            toast(R.string.uri_to_path_fail)
                         }
+                    } catch (e: Exception) {
+                        e.localizedMessage?.let { toast(it) }
                     }
                 }
             }
