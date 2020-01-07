@@ -4,13 +4,14 @@ import android.content.Context
 import io.legado.app.App
 import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
 import io.legado.app.utils.ZipUtils
 import io.legado.app.utils.getPrefString
-import org.jetbrains.anko.doAsync
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.selector
-import org.jetbrains.anko.uiThread
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,28 +55,26 @@ object WebDavHelp {
         return names
     }
 
-    fun showRestoreDialog(context: Context) {
-        doAsync {
-            val names = getWebDavFileNames()
-            if (names.isNotEmpty()) {
-                uiThread {
-                    context.selector(title = "选择恢复文件", items = names) { _, index ->
-                        if (index in 0 until names.size) {
-                            restoreWebDav(names[index])
-                        }
-                    }
+    suspend fun showRestoreDialog(context: Context): Boolean {
+        val names = withContext(IO) { getWebDavFileNames() }
+        return if (names.isNotEmpty()) {
+            context.selector(title = "选择恢复文件", items = names) { _, index ->
+                if (index in 0 until names.size) {
+                    restoreWebDav(names[index])
                 }
-            } else {
-                Restore.restore()
             }
+            true
+        } else {
+            false
         }
     }
 
     private fun restoreWebDav(name: String) {
-        doAsync {
+        Coroutine.async {
             getWebDavUrl()?.let {
                 val file = WebDav(it + "legado/" + name)
                 file.downloadTo(zipFilePath, true)
+                @Suppress("BlockingMethodInNonBlockingContext")
                 ZipUtils.unzipFile(zipFilePath, unzipFilesPath)
                 Restore.restore(unzipFilesPath)
             }

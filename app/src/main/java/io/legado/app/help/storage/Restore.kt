@@ -1,13 +1,14 @@
 package io.legado.app.help.storage
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.*
 import io.legado.app.help.FileHelp
@@ -19,9 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
 import java.io.File
 
 object Restore {
@@ -33,8 +32,24 @@ object Restore {
         )
     }
 
-    fun restore(path: String = Backup.defaultPath) {
-        doAsync {
+    suspend fun restore(context: Context, uri: Uri) {
+        withContext(IO) {
+            DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach { doc ->
+                for (fileName in Backup.backupFileNames) {
+                    if (doc.name == fileName) {
+                        DocumentUtils.readText(context, doc.uri)?.let {
+                            FileHelp.getFile(Backup.backupPath + File.separator + fileName)
+                                .writeText(it)
+                        }
+                    }
+                }
+            }
+        }
+        restore(Backup.backupPath)
+    }
+
+    suspend fun restore(path: String) {
+        withContext(IO) {
             try {
                 val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
                 val json = file.readText()
@@ -104,7 +119,6 @@ object Restore {
                 }
                 edit.commit()
             }
-            uiThread { App.INSTANCE.toast(R.string.restore_success) }
         }
     }
 

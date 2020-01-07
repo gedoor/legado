@@ -1,7 +1,5 @@
 package io.legado.app.ui.main
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
@@ -18,11 +16,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.Restore
-import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -33,15 +27,11 @@ import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
-    private val backupSelectRequestCode = 4567489
-    private val restoreSelectRequestCode = 654872
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
 
@@ -127,13 +117,24 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun finish() {
         if (!BuildConfig.DEBUG) {
             launch {
-                withContext(IO) {
-                    backup()
-                }
+                backup()
                 super.finish()
             }
         } else {
             super.finish()
+        }
+    }
+
+    private suspend fun backup() {
+        val backupPath = getPrefString(PreferKey.backupPath)
+        if (backupPath?.isNotEmpty() == true) {
+            val uri = Uri.parse(backupPath)
+            val doc = DocumentFile.fromTreeUri(this, uri)
+            if (doc?.canWrite() == true) {
+                Backup.backup(this@MainActivity, uri)
+            }
+        } else {
+            Backup.backup(this@MainActivity, null)
         }
     }
 
@@ -152,86 +153,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             view_pager_main.adapter?.notifyDataSetChanged()
             if (isShowRSS) {
                 view_pager_main.setCurrentItem(3, false)
-            }
-        }
-    }
-
-    fun backup() {
-        val backupPath = getPrefString(PreferKey.backupPath)
-        if (backupPath?.isEmpty() == true) {
-            selectBackupFolder()
-        } else {
-            val uri = Uri.parse(backupPath)
-            val doc = DocumentFile.fromTreeUri(this, uri)
-            if (doc?.canWrite() == true) {
-                Backup.backup(this, uri)
-            } else {
-                selectBackupFolder()
-            }
-        }
-    }
-
-    fun restore() {
-        PermissionsCompat.Builder(this)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted { WebDavHelp.showRestoreDialog(this) }
-            .request()
-    }
-
-    fun restore(uri: Uri) {
-
-    }
-
-    private fun selectBackupFolder() {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, backupSelectRequestCode)
-        } catch (e: java.lang.Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup(this, null) }
-                .request()
-        }
-    }
-
-    private fun selectRestoreFolder() {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, restoreSelectRequestCode)
-        } catch (e: java.lang.Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Restore.restore() }
-                .request()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            backupSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    putPrefString(PreferKey.backupPath, uri.toString())
-                    Backup.backup(this, uri)
-                }
-            }
-            restoreSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    putPrefString(PreferKey.backupPath, uri.toString())
-                }
             }
         }
     }

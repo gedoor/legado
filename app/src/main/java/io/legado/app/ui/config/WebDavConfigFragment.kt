@@ -34,10 +34,10 @@ import kotlin.coroutines.CoroutineContext
 class WebDavConfigFragment : PreferenceFragmentCompat(),
     Preference.OnPreferenceChangeListener,
     CoroutineScope {
-    lateinit var job: Job
-    private val oldDataRequestCode = 23156
-    private val backupSelectRequestCode = 4567489
-    private val restoreSelectRequestCode = 654872
+    private lateinit var job: Job
+    private val oldDataRequestCode = 11
+    private val backupSelectRequestCode = 22
+    private val restoreSelectRequestCode = 33
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -116,13 +116,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "web_dav_backup" -> backup()
-            "web_dav_restore" -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted {
-                    WebDavHelp.showRestoreDialog(requireContext())
-                }
-                .request()
+            "web_dav_restore" -> restore()
             "import_old" -> importOldData()
         }
         return super.onPreferenceTreeClick(preference)
@@ -130,16 +124,18 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
 
     private fun backup() {
         val backupPath = getPrefString(PreferKey.backupPath)
-        if (backupPath?.isEmpty() == true) {
-            selectBackupFolder()
-        } else {
+        if (backupPath?.isNotEmpty() == true) {
             val uri = Uri.parse(backupPath)
             val doc = DocumentFile.fromTreeUri(requireContext(), uri)
             if (doc?.canWrite() == true) {
-                Backup.backup(requireContext(), uri)
+                launch {
+                    Backup.backup(requireContext(), uri)
+                }
             } else {
                 selectBackupFolder()
             }
+        } else {
+            selectBackupFolder()
         }
     }
 
@@ -152,7 +148,50 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
             PermissionsCompat.Builder(this)
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup(requireContext(), null) }
+                .onGranted {
+                    launch {
+                        Backup.backup(requireContext(), null)
+                    }
+                }
+                .request()
+        }
+    }
+
+    fun restore() {
+        launch {
+            if (!WebDavHelp.showRestoreDialog(requireContext())) {
+                val backupPath = getPrefString(PreferKey.backupPath)
+                if (backupPath?.isNotEmpty() == true) {
+                    val uri = Uri.parse(backupPath)
+                    val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                    if (doc?.canWrite() == true) {
+                        Restore.restore(requireContext(), uri)
+                        toast(R.string.restore_success)
+                    } else {
+                        selectBackupFolder()
+                    }
+                } else {
+                    selectRestoreFolder()
+                }
+            }
+        }
+    }
+
+    private fun selectRestoreFolder() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, restoreSelectRequestCode)
+        } catch (e: java.lang.Exception) {
+            PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted {
+                    launch {
+                        Restore.restore(Backup.legadoPath)
+                        toast(R.string.restore_success)
+                    }
+                }
                 .request()
         }
     }
@@ -267,7 +306,22 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
-                    Backup.backup(requireContext(), uri)
+                    launch {
+                        Backup.backup(requireContext(), uri)
+                    }
+                }
+            }
+            restoreSelectRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    putPrefString(PreferKey.backupPath, uri.toString())
+                    launch {
+                        Restore.restore(requireContext(), uri)
+                        toast(R.string.restore_success)
+                    }
                 }
             }
         }
