@@ -17,6 +17,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.sdk27.listeners.onScrollChange
+import java.io.File
 import java.util.*
 
 
@@ -83,10 +84,13 @@ class ContentView : FrameLayout {
         }
         context.getPrefString(PreferKey.readBookFont)?.let {
             if (it.isNotEmpty()) {
-                content_text_view.typeface = Typeface.createFromFile(it)
-            } else {
-                content_text_view.typeface = Typeface.DEFAULT
+                val file = File(it)
+                if (file.exists()) {
+                    content_text_view.typeface = Typeface.createFromFile(it)
+                    return@let
+                }
             }
+            content_text_view.typeface = Typeface.DEFAULT
         }
     }
 
