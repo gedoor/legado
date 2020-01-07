@@ -107,7 +107,7 @@ object Backup {
     private fun copyBackup(context: Context, uri: Uri) {
         DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
             for (fileName in backupFileNames) {
-                val doc = treeDoc.findFile(fileName) ?: treeDoc.createFile("text/plain", fileName)
+                val doc = treeDoc.findFile(fileName) ?: treeDoc.createFile("", fileName)
                 doc?.let {
                     DocumentUtils.writeText(
                         context,
