@@ -226,7 +226,7 @@ object Restore {
     fun importOldReplaceRule(json: String): Int {
         val replaceRules = mutableListOf<ReplaceRule>()
         val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-        for ((index: Int, item: Map<String, Any>) in items.withIndex()) {
+        for (item in items) {
             val jsonItem = jsonPath.parse(item)
             OldRule.jsonToReplaceRule(jsonItem.jsonString())?.let {
                 replaceRules.add(it)
