@@ -198,14 +198,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         }.show().applyTint()
     }
 
-    private fun selectFile() {
-        FileChooserDialog.show(
-            supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json"),
-            menus = arrayOf(getString(R.string.sys_file_picker))
-        )
-    }
-
     private fun selectFileSys() {
         try {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -213,15 +205,24 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             intent.type = "text/*"//设置类型
             startActivityForResult(intent, importSource)
         } catch (e: Exception) {
-            selectFile()
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    selectFile()
+                }
+                .request()
         }
     }
 
-    override fun onMenuClick(menu: String) {
-        super.onMenuClick(menu)
-        when (menu) {
-            getString(R.string.sys_file_picker) -> selectFileSys()
-        }
+    private fun selectFile() {
+        FileChooserDialog.show(
+            supportFragmentManager, importSource,
+            allowExtensions = arrayOf("txt", "json")
+        )
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
