@@ -40,7 +40,7 @@
         <item>@string/layout_grid3</item>
         <item>@string/layout_grid4</item>
         <item>@string/layout_grid5</item>
-        <item>@string/layout_grid6</item>
+        <!-- <item>@string/layout_grid6</item> -->
     </string-array>
 
     <string-array name="indent">
