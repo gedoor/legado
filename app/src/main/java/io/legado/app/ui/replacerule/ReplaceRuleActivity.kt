@@ -211,7 +211,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                             Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                                 .show()
                             viewModel.importSource(it) { msg ->
-                                toast(msg)
+                                title_bar.snackbar(msg)
                             }
                         }
                     } catch (e: Exception) {
