@@ -80,7 +80,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
             R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
-            R.id.menu_import_source_local -> selectFile()
+            R.id.menu_import_source_local -> selectFileSys()
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage -> GroupManageDialog()
@@ -203,10 +203,14 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     private fun selectFileSys() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "text/*"//设置类型
-        startActivityForResult(intent, importSource)
+        try {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.type = "text/*"//设置类型
+            startActivityForResult(intent, importSource)
+        } catch (e: Exception) {
+            selectFile()
+        }
     }
 
     override fun onMenuClick(menu: String) {
@@ -229,11 +233,11 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             importSource -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let {
-                    FileUtils.getPath(this, it)?.let { path ->
+                data?.data?.let { uri ->
+                    uri.readText(this)?.let {
                         Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                             .show()
-                        viewModel.importSourceFromFilePath(path) { msg ->
+                        viewModel.importSource(it) { msg ->
                             title_bar.snackbar(msg)
                         }
                     }

@@ -3,10 +3,12 @@ package io.legado.app.ui.replacerule
 import android.app.Application
 import android.text.TextUtils
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.FileHelp
 import io.legado.app.help.storage.Backup
+import io.legado.app.help.storage.Restore
 import io.legado.app.utils.GSON
 import io.legado.app.utils.splitNotBlank
 import org.jetbrains.anko.toast
@@ -14,6 +16,15 @@ import java.io.File
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
 
+    fun importSource(text: String, toast: (msg: String) -> Unit) {
+        execute {
+            Restore.importOldReplaceRule(text)
+        }.onError {
+            toast(it.localizedMessage ?: "ERROR")
+        }.onSuccess {
+            toast(context.getString(R.string.success))
+        }
+    }
 
     fun update(vararg rule: ReplaceRule) {
         execute {
@@ -68,7 +79,8 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
                 App.db.replaceRuleDao().findById(it)
             }.let {
                 val json = GSON.toJson(it)
-                val file = FileHelp.getFile(Backup.exportPath + File.separator + "exportReplaceRule.json")
+                val file =
+                    FileHelp.getFile(Backup.exportPath + File.separator + "exportReplaceRule.json")
                 file.writeText(json)
             }
         }.onSuccess {

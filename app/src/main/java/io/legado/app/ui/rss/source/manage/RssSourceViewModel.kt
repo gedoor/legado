@@ -115,7 +115,6 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-
     fun importSourceFromFilePath(path: String, finally: (msg: String) -> Unit) {
         execute {
             val file = File(path)

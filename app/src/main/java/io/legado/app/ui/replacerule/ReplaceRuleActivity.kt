@@ -1,6 +1,8 @@
 package io.legado.app.ui.replacerule
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,18 +15,25 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.cancelButton
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
+import org.jetbrains.anko.toast
 
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
@@ -32,7 +41,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     ReplaceRuleAdapter.CallBack {
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
-
+    private val importSource = 132
     private lateinit var adapter: ReplaceRuleAdapter
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
@@ -68,6 +77,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
+            R.id.menu_import_source_onLine -> showImportDialog()
+            R.id.menu_import_source_local -> selectFileSys()
             R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
         }
         return super.onCompatOptionsItemSelected(item)
@@ -134,6 +145,52 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         }
     }
 
+    @SuppressLint("InflateParams")
+    private fun showImportDialog() {
+        val aCache = ACache.get(this, cacheDir = false)
+        val cacheUrls: MutableList<String> = aCache
+            .getAsString("replaceRuleUrl")
+            ?.splitNotBlank(",")
+            ?.toMutableList() ?: mutableListOf()
+        alert(titleResource = R.string.import_replace_rule_on_line) {
+            var editText: ATEAutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                    edit_view.setFilterValues(cacheUrls) {
+                        cacheUrls.remove(it)
+                        aCache.put("replaceRuleUrl", cacheUrls.joinToString(","))
+                    }
+                }
+            }
+            okButton {
+                val text = editText?.text?.toString()
+                text?.let {
+                    if (!cacheUrls.contains(it)) {
+                        cacheUrls.add(0, it)
+                        aCache.put("replaceRuleUrl", cacheUrls.joinToString(","))
+                    }
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    viewModel.importSource(it) { msg ->
+                        title_bar.snackbar(msg)
+                    }
+                }
+            }
+            cancelButton()
+        }.show().applyTint()
+    }
+
+    private fun selectFileSys() {
+        try {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.type = "text/*"//设置类型
+            startActivityForResult(intent, importSource)
+        } catch (e: Exception) {
+
+        }
+    }
 
     override fun onQueryTextChange(newText: String?): Boolean {
         observeReplaceRuleData("%$newText%")
@@ -142,6 +199,27 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            importSource -> if (resultCode == Activity.RESULT_OK) {
+                data?.data?.let { uri ->
+                    try {
+                        uri.readText(this)?.let {
+                            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                                .show()
+                            viewModel.importSource(it) { msg ->
+                                toast(msg)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.localizedMessage?.let { toast(it) }
+                    }
+                }
+            }
+        }
     }
 
     override fun update(vararg rule: ReplaceRule) {

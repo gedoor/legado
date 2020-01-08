@@ -226,20 +226,11 @@ object Restore {
     fun importOldReplaceRule(json: String): Int {
         val replaceRules = mutableListOf<ReplaceRule>()
         val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-        val existingRules = App.db.replaceRuleDao().all.map { it.pattern }.toSet()
-        for ((index: Int, item: Map<String, Any>) in items.withIndex()) {
+        for (item in items) {
             val jsonItem = jsonPath.parse(item)
-            val rule = ReplaceRule()
-            rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis().plus(index)
-            rule.pattern = jsonItem.readString("$.regex") ?: ""
-            if (rule.pattern.isEmpty() || rule.pattern in existingRules) continue
-            rule.name = jsonItem.readString("$.replaceSummary") ?: ""
-            rule.replacement = jsonItem.readString("$.replacement") ?: ""
-            rule.isRegex = jsonItem.readBool("$.isRegex") == true
-            rule.scope = jsonItem.readString("$.useTo")
-            rule.isEnabled = jsonItem.readBool("$.enable") == true
-            rule.order = jsonItem.readInt("$.serialNumber") ?: index
-            replaceRules.add(rule)
+            OldRule.jsonToReplaceRule(jsonItem.jsonString())?.let {
+                replaceRules.add(it)
+            }
         }
         App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
         return replaceRules.size
