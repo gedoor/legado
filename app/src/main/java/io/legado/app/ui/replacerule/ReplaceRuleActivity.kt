@@ -21,6 +21,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
@@ -28,16 +30,20 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.toast
+import java.io.File
+import java.io.FileNotFoundException
 
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
     SearchView.OnQueryTextListener,
+    FileChooserDialog.CallBack,
     ReplaceRuleAdapter.CallBack {
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
@@ -188,7 +194,32 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             intent.type = "text/*"//设置类型
             startActivityForResult(intent, importSource)
         } catch (e: Exception) {
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    selectFile()
+                }
+                .request()
+        }
+    }
 
+    private fun selectFile() {
+        FileChooserDialog.show(
+            supportFragmentManager, importSource,
+            allowExtensions = arrayOf("txt", "json")
+        )
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        if (requestCode == importSource) {
+            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+            viewModel.importSource(File(currentPath).readText()) { msg ->
+                title_bar.snackbar(msg)
+            }
         }
     }
 
@@ -211,11 +242,22 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                             Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                                 .show()
                             viewModel.importSource(it) { msg ->
-                                toast(msg)
+                                title_bar.snackbar(msg)
                             }
                         }
+                    } catch (e: FileNotFoundException) {
+                        PermissionsCompat.Builder(this)
+                            .addPermissions(
+                                Permissions.READ_EXTERNAL_STORAGE,
+                                Permissions.WRITE_EXTERNAL_STORAGE
+                            )
+                            .rationale(R.string.bg_image_per)
+                            .onGranted {
+                                selectFileSys()
+                            }
+                            .request()
                     } catch (e: Exception) {
-                        e.localizedMessage?.let { toast(it) }
+                        toast(e.localizedMessage ?: "ERROR")
                     }
                 }
             }

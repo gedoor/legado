@@ -16,13 +16,13 @@ import java.io.File
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
 
-    fun importSource(text: String, toast: (msg: String) -> Unit) {
+    fun importSource(text: String, showMsg: (msg: String) -> Unit) {
         execute {
             Restore.importOldReplaceRule(text)
         }.onError {
-            toast(it.localizedMessage ?: "ERROR")
+            showMsg(it.localizedMessage ?: "ERROR")
         }.onSuccess {
-            toast(context.getString(R.string.success))
+            showMsg(context.getString(R.string.success))
         }
     }
 

@@ -21,6 +21,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
@@ -40,6 +42,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.startService
 import org.jetbrains.anko.toast
+import java.io.FileNotFoundException
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     BookSourceAdapter.CallBack,
@@ -210,14 +213,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }.show().applyTint()
     }
 
-    private fun selectFile() {
-        FileChooserDialog.show(
-            supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json"),
-            menus = arrayOf(getString(R.string.sys_file_picker))
-        )
-    }
-
     private fun selectFileSys() {
         try {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -226,15 +221,24 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             intent.type = "text/*"//设置类型
             startActivityForResult(intent, importSource)
         } catch (e: Exception) {
-            selectFile()
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    selectFile()
+                }
+                .request()
         }
     }
 
-    override fun onMenuClick(menu: String) {
-        super.onMenuClick(menu)
-        when (menu) {
-            getString(R.string.sys_file_picker) -> selectFileSys()
-        }
+    private fun selectFile() {
+        FileChooserDialog.show(
+            supportFragmentManager, importSource,
+            allowExtensions = arrayOf("txt", "json")
+        )
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
@@ -295,11 +299,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                             Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                                 .show()
                             viewModel.importSource(it) { msg ->
-                                toast(msg)
+                                title_bar.snackbar(msg)
                             }
                         }
+                    } catch (e: FileNotFoundException) {
+                        PermissionsCompat.Builder(this)
+                            .addPermissions(
+                                Permissions.READ_EXTERNAL_STORAGE,
+                                Permissions.WRITE_EXTERNAL_STORAGE
+                            )
+                            .rationale(R.string.bg_image_per)
+                            .onGranted {
+                                selectFileSys()
+                            }
+                            .request()
                     } catch (e: Exception) {
-                        e.localizedMessage?.let { toast(it) }
+                        toast(e.localizedMessage ?: "ERROR")
                     }
                 }
             }
