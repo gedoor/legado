@@ -21,6 +21,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
@@ -40,6 +42,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.startService
 import org.jetbrains.anko.toast
+import java.io.FileNotFoundException
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     BookSourceAdapter.CallBack,
@@ -295,11 +298,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                             Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                                 .show()
                             viewModel.importSource(it) { msg ->
-                                toast(msg)
+                                title_bar.snackbar(msg)
                             }
                         }
+                    } catch (e: FileNotFoundException) {
+                        PermissionsCompat.Builder(this)
+                            .addPermissions(
+                                Permissions.READ_EXTERNAL_STORAGE,
+                                Permissions.WRITE_EXTERNAL_STORAGE
+                            )
+                            .rationale(R.string.bg_image_per)
+                            .onGranted {
+                                selectFileSys()
+                            }
+                            .request()
                     } catch (e: Exception) {
-                        e.localizedMessage?.let { toast(it) }
+                        toast(e.localizedMessage ?: "ERROR")
                     }
                 }
             }

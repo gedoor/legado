@@ -195,7 +195,6 @@ class BgTextConfigDialog : DialogFragment() {
                                         ReadBookConfig.upBg()
                                         postEvent(Bus.UP_CONFIG, false)
                                     }
-                                    Unit
                                 }
                                 .request()
                         }

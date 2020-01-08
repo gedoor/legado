@@ -21,6 +21,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
@@ -34,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_replace_rule.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.toast
+import java.io.FileNotFoundException
 
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
@@ -214,8 +217,19 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                                 title_bar.snackbar(msg)
                             }
                         }
+                    } catch (e: FileNotFoundException) {
+                        PermissionsCompat.Builder(this)
+                            .addPermissions(
+                                Permissions.READ_EXTERNAL_STORAGE,
+                                Permissions.WRITE_EXTERNAL_STORAGE
+                            )
+                            .rationale(R.string.bg_image_per)
+                            .onGranted {
+                                selectFileSys()
+                            }
+                            .request()
                     } catch (e: Exception) {
-                        e.localizedMessage?.let { toast(it) }
+                        toast(e.localizedMessage ?: "ERROR")
                     }
                 }
             }

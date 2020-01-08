@@ -21,6 +21,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
@@ -37,6 +39,8 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
+import org.jetbrains.anko.toast
+import java.io.FileNotFoundException
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
@@ -234,12 +238,27 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         when (requestCode) {
             importSource -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    uri.readText(this)?.let {
-                        Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
-                            .show()
-                        viewModel.importSource(it) { msg ->
-                            title_bar.snackbar(msg)
+                    try {
+                        uri.readText(this)?.let {
+                            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                                .show()
+                            viewModel.importSource(it) { msg ->
+                                title_bar.snackbar(msg)
+                            }
                         }
+                    } catch (e: FileNotFoundException) {
+                        PermissionsCompat.Builder(this)
+                            .addPermissions(
+                                Permissions.READ_EXTERNAL_STORAGE,
+                                Permissions.WRITE_EXTERNAL_STORAGE
+                            )
+                            .rationale(R.string.bg_image_per)
+                            .onGranted {
+                                selectFileSys()
+                            }
+                            .request()
+                    } catch (e: Exception) {
+                        toast(e.localizedMessage ?: "ERROR")
                     }
                 }
             }
