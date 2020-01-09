@@ -77,6 +77,7 @@ class BadgeView @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BadgeView)
         val radios =
             typedArray.getDimensionPixelOffset(R.styleable.BadgeView_bv_radius, 8)
+        typedArray.recycle()
 
         if (layoutParams !is LayoutParams) {
             val layoutParams = LayoutParams(
