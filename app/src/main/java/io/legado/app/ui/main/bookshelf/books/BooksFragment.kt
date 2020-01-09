@@ -71,7 +71,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterList(requireContext(), this)
         } else {
             rv_bookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
-            booksAdapter = BooksAdapterGrid(requireContext(), bookshelfLayout, this)
+            booksAdapter = BooksAdapterGrid(requireContext(),this)
         }
         rv_bookshelf.adapter = booksAdapter
     }

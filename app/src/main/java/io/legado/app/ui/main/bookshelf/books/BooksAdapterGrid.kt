@@ -12,16 +12,13 @@ import kotlinx.android.synthetic.main.item_bookshelf_grid.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class BooksAdapterGrid(context: Context, private val span: Int, private val callBack: CallBack) :
+class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
     BooksAdapter(context, R.layout.item_bookshelf_grid) {
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
             if (payloads.isEmpty()) {
                 ATH.applyBackgroundTint(this)
-                tv_name.textSize = (16 - span).toFloat()
-                bv_author.textSize = (10 - span).toFloat()
-                bv_unread.textSize = (10 - span).toFloat()
                 tv_name.text = item.name
                 bv_author.text = item.author
                 item.getDisplayCover()?.let {
