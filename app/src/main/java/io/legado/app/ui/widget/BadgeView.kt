@@ -74,6 +74,10 @@ class BadgeView @JvmOverloads constructor(
         }
 
     init {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BadgeView)
+        val radios =
+            typedArray.getDimensionPixelOffset(R.styleable.BadgeView_bv_radius, 8)
+
         if (layoutParams !is LayoutParams) {
             val layoutParams = LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -88,7 +92,7 @@ class BadgeView @JvmOverloads constructor(
         //setTypeface(Typeface.DEFAULT_BOLD);
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
         setPadding(dip2Px(5f), dip2Px(1f), dip2Px(5f), dip2Px(1f))
-        radius = 8f
+        radius = radios.toFloat()
 
         // set default background
         setBackground(radius, context.accentColor)

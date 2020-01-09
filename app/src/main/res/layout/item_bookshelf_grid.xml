@@ -49,35 +49,39 @@
             tools:ignore="RtlHardcoded" />
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/fl_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@id/iv_cover"
+        app:layout_constraintBottom_toBottomOf="@id/iv_cover">
+
+        <io.legado.app.ui.widget.BadgeView
+            android:id="@+id/bv_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            app:bv_radius="0dp"
+            tools:ignore="RtlHardcoded" />
+
+    </FrameLayout>
+
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:gravity="center"
-        android:singleLine="true"
+        android:lines="2"
+        android:ellipsize="end"
         android:text="@string/book_name"
         android:textColor="@color/tv_text_default"
-        android:textSize="16sp"
+        android:textSize="12sp"
         app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
         app:layout_constraintRight_toRightOf="@+id/iv_cover"
         app:layout_constraintTop_toBottomOf="@+id/iv_cover"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
-
-    <TextView
-        android:id="@+id/tv_author"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:includeFontPadding="false"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/author"
-        android:textColor="@color/tv_text_secondary"
-        android:textSize="13sp"
-        app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
-        app:layout_constraintRight_toRightOf="@+id/iv_cover"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="RtlSymmetry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

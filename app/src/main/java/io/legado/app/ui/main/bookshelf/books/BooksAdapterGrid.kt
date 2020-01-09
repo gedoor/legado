@@ -20,7 +20,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
             if (payloads.isEmpty()) {
                 ATH.applyBackgroundTint(this)
                 tv_name.text = item.name
-                tv_author.text = item.author
+                bv_author.text = item.author
                 item.getDisplayCover()?.let {
                     ImageLoader.load(context, it)//Glide自动识别http://和file://
                         .placeholder(R.drawable.image_cover_default)
