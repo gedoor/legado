@@ -108,17 +108,9 @@ class BadgeView @JvmOverloads constructor(
     }
 
     fun setBackground(dipRadius: Float, badgeColor: Int) {
-        val radius = dip2Px(dipRadius)
-        val radiusArray = floatArrayOf(
-            radius.toFloat(),
-            radius.toFloat(),
-            radius.toFloat(),
-            radius.toFloat(),
-            radius.toFloat(),
-            radius.toFloat(),
-            radius.toFloat(),
-            radius.toFloat()
-        )
+        val radius = dip2Px(dipRadius).toFloat()
+        val radiusArray =
+            floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
 
         val roundRect = RoundRectShape(radiusArray, null, null)
         val bgDrawable = ShapeDrawable(roundRect)
