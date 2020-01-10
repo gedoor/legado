@@ -110,7 +110,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     fun readAloud(text: String) {
-
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "rss")
     }
 
     override fun onCleared() {
