@@ -122,7 +122,9 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun readAloud() {
-
+        webView.evaluateJavascript("document.documentElement.outerHTML") {
+            viewModel.readAloud(it)
+        }
     }
 
 }
