@@ -47,6 +47,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 shareText("链接分享", it.link)
             }
+            R.id.menu_aloud -> readAloud()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -119,6 +120,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             }
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    private fun readAloud() {
+
     }
 
     private fun shareText(title: String, text: String) {

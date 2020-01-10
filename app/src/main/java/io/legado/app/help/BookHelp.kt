@@ -86,7 +86,7 @@ object BookHelp {
     }
 
     private fun getBookFolder(book: Book): String {
-        val bookFolder = formatFolderName(book.name + book.bookUrl)
+        val bookFolder = formatFolderName(book.name + MD5Utils.md5Encode16(book.bookUrl))
         return "${getBookCachePath()}${File.separator}$bookFolder"
     }
 
