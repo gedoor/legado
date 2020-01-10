@@ -88,13 +88,13 @@ class FontSelectDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_default -> {
-                parentFragment?.let {
-                    if (it is CallBack && it.curFontPath != "") {
+                (parentFragment as? CallBack)?.let {
+                    if (it.curFontPath != "") {
                         it.selectFile("")
                     }
                 }
-                activity?.let {
-                    if (it is CallBack && it.curFontPath != "") {
+                (activity as? CallBack)?.let {
+                    if (it.curFontPath != "") {
                         it.selectFile("")
                     }
                 }
@@ -168,13 +168,13 @@ class FontSelectDialog : DialogFragment(),
 
     override fun onClick(file: File) {
         file.absolutePath.let { path ->
-            parentFragment?.let {
-                if (it is CallBack && it.curFontPath != path) {
+            (parentFragment as? CallBack)?.let {
+                if (it.curFontPath != path) {
                     it.selectFile(path)
                 }
             }
-            activity?.let {
-                if (it is CallBack && it.curFontPath != path) {
+            (activity as? CallBack)?.let {
+                if (it.curFontPath != path) {
                     it.selectFile(path)
                 }
             }
@@ -183,17 +183,9 @@ class FontSelectDialog : DialogFragment(),
     }
 
     override fun curFilePath(): String {
-        parentFragment?.let {
-            if (it is CallBack) {
-                return it.curFontPath
-            }
-        }
-        activity?.let {
-            if (it is CallBack) {
-                return it.curFontPath
-            }
-        }
-        return ""
+        return (parentFragment as? CallBack)?.curFontPath
+            ?: (activity as? CallBack)?.curFontPath
+            ?: ""
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
