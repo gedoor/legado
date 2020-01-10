@@ -143,5 +143,6 @@
 
     <declare-styleable name="BadgeView">
         <attr name="bv_radius" format="dimension" />
+        <attr name="up_flat_angle" format="boolean" />
     </declare-styleable>
 </resources>
