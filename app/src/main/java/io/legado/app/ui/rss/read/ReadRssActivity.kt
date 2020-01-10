@@ -24,6 +24,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         get() = getViewModel(ReadRssViewModel::class.java)
 
     private var starMenuItem: MenuItem? = null
+    private var ttsMenuItem: MenuItem? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
@@ -36,6 +37,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_read, menu)
         starMenuItem = menu.findItem(R.id.menu_rss_star)
+        ttsMenuItem = menu.findItem(R.id.menu_aloud)
         upStarMenu()
         return super.onCompatCreateOptionsMenu(menu)
     }
@@ -95,6 +97,17 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             starMenuItem?.setTitle(R.string.w_store_up)
         }
         DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
+    }
+
+    override fun upTtsMenu(isPlaying: Boolean) {
+        if (isPlaying) {
+            ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
+            ttsMenuItem?.setTitle(R.string.aloud_stop)
+        } else {
+            ttsMenuItem?.setIcon(R.drawable.ic_volume_up)
+            ttsMenuItem?.setTitle(R.string.read_aloud)
+        }
+        DrawableUtils.setTint(ttsMenuItem?.icon, primaryTextColor)
     }
 
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {

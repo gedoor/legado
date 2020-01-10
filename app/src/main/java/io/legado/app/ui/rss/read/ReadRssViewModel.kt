@@ -125,16 +125,11 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     private inner class TTSUtteranceListener : UtteranceProgressListener() {
 
         override fun onStart(s: String) {
-
+            callBack?.upTtsMenu(true)
         }
 
         override fun onDone(s: String) {
-
-        }
-
-        override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
-            super.onRangeStart(utteranceId, start, end, frame)
-
+            callBack?.upTtsMenu(false)
         }
 
         override fun onError(s: String) {
@@ -142,7 +137,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         }
 
     }
+
     interface CallBack {
         fun upStarMenu()
+        fun upTtsMenu(isPlaying: Boolean)
     }
 }
