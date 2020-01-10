@@ -1,13 +1,16 @@
 package io.legado.app.utils
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import io.legado.app.R
 import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.toast
 
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)
@@ -48,7 +51,8 @@ fun Context.getCompatColor(@ColorRes id: Int): Int = ContextCompat.getColor(this
 
 fun Context.getCompatDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.getDrawable(this, id)
 
-fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? = ContextCompat.getColorStateList(this, id)
+fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
+    ContextCompat.getColorStateList(this, id)
 
 fun Context.getStatusBarHeight(): Int {
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -60,6 +64,17 @@ fun Context.getNavigationBarHeight(): Int {
     return resources.getDimensionPixelSize(resourceId)
 }
 
+fun Context.shareText(title: String, text: String) {
+    try {
+        val textIntent = Intent(Intent.ACTION_SEND)
+        textIntent.type = "text/plain"
+        textIntent.putExtra(Intent.EXTRA_TEXT, text)
+        startActivity(Intent.createChooser(textIntent, title))
+    } catch (e: Exception) {
+        toast(R.string.can_not_share)
+    }
+}
+
 val Context.isNightTheme: Boolean
     get() = getPrefBoolean("isNightTheme")
 
@@ -67,4 +82,4 @@ val Context.isTransparentStatusBar: Boolean
     get() = getPrefBoolean("transparentStatusBar", true)
 
 val Context.isShowRSS: Boolean
-   get() = getPrefBoolean("showRss", true)
+    get() = getPrefBoolean("showRss", true)

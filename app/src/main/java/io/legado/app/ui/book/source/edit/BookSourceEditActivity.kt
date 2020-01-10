@@ -29,6 +29,7 @@ import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.shareText
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.startActivity
@@ -87,17 +88,8 @@ class BookSourceEditActivity :
                 }
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
-            R.id.menu_share_str -> {
-                GSON.toJson(getSource())?.let { sourceStr ->
-                    try {
-                        val textIntent = Intent(Intent.ACTION_SEND)
-                        textIntent.type = "text/plain"
-                        textIntent.putExtra(Intent.EXTRA_TEXT, sourceStr)
-                        startActivity(Intent.createChooser(textIntent, "Source Share"))
-                    } catch (e: Exception) {
-                        toast(R.string.can_not_share)
-                    }
-                }
+            R.id.menu_share_str -> GSON.toJson(getSource())?.let { sourceStr ->
+                shareText("分享书源", sourceStr)
             }
             R.id.menu_rule_summary -> {
                 try {

@@ -1,7 +1,6 @@
 package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -15,8 +14,8 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.shareText
 import kotlinx.android.synthetic.main.activity_rss_read.*
-import org.jetbrains.anko.toast
 
 class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
     ReadRssViewModel.CallBack {
@@ -126,14 +125,4 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     }
 
-    private fun shareText(title: String, text: String) {
-        try {
-            val textIntent = Intent(Intent.ACTION_SEND)
-            textIntent.type = "text/plain"
-            textIntent.putExtra(Intent.EXTRA_TEXT, text)
-            startActivity(Intent.createChooser(textIntent, title))
-        } catch (e: Exception) {
-            toast(R.string.can_not_share)
-        }
-    }
 }
