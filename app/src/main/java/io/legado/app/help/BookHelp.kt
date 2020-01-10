@@ -108,6 +108,9 @@ object BookHelp {
             ?: ""
     }
 
+    /**
+     * 找到相似度最高的章节
+     */
     fun getDurChapterIndexByChapterTitle(
         title: String?,
         index: Int,
