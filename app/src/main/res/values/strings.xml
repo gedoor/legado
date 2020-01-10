@@ -579,5 +579,8 @@
     <string name="prev_sentence">上一句</string>
     <string name="next_sentence">下一句</string>
     <string name="other_folder">其它目录</string>
+    <string name="text_too_long_qr_error">文字太多,生成二维码失败</string>
+    <string name="share_rss_source">分享RSS源</string>
+    <string name="share_book_source">分享书源</string>
 
 </resources>

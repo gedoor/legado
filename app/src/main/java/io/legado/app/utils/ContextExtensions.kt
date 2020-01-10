@@ -1,16 +1,25 @@
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.toast
+import java.io.File
+import java.io.FileOutputStream
 
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)
@@ -72,6 +81,37 @@ fun Context.shareText(title: String, text: String) {
         startActivity(Intent.createChooser(textIntent, title))
     } catch (e: Exception) {
         toast(R.string.can_not_share)
+    }
+}
+
+@SuppressLint("SetWorldReadable")
+fun Context.shareWithQr(title: String, text: String) {
+    QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
+    val bitmap = QRCodeEncoder.syncEncodeQRCode(text, 600)
+    QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H
+    if (bitmap == null) {
+        toast(R.string.text_too_long_qr_error)
+    } else {
+        try {
+            val file = File(externalCacheDir, "qr.png")
+            val fOut = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut)
+            fOut.flush()
+            fOut.close()
+            file.setReadable(true, false)
+            val contentUri = FileProvider.getUriForFile(
+                this,
+                "${BuildConfig.APPLICATION_ID}.fileProvider",
+                file
+            )
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.putExtra(Intent.EXTRA_STREAM, contentUri)
+            intent.type = "image/png"
+            startActivity(Intent.createChooser(intent, title))
+        } catch (e: Exception) {
+            toast(e.localizedMessage ?: "ERROR")
+        }
     }
 }
 
