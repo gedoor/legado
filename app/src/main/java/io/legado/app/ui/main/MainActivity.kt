@@ -16,6 +16,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -27,7 +28,6 @@ import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.launch
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
@@ -116,25 +116,23 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     override fun finish() {
         if (!BuildConfig.DEBUG) {
-            launch {
-                backup()
-                super.finish()
-            }
-        } else {
-            super.finish()
+            backup()
         }
+        super.finish()
     }
 
-    private suspend fun backup() {
-        val backupPath = getPrefString(PreferKey.backupPath)
-        if (backupPath?.isNotEmpty() == true) {
-            val uri = Uri.parse(backupPath)
-            val doc = DocumentFile.fromTreeUri(this, uri)
-            if (doc?.canWrite() == true) {
-                Backup.backup(this@MainActivity, uri)
+    private fun backup() {
+        Coroutine.async {
+            val backupPath = getPrefString(PreferKey.backupPath)
+            if (backupPath?.isNotEmpty() == true) {
+                val uri = Uri.parse(backupPath)
+                val doc = DocumentFile.fromTreeUri(this@MainActivity, uri)
+                if (doc?.canWrite() == true) {
+                    Backup.backup(this@MainActivity, uri)
+                }
+            } else {
+                Backup.backup(this@MainActivity, null)
             }
-        } else {
-            Backup.backup(this@MainActivity, null)
         }
     }
 

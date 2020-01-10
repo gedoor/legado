@@ -41,11 +41,11 @@ class FontSelectDialog : DialogFragment(),
     FontAdapter.CallBack {
     lateinit var job: Job
     private val fontFolderRequestCode = 35485
-    private lateinit var adapter: FontAdapter
     private val fontFolder =
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
     override val coroutineContext: CoroutineContext
         get() = job + Main
+    private var adapter: FontAdapter? = null
 
     override fun onStart() {
         super.onStart()
@@ -144,7 +144,7 @@ class FontSelectDialog : DialogFragment(),
                     pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
                 }?.let {
                     withContext(Main) {
-                        adapter.setItems(it.toList())
+                        adapter?.setItems(it.toList())
                     }
                 }
             } catch (e: Exception) {
@@ -161,7 +161,7 @@ class FontSelectDialog : DialogFragment(),
             file.listFiles { pathName ->
                 pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
             }?.let {
-                adapter.setItems(it.toList())
+                adapter?.setItems(it.toList())
             }
         } catch (e: Exception) {
             toast(e.localizedMessage ?: "")
