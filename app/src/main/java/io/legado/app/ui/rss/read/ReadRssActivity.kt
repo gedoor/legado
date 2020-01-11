@@ -142,10 +142,15 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun readAloud() {
-        webView.settings.javaScriptEnabled = true
-        webView.evaluateJavascript("document.documentElement.outerHTML") {
-            val html = StringEscapeUtils.unescapeJson(it)
-            viewModel.readAloud(Jsoup.parse(html).body().html().htmlFormat())
+        if (viewModel.textToSpeech.isSpeaking) {
+            viewModel.textToSpeech.stop()
+            upTtsMenu(false)
+        } else {
+            webView.settings.javaScriptEnabled = true
+            webView.evaluateJavascript("document.documentElement.outerHTML") {
+                val html = StringEscapeUtils.unescapeJson(it)
+                viewModel.readAloud(Jsoup.parse(html).body().html().htmlFormat())
+            }
         }
     }
 
