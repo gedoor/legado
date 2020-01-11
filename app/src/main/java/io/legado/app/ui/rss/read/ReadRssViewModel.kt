@@ -111,7 +111,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
 
     fun readAloud(text: String) {
         textToSpeech.stop()
-        text.split("   ").forEach {
+        text.split("\n", "  ", "　　").forEach {
             textToSpeech.speak(it, TextToSpeech.QUEUE_ADD, null, "rss")
         }
     }
