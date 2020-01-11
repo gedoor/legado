@@ -1,7 +1,6 @@
 package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -15,8 +14,8 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.shareText
 import kotlinx.android.synthetic.main.activity_rss_read.*
-import org.jetbrains.anko.toast
 
 class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
     ReadRssViewModel.CallBack {
@@ -25,6 +24,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         get() = getViewModel(ReadRssViewModel::class.java)
 
     private var starMenuItem: MenuItem? = null
+    private var ttsMenuItem: MenuItem? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
@@ -37,6 +37,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_read, menu)
         starMenuItem = menu.findItem(R.id.menu_rss_star)
+        ttsMenuItem = menu.findItem(R.id.menu_aloud)
         upStarMenu()
         return super.onCompatCreateOptionsMenu(menu)
     }
@@ -47,6 +48,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 shareText("链接分享", it.link)
             }
+            R.id.menu_aloud -> readAloud()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -97,6 +99,17 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
     }
 
+    override fun upTtsMenu(isPlaying: Boolean) {
+        if (isPlaying) {
+            ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
+            ttsMenuItem?.setTitle(R.string.aloud_stop)
+        } else {
+            ttsMenuItem?.setIcon(R.drawable.ic_volume_up)
+            ttsMenuItem?.setTitle(R.string.read_aloud)
+        }
+        DrawableUtils.setTint(ttsMenuItem?.icon, primaryTextColor)
+    }
+
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
@@ -121,14 +134,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         return super.onKeyUp(keyCode, event)
     }
 
-    private fun shareText(title: String, text: String) {
-        try {
-            val textIntent = Intent(Intent.ACTION_SEND)
-            textIntent.type = "text/plain"
-            textIntent.putExtra(Intent.EXTRA_TEXT, text)
-            startActivity(Intent.createChooser(textIntent, title))
-        } catch (e: Exception) {
-            toast(R.string.can_not_share)
+    private fun readAloud() {
+        webView.evaluateJavascript("document.documentElement.outerHTML") {
+            viewModel.readAloud(it)
         }
     }
+
 }

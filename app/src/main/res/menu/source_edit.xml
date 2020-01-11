@@ -35,7 +35,7 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_share_it"
+        android:id="@+id/menu_share_qr"
         android:title="@string/qr_share"
         app:showAsAction="never" />
 

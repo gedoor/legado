@@ -15,7 +15,7 @@ import io.legado.app.R
  * @author Aidan Follestad (afollestad), Karim Abou Zeid (kabouzeid)
  */
 class ThemeStore @SuppressLint("CommitPrefEdits")
-private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeStoreInterface {
+private constructor(private val mContext: Context) : ThemeStoreInterface {
     private val mEditor: SharedPreferences.Editor
 
     init {

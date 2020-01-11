@@ -88,16 +88,14 @@ class FontSelectDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_default -> {
-                val pf = parentFragment
-                if (pf is CallBack) {
-                    if ("" != pf.curFontPath) {
-                        pf.selectFile("")
+                (parentFragment as? CallBack)?.let {
+                    if (it.curFontPath != "") {
+                        it.selectFile("")
                     }
                 }
-                val activity = activity
-                if (activity is CallBack) {
-                    if ("" != activity.curFontPath) {
-                        activity.selectFile("")
+                (activity as? CallBack)?.let {
+                    if (it.curFontPath != "") {
+                        it.selectFile("")
                     }
                 }
                 dismiss()
@@ -131,7 +129,7 @@ class FontSelectDialog : DialogFragment(),
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(uri: Uri) {
         launch(IO) {
-            DocumentFile.fromTreeUri(requireContext(), uri)?.listFiles()?.forEach { file ->
+            DocumentFile.fromTreeUri(App.INSTANCE, uri)?.listFiles()?.forEach { file ->
                 if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
                     DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
                         FileHelp.getFile(fontFolder + file.name).writeBytes(it)
@@ -169,17 +167,15 @@ class FontSelectDialog : DialogFragment(),
     }
 
     override fun onClick(file: File) {
-        file.absolutePath.let {
-            val pf = parentFragment
-            if (pf is CallBack) {
-                if (it != pf.curFontPath) {
-                    pf.selectFile(it)
+        file.absolutePath.let { path ->
+            (parentFragment as? CallBack)?.let {
+                if (it.curFontPath != path) {
+                    it.selectFile(path)
                 }
             }
-            val activity = activity
-            if (activity is CallBack) {
-                if (it != activity.curFontPath) {
-                    activity.selectFile(it)
+            (activity as? CallBack)?.let {
+                if (it.curFontPath != path) {
+                    it.selectFile(path)
                 }
             }
         }
@@ -187,15 +183,9 @@ class FontSelectDialog : DialogFragment(),
     }
 
     override fun curFilePath(): String {
-        val pf = parentFragment
-        if (pf is CallBack) {
-            return pf.curFontPath
-        }
-        val activity = activity
-        if (activity is CallBack) {
-            return activity.curFontPath
-        }
-        return ""
+        return (parentFragment as? CallBack)?.curFontPath
+            ?: (activity as? CallBack)?.curFontPath
+            ?: ""
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

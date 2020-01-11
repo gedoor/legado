@@ -98,6 +98,7 @@
         <activity
             android:name=".ui.audio.AudioPlayActivity"
             android:launchMode="singleTask" />
+        <activity android:name=".ui.importbook.ImportBookActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
         <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
