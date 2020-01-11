@@ -43,6 +43,8 @@ class FontSelectDialog : DialogFragment(),
     private val fontFolderRequestCode = 35485
     private val fontFolder =
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
+    private val fontCacheFolder =
+        App.INSTANCE.cacheDir.absolutePath + File.separator + "Fonts" + File.separator
     override val coroutineContext: CoroutineContext
         get() = job + Main
     private var adapter: FontAdapter? = null
@@ -88,12 +90,8 @@ class FontSelectDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_default -> {
-                (parentFragment as? CallBack)?.let {
-                    if (it.curFontPath != "") {
-                        it.selectFile("")
-                    }
-                }
-                (activity as? CallBack)?.let {
+                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
+                cb?.let {
                     if (it.curFontPath != "") {
                         it.selectFile("")
                     }
@@ -129,15 +127,16 @@ class FontSelectDialog : DialogFragment(),
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(uri: Uri) {
         launch(IO) {
+            FileHelp.deleteFile(fontCacheFolder)
             DocumentFile.fromTreeUri(App.INSTANCE, uri)?.listFiles()?.forEach { file ->
                 if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
                     DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
-                        FileHelp.getFile(fontFolder + file.name).writeBytes(it)
+                        FileHelp.getFile(fontCacheFolder + file.name).writeBytes(it)
                     }
                 }
             }
             try {
-                val file = File(fontFolder)
+                val file = File(fontCacheFolder)
                 file.listFiles { pathName ->
                     pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
                 }?.let {
@@ -167,19 +166,19 @@ class FontSelectDialog : DialogFragment(),
     }
 
     override fun onClick(file: File) {
-        file.absolutePath.let { path ->
-            (parentFragment as? CallBack)?.let {
-                if (it.curFontPath != path) {
-                    it.selectFile(path)
+        launch(IO) {
+            file.copyTo(FileHelp.getFile(fontFolder + file.name), true).absolutePath.let { path ->
+                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
+                cb?.let {
+                    if (it.curFontPath != path) {
+                        withContext(Main) {
+                            it.selectFile(path)
+                        }
+                    }
                 }
             }
-            (activity as? CallBack)?.let {
-                if (it.curFontPath != path) {
-                    it.selectFile(path)
-                }
-            }
+            dialog?.dismiss()
         }
-        dialog?.dismiss()
     }
 
     override fun curFilePath(): String {
