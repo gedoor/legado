@@ -167,7 +167,7 @@ class FontSelectDialog : DialogFragment(),
 
     override fun onClick(file: File) {
         launch(IO) {
-            file.copyTo(FileHelp.getFile(fontFolder + file.name)).absolutePath.let { path ->
+            file.copyTo(FileHelp.getFile(fontFolder + file.name), true).absolutePath.let { path ->
                 val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
                 cb?.let {
                     if (it.curFontPath != path) {
