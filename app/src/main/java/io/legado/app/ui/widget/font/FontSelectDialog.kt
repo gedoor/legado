@@ -90,12 +90,8 @@ class FontSelectDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_default -> {
-                (parentFragment as? CallBack)?.let {
-                    if (it.curFontPath != "") {
-                        it.selectFile("")
-                    }
-                }
-                (activity as? CallBack)?.let {
+                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
+                cb?.let {
                     if (it.curFontPath != "") {
                         it.selectFile("")
                     }
@@ -170,19 +166,19 @@ class FontSelectDialog : DialogFragment(),
     }
 
     override fun onClick(file: File) {
-        file.copyTo(FileHelp.getFile(fontFolder + file.name)).absolutePath.let { path ->
-            (parentFragment as? CallBack)?.let {
-                if (it.curFontPath != path) {
-                    it.selectFile(path)
+        launch(IO) {
+            file.copyTo(FileHelp.getFile(fontFolder + file.name)).absolutePath.let { path ->
+                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
+                cb?.let {
+                    if (it.curFontPath != path) {
+                        withContext(Main) {
+                            it.selectFile(path)
+                        }
+                    }
                 }
             }
-            (activity as? CallBack)?.let {
-                if (it.curFontPath != path) {
-                    it.selectFile(path)
-                }
-            }
+            dialog?.dismiss()
         }
-        dialog?.dismiss()
     }
 
     override fun curFilePath(): String {
