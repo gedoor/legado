@@ -8,13 +8,13 @@ import android.widget.LinearLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -28,6 +28,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     lateinit var adapter: ChapterListAdapter
     private var chapterData: LiveData<List<BookChapter>>? = null
     private var durChapterIndex = 0
+    private lateinit var mLayoutManager: UpLinearLayoutManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,7 +39,8 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     private fun initRecyclerView() {
         adapter = ChapterListAdapter(requireContext(), this)
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
+        mLayoutManager = UpLinearLayoutManager(requireContext())
+        recycler_view.layoutManager = mLayoutManager
         recycler_view.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -55,7 +57,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
                 viewModel.book?.let { book ->
                     durChapterIndex = book.durChapterIndex
                     tv_current_chapter_info.text = book.durChapterTitle
-                    recycler_view.scrollToPosition(durChapterIndex)
+                    mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                 }
             })
         }
@@ -63,15 +65,15 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     private fun initView() {
         ll_chapter_base_info.setBackgroundColor(backgroundColor)
-        iv_chapter_top.onClick { recycler_view.scrollToPosition(0) }
+        iv_chapter_top.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
         iv_chapter_bottom.onClick {
             if (adapter.itemCount > 0) {
-                recycler_view.scrollToPosition(adapter.itemCount - 1)
+                mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
             }
         }
         tv_current_chapter_info.onClick {
             viewModel.book?.let {
-                recycler_view.scrollToPosition(it.durChapterIndex)
+                mLayoutManager.scrollToPositionWithOffset(it.durChapterIndex, 0)
             }
         }
         viewModel.callBack = this
@@ -86,7 +88,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             chapterData?.observe(viewLifecycleOwner, Observer {
                 adapter.setItems(it)
             })
-            recycler_view.scrollToPosition(0)
+            mLayoutManager.scrollToPositionWithOffset(0, 0)
         }
     }
 
