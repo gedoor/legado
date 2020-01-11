@@ -14,8 +14,12 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.htmlFormat
 import io.legado.app.utils.shareText
 import kotlinx.android.synthetic.main.activity_rss_read.*
+import kotlinx.coroutines.launch
+import org.apache.commons.text.StringEscapeUtils
+import org.jsoup.Jsoup
 
 class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
     ReadRssViewModel.CallBack {
@@ -100,14 +104,16 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     override fun upTtsMenu(isPlaying: Boolean) {
-        if (isPlaying) {
-            ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
-            ttsMenuItem?.setTitle(R.string.aloud_stop)
-        } else {
-            ttsMenuItem?.setIcon(R.drawable.ic_volume_up)
-            ttsMenuItem?.setTitle(R.string.read_aloud)
+        launch {
+            if (isPlaying) {
+                ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
+                ttsMenuItem?.setTitle(R.string.aloud_stop)
+            } else {
+                ttsMenuItem?.setIcon(R.drawable.ic_volume_up)
+                ttsMenuItem?.setTitle(R.string.read_aloud)
+            }
+            DrawableUtils.setTint(ttsMenuItem?.icon, primaryTextColor)
         }
-        DrawableUtils.setTint(ttsMenuItem?.icon, primaryTextColor)
     }
 
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
@@ -134,9 +140,17 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         return super.onKeyUp(keyCode, event)
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun readAloud() {
-        webView.evaluateJavascript("document.documentElement.outerHTML") {
-            viewModel.readAloud(it)
+        if (viewModel.textToSpeech.isSpeaking) {
+            viewModel.textToSpeech.stop()
+            upTtsMenu(false)
+        } else {
+            webView.settings.javaScriptEnabled = true
+            webView.evaluateJavascript("document.documentElement.outerHTML") {
+                val html = StringEscapeUtils.unescapeJson(it)
+                viewModel.readAloud(Jsoup.parse(html).body().html().htmlFormat())
+            }
         }
     }
 
