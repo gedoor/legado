@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.legado.app.App
@@ -26,7 +25,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
     lateinit var adapter: ChapterListAdapter
-    private var chapterData: LiveData<List<BookChapter>>? = null
     private var durChapterIndex = 0
     private lateinit var mLayoutManager: UpLinearLayoutManager
 
@@ -56,7 +54,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
                 adapter.setItems(it)
                 viewModel.book?.let { book ->
                     durChapterIndex = book.durChapterIndex
-                    tv_current_chapter_info.text = book.durChapterTitle
+                    tv_current_chapter_info.text = it[durChapterIndex()].title
                     mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                 }
             })
@@ -80,15 +78,15 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     override fun startSearch(newText: String?) {
-        chapterData?.removeObservers(this)
         if (newText.isNullOrBlank()) {
             initData()
         } else {
-            chapterData = App.db.bookChapterDao().liveDataSearch(newText)
-            chapterData?.observe(viewLifecycleOwner, Observer {
-                adapter.setItems(it)
-            })
-            mLayoutManager.scrollToPositionWithOffset(0, 0)
+            viewModel.bookUrl?.let { bookUrl ->
+                App.db.bookChapterDao().liveDataSearch(bookUrl, newText).observe(viewLifecycleOwner, Observer {
+                    adapter.setItems(it)
+                    mLayoutManager.scrollToPositionWithOffset(0, 0)
+                })
+            }
         }
     }
 
