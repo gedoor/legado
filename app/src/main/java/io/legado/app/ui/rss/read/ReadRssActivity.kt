@@ -14,12 +14,12 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.htmlFormat
 import io.legado.app.utils.shareText
 import kotlinx.android.synthetic.main.activity_rss_read.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
+import org.jsoup.safety.Whitelist
 
 class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
     ReadRssViewModel.CallBack {
@@ -149,7 +149,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             webView.settings.javaScriptEnabled = true
             webView.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
-                viewModel.readAloud(Jsoup.parse(html).body().html().htmlFormat())
+                viewModel.readAloud(Jsoup.clean(html, Whitelist()))
             }
         }
     }

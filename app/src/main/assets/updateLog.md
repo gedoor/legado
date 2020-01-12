@@ -6,6 +6,7 @@
 **2020/01/11
 * RSS阅读界面添加朗读功能
 * 其它一些优化
+* 合并KKL369提交的代码,重写LinearLayoutManager，修复书籍目录模糊搜索后scrollToPosition在可见范围不置顶
 
 **2020/01/10
 * 合并KKL369提交的代码
