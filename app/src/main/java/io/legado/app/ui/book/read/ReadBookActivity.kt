@@ -4,15 +4,18 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.AsyncTask.execute
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
@@ -20,6 +23,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.*
 import io.legado.app.receiver.TimeElectricityReceiver
@@ -41,6 +45,7 @@ import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_download_choice.view.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -174,7 +179,35 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }.show().applyTint()
             }
             R.id.menu_add_bookmark -> {
-
+                val book = ReadBook.book
+                val textChapter = ReadBook.curTextChapter
+                alert(title = getString(R.string.bookmark_add)) {
+                    var editText: EditText? = null
+                    message = book?.name + " • " + textChapter?.title
+                    customView {
+                        layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                            editText = edit_view.apply {
+                                hint = "备注内容"
+                            }
+                        }
+                    }
+                    yesButton {
+                        editText?.text?.toString()?.let { editContent ->
+                            execute {
+                                val bookmark = Bookmark(
+                                    book!!.durChapterTime,
+                                    book!!.bookUrl,
+                                    book!!.name,
+                                    ReadBook.durChapterIndex,
+                                    ReadBook.durPageIndex,
+                                    textChapter!!.title,
+                                    editContent)
+                                App.db.bookmarkDao().insert(bookmark)
+                            }
+                        }
+                    }
+                    noButton()
+                }.show().applyTint().requestInputMethod()
             }
             R.id.menu_copy_text -> {
 
@@ -438,8 +471,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             when (requestCode) {
                 requestCodeEditSource -> viewModel.upBookSource()
                 requestCodeChapterList ->
-                    data?.getIntExtra("index", ReadBook.durChapterIndex)?.let {
-                        viewModel.openChapter(it)
+                    data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
+                        viewModel.openChapter(index, data?.getIntExtra("pageIndex", ReadBook.durPageIndex))
                     }
                 requestCodeReplace -> ReadBook.loadContent()
             }
@@ -476,7 +509,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEvent<BookChapter>(Bus.OPEN_CHAPTER) {
-            viewModel.openChapter(it.index)
+            viewModel.openChapter(it.index, ReadBook.durPageIndex)
             page_view.upContent()
         }
         observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
