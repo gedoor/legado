@@ -154,14 +154,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun openChapter(index: Int) {
+    fun openChapter(index: Int, pageIndex: Int) {
         ReadBook.prevTextChapter = null
         ReadBook.curTextChapter = null
         ReadBook.nextTextChapter = null
         ReadBook.callBack?.upContent()
         if (index != ReadBook.durChapterIndex) {
             ReadBook.durChapterIndex = index
-            ReadBook.durPageIndex = 0
+            ReadBook.durPageIndex = pageIndex
         }
         ReadBook.saveRead()
         ReadBook.loadContent()
