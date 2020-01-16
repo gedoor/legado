@@ -72,8 +72,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         val books = arrayListOf<SearchBook>()
         searchBooks.forEach { searchBook ->
             if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                if (searchBook.name.contains(searchKey)
-                    || searchBook.author.contains(searchKey)
+                if (searchBook.name.equals(searchKey, true)
+                    || searchBook.author.equals(searchKey, true)
                 ) books.add(searchBook)
             } else
                 books.add(searchBook)
