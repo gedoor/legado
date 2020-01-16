@@ -14,6 +14,7 @@ object PreferKey {
     const val processText = "process_text"
     const val cleanCache = "cleanCache"
     const val lastGroup = "lastGroup"
+    const val saveTabPosition = "saveTabPosition"
     const val pageAnim = "pageAnim"
     const val readBookFont = "readBookFont"
     const val fontFolder = "fontFolder"

@@ -20,4 +20,5 @@ object Bus {
     const val SHOW_RSS = "showRss"
     const val WEB_SERVICE_STOP = "webServiceStop"
     const val UP_DOWNLOAD = "upDownload"
+    const val UP_TABS = "upTabs"
 }
