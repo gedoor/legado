@@ -54,7 +54,7 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (tab_layout.selectedTabPosition == 1) {
-
+                    viewModel.startBookmarkSearch(newText)
                 } else {
                     viewModel.startChapterListSearch(newText)
                 }

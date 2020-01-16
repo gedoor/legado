@@ -17,6 +17,9 @@ interface BookmarkDao {
     @Query("select * from bookmarks where bookUrl = :bookUrl")
     fun observeByBook(bookUrl: String): DataSource.Factory<Int, Bookmark>
 
+    @Query("SELECT * FROM bookmarks where bookUrl = :bookUrl and chapterName like '%'||:key||'%' or content like '%'||:key||'%'")
+    fun liveDataSearch(bookUrl: String, key: String): DataSource.Factory<Int, Bookmark>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookmark: Bookmark)
 
