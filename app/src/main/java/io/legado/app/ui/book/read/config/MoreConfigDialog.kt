@@ -94,6 +94,7 @@ class MoreConfigDialog : DialogFragment() {
             when (key) {
                 PreferKey.hideStatusBar -> postEvent(Bus.UP_CONFIG, true)
                 PreferKey.hideNavigationBar -> postEvent(Bus.UP_CONFIG, true)
+                PreferKey.clickAllNext -> postEvent(Bus.UP_CONFIG, true)
             }
         }
 
