@@ -20,7 +20,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
-    ChapterListViewModel.CallBack {
+    ChapterListViewModel.ChapterListCallBack{
     override val viewModel: ChapterListViewModel
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
@@ -30,6 +30,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.chapterCallBack = this
         initRecyclerView()
         initView()
         initData()
@@ -74,19 +75,16 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
                 mLayoutManager.scrollToPositionWithOffset(it.durChapterIndex, 0)
             }
         }
-        viewModel.callBack = this
     }
 
-    override fun startSearch(newText: String?) {
+    override fun startChapterListSearch(newText: String?) {
         if (newText.isNullOrBlank()) {
             initData()
         } else {
-            viewModel.bookUrl?.let { bookUrl ->
-                App.db.bookChapterDao().liveDataSearch(bookUrl, newText).observe(viewLifecycleOwner, Observer {
-                    adapter.setItems(it)
-                    mLayoutManager.scrollToPositionWithOffset(0, 0)
-                })
-            }
+            App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl ?: "", newText).observe(viewLifecycleOwner, Observer {
+                adapter.setItems(it)
+                mLayoutManager.scrollToPositionWithOffset(0, 0)
+            })
         }
     }
 

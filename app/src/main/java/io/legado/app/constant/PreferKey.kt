@@ -4,6 +4,7 @@ object PreferKey {
 
     const val downloadPath = "downloadPath"
     const val hideStatusBar = "hideStatusBar"
+    const val clickAllNext = "clickAllNext"
     const val hideNavigationBar = "hideNavigationBar"
     const val precisionSearch = "precisionSearch"
     const val prevKey = "prevKeyCode"
@@ -14,6 +15,7 @@ object PreferKey {
     const val processText = "process_text"
     const val cleanCache = "cleanCache"
     const val lastGroup = "lastGroup"
+    const val saveTabPosition = "saveTabPosition"
     const val pageAnim = "pageAnim"
     const val readBookFont = "readBookFont"
     const val fontFolder = "fontFolder"

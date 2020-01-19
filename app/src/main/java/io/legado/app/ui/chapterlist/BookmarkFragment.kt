@@ -21,7 +21,8 @@ import kotlinx.android.synthetic.main.fragment_bookmark.*
 
 
 class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_bookmark),
-    BookmarkAdapter.Callback {
+    BookmarkAdapter.Callback,
+    ChapterListViewModel.BookmarkCallBack {
     override val viewModel: ChapterListViewModel
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
@@ -30,6 +31,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.bookMarkCallBack = this
         initRecyclerView()
         initData()
     }
@@ -51,6 +53,16 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
         bookmarkLiveData?.removeObservers(viewLifecycleOwner)
         bookmarkLiveData = LivePagedListBuilder(App.db.bookmarkDao().observeByBook(viewModel.bookUrl ?: ""), 20).build()
         bookmarkLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+    }
+
+    override fun startBookmarkSearch(newText: String?) {
+        if (newText.isNullOrBlank()) {
+            initData()
+        } else {
+            bookmarkLiveData?.removeObservers(viewLifecycleOwner)
+            bookmarkLiveData = LivePagedListBuilder(App.db.bookmarkDao().liveDataSearch(viewModel.bookUrl ?: "", newText), 20).build()
+            bookmarkLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+        }
     }
 
     override fun open(bookmark: Bookmark) {
