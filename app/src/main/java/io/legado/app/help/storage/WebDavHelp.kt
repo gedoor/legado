@@ -3,7 +3,6 @@ package io.legado.app.help.storage
 import android.content.Context
 import io.legado.app.App
 import io.legado.app.help.FileHelp
-import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
@@ -83,14 +82,10 @@ object WebDavHelp {
 
     fun backUpWebDav(path: String) {
         if (initWebDav()) {
-            val paths = arrayListOf(
-                path + File.separator + "bookshelf.json",
-                path + File.separator + "bookSource.json",
-                path + File.separator + "rssSource.json",
-                path + File.separator + "replaceRule.json",
-                path + File.separator + "config.xml",
-                path + File.separator + ReadBookConfig.readConfigFileName
-            )
+            val paths = arrayListOf(*Backup.backupFileNames)
+            for (i in 0 until paths.size) {
+                paths[i] = path + File.separator + paths[i]
+            }
             FileHelp.deleteFile(zipFilePath)
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 WebDav(getWebDavUrl() + "legado").makeAsDir()
