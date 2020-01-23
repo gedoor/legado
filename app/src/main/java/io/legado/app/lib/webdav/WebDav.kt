@@ -23,13 +23,20 @@ class WebDav @Throws(MalformedURLException::class)
 constructor(urlStr: String) {
     companion object {
         // 指定返回哪些属性
-        private const val DIR = "<?xml version=\"1.0\"?>\n" +
-                "<a:propfind xmlns:a=\"DAV:\">\n" +
-                "<a:prop>\n" +
-                "<a:displayname/>\n<a:resourcetype/>\n<a:getcontentlength/>\n<a:creationdate/>\n<a:getlastmodified/>\n%s" +
-                "</a:prop>\n" +
-                "</a:propfind>"
+        private const val DIR =
+            """<?xml version="1.0"?>
+                <a:propfind xmlns:a="DAV:">
+                    <a:prop>
+                        <a:displayname/>
+                        <a:resourcetype/>
+                        <a:getcontentlength/>
+                        <a:creationdate/>
+                        <a:getlastmodified/>
+                        %s
+                    </a:prop>
+                </a:propfind>"""
     }
+
     private val url: URL = URL(null, urlStr, Handler)
     private val httpUrl: String? by lazy {
         val raw = url.toString().replace("davs://", "https://").replace("dav://", "http://")
