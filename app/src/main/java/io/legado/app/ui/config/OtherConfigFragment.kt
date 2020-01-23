@@ -63,7 +63,9 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 .setMinValue(1)
                 .setValue(requireContext().threadCount)
                 .show {
-                    putPrefInt(PreferKey.threadCount, it)
+                    requireContext().putPrefInt(PreferKey.threadCount, it)
+                    findPreference<Preference>(PreferKey.threadCount)?.summary =
+                        getString(R.string.threads_num, it.toString())
                 }
             PreferKey.downloadPath -> FileChooserDialog.show(
                 childFragmentManager,
