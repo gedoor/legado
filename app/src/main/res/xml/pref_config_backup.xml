@@ -29,6 +29,11 @@
     <io.legado.app.lib.theme.prefs.ATEPreferenceCategory app:iconSpaceReserved="false">
 
         <androidx.preference.Preference
+            android:key="backupUri"
+            android:title="备份路径"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
             android:key="web_dav_backup"
             android:title="备份"
             app:iconSpaceReserved="false" />

@@ -36,9 +36,9 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
             }
             ConfigViewModel.TYPE_WEB_DAV_CONFIG -> {
                 title_bar.title = getString(R.string.backup_restore)
-                val fTag = "webDavFragment"
+                val fTag = "backupFragment"
                 var configFragment = supportFragmentManager.findFragmentByTag(fTag)
-                if (configFragment == null) configFragment = WebDavConfigFragment()
+                if (configFragment == null) configFragment = BackupConfigFragment()
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.configFrameLayout, configFragment, fTag)
                     .commit()

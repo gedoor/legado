@@ -31,7 +31,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import org.jetbrains.anko.toast
 import kotlin.coroutines.CoroutineContext
 
-class WebDavConfigFragment : PreferenceFragmentCompat(),
+class BackupConfigFragment : PreferenceFragmentCompat(),
     Preference.OnPreferenceChangeListener,
     CoroutineScope {
     private lateinit var job: Job
@@ -46,14 +46,14 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
         job = Job()
         fun bindPreferenceSummaryToValue(preference: Preference?) {
             preference?.apply {
-                onPreferenceChangeListener = this@WebDavConfigFragment
+                onPreferenceChangeListener = this@BackupConfigFragment
                 onPreferenceChange(
                     this,
                     context.getPrefString(key)
                 )
             }
         }
-        addPreferencesFromResource(R.xml.pref_config_web_dav)
+        addPreferencesFromResource(R.xml.pref_config_backup)
         findPreference<EditTextPreference>("web_dav_url")?.let {
             it.setOnBindEditTextListener { editText ->
                 ATH.setTint(editText, requireContext().accentColor)
@@ -74,6 +74,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
             }
             bindPreferenceSummaryToValue(it)
         }
+        bindPreferenceSummaryToValue(findPreference(PreferKey.backupPath))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,6 +116,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
+            PreferKey.backupPath -> selectBackupFolder()
             "web_dav_backup" -> backup()
             "web_dav_restore" -> restore()
             "import_old" -> importOldData()
@@ -206,7 +208,7 @@ class WebDavConfigFragment : PreferenceFragmentCompat(),
                 alert(title = "导入") {
                     message = "是否导入旧版本数据"
                     yesButton {
-                        PermissionsCompat.Builder(this@WebDavConfigFragment)
+                        PermissionsCompat.Builder(this@BackupConfigFragment)
                             .addPermissions(*Permissions.Group.STORAGE)
                             .rationale(R.string.tip_perm_request_storage)
                             .onGranted {
