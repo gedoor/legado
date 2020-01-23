@@ -17,6 +17,7 @@ import io.legado.app.help.threadCount
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 
 
@@ -36,7 +37,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         putPrefBoolean("process_text", isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
         bindPreferenceSummaryToValue(findPreference(PreferKey.downloadPath))
-        bindPreferenceSummaryToValue(findPreference("threadCount"))
+        bindPreferenceSummaryToValue(findPreference(PreferKey.threadCount))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,6 +57,14 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
+            PreferKey.threadCount -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.threads_num_title))
+                .setMaxValue(999)
+                .setMinValue(1)
+                .setValue(requireContext().threadCount)
+                .show {
+                    requireContext().putPrefInt(PreferKey.threadCount, it)
+                }
             PreferKey.downloadPath -> FileChooserDialog.show(
                 childFragmentManager,
                 downloadPath,
@@ -92,7 +101,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 // Set the summary to reflect the new value.
                 preference.setSummary(if (index >= 0) preference.entries[index] else null)
             }
-            preference?.key == "threadCount" -> preference.summary =
+            preference?.key == PreferKey.threadCount -> preference.summary =
                 getString(R.string.threads_num, stringValue)
             else -> preference?.summary = stringValue
         }
@@ -114,7 +123,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
             PreferKey.downloadPath -> getPrefString(PreferKey.downloadPath)
                 ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
                 ?: App.INSTANCE.cacheDir.absolutePath
-            "threadCount" -> requireContext().threadCount
+            PreferKey.threadCount -> requireContext().threadCount
             else -> getPrefString(key) ?: ""
         }
     }

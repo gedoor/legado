@@ -20,4 +20,5 @@ object PreferKey {
     const val readBookFont = "readBookFont"
     const val fontFolder = "fontFolder"
     const val backupPath = "backupUri"
+    const val threadCount = "threadCount"
 }
