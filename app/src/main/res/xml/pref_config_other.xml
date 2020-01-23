@@ -22,6 +22,21 @@
         android:title="显示订阅"
         app:iconSpaceReserved="false" />
 
+    <Preference
+        android:key="threadCount"
+        android:title="@string/threads_num_title"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="downloadPath"
+        android:title="@string/download_path"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="cleanCache"
+        android:title="@string/cleanCache"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="true"
         android:key="process_text"
@@ -35,13 +50,4 @@
         android:title="记录日志"
         app:iconSpaceReserved="false" />
 
-    <Preference
-        android:key="downloadPath"
-        android:title="@string/download_path"
-        app:iconSpaceReserved="false" />
-
-    <Preference
-        android:key="cleanCache"
-        android:title="@string/cleancache"
-        app:iconSpaceReserved="false" />
 </androidx.preference.PreferenceScreen>

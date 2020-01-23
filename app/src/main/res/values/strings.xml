@@ -211,7 +211,7 @@
     <string name="no_download">暂无任务</string>
     <string name="download_count">已下载 %d/%d</string>
     <string name="import_select_book">导入选择书籍</string>
-    <string name="update_search_threads_num">更新和搜索线程数,如感觉卡顿请减小线程数,量力而行</string>
+    <string name="threads_num_title">更新和搜索线程数,太多会卡顿</string>
     <string name="change_icon">切换图标</string>
     <string name="remove_from_bookshelf">删除书籍</string>
     <string name="start_read">开始阅读</string>
@@ -316,7 +316,7 @@
     <string name="use_to">替换范围，选填书名或者源名</string>
     <string name="menu_action_group">分组</string>
     <string name="download_path">内容缓存路径</string>
-    <string name="cleancache">清理缓存</string>
+    <string name="cleanCache">清理缓存</string>
     <string name="sys_file_picker">系统文件选择器</string>
     <string name="new_version">新版本</string>
     <string name="download_update">下载更新</string>

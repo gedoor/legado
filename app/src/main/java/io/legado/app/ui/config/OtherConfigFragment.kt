@@ -19,7 +19,7 @@ import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.utils.*
 
 
-class ConfigFragment : PreferenceFragmentCompat(),
+class OtherConfigFragment : PreferenceFragmentCompat(),
     FileChooserDialog.CallBack,
     Preference.OnPreferenceChangeListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -33,8 +33,9 @@ class ConfigFragment : PreferenceFragmentCompat(),
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean("process_text", isProcessTextEnabled())
-        addPreferencesFromResource(R.xml.pref_config)
+        addPreferencesFromResource(R.xml.pref_config_other)
         bindPreferenceSummaryToValue(findPreference(PreferKey.downloadPath))
+        bindPreferenceSummaryToValue(findPreference("threadCount"))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,7 +59,7 @@ class ConfigFragment : PreferenceFragmentCompat(),
                 childFragmentManager,
                 downloadPath,
                 mode = FileChooserDialog.DIRECTORY,
-                initPath = getPreferenceString(PreferKey.downloadPath)
+                initPath = getPreferenceString(PreferKey.downloadPath).toString()
             )
             PreferKey.cleanCache -> {
                 BookHelp.clearCache()
@@ -72,7 +73,7 @@ class ConfigFragment : PreferenceFragmentCompat(),
         when (key) {
             PreferKey.downloadPath -> {
                 BookHelp.upDownloadPath()
-                findPreference<Preference>(key)?.summary = getPreferenceString(key)
+                findPreference<Preference>(key)?.summary = getPreferenceString(key).toString()
             }
             PreferKey.recordLog -> LogUtils.upLevel()
             PreferKey.processText -> sharedPreferences?.let {
@@ -84,14 +85,15 @@ class ConfigFragment : PreferenceFragmentCompat(),
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
         val stringValue = newValue.toString()
-
-        if (preference is ListPreference) {
-            val index = preference.findIndexOfValue(stringValue)
-            // Set the summary to reflect the new value.
-            preference.setSummary(if (index >= 0) preference.entries[index] else null)
-        } else {
-            // For all other preferences, set the summary to the value's
-            preference?.summary = stringValue
+        when {
+            preference is ListPreference -> {
+                val index = preference.findIndexOfValue(stringValue)
+                // Set the summary to reflect the new value.
+                preference.setSummary(if (index >= 0) preference.entries[index] else null)
+            }
+            preference?.key == "threadCount" -> preference.summary =
+                getString(R.string.threads_num, stringValue)
+            else -> preference?.summary = stringValue
         }
         return true
     }
@@ -106,11 +108,12 @@ class ConfigFragment : PreferenceFragmentCompat(),
         }
     }
 
-    private fun getPreferenceString(key: String): String {
+    private fun getPreferenceString(key: String): Any {
         return when (key) {
             PreferKey.downloadPath -> getPrefString(PreferKey.downloadPath)
                 ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
                 ?: App.INSTANCE.cacheDir.absolutePath
+            "threadCount" -> getPrefInt("threadCount", 6)
             else -> getPrefString(key) ?: ""
         }
     }

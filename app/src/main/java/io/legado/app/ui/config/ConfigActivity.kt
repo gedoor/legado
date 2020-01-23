@@ -18,9 +18,9 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
         when (viewModel.configType) {
             ConfigViewModel.TYPE_CONFIG -> {
                 title_bar.title = getString(R.string.other_setting)
-                val fTag = "configFragment"
+                val fTag = "otherConfigFragment"
                 var configFragment = supportFragmentManager.findFragmentByTag(fTag)
-                if (configFragment == null) configFragment = ConfigFragment()
+                if (configFragment == null) configFragment = OtherConfigFragment()
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.configFrameLayout, configFragment, fTag)
                     .commit()
@@ -36,7 +36,7 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
             }
             ConfigViewModel.TYPE_WEB_DAV_CONFIG -> {
                 title_bar.title = getString(R.string.backup_restore)
-                val fTag = "backupFragment"
+                val fTag = "backupConfigFragment"
                 var configFragment = supportFragmentManager.findFragmentByTag(fTag)
                 if (configFragment == null) configFragment = BackupConfigFragment()
                 supportFragmentManager.beginTransaction()
