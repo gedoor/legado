@@ -120,6 +120,3 @@ val Context.isNightTheme: Boolean
 
 val Context.isTransparentStatusBar: Boolean
     get() = getPrefBoolean("transparentStatusBar", true)
-
-val Context.isShowRSS: Boolean
-    get() = getPrefBoolean("showRss", true)
