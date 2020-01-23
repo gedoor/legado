@@ -7,6 +7,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.threadCount
 import io.legado.app.model.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
-    private var searchPool = Executors.newFixedThreadPool(16).asCoroutineDispatcher()
+    private var searchPool =
+        Executors.newFixedThreadPool(context.threadCount).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
     var callBack: CallBack? = null
     var searchKey: String = ""

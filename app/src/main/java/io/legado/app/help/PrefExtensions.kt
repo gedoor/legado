@@ -9,4 +9,4 @@ val Context.isShowRSS: Boolean
     get() = getPrefBoolean("showRss", true)
 
 val Context.threadCount: Int
-    get() = getPrefInt("threadCount", 6)
+    get() = getPrefInt("threadCount", 16)
