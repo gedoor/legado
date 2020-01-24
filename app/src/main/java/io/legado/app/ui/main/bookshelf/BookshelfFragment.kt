@@ -15,7 +15,6 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
-import io.legado.app.constant.PreferKey.saveTabPosition
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
@@ -26,11 +25,11 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import org.jetbrains.anko.sdk27.listeners.onLongClick
 import org.jetbrains.anko.startActivity
 
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
+    TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener,
     GroupManageDialog.CallBack,
     BookshelfAdapter.CallBack {
@@ -83,12 +82,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         view_pager_bookshelf.adapter = BookshelfAdapter(this, this)
         TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->
             tab.text = bookGroups[position].groupName
-            tab.view?.onLongClick {
-                tab.select()
-                putPrefInt(saveTabPosition, position)
-                toast("该分组<" + bookGroups[position].groupName + ">已成为默认页。")
-                true
-            }
         }.attach()
         observeEvent<Int>(Bus.UP_TABS) {
             tab_layout.getTabAt(it)?.select()
@@ -110,6 +103,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 }
                 bookGroups.addAll(it)
                 view_pager_bookshelf.adapter?.notifyDataSetChanged()
+                tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
+                tab_layout.removeOnTabSelectedListener(this)
+                tab_layout.addOnTabSelectedListener(this)
             }
         })
     }
@@ -144,6 +140,20 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         ) { _, index ->
             putPrefInt(PreferKey.bookshelfLayout, index)
             activity?.recreate()
+        }
+    }
+
+    override fun onTabReselected(tab: TabLayout.Tab?) {
+
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab?) {
+        tab?.position?.let {
+            putPrefInt(PreferKey.saveTabPosition, it)
         }
     }
 }

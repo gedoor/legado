@@ -24,7 +24,6 @@ import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
-import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
 
@@ -57,7 +56,6 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         observeEvent<String>(Bus.UP_BOOK) {
             booksAdapter.notification(it)
         }
-        postEvent(Bus.UP_TABS, getPrefInt(PreferKey.saveTabPosition, 0))
     }
 
     private fun initRecyclerView() {
