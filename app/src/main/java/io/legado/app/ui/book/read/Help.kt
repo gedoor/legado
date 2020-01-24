@@ -70,6 +70,14 @@ object Help {
         return false
     }
 
+    fun keepScreenOn(window: Window, on: Boolean) {
+        if (on) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     /**
      * 适配刘海
      */
@@ -81,4 +89,5 @@ object Help {
             }
         }
     }
+
 }
