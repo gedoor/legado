@@ -93,6 +93,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
             synchronized(this) {
+                tab_layout.removeOnTabSelectedListener(this)
                 bookGroups.clear()
                 bookGroups.add(AppConst.bookGroupAll)
                 if (AppConst.bookGroupLocalShow) {
@@ -104,7 +105,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 bookGroups.addAll(it)
                 view_pager_bookshelf.adapter?.notifyDataSetChanged()
                 tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
-                tab_layout.removeOnTabSelectedListener(this)
                 tab_layout.addOnTabSelectedListener(this)
             }
         })
