@@ -2,6 +2,14 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <io.legado.app.lib.theme.prefs.ATEListPreference
+        android:key="keep_light"
+        android:defaultValue="0"
+        android:entryValues="@array/screen_time_out_value"
+        android:entries="@array/screen_time_out"
+        android:title="@string/keep_light"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:title="@string/pt_hide_status_bar"

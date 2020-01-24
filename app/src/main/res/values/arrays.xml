@@ -78,13 +78,13 @@
         <item>常亮</item>
     </string-array>
 
-    <integer-array name="screen_time_out_value">
+    <string-array name="screen_time_out_value">
         <item>0</item>
         <item>60</item>
         <item>120</item>
         <item>180</item>
         <item>-1</item>
-    </integer-array>
+    </string-array>
 
     <string-array name="screen_direction_list_title">
         <item>@string/screen_unspecified</item>
