@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.provider.Settings
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -62,6 +63,16 @@ fun Context.getCompatDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.g
 
 fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
     ContextCompat.getColorStateList(this, id)
+
+fun Context.getScreenOffTime(): Int {
+    var screenOffTime = 0
+    try {
+        screenOffTime = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return screenOffTime
+}
 
 fun Context.getStatusBarHeight(): Int {
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")

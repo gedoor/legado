@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask.execute
 import android.os.Bundle
+import android.os.Handler
 import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
@@ -63,20 +64,26 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
     ColorPickerDialogListener {
+    private val requestCodeChapterList = 568
+    private val requestCodeEditSource = 111
+    private val requestCodeReplace = 31242
+
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
     override val isInitFinish: Boolean
         get() = viewModel.isInitFinish
 
-    private val requestCodeChapterList = 568
-    private val requestCodeEditSource = 111
-    private val requestCodeReplace = 31242
+    private val mHandler = Handler()
+    private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
+
+    private var screenTimeOut: Long = 0
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Help.upLayoutInDisplayCutoutMode(window)
         initView()
+        upScreenTimeOut()
         ReadBook.callBack = this
         ReadBook.titleDate.observe(this, Observer { title_bar.title = it })
         viewModel.initData(intent)
@@ -179,11 +186,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }.show().applyTint()
             }
             R.id.menu_add_bookmark -> {
-                val book = ReadBook.book
+                val book = ReadBook.book ?: return true
                 val textChapter = ReadBook.curTextChapter
                 alert(title = getString(R.string.bookmark_add)) {
                     var editText: EditText? = null
-                    message = book?.name + " • " + textChapter?.title
+                    message = book.name + " • " + textChapter?.title
                     customView {
                         layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                             editText = edit_view.apply {
@@ -195,9 +202,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         editText?.text?.toString()?.let { editContent ->
                             execute {
                                 val bookmark = Bookmark(
-                                    book!!.durChapterTime,
-                                    book!!.bookUrl,
-                                    book!!.name,
+                                    book.durChapterTime,
+                                    book.bookUrl,
+                                    book.name,
                                     ReadBook.durChapterIndex,
                                     ReadBook.durPageIndex,
                                     textChapter!!.title,
@@ -548,4 +555,27 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    private fun upScreenTimeOut() {
+        getPrefString("keep_light")?.let {
+            screenTimeOut = it.toLong() * 1000
+        }
+    }
+
+    /**
+     * 重置黑屏时间
+     */
+    fun screenOffTimerStart() {
+        if (screenTimeOut < 0) {
+            Help.keepScreenOn(window, true)
+            return
+        }
+        val t = screenTimeOut - getScreenOffTime()
+        if (t > 0) {
+            mHandler.removeCallbacks(keepScreenRunnable)
+            Help.keepScreenOn(window, true)
+            mHandler.postDelayed(keepScreenRunnable, screenTimeOut)
+        } else {
+            Help.keepScreenOn(window, false)
+        }
+    }
 }
