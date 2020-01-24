@@ -18,8 +18,8 @@ import io.legado.app.lib.theme.ATH
 class ATEColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
     ColorPickerDialogListener {
 
-    private val SIZE_NORMAL = 0
-    private val SIZE_LARGE = 1
+    private val sizeNormal = 0
+    private val sizeLarge = 1
 
     private var onShowDialogListener: OnShowDialogListener? = null
     private var color = Color.BLACK
@@ -46,20 +46,18 @@ class ATEColorPreference(context: Context, attrs: AttributeSet) : Preference(con
         allowCustom = a.getBoolean(R.styleable.ColorPreference_cpv_allowCustom, true)
         showAlphaSlider = a.getBoolean(R.styleable.ColorPreference_cpv_showAlphaSlider, false)
         showColorShades = a.getBoolean(R.styleable.ColorPreference_cpv_showColorShades, true)
-        previewSize = a.getInt(R.styleable.ColorPreference_cpv_previewSize, SIZE_NORMAL)
+        previewSize = a.getInt(R.styleable.ColorPreference_cpv_previewSize, sizeNormal)
         val presetsResId = a.getResourceId(R.styleable.ColorPreference_cpv_colorPresets, 0)
         dialogTitle = a.getResourceId(R.styleable.ColorPreference_cpv_dialogTitle, R.string.cpv_default_title)
-        if (presetsResId != 0) {
-            presets = context.resources.getIntArray(presetsResId)
+        presets = if (presetsResId != 0) {
+            context.resources.getIntArray(presetsResId)
         } else {
-            presets = ColorPickerDialog.MATERIAL_COLORS
+            ColorPickerDialog.MATERIAL_COLORS
         }
-        if (colorShape == ColorShape.CIRCLE) {
-            widgetLayoutResource =
-                if (previewSize == SIZE_LARGE) R.layout.cpv_preference_circle_large else R.layout.cpv_preference_circle
+        widgetLayoutResource = if (colorShape == ColorShape.CIRCLE) {
+            if (previewSize == sizeLarge) R.layout.cpv_preference_circle_large else R.layout.cpv_preference_circle
         } else {
-            widgetLayoutResource =
-                if (previewSize == SIZE_LARGE) R.layout.cpv_preference_square_large else R.layout.cpv_preference_square
+            if (previewSize == sizeLarge) R.layout.cpv_preference_square_large else R.layout.cpv_preference_square
         }
         a.recycle()
     }
