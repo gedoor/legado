@@ -65,6 +65,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        callBack?.screenOffTimerStart()
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
     }
 
@@ -241,5 +242,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         fun clickCenter()
 
         val isInitFinish: Boolean
+
+        fun screenOffTimerStart()
     }
 }

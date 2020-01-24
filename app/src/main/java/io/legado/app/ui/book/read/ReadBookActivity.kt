@@ -553,18 +553,22 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         observeEvent<String>(Bus.REPLACE) {
             ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
         }
+        observeEvent<Boolean>(PreferKey.keepLight) {
+            upScreenTimeOut()
+        }
     }
 
     private fun upScreenTimeOut() {
-        getPrefString("keep_light")?.let {
+        getPrefString(PreferKey.keepLight)?.let {
             screenTimeOut = it.toLong() * 1000
         }
+        screenOffTimerStart()
     }
 
     /**
      * 重置黑屏时间
      */
-    fun screenOffTimerStart() {
+    override fun screenOffTimerStart() {
         if (screenTimeOut < 0) {
             Help.keepScreenOn(window, true)
             return

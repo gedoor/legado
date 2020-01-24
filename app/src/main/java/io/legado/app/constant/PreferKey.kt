@@ -20,4 +20,5 @@ object PreferKey {
     const val fontFolder = "fontFolder"
     const val backupPath = "backupUri"
     const val threadCount = "threadCount"
+    const val keepLight = "keep_light"
 }
