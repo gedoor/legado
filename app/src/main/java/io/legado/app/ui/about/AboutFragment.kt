@@ -8,6 +8,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.utils.shareText
 import io.legado.app.utils.toast
 
 class AboutFragment : PreferenceFragmentCompat() {
@@ -29,7 +30,10 @@ class AboutFragment : PreferenceFragmentCompat() {
             "mail" -> openIntent(Intent.ACTION_SENDTO, "mailto:kunfei.ge@gmail.com")
             "git" -> openIntent(Intent.ACTION_VIEW, getString(R.string.this_github_url))
             "home_page" -> openIntent(Intent.ACTION_VIEW, getString(R.string.home_page_url))
-            "share_app" -> shareText("App Share",getString(R.string.app_share_description))
+            "share_app" -> activity?.shareText(
+                "App Share",
+                getString(R.string.app_share_description)
+            )
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -44,14 +48,4 @@ class AboutFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun shareText(title: String, text: String) {
-        try {
-            val textIntent = Intent(Intent.ACTION_SEND)
-            textIntent.type = "text/plain"
-            textIntent.putExtra(Intent.EXTRA_TEXT, text)
-            startActivity(Intent.createChooser(textIntent, title))
-        } catch (e: Exception) {
-            toast(R.string.can_not_share)
-        }
-    }
 }
