@@ -215,9 +215,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
     open fun onScroll() {//移动contentView， slidePage
     }
 
-    open fun onPageUp() {
-    }
-
     abstract fun onScroll(
         e1: MotionEvent,
         e2: MotionEvent,

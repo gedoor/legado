@@ -119,7 +119,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                 prevPage?.scrollToBottom()
             }
         }
-        pageDelegate?.onPageUp()
+        callBack?.screenOffTimerStart()
     }
 
     fun moveToPrevPage(noAnim: Boolean = true) {
