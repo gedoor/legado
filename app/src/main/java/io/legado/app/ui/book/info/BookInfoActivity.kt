@@ -314,7 +314,7 @@ class BookInfoActivity :
                 }
             } else {
                 if (!viewModel.inBookshelf) {
-                    viewModel.delBook {}
+                    viewModel.delBook(null)
                 }
             }
         }
