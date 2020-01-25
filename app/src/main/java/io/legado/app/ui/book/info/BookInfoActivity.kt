@@ -217,18 +217,24 @@ class BookInfoActivity :
         }
         tv_toc.onClick {
             if (!viewModel.inBookshelf) {
-                toast(R.string.after_add_bookshelf)
-                return@onClick
-            }
-            viewModel.bookData.value?.let {
-                startActivityForResult<ChapterListActivity>(
-                    requestCodeChapterList,
-                    Pair("bookUrl", it.bookUrl)
-                )
+                viewModel.saveBook {
+                    openChapterList()
+                }
+            } else {
+                openChapterList()
             }
         }
         tv_group.onClick {
             GroupSelectDialog.show(supportFragmentManager)
+        }
+    }
+
+    private fun openChapterList() {
+        viewModel.bookData.value?.let {
+            startActivityForResult<ChapterListActivity>(
+                requestCodeChapterList,
+                Pair("bookUrl", it.bookUrl)
+            )
         }
     }
 
@@ -305,6 +311,10 @@ class BookInfoActivity :
                         }
                         readBook(it)
                     }
+                }
+            } else {
+                if (!viewModel.inBookshelf) {
+                    viewModel.delBook {}
                 }
             }
         }
