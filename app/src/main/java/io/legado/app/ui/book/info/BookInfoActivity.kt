@@ -311,7 +311,7 @@ class BookInfoActivity :
                             it.durChapterIndex = index
                             it.durChapterPos = 0
                         }
-                        readBook(it)
+                        startReadActivity(it)
                     }
                 }
             } else {
