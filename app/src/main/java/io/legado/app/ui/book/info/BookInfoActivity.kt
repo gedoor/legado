@@ -218,7 +218,9 @@ class BookInfoActivity :
         tv_toc.onClick {
             if (!viewModel.inBookshelf) {
                 viewModel.saveBook {
-                    openChapterList()
+                    viewModel.saveChapterList {
+                        openChapterList()
+                    }
                 }
             } else {
                 openChapterList()
