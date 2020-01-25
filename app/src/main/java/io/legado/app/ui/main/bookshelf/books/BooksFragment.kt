@@ -32,10 +32,11 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     BooksAdapter.CallBack {
 
     companion object {
-        fun newInstance(position: Int): BooksFragment {
+        fun newInstance(position: Int, groupId: Int): BooksFragment {
             return BooksFragment().apply {
                 val bundle = Bundle()
-                bundle.putInt("groupId", position)
+                bundle.putInt("position", position)
+                bundle.putInt("groupId", groupId)
                 arguments = bundle
             }
         }

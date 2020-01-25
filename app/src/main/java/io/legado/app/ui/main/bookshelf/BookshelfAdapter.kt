@@ -15,7 +15,7 @@ class BookshelfAdapter(fragment: Fragment, val callBack: CallBack) :
 
     override fun createFragment(position: Int): Fragment {
         val groupId = callBack.getGroup(position).groupId
-        return BooksFragment.newInstance(groupId)
+        return BooksFragment.newInstance(position, groupId)
     }
 
     interface CallBack {
