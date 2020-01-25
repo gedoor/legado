@@ -53,6 +53,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         viewModel.bookUrl?.let { bookUrl ->
             App.db.bookChapterDao().observeByBook(bookUrl).observe(viewLifecycleOwner, Observer {
                 adapter.setItems(it)
+                if (it.isEmpty()) return@Observer
                 viewModel.book?.let { book ->
                     durChapterIndex = book.durChapterIndex
                     tv_current_chapter_info.text = it[durChapterIndex()].title
