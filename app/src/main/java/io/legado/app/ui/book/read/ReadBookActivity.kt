@@ -502,6 +502,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         } ?: super.finish()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mHandler.removeCallbacks(keepScreenRunnable)
+    }
+
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<Int>(Bus.ALOUD_STATE) {
