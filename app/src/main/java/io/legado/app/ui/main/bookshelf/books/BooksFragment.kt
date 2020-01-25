@@ -45,11 +45,13 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private lateinit var activityViewModel: MainViewModel
     private lateinit var booksAdapter: BooksAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
+    private var position = 0
     private var groupId = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
         arguments?.let {
+            position = it.getInt("position", 0)
             groupId = it.getInt("groupId", -1)
         }
         initRecyclerView()
