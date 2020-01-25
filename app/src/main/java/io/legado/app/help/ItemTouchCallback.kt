@@ -88,16 +88,13 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
         srcViewHolder: RecyclerView.ViewHolder,
         targetViewHolder: RecyclerView.ViewHolder
     ): Boolean {
-        onItemTouchCallbackListener?.let {
-            return it.onMove(srcViewHolder.adapterPosition, targetViewHolder.adapterPosition)
-        }
-        return false
+        return onItemTouchCallbackListener
+            ?.onMove(srcViewHolder.adapterPosition, targetViewHolder.adapterPosition)
+            ?: false
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        onItemTouchCallbackListener?.let {
-            return it.onSwiped(viewHolder.adapterPosition)
-        }
+        onItemTouchCallbackListener?.onSwiped(viewHolder.adapterPosition)
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
