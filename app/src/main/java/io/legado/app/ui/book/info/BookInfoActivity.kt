@@ -221,7 +221,8 @@ class BookInfoActivity :
                 return@onClick
             }
             viewModel.bookData.value?.let {
-                startActivity<ChapterListActivity>(
+                startActivityForResult<ChapterListActivity>(
+                    requestCodeChapterList,
                     Pair("bookUrl", it.bookUrl)
                 )
             }
@@ -295,7 +296,11 @@ class BookInfoActivity :
             requestCodeSourceEdit -> if (resultCode == Activity.RESULT_OK) {
                 viewModel.initData(intent)
             }
-
+            requestCodeChapterList -> if (resultCode == Activity.RESULT_OK) {
+                viewModel.bookData.value?.let {
+                    readBook(it)
+                }
+            }
         }
     }
 }
