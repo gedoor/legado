@@ -154,7 +154,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun openChapter(index: Int, pageIndex: Int) {
+    fun openChapter(index: Int, pageIndex: Int = 0) {
         ReadBook.prevTextChapter = null
         ReadBook.curTextChapter = null
         ReadBook.nextTextChapter = null

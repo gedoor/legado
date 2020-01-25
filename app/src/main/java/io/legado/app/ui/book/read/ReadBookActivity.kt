@@ -479,7 +479,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 requestCodeEditSource -> viewModel.upBookSource()
                 requestCodeChapterList ->
                     data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
-                        viewModel.openChapter(index, data?.getIntExtra("pageIndex", ReadBook.durPageIndex))
+                        if (index != ReadBook.durChapterIndex) {
+                            viewModel.openChapter(index)
+                        }
                     }
                 requestCodeReplace -> ReadBook.loadContent()
             }
