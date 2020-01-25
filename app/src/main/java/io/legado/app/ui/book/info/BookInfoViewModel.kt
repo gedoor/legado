@@ -14,7 +14,6 @@ import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
-
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
     val isLoadingData = MutableLiveData<Boolean>()

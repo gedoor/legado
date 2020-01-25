@@ -298,7 +298,13 @@ class BookInfoActivity :
             }
             requestCodeChapterList -> if (resultCode == Activity.RESULT_OK) {
                 viewModel.bookData.value?.let {
-                    readBook(it)
+                    data?.getIntExtra("index", it.durChapterIndex)?.let { index ->
+                        if (it.durChapterIndex != index) {
+                            it.durChapterIndex = index
+                            it.durChapterPos = 0
+                        }
+                        readBook(it)
+                    }
                 }
             }
         }
