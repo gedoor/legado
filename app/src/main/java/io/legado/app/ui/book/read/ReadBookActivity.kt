@@ -66,7 +66,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ColorPickerDialogListener {
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
-    private val requestCodeReplace = 31242
+    private val requestCodeReplace = 312
 
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)

@@ -32,6 +32,7 @@ import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_book_info.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
 
@@ -40,6 +41,9 @@ class BookInfoActivity :
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack {
+
+    private val requestCodeChapterList = 568
+    private val requestCodeSourceEdit = 562
 
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
@@ -70,7 +74,10 @@ class BookInfoActivity :
             R.id.menu_edit -> {
                 if (viewModel.inBookshelf) {
                     viewModel.bookData.value?.let {
-                        startActivity<BookInfoEditActivity>(Pair("bookUrl", it.bookUrl))
+                        startActivityForResult<BookInfoEditActivity>(
+                            requestCodeSourceEdit,
+                            Pair("bookUrl", it.bookUrl)
+                        )
                     }
                 } else {
                     toast(R.string.after_add_bookshelf)
@@ -284,8 +291,11 @@ class BookInfoActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            viewModel.initData(intent)
+        when (requestCode) {
+            requestCodeSourceEdit -> if (resultCode == Activity.RESULT_OK) {
+                viewModel.initData(intent)
+            }
+
         }
     }
 }
