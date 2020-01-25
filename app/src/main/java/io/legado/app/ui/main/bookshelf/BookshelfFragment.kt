@@ -37,6 +37,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
 
+    lateinit var bookshelfAdapter: BookshelfAdapter
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
 
@@ -79,7 +80,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         tab_layout.tabMode = TabLayout.MODE_SCROLLABLE
         tab_layout.setSelectedTabIndicatorColor(requireContext().accentColor)
         ATH.applyEdgeEffectColor(view_pager_bookshelf)
-        view_pager_bookshelf.adapter = BookshelfAdapter(this, this)
+        bookshelfAdapter = BookshelfAdapter(this, this)
+        view_pager_bookshelf.adapter = bookshelfAdapter
         TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->
             tab.text = bookGroups[position].groupName
         }.attach()
@@ -103,7 +105,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     bookGroups.add(AppConst.bookGroupAudio)
                 }
                 bookGroups.addAll(it)
-                view_pager_bookshelf.adapter?.notifyDataSetChanged()
+                bookshelfAdapter.notifyDataSetChanged()
                 tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
                 tab_layout.addOnTabSelectedListener(this)
             }
