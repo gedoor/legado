@@ -12,10 +12,7 @@ import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -79,7 +76,10 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         )
         recycler_view.adapter = adapter
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
-            adapter.setItems(it)
+            val diffResult =
+                DiffUtil.calculateDiff(GroupDiffCallBack(adapter.getItems(), it))
+            adapter.setItems(it, false)
+            diffResult.dispatchUpdatesTo(adapter)
         })
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
@@ -143,6 +143,34 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             }
             noButton()
         }.show().applyTint().requestInputMethod()
+    }
+
+    private class GroupDiffCallBack(
+        private val oldItems: List<BookGroup>,
+        private val newItems: List<BookGroup>
+    ) :
+        DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+            return oldItem.groupId == newItem.groupId
+        }
+
+        override fun getOldListSize(): Int {
+            return oldItems.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newItems.size
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+            return oldItem.groupName == newItem.groupName
+                    && oldItem.order == newItem.order
+        }
+
     }
 
     private inner class GroupAdapter(context: Context) :
