@@ -10,11 +10,10 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
 
     fun addGroup(groupName: String) {
         execute {
-            val maxId = App.db.bookGroupDao().maxId
             val bookGroup = BookGroup(
-                groupId = maxId.plus(1),
+                groupId = App.db.bookGroupDao().maxId.plus(1),
                 groupName = groupName,
-                order = maxId.plus(1)
+                order = App.db.bookGroupDao().maxOrder.plus(1)
             )
             App.db.bookGroupDao().insert(bookGroup)
         }

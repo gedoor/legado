@@ -16,6 +16,9 @@ interface BookGroupDao {
     @get:Query("SELECT MAX(groupId) FROM book_groups")
     val maxId: Int
 
+    @get:Query("SELECT MAX(`order`) FROM book_groups")
+    val maxOrder: Int
+
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun all(): List<BookGroup>
 
