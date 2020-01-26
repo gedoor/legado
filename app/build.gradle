@@ -20,13 +20,15 @@ def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], projec
 android {
     compileSdkVersion 29
     signingConfigs {
-        myConfig {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-            v1SigningEnabled true
-            v2SigningEnabled true
+        if (project.hasProperty("RELEASE_STORE_FILE")) {
+            myConfig {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+                v1SigningEnabled true
+                v2SigningEnabled true
+            }
         }
     }
     defaultConfig {
@@ -49,12 +51,16 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.myConfig
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.myConfig
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            signingConfig signingConfigs.myConfig
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.myConfig
+            }
             applicationIdSuffix '.debug'
             versionNameSuffix 'debug'
             minifyEnabled false
