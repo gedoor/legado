@@ -16,3 +16,6 @@ val Context.isShowRSS: Boolean
 
 val Context.threadCount: Int
     get() = getPrefInt(PreferKey.threadCount, 16)
+
+val Context.autoDarkMode: Boolean
+    get() = getPrefBoolean(PreferKey.autoDarkMode, true)

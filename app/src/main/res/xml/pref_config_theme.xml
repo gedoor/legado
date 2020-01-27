@@ -2,6 +2,12 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="true"
+        android:key="autoDarkMode"
+        android:summary="@string/auto_dark_mode_s"
+        android:title="@string/auto_dark_mode"
+        app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="true"
