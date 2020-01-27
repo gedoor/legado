@@ -129,5 +129,8 @@ fun Context.shareWithQr(title: String, text: String) {
 val Context.isNightTheme: Boolean
     get() = getPrefBoolean("isNightTheme")
 
+val Context.isEInkMode: Boolean
+    get() = getPrefBoolean("isEInkMode")
+
 val Context.isTransparentStatusBar: Boolean
     get() = getPrefBoolean("transparentStatusBar", true)
