@@ -20,12 +20,12 @@ import io.legado.app.utils.*
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    val items = arrayOf("极简","曜夜","经典")
+    val items = arrayOf("极简", "曜夜", "经典", "黑白", "A屏黑")
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
 
-        findPreference<Preference>("defaultTheme")?.summary = "${items[getPrefInt("default_theme", 0)]}"
+        findPreference<Preference>("defaultTheme")?.summary = items[getPrefInt("default_theme", 0)]
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -123,6 +123,24 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                                     putPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
                                     putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
                                     putPrefBoolean("isNightTheme", false)
+                                }
+                                3 -> {
+                                    putPrefInt("colorPrimary", getCompatColor(R.color.white))
+                                    putPrefInt("colorAccent", getCompatColor(R.color.black))
+                                    putPrefInt("colorBackground", getCompatColor(R.color.white))
+                                    putPrefBoolean("isNightTheme", false)
+                                }
+                                4 -> {
+                                    putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
+                                    putPrefInt(
+                                        "colorAccentNight",
+                                        getCompatColor(R.color.md_grey_600)
+                                    )
+                                    putPrefInt(
+                                        "colorBackgroundNight",
+                                        getCompatColor(R.color.black)
+                                    )
+                                    putPrefBoolean("isNightTheme", true)
                                 }
                             }
                             App.INSTANCE.applyDayNight()
