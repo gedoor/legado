@@ -127,7 +127,7 @@ fun Context.shareWithQr(title: String, text: String) {
     }
 }
 
-fun Context.getDarkModeStatus(): Boolean {
+fun Context.sysIsDarkMode(): Boolean {
     val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
     return mode == Configuration.UI_MODE_NIGHT_YES
 }
