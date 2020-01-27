@@ -16,8 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.R
-import io.legado.app.help.isNightTheme
-import io.legado.app.help.isTransparentStatusBar
+import io.legado.app.help.AppConfig
 import io.legado.app.utils.getCompatColor
 import kotlinx.android.synthetic.main.activity_main.view.*
 import org.jetbrains.anko.backgroundColor
@@ -37,7 +36,7 @@ object ATH {
     }
 
     fun setStatusBarColorAuto(activity: Activity, fullScreen: Boolean) {
-        val isTransparentStatusBar = activity.isTransparentStatusBar
+        val isTransparentStatusBar = AppConfig.isTransparentStatusBar
         setStatusBarColor(
             activity,
             ThemeStore.statusBarColor(activity, isTransparentStatusBar),
@@ -131,14 +130,14 @@ object ATH {
     fun setTint(
         view: View,
         @ColorInt color: Int,
-        isDark: Boolean = view.context.isNightTheme
+        isDark: Boolean = AppConfig.isNightTheme
     ) {
         TintHelper.setTintAuto(view, color, false, isDark)
     }
 
     fun setBackgroundTint(
         view: View, @ColorInt color: Int,
-        isDark: Boolean = view.context.isNightTheme
+        isDark: Boolean = AppConfig.isNightTheme
     ) {
         TintHelper.setTintAuto(view, color, true, isDark)
     }
@@ -206,7 +205,7 @@ object ATH {
                 .setSelectedColor(ThemeStore.accentColor(bottom_navigation_view.context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
-            itemBackgroundResource = when(context.isNightTheme) {
+            itemBackgroundResource = when (AppConfig.isNightTheme) {
                 true -> R.drawable.item_bg_dark
                 false -> R.drawable.item_bg_light
             }

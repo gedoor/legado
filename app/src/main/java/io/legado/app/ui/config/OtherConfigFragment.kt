@@ -12,8 +12,8 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.threadCount
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -61,7 +61,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 .setTitle(getString(R.string.threads_num_title))
                 .setMaxValue(999)
                 .setMinValue(1)
-                .setValue(requireContext().threadCount)
+                .setValue(AppConfig.threadCount)
                 .show {
                     requireContext().putPrefInt(PreferKey.threadCount, it)
                     findPreference<Preference>(PreferKey.threadCount)?.summary =
@@ -125,7 +125,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
             PreferKey.downloadPath -> getPrefString(PreferKey.downloadPath)
                 ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
                 ?: App.INSTANCE.cacheDir.absolutePath
-            PreferKey.threadCount -> requireContext().threadCount
+            PreferKey.threadCount -> AppConfig.threadCount
             else -> getPrefString(key) ?: ""
         }
     }

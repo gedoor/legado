@@ -111,7 +111,7 @@ object ReadBookConfig {
         var textSize: Int = 15
     ) {
         fun setBg(bgType: Int, bg: String) {
-            if (App.INSTANCE.isNightTheme) {
+            if (AppConfig.isNightTheme) {
                 bgTypeNight = bgType
                 bgStrNight = bg
             } else {
@@ -121,7 +121,7 @@ object ReadBookConfig {
         }
 
         fun setTextColor(color: Int) {
-            if (App.INSTANCE.isNightTheme) {
+            if (AppConfig.isNightTheme) {
                 textColorNight = "#${color.hexString}"
             } else {
                 textColor = "#${color.hexString}"
@@ -129,7 +129,7 @@ object ReadBookConfig {
         }
 
         fun setStatusIconDark(isDark: Boolean) {
-            if (App.INSTANCE.isNightTheme) {
+            if (AppConfig.isNightTheme) {
                 darkStatusIconNight = isDark
             } else {
                 darkStatusIcon = isDark
@@ -137,7 +137,7 @@ object ReadBookConfig {
         }
 
         fun statusIconDark(): Boolean {
-            return if (App.INSTANCE.isNightTheme) {
+            return if (AppConfig.isNightTheme) {
                 darkStatusIconNight
             } else {
                 darkStatusIcon
@@ -145,17 +145,17 @@ object ReadBookConfig {
         }
 
         fun textColor(): Int {
-            return if (App.INSTANCE.isNightTheme) Color.parseColor(textColorNight)
+            return if (AppConfig.isNightTheme) Color.parseColor(textColorNight)
             else Color.parseColor(textColor)
         }
 
         fun bgStr(): String {
-            return if (App.INSTANCE.isNightTheme) bgStrNight
+            return if (AppConfig.isNightTheme) bgStrNight
             else bgStr
         }
 
         fun bgType(): Int {
-            return if (App.INSTANCE.isNightTheme) bgTypeNight
+            return if (AppConfig.isNightTheme) bgTypeNight
             else bgType
         }
 

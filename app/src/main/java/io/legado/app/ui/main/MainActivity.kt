@@ -16,8 +16,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.isShowRSS
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -47,7 +47,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
-        bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = isShowRSS
+        bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
         upVersion()
     }
 
@@ -68,10 +68,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             fragmentList.add(RssFragment())
             fragmentList.add(MyFragment())
         }
-        if (isShowRSS && fragmentList.size < 4) {
+        if (AppConfig.isShowRSS && fragmentList.size < 4) {
             fragmentList.add(2, RssFragment())
         }
-        if (!isShowRSS && fragmentList.size == 4) {
+        if (!AppConfig.isShowRSS && fragmentList.size == 4) {
             fragmentList.removeAt(2)
         }
     }
@@ -89,7 +89,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         pagePosition = position
         when (position) {
             0, 1, 3 -> bottom_navigation_view.menu.getItem(position).isChecked = true
-            2 -> if (isShowRSS) {
+            2 -> if (AppConfig.isShowRSS) {
                 bottom_navigation_view.menu.getItem(position).isChecked = true
             } else {
                 bottom_navigation_view.menu.getItem(3).isChecked = true
@@ -147,10 +147,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             recreate()
         }
         observeEvent<String>(Bus.SHOW_RSS) {
-            bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = isShowRSS
+            bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
             upFragmentList()
             view_pager_main.adapter?.notifyDataSetChanged()
-            if (isShowRSS) {
+            if (AppConfig.isShowRSS) {
                 view_pager_main.setCurrentItem(3, false)
             }
         }
@@ -168,7 +168,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
 
         override fun getCount(): Int {
-            return if (isShowRSS) 4 else 3
+            return if (AppConfig.isShowRSS) 4 else 3
         }
 
     }

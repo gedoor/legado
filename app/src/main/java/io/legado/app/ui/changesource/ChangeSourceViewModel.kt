@@ -8,8 +8,8 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.threadCount
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -20,7 +20,7 @@ import java.util.concurrent.Executors
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     private var searchPool =
-        Executors.newFixedThreadPool(context.threadCount).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     var callBack: CallBack? = null
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""

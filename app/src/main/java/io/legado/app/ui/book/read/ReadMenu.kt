@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.isNightTheme
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.service.help.ReadBook
@@ -42,7 +42,7 @@ class ReadMenu : FrameLayout {
     init {
         callBack = activity as? CallBack
         inflate(context, R.layout.view_read_menu, this)
-        if (context.isNightTheme) {
+        if (AppConfig.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
         } else {
             fabNightTheme.setImageResource(R.drawable.ic_brightness)
@@ -145,7 +145,7 @@ class ReadMenu : FrameLayout {
 
         //夜间模式
         fabNightTheme.onClick {
-            context.putPrefBoolean("isNightTheme", !context.isNightTheme)
+            context.putPrefBoolean("isNightTheme", !AppConfig.isNightTheme)
             App.INSTANCE.applyDayNight()
         }
 
