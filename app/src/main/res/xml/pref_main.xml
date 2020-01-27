@@ -13,6 +13,13 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="true"
+        android:key="autoDarkMode"
+        android:summary="@string/auto_dark_mode_s"
+        android:title="@string/auto_dark_mode"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="isNightTheme"
         android:title="@string/night_theme"

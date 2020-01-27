@@ -4,13 +4,6 @@
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="true"
-        android:key="autoDarkMode"
-        android:summary="@string/auto_dark_mode_s"
-        android:title="@string/auto_dark_mode"
-        app:iconSpaceReserved="false" />
-
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="true"
         android:key="transparentStatusBar"
         android:summary="@string/status_bar_immersion"
         android:title="@string/immersion_status_bar"
