@@ -38,4 +38,7 @@ object AppConfig {
         set(value) {
             App.INSTANCE.putPrefBoolean(PreferKey.autoDarkMode, value)
         }
+
+    val isEInkMode: Boolean
+        get() = App.INSTANCE.getPrefBoolean("isEInkMode")
 }
