@@ -77,7 +77,7 @@
     <string name="import_books_count">共%s个Text文件</string>
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
-    <string name="web_service">Web服务</string>
+    <string name="web_service">Web 服务</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%s:%d</string>
     <string name="download_offline">离线下载</string>
@@ -447,6 +447,7 @@
     <string name="switch_display_style">切换显示样式</string>
     <string name="import_per">导入本地书籍需存储权限</string>
     <string name="night_theme">夜间模式</string>
+    <string name="eink_theme">E-Ink 模式</string>
     <string name="get_storage_per">本软件需要存储权限来存储备份书籍信息</string>
     <string name="double_click_exit">再按一次退出程序</string>
     <string name="import_book_per">导入本地书籍需存储权限</string>

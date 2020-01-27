@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -205,10 +206,7 @@ object ATH {
                 .setSelectedColor(ThemeStore.accentColor(bottom_navigation_view.context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
-            itemBackgroundResource = when (AppConfig.isNightTheme) {
-                true -> R.drawable.item_bg_dark
-                false -> R.drawable.item_bg_light
-            }
+            itemBackground = ColorDrawable(ThemeStore.primaryColor(bottomBar.context))
         }
     }
 
