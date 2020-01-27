@@ -17,11 +17,11 @@ import io.legado.app.data.AppDatabase
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.isNightTheme
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.isNightTheme
 
 @Suppress("DEPRECATION")
 class App : Application() {

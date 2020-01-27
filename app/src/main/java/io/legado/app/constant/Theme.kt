@@ -1,7 +1,7 @@
 package io.legado.app.constant
 
 import io.legado.app.App
-import io.legado.app.utils.isNightTheme
+import io.legado.app.help.isNightTheme
 
 enum class Theme {
     Dark, Light, Auto;

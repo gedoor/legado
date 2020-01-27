@@ -10,10 +10,10 @@ import android.view.WindowManager
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.isTransparentStatusBar
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.isTransparentStatusBar
 
 
 object Help {

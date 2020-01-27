@@ -16,9 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.R
+import io.legado.app.help.isNightTheme
+import io.legado.app.help.isTransparentStatusBar
 import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.isNightTheme
-import io.legado.app.utils.isTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_main.view.*
 import org.jetbrains.anko.backgroundColor
 
