@@ -2,17 +2,24 @@ package io.legado.app.help
 
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.putPrefBoolean
-import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.*
 
 object AppConfig {
 
     var isNightTheme: Boolean
-        get() = App.INSTANCE.getPrefBoolean("isNightTheme")
+        get() {
+            return when (App.INSTANCE.getPrefString("themeMode", "0")) {
+                "1" -> false
+                "2" -> true
+                else -> App.INSTANCE.sysIsDarkMode()
+            }
+        }
         set(value) {
-            App.INSTANCE.putPrefBoolean("isNightTheme", value)
+            if (value) {
+                App.INSTANCE.putPrefString("themeMode", "2")
+            } else {
+                App.INSTANCE.putPrefString("themeMode", "1")
+            }
         }
 
     var isTransparentStatusBar: Boolean

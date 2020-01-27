@@ -22,7 +22,6 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.sysIsDarkMode
 
 @Suppress("DEPRECATION")
 class App : Application() {
@@ -104,13 +103,7 @@ class App : Application() {
 
     private fun initNightMode() {
         val targetMode =
-            if (AppConfig.autoDarkMode) {
-                if (sysIsDarkMode()) {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                }
-            } else if (AppConfig.isNightTheme) {
+            if (AppConfig.isNightTheme) {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO

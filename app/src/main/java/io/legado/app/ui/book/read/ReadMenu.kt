@@ -145,7 +145,7 @@ class ReadMenu : FrameLayout {
 
         //夜间模式
         fabNightTheme.onClick {
-            context.putPrefBoolean("isNightTheme", !AppConfig.isNightTheme)
+            AppConfig.isNightTheme = !AppConfig.isNightTheme
             App.INSTANCE.applyDayNight()
         }
 

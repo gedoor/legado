@@ -63,6 +63,18 @@
         <item>@string/jf_convert_f</item>
     </string-array>
 
+    <string-array name="theme_mode">
+        <item>跟随系统</item>
+        <item>亮色主题</item>
+        <item>暗色主题</item>
+    </string-array>
+
+    <string-array name="theme_mode_v">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="NavBarColors">
         <item>自动</item>
         <item>黑色</item>
