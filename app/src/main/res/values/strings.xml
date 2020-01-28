@@ -433,6 +433,7 @@
     <string name="scan_qr_code">扫描二维码</string>
     <string name="click_on_selected_show_menu">选中时点击可弹出菜单</string>
     <string name="theme">主题</string>
+    <string name="theme_mode">主题模式</string>
     <string name="default_theme">默认主题</string>
     <string name="restore_default_theme">恢复主题为默认配色</string>
     <string name="join_qq_group">加入QQ群</string>
@@ -583,5 +584,7 @@
     <string name="text_too_long_qr_error">文字太多,生成二维码失败</string>
     <string name="share_rss_source">分享RSS源</string>
     <string name="share_book_source">分享书源</string>
+    <string name="auto_dark_mode">自动切换夜间模式</string>
+    <string name="auto_dark_mode_s">夜间模式跟随系统</string>
 
 </resources>

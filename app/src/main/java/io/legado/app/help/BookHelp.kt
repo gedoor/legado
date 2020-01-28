@@ -1,19 +1,19 @@
 package io.legado.app.help
 
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getPrefString
+import io.legado.app.utils.*
 import org.apache.commons.text.similarity.JaccardSimilarity
 import java.io.File
 import kotlin.math.min
 
 object BookHelp {
-
+    private const val cacheFolderName = "book_cache"
     private var downloadPath: String =
         App.INSTANCE.getPrefString(PreferKey.downloadPath)
             ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
@@ -26,74 +26,125 @@ object BookHelp {
                         ?: App.INSTANCE.cacheDir.absolutePath
     }
 
+    private val downloadUri get() = Uri.parse(downloadPath)
+
+    private fun bookFolderName(book: Book): String {
+        return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
+    }
+
+    private fun bookChapterName(bookChapter: BookChapter): String {
+        return String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
+    }
+
     private fun getBookCachePath(): String {
-        return "$downloadPath${File.separator}book_cache"
+        return "$downloadPath${File.separator}$cacheFolderName"
     }
 
     fun clearCache() {
-        FileHelp.deleteFile(getBookCachePath())
-        FileHelp.getFolder(getBookCachePath())
+        FileUtils.deleteFile(getBookCachePath())
+        FileUtils.getFolder(getBookCachePath())
     }
 
     @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
-        FileHelp.getFolder(getBookFolder(book)).listFiles()?.forEach {
-            if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
-                it.delete()
-                return@forEach
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                DocumentUtils.createFileIfNotExist(
+                    it,
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.uri?.writeText(App.INSTANCE, content)
             }
+        } else {
+            FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).listFiles()?.forEach {
+                if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
+                    it.delete()
+                    return@forEach
+                }
+            }
+            FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).writeText(content)
         }
-        val filePath = getChapterPath(book, bookChapter)
-        val file = FileHelp.getFile(filePath)
-        file.writeText(content)
     }
 
     fun getChapterCount(book: Book): Int {
-        return FileHelp.getFolder(getBookFolder(book)).list()?.size ?: 0
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                return DocumentUtils.createFileIfNotExist(
+                    it,
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.listFiles()?.size ?: 0
+            }
+        } else {
+            return FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).list()?.size ?: 0
+        }
+        return 0
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        val filePath = getChapterPath(book, bookChapter)
-        runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                return true
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                return DocumentUtils.exists(
+                    it,
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )
             }
+        } else {
+            return FileUtils.exists(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            )
         }
         return false
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        val filePath = getChapterPath(book, bookChapter)
-        runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                return file.readText()
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                return DocumentUtils.createFileIfNotExist(
+                    it,
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.uri?.readText(App.INSTANCE)
             }
+        } else {
+            return FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).readText()
         }
         return null
     }
 
     fun delContent(book: Book, bookChapter: BookChapter) {
-        val filePath = getChapterPath(book, bookChapter)
-        kotlin.runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                file.delete()
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                DocumentUtils.createFileIfNotExist(
+                    it,
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.delete()
             }
+        } else {
+            FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).delete()
         }
-    }
-
-    private fun getBookFolder(book: Book): String {
-        val bookFolder = formatFolderName(book.name + MD5Utils.md5Encode16(book.bookUrl))
-        return "${getBookCachePath()}${File.separator}$bookFolder"
-    }
-
-    private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
-        val chapterFile =
-            String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
-        return "${getBookFolder(book)}${File.separator}$chapterFile.nb"
     }
 
     private fun formatFolderName(folderName: String): String {
@@ -124,16 +175,16 @@ object BookHelp {
         }
 
         var newIndex = 0
-        val jaccardSimilarity = JaccardSimilarity()
+        val jSimilarity = JaccardSimilarity()
         var similarity = if (chapters.size > index) {
-            jaccardSimilarity.apply(title, chapters[index].title)
+            jSimilarity.apply(title, chapters[index].title)
         } else 0.0
         if (similarity == 1.0) {
             return index
         } else {
             for (i in 1..50) {
                 if (index - i in chapters.indices) {
-                    jaccardSimilarity.apply(title, chapters[index - i].title).let {
+                    jSimilarity.apply(title, chapters[index - i].title).let {
                         if (it > similarity) {
                             similarity = it
                             newIndex = index - i
@@ -144,7 +195,7 @@ object BookHelp {
                     }
                 }
                 if (index + i in chapters.indices) {
-                    jaccardSimilarity.apply(title, chapters[index + i].title).let {
+                    jSimilarity.apply(title, chapters[index + i].title).let {
                         if (it > similarity) {
                             similarity = it
                             newIndex = index + i

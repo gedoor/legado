@@ -5,7 +5,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -18,13 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.FileHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.getPrefString
-import io.legado.app.utils.putPrefString
-import io.legado.app.utils.toast
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_font_select.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -127,11 +122,11 @@ class FontSelectDialog : DialogFragment(),
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(uri: Uri) {
         launch(IO) {
-            FileHelp.deleteFile(fontCacheFolder)
+            FileUtils.deleteFile(fontCacheFolder)
             DocumentFile.fromTreeUri(App.INSTANCE, uri)?.listFiles()?.forEach { file ->
                 if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
                     DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
-                        FileHelp.getFile(fontCacheFolder + file.name).writeBytes(it)
+                        FileUtils.getFile(fontCacheFolder + file.name).writeBytes(it)
                     }
                 }
             }
@@ -154,7 +149,7 @@ class FontSelectDialog : DialogFragment(),
     private fun getFontFilesOld() {
         try {
             val file =
-                File(Environment.getExternalStorageDirectory().absolutePath + File.separator + "Fonts")
+                File(FileUtils.getSdCardPath() + File.separator + "Fonts")
             file.listFiles { pathName ->
                 pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
             }?.let {
@@ -167,7 +162,7 @@ class FontSelectDialog : DialogFragment(),
 
     override fun onClick(file: File) {
         launch(IO) {
-            file.copyTo(FileHelp.getFile(fontFolder + file.name), true).absolutePath.let { path ->
+            file.copyTo(FileUtils.getFile(fontFolder + file.name), true).absolutePath.let { path ->
                 val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
                 cb?.let {
                     if (it.curFontPath != path) {

@@ -85,17 +85,12 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     fun clHtml(content: String): String {
-        return if (content.contains("<style>|style=".toRegex())) {
-            content
-        } else {
-            """
-                <style>
-                    img{max-width:100% !important; width:auto; height:auto;}
-                    video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
+        return """<style>
+                    img{max-width:100%; width:auto; height:auto;}
+                    video{object-fit:fill; max-width:100%; width:auto; height:auto;}
                     body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
-                </style>$content
-             """
-        }
+                </style>
+                $content"""
     }
 
     override fun onInit(status: Int) {

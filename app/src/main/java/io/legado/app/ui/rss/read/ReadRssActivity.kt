@@ -149,7 +149,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             webView.settings.javaScriptEnabled = true
             webView.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
-                viewModel.readAloud(Jsoup.clean(html, Whitelist()))
+                viewModel.readAloud(Jsoup.clean(html, Whitelist.none()))
             }
         }
     }

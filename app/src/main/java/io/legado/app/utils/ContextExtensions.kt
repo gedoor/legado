@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.provider.Settings
@@ -126,11 +127,7 @@ fun Context.shareWithQr(title: String, text: String) {
     }
 }
 
-val Context.isNightTheme: Boolean
-    get() = getPrefBoolean("isNightTheme")
-
-val Context.isEInkMode: Boolean
-    get() = getPrefBoolean("isEInkMode")
-
-val Context.isTransparentStatusBar: Boolean
-    get() = getPrefBoolean("transparentStatusBar", true)
+fun Context.sysIsDarkMode(): Boolean {
+    val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    return mode == Configuration.UI_MODE_NIGHT_YES
+}

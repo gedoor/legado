@@ -10,6 +10,7 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
@@ -20,7 +21,7 @@ import io.legado.app.utils.*
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    val items = arrayOf("极简","曜夜","经典","黑白","A屏黑")
+    val items = arrayOf("极简", "曜夜", "经典", "黑白", "A屏黑")
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
@@ -110,31 +111,37 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                                     putPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
                                     putPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
                                     putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                                    putPrefBoolean("isNightTheme", false)
+                                    AppConfig.isNightTheme = false
                                 }
                                 1 -> {
                                     putPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
                                     putPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
                                     putPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
-                                    putPrefBoolean("isNightTheme", true)
+                                    AppConfig.isNightTheme = true
                                 }
                                 2 -> {
                                     putPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
                                     putPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
                                     putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                                    putPrefBoolean("isNightTheme", false)
+                                    AppConfig.isNightTheme = false
                                 }
                                 3 -> {
                                     putPrefInt("colorPrimary", getCompatColor(R.color.white))
                                     putPrefInt("colorAccent", getCompatColor(R.color.black))
                                     putPrefInt("colorBackground", getCompatColor(R.color.white))
-                                    putPrefBoolean("isNightTheme", false)
+                                    AppConfig.isNightTheme = false
                                 }
                                 4 -> {
                                     putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
-                                    putPrefInt("colorAccentNight", getCompatColor(R.color.md_grey_600))
-                                    putPrefInt("colorBackgroundNight", getCompatColor(R.color.black))
-                                    putPrefBoolean("isNightTheme", true)
+                                    putPrefInt(
+                                        "colorAccentNight",
+                                        getCompatColor(R.color.md_grey_600)
+                                    )
+                                    putPrefInt(
+                                        "colorBackgroundNight",
+                                        getCompatColor(R.color.black)
+                                    )
+                                    AppConfig.isNightTheme = true
                                 }
                             }
                             App.INSTANCE.applyDayNight()
@@ -166,7 +173,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     }
 
     private fun upTheme(isNightTheme: Boolean) {
-        if (this.isNightTheme == isNightTheme) {
+        if (AppConfig.isNightTheme == isNightTheme) {
             App.INSTANCE.applyTheme()
             recreateActivities()
         }

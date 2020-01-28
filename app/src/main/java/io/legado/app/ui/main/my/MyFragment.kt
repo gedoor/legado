@@ -200,7 +200,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             when (key) {
-                "isNightTheme" -> App.INSTANCE.applyDayNight()
+                "themeMode" -> App.INSTANCE.applyDayNight()
                 "webService" -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())

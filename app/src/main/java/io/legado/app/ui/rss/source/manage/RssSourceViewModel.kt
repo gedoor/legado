@@ -4,10 +4,10 @@ import android.app.Application
 import android.text.TextUtils
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.RssSource
-import io.legado.app.help.FileHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore.jsonPath
@@ -65,7 +65,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             App.db.rssSourceDao().getRssSources(*ids.toTypedArray()).let {
                 val json = GSON.toJson(it)
                 val file =
-                    FileHelp.getFile(Backup.exportPath + File.separator + "exportRssSource.json")
+                    FileUtils.getFile(Backup.exportPath + File.separator + "exportRssSource.json")
                 file.writeText(json)
             }
         }.onSuccess {
@@ -123,6 +123,8 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                     App.db.rssSourceDao().insert(*it.toTypedArray())
                 }
             }
+        }.onSuccess {
+            finally.invoke(context.getString(R.string.success))
         }
     }
 

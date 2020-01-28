@@ -2,7 +2,6 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import io.legado.app.App
-import io.legado.app.help.FileHelp
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,8 +29,8 @@ object LogUtils {
     }
 
     private val fileHandler by lazy {
-        val logFolder = FileHelp.getCachePath() + File.separator + "logs"
-        FileHelp.getFolder(logFolder)
+        val logFolder = FileUtils.getCachePath() + File.separator + "logs"
+        FileUtils.getFolder(logFolder)
         FileHandler(
             logFolder + File.separator + "app.log",
             10240,

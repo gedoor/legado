@@ -15,13 +15,13 @@ import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.data.AppDatabase
 import io.legado.app.help.ActivityHelp
+import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.isNightTheme
 
 @Suppress("DEPRECATION")
 class App : Application() {
@@ -50,7 +50,7 @@ class App : Application() {
         }
 
         if (!ThemeStore.isConfigured(this, versionCode)) applyTheme()
-        initNightTheme()
+        initNightMode()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
 
@@ -67,7 +67,7 @@ class App : Application() {
      * 更新主题
      */
     fun applyTheme() {
-        if (isNightTheme) {
+        if (AppConfig.isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(
                     getPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
@@ -98,15 +98,16 @@ class App : Application() {
     fun applyDayNight() {
         ReadBookConfig.upBg()
         applyTheme()
-        initNightTheme()
+        initNightMode()
     }
 
-    private fun initNightTheme() {
-        val targetMode = if (isNightTheme) {
-            AppCompatDelegate.MODE_NIGHT_YES
-        } else {
-            AppCompatDelegate.MODE_NIGHT_NO
-        }
+    private fun initNightMode() {
+        val targetMode =
+            if (AppConfig.isNightTheme) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
         AppCompatDelegate.setDefaultNightMode(targetMode)
     }
 

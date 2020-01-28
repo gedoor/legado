@@ -21,4 +21,5 @@ object PreferKey {
     const val backupPath = "backupUri"
     const val threadCount = "threadCount"
     const val keepLight = "keep_light"
+    const val autoDarkMode = "autoDarkMode"
 }

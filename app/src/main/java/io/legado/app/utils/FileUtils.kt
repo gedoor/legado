@@ -4,86 +4,92 @@ import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.os.storage.StorageManager
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import android.util.Log
-import androidx.core.content.ContextCompat
+import io.legado.app.App
 import java.io.File
 import java.io.IOException
-import java.lang.reflect.Array
-import java.util.*
 
 
 object FileUtils {
 
-    fun getFileByPath(filePath: String): File? {
-        return if (filePath.isBlank()) null else File(filePath)
+    fun exists(file: File, fileName: String, vararg subDirs: String): Boolean {
+        val filePath =
+            file.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+        return File(filePath).exists()
+    }
+
+    fun createFileIfNotExist(file: File, fileName: String, vararg subDirs: String): File {
+        val filePath =
+            file.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+        return getFile(filePath)
+    }
+
+    fun createFileIfNotExist(file: File, vararg subDirs: String): File {
+        val filePath = file.absolutePath + File.separator + subDirs.joinToString(File.separator)
+        return getFolder(filePath)
+    }
+
+    fun getCachePath(): String {
+        return App.INSTANCE.externalCacheDir?.absolutePath
+            ?: App.INSTANCE.cacheDir.absolutePath
+    }
+
+    //获取文件夹
+    fun getFolder(filePath: String): File {
+        val file = File(filePath)
+        //如果文件夹不存在，就创建它
+        if (!file.exists()) {
+            file.mkdirs()
+        }
+        return file
+    }
+
+    //获取文件
+    @Synchronized
+    fun getFile(filePath: String): File {
+        val file = File(filePath)
+        try {
+            if (!file.exists()) {
+                //创建父类文件夹
+                file.parent?.let {
+                    getFolder(it)
+                }
+                //创建文件
+                file.createNewFile()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return file
+    }
+
+    //递归删除文件夹下的数据
+    @Synchronized
+    fun deleteFile(filePath: String) {
+        val file = File(filePath)
+        if (!file.exists()) return
+
+        if (file.isDirectory) {
+            val files = file.listFiles()
+            files?.forEach { subFile ->
+                val path = subFile.path
+                deleteFile(path)
+            }
+        }
+        //删除文件
+        file.delete()
     }
 
     fun getSdCardPath(): String {
+        @Suppress("DEPRECATION")
         var sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
-
         try {
             sdCardDirectory = File(sdCardDirectory).canonicalPath
         } catch (ioe: IOException) {
             ioe.printStackTrace()
         }
-
         return sdCardDirectory
-    }
-
-    fun getStorageData(pContext: Context): ArrayList<String>? {
-
-        val storageManager = pContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager
-
-        try {
-            val getVolumeList = storageManager.javaClass.getMethod("getVolumeList")
-
-            val storageVolumeClazz = Class.forName("android.os.storage.StorageVolume")
-            val getPath = storageVolumeClazz.getMethod("getPath")
-
-            val invokeVolumeList = getVolumeList.invoke(storageManager)
-            val length = Array.getLength(invokeVolumeList)
-
-            val list = ArrayList<String>()
-            for (i in 0 until length) {
-                val storageVolume = Array.get(invokeVolumeList, i)//得到StorageVolume对象
-                val path = getPath.invoke(storageVolume) as String
-
-                list.add(path)
-            }
-            return list
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        return null
-    }
-
-
-    fun getExtSdCardPaths(con: Context): ArrayList<String> {
-        val paths = ArrayList<String>()
-        val files = ContextCompat.getExternalFilesDirs(con, "external")
-        val firstFile = files[0]
-        for (file in files) {
-            if (file != null && file != firstFile) {
-                val index = file.absolutePath.lastIndexOf("/Android/data")
-                if (index < 0) {
-                    Log.w("", "Unexpected external file dir: " + file.absolutePath)
-                } else {
-                    var path = file.absolutePath.substring(0, index)
-                    try {
-                        path = File(path).canonicalPath
-                    } catch (e: IOException) {
-                        // Keep non-canonical path.
-                    }
-
-                    paths.add(path)
-                }
-            }
-        }
-        return paths
     }
 
     fun getPath(context: Context, uri: Uri): String? {
@@ -96,6 +102,7 @@ object FileUtils {
                 val type = split[0]
 
                 if ("primary".equals(type, ignoreCase = true)) {
+                    @Suppress("DEPRECATION")
                     return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
                 }
 
@@ -145,7 +152,7 @@ object FileUtils {
 
     private fun getDataColumn(
         context: Context, uri: Uri, selection: String?,
-        selectionArgs: kotlin.Array<String>?
+        selectionArgs: Array<String>?
     ): String? {
 
         val column = "_data"

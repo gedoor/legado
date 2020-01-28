@@ -2,10 +2,10 @@ package io.legado.app.help.storage
 
 import android.content.Context
 import io.legado.app.App
-import io.legado.app.help.FileHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.ZipUtils
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
@@ -17,9 +17,9 @@ import java.util.*
 import kotlin.math.min
 
 object WebDavHelp {
-    private val zipFilePath = FileHelp.getCachePath() + "/backup" + ".zip"
+    private val zipFilePath = FileUtils.getCachePath() + "/backup" + ".zip"
     private val unzipFilesPath by lazy {
-        FileHelp.getCachePath()
+        FileUtils.getCachePath()
     }
 
     private fun getWebDavUrl(): String? {
@@ -86,7 +86,7 @@ object WebDavHelp {
             for (i in 0 until paths.size) {
                 paths[i] = path + File.separator + paths[i]
             }
-            FileHelp.deleteFile(zipFilePath)
+            FileUtils.deleteFile(zipFilePath)
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 WebDav(getWebDavUrl() + "legado").makeAsDir()
                 val putUrl = getWebDavUrl() + "legado/backup" +

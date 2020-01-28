@@ -9,10 +9,10 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.threadCount
 import io.legado.app.model.WebBook
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 
 class DownloadService : BaseService() {
     private var searchPool =
-        Executors.newFixedThreadPool(App.INSTANCE.threadCount).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
     private val handler = Handler()
     private var runnable: Runnable = Runnable { upDownload() }

@@ -52,8 +52,8 @@ abstract class BaseActivity(
         } ?: super.onCreateOptionsMenu(menu)
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
-        menu?.applyOpenTint(this)
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.applyOpenTint(this)
         return super.onMenuOpened(featureId, menu)
     }
 

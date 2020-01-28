@@ -57,7 +57,7 @@ object ZipUtils {
             }
             return true
         } finally {
-            if (zos != null) {
+            zos?.let {
                 zos.finish()
                 zos.close()
             }
@@ -89,7 +89,7 @@ object ZipUtils {
             }
             return true
         } finally {
-            if (zos != null) {
+            zos?.let {
                 zos.finish()
                 zos.close()
             }
@@ -261,7 +261,7 @@ object ZipUtils {
         val files = ArrayList<File>()
         val zip = ZipFile(zipFile)
         val entries = zip.entries()
-        try {
+        zip.use {
             if (isSpace(keyword)) {
                 while (entries.hasMoreElements()) {
                     val entry = entries.nextElement() as ZipEntry
@@ -285,8 +285,6 @@ object ZipUtils {
                     }
                 }
             }
-        } finally {
-            zip.close()
         }
         return files
     }
