@@ -6,6 +6,11 @@ import androidx.documentfile.provider.DocumentFile
 
 object DocumentUtils {
 
+    fun exists(root: DocumentFile, fileName: String, vararg subDirs: String): Boolean {
+        val parent = getDirDocument(root, *subDirs) ?: return false
+        return parent.findFile(fileName)?.exists() ?: false
+    }
+
     fun createFileIfNotExist(
         root: DocumentFile,
         fileName: String,

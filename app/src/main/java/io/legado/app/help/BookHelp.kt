@@ -52,65 +52,99 @@ object BookHelp {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
                 DocumentUtils.createFileIfNotExist(
                     it,
-                    bookChapterName(bookChapter),
+                    "${bookChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )
+                )?.uri?.writeText(App.INSTANCE, content)
             }
         } else {
-            FileUtils.getFolder(getBookFolder(book)).listFiles()?.forEach {
+            FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).listFiles()?.forEach {
                 if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
                     it.delete()
                     return@forEach
                 }
             }
-            val filePath = getChapterPath(book, bookChapter)
-            val file = FileUtils.getFile(filePath)
-            file.writeText(content)
+            FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).writeText(content)
         }
     }
 
     fun getChapterCount(book: Book): Int {
-        return FileUtils.getFolder(getBookFolder(book)).list()?.size ?: 0
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                return DocumentUtils.createFileIfNotExist(
+                    it,
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.listFiles()?.size ?: 0
+            }
+        } else {
+            return FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).list()?.size ?: 0
+        }
+        return 0
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        val filePath = getChapterPath(book, bookChapter)
-        runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                return true
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                return DocumentUtils.exists(
+                    it,
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )
             }
+        } else {
+            return FileUtils.exists(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            )
         }
         return false
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        val filePath = getChapterPath(book, bookChapter)
-        runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                return file.readText()
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                return DocumentUtils.createFileIfNotExist(
+                    it,
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.uri?.readText(App.INSTANCE)
             }
+        } else {
+            return FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).readText()
         }
         return null
     }
 
     fun delContent(book: Book, bookChapter: BookChapter) {
-        val filePath = getChapterPath(book, bookChapter)
-        kotlin.runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                file.delete()
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                DocumentUtils.createFileIfNotExist(
+                    it,
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.delete()
             }
+        } else {
+            FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                "${bookChapterName(bookChapter)}.nb",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).delete()
         }
-    }
-
-    private fun getBookFolder(book: Book): String {
-        return "${getBookCachePath()}${File.separator}${bookFolderName(book)}"
-    }
-
-    private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
-        return "${getBookFolder(book)}${File.separator}${bookChapterName(bookChapter)}.nb"
     }
 
     private fun formatFolderName(folderName: String): String {

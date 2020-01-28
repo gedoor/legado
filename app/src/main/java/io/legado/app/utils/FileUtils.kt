@@ -13,11 +13,27 @@ import java.io.IOException
 
 object FileUtils {
 
+    fun exists(file: File, fileName: String, vararg subDirs: String): Boolean {
+        val filePath =
+            file.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+        return File(filePath).exists()
+    }
+
+    fun createFileIfNotExist(file: File, fileName: String, vararg subDirs: String): File {
+        val filePath =
+            file.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+        return getFile(filePath)
+    }
+
+    fun createFileIfNotExist(file: File, vararg subDirs: String): File {
+        val filePath = file.absolutePath + File.separator + subDirs.joinToString(File.separator)
+        return getFolder(filePath)
+    }
+
     fun getCachePath(): String {
         return App.INSTANCE.externalCacheDir?.absolutePath
             ?: App.INSTANCE.cacheDir.absolutePath
     }
-
 
     //获取文件夹
     fun getFolder(filePath: String): File {
