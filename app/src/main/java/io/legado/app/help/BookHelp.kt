@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import android.net.Uri
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
@@ -24,6 +25,16 @@ object BookHelp {
             App.INSTANCE.getPrefString(PreferKey.downloadPath)
                 ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
                         ?: App.INSTANCE.cacheDir.absolutePath
+    }
+
+    private val dwnloadUri get() = Uri.parse(downloadPath)
+
+    private fun bookFolderName(book: Book): String {
+        return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
+    }
+
+    private fun bookChapterName(bookChapter: BookChapter): String {
+        return String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
     }
 
     private fun getBookCachePath(): String {
@@ -86,14 +97,11 @@ object BookHelp {
     }
 
     private fun getBookFolder(book: Book): String {
-        val bookFolder = formatFolderName(book.name + MD5Utils.md5Encode16(book.bookUrl))
-        return "${getBookCachePath()}${File.separator}$bookFolder"
+        return "${getBookCachePath()}${File.separator}${bookFolderName(book)}"
     }
 
     private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
-        val chapterFile =
-            String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
-        return "${getBookFolder(book)}${File.separator}$chapterFile.nb"
+        return "${getBookFolder(book)}${File.separator}${bookChapterName(bookChapter)}.nb"
     }
 
     private fun formatFolderName(folderName: String): String {
