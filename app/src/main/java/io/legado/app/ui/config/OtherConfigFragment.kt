@@ -1,6 +1,8 @@
 package io.legado.app.ui.config
 
+import android.app.Activity.RESULT_OK
 import android.content.ComponentName
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,6 +16,8 @@ import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -26,7 +30,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
     Preference.OnPreferenceChangeListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val downloadPath = 25324
+    private val requestCodeDownloadPath = 25324
     private val packageManager = App.INSTANCE.packageManager
     private val componentName = ComponentName(
         App.INSTANCE,
@@ -67,12 +71,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                     findPreference<Preference>(PreferKey.threadCount)?.summary =
                         getString(R.string.threads_num, it.toString())
                 }
-            PreferKey.downloadPath -> FileChooserDialog.show(
-                childFragmentManager,
-                downloadPath,
-                mode = FileChooserDialog.DIRECTORY,
-                initPath = getPreferenceString(PreferKey.downloadPath).toString()
-            )
+            PreferKey.downloadPath -> selectDownloadPathSys()
             PreferKey.cleanCache -> {
                 BookHelp.clearCache()
                 toast(R.string.clear_cache_success)
@@ -148,7 +147,49 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         }
     }
 
+    private fun selectDownloadPathSys() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, requestCodeDownloadPath)
+        } catch (e: Exception) {
+            selectDownloadPath()
+        }
+    }
+
+    private fun selectDownloadPath() {
+        PermissionsCompat.Builder(this)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                FileChooserDialog.show(
+                    childFragmentManager,
+                    requestCodeDownloadPath,
+                    mode = FileChooserDialog.DIRECTORY,
+                    initPath = getPreferenceString(PreferKey.downloadPath).toString()
+                )
+            }
+            .request()
+    }
+
     override fun onFilePicked(requestCode: Int, currentPath: String) {
-        putPrefString(PreferKey.downloadPath, currentPath)
+        if (requestCode == requestCodeDownloadPath) {
+            putPrefString(PreferKey.downloadPath, currentPath)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            requestCodeDownloadPath -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    putPrefString(PreferKey.downloadPath, uri.toString())
+                }
+            }
+        }
     }
 }
