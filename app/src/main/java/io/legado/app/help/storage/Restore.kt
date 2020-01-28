@@ -11,7 +11,6 @@ import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.*
-import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -38,7 +37,7 @@ object Restore {
                 for (fileName in Backup.backupFileNames) {
                     if (doc.name == fileName) {
                         DocumentUtils.readText(context, doc.uri)?.let {
-                            FileHelp.getFile(Backup.backupPath + File.separator + fileName)
+                            FileUtils.getFile(Backup.backupPath + File.separator + fileName)
                                 .writeText(it)
                         }
                     }
@@ -51,7 +50,7 @@ object Restore {
     suspend fun restore(path: String) {
         withContext(IO) {
             try {
-                val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
+                val file = FileUtils.getFile(path + File.separator + "bookshelf.json")
                 val json = file.readText()
                 GSON.fromJsonArray<Book>(json)?.let {
                     App.db.bookDao().insert(*it.toTypedArray())
@@ -60,7 +59,7 @@ object Restore {
                 e.printStackTrace()
             }
             try {
-                val file = FileHelp.getFile(path + File.separator + "bookGroup.json")
+                val file = FileUtils.getFile(path + File.separator + "bookGroup.json")
                 val json = file.readText()
                 GSON.fromJsonArray<BookGroup>(json)?.let {
                     App.db.bookGroupDao().insert(*it.toTypedArray())
@@ -69,7 +68,7 @@ object Restore {
                 e.printStackTrace()
             }
             try {
-                val file = FileHelp.getFile(path + File.separator + "bookSource.json")
+                val file = FileUtils.getFile(path + File.separator + "bookSource.json")
                 val json = file.readText()
                 GSON.fromJsonArray<BookSource>(json)?.let {
                     App.db.bookSourceDao().insert(*it.toTypedArray())
@@ -78,7 +77,7 @@ object Restore {
                 e.printStackTrace()
             }
             try {
-                val file = FileHelp.getFile(path + File.separator + "rssSource.json")
+                val file = FileUtils.getFile(path + File.separator + "rssSource.json")
                 val json = file.readText()
                 GSON.fromJsonArray<RssSource>(json)?.let {
                     App.db.rssSourceDao().insert(*it.toTypedArray())
@@ -87,7 +86,7 @@ object Restore {
                 e.printStackTrace()
             }
             try {
-                val file = FileHelp.getFile(path + File.separator + "replaceRule.json")
+                val file = FileUtils.getFile(path + File.separator + "replaceRule.json")
                 val json = file.readText()
                 GSON.fromJsonArray<ReplaceRule>(json)?.let {
                     App.db.replaceRuleDao().insert(*it.toTypedArray())
@@ -97,7 +96,7 @@ object Restore {
             }
             try {
                 val file =
-                    FileHelp.getFile(path + File.separator + ReadBookConfig.readConfigFileName)
+                    FileUtils.getFile(path + File.separator + ReadBookConfig.readConfigFileName)
                 val configFile =
                     File(App.INSTANCE.filesDir.absolutePath + File.separator + ReadBookConfig.readConfigFileName)
                 if (file.exists()) {
@@ -126,7 +125,7 @@ object Restore {
         GlobalScope.launch(IO) {
             try {// 导入书架
                 val shelfFile =
-                    FileHelp.getFile(Backup.defaultPath + File.separator + "myBookShelf.json")
+                    FileUtils.getFile(Backup.defaultPath + File.separator + "myBookShelf.json")
                 val json = shelfFile.readText()
                 val importCount = importOldBookshelf(json)
                 withContext(Main) {
@@ -140,7 +139,7 @@ object Restore {
 
             try {// Book source
                 val sourceFile =
-                    FileHelp.getFile(Backup.defaultPath + File.separator + "myBookSource.json")
+                    FileUtils.getFile(Backup.defaultPath + File.separator + "myBookSource.json")
                 val json = sourceFile.readText()
                 val importCount = importOldSource(json)
                 withContext(Main) {
@@ -154,7 +153,7 @@ object Restore {
 
             try {// Replace rules
                 val ruleFile =
-                    FileHelp.getFile(Backup.defaultPath + File.separator + "myBookReplaceRule.json")
+                    FileUtils.getFile(Backup.defaultPath + File.separator + "myBookReplaceRule.json")
                 val json = ruleFile.readText()
                 val importCount = importOldReplaceRule(json)
                 withContext(Main) {

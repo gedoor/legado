@@ -4,14 +4,10 @@ import android.app.PendingIntent
 import android.media.MediaPlayer
 import io.legado.app.constant.Bus
 import io.legado.app.data.api.IHttpPostApi
-import io.legado.app.help.FileHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.service.help.ReadBook
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getPrefString
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
@@ -65,7 +61,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun downloadAudio() {
         job = launch(IO) {
-            FileHelp.deleteFile(ttsFolder)
+            FileUtils.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
                 if (isActive) {
                     val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
@@ -104,7 +100,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun getSpeakFile(index: Int = nowSpeak): File {
-        return FileHelp.getFile("${ttsFolder}${File.separator}${index}.mp3")
+        return FileUtils.getFile("${ttsFolder}${File.separator}${index}.mp3")
     }
 
     private fun getAudioBody(content: String): Map<String, String> {

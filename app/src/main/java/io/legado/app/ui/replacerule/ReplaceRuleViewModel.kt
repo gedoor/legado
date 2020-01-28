@@ -6,9 +6,9 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.help.FileHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.splitNotBlank
 import org.jetbrains.anko.toast
@@ -80,7 +80,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             }.let {
                 val json = GSON.toJson(it)
                 val file =
-                    FileHelp.getFile(Backup.exportPath + File.separator + "exportReplaceRule.json")
+                    FileUtils.getFile(Backup.exportPath + File.separator + "exportReplaceRule.json")
                 file.writeText(json)
             }
         }.onSuccess {

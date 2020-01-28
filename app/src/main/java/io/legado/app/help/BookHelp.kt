@@ -41,8 +41,8 @@ object BookHelp {
     }
 
     fun clearCache() {
-        FileHelp.deleteFile(getBookCachePath())
-        FileHelp.getFolder(getBookCachePath())
+        FileUtils.deleteFile(getBookCachePath())
+        FileUtils.getFolder(getBookCachePath())
     }
 
     @Synchronized
@@ -57,20 +57,20 @@ object BookHelp {
                 )
             }
         } else {
-            FileHelp.getFolder(getBookFolder(book)).listFiles()?.forEach {
+            FileUtils.getFolder(getBookFolder(book)).listFiles()?.forEach {
                 if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
                     it.delete()
                     return@forEach
                 }
             }
             val filePath = getChapterPath(book, bookChapter)
-            val file = FileHelp.getFile(filePath)
+            val file = FileUtils.getFile(filePath)
             file.writeText(content)
         }
     }
 
     fun getChapterCount(book: Book): Int {
-        return FileHelp.getFolder(getBookFolder(book)).list()?.size ?: 0
+        return FileUtils.getFolder(getBookFolder(book)).list()?.size ?: 0
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {

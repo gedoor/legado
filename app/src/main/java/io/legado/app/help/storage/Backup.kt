@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
-import io.legado.app.help.FileHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
@@ -48,37 +47,40 @@ object Backup {
             App.db.bookDao().allBooks.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileHelp.getFile(backupPath + File.separator + "bookshelf.json").writeText(json)
+                    FileUtils.getFile(backupPath + File.separator + "bookshelf.json")
+                        .writeText(json)
                 }
             }
             App.db.bookGroupDao().all().let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileHelp.getFile(backupPath + File.separator + "bookGroup.json").writeText(json)
+                    FileUtils.getFile(backupPath + File.separator + "bookGroup.json")
+                        .writeText(json)
                 }
             }
             App.db.bookSourceDao().all.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileHelp.getFile(backupPath + File.separator + "bookSource.json")
+                    FileUtils.getFile(backupPath + File.separator + "bookSource.json")
                         .writeText(json)
                 }
             }
             App.db.rssSourceDao().all.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileHelp.getFile(backupPath + File.separator + "rssSource.json").writeText(json)
+                    FileUtils.getFile(backupPath + File.separator + "rssSource.json")
+                        .writeText(json)
                 }
             }
             App.db.replaceRuleDao().all.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileHelp.getFile(backupPath + File.separator + "replaceRule.json")
+                    FileUtils.getFile(backupPath + File.separator + "replaceRule.json")
                         .writeText(json)
                 }
             }
             GSON.toJson(ReadBookConfig.configList)?.let {
-                FileHelp.getFile(backupPath + File.separator + ReadBookConfig.readConfigFileName)
+                FileUtils.getFile(backupPath + File.separator + ReadBookConfig.readConfigFileName)
                     .writeText(it)
             }
             Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
@@ -111,7 +113,7 @@ object Backup {
                 doc?.let {
                     DocumentUtils.writeText(
                         context,
-                        FileHelp.getFile(backupPath + File.separator + fileName).readText(),
+                        FileUtils.getFile(backupPath + File.separator + fileName).readText(),
                         doc.uri
                     )
                 }
@@ -122,8 +124,8 @@ object Backup {
     private fun copyBackup() {
         try {
             for (fileName in backupFileNames) {
-                FileHelp.getFile(backupPath + File.separator + "bookshelf.json")
-                    .copyTo(FileHelp.getFile(legadoPath + File.separator + "bookshelf.json"), true)
+                FileUtils.getFile(backupPath + File.separator + "bookshelf.json")
+                    .copyTo(FileUtils.getFile(legadoPath + File.separator + "bookshelf.json"), true)
             }
         } catch (e: Exception) {
             e.printStackTrace()

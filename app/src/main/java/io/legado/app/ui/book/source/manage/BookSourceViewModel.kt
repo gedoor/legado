@@ -7,7 +7,6 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.FileHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.OldRule
@@ -92,7 +91,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             }.let {
                 val json = GSON.toJson(it)
                 val file =
-                    FileHelp.getFile(Backup.exportPath + File.separator + "exportBookSource.json")
+                    FileUtils.getFile(Backup.exportPath + File.separator + "exportBookSource.json")
                 file.writeText(json)
             }
         }.onSuccess {

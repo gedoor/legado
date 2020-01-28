@@ -21,7 +21,6 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.Bus
-import io.legado.app.help.FileHelp
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
@@ -174,7 +173,7 @@ class BgTextConfigDialog : DialogFragment() {
                                 var file = requireContext().getExternalFilesDir(null)
                                     ?: requireContext().filesDir
                                 file =
-                                    FileHelp.getFile(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
+                                    FileUtils.getFile(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
                                 DocumentUtils.readBytes(requireContext(), uri)?.let {
                                     file.writeBytes(it)
                                     ReadBookConfig.getConfig().setBg(2, file.absolutePath)

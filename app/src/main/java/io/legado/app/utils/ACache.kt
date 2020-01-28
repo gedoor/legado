@@ -597,6 +597,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             val w = drawable.intrinsicWidth
             val h = drawable.intrinsicHeight
             // 取 drawable 的颜色格式
+            @Suppress("DEPRECATION")
             val config = if (drawable.opacity != PixelFormat.OPAQUE)
                 Bitmap.Config.ARGB_8888
             else
