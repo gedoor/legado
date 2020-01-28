@@ -43,7 +43,7 @@ object FileUtils {
             val storageVolumeClazz = Class.forName("android.os.storage.StorageVolume")
             val getPath = storageVolumeClazz.getMethod("getPath")
 
-            val invokeVolumeList = getVolumeList.invoke(storageManager)
+            val invokeVolumeList = getVolumeList.invoke(storageManager) ?: return null
             val length = Array.getLength(invokeVolumeList)
 
             val list = ArrayList<String>()
