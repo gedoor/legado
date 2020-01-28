@@ -76,7 +76,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                     !getPrefBoolean(PreferKey.precisionSearch)
                 )
                 precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
-                search_view.query.toString().trim()?.let {
+                search_view.query?.toString()?.trim()?.let {
                     search_view.setQuery(it, true)
                 }
             }
@@ -88,7 +88,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 } else {
                     putPrefString("searchGroup", item.title.toString())
                 }
-                search_view.query.toString().trim()?.let {
+                search_view.query?.toString()?.trim()?.let {
                     search_view.setQuery(it, true)
                 }
             }

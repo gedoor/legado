@@ -86,6 +86,7 @@ object FileUtils {
                 val type = split[0]
 
                 if ("primary".equals(type, ignoreCase = true)) {
+                    @Suppress("DEPRECATION")
                     return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
                 }
 
@@ -135,7 +136,7 @@ object FileUtils {
 
     private fun getDataColumn(
         context: Context, uri: Uri, selection: String?,
-        selectionArgs: kotlin.Array<String>?
+        selectionArgs: Array<String>?
     ): String? {
 
         val column = "_data"
