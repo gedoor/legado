@@ -2,8 +2,38 @@ package io.legado.app.utils
 
 import android.content.Context
 import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 
 object DocumentUtils {
+
+    fun createFileIfNotExist(
+        root: DocumentFile,
+        fileName: String,
+        mimeType: String = "",
+        vararg subDirs: String
+    ): DocumentFile? {
+        val parent: DocumentFile? = createFileIfNotExist(root, *subDirs)
+        return parent?.createFile(mimeType, fileName)
+    }
+
+    fun createFileIfNotExist(root: DocumentFile, vararg subDirs: String): DocumentFile? {
+        var parent: DocumentFile? = root
+        for (subDirName in subDirs) {
+            val subDir = parent?.findFile(subDirName)
+                ?: parent?.createDirectory(subDirName)
+            parent = subDir
+        }
+        return parent
+    }
+
+    fun getDirDocument(root: DocumentFile, vararg subDirs: String): DocumentFile? {
+        var parent = root
+        for (subDirName in subDirs) {
+            val subDir = parent.findFile(subDirName)
+            parent = subDir ?: return null
+        }
+        return parent
+    }
 
     @JvmStatic
     @Throws(Exception::class)

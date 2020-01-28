@@ -5,6 +5,9 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
 
+fun Uri.isDocumentUri(context: Context): Boolean {
+    return DocumentFile.isDocumentUri(context, this)
+}
 
 @Throws(Exception::class)
 fun Uri.readBytes(context: Context): ByteArray? {

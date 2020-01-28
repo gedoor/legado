@@ -1,20 +1,19 @@
 package io.legado.app.help
 
 import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getPrefString
+import io.legado.app.utils.*
 import org.apache.commons.text.similarity.JaccardSimilarity
 import java.io.File
 import kotlin.math.min
 
 object BookHelp {
-
+    private const val cacheFolderName = "book_cache"
     private var downloadPath: String =
         App.INSTANCE.getPrefString(PreferKey.downloadPath)
             ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
@@ -27,7 +26,7 @@ object BookHelp {
                         ?: App.INSTANCE.cacheDir.absolutePath
     }
 
-    private val dwnloadUri get() = Uri.parse(downloadPath)
+    private val downloadUri get() = Uri.parse(downloadPath)
 
     private fun bookFolderName(book: Book): String {
         return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
@@ -38,7 +37,7 @@ object BookHelp {
     }
 
     private fun getBookCachePath(): String {
-        return "$downloadPath${File.separator}book_cache"
+        return "$downloadPath${File.separator}$cacheFolderName"
     }
 
     fun clearCache() {
@@ -49,15 +48,25 @@ object BookHelp {
     @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
-        FileHelp.getFolder(getBookFolder(book)).listFiles()?.forEach {
-            if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
-                it.delete()
-                return@forEach
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+                DocumentUtils.createFileIfNotExist(
+                    it,
+                    bookChapterName(bookChapter),
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )
             }
+        } else {
+            FileHelp.getFolder(getBookFolder(book)).listFiles()?.forEach {
+                if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
+                    it.delete()
+                    return@forEach
+                }
+            }
+            val filePath = getChapterPath(book, bookChapter)
+            val file = FileHelp.getFile(filePath)
+            file.writeText(content)
         }
-        val filePath = getChapterPath(book, bookChapter)
-        val file = FileHelp.getFile(filePath)
-        file.writeText(content)
     }
 
     fun getChapterCount(book: Book): Int {
@@ -132,16 +141,16 @@ object BookHelp {
         }
 
         var newIndex = 0
-        val jaccardSimilarity = JaccardSimilarity()
+        val jSimilarity = JaccardSimilarity()
         var similarity = if (chapters.size > index) {
-            jaccardSimilarity.apply(title, chapters[index].title)
+            jSimilarity.apply(title, chapters[index].title)
         } else 0.0
         if (similarity == 1.0) {
             return index
         } else {
             for (i in 1..50) {
                 if (index - i in chapters.indices) {
-                    jaccardSimilarity.apply(title, chapters[index - i].title).let {
+                    jSimilarity.apply(title, chapters[index - i].title).let {
                         if (it > similarity) {
                             similarity = it
                             newIndex = index - i
@@ -152,7 +161,7 @@ object BookHelp {
                     }
                 }
                 if (index + i in chapters.indices) {
-                    jaccardSimilarity.apply(title, chapters[index + i].title).let {
+                    jSimilarity.apply(title, chapters[index + i].title).let {
                         if (it > similarity) {
                             similarity = it
                             newIndex = index + i
