@@ -41,16 +41,18 @@ object StringUtils {
     //将时间转换成日期
     fun dateConvert(time: Long, pattern: String): String {
         val date = Date(time)
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern)
+        @SuppressLint("SimpleDateFormat")
+        val format = SimpleDateFormat(pattern)
         return format.format(date)
     }
 
     //将日期转换成昨天、今天、明天
     fun dateConvert(source: String, pattern: String): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern)
+        @SuppressLint("SimpleDateFormat")
+        val format = SimpleDateFormat(pattern)
         val calendar = Calendar.getInstance()
         try {
-            val date = format.parse(source)
+            val date = format.parse(source) ?: return ""
             val curTime = calendar.timeInMillis
             calendar.time = date
             //将MISC 转换成 sec
@@ -62,13 +64,18 @@ object StringUtils {
             //如果没有时间
             if (oldHour == 0) {
                 //比日期:昨天今天和明天
-                if (difDate == 0L) {
-                    return "今天"
-                } else if (difDate < DAY_OF_YESTERDAY) {
-                    return "昨天"
-                } else {
-                    @SuppressLint("SimpleDateFormat") val convertFormat = SimpleDateFormat("yyyy-MM-dd")
-                    return convertFormat.format(date)
+                return when {
+                    difDate == 0L -> {
+                        "今天"
+                    }
+                    difDate < DAY_OF_YESTERDAY -> {
+                        "昨天"
+                    }
+                    else -> {
+                        @SuppressLint("SimpleDateFormat")
+                        val convertFormat = SimpleDateFormat("yyyy-MM-dd")
+                        convertFormat.format(date)
+                    }
                 }
             }
 
@@ -78,7 +85,8 @@ object StringUtils {
                 difHour < HOUR_OF_DAY -> difHour.toString() + "小时前"
                 difDate < DAY_OF_YESTERDAY -> "昨天"
                 else -> {
-                    @SuppressLint("SimpleDateFormat") val convertFormat = SimpleDateFormat("yyyy-MM-dd")
+                    @SuppressLint("SimpleDateFormat")
+                    val convertFormat = SimpleDateFormat("yyyy-MM-dd")
                     convertFormat.format(date)
                 }
             }
@@ -254,9 +262,9 @@ object StringUtils {
             "(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>".toRegex(),
             "\n"
         )// 替换特定标签为换行符
-                .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
-                .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
-                .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
-                .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
+            .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
+            .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
+            .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
+            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
     }
 }
