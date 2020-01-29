@@ -36,18 +36,18 @@ object BookHelp {
         return String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
     }
 
-    private fun getBookCachePath(): String {
-        return "$downloadPath${File.separator}$cacheFolderName"
-    }
-
     fun clearCache() {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)
                 ?.findFile(cacheFolderName)
                 ?.delete()
         } else {
-            FileUtils.deleteFile(getBookCachePath())
-            FileUtils.createFolderIfNotExist(getBookCachePath())
+            FileUtils.deleteFile(
+                FileUtils.getPath(
+                    File(downloadPath),
+                    subDirs = *arrayOf(cacheFolderName)
+                )
+            )
         }
     }
 

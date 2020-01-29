@@ -13,26 +13,18 @@ import java.io.IOException
 
 object FileUtils {
 
-    fun exists(file: File, fileName: String, vararg subDirs: String): Boolean {
-        val filePath =
-            file.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
-        return File(filePath).exists()
+    fun exists(root: File, fileName: String, vararg subDirs: String): Boolean {
+        return getFile(root, fileName, subDirs = *subDirs).exists()
     }
 
-    fun createFileIfNotExist(file: File, fileName: String, vararg subDirs: String): File {
-        val filePath =
-            file.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+    fun createFileIfNotExist(root: File, fileName: String, vararg subDirs: String): File {
+        val filePath = getPath(root, fileName, *subDirs)
         return createFileIfNotExist(filePath)
     }
 
-    fun createFileIfNotExist(file: File, vararg subDirs: String): File {
-        val filePath = file.absolutePath + File.separator + subDirs.joinToString(File.separator)
+    fun createFileIfNotExist(root: File, vararg subDirs: String): File {
+        val filePath = root.absolutePath + File.separator + subDirs.joinToString(File.separator)
         return createFolderIfNotExist(filePath)
-    }
-
-    fun getCachePath(): String {
-        return App.INSTANCE.externalCacheDir?.absolutePath
-            ?: App.INSTANCE.cacheDir.absolutePath
     }
 
     fun createFolderIfNotExist(filePath: String): File {
@@ -62,6 +54,24 @@ object FileUtils {
         return file
     }
 
+    fun getFile(file: File, fileName: String, vararg subDirs: String): File {
+        val filePath = getPath(file, fileName, *subDirs)
+        return File(filePath)
+    }
+
+    fun getFile(root: File, vararg subDirs: String): File {
+        val filePath = getPath(root, subDirs = *subDirs)
+        return File(filePath)
+    }
+
+    fun getPath(root: File, fileName: String? = null, vararg subDirs: String): String {
+        return if (fileName.isNullOrEmpty()) {
+            root.absolutePath + File.separator + subDirs.joinToString(File.separator)
+        } else {
+            root.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+        }
+    }
+
     //递归删除文件夹下的数据
     @Synchronized
     fun deleteFile(filePath: String) {
@@ -77,6 +87,11 @@ object FileUtils {
         }
         //删除文件
         file.delete()
+    }
+
+    fun getCachePath(): String {
+        return App.INSTANCE.externalCacheDir?.absolutePath
+            ?: App.INSTANCE.cacheDir.absolutePath
     }
 
     fun getSdCardPath(): String {
