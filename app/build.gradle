@@ -117,7 +117,7 @@ dependencies {
     implementation 'com.google.android:flexbox:1.1.0'
 
     //lifecycle
-    def lifecycle_version = '2.1.0'
+    def lifecycle_version = '2.2.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 

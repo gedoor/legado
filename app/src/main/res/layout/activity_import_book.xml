@@ -21,7 +21,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/file_category_tv_path"
+            android:id="@+id/tv_path"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -33,7 +33,7 @@
             tools:text="/" />
 
         <io.legado.app.lib.theme.view.ATEStrokeTextView
-            android:id="@+id/file_category_tv_back_last"
+            android:id="@+id/tv_go_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
