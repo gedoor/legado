@@ -1,7 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <io.legado.app.ui.widget.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/book_local" />
+
+    <!--path-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="36dp"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/file_category_tv_path"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/tv_text_secondary"
+            android:textSize="13sp"
+            android:focusable="true"
+            tools:text="/" />
+
+        <io.legado.app.lib.theme.view.ATEStrokeTextView
+            android:id="@+id/file_category_tv_back_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_margin="4dp"
+            app:cornerRadius="5dp"
+            android:text="@string/go_back"
+            android:textFontWeight="800"
+            android:textSize="14sp"
+            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
+
 
 </LinearLayout>
