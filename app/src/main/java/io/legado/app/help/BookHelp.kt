@@ -135,11 +135,15 @@ object BookHelp {
                     ?.uri?.readText(App.INSTANCE)
             }
         } else {
-            return FileUtils.createFileIfNotExist(
+            val path = FileUtils.getPath(
                 File(downloadPath),
                 "${bookChapterName(bookChapter)}.nb",
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).readText()
+            )
+            val file = File(path)
+            if (file.exists()) {
+                return file.readText()
+            }
         }
         return null
     }
