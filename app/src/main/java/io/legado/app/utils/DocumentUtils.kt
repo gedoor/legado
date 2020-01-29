@@ -17,11 +17,11 @@ object DocumentUtils {
         mimeType: String = "",
         vararg subDirs: String
     ): DocumentFile? {
-        val parent: DocumentFile? = createFileIfNotExist(root, *subDirs)
+        val parent: DocumentFile? = createFolderIfNotExist(root, *subDirs)
         return parent?.createFile(mimeType, fileName)
     }
 
-    fun createFileIfNotExist(root: DocumentFile, vararg subDirs: String): DocumentFile? {
+    fun createFolderIfNotExist(root: DocumentFile, vararg subDirs: String): DocumentFile? {
         var parent: DocumentFile? = root
         for (subDirName in subDirs) {
             val subDir = parent?.findFile(subDirName)

@@ -83,7 +83,7 @@ object BookHelp {
     fun getChapterCount(book: Book): Int {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
-                return DocumentUtils.createFileIfNotExist(
+                return DocumentUtils.createFolderIfNotExist(
                     it,
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )?.listFiles()?.size ?: 0
