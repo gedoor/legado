@@ -480,7 +480,7 @@
     <string name="indent_2">二字符缩进</string>
     <string name="indent_3">三字符缩进</string>
     <string name="indent_4">四字符缩进</string>
-    <string name="select_sd_file">选择SD卡</string>
+    <string name="select_folder">选择文件夹</string>
     <string name="no_find">没有发现，可以在书源里添加。</string>
     <string name="restore_default">恢复默认</string>
     <string name="set_download_per">自定义缓存路径需要存储权限</string>
