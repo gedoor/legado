@@ -33,7 +33,7 @@ object BookHelp {
     }
 
     private fun bookChapterName(bookChapter: BookChapter): String {
-        return String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
+        return String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode16(bookChapter.title))
     }
 
     fun clearCache() {
@@ -135,12 +135,11 @@ object BookHelp {
                     ?.uri?.readText(App.INSTANCE)
             }
         } else {
-            val path = FileUtils.getPath(
+            val file = FileUtils.getFile(
                 File(downloadPath),
                 "${bookChapterName(bookChapter)}.nb",
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
             )
-            val file = File(path)
             if (file.exists()) {
                 return file.readText()
             }
