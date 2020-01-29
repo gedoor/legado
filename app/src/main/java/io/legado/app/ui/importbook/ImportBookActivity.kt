@@ -35,8 +35,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_select_folder -> {
-            }
+            R.id.menu_select_folder -> selectImportFolder()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -49,6 +48,16 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         AppConfig.importBookPath?.let {
             val rootUri = Uri.parse(it)
             rootDoc = DocumentFile.fromTreeUri(this, rootUri)
+        }
+    }
+
+    private fun selectImportFolder() {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, requestCodeSelectFolder)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
