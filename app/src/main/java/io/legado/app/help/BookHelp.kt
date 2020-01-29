@@ -128,11 +128,11 @@ object BookHelp {
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
-                return DocumentUtils.createFileIfNotExist(
+                return DocumentUtils.getDirDocument(
                     root,
-                    "${bookChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.uri?.readText(App.INSTANCE)
+                )?.findFile("${bookChapterName(bookChapter)}.nb")
+                    ?.uri?.readText(App.INSTANCE)
             }
         } else {
             return FileUtils.createFileIfNotExist(
@@ -225,9 +225,9 @@ object BookHelp {
         return newIndex
     }
 
-    var bookName: String? = null
-    var bookOrigin: String? = null
-    var replaceRules: List<ReplaceRule> = arrayListOf()
+    private var bookName: String? = null
+    private var bookOrigin: String? = null
+    private var replaceRules: List<ReplaceRule> = arrayListOf()
 
     fun disposeContent(
         title: String,
