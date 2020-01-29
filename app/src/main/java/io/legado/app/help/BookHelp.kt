@@ -55,9 +55,18 @@ object BookHelp {
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                DocumentUtils.getDirDocument(
+                    root,
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.listFiles()?.forEach {
+                    if (it.name?.startsWith(String.format("%05d", bookChapter.index)) == true) {
+                        it.delete()
+                        return@forEach
+                    }
+                }
                 DocumentUtils.createFileIfNotExist(
-                    it,
+                    root,
                     "${bookChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )?.uri?.writeText(App.INSTANCE, content)
@@ -82,9 +91,9 @@ object BookHelp {
 
     fun getChapterCount(book: Book): Int {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 return DocumentUtils.createFolderIfNotExist(
-                    it,
+                    root,
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )?.listFiles()?.size ?: 0
             }
@@ -99,9 +108,9 @@ object BookHelp {
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 return DocumentUtils.exists(
-                    it,
+                    root,
                     "${bookChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )
@@ -118,9 +127,9 @@ object BookHelp {
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 return DocumentUtils.createFileIfNotExist(
-                    it,
+                    root,
                     "${bookChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )?.uri?.readText(App.INSTANCE)
@@ -137,9 +146,9 @@ object BookHelp {
 
     fun delContent(book: Book, bookChapter: BookChapter) {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 DocumentUtils.getDirDocument(
-                    it,
+                    root,
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )?.findFile("${bookChapterName(bookChapter)}.nb")
                     ?.delete()
