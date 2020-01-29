@@ -86,6 +86,7 @@
             android:layout_width="70dp"
             android:layout_height="35dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             android:gravity="center"
             android:layout_toLeftOf="@id/file_system_btn_add_book"
             android:text="@string/delete" />
