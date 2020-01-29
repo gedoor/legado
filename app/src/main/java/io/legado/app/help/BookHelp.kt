@@ -41,8 +41,14 @@ object BookHelp {
     }
 
     fun clearCache() {
-        FileUtils.deleteFile(getBookCachePath())
-        FileUtils.getFolder(getBookCachePath())
+        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)
+                ?.findFile(cacheFolderName)
+                ?.delete()
+        } else {
+            FileUtils.deleteFile(getBookCachePath())
+            FileUtils.createFolderIfNotExist(getBookCachePath())
+        }
     }
 
     @Synchronized
@@ -132,11 +138,11 @@ object BookHelp {
     fun delContent(book: Book, bookChapter: BookChapter) {
         if (downloadUri.isDocumentUri(App.INSTANCE)) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
-                DocumentUtils.createFileIfNotExist(
+                DocumentUtils.getDirDocument(
                     it,
-                    "${bookChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.delete()
+                )?.findFile("${bookChapterName(bookChapter)}.nb")
+                    ?.delete()
             }
         } else {
             FileUtils.createFileIfNotExist(

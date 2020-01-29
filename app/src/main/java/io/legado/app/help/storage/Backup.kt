@@ -47,40 +47,40 @@ object Backup {
             App.db.bookDao().allBooks.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "bookshelf.json")
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + "bookshelf.json")
                         .writeText(json)
                 }
             }
             App.db.bookGroupDao().all().let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "bookGroup.json")
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + "bookGroup.json")
                         .writeText(json)
                 }
             }
             App.db.bookSourceDao().all.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "bookSource.json")
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + "bookSource.json")
                         .writeText(json)
                 }
             }
             App.db.rssSourceDao().all.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "rssSource.json")
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + "rssSource.json")
                         .writeText(json)
                 }
             }
             App.db.replaceRuleDao().all.let {
                 if (it.isNotEmpty()) {
                     val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "replaceRule.json")
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + "replaceRule.json")
                         .writeText(json)
                 }
             }
             GSON.toJson(ReadBookConfig.configList)?.let {
-                FileUtils.getFile(backupPath + File.separator + ReadBookConfig.readConfigFileName)
+                FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.readConfigFileName)
                     .writeText(it)
             }
             Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
@@ -113,7 +113,7 @@ object Backup {
                 doc?.let {
                     DocumentUtils.writeText(
                         context,
-                        FileUtils.getFile(backupPath + File.separator + fileName).readText(),
+                        FileUtils.createFileIfNotExist(backupPath + File.separator + fileName).readText(),
                         doc.uri
                     )
                 }
@@ -124,8 +124,11 @@ object Backup {
     private fun copyBackup() {
         try {
             for (fileName in backupFileNames) {
-                FileUtils.getFile(backupPath + File.separator + "bookshelf.json")
-                    .copyTo(FileUtils.getFile(legadoPath + File.separator + "bookshelf.json"), true)
+                FileUtils.createFileIfNotExist(backupPath + File.separator + "bookshelf.json")
+                    .copyTo(
+                        FileUtils.createFileIfNotExist(legadoPath + File.separator + "bookshelf.json"),
+                        true
+                    )
             }
         } catch (e: Exception) {
             e.printStackTrace()

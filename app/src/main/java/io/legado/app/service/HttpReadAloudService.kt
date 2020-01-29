@@ -100,7 +100,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun getSpeakFile(index: Int = nowSpeak): File {
-        return FileUtils.getFile("${ttsFolder}${File.separator}${index}.mp3")
+        return FileUtils.createFileIfNotExist("${ttsFolder}${File.separator}${index}.mp3")
     }
 
     private fun getAudioBody(content: String): Map<String, String> {

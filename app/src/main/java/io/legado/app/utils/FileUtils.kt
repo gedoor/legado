@@ -22,12 +22,12 @@ object FileUtils {
     fun createFileIfNotExist(file: File, fileName: String, vararg subDirs: String): File {
         val filePath =
             file.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
-        return getFile(filePath)
+        return createFileIfNotExist(filePath)
     }
 
     fun createFileIfNotExist(file: File, vararg subDirs: String): File {
         val filePath = file.absolutePath + File.separator + subDirs.joinToString(File.separator)
-        return getFolder(filePath)
+        return createFolderIfNotExist(filePath)
     }
 
     fun getCachePath(): String {
@@ -35,8 +35,7 @@ object FileUtils {
             ?: App.INSTANCE.cacheDir.absolutePath
     }
 
-    //获取文件夹
-    fun getFolder(filePath: String): File {
+    fun createFolderIfNotExist(filePath: String): File {
         val file = File(filePath)
         //如果文件夹不存在，就创建它
         if (!file.exists()) {
@@ -45,15 +44,14 @@ object FileUtils {
         return file
     }
 
-    //获取文件
     @Synchronized
-    fun getFile(filePath: String): File {
+    fun createFileIfNotExist(filePath: String): File {
         val file = File(filePath)
         try {
             if (!file.exists()) {
                 //创建父类文件夹
                 file.parent?.let {
-                    getFolder(it)
+                    createFolderIfNotExist(it)
                 }
                 //创建文件
                 file.createNewFile()

@@ -80,7 +80,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             }.let {
                 val json = GSON.toJson(it)
                 val file =
-                    FileUtils.getFile(Backup.exportPath + File.separator + "exportReplaceRule.json")
+                    FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportReplaceRule.json")
                 file.writeText(json)
             }
         }.onSuccess {

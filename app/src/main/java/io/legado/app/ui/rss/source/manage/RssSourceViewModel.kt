@@ -65,7 +65,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             App.db.rssSourceDao().getRssSources(*ids.toTypedArray()).let {
                 val json = GSON.toJson(it)
                 val file =
-                    FileUtils.getFile(Backup.exportPath + File.separator + "exportRssSource.json")
+                    FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportRssSource.json")
                 file.writeText(json)
             }
         }.onSuccess {

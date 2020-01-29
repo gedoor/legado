@@ -173,7 +173,7 @@ class BgTextConfigDialog : DialogFragment() {
                                 var file = requireContext().getExternalFilesDir(null)
                                     ?: requireContext().filesDir
                                 file =
-                                    FileUtils.getFile(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
+                                    FileUtils.createFileIfNotExist(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
                                 DocumentUtils.readBytes(requireContext(), uri)?.let {
                                     file.writeBytes(it)
                                     ReadBookConfig.getConfig().setBg(2, file.absolutePath)

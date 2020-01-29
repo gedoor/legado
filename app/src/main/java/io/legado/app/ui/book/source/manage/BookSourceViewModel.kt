@@ -91,7 +91,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             }.let {
                 val json = GSON.toJson(it)
                 val file =
-                    FileUtils.getFile(Backup.exportPath + File.separator + "exportBookSource.json")
+                    FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportBookSource.json")
                 file.writeText(json)
             }
         }.onSuccess {

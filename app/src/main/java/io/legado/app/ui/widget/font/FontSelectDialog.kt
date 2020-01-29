@@ -126,7 +126,7 @@ class FontSelectDialog : DialogFragment(),
             DocumentFile.fromTreeUri(App.INSTANCE, uri)?.listFiles()?.forEach { file ->
                 if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
                     DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
-                        FileUtils.getFile(fontCacheFolder + file.name).writeBytes(it)
+                        FileUtils.createFileIfNotExist(fontCacheFolder + file.name).writeBytes(it)
                     }
                 }
             }
@@ -162,7 +162,8 @@ class FontSelectDialog : DialogFragment(),
 
     override fun onClick(file: File) {
         launch(IO) {
-            file.copyTo(FileUtils.getFile(fontFolder + file.name), true).absolutePath.let { path ->
+            file.copyTo(FileUtils.createFileIfNotExist(fontFolder + file.name), true)
+                .absolutePath.let { path ->
                 val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
                 cb?.let {
                     if (it.curFontPath != path) {
