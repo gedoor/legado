@@ -40,10 +40,14 @@ object AppConfig {
             App.INSTANCE.putPrefInt(PreferKey.threadCount, value)
         }
 
-    var autoDarkMode: Boolean
-        get() = App.INSTANCE.getPrefBoolean(PreferKey.autoDarkMode)
+    var importBookPath: String?
+        get() = App.INSTANCE.getPrefString("importBookPath")
         set(value) {
-            App.INSTANCE.putPrefBoolean(PreferKey.autoDarkMode, value)
+            if (value == null) {
+                App.INSTANCE.removePref("importBookPath")
+            } else {
+                App.INSTANCE.putPrefString("importBookPath", value)
+            }
         }
 
     val isEInkMode: Boolean
