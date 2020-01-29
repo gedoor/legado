@@ -48,5 +48,47 @@
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/file_category_rv_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!--文件点击按钮-->
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        tools:ignore="RtlHardcoded,RtlSymmetry">
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/file_system_cb_selected_all"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:text="@string/select_all"
+            android:textColor="@color/tv_text_default" />
+
+        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+            android:id="@+id/file_system_btn_add_book"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:minWidth="110dp"
+            android:text="@string/add_to_shelf" />
+
+        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+            android:id="@+id/file_system_btn_delete"
+            android:layout_width="70dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:layout_toLeftOf="@id/file_system_btn_add_book"
+            android:text="@string/delete" />
+    </RelativeLayout>
 
 </LinearLayout>

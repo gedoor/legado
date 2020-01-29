@@ -21,6 +21,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.download.DownloadActivity
+import io.legado.app.ui.importbook.ImportBookActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
@@ -37,7 +38,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
 
-    lateinit var bookshelfAdapter: BookshelfAdapter
+    private lateinit var bookshelfAdapter: BookshelfAdapter
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
 
@@ -58,8 +59,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             R.id.menu_bookshelf_layout -> selectBookshelfLayout()
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(childFragmentManager, "groupManageDialog")
-            R.id.menu_add_local -> {
-            }
+            R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> {
             }
             R.id.menu_arrange_bookshelf -> {
