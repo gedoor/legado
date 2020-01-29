@@ -59,11 +59,6 @@ object FileUtils {
         return File(filePath)
     }
 
-    fun getFile(root: File, vararg subDirs: String): File {
-        val filePath = getPath(root, subDirs = *subDirs)
-        return File(filePath)
-    }
-
     fun getPath(root: File, fileName: String? = null, vararg subDirs: String): String {
         return if (fileName.isNullOrEmpty()) {
             root.absolutePath + File.separator + subDirs.joinToString(File.separator)
