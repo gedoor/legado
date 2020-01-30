@@ -1,5 +1,6 @@
 package io.legado.app.ui.importbook
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -58,16 +59,16 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun upPath() {
-        rootDoc?.let {
-            var path = it.name + File.separator + subDirs.joinToString(File.separator)
-            if (!path.endsWith(File.separator)) {
-                path += File.separator
-            }
-            tv_path.text = path
-            var doc = rootDoc
+        rootDoc?.let { rootDoc ->
+            tv_path.text = rootDoc.name.toString() + File.separator
+            var doc: DocumentFile? = rootDoc
             for (dirName in subDirs) {
-                doc = rootDoc?.findFile(dirName)
+                doc = doc?.findFile(dirName)
+                doc?.let {
+                    tv_path.text = tv_path.text.toString() + it.name + File.separator
+                }
             }
             doc?.listFiles()?.let {
                 importBookAdapter.setItems(it.toList())
