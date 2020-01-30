@@ -59,7 +59,11 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     private fun getPath(): String {
         rootDoc?.let {
-            return it.name + File.separator + subDirs.joinToString(File.separator)
+            var path = it.name + File.separator + subDirs.joinToString(File.separator)
+            if (!path.endsWith(File.separator)) {
+                path += File.separator
+            }
+            return path
         }
         return ""
     }
