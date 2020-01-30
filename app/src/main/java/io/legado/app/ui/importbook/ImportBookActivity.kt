@@ -87,9 +87,13 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                     tv_path.text = tv_path.text.toString() + it.name + File.separator
                 }
             }
-            doc?.listFiles()?.let {
-                importBookAdapter.setItems(it.toList())
+            val docList = arrayListOf<DocumentFile>()
+            doc?.listFiles()?.forEach {
+                if (it.isDirectory || it.name?.endsWith(".txt", true) == true) {
+                    docList.add(it)
+                }
             }
+            importBookAdapter.setItems(docList)
         }
     }
 
