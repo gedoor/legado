@@ -6,10 +6,12 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.splitNotBlank
 import org.jetbrains.anko.toast
 import java.io.File
@@ -18,7 +20,13 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
 
     fun importSource(text: String, showMsg: (msg: String) -> Unit) {
         execute {
-            Restore.importOldReplaceRule(text)
+            if (text.isAbsUrl()) {
+                HttpHelper.simpleGet(text)?.let {
+                    Restore.importOldReplaceRule(it)
+                }
+            } else {
+                Restore.importOldReplaceRule(text)
+            }
         }.onError {
             showMsg(it.localizedMessage ?: "ERROR")
         }.onSuccess {

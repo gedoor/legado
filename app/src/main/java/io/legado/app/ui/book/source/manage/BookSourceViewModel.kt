@@ -5,7 +5,6 @@ import android.text.TextUtils
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
@@ -202,20 +201,17 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     private fun importSourceUrl(url: String): Int {
-        NetworkUtils.getBaseUrl(url)?.let {
-            val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
-            response.body()?.let { body ->
-                val bookSources = mutableListOf<BookSource>()
-                val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
-                for (item in items) {
-                    val jsonItem = jsonPath.parse(item)
-                    OldRule.jsonToBookSource(jsonItem.jsonString())?.let { source ->
-                        bookSources.add(source)
-                    }
+        HttpHelper.simpleGet(url)?.let { body ->
+            val bookSources = mutableListOf<BookSource>()
+            val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
+            for (item in items) {
+                val jsonItem = jsonPath.parse(item)
+                OldRule.jsonToBookSource(jsonItem.jsonString())?.let { source ->
+                    bookSources.add(source)
                 }
-                App.db.bookSourceDao().insert(*bookSources.toTypedArray())
-                return bookSources.size
             }
+            App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+            return bookSources.size
         }
         return 0
     }

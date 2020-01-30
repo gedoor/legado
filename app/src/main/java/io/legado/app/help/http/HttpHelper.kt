@@ -1,5 +1,7 @@
 package io.legado.app.help.http
 
+import io.legado.app.data.api.IHttpGetApi
+import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import retrofit2.Retrofit
@@ -35,11 +37,17 @@ object HttpHelper {
         builder.build()
     }
 
-    inline fun <reified T> getApiService(baseUrl: String): T {
-        return getRetrofit(baseUrl).create(T::class.java)
+    fun simpleGet(url: String, encode: String? = null): String? {
+        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
+            val response = getApiService<IHttpGetApi>(baseUrl, encode)
+                .get(url, mapOf())
+                .execute()
+            return response.body()
+        }
+        return null
     }
 
-    inline fun <reified T> getApiService(baseUrl: String, encode: String): T {
+    inline fun <reified T> getApiService(baseUrl: String, encode: String? = null): T {
         return getRetrofit(baseUrl, encode).create(T::class.java)
     }
 
