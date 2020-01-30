@@ -14,6 +14,10 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_import_book.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
 
@@ -79,21 +83,27 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     @SuppressLint("SetTextI18n")
     private fun upPath() {
         rootDoc?.let { rootDoc ->
-            tv_path.text = rootDoc.name.toString() + File.separator
-            var doc: DocumentFile? = rootDoc
-            for (dirName in subDirs) {
-                doc = doc?.findFile(dirName)
-                doc?.let {
-                    tv_path.text = tv_path.text.toString() + it.name + File.separator
+            launch(IO) {
+                var path = rootDoc.name.toString() + File.separator
+                var doc: DocumentFile? = rootDoc
+                for (dirName in subDirs) {
+                    doc = doc?.findFile(dirName)
+                    doc?.let {
+                        path = path + it.name + File.separator
+                    }
+                }
+                val docList = arrayListOf<DocumentFile>()
+                doc?.listFiles()?.forEach {
+                    if (it.isDirectory || it.name?.endsWith(".txt", true) == true) {
+                        docList.add(it)
+                    }
+                }
+                docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
+                withContext(Main) {
+                    tv_path.text = path
+                    importBookAdapter.setItems(docList)
                 }
             }
-            val docList = arrayListOf<DocumentFile>()
-            doc?.listFiles()?.forEach {
-                if (it.isDirectory || it.name?.endsWith(".txt", true) == true) {
-                    docList.add(it)
-                }
-            }
-            importBookAdapter.setItems(docList)
         }
     }
 
