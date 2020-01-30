@@ -16,7 +16,8 @@ import kotlinx.android.synthetic.main.activity_import_book.*
 import java.io.File
 
 
-class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book) {
+class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book),
+    ImportBookAdapter.CallBack {
     private val requestCodeSelectFolder = 342
     private var rootDoc: DocumentFile? = null
     private val subDirs = arrayListOf<String>()
@@ -27,7 +28,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
-        upPath()
+        upRootDoc()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -44,28 +45,34 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     private fun initView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
-        importBookAdapter = ImportBookAdapter(this)
+        importBookAdapter = ImportBookAdapter(this, this)
         recycler_view.adapter = importBookAdapter
     }
 
-    private fun upPath() {
+    private fun upRootDoc() {
         AppConfig.importBookPath?.let {
             val rootUri = Uri.parse(it)
             rootDoc = DocumentFile.fromTreeUri(this, rootUri)
             subDirs.clear()
-            tv_path.text = getPath()
+            upPath()
         }
     }
 
-    private fun getPath(): String {
+    private fun upPath() {
         rootDoc?.let {
             var path = it.name + File.separator + subDirs.joinToString(File.separator)
             if (!path.endsWith(File.separator)) {
                 path += File.separator
             }
-            return path
+            tv_path.text = path
+            var doc = rootDoc
+            for (dirName in subDirs) {
+                doc = rootDoc?.findFile(dirName)
+            }
+            doc?.listFiles()?.let {
+                importBookAdapter.setItems(it.toList())
+            }
         }
-        return ""
     }
 
     private fun selectImportFolder() {
@@ -88,10 +95,14 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     AppConfig.importBookPath = it.toString()
-                    upPath()
+                    upRootDoc()
                 }
             }
         }
     }
 
+    override fun findFolder(dirName: String) {
+        subDirs.add(dirName)
+        upPath()
+    }
 }
