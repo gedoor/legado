@@ -87,7 +87,9 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             }
             val docList = arrayListOf<DocumentFile>()
             doc?.listFiles()?.forEach {
-                if (it.isDirectory || it.name?.endsWith(".txt", true) == true) {
+                if (it.isDirectory && it.name?.startsWith(".") == false) {
+                    docList.add(it)
+                } else if (it.name?.endsWith(".txt", true) == true) {
                     docList.add(it)
                 }
             }
