@@ -62,6 +62,9 @@
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:text="TXT"
+                android:maxLines="1"
+                android:maxWidth="50dp"
+                app:abt_radius="2dp"
                 tools:ignore="HardcodedText,RtlHardcoded" />
 
             <TextView
