@@ -15,9 +15,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/background"
         android:minHeight="36dp"
         android:padding="8dp"
         android:gravity="center_vertical"
+        android:elevation="1dp"
         android:orientation="horizontal">
 
         <TextView
@@ -59,8 +61,10 @@
         android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/background"
         android:gravity="center_vertical"
         android:padding="10dp"
+        android:elevation="2dp"
         tools:ignore="RtlHardcoded,RtlSymmetry">
 
         <io.legado.app.lib.theme.view.ATECheckBox
@@ -87,6 +91,7 @@
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:gravity="center"
             android:layout_toLeftOf="@id/file_system_btn_add_book"
             android:text="@string/delete" />
