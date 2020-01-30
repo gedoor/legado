@@ -14,10 +14,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_import_book.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
 
@@ -58,10 +54,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     private fun initEvent() {
         tv_go_back.onClick {
-            if (subDirs.isNotEmpty()) {
-                subDirs.removeAt(subDirs.lastIndex)
-                upPath()
-            }
+            goBackDir()
         }
         btn_add_book.onClick {
 
@@ -81,29 +74,26 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     @SuppressLint("SetTextI18n")
+    @Synchronized
     private fun upPath() {
         rootDoc?.let { rootDoc ->
-            launch(IO) {
-                var path = rootDoc.name.toString() + File.separator
-                var doc: DocumentFile? = rootDoc
-                for (dirName in subDirs) {
-                    doc = doc?.findFile(dirName)
-                    doc?.let {
-                        path = path + it.name + File.separator
-                    }
-                }
-                val docList = arrayListOf<DocumentFile>()
-                doc?.listFiles()?.forEach {
-                    if (it.isDirectory || it.name?.endsWith(".txt", true) == true) {
-                        docList.add(it)
-                    }
-                }
-                docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
-                withContext(Main) {
-                    tv_path.text = path
-                    importBookAdapter.setItems(docList)
+            var path = rootDoc.name.toString() + File.separator
+            var doc: DocumentFile? = rootDoc
+            for (dirName in subDirs) {
+                doc = doc?.findFile(dirName)
+                doc?.let {
+                    path = path + it.name + File.separator
                 }
             }
+            val docList = arrayListOf<DocumentFile>()
+            doc?.listFiles()?.forEach {
+                if (it.isDirectory || it.name?.endsWith(".txt", true) == true) {
+                    docList.add(it)
+                }
+            }
+            docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
+            tv_path.text = path
+            importBookAdapter.setItems(docList)
         }
     }
 
@@ -133,16 +123,25 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         }
     }
 
+    @Synchronized
     override fun findFolder(dirName: String) {
         subDirs.add(dirName)
         upPath()
     }
 
-    override fun onBackPressed() {
-        if (subDirs.isNotEmpty()) {
+    @Synchronized
+    private fun goBackDir(): Boolean {
+        return if (subDirs.isNotEmpty()) {
             subDirs.removeAt(subDirs.lastIndex)
             upPath()
+            true
         } else {
+            false
+        }
+    }
+
+    override fun onBackPressed() {
+        if (!goBackDir()) {
             super.onBackPressed()
         }
     }
