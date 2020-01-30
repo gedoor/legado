@@ -8,7 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 fun <T : ViewModel> AppCompatActivity.getViewModel(clazz: Class<T>) =
     ViewModelProvider(this).get(clazz)
 
-fun <T : ViewModel> Fragment.getViewModel(clazz: Class<T>) = ViewModelProvider(this).get(clazz)
+fun <T : ViewModel> Fragment.getViewModel(clazz: Class<T>) =
+    ViewModelProvider(this).get(clazz)
 
 /**
  * 与activity数据同步
