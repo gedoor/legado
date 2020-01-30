@@ -14,6 +14,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_import_book.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
 
 
@@ -29,6 +30,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
+        initEvent()
         upRootDoc()
     }
 
@@ -48,6 +50,21 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         recycler_view.layoutManager = LinearLayoutManager(this)
         importBookAdapter = ImportBookAdapter(this, this)
         recycler_view.adapter = importBookAdapter
+    }
+
+    private fun initEvent() {
+        tv_go_back.onClick {
+            if (subDirs.isNotEmpty()) {
+                subDirs.removeAt(subDirs.lastIndex)
+                upPath()
+            }
+        }
+        btn_add_book.onClick {
+
+        }
+        btn_delete.onClick {
+
+        }
     }
 
     private fun upRootDoc() {
