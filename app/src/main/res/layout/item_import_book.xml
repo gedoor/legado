@@ -11,6 +11,15 @@
     <FrameLayout
         android:layout_width="60dp"
         android:layout_height="match_parent">
+        <!--选择是否添加文件-->
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:enabled="true"
+            android:focusable="true" />
         <!--文件夹标识或已选文件标识-->
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon"
@@ -20,15 +29,6 @@
             android:visibility="invisible"
             android:src="@drawable/ic_folder"
             app:tint="@color/tv_text_default" />
-        <!--选择是否添加文件-->
-        <io.legado.app.lib.theme.view.ATECheckBox
-            android:id="@+id/cb_select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:clickable="true"
-            android:enabled="true"
-            android:focusable="true" />
     </FrameLayout>
 
     <RelativeLayout

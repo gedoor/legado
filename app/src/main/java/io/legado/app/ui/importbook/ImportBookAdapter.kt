@@ -30,7 +30,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     if (item.isDirectory) {
                         callBack.findFolder(name)
                     } else {
-
+                        cb_select.isChecked = !cb_select.isChecked
                     }
                 }
             }
