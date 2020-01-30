@@ -106,4 +106,13 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         subDirs.add(dirName)
         upPath()
     }
+
+    override fun onBackPressed() {
+        if (subDirs.isNotEmpty()) {
+            subDirs.removeAt(subDirs.lastIndex)
+            upPath()
+        } else {
+            super.onBackPressed()
+        }
+    }
 }
