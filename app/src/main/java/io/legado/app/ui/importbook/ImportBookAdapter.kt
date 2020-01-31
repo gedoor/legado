@@ -18,16 +18,30 @@ import java.util.*
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<DocumentFile>(context, R.layout.item_import_book) {
 
+    private var localUri = arrayListOf<String>()
+
+    fun upBookHas(uriList: List<String>) {
+        localUri.clear()
+        localUri.addAll(uriList)
+        notifyDataSetChanged()
+    }
 
     override fun convert(holder: ItemViewHolder, item: DocumentFile, payloads: MutableList<Any>) {
         holder.itemView.apply {
             if (item.isDirectory) {
+                iv_icon.setImageResource(R.drawable.ic_folder)
                 iv_icon.visible()
                 cb_select.invisible()
                 ll_brief.gone()
             } else {
-                iv_icon.invisible()
-                cb_select.visible()
+                if (localUri.contains(item.uri.toString())) {
+                    iv_icon.setImageResource(R.drawable.ic_book_has)
+                    iv_icon.visible()
+                    cb_select.invisible()
+                } else {
+                    iv_icon.invisible()
+                    cb_select.visible()
+                }
                 ll_brief.visible()
                 tv_tag.text = item.name?.substringAfterLast(".")
                 tv_size.text = StringUtils.toSize(item.length())

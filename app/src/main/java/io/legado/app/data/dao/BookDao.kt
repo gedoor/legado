@@ -17,6 +17,9 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
     fun observeLocal(): LiveData<List<Book>>
 
+    @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
+    fun observeLocalUri(): LiveData<List<String>>
+
     @Query("SELECT * FROM books WHERE origin <> '${BookType.local}' and type = 0 order by durChapterTime desc")
     fun observeDownload(): LiveData<List<Book>>
 

@@ -8,7 +8,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
@@ -24,6 +27,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     private var rootDoc: DocumentFile? = null
     private val subDirs = arrayListOf<String>()
     private lateinit var importBookAdapter: ImportBookAdapter
+    private var localUriLiveData: LiveData<List<String>>? = null
 
     override val viewModel: ImportBookViewModel
         get() = getViewModel(ImportBookViewModel::class.java)
@@ -31,6 +35,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         initEvent()
+        initData()
         upRootDoc()
     }
 
@@ -62,6 +67,14 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         btn_delete.onClick {
 
         }
+    }
+
+    private fun initData() {
+        localUriLiveData?.removeObservers(this)
+        localUriLiveData = App.db.bookDao().observeLocalUri()
+        localUriLiveData?.observe(this, Observer {
+            importBookAdapter.upBookHas(it)
+        })
     }
 
     private fun upRootDoc() {
