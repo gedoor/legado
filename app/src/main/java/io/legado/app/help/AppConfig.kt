@@ -35,7 +35,7 @@ object AppConfig {
         }
 
     var threadCount: Int
-        get() = App.INSTANCE.getPrefInt(PreferKey.threadCount)
+        get() = App.INSTANCE.getPrefInt(PreferKey.threadCount, 16)
         set(value) {
             App.INSTANCE.putPrefInt(PreferKey.threadCount, value)
         }
