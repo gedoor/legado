@@ -47,7 +47,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
             cb_select.isChecked = selectedUris.contains(item.uri.toString())
             onClick {
                 if (item.isDir) {
-                    callBack.nextDoc(DocumentFile.fromTreeUri(context, item.uri)!!)
+                    callBack.nextDoc(DocumentFile.fromSingleUri(context, item.uri)!!)
                 } else {
                     cb_select.isChecked = !cb_select.isChecked
                     if (cb_select.isChecked) {
