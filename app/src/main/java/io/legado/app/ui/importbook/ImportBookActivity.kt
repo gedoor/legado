@@ -96,6 +96,9 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 lastDoc = doc
                 path = path + doc.name + File.separator
             }
+            tv_path.text = path
+            importBookAdapter.selectedUris.clear()
+
             val docList = arrayListOf<DocumentFile>()
             lastDoc.listFiles().forEach {
                 if (it.isDirectory && it.name?.startsWith(".") == false) {
@@ -105,8 +108,6 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 }
             }
             docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
-            tv_path.text = path
-            importBookAdapter.selectedUris.clear()
             importBookAdapter.setItems(docList)
         }
     }
