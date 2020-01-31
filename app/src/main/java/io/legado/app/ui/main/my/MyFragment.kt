@@ -69,6 +69,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             if (doc?.canWrite() == true) {
                 launch {
                     Backup.backup(requireContext(), uri)
+                    toast(R.string.backup_success)
                 }
             } else {
                 selectBackupFolder()
@@ -90,6 +91,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                 .onGranted {
                     launch {
                         Backup.backup(requireContext(), null)
+                        toast(R.string.backup_success)
                     }
                 }
                 .request()
@@ -147,6 +149,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                     putPrefString(PreferKey.backupPath, uri.toString())
                     launch {
                         Backup.backup(requireContext(), uri)
+                        toast(R.string.backup_success)
                     }
                 }
             }
