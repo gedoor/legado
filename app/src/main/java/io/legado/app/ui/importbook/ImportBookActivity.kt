@@ -161,4 +161,26 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             super.onBackPressed()
         }
     }
+
+    override fun upCountView() {
+        if (importBookAdapter.selectedUris.isEmpty()) {
+            btn_add_book.setText(R.string.nb_file_add_shelf)
+            //设置某些按钮的是否可点击
+            setMenuClickable(false)
+        } else {
+            btn_add_book.text =
+                getString(R.string.nb_file_add_shelves, importBookAdapter.selectedUris.size)
+            //设置某些按钮的是否可点击
+            setMenuClickable(true)
+        }
+    }
+
+    private fun setMenuClickable(isClickable: Boolean) {
+        //设置是否可删除
+        btn_delete.isEnabled = isClickable
+        btn_delete.isClickable = isClickable
+        //设置是否可添加书籍
+        btn_add_book.isEnabled = isClickable
+        btn_add_book.isClickable = isClickable
+    }
 }

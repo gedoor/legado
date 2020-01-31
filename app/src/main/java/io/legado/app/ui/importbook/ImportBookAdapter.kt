@@ -68,6 +68,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun findFolder(dirName: String)
+        fun upCountView()
     }
 
 }
