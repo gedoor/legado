@@ -1,4 +1,4 @@
-package io.legado.app.model.webbook
+package io.legado.app.model.webBook
 
 import android.text.TextUtils
 import io.legado.app.App

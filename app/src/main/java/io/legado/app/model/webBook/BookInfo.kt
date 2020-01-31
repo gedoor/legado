@@ -1,4 +1,4 @@
-package io.legado.app.model.webbook
+package io.legado.app.model.webBook
 
 import io.legado.app.App
 import io.legado.app.R

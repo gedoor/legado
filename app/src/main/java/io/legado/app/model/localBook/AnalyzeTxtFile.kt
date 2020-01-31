@@ -1,4 +1,4 @@
-package io.legado.app.model.localbook
+package io.legado.app.model.localBook
 
 import android.content.Context
 import android.net.Uri
