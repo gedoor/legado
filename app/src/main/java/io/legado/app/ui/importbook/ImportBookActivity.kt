@@ -15,8 +15,13 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_import_book.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
 
@@ -55,6 +60,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         recycler_view.layoutManager = LinearLayoutManager(this)
         importBookAdapter = ImportBookAdapter(this, this)
         recycler_view.adapter = importBookAdapter
+        rotate_loading.loadingColor = accentColor
     }
 
     private fun initEvent() {
@@ -98,17 +104,23 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             }
             tv_path.text = path
             importBookAdapter.selectedUris.clear()
-
-            val docList = arrayListOf<DocumentFile>()
-            lastDoc.listFiles().forEach {
-                if (it.isDirectory && it.name?.startsWith(".") == false) {
-                    docList.add(it)
-                } else if (it.name?.endsWith(".txt", true) == true) {
-                    docList.add(it)
+            importBookAdapter.clearItems()
+            rotate_loading.show()
+            launch(IO) {
+                val docList = arrayListOf<DocumentFile>()
+                lastDoc.listFiles().forEach {
+                    if (it.isDirectory && it.name?.startsWith(".") == false) {
+                        docList.add(it)
+                    } else if (it.name?.endsWith(".txt", true) == true) {
+                        docList.add(it)
+                    }
+                }
+                docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
+                withContext(Main) {
+                    rotate_loading.hide()
+                    importBookAdapter.setItems(docList)
                 }
             }
-            docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
-            importBookAdapter.setItems(docList)
         }
     }
 
