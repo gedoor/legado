@@ -16,6 +16,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_import_book.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -107,15 +108,8 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             importBookAdapter.clearItems()
             rotate_loading.show()
             launch(IO) {
-                val docList = arrayListOf<DocumentFile>()
-                lastDoc.listFiles().forEach {
-                    if (it.isDirectory && it.name?.startsWith(".") == false) {
-                        docList.add(it)
-                    } else if (it.name?.endsWith(".txt", true) == true) {
-                        docList.add(it)
-                    }
-                }
-                docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
+                val docList = DocumentUtils.listFiles(this@ImportBookActivity, lastDoc.uri)
+                docList.sortWith(compareBy({ !it.isDir }, { it.name }))
                 withContext(Main) {
                     rotate_loading.hide()
                     importBookAdapter.setItems(docList)
@@ -194,4 +188,5 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         btn_add_book.isEnabled = isClickable
         btn_add_book.isClickable = isClickable
     }
+
 }

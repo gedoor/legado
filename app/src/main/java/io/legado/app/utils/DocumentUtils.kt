@@ -1,8 +1,11 @@
 package io.legado.app.utils
 
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
+import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
+import java.util.*
 
 object DocumentUtils {
 
@@ -79,5 +82,58 @@ object DocumentUtils {
         return null
     }
 
+    fun listFiles(context: Context, uri: Uri): ArrayList<DocItem> {
+        val docList = arrayListOf<DocItem>()
+        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+            uri,
+            DocumentsContract.getDocumentId(uri)
+        )
+        var c: Cursor? = null
+        try {
+            c = context.contentResolver.query(
+                childrenUri, arrayOf(
+                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                    DocumentsContract.Document.COLUMN_LAST_MODIFIED,
+                    DocumentsContract.Document.COLUMN_SIZE,
+                    DocumentsContract.Document.COLUMN_MIME_TYPE
+                ), null, null, null
+            )
+            c?.let {
+                val ici = c.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+                val nci = c.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
+                val sci = c.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE)
+                val mci = c.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE)
+                val dci = c.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
+                c.moveToFirst()
+                do {
+                    val item = DocItem(
+                        name = c.getString(nci),
+                        attr = c.getString(mci),
+                        size = c.getLong(sci),
+                        date = Date(c.getLong(dci)),
+                        uri = DocumentsContract.buildDocumentUriUsingTree(uri, c.getString(ici))
+                    )
+                    docList.add(item)
+                } while (c.moveToNext())
+            }
+        } catch (e: java.lang.Exception) {
+        } finally {
+            c?.close()
+        }
+        return docList
+    }
 
+}
+
+data class DocItem(
+    val name: String,
+    val attr: String,
+    val size: Long,
+    val date: Date,
+    val uri: Uri
+) {
+    val isDir: Boolean by lazy {
+        DocumentsContract.Document.MIME_TYPE_DIR == attr
+    }
 }
