@@ -69,10 +69,14 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             goBackDir()
         }
         btn_add_book.onClick {
-            viewModel.addToBookshelf(adapter.selectedUris)
+            viewModel.addToBookshelf(adapter.selectedUris) {
+                upPath()
+            }
         }
         btn_delete.onClick {
-            viewModel.deleteDoc(adapter.selectedUris)
+            viewModel.deleteDoc(adapter.selectedUris) {
+                upPath()
+            }
         }
         cb_selected_all.onClick {
             adapter.selectAll(cb_selected_all.isChecked)
