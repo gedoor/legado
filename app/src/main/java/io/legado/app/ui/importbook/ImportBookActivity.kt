@@ -108,6 +108,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             }
             docList.sortWith(compareBy({ !it.isDirectory }, { it.name }))
             tv_path.text = path
+            importBookAdapter.selectedUris.clear()
             importBookAdapter.setItems(docList)
         }
     }

@@ -17,7 +17,7 @@ import java.util.*
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<DocumentFile>(context, R.layout.item_import_book) {
-
+    var selectedUris = linkedSetOf<String>()
     private var localUri = arrayListOf<String>()
 
     fun upBookHas(uriList: List<String>) {
@@ -48,12 +48,18 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                 tv_date.text = AppConst.DATE_FORMAT.format(Date(item.lastModified()))
             }
             tv_name.text = item.name
+            cb_select.isChecked = selectedUris.contains(item.uri.toString())
             onClick {
                 item.name?.let { name ->
                     if (item.isDirectory) {
                         callBack.findFolder(name)
                     } else {
                         cb_select.isChecked = !cb_select.isChecked
+                        if (cb_select.isChecked) {
+                            selectedUris.add(item.uri.toString())
+                        } else {
+                            selectedUris.remove(item.uri.toString())
+                        }
                     }
                 }
             }
