@@ -1,4 +1,4 @@
-package io.legado.app.data.api
+package io.legado.app.help.http.api
 
 import kotlinx.coroutines.Deferred
 import retrofit2.Call
@@ -13,7 +13,7 @@ import retrofit2.http.Url
  * get web content
  */
 
-interface IHttpGetApi {
+interface HttpGetApi {
     @GET
     fun getAsync(
         @Url url: String,

@@ -3,9 +3,9 @@ package io.legado.app.service
 import android.app.PendingIntent
 import android.media.MediaPlayer
 import io.legado.app.constant.Bus
-import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -65,7 +65,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             for (index in 0 until contentList.size) {
                 if (isActive) {
                     val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
-                        .create(IHttpPostApi::class.java)
+                        .create(HttpPostApi::class.java)
                         .postMapByteAsync(
                             "http://tts.baidu.com/text2audio",
                             getAudioBody(contentList[index]), mapOf()

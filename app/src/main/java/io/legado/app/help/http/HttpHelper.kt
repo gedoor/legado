@@ -1,6 +1,6 @@
 package io.legado.app.help.http
 
-import io.legado.app.data.api.IHttpGetApi
+import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
@@ -39,7 +39,7 @@ object HttpHelper {
 
     fun simpleGet(url: String, encode: String? = null): String? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
-            val response = getApiService<IHttpGetApi>(baseUrl, encode)
+            val response = getApiService<HttpGetApi>(baseUrl, encode)
                 .get(url, mapOf())
                 .execute()
             return response.body()

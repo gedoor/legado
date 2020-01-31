@@ -1,4 +1,4 @@
-package io.legado.app.data.api
+package io.legado.app.help.http.api
 
 import kotlinx.coroutines.Deferred
 import okhttp3.RequestBody
@@ -11,7 +11,7 @@ import retrofit2.http.*
  * post
  */
 
-interface IHttpPostApi {
+interface HttpPostApi {
 
     @FormUrlEncoded
     @POST
