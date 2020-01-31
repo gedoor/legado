@@ -25,14 +25,10 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                 iv_icon.visible()
                 cb_select.invisible()
                 ll_brief.gone()
-                tv_sub_count.visible()
-                tv_sub_count.text =
-                    context.getString(R.string.nb_file_sub_count, item.listFiles().size)
             } else {
                 iv_icon.invisible()
                 cb_select.visible()
                 ll_brief.visible()
-                tv_sub_count.gone()
                 tv_tag.text = item.name?.substringAfterLast(".")
                 tv_size.text = StringUtils.toSize(item.length())
                 tv_date.text = AppConst.DATE_FORMAT.format(Date(item.lastModified()))
