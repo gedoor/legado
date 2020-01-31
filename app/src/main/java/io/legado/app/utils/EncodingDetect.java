@@ -1,6 +1,7 @@
-package io.legado.app.help.http;
+package io.legado.app.utils;
 
 import androidx.annotation.NonNull;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -119,19 +120,19 @@ public class EncodingDetect {
 class BytesEncodingDetect extends Encoding {
     // Frequency tables to hold the GB, Big5, and EUC-TW character
     // frequencies
-    int GBFreq[][];
+    int[][] GBFreq;
 
-    int GBKFreq[][];
+    int[][] GBKFreq;
 
-    int Big5Freq[][];
+    int[][] Big5Freq;
 
-    int Big5PFreq[][];
+    int[][] Big5PFreq;
 
-    int EUC_TWFreq[][];
+    int[][] EUC_TWFreq;
 
-    int KRFreq[][];
+    int[][] KRFreq;
 
-    int JPFreq[][];
+    int[][] JPFreq;
 
     // int UnicodeFreq[94][128];
     // public static String[] nicename;
@@ -170,7 +171,6 @@ class BytesEncodingDetect extends Encoding {
                     rawtext.length - byteoffset)) > 0) {
                 byteoffset += bytesread;
             }
-            ;
             chinesestream.close();
             guess = detectEncoding(rawtext);
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package io.legado.app.help.http
 
+import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.UTF8BOMFighter
 import okhttp3.ResponseBody
 import retrofit2.Converter
