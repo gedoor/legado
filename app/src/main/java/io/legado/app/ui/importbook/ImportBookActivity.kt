@@ -108,7 +108,18 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             importBookAdapter.clearItems()
             rotate_loading.show()
             launch(IO) {
-                val docList = DocumentUtils.listFiles(this@ImportBookActivity, lastDoc.uri)
+                val docList = DocumentUtils.listFiles(
+                    this@ImportBookActivity,
+                    lastDoc.uri
+                )
+                for (i in docList.lastIndex downTo 0) {
+                    val item = docList[i]
+                    if (item.name.startsWith(".")) {
+                        docList.removeAt(i)
+                    } else if (!item.isDir && !item.name.endsWith(".txt", true)) {
+                        docList.removeAt(i)
+                    }
+                }
                 docList.sortWith(compareBy({ !it.isDir }, { it.name }))
                 withContext(Main) {
                     rotate_loading.hide()
