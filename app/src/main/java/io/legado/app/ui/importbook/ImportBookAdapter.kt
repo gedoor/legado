@@ -50,16 +50,14 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
             tv_name.text = item.name
             cb_select.isChecked = selectedUris.contains(item.uri.toString())
             onClick {
-                item.name?.let { name ->
-                    if (item.isDirectory) {
-                        callBack.findFolder(name)
+                if (item.isDirectory) {
+                    callBack.nextDoc(item)
+                } else {
+                    cb_select.isChecked = !cb_select.isChecked
+                    if (cb_select.isChecked) {
+                        selectedUris.add(item.uri.toString())
                     } else {
-                        cb_select.isChecked = !cb_select.isChecked
-                        if (cb_select.isChecked) {
-                            selectedUris.add(item.uri.toString())
-                        } else {
-                            selectedUris.remove(item.uri.toString())
-                        }
+                        selectedUris.remove(item.uri.toString())
                     }
                 }
             }
@@ -67,7 +65,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
-        fun findFolder(dirName: String)
+        fun nextDoc(doc: DocumentFile)
         fun upCountView()
     }
 

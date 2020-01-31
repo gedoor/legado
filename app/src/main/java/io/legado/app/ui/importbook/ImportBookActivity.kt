@@ -25,7 +25,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     ImportBookAdapter.CallBack {
     private val requestCodeSelectFolder = 342
     private var rootDoc: DocumentFile? = null
-    private val subDirs = arrayListOf<String>()
+    private val subDocs = arrayListOf<DocumentFile>()
     private lateinit var importBookAdapter: ImportBookAdapter
     private var localUriLiveData: LiveData<List<String>>? = null
 
@@ -81,7 +81,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         AppConfig.importBookPath?.let {
             val rootUri = Uri.parse(it)
             rootDoc = DocumentFile.fromTreeUri(this, rootUri)
-            subDirs.clear()
+            subDocs.clear()
             upPath()
         }
     }
@@ -91,15 +91,13 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     private fun upPath() {
         rootDoc?.let { rootDoc ->
             var path = rootDoc.name.toString() + File.separator
-            var doc: DocumentFile? = rootDoc
-            for (dirName in subDirs) {
-                doc = doc?.findFile(dirName)
-                doc?.let {
-                    path = path + it.name + File.separator
-                }
+            var lastDoc = rootDoc
+            for (doc in subDocs) {
+                lastDoc = doc
+                path = path + doc.name + File.separator
             }
             val docList = arrayListOf<DocumentFile>()
-            doc?.listFiles()?.forEach {
+            lastDoc.listFiles().forEach {
                 if (it.isDirectory && it.name?.startsWith(".") == false) {
                     docList.add(it)
                 } else if (it.name?.endsWith(".txt", true) == true) {
@@ -140,15 +138,15 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     @Synchronized
-    override fun findFolder(dirName: String) {
-        subDirs.add(dirName)
+    override fun nextDoc(doc: DocumentFile) {
+        subDocs.add(doc)
         upPath()
     }
 
     @Synchronized
     private fun goBackDir(): Boolean {
-        return if (subDirs.isNotEmpty()) {
-            subDirs.removeAt(subDirs.lastIndex)
+        return if (subDocs.isNotEmpty()) {
+            subDocs.removeAt(subDocs.lastIndex)
             upPath()
             true
         } else {
