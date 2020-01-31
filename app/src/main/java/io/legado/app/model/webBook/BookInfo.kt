@@ -68,7 +68,7 @@ object BookInfo {
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.coverUrl}")
         Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
-        book.tocUrl = analyzeRule.getString(infoRule.tocUrl, true) ?: baseUrl
+        book.tocUrl = analyzeRule.getString(infoRule.tocUrl, true)
         if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
         if (book.tocUrl == baseUrl) {
             book.tocHtml = body
