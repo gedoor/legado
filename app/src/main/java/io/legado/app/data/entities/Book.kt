@@ -48,6 +48,10 @@ data class Book(
     var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
 ) : Parcelable, BaseBook {
 
+    fun isLocalBook(): Boolean {
+        return origin == BookType.local
+    }
+
     @Ignore
     @IgnoredOnParcel
     override var variableMap: HashMap<String, String>? = null

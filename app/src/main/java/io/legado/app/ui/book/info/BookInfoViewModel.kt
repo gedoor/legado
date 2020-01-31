@@ -55,6 +55,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
+        if (book.isLocalBook()) return
         execute {
             isLoadingData.postValue(true)
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
