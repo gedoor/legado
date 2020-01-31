@@ -14,12 +14,45 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<DocItem>(context, R.layout.item_import_book) {
     var selectedUris = linkedSetOf<String>()
-    private var localUri = arrayListOf<String>()
+    var checkableCount = 0
+    private var bookshelf = arrayListOf<String>()
 
     fun upBookHas(uriList: List<String>) {
-        localUri.clear()
-        localUri.addAll(uriList)
+        bookshelf.clear()
+        bookshelf.addAll(uriList)
         notifyDataSetChanged()
+        upCheckableCount()
+    }
+
+    fun setData(data: List<DocItem>) {
+        setItems(data)
+        upCheckableCount()
+    }
+
+    private fun upCheckableCount() {
+        checkableCount = 0
+        getItems().forEach {
+            if (!it.isDir && !bookshelf.contains(it.uri.toString())) {
+                checkableCount++
+            }
+        }
+        callBack.upCountView()
+    }
+
+    fun selectAll(selectAll: Boolean) {
+        if (selectAll) {
+            getItems().forEach {
+                if (!it.isDir && !bookshelf.contains(it.uri.toString())) {
+                    selectedUris.add(it.uri.toString())
+                }
+            }
+            notifyDataSetChanged()
+            callBack.upCountView()
+        } else {
+            selectedUris.clear()
+            notifyDataSetChanged()
+            callBack.upCountView()
+        }
     }
 
     override fun convert(holder: ItemViewHolder, item: DocItem, payloads: MutableList<Any>) {
@@ -29,8 +62,9 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                 iv_icon.visible()
                 cb_select.invisible()
                 ll_brief.gone()
+                cb_select.isChecked = false
             } else {
-                if (localUri.contains(item.uri.toString())) {
+                if (bookshelf.contains(item.uri.toString())) {
                     iv_icon.setImageResource(R.drawable.ic_book_has)
                     iv_icon.visible()
                     cb_select.invisible()
@@ -42,19 +76,20 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                 tv_tag.text = item.name.substringAfterLast(".")
                 tv_size.text = StringUtils.toSize(item.size)
                 tv_date.text = AppConst.DATE_FORMAT.format(item.date)
+                cb_select.isChecked = selectedUris.contains(item.uri.toString())
             }
             tv_name.text = item.name
-            cb_select.isChecked = selectedUris.contains(item.uri.toString())
             onClick {
                 if (item.isDir) {
                     callBack.nextDoc(DocumentFile.fromSingleUri(context, item.uri)!!)
-                } else {
+                } else if (!bookshelf.contains(item.uri.toString())) {
                     cb_select.isChecked = !cb_select.isChecked
                     if (cb_select.isChecked) {
                         selectedUris.add(item.uri.toString())
                     } else {
                         selectedUris.remove(item.uri.toString())
                     }
+                    callBack.upCountView()
                 }
             }
         }

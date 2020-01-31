@@ -32,7 +32,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     private val requestCodeSelectFolder = 342
     private var rootDoc: DocumentFile? = null
     private val subDocs = arrayListOf<DocumentFile>()
-    private lateinit var importBookAdapter: ImportBookAdapter
+    private lateinit var adapter: ImportBookAdapter
     private var localUriLiveData: LiveData<List<String>>? = null
 
     override val viewModel: ImportBookViewModel
@@ -59,8 +59,8 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     private fun initView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
-        importBookAdapter = ImportBookAdapter(this, this)
-        recycler_view.adapter = importBookAdapter
+        adapter = ImportBookAdapter(this, this)
+        recycler_view.adapter = adapter
         rotate_loading.loadingColor = accentColor
     }
 
@@ -74,13 +74,16 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         btn_delete.onClick {
 
         }
+        cb_selected_all.onClick {
+            adapter.selectAll(cb_selected_all.isChecked)
+        }
     }
 
     private fun initData() {
         localUriLiveData?.removeObservers(this)
         localUriLiveData = App.db.bookDao().observeLocalUri()
         localUriLiveData?.observe(this, Observer {
-            importBookAdapter.upBookHas(it)
+            adapter.upBookHas(it)
         })
     }
 
@@ -104,8 +107,8 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 path = path + doc.name + File.separator
             }
             tv_path.text = path
-            importBookAdapter.selectedUris.clear()
-            importBookAdapter.clearItems()
+            adapter.selectedUris.clear()
+            adapter.clearItems()
             rotate_loading.show()
             launch(IO) {
                 val docList = DocumentUtils.listFiles(
@@ -123,7 +126,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 docList.sortWith(compareBy({ !it.isDir }, { it.name }))
                 withContext(Main) {
                     rotate_loading.hide()
-                    importBookAdapter.setItems(docList)
+                    adapter.setData(docList)
                 }
             }
         }
@@ -179,15 +182,28 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     override fun upCountView() {
-        if (importBookAdapter.selectedUris.isEmpty()) {
+        if (adapter.selectedUris.isEmpty()) {
             btn_add_book.setText(R.string.nb_file_add_shelf)
             //设置某些按钮的是否可点击
             setMenuClickable(false)
         } else {
             btn_add_book.text =
-                getString(R.string.nb_file_add_shelves, importBookAdapter.selectedUris.size)
+                getString(R.string.nb_file_add_shelves, adapter.selectedUris.size)
             //设置某些按钮的是否可点击
             setMenuClickable(true)
+        }
+
+        if (adapter.checkableCount == 0) {
+            cb_selected_all.isChecked = false
+        } else {
+            cb_selected_all.isChecked = adapter.selectedUris.size >= adapter.checkableCount
+        }
+
+        //重置全选的文字
+        if (cb_selected_all.isChecked) {
+            cb_selected_all.setText(R.string.cancel)
+        } else {
+            cb_selected_all.setText(R.string.select_all)
         }
     }
 
