@@ -73,9 +73,9 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
                 val html = viewModel.clHtml(content)
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
+                    webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", url)//Referer会导致一些有反盗链的图片无法加载，暂时先用null应该还有更好的办法
                 } else {
-                    webView.loadData(html, "text/html", "utf-8")
+                    webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
                 }
             }
         })
