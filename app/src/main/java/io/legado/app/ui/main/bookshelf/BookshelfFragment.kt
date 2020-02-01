@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.bookshelf
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -146,6 +147,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun addBookByUrl() {
         requireContext()
             .alert(titleResource = R.string.add_book_url) {
