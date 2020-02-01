@@ -16,13 +16,15 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.Bus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.ui.importbook.ImportBookActivity
 import io.legado.app.utils.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -60,8 +62,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(childFragmentManager, "groupManageDialog")
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
-            R.id.menu_add_url -> {
-            }
+            R.id.menu_add_url -> addBookByUrl()
             R.id.menu_arrange_bookshelf -> {
             }
             R.id.menu_download -> startActivity<DownloadActivity>()
@@ -143,6 +144,24 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             putPrefInt(PreferKey.bookshelfLayout, index)
             activity?.recreate()
         }
+    }
+
+    private fun addBookByUrl() {
+        requireContext()
+            .alert(titleResource = R.string.add_book_url) {
+                var editText: ATEAutoCompleteTextView? = null
+                customView {
+                    layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                        editText = edit_view
+                    }
+                }
+                okButton {
+                    editText?.text?.toString()?.let {
+                        viewModel.addBookByUrl(it)
+                    }
+                }
+                noButton { }
+            }.show().applyTint()
     }
 
     override fun onTabReselected(tab: TabLayout.Tab?) {

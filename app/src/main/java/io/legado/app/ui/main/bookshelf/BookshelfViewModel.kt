@@ -31,4 +31,8 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+    fun addBookByUrl(bookUrl: String) {
+
+    }
+
 }
