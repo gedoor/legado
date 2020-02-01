@@ -53,6 +53,9 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabled = 1 and bookSourceGroup like '%' || :group || '%'")
     fun getEnabledByGroup(group: String): List<BookSource>
 
+    @get:Query("select * from book_sources where bookUrlPattern is not null || bookUrlPattern <> ''")
+    val hasBookUrlPattern: List<BookSource>
+
     @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = ''")
     val noGroup: List<BookSource>
 
