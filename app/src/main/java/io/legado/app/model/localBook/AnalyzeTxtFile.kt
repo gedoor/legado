@@ -29,8 +29,8 @@ object AnalyzeTxtFile {
 
     fun analyze(context: Context, book: Book): ArrayList<BookChapter> {
         val bookFile = getBookFile(context, book)
-        val charset = charset(EncodingDetect.getEncode(bookFile))
-        book.charset = charset.name()
+        book.charset = EncodingDetect.getEncode(bookFile)
+        val charset = book.getCharset()
         val toc = arrayListOf<BookChapter>()
         //获取文件流
         val bookStream = RandomAccessFile(bookFile, "r")
