@@ -99,6 +99,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocalBook()) {
                 AnalyzeTxtFile.analyze(context, book).let {
                     App.db.bookChapterDao().insert(*it.toTypedArray())
+                    App.db.bookDao().update(book)
                     ReadBook.chapterSize = it.size
                     ReadBook.loadContent()
                 }
@@ -108,6 +109,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         if (!cList.isNullOrEmpty()) {
                             if (changeDruChapterIndex == null) {
                                 App.db.bookChapterDao().insert(*cList.toTypedArray())
+                                App.db.bookDao().update(book)
                                 ReadBook.chapterSize = cList.size
                                 ReadBook.loadContent()
                             } else {
