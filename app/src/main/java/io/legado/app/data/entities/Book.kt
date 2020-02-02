@@ -82,7 +82,7 @@ data class Book(
         variable = GSON.toJson(variableMap)
     }
 
-    fun getCharset(): Charset {
+    fun fileCharset(): Charset {
         return charset(charset ?: "UTF-8")
     }
 

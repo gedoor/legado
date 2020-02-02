@@ -30,7 +30,7 @@ object AnalyzeTxtFile {
     fun analyze(context: Context, book: Book): ArrayList<BookChapter> {
         val bookFile = getBookFile(context, book)
         book.charset = EncodingDetect.getEncode(bookFile)
-        val charset = book.getCharset()
+        val charset = book.fileCharset()
         val toc = arrayListOf<BookChapter>()
         //获取文件流
         val bookStream = RandomAccessFile(bookFile, "r")
@@ -190,7 +190,7 @@ object AnalyzeTxtFile {
         val extent = (bookChapter.end!! - bookChapter.start!!).toInt()
         val content = ByteArray(extent)
         bookStream.read(content, 0, extent)
-        return String(content, book.getCharset())
+        return String(content, book.fileCharset())
     }
 
     private fun getBookFile(context: Context, book: Book): File {
