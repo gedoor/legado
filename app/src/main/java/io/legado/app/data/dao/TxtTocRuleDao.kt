@@ -1,11 +1,7 @@
 package io.legado.app.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.TxtTocRule
-import retrofit2.http.DELETE
 
 @Dao
 interface TxtTocRuleDao {
@@ -19,6 +15,6 @@ interface TxtTocRuleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rule: TxtTocRule)
 
-    @DELETE
+    @Delete
     fun delete(vararg rule: TxtTocRule)
 }
