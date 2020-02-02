@@ -7,6 +7,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.utils.*
 import org.apache.commons.text.similarity.JaccardSimilarity
 import java.io.File
@@ -126,7 +127,9 @@ object BookHelp {
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+        if (book.isLocalBook()) {
+            AnalyzeTxtFile.getContent(book, bookChapter)
+        } else if (downloadUri.isDocumentUri(App.INSTANCE)) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 return DocumentUtils.getDirDocument(
                     root,

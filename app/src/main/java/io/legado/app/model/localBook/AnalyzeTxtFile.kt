@@ -28,14 +28,7 @@ object AnalyzeTxtFile {
     }
 
     fun analyze(context: Context, book: Book): ArrayList<BookChapter> {
-        val uri = Uri.parse(book.bookUrl)
-        val bookFile = FileUtils.getFile(cacheFolder, book.originName, subDirs = *arrayOf())
-        if (!bookFile.exists()) {
-            bookFile.createNewFile()
-            DocumentUtils.readBytes(context, uri)?.let {
-                bookFile.writeBytes(it)
-            }
-        }
+        val bookFile = getBookFile(context, book)
         val charset = charset(EncodingDetect.getEncode(bookFile))
         book.charset = charset.name()
         val toc = arrayListOf<BookChapter>()
@@ -189,6 +182,28 @@ object AnalyzeTxtFile {
         return toc
     }
 
+    fun getContent(book: Book, bookChapter: BookChapter): String {
+        val bookFile = getBookFile(App.INSTANCE, book)
+        //获取文件流
+        val bookStream = RandomAccessFile(bookFile, "r")
+        bookStream.seek(bookChapter.start ?: 0)
+        val extent = (bookChapter.end!! - bookChapter.start!!).toInt()
+        val content = ByteArray(extent)
+        bookStream.read(content, 0, extent)
+        return String(content, book.getCharset())
+    }
+
+    private fun getBookFile(context: Context, book: Book): File {
+        val uri = Uri.parse(book.bookUrl)
+        val bookFile = FileUtils.getFile(cacheFolder, book.originName, subDirs = *arrayOf())
+        if (!bookFile.exists()) {
+            bookFile.createNewFile()
+            DocumentUtils.readBytes(context, uri)?.let {
+                bookFile.writeBytes(it)
+            }
+        }
+        return bookFile
+    }
 
     private fun getTocRule(bookStream: RandomAccessFile, charset: Charset): Pattern? {
         val tocRules = getTocRules()

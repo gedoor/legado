@@ -10,6 +10,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import java.nio.charset.Charset
 import kotlin.math.max
 
 @Parcelize
@@ -79,6 +80,10 @@ data class Book(
     override fun putVariable(key: String, value: String) {
         variableMap?.put(key, value)
         variable = GSON.toJson(variableMap)
+    }
+
+    fun getCharset(): Charset {
+        return charset(charset ?: "UTF-8")
     }
 
     fun toSearchBook(): SearchBook {

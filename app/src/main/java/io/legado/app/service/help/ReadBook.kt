@@ -197,6 +197,7 @@ object ReadBook {
 
     private fun download(index: Int) {
         book?.let { book ->
+            if (book.isLocalBook()) return
             if (addLoading(index)) {
                 Coroutine.async {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
