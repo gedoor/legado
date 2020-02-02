@@ -11,7 +11,6 @@ import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -24,6 +23,7 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.prefs.ATESwitchPreference
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
@@ -179,10 +179,9 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                 putPrefBoolean(PreferKey.webService, false)
             }
             addPreferencesFromResource(R.xml.pref_main)
+            val webServicePre = findPreference<ATESwitchPreference>(PreferKey.webService)
             observeEvent<Boolean>(Bus.WEB_SERVICE_STOP) {
-                findPreference<SwitchPreference>(PreferKey.webService)?.let {
-                    it.isChecked = false
-                }
+                webServicePre?.isChecked = false
             }
         }
 
