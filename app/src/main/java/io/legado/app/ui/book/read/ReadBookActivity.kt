@@ -219,6 +219,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             R.id.menu_copy_text -> {
 
             }
+            R.id.menu_update_toc -> ReadBook.book?.let {
+                viewModel.loadChapterList(it)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }

@@ -80,9 +80,9 @@
             app:showAsAction="never" />
 
         <item
-            android:id="@+id/menu_update_chapter_list"
+            android:id="@+id/menu_update_toc"
             android:icon="@drawable/ic_update"
-            android:title="@string/update_chapter"
+            android:title="@string/update_toc"
             app:showAsAction="never" />
 
         <item
