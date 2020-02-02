@@ -79,7 +79,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                         "text/html",
                         "utf-8",
                         url
-                    )//不想用baseUrl进下一个吧
+                    )//不想用baseUrl进else
                 } else {
                     webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
                 }
