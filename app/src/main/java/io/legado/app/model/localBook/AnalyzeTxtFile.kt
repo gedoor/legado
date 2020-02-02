@@ -168,14 +168,14 @@ object AnalyzeTxtFile {
                 System.runFinalization()
             }
         }
-
+        bookStream.close()
         for (i in toc.indices) {
             val bean = toc[i]
             bean.index = i
             bean.bookUrl = book.bookUrl
             bean.url = (MD5Utils.md5Encode16(book.originName + i + bean.title) ?: "")
         }
-        bookStream.close()
+        book.latestChapterTitle = toc.last().title
 
         System.gc()
         System.runFinalization()
