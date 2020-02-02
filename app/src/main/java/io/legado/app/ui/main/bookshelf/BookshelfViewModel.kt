@@ -65,17 +65,15 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         origin = bookSource.bookSourceUrl,
                         originName = bookSource.bookSourceName
                     )
-                    suspend {
-                        WebBook(bookSource).getBookInfo(book, this)
-                            .onSuccess(IO) {
-                                it?.let { book ->
-                                    App.db.bookDao().insert(book)
-                                    successCount++
-                                }
-                            }.onError {
-                                throw Exception(it.localizedMessage)
+                    WebBook(bookSource).getBookInfo(book, this)
+                        .onSuccess(IO) {
+                            it?.let { book ->
+                                App.db.bookDao().insert(book)
+                                successCount++
                             }
-                    }
+                        }.onError {
+                            throw Exception(it.localizedMessage)
+                        }
                 }
             }
         }.onSuccess {
