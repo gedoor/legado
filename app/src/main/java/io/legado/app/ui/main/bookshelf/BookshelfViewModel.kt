@@ -45,7 +45,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             for (url in urls) {
                 val bookUrl = url.trim()
                 if (bookUrl.isEmpty()) continue
-                App.db.bookDao().getBook(bookUrl) ?: continue
+                if (App.db.bookDao().getBook(bookUrl) != null) continue
                 val baseUrl = NetworkUtils.getBaseUrl(bookUrl) ?: continue
                 var source = App.db.bookSourceDao().getBookSource(baseUrl)
                 if (source == null) {
