@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import io.legado.app.App
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.utils.*
 import java.io.File
@@ -28,12 +29,26 @@ object AnalyzeTxtFile {
             }
         }
         book.charset = EncodingDetect.getEncode(bookFile)
-        val tocRules = getTocRules()
+        val toc = arrayListOf<BookChapter>()
         //获取文件流
         val bookStream = RandomAccessFile(bookFile, "r")
+        val tocRule = getTocRule(bookStream)
+
 
     }
 
+
+    private fun getTocRule(bookStream: RandomAccessFile): String? {
+        val tocRules = getTocRules()
+        var tocRule: String? = null
+        //首先获取128k的数据
+        val buffer = ByteArray(10240)
+        val length = bookStream.read(buffer, 0, buffer.size)
+        for (str in tocRules) {
+
+        }
+        return tocRule
+    }
 
     private fun getTocRules(): List<TxtTocRule> {
         val rules = App.db.txtTocRule().all
