@@ -38,6 +38,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     }
 
     fun addBookByUrl(bookUrls: String) {
+        var successCount = 0
         execute {
             var hasBookUrlPattern: List<BookSource>? = null
             val urls = bookUrls.split("\n")
@@ -59,17 +60,30 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     }
                 }
                 source?.let { bookSource ->
-                    val book = Book(bookUrl = bookUrl)
-                    WebBook(bookSource).getBookInfo(book, this)
-                        .onSuccess(IO) {
-                            it?.let { book ->
-                                App.db.bookDao().insert(book)
+                    val book = Book(
+                        bookUrl = bookUrl,
+                        origin = bookSource.bookSourceUrl,
+                        originName = bookSource.bookSourceName
+                    )
+                    suspend {
+                        WebBook(bookSource).getBookInfo(book, this)
+                            .onSuccess(IO) {
+                                it?.let { book ->
+                                    App.db.bookDao().insert(book)
+                                    successCount++
+                                }
+                            }.onError {
+                                throw Exception(it.localizedMessage)
                             }
-                        }
+                    }
                 }
             }
         }.onSuccess {
-            toast(R.string.success)
+            if (successCount > 0) {
+                toast(R.string.success)
+            } else {
+                toast("ERROR")
+            }
         }.onError {
             toast(it.localizedMessage ?: "ERROR")
         }
