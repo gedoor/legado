@@ -23,7 +23,12 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                         if (smhStart != -1 && smhEnd != -1) {
                             name = (name.substring(smhStart + 1, smhEnd))
                         }
-                        val book = Book(bookUrl = uriStr, name = name, author = author)
+                        val book = Book(
+                            bookUrl = uriStr,
+                            name = name,
+                            author = author,
+                            originName = fileName
+                        )
                         App.db.bookDao().insert(book)
                     }
                 }
