@@ -128,7 +128,7 @@ object BookHelp {
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (book.isLocalBook()) {
-            AnalyzeTxtFile.getContent(book, bookChapter)
+            return AnalyzeTxtFile.getContent(book, bookChapter)
         } else if (downloadUri.isDocumentUri(App.INSTANCE)) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 return DocumentUtils.getDirDocument(
