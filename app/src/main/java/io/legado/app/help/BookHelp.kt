@@ -133,44 +133,52 @@ object BookHelp {
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        if (book.isLocalBook()) {
-            return AnalyzeTxtFile.getContent(book, bookChapter)
-        } else if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
-                return DocumentUtils.getDirDocument(
-                    root,
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.findFile("${bookChapterName(bookChapter)}.nb")
-                    ?.uri?.readText(App.INSTANCE)
+        when {
+            book.isLocalBook() -> {
+                return AnalyzeTxtFile.getContent(book, bookChapter)
             }
-        } else {
-            val file = FileUtils.getFile(
-                File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            )
-            if (file.exists()) {
-                return file.readText()
+            downloadUri.isDocumentUri(App.INSTANCE) -> {
+                DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                    return DocumentUtils.getDirDocument(
+                        root,
+                        subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                    )?.findFile("${bookChapterName(bookChapter)}.nb")
+                        ?.uri?.readText(App.INSTANCE)
+                }
+            }
+            else -> {
+                val file = FileUtils.getFile(
+                    File(downloadPath),
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )
+                if (file.exists()) {
+                    return file.readText()
+                }
             }
         }
         return null
     }
 
     fun delContent(book: Book, bookChapter: BookChapter) {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
-                DocumentUtils.getDirDocument(
-                    root,
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.findFile("${bookChapterName(bookChapter)}.nb")
-                    ?.delete()
+        when {
+            book.isLocalBook() -> return
+            downloadUri.isDocumentUri(App.INSTANCE) -> {
+                DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                    DocumentUtils.getDirDocument(
+                        root,
+                        subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                    )?.findFile("${bookChapterName(bookChapter)}.nb")
+                        ?.delete()
+                }
             }
-        } else {
-            FileUtils.createFileIfNotExist(
-                File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).delete()
+            else -> {
+                FileUtils.createFileIfNotExist(
+                    File(downloadPath),
+                    "${bookChapterName(bookChapter)}.nb",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                ).delete()
+            }
         }
     }
 
