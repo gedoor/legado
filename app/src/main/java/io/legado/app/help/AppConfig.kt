@@ -8,7 +8,7 @@ object AppConfig {
 
     var isNightTheme: Boolean
         get() {
-            return when (App.INSTANCE.getPrefString("themeMode", "0")) {
+            return when (App.INSTANCE.getPrefString(PreferKey.themeMode, "0")) {
                 "1" -> false
                 "2" -> true
                 else -> App.INSTANCE.sysIsDarkMode()
@@ -16,9 +16,9 @@ object AppConfig {
         }
         set(value) {
             if (value) {
-                App.INSTANCE.putPrefString("themeMode", "2")
+                App.INSTANCE.putPrefString(PreferKey.themeMode, "2")
             } else {
-                App.INSTANCE.putPrefString("themeMode", "1")
+                App.INSTANCE.putPrefString(PreferKey.themeMode, "1")
             }
         }
 

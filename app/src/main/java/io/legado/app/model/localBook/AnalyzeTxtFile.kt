@@ -8,6 +8,7 @@ import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.FileUtils
 import java.io.File
+import java.io.RandomAccessFile
 
 object AnalyzeTxtFile {
     private const val folderName = "bookTxt"
@@ -28,6 +29,9 @@ object AnalyzeTxtFile {
             }
         }
         book.charset = EncodingDetect.getEncode(bookFile)
+
+        //获取文件流
+        val bookStream = RandomAccessFile(bookFile, "r")
 
     }
 

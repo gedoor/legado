@@ -174,13 +174,13 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             if (WebService.isRun) {
-                putPrefBoolean("webService", true)
+                putPrefBoolean(PreferKey.webService, true)
             } else {
-                putPrefBoolean("webService", false)
+                putPrefBoolean(PreferKey.webService, false)
             }
             addPreferencesFromResource(R.xml.pref_main)
             observeEvent<Boolean>(Bus.WEB_SERVICE_STOP) {
-                findPreference<SwitchPreference>("webService")?.let {
+                findPreference<SwitchPreference>(PreferKey.webService)?.let {
                     it.isChecked = false
                 }
             }
@@ -203,8 +203,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             when (key) {
-                "themeMode" -> App.INSTANCE.applyDayNight()
-                "webService" -> {
+                PreferKey.themeMode -> App.INSTANCE.applyDayNight()
+                PreferKey.webService -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())
                         toast("正在启动服务\n具体信息查看通知栏")
@@ -213,8 +213,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                         toast("服务已停止")
                     }
                 }
+                PreferKey.downloadPath -> BookHelp.upDownloadPath()
                 "recordLog" -> LogUtils.upLevel()
-                "downloadPath" -> BookHelp.upDownloadPath()
             }
         }
 

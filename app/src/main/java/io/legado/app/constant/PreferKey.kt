@@ -1,7 +1,7 @@
 package io.legado.app.constant
 
 object PreferKey {
-
+    const val themeMode = "themeMode"
     const val downloadPath = "downloadPath"
     const val hideStatusBar = "hideStatusBar"
     const val clickAllNext = "clickAllNext"
@@ -21,5 +21,5 @@ object PreferKey {
     const val backupPath = "backupUri"
     const val threadCount = "threadCount"
     const val keepLight = "keep_light"
-    const val autoDarkMode = "autoDarkMode"
+    const val webService = "webService"
 }
