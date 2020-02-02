@@ -108,20 +108,26 @@ object BookHelp {
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
-                return DocumentUtils.exists(
-                    root,
+        when {
+            book.isLocalBook() -> {
+                return true
+            }
+            downloadUri.isDocumentUri(App.INSTANCE) -> {
+                DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                    return DocumentUtils.exists(
+                        root,
+                        "${bookChapterName(bookChapter)}.nb",
+                        subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                    )
+                }
+            }
+            else -> {
+                return FileUtils.exists(
+                    File(downloadPath),
                     "${bookChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )
             }
-        } else {
-            return FileUtils.exists(
-                File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            )
         }
         return false
     }
