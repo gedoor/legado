@@ -101,7 +101,7 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun initOnClick() {
-        iv_menu.onClick { callBack?.showMenu(); dismiss() }
+        iv_menu.onClick { callBack?.showMenuBar(); dismiss() }
         iv_other_config.onClick {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
@@ -135,7 +135,7 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     interface CallBack {
-        fun showMenu()
+        fun showMenuBar()
         fun openChapterList()
         fun onClickReadAloud()
         fun finish()

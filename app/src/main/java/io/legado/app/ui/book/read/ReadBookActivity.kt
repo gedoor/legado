@@ -67,6 +67,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
     private val requestCodeReplace = 312
+    private var replaceUseMenu: MenuItem? = null
 
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
@@ -85,7 +86,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         initView()
         upScreenTimeOut()
         ReadBook.callBack = this
-        ReadBook.titleDate.observe(this, Observer { title_bar.title = it })
+        ReadBook.titleDate.observe(this, Observer {
+            title_bar.title = it
+            upMenu()
+        })
         viewModel.initData(intent)
     }
 
@@ -143,7 +147,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.read_book, menu)
+        replaceUseMenu = menu.findItem(R.id.menu_enable_replace)
+        upMenu()
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    private fun upMenu() {
+        ReadBook.book?.let {
+            replaceUseMenu?.isChecked = it.useReplaceRule
+        }
+
     }
 
     /**
@@ -221,6 +234,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             R.id.menu_update_toc -> ReadBook.book?.let {
                 viewModel.loadChapterList(it)
+            }
+            R.id.menu_enable_replace -> ReadBook.book?.let {
+                it.useReplaceRule = !it.useReplaceRule
+                replaceUseMenu?.isChecked = it.useReplaceRule
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -378,7 +395,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         seek_read_page.progress = ReadBook.durPageIndex
     }
 
-    override fun showMenu() {
+    override fun showMenuBar() {
         read_menu.runMenuIn()
     }
 
