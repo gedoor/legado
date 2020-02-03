@@ -71,7 +71,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         }
     }
 
-    fun setName(name: String) {
+    fun setName(name: String?) {
         this.name = name
         invalidate()
     }
@@ -81,7 +81,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         minimumWidth = width
     }
 
-    fun load(path: String?, name: String) {
+    fun load(path: String?, name: String?) {
         if (path.isNullOrEmpty()) {
             setName(name)
         } else {
@@ -106,6 +106,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
                         dataSource: DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
+                        setName(null)
                         return false
                     }
 
