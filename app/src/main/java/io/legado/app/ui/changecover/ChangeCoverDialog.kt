@@ -13,7 +13,7 @@ import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeCoverDialog : DialogFragment() {
+class ChangeCoverDialog : DialogFragment(), ChangeCoverViewModel.CallBack {
 
     companion object {
         const val tag = "changeCoverDialog"
@@ -32,7 +32,7 @@ class ChangeCoverDialog : DialogFragment() {
 
     private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeCoverViewModel
-    private lateinit var adapter: CoverAdapter
+    override lateinit var adapter: CoverAdapter
 
     override fun onStart() {
         super.onStart()

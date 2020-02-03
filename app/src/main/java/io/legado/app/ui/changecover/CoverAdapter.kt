@@ -22,4 +22,7 @@ class CoverAdapter(context: Context) :
         }
     }
 
+    interface CallBack {
+        fun changeTo()
+    }
 }

@@ -40,7 +40,7 @@ class ChangeSourceDialog : DialogFragment(),
 
     private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeSourceViewModel
-    private lateinit var changeSourceAdapter: ChangeSourceAdapter
+    override lateinit var changeSourceAdapter: ChangeSourceAdapter
 
     override fun onStart() {
         super.onStart()
@@ -138,10 +138,6 @@ class ChangeSourceDialog : DialogFragment(),
 
     override val bookUrl: String?
         get() = callBack?.oldBook?.bookUrl
-
-    override fun adapter(): ChangeSourceAdapter {
-        return changeSourceAdapter
-    }
 
     interface CallBack {
         val oldBook: Book?
