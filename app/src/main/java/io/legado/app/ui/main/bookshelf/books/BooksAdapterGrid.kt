@@ -5,7 +5,6 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
-import io.legado.app.help.ImageLoader
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.invisible
 import kotlinx.android.synthetic.main.item_bookshelf_grid.view.*
@@ -21,13 +20,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 ATH.applyBackgroundTint(this)
                 tv_name.text = item.name
                 bv_author.text = item.author
-                item.getDisplayCover()?.let {
-                    ImageLoader.load(context, it)//Glide自动识别http://和file://
-                        .placeholder(R.drawable.image_cover_default)
-                        .error(R.drawable.image_cover_default)
-                        .centerCrop()
-                        .into(iv_cover)
-                }
+                iv_cover.load(item.getDisplayCover(), item.name)
                 onClick { callBack.open(item) }
                 onLongClick {
                     callBack.openBookInfo(item)

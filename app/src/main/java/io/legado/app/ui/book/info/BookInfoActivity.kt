@@ -106,11 +106,6 @@ class BookInfoActivity :
         return super.onMenuOpened(featureId, menu)
     }
 
-    private fun defaultCover(): RequestBuilder<Drawable> {
-        return ImageLoader.load(this, R.drawable.image_cover_default)
-            .apply(bitmapTransform(BlurTransformation(this, 25)))
-    }
-
     private fun showBook(book: Book) {
         showCover(book)
         tv_name.text = book.name
@@ -152,17 +147,18 @@ class BookInfoActivity :
     }
 
     private fun showCover(book: Book) {
-        book.getDisplayCover()?.let {
-            ImageLoader.load(this, it)
-                .centerCrop()
-                .into(iv_cover)
-            ImageLoader.load(this, it)
-                .transition(DrawableTransitionOptions.withCrossFade(1500))
-                .thumbnail(defaultCover())
-                .centerCrop()
-                .apply(bitmapTransform(BlurTransformation(this, 25)))
-                .into(bg_book)  //模糊、渐变、缩小效果
-        }
+        iv_cover.load(book.getDisplayCover(), book.name)
+        ImageLoader.load(this, book.getDisplayCover())
+            .transition(DrawableTransitionOptions.withCrossFade(1500))
+            .thumbnail(defaultCover())
+            .centerCrop()
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
+            .into(bg_book)  //模糊、渐变、缩小效果
+    }
+
+    private fun defaultCover(): RequestBuilder<Drawable> {
+        return ImageLoader.load(this, R.drawable.image_cover_default)
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
     private fun showChapter(chapterList: List<BookChapter>) {

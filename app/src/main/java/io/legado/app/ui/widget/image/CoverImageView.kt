@@ -4,9 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Path
+import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
-import io.legado.app.utils.dp
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import io.legado.app.R
+import io.legado.app.help.ImageLoader
 
 
 class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
@@ -26,16 +32,6 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         defStyleAttr
     )
 
-    init {
-        textPaint.textSize = 13.dp.toFloat()
-    }
-
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        width = getWidth().toFloat()
-        height = getHeight().toFloat()
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = measuredWidth * 7 / 5
@@ -43,6 +39,13 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             widthMeasureSpec,
             MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
         )
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        width = getWidth().toFloat()
+        height = getHeight().toFloat()
+        textPaint.textSize = width / 9
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -76,5 +79,39 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     fun setHeight(height: Int) {
         val width = height * 5 / 7
         minimumWidth = width
+    }
+
+    fun load(path: String?, name: String) {
+        if (path.isNullOrEmpty()) {
+            setName(name)
+        } else {
+            ImageLoader.load(context, path)//Glide自动识别http://和file://
+                .placeholder(R.drawable.image_cover_default)
+                .error(R.drawable.image_cover_default)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        setName(name)
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+
+                })
+                .centerCrop()
+                .into(this)
+        }
     }
 }
