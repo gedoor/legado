@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Path
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
@@ -46,6 +47,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         width = getWidth().toFloat()
         height = getHeight().toFloat()
         textPaint.textSize = width / 9
+        textPaint.typeface = Typeface.DEFAULT_BOLD
     }
 
     override fun onDraw(canvas: Canvas) {
