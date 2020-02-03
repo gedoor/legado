@@ -47,10 +47,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
         fun bindPreferenceSummaryToValue(preference: Preference?) {
             preference?.apply {
                 onPreferenceChangeListener = this@BackupConfigFragment
-                onPreferenceChange(
-                    this,
-                    context.getPrefString(key)
-                )
+                onPreferenceChange(this, context.getPrefString(key))
             }
         }
         addPreferencesFromResource(R.xml.pref_config_backup)
