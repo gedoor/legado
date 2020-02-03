@@ -52,4 +52,6 @@ object AppConfig {
 
     val isEInkMode: Boolean
         get() = App.INSTANCE.getPrefBoolean("isEInkMode")
+
+    val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
 }
