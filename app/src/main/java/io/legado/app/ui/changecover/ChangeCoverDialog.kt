@@ -66,6 +66,7 @@ class ChangeCoverDialog : DialogFragment(), ChangeCoverViewModel.CallBack {
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = CoverAdapter(requireContext())
         recycler_view.adapter = adapter
+        viewModel.initData()
     }
 
     interface CallBack {

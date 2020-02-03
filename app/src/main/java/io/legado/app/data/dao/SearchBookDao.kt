@@ -28,6 +28,14 @@ interface SearchBookDao {
     @Query("select * from searchBooks where name = :name and author = :author and origin in (select bookSourceUrl from book_sources where enabled = 1) order by originOrder")
     fun getByNameAuthorEnable(name: String, author: String): List<SearchBook>
 
+    @Query(
+        """select * from searchBooks
+                     where name = :name and author = :author and origin in (select bookSourceUrl from book_sources where enabled = 1)
+                         and coverUrl is not null and coverUrl <> ''
+                     order by originOrder"""
+    )
+    fun getEnableHasCover(name: String, author: String): List<SearchBook>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg searchBook: SearchBook): List<Long>
 

@@ -42,7 +42,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             callBack?.changeSourceAdapter?.let {
                 val books = searchBooks.toList()
-                books.sorted()
                 val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), books))
                 withContext(Main) {
                     synchronized(this) {
@@ -130,12 +129,13 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
-    interface CallBack {
-        var changeSourceAdapter: ChangeSourceAdapter
-    }
-
     override fun onCleared() {
         super.onCleared()
         searchPool.close()
     }
+
+    interface CallBack {
+        var changeSourceAdapter: ChangeSourceAdapter
+    }
+
 }
