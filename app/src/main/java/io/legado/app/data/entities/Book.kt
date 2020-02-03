@@ -53,6 +53,10 @@ data class Book(
         return origin == BookType.local
     }
 
+    fun isTxt(): Boolean {
+        return isLocalBook() && originName.endsWith(".txt", true)
+    }
+
     @Ignore
     @IgnoredOnParcel
     override var variableMap: HashMap<String, String>? = null

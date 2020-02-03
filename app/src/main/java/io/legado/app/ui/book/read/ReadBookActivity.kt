@@ -13,7 +13,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.core.view.size
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.App
@@ -67,7 +69,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
     private val requestCodeReplace = 312
-    private var replaceUseMenu: MenuItem? = null
+    private var menu: Menu? = null
 
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
@@ -147,16 +149,34 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.read_book, menu)
-        replaceUseMenu = menu.findItem(R.id.menu_enable_replace)
-        upMenu()
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    private fun upMenu() {
-        ReadBook.book?.let {
-            replaceUseMenu?.isChecked = it.useReplaceRule
-        }
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        this.menu = menu
+        upMenu()
+        return super.onPrepareOptionsMenu(menu)
+    }
 
+    private fun upMenu() {
+        menu?.let { menu ->
+            ReadBook.book?.let { book ->
+                val onLine = !book.isLocalBook()
+                for (i in 0 until menu.size) {
+                    val item = menu[i]
+                    when (item.groupId) {
+                        R.id.menu_group_on_line -> item.isVisible = onLine
+                        R.id.menu_group_local -> item.isVisible = !onLine
+                        R.id.menu_group_text -> item.isVisible = book.isTxt()
+                        R.id.menu_group_login ->
+                            item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
+                        else -> if (item.itemId == R.id.menu_enable_replace) {
+                            item.isChecked = book.useReplaceRule
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -221,7 +241,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                                     ReadBook.durChapterIndex,
                                     ReadBook.durPageIndex,
                                     textChapter!!.title,
-                                    editContent)
+                                    editContent
+                                )
                                 App.db.bookmarkDao().insert(bookmark)
                             }
                         }
@@ -237,7 +258,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             R.id.menu_enable_replace -> ReadBook.book?.let {
                 it.useReplaceRule = !it.useReplaceRule
-                replaceUseMenu?.isChecked = it.useReplaceRule
+                menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.useReplaceRule
             }
         }
         return super.onCompatOptionsItemSelected(item)

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.main.MainActivity">
 
-    <group android:id="@+id/menuOnLine">
+    <group android:id="@+id/menu_group_on_line">
         <item
             android:id="@+id/menu_change_source"
             android:icon="@drawable/ic_exchange"

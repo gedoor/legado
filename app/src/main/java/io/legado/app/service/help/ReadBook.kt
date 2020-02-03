@@ -39,6 +39,7 @@ object ReadBook {
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
+        webBook = null
         App.db.bookSourceDao().getBookSource(book.origin)?.let {
             webBook = WebBook(it)
         }
