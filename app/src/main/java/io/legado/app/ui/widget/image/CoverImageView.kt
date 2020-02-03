@@ -4,18 +4,31 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Path
+import android.text.TextPaint
 import android.util.AttributeSet
+import io.legado.app.utils.dp
 
 
 class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()
 
+    private val textPaint = TextPaint()
+    private var name: String? = null
+
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
+
+    init {
+        textPaint.textSize = 13.dp.toFloat()
+    }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -26,7 +39,10 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = measuredWidth * 7 / 5
-        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY))
+        super.onMeasure(
+            widthMeasureSpec,
+            MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+        )
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -47,6 +63,14 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             canvas.clipPath(path)
         }
         super.onDraw(canvas)
+        name?.let {
+            canvas.drawText(it, width / 3, height * 2 / 3, textPaint)
+        }
+    }
+
+    fun setName(name: String) {
+        this.name = name
+        invalidate()
     }
 
     fun setHeight(height: Int) {
