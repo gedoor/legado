@@ -112,23 +112,13 @@ class BookInfoActivity :
     }
 
     private fun showBook(book: Book) {
+        showCover(book)
         tv_name.text = book.name
         tv_author.text = getString(R.string.author_show, book.author)
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tv_toc.text = getString(R.string.toc_s, book.latestChapterTitle)
         tv_intro.text = book.getDisplayIntro()
-        book.getDisplayCover()?.let {
-            ImageLoader.load(this, it)
-                .centerCrop()
-                .into(iv_cover)
-            ImageLoader.load(this, it)
-                .transition(DrawableTransitionOptions.withCrossFade(1500))
-                .thumbnail(defaultCover())
-                .centerCrop()
-                .apply(bitmapTransform(BlurTransformation(this, 25)))
-                .into(bg_book)  //模糊、渐变、缩小效果
-        }
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {
             ll_kind.gone()
@@ -158,6 +148,20 @@ class BookInfoActivity :
                     }
                 }
             }
+        }
+    }
+
+    private fun showCover(book: Book) {
+        book.getDisplayCover()?.let {
+            ImageLoader.load(this, it)
+                .centerCrop()
+                .into(iv_cover)
+            ImageLoader.load(this, it)
+                .transition(DrawableTransitionOptions.withCrossFade(1500))
+                .thumbnail(defaultCover())
+                .centerCrop()
+                .apply(bitmapTransform(BlurTransformation(this, 25)))
+                .into(bg_book)  //模糊、渐变、缩小效果
         }
     }
 
@@ -285,6 +289,7 @@ class BookInfoActivity :
         viewModel.bookData.value?.let {
             it.coverUrl = coverUrl
             viewModel.saveBook()
+            showCover(it)
         }
     }
 
