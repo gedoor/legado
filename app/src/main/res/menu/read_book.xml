@@ -41,7 +41,7 @@
 
     <group android:id="@+id/menu_group_text">
         <item
-            android:id="@+id/menu_set_regex"
+            android:id="@+id/menu_toc_regex"
             android:icon="@drawable/ic_exchange"
             android:title="@string/txt_chapter_regex"
             android:visible="false"
