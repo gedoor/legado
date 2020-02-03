@@ -16,6 +16,7 @@ class CoverAdapter(context: Context) :
         with(holder.itemView) {
             item.coverUrl?.let {
                 ImageLoader.load(context, it)
+                    .error(R.drawable.image_cover_default)
                     .centerCrop()
                     .into(iv_cover)
             }

@@ -22,10 +22,13 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
     fun initData() {
         execute {
-            App.db.searchBookDao().getEnableHasCover(name, author).let {
+            App.db.searchBookDao().getEnableHasCover(name, author)
+        }.onSuccess {
+            it?.let {
                 callBack?.adapter?.setItems(it)
-                search()
             }
+        }.onFinally {
+            search()
         }
     }
 

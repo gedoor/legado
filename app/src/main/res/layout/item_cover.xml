@@ -15,7 +15,6 @@
         android:layout_height="100dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
-        android:src="@drawable/image_cover_default"
         android:transitionName="img_cover"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
