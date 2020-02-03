@@ -8,7 +8,9 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class ChangeCoverViewModel(application: Application) : BaseViewModel(application) {
@@ -44,9 +46,12 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                         if (it != null && it.isNotEmpty()) {
                             val searchBook = it[0]
                             if (searchBook.name == name && searchBook.author == author) {
+                                App.db.searchBookDao().insert(searchBook)
                                 callBack?.adapter?.let { adapter ->
                                     if (!adapter.getItems().contains(searchBook)) {
-                                        adapter.addItem(searchBook)
+                                        withContext(Main) {
+                                            adapter.addItem(searchBook)
+                                        }
                                     }
                                 }
                             }
