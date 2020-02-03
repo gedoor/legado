@@ -44,7 +44,9 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                     .onSuccess(Dispatchers.IO) {
                         if (it != null && it.isNotEmpty()) {
                             val searchBook = it[0]
-                            if (searchBook.name == name && searchBook.author == author) {
+                            if (searchBook.name == name && searchBook.author == author
+                                && !searchBook.coverUrl.isNullOrEmpty()
+                            ) {
                                 App.db.searchBookDao().insert(searchBook)
                                 callBack?.adapter?.let { adapter ->
                                     if (!adapter.getItems().contains(searchBook)) {

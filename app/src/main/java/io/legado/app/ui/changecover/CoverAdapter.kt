@@ -9,7 +9,7 @@ import io.legado.app.help.ImageLoader
 import kotlinx.android.synthetic.main.item_cover.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class CoverAdapter(context: Context) :
+class CoverAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_cover) {
 
     override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
@@ -22,12 +22,12 @@ class CoverAdapter(context: Context) :
             }
             tv_source.text = item.originName
             onClick {
-
+                callBack.changeTo(item.coverUrl!!)
             }
         }
     }
 
     interface CallBack {
-        fun changeTo()
+        fun changeTo(coverUrl: String)
     }
 }

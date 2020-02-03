@@ -14,7 +14,9 @@ import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeCoverDialog : DialogFragment(), ChangeCoverViewModel.CallBack {
+class ChangeCoverDialog : DialogFragment(),
+    ChangeCoverViewModel.CallBack,
+    CoverAdapter.CallBack {
 
     companion object {
         const val tag = "changeCoverDialog"
@@ -68,9 +70,13 @@ class ChangeCoverDialog : DialogFragment(), ChangeCoverViewModel.CallBack {
             }
         }
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
-        adapter = CoverAdapter(requireContext())
+        adapter = CoverAdapter(requireContext(), this)
         recycler_view.adapter = adapter
         viewModel.initData()
+    }
+
+    override fun changeTo(coverUrl: String) {
+        callBack?.coverChangeTo(coverUrl)
     }
 
     interface CallBack {
