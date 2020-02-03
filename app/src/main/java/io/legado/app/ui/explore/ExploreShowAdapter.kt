@@ -6,7 +6,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.iv_cover
@@ -58,13 +57,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            item.coverUrl.let {
-                ImageLoader.load(context, it)//Glide自动识别http://和file://
-                    .placeholder(R.drawable.image_cover_default)
-                    .error(R.drawable.image_cover_default)
-                    .centerCrop()
-                    .into(iv_cover)
-            }
+            iv_cover.load(item.coverUrl, item.name)
             onClick {
                 callBack.showBookInfo(item.toBook())
             }
