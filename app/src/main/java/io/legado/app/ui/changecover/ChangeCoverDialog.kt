@@ -47,6 +47,7 @@ class ChangeCoverDialog : DialogFragment(), ChangeCoverViewModel.CallBack {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = getViewModel(ChangeCoverViewModel::class.java)
+        viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 

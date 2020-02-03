@@ -55,6 +55,7 @@ class ChangeSourceDialog : DialogFragment(),
         savedInstanceState: Bundle?
     ): View? {
         viewModel = getViewModel(ChangeSourceViewModel::class.java)
+        viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
@@ -92,7 +93,6 @@ class ChangeSourceDialog : DialogFragment(),
             DividerItemDecoration(requireContext(), LinearLayout.VERTICAL)
         )
         recycler_view.adapter = changeSourceAdapter
-        viewModel.callBack = this
     }
 
     private fun initSearchView() {

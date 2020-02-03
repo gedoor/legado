@@ -5,7 +5,7 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 
 class ChangeCoverViewModel(application: Application) : BaseViewModel(application) {
-
+    var callBack: CallBack? = null
     var name: String = ""
     var author: String = ""
 
