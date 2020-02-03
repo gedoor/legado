@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.utils.getViewModel
@@ -46,6 +47,7 @@ class ChangeCoverDialog : DialogFragment(), ChangeCoverViewModel.CallBack {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        callBack = activity as? CallBack
         viewModel = getViewModel(ChangeCoverViewModel::class.java)
         viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_source, container)
@@ -53,7 +55,9 @@ class ChangeCoverDialog : DialogFragment(), ChangeCoverViewModel.CallBack {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        callBack = activity as? CallBack
+        viewModel.searchStateData.observe(this, Observer {
+            refresh_progress_bar.isAutoLoading = it
+        })
         tool_bar.setTitle(R.string.change_cover_source)
         arguments?.let { bundle ->
             bundle.getString("name")?.let {

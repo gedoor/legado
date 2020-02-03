@@ -54,6 +54,7 @@ class ChangeSourceDialog : DialogFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        callBack = activity as? CallBack
         viewModel = getViewModel(ChangeSourceViewModel::class.java)
         viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_source, container)
@@ -61,7 +62,6 @@ class ChangeSourceDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        callBack = activity as? CallBack
         viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
         })
