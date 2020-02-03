@@ -2,9 +2,7 @@ package io.legado.app.ui.widget.image
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Path
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
@@ -33,6 +31,11 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         defStyleAttr
     )
 
+    init {
+        textPaint.typeface = Typeface.DEFAULT_BOLD
+        textPaint.isAntiAlias = true
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = measuredWidth * 7 / 5
@@ -46,8 +49,8 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         super.onLayout(changed, left, top, right, bottom)
         width = getWidth().toFloat()
         height = getHeight().toFloat()
-        textPaint.textSize = width / 9
-        textPaint.typeface = Typeface.DEFAULT_BOLD
+        textPaint.textSize = width / 8
+        textPaint.strokeWidth = textPaint.textSize / 10
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -69,7 +72,12 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         }
         super.onDraw(canvas)
         name?.let {
-            canvas.drawText(it, width / 3, height * 2 / 3, textPaint)
+            textPaint.color = Color.WHITE
+            textPaint.style = Paint.Style.STROKE
+            canvas.drawText(it, width / 6, height * 2 / 3, textPaint)
+            textPaint.color = Color.BLACK
+            textPaint.style = Paint.Style.FILL
+            canvas.drawText(it, width / 6, height * 2 / 3, textPaint)
         }
     }
 
