@@ -77,8 +77,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     private fun upVersion() {
-        if (getPrefInt("versionCode") != App.INSTANCE.versionCode) {
-            putPrefInt("versionCode", App.INSTANCE.versionCode)
+        if (getPrefInt(PreferKey.versionCode) != App.INSTANCE.versionCode) {
+            putPrefInt(PreferKey.versionCode, App.INSTANCE.versionCode)
             if (!BuildConfig.DEBUG) {
                 UpdateLog().show(supportFragmentManager, "updateLog")
             }

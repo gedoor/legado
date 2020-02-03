@@ -10,6 +10,7 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
@@ -117,6 +118,7 @@ object Restore {
                     is String -> edit.putString(it.key, value)
                     else -> Unit
                 }
+                edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
                 edit.commit()
             }
         }
