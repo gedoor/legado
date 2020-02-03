@@ -86,6 +86,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     override fun onPageSelected(position: Int) {
+        view_pager_main.hideSoftInput()
         pagePosition = position
         when (position) {
             0, 1, 3 -> bottom_navigation_view.menu.getItem(position).isChecked = true
