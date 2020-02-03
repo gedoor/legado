@@ -34,7 +34,7 @@ object AnalyzeTxtFile {
         val toc = arrayListOf<BookChapter>()
         //获取文件流
         val bookStream = RandomAccessFile(bookFile, "r")
-        val rulePattern = getTocRule(bookStream, charset)
+        val rulePattern = getTocRule(book, bookStream, charset)
 
         //加载章节
         val buffer = ByteArray(BUFFER_SIZE)
@@ -205,7 +205,7 @@ object AnalyzeTxtFile {
         return bookFile
     }
 
-    private fun getTocRule(bookStream: RandomAccessFile, charset: Charset): Pattern? {
+    private fun getTocRule(book: Book, bookStream: RandomAccessFile, charset: Charset): Pattern? {
         val tocRules = getTocRules()
         var rulePattern: Pattern? = null
         //首先获取128k的数据
@@ -216,6 +216,7 @@ object AnalyzeTxtFile {
             val pattern = Pattern.compile(tocRule.rule, Pattern.MULTILINE)
             val matcher = pattern.matcher(content)
             if (matcher.find()) {
+                book.tocUrl = tocRule.rule
                 rulePattern = pattern
                 break
             }
