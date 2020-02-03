@@ -191,7 +191,9 @@ class BookInfoActivity :
 
     private fun initOnClick() {
         iv_cover.onClick {
-
+            viewModel.bookData.value?.let {
+                ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
+            }
         }
         tv_read.onClick {
             viewModel.bookData.value?.let {
