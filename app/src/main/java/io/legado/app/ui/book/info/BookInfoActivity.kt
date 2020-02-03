@@ -24,6 +24,7 @@ import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.changecover.ChangeCoverDialog
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.getViewModel
@@ -40,7 +41,8 @@ class BookInfoActivity :
     VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, theme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
-    ChangeSourceDialog.CallBack {
+    ChangeSourceDialog.CallBack,
+    ChangeCoverDialog.CallBack {
 
     private val requestCodeChapterList = 568
     private val requestCodeSourceEdit = 562
@@ -184,6 +186,9 @@ class BookInfoActivity :
     }
 
     private fun initOnClick() {
+        iv_cover.onClick {
+
+        }
         tv_read.onClick {
             viewModel.bookData.value?.let {
                 readBook(it)
@@ -274,6 +279,13 @@ class BookInfoActivity :
     override fun changeTo(book: Book) {
         upLoading(true)
         viewModel.changeTo(book)
+    }
+
+    override fun coverChangeTo(coverUrl: String) {
+        viewModel.bookData.value?.let {
+            it.coverUrl = coverUrl
+            viewModel.saveBook()
+        }
     }
 
     override fun openChapter(chapter: BookChapter) {
