@@ -70,7 +70,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             }
     }
 
-    fun star() {
+    fun favorite() {
         execute {
             rssArticle?.let {
                 if (star) {
@@ -78,6 +78,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                 } else {
                     App.db.rssStarDao().insert(it.toStar())
                 }
+                star = !star
             }
         }.onSuccess {
             callBack?.upStarMenu()

@@ -40,15 +40,19 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_read, menu)
-        starMenuItem = menu.findItem(R.id.menu_rss_star)
-        ttsMenuItem = menu.findItem(R.id.menu_aloud)
-        upStarMenu()
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        starMenuItem = menu?.findItem(R.id.menu_rss_star)
+        ttsMenuItem = menu?.findItem(R.id.menu_aloud)
+        upStarMenu()
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_rss_star -> viewModel.star()
+            R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 shareText("链接分享", it.link)
             }
