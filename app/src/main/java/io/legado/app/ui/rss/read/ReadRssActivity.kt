@@ -101,10 +101,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     override fun upStarMenu() {
         if (viewModel.star) {
             starMenuItem?.setIcon(R.drawable.ic_star)
-            starMenuItem?.setTitle(R.string.y_store_up)
+            starMenuItem?.setTitle(R.string.in_favorites)
         } else {
             starMenuItem?.setIcon(R.drawable.ic_star_border)
-            starMenuItem?.setTitle(R.string.w_store_up)
+            starMenuItem?.setTitle(R.string.out_favorites)
         }
         DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
     }
