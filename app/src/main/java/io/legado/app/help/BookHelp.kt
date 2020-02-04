@@ -60,10 +60,12 @@ object BookHelp {
                 DocumentUtils.getDirDocument(
                     root,
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.listFiles()?.forEach {
-                    if (it.name?.startsWith(String.format("%05d", bookChapter.index)) == true) {
-                        it.delete()
-                        return@forEach
+                )?.uri?.let { uri ->
+                    DocumentUtils.listFiles(App.INSTANCE, uri).forEach {
+                        if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
+                            DocumentFile.fromSingleUri(App.INSTANCE, it.uri)?.delete()
+                            return@forEach
+                        }
                     }
                 }
                 DocumentUtils.createFileIfNotExist(
