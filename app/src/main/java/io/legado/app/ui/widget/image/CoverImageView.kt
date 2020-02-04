@@ -35,6 +35,8 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     init {
         textPaint.typeface = Typeface.DEFAULT_BOLD
         textPaint.isAntiAlias = true
+        textPaint.textAlign = Paint.Align.CENTER
+        textPaint.textSkewX = -0.2f
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -50,7 +52,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         super.onLayout(changed, left, top, right, bottom)
         width = getWidth().toFloat()
         height = getHeight().toFloat()
-        textPaint.textSize = width / 8
+        textPaint.textSize = width / 6
         textPaint.strokeWidth = textPaint.textSize / 10
     }
 
@@ -75,15 +77,20 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         name?.let {
             textPaint.color = Color.WHITE
             textPaint.style = Paint.Style.STROKE
-            canvas.drawText(it, width / 6, height * 2 / 3, textPaint)
+            canvas.drawText(it, width / 2, height * 3 / 5, textPaint)
             textPaint.color = Color.BLACK
             textPaint.style = Paint.Style.FILL
-            canvas.drawText(it, width / 6, height * 2 / 3, textPaint)
+            canvas.drawText(it, width / 2, height * 3 / 5, textPaint)
         }
     }
 
     fun setName(name: String?, author: String?) {
-        this.name = name
+        this.name =
+            when {
+                name == null -> null
+                name.length > 5 -> name.substring(0, 4) + "…"
+                else -> name
+            }
         this.author = author
         invalidate()
     }
