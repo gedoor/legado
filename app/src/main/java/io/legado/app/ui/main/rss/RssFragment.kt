@@ -13,6 +13,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.rss.article.RssArticlesActivity
+import io.legado.app.ui.rss.favorites.RssFavoritesActivity
 import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.startActivity
@@ -38,8 +39,7 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
             R.id.menu_rss_config -> startActivity<RssSourceActivity>()
-            R.id.menu_rss_star -> {
-            }
+            R.id.menu_rss_star -> startActivity<RssFavoritesActivity>()
         }
     }
 
