@@ -40,7 +40,7 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    private val handler = Handler()
+    val handler = Handler()
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
     private var broadcastReceiver: BroadcastReceiver? = null

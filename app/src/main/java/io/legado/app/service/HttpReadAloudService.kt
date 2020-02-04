@@ -8,7 +8,10 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.service.help.ReadBook
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
@@ -94,6 +97,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 mediaPlayer.reset()
                 mediaPlayer.setDataSource(fd)
                 mediaPlayer.prepareAsync()
+                postEvent(Bus.TTS_START, readAloudNumber + 1)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -182,11 +186,19 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        handler.postDelayed({
+            readAloudNumber += contentList[nowSpeak].length + 1
+            if (nowSpeak < contentList.lastIndex) {
+                nowSpeak++
+                play()
+            } else {
+                nextChapter()
+            }
+        }, 1000)
         return true
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
-        LogUtils.d("播放完成", contentList[nowSpeak])
         readAloudNumber += contentList[nowSpeak].length + 1
         if (nowSpeak < contentList.lastIndex) {
             nowSpeak++
