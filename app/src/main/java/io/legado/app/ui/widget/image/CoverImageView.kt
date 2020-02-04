@@ -62,7 +62,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         namePaint.strokeWidth = namePaint.textSize / 10
         authorPaint.textSize = width / 9
         authorPaint.strokeWidth = authorPaint.textSize / 10
-        nameHeight = height * 3 / 5
+        nameHeight = height / 2
         authorHeight = nameHeight + authorPaint.fontSpacing
     }
 
@@ -88,7 +88,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             namePaint.color = Color.WHITE
             namePaint.style = Paint.Style.STROKE
             canvas.drawText(it, width / 2, nameHeight, namePaint)
-            namePaint.color = Color.BLACK
+            namePaint.color = Color.RED
             namePaint.style = Paint.Style.FILL
             canvas.drawText(it, width / 2, nameHeight, namePaint)
         }
@@ -96,7 +96,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             authorPaint.color = Color.WHITE
             authorPaint.style = Paint.Style.STROKE
             canvas.drawText(it, width / 2, authorHeight, authorPaint)
-            authorPaint.color = Color.BLACK
+            authorPaint.color = Color.RED
             authorPaint.style = Paint.Style.FILL
             canvas.drawText(it, width / 2, authorHeight, authorPaint)
         }
