@@ -13,6 +13,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.Bus
+import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -68,7 +69,7 @@ class ReadAloudConfigDialog : DialogFragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             ATH.applyEdgeEffectColor(listView)
-            bindPreferenceSummaryToValue(findPreference("ttsSpeechPer"))
+            bindPreferenceSummaryToValue(findPreference(PreferKey.ttsSpeechPer))
         }
 
         override fun onResume() {
@@ -86,18 +87,18 @@ class ReadAloudConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                "readAloudByPage" -> {
+                PreferKey.readAloudByPage -> {
                     if (BaseReadAloudService.isRun) {
                         postEvent(Bus.MEDIA_BUTTON, false)
                     }
                 }
-                "readAloudOnLine" -> {
+                PreferKey.readAloudOnLine -> {
                     if (BaseReadAloudService.isRun) {
                         ReadAloud.stop(requireContext())
                         ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
                     }
                 }
-                "ttsSpeechPer" -> ReadAloud.upTtsSpeechRate(requireContext())
+                PreferKey.ttsSpeechPer -> ReadAloud.upTtsSpeechRate(requireContext())
             }
         }
 

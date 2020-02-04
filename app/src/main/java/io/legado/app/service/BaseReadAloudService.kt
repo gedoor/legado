@@ -16,10 +16,7 @@ import androidx.core.app.NotificationCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.Action
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
-import io.legado.app.constant.Status
+import io.legado.app.constant.*
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
@@ -111,7 +108,7 @@ abstract class BaseReadAloudService : BaseService(),
                 nowSpeak = 0
                 readAloudNumber = textChapter.getReadLength(pageIndex)
                 contentList.clear()
-                if (getPrefBoolean("readAloudByPage")) {
+                if (getPrefBoolean(PreferKey.readAloudByPage)) {
                     for (index in pageIndex..textChapter.lastIndex()) {
                         textChapter.page(index)?.text?.split("\n")?.let {
                             contentList.addAll(it)

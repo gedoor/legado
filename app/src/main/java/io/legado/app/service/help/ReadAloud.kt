@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import io.legado.app.App
 import io.legado.app.constant.Action
+import io.legado.app.constant.PreferKey
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
@@ -13,7 +14,7 @@ object ReadAloud {
     var aloudClass: Class<*> = getReadAloudClass()
 
     fun getReadAloudClass(): Class<*> {
-        return if (App.INSTANCE.getPrefBoolean("readAloudOnLine")) {
+        return if (App.INSTANCE.getPrefBoolean(PreferKey.readAloudOnLine)) {
             HttpReadAloudService::class.java
         } else {
             TTSReadAloudService::class.java
