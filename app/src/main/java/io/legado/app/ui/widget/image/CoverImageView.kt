@@ -23,7 +23,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     private val authorPaint = TextPaint()
     private var name: String? = null
     private var author: String? = null
-    private var loadField = false
+    private var loadFailed = false
 
     constructor(context: Context) : super(context)
 
@@ -85,7 +85,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             canvas.clipPath(path)
         }
         super.onDraw(canvas)
-        if (!loadField) return
+        if (!loadFailed) return
         name?.let {
             namePaint.color = Color.WHITE
             namePaint.style = Paint.Style.STROKE
@@ -104,7 +104,12 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         }
     }
 
-    fun setText(name: String?, author: String?) {
+    fun setHeight(height: Int) {
+        val width = height * 5 / 7
+        minimumWidth = width
+    }
+
+    private fun setText(name: String?, author: String?) {
         this.name =
             when {
                 name == null -> null
@@ -119,11 +124,6 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             }
     }
 
-    fun setHeight(height: Int) {
-        val width = height * 5 / 7
-        minimumWidth = width
-    }
-
     fun load(path: String?, name: String?, author: String?) {
         setText(name, author)
         ImageLoader.load(context, path)//Glide自动识别http://和file://
@@ -136,7 +136,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    loadField = true
+                    loadFailed = true
                     return false
                 }
 
@@ -147,7 +147,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    loadField = false
+                    loadFailed = false
                     return false
                 }
 
