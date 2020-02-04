@@ -80,7 +80,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     if (bytes != null && isActive) {
                         val file = getSpeakFile(index)
                         file.writeBytes(bytes)
-                        if (index == nowSpeak && !pause) {
+                        if (index == nowSpeak) {
                             playAudio(FileInputStream(file).fd)
                         }
                     }
