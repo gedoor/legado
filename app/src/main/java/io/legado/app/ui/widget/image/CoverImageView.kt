@@ -23,6 +23,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     private val authorPaint = TextPaint()
     private var name: String? = null
     private var author: String? = null
+    private var loadField = false
 
     constructor(context: Context) : super(context)
 
@@ -84,6 +85,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             canvas.clipPath(path)
         }
         super.onDraw(canvas)
+        if (!loadField) return
         name?.let {
             namePaint.color = Color.WHITE
             namePaint.style = Paint.Style.STROKE
@@ -102,7 +104,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         }
     }
 
-    fun setName(name: String?, author: String?) {
+    fun setText(name: String?, author: String?) {
         this.name =
             when {
                 name == null -> null
@@ -115,7 +117,6 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
                 author.length > 8 -> author.substring(0, 7) + "…"
                 else -> author
             }
-        invalidate()
     }
 
     fun setHeight(height: Int) {
@@ -124,6 +125,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     }
 
     fun load(path: String?, name: String?, author: String?) {
+        setText(name, author)
         ImageLoader.load(context, path)//Glide自动识别http://和file://
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
@@ -134,7 +136,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    setName(name, author)
+                    loadField = true
                     return false
                 }
 
@@ -145,7 +147,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    setName(null, null)
+                    loadField = false
                     return false
                 }
 
