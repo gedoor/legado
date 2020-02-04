@@ -38,7 +38,7 @@ object BookHelp {
     }
 
     fun clearCache() {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+        if (downloadPath.isContentPath()) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)
                 ?.findFile(cacheFolderName)
                 ?.delete()
@@ -55,7 +55,7 @@ object BookHelp {
     @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+        if (downloadPath.isContentPath()) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 DocumentUtils.getDirDocument(
                     root,
@@ -91,7 +91,7 @@ object BookHelp {
     }
 
     fun getChapterCount(book: Book): Int {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
+        if (downloadPath.isContentPath()) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 return DocumentUtils.createFolderIfNotExist(
                     root,
@@ -112,7 +112,7 @@ object BookHelp {
             book.isLocalBook() -> {
                 return true
             }
-            downloadUri.isDocumentUri(App.INSTANCE) -> {
+            downloadPath.isContentPath() -> {
                 DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                     return DocumentUtils.exists(
                         root,
@@ -137,7 +137,7 @@ object BookHelp {
             book.isLocalBook() -> {
                 return AnalyzeTxtFile.getContent(book, bookChapter)
             }
-            downloadUri.isDocumentUri(App.INSTANCE) -> {
+            downloadPath.isContentPath() -> {
                 DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                     return DocumentUtils.getDirDocument(
                         root,
@@ -163,7 +163,7 @@ object BookHelp {
     fun delContent(book: Book, bookChapter: BookChapter) {
         when {
             book.isLocalBook() -> return
-            downloadUri.isDocumentUri(App.INSTANCE) -> {
+            downloadPath.isContentPath() -> {
                 DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                     DocumentUtils.getDirDocument(
                         root,

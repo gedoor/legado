@@ -4,6 +4,8 @@ package io.legado.app.utils
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
+fun String?.isContentPath(): Boolean = this?.startsWith("content://") == true
+
 fun String?.isAbsUrl() =
     this?.let {
         it.startsWith("http://", true)
@@ -48,7 +50,4 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
     this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
-fun String.startWithIgnoreCase(start: String): Boolean {
-    return if (this.isBlank()) false else startsWith(start, true)
-}
 
