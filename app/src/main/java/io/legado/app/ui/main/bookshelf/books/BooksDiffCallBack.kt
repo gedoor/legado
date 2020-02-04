@@ -23,6 +23,7 @@ class BooksDiffCallBack(private val oldItems: List<Book>, private val newItems: 
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
         return oldItem.name == newItem.name
+                && oldItem.author == newItem.author
                 && oldItem.durChapterTitle == newItem.durChapterTitle
                 && oldItem.latestChapterTitle == newItem.latestChapterTitle
                 && oldItem.getDisplayCover() == newItem.getDisplayCover()

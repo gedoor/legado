@@ -4,7 +4,7 @@ import android.content.Context
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 
-abstract class BooksAdapter(context: Context, layoutId: Int) :
+abstract class BaseBooksAdapter(context: Context, layoutId: Int) :
     SimpleRecyclerAdapter<Book>(context, layoutId) {
 
     fun notification(bookUrl: String) {

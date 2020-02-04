@@ -12,7 +12,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class BooksAdapterList(context: Context, private val callBack: CallBack) :
-    BooksAdapter(context, R.layout.item_bookshelf_list) {
+    BaseBooksAdapter(context, R.layout.item_bookshelf_list) {
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {

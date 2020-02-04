@@ -29,7 +29,7 @@ import org.jetbrains.anko.startActivity
 
 
 class BooksFragment : BaseFragment(R.layout.fragment_books),
-    BooksAdapter.CallBack {
+    BaseBooksAdapter.CallBack {
 
     companion object {
         fun newInstance(position: Int, groupId: Int): BooksFragment {
@@ -43,7 +43,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     private lateinit var activityViewModel: MainViewModel
-    private lateinit var booksAdapter: BooksAdapter
+    private lateinit var booksAdapter: BaseBooksAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var position = 0
     private var groupId = -1
