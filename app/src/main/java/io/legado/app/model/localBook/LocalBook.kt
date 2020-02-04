@@ -11,7 +11,7 @@ object LocalBook {
         doc.name?.let { fileName ->
             val str = fileName.substringBeforeLast(".")
             var name = str.substringBefore("作者")
-            val author = str.substringAfter("作者")
+            val author = str.substringAfter("作者", "")
             val smhStart = name.indexOf("《")
             val smhEnd = name.indexOf("》")
             if (smhStart != -1 && smhEnd != -1) {
