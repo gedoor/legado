@@ -141,7 +141,11 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun resumeReadAloud() {
         super.resumeReadAloud()
-        mediaPlayer.start()
+        if (playingIndex == -1) {
+            play()
+        } else {
+            mediaPlayer.start()
+        }
     }
 
     override fun upSpeechRate(reset: Boolean) {
