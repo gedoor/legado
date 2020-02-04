@@ -67,7 +67,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            iv_cover.load(searchBook.coverUrl, searchBook.name)
+            iv_cover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
             onClick {
                 callBack.showBookInfo(searchBook.name, searchBook.author)
             }

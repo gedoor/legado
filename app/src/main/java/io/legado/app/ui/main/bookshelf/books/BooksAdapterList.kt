@@ -22,7 +22,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                 tv_author.text = item.author
                 tv_read.text = item.durChapterTitle
                 tv_last.text = item.latestChapterTitle
-                iv_cover.load(item.getDisplayCover(), item.name)
+                iv_cover.load(item.getDisplayCover(), item.name, item.author)
                 onClick { callBack.open(item) }
                 onLongClick {
                     callBack.openBookInfo(item)

@@ -57,7 +57,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            iv_cover.load(item.coverUrl, item.name)
+            iv_cover.load(item.coverUrl, item.name, item.author)
             onClick {
                 callBack.showBookInfo(item.toBook())
             }

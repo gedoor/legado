@@ -59,7 +59,7 @@ class BookInfoEditActivity :
 
     private fun upCover() {
         viewModel.book.let {
-            iv_cover.load(it?.getDisplayCover(), it?.name)
+            iv_cover.load(it?.getDisplayCover(), it?.name, it?.author)
         }
     }
 

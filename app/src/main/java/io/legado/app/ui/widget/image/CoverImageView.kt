@@ -20,6 +20,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
 
     private val textPaint = TextPaint()
     private var name: String? = null
+    private var author: String? = null
 
     constructor(context: Context) : super(context)
 
@@ -81,8 +82,9 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         }
     }
 
-    fun setName(name: String?) {
+    fun setName(name: String?, author: String?) {
         this.name = name
+        this.author = author
         invalidate()
     }
 
@@ -91,38 +93,34 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         minimumWidth = width
     }
 
-    fun load(path: String?, name: String?) {
-        if (path.isNullOrEmpty()) {
-            setName(name)
-        } else {
-            ImageLoader.load(context, path)//Glide自动识别http://和file://
-                .placeholder(R.drawable.image_cover_default)
-                .error(R.drawable.image_cover_default)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        setName(name)
-                        return false
-                    }
+    fun load(path: String?, name: String?, author: String?) {
+        ImageLoader.load(context, path)//Glide自动识别http://和file://
+            .placeholder(R.drawable.image_cover_default)
+            .error(R.drawable.image_cover_default)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    setName(name, author)
+                    return false
+                }
 
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        setName(null)
-                        return false
-                    }
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    setName(null, null)
+                    return false
+                }
 
-                })
-                .centerCrop()
-                .into(this)
-        }
+            })
+            .centerCrop()
+            .into(this)
     }
 }

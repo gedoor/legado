@@ -20,7 +20,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 ATH.applyBackgroundTint(this)
                 tv_name.text = item.name
                 bv_author.text = item.author
-                iv_cover.load(item.getDisplayCover(), item.name)
+                iv_cover.load(item.getDisplayCover(), item.name, item.author)
                 onClick { callBack.open(item) }
                 onLongClick {
                     callBack.openBookInfo(item)

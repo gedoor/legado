@@ -13,7 +13,7 @@ class CoverAdapter(context: Context, val callBack: CallBack) :
 
     override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            iv_cover.load(item.coverUrl, item.name)
+            iv_cover.load(item.coverUrl, item.name, item.author)
             tv_source.text = item.originName
             onClick {
                 callBack.changeTo(item.coverUrl!!)

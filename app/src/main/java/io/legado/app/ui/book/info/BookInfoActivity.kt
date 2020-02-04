@@ -147,7 +147,7 @@ class BookInfoActivity :
     }
 
     private fun showCover(book: Book) {
-        iv_cover.load(book.getDisplayCover(), book.name)
+        iv_cover.load(book.getDisplayCover(), book.name, book.author)
         ImageLoader.load(this, book.getDisplayCover())
             .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
