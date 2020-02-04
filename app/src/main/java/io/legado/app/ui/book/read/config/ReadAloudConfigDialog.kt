@@ -93,10 +93,8 @@ class ReadAloudConfigDialog : DialogFragment() {
                     }
                 }
                 PreferKey.readAloudOnLine -> {
-                    if (BaseReadAloudService.isRun) {
-                        ReadAloud.stop(requireContext())
-                        ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
-                    }
+                    ReadAloud.stop(requireContext())
+                    ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
                 }
                 PreferKey.ttsSpeechPer -> ReadAloud.upTtsSpeechRate(requireContext())
             }
@@ -113,7 +111,7 @@ class ReadAloudConfigDialog : DialogFragment() {
                 // For all other preferences, set the summary to the value's
                 preference?.summary = stringValue
             }
-            return true
+            return false
         }
 
         private fun bindPreferenceSummaryToValue(preference: Preference?) {
