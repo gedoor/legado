@@ -106,7 +106,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 getString(R.string.threads_num, stringValue)
             else -> preference?.summary = stringValue
         }
-        return true
+        return false
     }
 
     private fun bindPreferenceSummaryToValue(preference: Preference?) {
@@ -188,6 +188,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.downloadPath, uri.toString())
+                    findPreference<Preference>(PreferKey.downloadPath)?.summary = uri.toString()
                     BookHelp.upDownloadPath()
                 }
             }

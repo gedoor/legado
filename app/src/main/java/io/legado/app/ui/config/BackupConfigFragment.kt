@@ -108,7 +108,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
             }
             else -> preference?.summary = newValue?.toString()
         }
-        return true
+        return false
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
@@ -305,6 +305,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
+                    findPreference<Preference>(PreferKey.backupPath)?.summary = uri.toString()
                     launch {
                         Backup.backup(requireContext(), uri)
                     }
@@ -317,6 +318,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.backupPath, uri.toString())
+                    findPreference<Preference>(PreferKey.backupPath)?.summary = uri.toString()
                     launch {
                         Restore.restore(requireContext(), uri)
                         toast(R.string.restore_success)
