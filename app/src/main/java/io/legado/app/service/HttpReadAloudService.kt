@@ -49,7 +49,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         mediaPlayer.reset()
         job?.cancel()
         playingIndex = -1
-        nowSpeak = 0
         super.newReadAloud(dataKey, play)
     }
 
