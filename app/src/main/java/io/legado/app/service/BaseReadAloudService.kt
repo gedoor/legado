@@ -40,18 +40,18 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    val handler = Handler()
+    internal val handler = Handler()
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var title: String = ""
     private var subtitle: String = ""
-    val contentList = arrayListOf<String>()
-    var nowSpeak: Int = 0
-    var readAloudNumber: Int = 0
-    var textChapter: TextChapter? = null
-    var pageIndex = 0
+    internal val contentList = arrayListOf<String>()
+    internal var nowSpeak: Int = 0
+    internal var readAloudNumber: Int = 0
+    internal var textChapter: TextChapter? = null
+    internal var pageIndex = 0
     private val dsRunnable: Runnable = Runnable { doDs() }
 
     override fun onCreate() {
