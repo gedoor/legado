@@ -16,8 +16,9 @@ import kotlinx.coroutines.launch
 @Database(
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
-        RssSource::class, Bookmark::class, RssArticle::class, RssStar::class, TxtTocRule::class],
-    version = 7,
+        RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
+        RssStar::class, TxtTocRule::class],
+    version = 8,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
