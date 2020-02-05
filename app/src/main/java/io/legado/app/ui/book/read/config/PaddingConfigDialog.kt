@@ -26,8 +26,6 @@ class PaddingConfigDialog : DialogFragment() {
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
-            it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             it.attributes = attr
