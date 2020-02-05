@@ -21,6 +21,7 @@ import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
+import io.legado.app.ui.book.arrange.ArrangeBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.ui.importbook.ImportBookActivity
@@ -64,8 +65,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 .show(childFragmentManager, "groupManageDialog")
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> addBookByUrl()
-            R.id.menu_arrange_bookshelf -> {
-            }
+            R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity>()
             R.id.menu_download -> startActivity<DownloadActivity>()
         }
     }
