@@ -20,7 +20,7 @@ class CheckSourceService : BaseService() {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
-    private val allIds = LinkedHashSet<String>()
+    private var idsCount = 0
     private val unCheckIds = LinkedHashSet<String>()
 
     override fun onCreate() {
@@ -46,9 +46,8 @@ class CheckSourceService : BaseService() {
 
     private fun check(ids: List<String>) {
         task?.cancel()
-        allIds.clear()
         unCheckIds.clear()
-        allIds.addAll(ids)
+        idsCount = ids.size
         unCheckIds.addAll(ids)
         task = execute {
             unCheckIds.forEach { sourceUrl ->
@@ -60,10 +59,10 @@ class CheckSourceService : BaseService() {
                             App.db.bookSourceDao().update(source)
                         }.onFinally {
                             unCheckIds.remove(sourceUrl)
-                            val checkedCount = allIds.size - unCheckIds.size
+                            val checkedCount = idsCount - unCheckIds.size
                             updateNotification(
                                 checkedCount,
-                                getString(R.string.progress_show, checkedCount, unCheckIds.size)
+                                getString(R.string.progress_show, checkedCount, idsCount)
                             )
                         }
                 }
@@ -92,7 +91,7 @@ class CheckSourceService : BaseService() {
                 getString(R.string.cancel),
                 IntentHelp.servicePendingIntent<CheckSourceService>(this, IntentAction.stop)
             )
-        builder.setProgress(allIds.size, state, false)
+        builder.setProgress(idsCount, state, false)
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(112202, notification)
