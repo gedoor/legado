@@ -64,7 +64,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             fileParent.icon = upIcon
             fileParent.name = DIR_PARENT
             fileParent.size = 0
-            fileParent.path = File(path).parent
+            fileParent.path = File(path).parent ?: ""
             data.add(fileParent)
         }
         currentPath?.let { currentPath ->

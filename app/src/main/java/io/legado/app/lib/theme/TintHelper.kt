@@ -254,11 +254,10 @@ object TintHelper {
             if (!skipIndeterminate)
                 progressBar.indeterminateTintList = sl
         } else {
-            val mode = PorterDuff.Mode.SRC_IN
             if (!skipIndeterminate && progressBar.indeterminateDrawable != null)
-                progressBar.indeterminateDrawable.setColorFilter(color, mode)
+                progressBar.indeterminateDrawable.setTint(color)
             if (progressBar.progressDrawable != null)
-                progressBar.progressDrawable.setColorFilter(color, mode)
+                progressBar.progressDrawable.setTint(color)
         }
     }
 

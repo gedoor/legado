@@ -15,6 +15,7 @@ import java.util.*
 class PathAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<String>(context, R.layout.item_path_filepicker) {
     private val paths = LinkedList<String>()
+    @Suppress("DEPRECATION")
     private val sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
     private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getARROW())
 
