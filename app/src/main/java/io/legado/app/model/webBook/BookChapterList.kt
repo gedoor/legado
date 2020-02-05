@@ -100,6 +100,11 @@ object BookChapterList {
             item.index = index
         }
         book.latestChapterTitle = chapterList.last().title
+        if (book.durChapterIndex < chapterList.size) {
+            book.durChapterTitle = chapterList[book.durChapterIndex].title
+        } else {
+            book.durChapterTitle = book.latestChapterTitle
+        }
         if (book.totalChapterNum < chapterList.size) {
             book.lastCheckCount = chapterList.size - book.totalChapterNum
         }
