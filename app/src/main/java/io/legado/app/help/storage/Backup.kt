@@ -51,7 +51,6 @@ object Backup {
             writeListToJson(App.db.rssSourceDao().all, "rssSource.json", backupPath)
             writeListToJson(App.db.rssStarDao().all, "rssStar.json", backupPath)
             writeListToJson(App.db.replaceRuleDao().all, "replaceRule.json", backupPath)
-
             GSON.toJson(ReadBookConfig.configList)?.let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.readConfigFileName)
                     .writeText(it)
