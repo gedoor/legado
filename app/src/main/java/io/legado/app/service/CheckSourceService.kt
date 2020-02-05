@@ -7,23 +7,34 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.Executors
 
 class CheckSourceService : BaseService() {
-
+    private var searchPool =
+        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     private var sourceList: List<BookSource>? = null
 
     override fun onCreate() {
         super.onCreate()
+        updateNotification(0, getString(R.string.start))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            Action.start -> {
+            }
+            else -> stopSelf()
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        searchPool.close()
     }
 
     /**
