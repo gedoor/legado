@@ -3,7 +3,7 @@ package io.legado.app.ui.main
 import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
@@ -24,14 +24,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                         synchronized(this) {
                             updateList.add(book.bookUrl)
-                            postEvent(Bus.UP_BOOK, book.bookUrl)
+                            postEvent(EventBus.UP_BOOK, book.bookUrl)
                         }
                         WebBook(bookSource).getChapterList(book)
                             .timeout(300000)
                             .onSuccess(IO) {
                                 synchronized(this) {
                                     updateList.remove(book.bookUrl)
-                                    postEvent(Bus.UP_BOOK, book.bookUrl)
+                                    postEvent(EventBus.UP_BOOK, book.bookUrl)
                                 }
                                 it?.let {
                                     App.db.bookDao().update(book)
@@ -42,7 +42,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             .onError {
                                 synchronized(this) {
                                     updateList.remove(book.bookUrl)
-                                    postEvent(Bus.UP_BOOK, book.bookUrl)
+                                    postEvent(EventBus.UP_BOOK, book.bookUrl)
                                 }
                                 it.printStackTrace()
                             }

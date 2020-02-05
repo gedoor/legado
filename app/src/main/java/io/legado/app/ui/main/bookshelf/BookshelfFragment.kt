@@ -14,7 +14,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.*
@@ -87,7 +87,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->
             tab.text = bookGroups[position].groupName
         }.attach()
-        observeEvent<Int>(Bus.UP_TABS) {
+        observeEvent<Int>(EventBus.UP_TABS) {
             tab_layout.getTabAt(it)?.select()
         }
     }

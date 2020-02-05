@@ -1,6 +1,6 @@
 package io.legado.app.constant
 
-object Action {
+object IntentAction {
     const val start = "start"
     const val play = "play"
     const val stop = "stop"

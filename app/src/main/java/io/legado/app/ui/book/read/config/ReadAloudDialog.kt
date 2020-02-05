@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -57,8 +57,8 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun initData() {
-        observeEvent<Int>(Bus.ALOUD_STATE) { upPlayState() }
-        observeEvent<Int>(Bus.TTS_DS) { seek_timer.progress = it }
+        observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
+        observeEvent<Int>(EventBus.TTS_DS) { seek_timer.progress = it }
         upPlayState()
         seek_timer.progress = BaseReadAloudService.timeMinute
         tv_timer.text =

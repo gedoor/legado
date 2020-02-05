@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.postEvent
@@ -61,35 +61,35 @@ class PaddingConfigDialog : DialogFragment() {
     private fun initView() = with(ReadBookConfig.getConfig()) {
         iv_padding_top_add.onClick {
             seek_padding_top.progressAdd(1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_padding_top_remove.onClick {
             seek_padding_top.progressAdd(-1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_padding_bottom_add.onClick {
             seek_padding_bottom.progressAdd(1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_padding_bottom_remove.onClick {
             seek_padding_bottom.progressAdd(-1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_padding_left_add.onClick {
             seek_padding_left.progressAdd(1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_padding_left_remove.onClick {
             seek_padding_left.progressAdd(-1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_padding_right_add.onClick {
             seek_padding_right.progressAdd(1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_padding_right_remove.onClick {
             seek_padding_right.progressAdd(-1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
 
         seek_padding_top.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -101,7 +101,7 @@ class PaddingConfigDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         })
         seek_padding_bottom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -113,7 +113,7 @@ class PaddingConfigDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         })
         seek_padding_left.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -125,7 +125,7 @@ class PaddingConfigDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         })
         seek_padding_right.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -137,7 +137,7 @@ class PaddingConfigDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         })
     }

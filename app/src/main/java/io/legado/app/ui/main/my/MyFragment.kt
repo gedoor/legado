@@ -14,7 +14,7 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
@@ -182,7 +182,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             }
             addPreferencesFromResource(R.xml.pref_main)
             val webServicePre = findPreference<ATESwitchPreference>(PreferKey.webService)
-            observeEvent<Boolean>(Bus.WEB_SERVICE_STOP) {
+            observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
                 webServicePre?.isChecked = false
             }
         }

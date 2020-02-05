@@ -12,7 +12,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
@@ -90,7 +90,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
             PreferKey.processText -> sharedPreferences?.let {
                 setProcessTextEnable(it.getBoolean("process_text", true))
             }
-            PreferKey.showRss -> postEvent(Bus.SHOW_RSS, "unused")
+            PreferKey.showRss -> postEvent(EventBus.SHOW_RSS, "unused")
         }
     }
 

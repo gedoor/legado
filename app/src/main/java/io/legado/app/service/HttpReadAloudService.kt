@@ -2,7 +2,7 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.media.MediaPlayer
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
@@ -98,7 +98,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 mediaPlayer.reset()
                 mediaPlayer.setDataSource(fd)
                 mediaPlayer.prepareAsync()
-                postEvent(Bus.TTS_START, readAloudNumber + 1)
+                postEvent(EventBus.TTS_START, readAloudNumber + 1)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -187,7 +187,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 ReadBook.moveToNextPage()
             }
         }
-        postEvent(Bus.TTS_START, readAloudNumber + 1)
+        postEvent(EventBus.TTS_START, readAloudNumber + 1)
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {

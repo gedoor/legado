@@ -70,7 +70,7 @@ abstract class BaseReadAloudService : BaseService(),
         isRun = false
         pause = true
         unregisterReceiver(broadcastReceiver)
-        postEvent(Bus.ALOUD_STATE, Status.STOP)
+        postEvent(EventBus.ALOUD_STATE, Status.STOP)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         mediaSessionCompat?.release()
     }
@@ -78,7 +78,7 @@ abstract class BaseReadAloudService : BaseService(),
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
-                Action.play -> {
+                IntentAction.play -> {
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
                     pageIndex = intent.getIntExtra("pageIndex", 0)
@@ -87,13 +87,13 @@ abstract class BaseReadAloudService : BaseService(),
                         intent.getBooleanExtra("play", true)
                     )
                 }
-                Action.pause -> pauseReadAloud(true)
-                Action.resume -> resumeReadAloud()
-                Action.upTtsSpeechRate -> upSpeechRate(true)
-                Action.prevParagraph -> prevP()
-                Action.nextParagraph -> nextP()
-                Action.addTimer -> addTimer()
-                Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
+                IntentAction.pause -> pauseReadAloud(true)
+                IntentAction.resume -> resumeReadAloud()
+                IntentAction.upTtsSpeechRate -> upSpeechRate(true)
+                IntentAction.prevParagraph -> prevP()
+                IntentAction.nextParagraph -> nextP()
+                IntentAction.addTimer -> addTimer()
+                IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 else -> stopSelf()
             }
         }
@@ -124,13 +124,13 @@ abstract class BaseReadAloudService : BaseService(),
 
     open fun play() {
         pause = false
-        postEvent(Bus.ALOUD_STATE, Status.PLAY)
+        postEvent(EventBus.ALOUD_STATE, Status.PLAY)
         upNotification()
     }
 
     @CallSuper
     open fun pauseReadAloud(pause: Boolean) {
-        postEvent(Bus.ALOUD_STATE, Status.PAUSE)
+        postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
         BaseReadAloudService.pause = pause
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
@@ -167,7 +167,7 @@ abstract class BaseReadAloudService : BaseService(),
             handler.removeCallbacks(dsRunnable)
             handler.postDelayed(dsRunnable, 60000)
         }
-        postEvent(Bus.TTS_DS, timeMinute)
+        postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
     }
 
@@ -183,7 +183,7 @@ abstract class BaseReadAloudService : BaseService(),
                 handler.postDelayed(dsRunnable, 60000)
             }
         }
-        postEvent(Bus.TTS_DS, timeMinute)
+        postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
     }
 
@@ -298,24 +298,24 @@ abstract class BaseReadAloudService : BaseService(),
             builder.addAction(
                 R.drawable.ic_play_24dp,
                 getString(R.string.resume),
-                aloudServicePendingIntent(Action.resume)
+                aloudServicePendingIntent(IntentAction.resume)
             )
         } else {
             builder.addAction(
                 R.drawable.ic_pause_24dp,
                 getString(R.string.pause),
-                aloudServicePendingIntent(Action.pause)
+                aloudServicePendingIntent(IntentAction.pause)
             )
         }
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.stop),
-            aloudServicePendingIntent(Action.stop)
+            aloudServicePendingIntent(IntentAction.stop)
         )
         builder.addAction(
             R.drawable.ic_time_add_24dp,
             getString(R.string.set_timer),
-            aloudServicePendingIntent(Action.addTimer)
+            aloudServicePendingIntent(IntentAction.addTimer)
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()

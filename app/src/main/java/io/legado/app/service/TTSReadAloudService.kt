@@ -6,7 +6,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.legado.app.R
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.service.help.ReadBook
@@ -152,7 +152,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     ReadBook.moveToNextPage()
                 }
             }
-            postEvent(Bus.TTS_START, readAloudNumber + 1)
+            postEvent(EventBus.TTS_START, readAloudNumber + 1)
         }
 
         override fun onDone(s: String) {
@@ -169,7 +169,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
                     ReadBook.moveToNextPage()
-                    postEvent(Bus.TTS_START, readAloudNumber + start)
+                    postEvent(EventBus.TTS_START, readAloudNumber + start)
                 }
             }
         }

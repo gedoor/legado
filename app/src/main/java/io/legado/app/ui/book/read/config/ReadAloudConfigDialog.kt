@@ -12,7 +12,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -89,7 +89,7 @@ class ReadAloudConfigDialog : DialogFragment() {
             when (key) {
                 PreferKey.readAloudByPage -> {
                     if (BaseReadAloudService.isRun) {
-                        postEvent(Bus.MEDIA_BUTTON, false)
+                        postEvent(EventBus.MEDIA_BUTTON, false)
                     }
                 }
                 PreferKey.readAloudOnLine -> {

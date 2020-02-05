@@ -20,7 +20,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
@@ -154,7 +154,7 @@ class BgTextConfigDialog : DialogFragment() {
                 this.onClick {
                     ReadBookConfig.getConfig().setBg(1, item)
                     ReadBookConfig.upBg()
-                    postEvent(Bus.UP_CONFIG, false)
+                    postEvent(EventBus.UP_CONFIG, false)
                 }
             }
         }
@@ -178,7 +178,7 @@ class BgTextConfigDialog : DialogFragment() {
                                     file.writeBytes(it)
                                     ReadBookConfig.getConfig().setBg(2, file.absolutePath)
                                     ReadBookConfig.upBg()
-                                    postEvent(Bus.UP_CONFIG, false)
+                                    postEvent(EventBus.UP_CONFIG, false)
                                 }
                             }
                         } else {
@@ -192,7 +192,7 @@ class BgTextConfigDialog : DialogFragment() {
                                     FileUtils.getPath(requireContext(), uri)?.let { path ->
                                         ReadBookConfig.getConfig().setBg(2, path)
                                         ReadBookConfig.upBg()
-                                        postEvent(Bus.UP_CONFIG, false)
+                                        postEvent(EventBus.UP_CONFIG, false)
                                     }
                                 }
                                 .request()

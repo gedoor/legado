@@ -21,7 +21,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
@@ -498,12 +498,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         when (dialogId) {
             TEXT_COLOR -> {
                 setTextColor(color)
-                postEvent(Bus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, false)
             }
             BG_COLOR -> {
                 setBg(0, "#${color.hexString}")
                 ReadBookConfig.upBg()
-                postEvent(Bus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, false)
             }
         }
     }
@@ -550,7 +550,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<Int>(Bus.ALOUD_STATE) {
+        observeEvent<Int>(EventBus.ALOUD_STATE) {
             if (it == Status.STOP || it == Status.PAUSE) {
                 ReadBook.curTextChapter?.let { textChapter ->
                     val page = textChapter.page(ReadBook.durPageIndex)
@@ -561,20 +561,20 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
         }
-        observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
-        observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
-        observeEvent<BookChapter>(Bus.OPEN_CHAPTER) {
+        observeEvent<String>(EventBus.TIME_CHANGED) { page_view.upTime() }
+        observeEvent<Int>(EventBus.BATTERY_CHANGED) { page_view.upBattery(it) }
+        observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
             viewModel.openChapter(it.index, ReadBook.durPageIndex)
             page_view.upContent()
         }
-        observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
+        observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
                 onClickReadAloud()
             } else {
                 ReadBook.readAloud(!BaseReadAloudService.pause)
             }
         }
-        observeEvent<Boolean>(Bus.UP_CONFIG) {
+        observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
             content_view.upStyle()
             page_view.upBg()
@@ -585,7 +585,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 page_view.upContent()
             }
         }
-        observeEventSticky<Int>(Bus.TTS_START) { chapterStart ->
+        observeEventSticky<Int>(EventBus.TTS_START) { chapterStart ->
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let {
@@ -598,7 +598,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
         }
-        observeEvent<String>(Bus.REPLACE) {
+        observeEvent<String>(EventBus.REPLACE) {
             ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
         }
         observeEvent<Boolean>(PreferKey.keepLight) {

@@ -14,7 +14,7 @@ import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -144,10 +144,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     override fun observeLiveBus() {
-        observeEvent<String>(Bus.RECREATE) {
+        observeEvent<String>(EventBus.RECREATE) {
             recreate()
         }
-        observeEvent<String>(Bus.SHOW_RSS) {
+        observeEvent<String>(EventBus.SHOW_RSS) {
             bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
             upFragmentList()
             view_pager_main.adapter?.notifyDataSetChanged()

@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.Status
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
@@ -193,12 +193,12 @@ class AudioPlayActivity :
     }
 
     override fun observeLiveBus() {
-        observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
+        observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
                 playButton()
             }
         }
-        observeEventSticky<Int>(Bus.AUDIO_STATE) {
+        observeEventSticky<Int>(EventBus.AUDIO_STATE) {
             AudioPlay.status = it
             if (it == Status.PLAY) {
                 fab_play_stop.setImageResource(R.drawable.ic_pause_24dp)
@@ -206,19 +206,19 @@ class AudioPlayActivity :
                 fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
             }
         }
-        observeEventSticky<String>(Bus.AUDIO_SUB_TITLE) {
+        observeEventSticky<String>(EventBus.AUDIO_SUB_TITLE) {
             tv_sub_title.text = it
         }
-        observeEventSticky<Int>(Bus.AUDIO_SIZE) {
+        observeEventSticky<Int>(EventBus.AUDIO_SIZE) {
             player_progress.max = it
             tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
-        observeEventSticky<Int>(Bus.AUDIO_PROGRESS) {
+        observeEventSticky<Int>(EventBus.AUDIO_PROGRESS) {
             AudioPlay.durPageIndex = it
             if (!adjustProgress) player_progress.progress = it
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
-        observeEventSticky<Float>(Bus.AUDIO_SPEED) {
+        observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
             tv_speed.text = String.format("%.1fX", it)
             tv_speed.visible()
         }

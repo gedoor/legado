@@ -11,7 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.BookType
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentDataHelp
@@ -56,7 +56,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
         initRecyclerView()
         upRecyclerData()
-        observeEvent<String>(Bus.UP_BOOK) {
+        observeEvent<String>(EventBus.UP_BOOK) {
             booksAdapter.notification(it)
         }
     }
