@@ -156,6 +156,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                 .onGranted {
                     launch {
                         Backup.backup(requireContext(), null)
+                        toast(R.string.backup_success)
                     }
                 }
                 .request()
@@ -316,6 +317,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                     findPreference<Preference>(PreferKey.backupPath)?.summary = uri.toString()
                     launch {
                         Backup.backup(requireContext(), uri)
+                        toast(R.string.backup_success)
                     }
                 }
             }
