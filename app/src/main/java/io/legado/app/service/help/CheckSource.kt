@@ -12,6 +12,7 @@ object CheckSource {
     fun start(context: Context, selectedIds: ArrayList<String>) {
         if (selectedIds.isEmpty()) {
             context.toast(R.string.non_select)
+            return
         }
         Intent(context, CheckSourceService::class.java).let {
             it.action = IntentAction.start
