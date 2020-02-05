@@ -2,19 +2,24 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 
 class CheckSourceService : BaseService() {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
+    private var task: Coroutine<*>? = null
     private val allIds = LinkedHashSet<String>()
     private val unCheckIds = LinkedHashSet<String>()
 
@@ -35,13 +40,39 @@ class CheckSourceService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        task?.cancel()
         searchPool.close()
     }
 
     private fun check(ids: List<String>) {
+        task?.cancel()
+        allIds.clear()
+        unCheckIds.clear()
         allIds.addAll(ids)
         unCheckIds.addAll(ids)
+        task = execute {
+            unCheckIds.forEach { sourceUrl ->
+                App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
+                    val webBook = WebBook(source)
+                    webBook.searchBook("我的", scope = this, context = searchPool)
+                        .onError(IO) {
+                            source.addGroup("失效")
+                            App.db.bookSourceDao().update(source)
+                        }.onFinally {
+                            unCheckIds.remove(sourceUrl)
+                            val checkedCount = allIds.size - unCheckIds.size
+                            updateNotification(
+                                checkedCount,
+                                getString(R.string.progress_show, checkedCount, unCheckIds.size)
+                            )
+                        }
+                }
+            }
+        }
 
+        task?.invokeOnCompletion {
+            stopSelf()
+        }
     }
 
     /**

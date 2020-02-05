@@ -126,6 +126,16 @@ data class BookSource(
         return contentRuleV!!
     }
 
+    fun addGroup(group: String) {
+        bookSourceGroup?.let {
+            if (!it.contains(group)) {
+                bookSourceGroup = "$it;$group"
+            }
+        } ?: let {
+            bookSourceGroup = group
+        }
+    }
+
     fun getExploreKinds(): ArrayList<ExploreKind>? {
         val exploreKinds = arrayListOf<ExploreKind>()
         exploreUrl?.let {
