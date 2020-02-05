@@ -30,7 +30,7 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
-import io.legado.app.service.CheckSourceService
+import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
@@ -40,7 +40,6 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.startService
 import org.jetbrains.anko.toast
 import java.io.FileNotFoundException
 
@@ -94,8 +93,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelectionIds())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
             R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
-            R.id.menu_check_source ->
-                startService<CheckSourceService>(Pair("data", adapter.getSelectionIds()))
+            R.id.menu_check_source -> CheckSource.start(this, ArrayList(adapter.getSelectionIds()))
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {

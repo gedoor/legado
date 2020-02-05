@@ -1,13 +1,11 @@
 package io.legado.app.service
 
-import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.IntentAction
 import io.legado.app.constant.AppConst
-import io.legado.app.data.entities.BookSource
+import io.legado.app.constant.IntentAction
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -15,27 +13,10 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 
 class CheckSourceService : BaseService() {
-
-    companion object{
-        fun start(context: Context, selectedIds: Array<String>) {
-            Intent(context, CheckSourceService::class.java).let {
-                it.action = IntentAction.start
-                it.putExtra("selectIds", selectedIds)
-                context.startService(it)
-            }
-        }
-
-        fun stop(context: Context) {
-            Intent(context, CheckSourceService::class.java).let {
-                it.action = IntentAction.stop
-                context.startService(it)
-            }
-        }
-    }
-
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    private var sourceList: List<BookSource>? = null
+    private val allIds = LinkedHashSet<String>()
+    private val unCheckIds = LinkedHashSet<String>()
 
     override fun onCreate() {
         super.onCreate()
@@ -44,7 +25,8 @@ class CheckSourceService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            IntentAction.start -> {
+            IntentAction.start -> intent.getStringArrayListExtra("selectIds")?.let {
+                check(it)
             }
             else -> stopSelf()
         }
@@ -54,6 +36,12 @@ class CheckSourceService : BaseService() {
     override fun onDestroy() {
         super.onDestroy()
         searchPool.close()
+    }
+
+    private fun check(ids: List<String>) {
+        allIds.addAll(ids)
+        unCheckIds.addAll(ids)
+
     }
 
     /**
@@ -73,9 +61,7 @@ class CheckSourceService : BaseService() {
                 getString(R.string.cancel),
                 IntentHelp.servicePendingIntent<CheckSourceService>(this, IntentAction.stop)
             )
-        sourceList?.let {
-            builder.setProgress(it.size, state, false)
-        }
+        builder.setProgress(allIds.size, state, false)
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(112202, notification)
