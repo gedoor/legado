@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -16,10 +17,44 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <LinearLayout
+    <!--文件点击按钮-->
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:elevation="2dp"
+        tools:ignore="RtlHardcoded,RtlSymmetry">
 
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_selected_all"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:text="@string/select_all"
+            android:textColor="@color/tv_text_default" />
 
-    </LinearLayout>
+        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+            android:id="@+id/btn_add_group"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:minWidth="110dp"
+            android:text="@string/move_to_group" />
+
+        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+            android:id="@+id/btn_delete"
+            android:layout_width="70dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:layout_toLeftOf="@id/btn_add_group"
+            android:text="@string/delete" />
+    </RelativeLayout>
 </LinearLayout>
