@@ -51,19 +51,19 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
             }
         }
         addPreferencesFromResource(R.xml.pref_config_backup)
-        findPreference<EditTextPreference>("web_dav_url")?.let {
+        findPreference<EditTextPreference>(PreferKey.webDavUrl)?.let {
             it.setOnBindEditTextListener { editText ->
                 ATH.setTint(editText, requireContext().accentColor)
             }
             bindPreferenceSummaryToValue(it)
         }
-        findPreference<EditTextPreference>("web_dav_account")?.let {
+        findPreference<EditTextPreference>(PreferKey.webDavAccount)?.let {
             it.setOnBindEditTextListener { editText ->
                 ATH.setTint(editText, requireContext().accentColor)
             }
             bindPreferenceSummaryToValue(it)
         }
-        findPreference<EditTextPreference>("web_dav_password")?.let {
+        findPreference<EditTextPreference>(PreferKey.webDavPassword)?.let {
             it.setOnBindEditTextListener { editText ->
                 ATH.setTint(editText, requireContext().accentColor)
                 editText.inputType =
@@ -85,28 +85,33 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        when {
-            preference?.key == "web_dav_password" -> if (newValue == null) {
-                preference.summary = getString(R.string.web_dav_pw_s)
-            } else {
-                preference.summary = "*".repeat(newValue.toString().length)
-            }
-            preference?.key == "web_dav_url" -> if (newValue == null) {
-                preference.summary = getString(R.string.web_dav_url_s)
-            } else {
-                preference.summary = newValue.toString()
-            }
-            preference?.key == "web_dav_account" -> if (newValue == null) {
-                preference.summary = getString(R.string.web_dav_account_s)
-            } else {
-                preference.summary = newValue.toString()
-            }
-            preference is ListPreference -> {
-                val index = preference.findIndexOfValue(newValue?.toString())
-                // Set the summary to reflect the new value.
-                preference.setSummary(if (index >= 0) preference.entries[index] else null)
-            }
-            else -> preference?.summary = newValue?.toString()
+        when (preference?.key) {
+            PreferKey.webDavUrl ->
+                if (newValue == null) {
+                    preference.summary = getString(R.string.web_dav_url_s)
+                } else {
+                    preference.summary = newValue.toString()
+                }
+            PreferKey.webDavAccount ->
+                if (newValue == null) {
+                    preference.summary = getString(R.string.web_dav_account_s)
+                } else {
+                    preference.summary = newValue.toString()
+                }
+            PreferKey.webDavPassword ->
+                if (newValue == null) {
+                    preference.summary = getString(R.string.web_dav_pw_s)
+                } else {
+                    preference.summary = "*".repeat(newValue.toString().length)
+                }
+            else ->
+                if (preference is ListPreference) {
+                    val index = preference.findIndexOfValue(newValue?.toString())
+                    // Set the summary to reflect the new value.
+                    preference.setSummary(if (index >= 0) preference.entries[index] else null)
+                } else {
+                    preference?.summary = newValue?.toString()
+                }
         }
         return false
     }

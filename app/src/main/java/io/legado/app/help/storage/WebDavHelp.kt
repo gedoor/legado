@@ -2,6 +2,7 @@ package io.legado.app.help.storage
 
 import android.content.Context
 import io.legado.app.App
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
@@ -23,15 +24,15 @@ object WebDavHelp {
     }
 
     private fun getWebDavUrl(): String? {
-        var url = App.INSTANCE.getPrefString("web_dav_url")
+        var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
         if (url.isNullOrBlank()) return null
         if (!url.endsWith("/")) url += "/"
         return url
     }
 
     private fun initWebDav(): Boolean {
-        val account = App.INSTANCE.getPrefString("web_dav_account")
-        val password = App.INSTANCE.getPrefString("web_dav_password")
+        val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
+        val password = App.INSTANCE.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
             HttpAuth.auth = HttpAuth.Auth(account, password)
             return true
