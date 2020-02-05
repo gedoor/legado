@@ -78,6 +78,7 @@
         <activity
             android:name=".ui.about.DonateActivity"
             android:launchMode="singleTask" />
+        <activity android:name=".ui.book.arrange.ArrangeBookActivity" />
         <activity android:name=".ui.book.info.BookInfoActivity" />
         <activity android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity" />
         <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
