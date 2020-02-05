@@ -100,7 +100,9 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
     fun restore() {
         launch {
-            if (!WebDavHelp.showRestoreDialog(requireContext())) {
+            if (!WebDavHelp.showRestoreDialog(requireContext()) {
+                    toast(R.string.restore_success)
+                }) {
                 val backupPath = getPrefString(PreferKey.backupPath)
                 if (backupPath?.isNotEmpty() == true) {
                     val uri = Uri.parse(backupPath)

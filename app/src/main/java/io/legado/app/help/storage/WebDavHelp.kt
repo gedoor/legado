@@ -54,12 +54,12 @@ object WebDavHelp {
         return names
     }
 
-    suspend fun showRestoreDialog(context: Context): Boolean {
+    suspend fun showRestoreDialog(context: Context, restoreSuccess: () -> Unit): Boolean {
         val names = withContext(IO) { getWebDavFileNames() }
         return if (names.isNotEmpty()) {
             context.selector(title = "选择恢复文件", items = names) { _, index ->
                 if (index in 0 until names.size) {
-                    restoreWebDav(names[index])
+                    restoreWebDav(names[index], restoreSuccess)
                 }
             }
             true
@@ -68,7 +68,7 @@ object WebDavHelp {
         }
     }
 
-    private fun restoreWebDav(name: String) {
+    private fun restoreWebDav(name: String, success: () -> Unit) {
         Coroutine.async {
             getWebDavUrl()?.let {
                 val file = WebDav(it + "legado/" + name)
@@ -77,6 +77,8 @@ object WebDavHelp {
                 ZipUtils.unzipFile(zipFilePath, unzipFilesPath)
                 Restore.restore(unzipFilesPath)
             }
+        }.onSuccess {
+            success.invoke()
         }
     }
 
