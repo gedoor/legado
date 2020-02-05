@@ -57,6 +57,7 @@
 
     </LinearLayout>
 
+    <View style="@style/Style.Shadow.Bottom" />
 
     <LinearLayout
         android:layout_width="match_parent"
