@@ -129,6 +129,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
             if (doc?.canWrite() == true) {
                 launch {
                     Backup.backup(requireContext(), uri)
+                    toast(R.string.backup_success)
                 }
             } else {
                 selectBackupFolder()
