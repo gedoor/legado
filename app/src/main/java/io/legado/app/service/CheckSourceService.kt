@@ -49,6 +49,7 @@ class CheckSourceService : BaseService() {
         unCheckIds.clear()
         idsCount = ids.size
         unCheckIds.addAll(ids)
+        updateNotification(0, getString(R.string.start))
         task = execute {
             unCheckIds.forEach { sourceUrl ->
                 App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
