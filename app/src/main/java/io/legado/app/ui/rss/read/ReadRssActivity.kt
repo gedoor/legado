@@ -159,7 +159,8 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             webView.settings.javaScriptEnabled = true
             webView.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
-                val text = Jsoup.clean(html, Whitelist.none()).replace(Regex("""&\w+;"""), "")
+                val text = Jsoup.clean(html, Whitelist.none())
+                    .replace(Regex("""&\w+;"""), "")
                     .trim()//朗读过程中总是听到一些杂音，清理一下
                 //longToast(需读内容)调试一下
                 viewModel.readAloud(text)
