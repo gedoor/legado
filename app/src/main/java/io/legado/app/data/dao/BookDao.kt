@@ -45,7 +45,7 @@ interface BookDao {
     val hasUpdateBooks: List<Book>
 
     @get:Query("SELECT * FROM books")
-    val allBooks: List<Book>
+    val all: List<Book>
 
     @get:Query("SELECT * FROM books where type = 0 ORDER BY durChapterTime DESC limit 1")
     val lastReadBook: Book?

@@ -13,7 +13,7 @@ class BookshelfController {
 
     val bookshelf: ReturnData
         get() {
-            val books = App.db.bookDao().allBooks
+            val books = App.db.bookDao().all
             val returnData = ReturnData()
             return if (books.isEmpty()) {
                 returnData.setErrorMsg("还没有添加小说")

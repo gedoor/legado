@@ -32,4 +32,6 @@ interface RssArticleDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertRecord(vararg rssReadRecord: RssReadRecord)
+
+
 }
