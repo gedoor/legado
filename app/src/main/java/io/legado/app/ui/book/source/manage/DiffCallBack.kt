@@ -30,14 +30,4 @@ class DiffCallBack(
                 && oldItem.enabled == newItem.enabled
     }
 
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        val oldItem = oldItems[oldItemPosition]
-        val newItem = newItems[newItemPosition]
-        return when {
-            oldItem.bookSourceName == newItem.bookSourceName
-                    && oldItem.bookSourceGroup == newItem.bookSourceGroup
-                    && oldItem.enabled != newItem.enabled -> 2
-            else -> null
-        }
-    }
 }

@@ -106,7 +106,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             } else {
                 when (payloads[0]) {
                     1 -> cb_book_source.isChecked = selected.contains(item)
-                    2 -> swt_enabled.isChecked = item.enabled
                 }
             }
         }
