@@ -10,6 +10,7 @@ import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
@@ -153,9 +154,10 @@ class HttpReadAloudService : BaseReadAloudService(),
      */
     override fun upSpeechRate(reset: Boolean) {
         job?.cancel()
-        mediaPlayer.reset()
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
         downloadAudio()
-        play()
     }
 
     /**
@@ -196,6 +198,10 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        LogUtils.d("mp", "what:$what extra:$extra")
+        if (what == -38 && extra == 0) {
+            return true
+        }
         handler.postDelayed({
             readAloudNumber += contentList[nowSpeak].length + 1
             if (nowSpeak < contentList.lastIndex) {
