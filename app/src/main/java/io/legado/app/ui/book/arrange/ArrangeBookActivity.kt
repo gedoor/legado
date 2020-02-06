@@ -20,8 +20,9 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     ArrangeBookAdapter.CallBack {
     override val viewModel: ArrangeBookViewModel
         get() = getViewModel(ArrangeBookViewModel::class.java)
-    override val groupList: List<BookGroup> = arrayListOf()
+    override val groupList: ArrayList<BookGroup> = arrayListOf()
     private lateinit var adapter: ArrangeBookAdapter
+    private var groupLiveData: LiveData<List<BookGroup>>? = null
     private var booksLiveData: LiveData<List<Book>>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -49,6 +50,13 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     }
 
     private fun initData() {
+        groupLiveData?.removeObservers(this)
+        groupLiveData = App.db.bookGroupDao().liveDataAll()
+        groupLiveData?.observe(this, Observer {
+            groupList.clear()
+            groupList.addAll(it)
+            adapter.notifyDataSetChanged()
+        })
         booksLiveData?.removeObservers(this)
         booksLiveData = App.db.bookDao().observeAll()
         booksLiveData?.observe(this, Observer {

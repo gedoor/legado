@@ -51,17 +51,17 @@ object BookChapterList {
                     ruleUrl = nextUrl, book = book, headerMapF = bookSource.getHeaderMap()
                 ).getResponseAwait()
                     .body?.let { nextBody ->
-                        chapterData = analyzeChapterList(
-                            nextBody, nextUrl, tocRule, listRule,
-                            book, bookSource, log = false
-                        )
-                        nextUrl = if (chapterData.nextUrl.isNotEmpty())
-                            chapterData.nextUrl[0]
-                        else ""
-                        chapterData.chapterList?.let {
-                            chapterList.addAll(it)
-                        }
+                    chapterData = analyzeChapterList(
+                        nextBody, nextUrl, tocRule, listRule,
+                        book, bookSource, log = false
+                    )
+                    nextUrl = if (chapterData.nextUrl.isNotEmpty())
+                        chapterData.nextUrl[0]
+                    else ""
+                    chapterData.chapterList?.let {
+                        chapterList.addAll(it)
                     }
+                }
             }
             Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
         } else if (chapterData.nextUrl.size > 1) {
@@ -100,11 +100,8 @@ object BookChapterList {
             item.index = index
         }
         book.latestChapterTitle = chapterList.last().title
-        if (book.durChapterIndex < chapterList.size) {
-            book.durChapterTitle = chapterList[book.durChapterIndex].title
-        } else {
-            book.durChapterTitle = book.latestChapterTitle
-        }
+        book.durChapterTitle =
+            chapterList.getOrNull(book.durChapterIndex)?.title ?: book.latestChapterTitle
         if (book.totalChapterNum < chapterList.size) {
             book.lastCheckCount = chapterList.size - book.totalChapterNum
         }
