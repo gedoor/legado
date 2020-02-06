@@ -50,6 +50,12 @@ object AppConfig {
             }
         }
 
+    var ttsSpeechRate: Int
+        get() = App.INSTANCE.getPrefInt(PreferKey.ttsSpeechRate, 5)
+        set(value) {
+            App.INSTANCE.putPrefInt(PreferKey.ttsSpeechRate, value)
+        }
+
     val isEInkMode: Boolean
         get() = App.INSTANCE.getPrefBoolean("isEInkMode")
 

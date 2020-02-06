@@ -10,11 +10,14 @@ import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.EventBus
+import io.legado.app.help.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -65,7 +68,7 @@ class ReadAloudDialog : DialogFragment() {
             requireContext().getString(R.string.timer_m, BaseReadAloudService.timeMinute)
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
-        seek_tts_SpeechRate.progress = requireContext().getPrefInt("ttsSpeechRate", 5)
+        seek_tts_SpeechRate.progress = AppConfig.ttsSpeechRate
     }
 
     private fun initOnChange() {
@@ -83,7 +86,7 @@ class ReadAloudDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                requireContext().putPrefInt("ttsSpeechRate", seek_tts_SpeechRate.progress)
+                AppConfig.ttsSpeechRate = seek_tts_SpeechRate.progress
                 upTtsSpeechRate()
             }
         })

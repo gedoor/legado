@@ -10,6 +10,7 @@ object PreferKey {
     const val precisionSearch = "precisionSearch"
     const val readAloudOnLine = "readAloudOnLine"
     const val readAloudByPage = "readAloudByPage"
+    const val ttsSpeechRate = "ttsSpeechRate"
     const val ttsSpeechPer = "ttsSpeechPer"
     const val prevKey = "prevKeyCode"
     const val nextKey = "nextKeyCode"

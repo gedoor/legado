@@ -96,7 +96,9 @@ class ReadAloudConfigDialog : DialogFragment() {
                     ReadAloud.stop(requireContext())
                     ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
                 }
-                PreferKey.ttsSpeechPer -> ReadAloud.upTtsSpeechRate(requireContext())
+                PreferKey.ttsSpeechPer -> {
+                    ReadAloud.upTtsSpeechRate(requireContext())
+                }
             }
         }
 
