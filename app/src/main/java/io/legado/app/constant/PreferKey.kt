@@ -1,12 +1,17 @@
 package io.legado.app.constant
 
 object PreferKey {
-
+    const val versionCode = "versionCode"
+    const val themeMode = "themeMode"
     const val downloadPath = "downloadPath"
     const val hideStatusBar = "hideStatusBar"
     const val clickAllNext = "clickAllNext"
     const val hideNavigationBar = "hideNavigationBar"
     const val precisionSearch = "precisionSearch"
+    const val readAloudOnLine = "readAloudOnLine"
+    const val readAloudByPage = "readAloudByPage"
+    const val ttsSpeechRate = "ttsSpeechRate"
+    const val ttsSpeechPer = "ttsSpeechPer"
     const val prevKey = "prevKeyCode"
     const val nextKey = "nextKeyCode"
     const val showRss = "showRss"
@@ -21,5 +26,8 @@ object PreferKey {
     const val backupPath = "backupUri"
     const val threadCount = "threadCount"
     const val keepLight = "keep_light"
-    const val autoDarkMode = "autoDarkMode"
+    const val webService = "webService"
+    const val webDavUrl = "web_dav_url"
+    const val webDavAccount = "web_dav_account"
+    const val webDavPassword = "web_dav_password"
 }

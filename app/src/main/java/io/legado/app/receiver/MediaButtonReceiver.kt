@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
 import io.legado.app.App
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ActivityHelp
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -51,9 +51,9 @@ class MediaButtonReceiver : BroadcastReceiver() {
         private fun readAloud(context: Context) {
             when {
                 ActivityHelp.isExist(AudioPlayActivity::class.java) ->
-                    postEvent(Bus.MEDIA_BUTTON, true)
+                    postEvent(EventBus.MEDIA_BUTTON, true)
                 ActivityHelp.isExist(ReadBookActivity::class.java) ->
-                    postEvent(Bus.MEDIA_BUTTON, true)
+                    postEvent(EventBus.MEDIA_BUTTON, true)
                 else -> {
                     GlobalScope.launch(Main) {
                         val lastBook: Book? = withContext(IO) {

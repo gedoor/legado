@@ -13,13 +13,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.core.view.size
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
@@ -67,6 +69,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
     private val requestCodeReplace = 312
+    private var menu: Menu? = null
 
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
@@ -85,7 +88,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         initView()
         upScreenTimeOut()
         ReadBook.callBack = this
-        ReadBook.titleDate.observe(this, Observer { title_bar.title = it })
+        ReadBook.titleDate.observe(this, Observer {
+            title_bar.title = it
+            upMenu()
+        })
         viewModel.initData(intent)
     }
 
@@ -144,6 +150,33 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.read_book, menu)
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        this.menu = menu
+        upMenu()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun upMenu() {
+        menu?.let { menu ->
+            ReadBook.book?.let { book ->
+                val onLine = !book.isLocalBook()
+                for (i in 0 until menu.size) {
+                    val item = menu[i]
+                    when (item.groupId) {
+                        R.id.menu_group_on_line -> item.isVisible = onLine
+                        R.id.menu_group_local -> item.isVisible = !onLine
+                        R.id.menu_group_text -> item.isVisible = book.isTxt()
+                        R.id.menu_group_login ->
+                            item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
+                        else -> if (item.itemId == R.id.menu_enable_replace) {
+                            item.isChecked = book.useReplaceRule
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -208,7 +241,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                                     ReadBook.durChapterIndex,
                                     ReadBook.durPageIndex,
                                     textChapter!!.title,
-                                    editContent)
+                                    editContent
+                                )
                                 App.db.bookmarkDao().insert(bookmark)
                             }
                         }
@@ -218,6 +252,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             R.id.menu_copy_text -> {
 
+            }
+            R.id.menu_update_toc -> ReadBook.book?.let {
+                viewModel.loadChapterList(it)
+            }
+            R.id.menu_enable_replace -> ReadBook.book?.let {
+                it.useReplaceRule = !it.useReplaceRule
+                menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.useReplaceRule
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -375,7 +416,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         seek_read_page.progress = ReadBook.durPageIndex
     }
 
-    override fun showMenu() {
+    override fun showMenuBar() {
         read_menu.runMenuIn()
     }
 
@@ -457,12 +498,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         when (dialogId) {
             TEXT_COLOR -> {
                 setTextColor(color)
-                postEvent(Bus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, false)
             }
             BG_COLOR -> {
                 setBg(0, "#${color.hexString}")
                 ReadBookConfig.upBg()
-                postEvent(Bus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, false)
             }
         }
     }
@@ -509,7 +550,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<Int>(Bus.ALOUD_STATE) {
+        observeEvent<Int>(EventBus.ALOUD_STATE) {
             if (it == Status.STOP || it == Status.PAUSE) {
                 ReadBook.curTextChapter?.let { textChapter ->
                     val page = textChapter.page(ReadBook.durPageIndex)
@@ -520,20 +561,20 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
         }
-        observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
-        observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
-        observeEvent<BookChapter>(Bus.OPEN_CHAPTER) {
+        observeEvent<String>(EventBus.TIME_CHANGED) { page_view.upTime() }
+        observeEvent<Int>(EventBus.BATTERY_CHANGED) { page_view.upBattery(it) }
+        observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
             viewModel.openChapter(it.index, ReadBook.durPageIndex)
             page_view.upContent()
         }
-        observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
+        observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
                 onClickReadAloud()
             } else {
                 ReadBook.readAloud(!BaseReadAloudService.pause)
             }
         }
-        observeEvent<Boolean>(Bus.UP_CONFIG) {
+        observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
             content_view.upStyle()
             page_view.upBg()
@@ -544,7 +585,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 page_view.upContent()
             }
         }
-        observeEventSticky<Int>(Bus.TTS_START) { chapterStart ->
+        observeEventSticky<Int>(EventBus.TTS_START) { chapterStart ->
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let {
@@ -557,7 +598,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
         }
-        observeEvent<String>(Bus.REPLACE) {
+        observeEvent<String>(EventBus.REPLACE) {
             ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
         }
         observeEvent<Boolean>(PreferKey.keepLight) {

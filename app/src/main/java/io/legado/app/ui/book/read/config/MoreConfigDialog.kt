@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.read.Help
@@ -29,8 +29,8 @@ class MoreConfigDialog : DialogFragment() {
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
-            it.decorView.setPadding(0, 0, 0, 0)
+            it.setBackgroundDrawableResource(R.color.background)
+            it.decorView.setPadding(0, 5, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
@@ -92,9 +92,8 @@ class MoreConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                PreferKey.hideStatusBar -> postEvent(Bus.UP_CONFIG, true)
-                PreferKey.hideNavigationBar -> postEvent(Bus.UP_CONFIG, true)
-                PreferKey.clickAllNext -> postEvent(Bus.UP_CONFIG, true)
+                PreferKey.hideStatusBar -> postEvent(EventBus.UP_CONFIG, true)
+                PreferKey.hideNavigationBar -> postEvent(EventBus.UP_CONFIG, true)
                 PreferKey.keepLight -> postEvent(PreferKey.keepLight, true)
             }
         }

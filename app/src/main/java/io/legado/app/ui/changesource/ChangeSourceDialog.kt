@@ -40,7 +40,7 @@ class ChangeSourceDialog : DialogFragment(),
 
     private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeSourceViewModel
-    private lateinit var changeSourceAdapter: ChangeSourceAdapter
+    override lateinit var changeSourceAdapter: ChangeSourceAdapter
 
     override fun onStart() {
         super.onStart()
@@ -54,13 +54,14 @@ class ChangeSourceDialog : DialogFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        callBack = activity as? CallBack
         viewModel = getViewModel(ChangeSourceViewModel::class.java)
+        viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        callBack = activity as? CallBack
         viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
         })
@@ -92,7 +93,6 @@ class ChangeSourceDialog : DialogFragment(),
             DividerItemDecoration(requireContext(), LinearLayout.VERTICAL)
         )
         recycler_view.adapter = changeSourceAdapter
-        viewModel.callBack = this
     }
 
     private fun initSearchView() {
@@ -138,10 +138,6 @@ class ChangeSourceDialog : DialogFragment(),
 
     override val bookUrl: String?
         get() = callBack?.oldBook?.bookUrl
-
-    override fun adapter(): ChangeSourceAdapter {
-        return changeSourceAdapter
-    }
 
     interface CallBack {
         val oldBook: Book?

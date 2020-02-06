@@ -36,6 +36,7 @@ object Backup {
             "bookGroup.json",
             "bookSource.json",
             "rssSource.json",
+            "rssStar.json",
             "replaceRule.json",
             ReadBookConfig.readConfigFileName,
             "config.xml"
@@ -44,41 +45,12 @@ object Backup {
 
     suspend fun backup(context: Context, uri: Uri?) {
         withContext(IO) {
-            App.db.bookDao().allBooks.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + "bookshelf.json")
-                        .writeText(json)
-                }
-            }
-            App.db.bookGroupDao().all().let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + "bookGroup.json")
-                        .writeText(json)
-                }
-            }
-            App.db.bookSourceDao().all.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + "bookSource.json")
-                        .writeText(json)
-                }
-            }
-            App.db.rssSourceDao().all.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + "rssSource.json")
-                        .writeText(json)
-                }
-            }
-            App.db.replaceRuleDao().all.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + "replaceRule.json")
-                        .writeText(json)
-                }
-            }
+            writeListToJson(App.db.bookDao().all, "bookshelf.json", backupPath)
+            writeListToJson(App.db.bookGroupDao().all, "bookGroup.json", backupPath)
+            writeListToJson(App.db.bookSourceDao().all, "bookSource.json", backupPath)
+            writeListToJson(App.db.rssSourceDao().all, "rssSource.json", backupPath)
+            writeListToJson(App.db.rssStarDao().all, "rssStar.json", backupPath)
+            writeListToJson(App.db.replaceRuleDao().all, "replaceRule.json", backupPath)
             GSON.toJson(ReadBookConfig.configList)?.let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.readConfigFileName)
                     .writeText(it)
@@ -103,6 +75,13 @@ object Backup {
             } else {
                 copyBackup()
             }
+        }
+    }
+
+    private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
+        if (list.isNotEmpty()) {
+            val json = GSON.toJson(list)
+            FileUtils.createFileIfNotExist(path + File.separator + fileName).writeText(json)
         }
     }
 

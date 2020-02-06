@@ -43,56 +43,54 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun enableSelection(ids: LinkedHashSet<String>) {
+    fun enableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().enableSection(it)
+            sources.forEach {
+                it.enabled = true
             }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
-    fun disableSelection(ids: LinkedHashSet<String>) {
+    fun disableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().disableSection(it)
+            sources.forEach {
+                it.enabled = false
             }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
-    fun enableSelectExplore(ids: LinkedHashSet<String>) {
+    fun enableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().enableSectionExplore(it)
+            sources.forEach {
+                it.enabledExplore = true
             }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
-    fun disableSelectExplore(ids: LinkedHashSet<String>) {
+    fun disableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().disableSectionExplore(it)
+            sources.forEach {
+                it.enabledExplore = false
             }
+            App.db.bookSourceDao().update(*sources.toTypedArray())
         }
     }
 
-    fun delSelection(ids: LinkedHashSet<String>) {
+    fun delSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().delSection(it)
-            }
+            App.db.bookSourceDao().delete(*sources.toTypedArray())
         }
     }
 
-    fun exportSelection(ids: LinkedHashSet<String>) {
+    fun exportSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.map {
-                App.db.bookSourceDao().getBookSource(it)
-            }.let {
-                val json = GSON.toJson(it)
-                val file =
-                    FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportBookSource.json")
-                file.writeText(json)
-            }
+            val json = GSON.toJson(sources)
+            val file =
+                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportBookSource.json")
+            file.writeText(json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {

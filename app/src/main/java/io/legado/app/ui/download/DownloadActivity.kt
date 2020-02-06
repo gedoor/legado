@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.service.help.Download
 import io.legado.app.utils.applyTint
@@ -67,7 +67,7 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
     }
 
     override fun observeLiveBus() {
-        observeEvent<Boolean>(Bus.UP_DOWNLOAD) {
+        observeEvent<Boolean>(EventBus.UP_DOWNLOAD) {
             if (it) {
                 menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_stop_black_24dp)
                 menu?.applyTint(this)

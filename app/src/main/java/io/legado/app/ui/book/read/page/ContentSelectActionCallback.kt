@@ -6,7 +6,7 @@ import android.view.MenuItem
 import android.widget.TextView
 
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.utils.postEvent
 
 class ContentSelectActionCallback(private val textView: TextView) : ActionMode.Callback {
@@ -15,7 +15,7 @@ class ContentSelectActionCallback(private val textView: TextView) : ActionMode.C
         when (item?.itemId) {
             R.id.menu_replace -> {
                 val text = textView.text.substring(textView.selectionStart, textView.selectionEnd)
-                postEvent(Bus.REPLACE, text)
+                postEvent(EventBus.REPLACE, text)
                 mode?.finish()
                 return true
             }

@@ -9,7 +9,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
@@ -104,7 +104,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                         .setTitle("切换默认主题")
                         .setItems(items){
                                 _,which ->
-                            preference.summary = "${items[which]}"
+                            preference.summary = items[which]
                             putPrefInt("default_theme", which)
                             when (which) {
                                 0 -> {
@@ -180,7 +180,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     }
 
     private fun recreateActivities() {
-        postEvent(Bus.RECREATE, "")
+        postEvent(EventBus.RECREATE, "")
         Handler().postDelayed({ activity?.recreate() }, 100L)
     }
 

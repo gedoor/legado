@@ -21,9 +21,11 @@ import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.ui.audio.AudioPlayActivity
+import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.changecover.ChangeCoverDialog
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.getViewModel
@@ -40,7 +42,8 @@ class BookInfoActivity :
     VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, theme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
-    ChangeSourceDialog.CallBack {
+    ChangeSourceDialog.CallBack,
+    ChangeCoverDialog.CallBack {
 
     private val requestCodeChapterList = 568
     private val requestCodeSourceEdit = 562
@@ -104,29 +107,14 @@ class BookInfoActivity :
         return super.onMenuOpened(featureId, menu)
     }
 
-    private fun defaultCover(): RequestBuilder<Drawable> {
-        return ImageLoader.load(this, R.drawable.image_cover_default)
-            .apply(bitmapTransform(BlurTransformation(this, 25)))
-    }
-
     private fun showBook(book: Book) {
+        showCover(book)
         tv_name.text = book.name
         tv_author.text = getString(R.string.author_show, book.author)
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tv_toc.text = getString(R.string.toc_s, book.latestChapterTitle)
         tv_intro.text = book.getDisplayIntro()
-        book.getDisplayCover()?.let {
-            ImageLoader.load(this, it)
-                .centerCrop()
-                .into(iv_cover)
-            ImageLoader.load(this, it)
-                .transition(DrawableTransitionOptions.withCrossFade(1500))
-                .thumbnail(defaultCover())
-                .centerCrop()
-                .apply(bitmapTransform(BlurTransformation(this, 25)))
-                .into(bg_book)  //模糊、渐变、缩小效果
-        }
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {
             ll_kind.gone()
@@ -159,6 +147,21 @@ class BookInfoActivity :
         }
     }
 
+    private fun showCover(book: Book) {
+        iv_cover.load(book.getDisplayCover(), book.name, book.author)
+        ImageLoader.load(this, book.getDisplayCover())
+            .transition(DrawableTransitionOptions.withCrossFade(1500))
+            .thumbnail(defaultCover())
+            .centerCrop()
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
+            .into(bg_book)  //模糊、渐变、缩小效果
+    }
+
+    private fun defaultCover(): RequestBuilder<Drawable> {
+        return ImageLoader.load(this, R.drawable.image_cover_default)
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
+    }
+
     private fun showChapter(chapterList: List<BookChapter>) {
         viewModel.bookData.value?.let {
             if (it.durChapterIndex < chapterList.size) {
@@ -184,6 +187,11 @@ class BookInfoActivity :
     }
 
     private fun initOnClick() {
+        iv_cover.onClick {
+            viewModel.bookData.value?.let {
+                ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
+            }
+        }
         tv_read.onClick {
             viewModel.bookData.value?.let {
                 readBook(it)
@@ -274,6 +282,14 @@ class BookInfoActivity :
     override fun changeTo(book: Book) {
         upLoading(true)
         viewModel.changeTo(book)
+    }
+
+    override fun coverChangeTo(coverUrl: String) {
+        viewModel.bookData.value?.let {
+            it.coverUrl = coverUrl
+            viewModel.saveBook()
+            showCover(it)
+        }
     }
 
     override fun openChapter(chapter: BookChapter) {

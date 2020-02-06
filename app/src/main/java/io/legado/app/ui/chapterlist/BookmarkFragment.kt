@@ -74,8 +74,6 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     }
 
     override fun delBookmark(bookmark: Bookmark) {
-        bookmark?.let {
-            App.db.bookmarkDao().delByBookmark(it.bookUrl, it.chapterName)
-        }
+        App.db.bookmarkDao().delByBookmark(bookmark.bookUrl, bookmark.chapterName)
     }
 }

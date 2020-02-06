@@ -39,6 +39,7 @@ object ReadBook {
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
+        webBook = null
         App.db.bookSourceDao().getBookSource(book.origin)?.let {
             webBook = WebBook(it)
         }
@@ -197,6 +198,7 @@ object ReadBook {
 
     private fun download(index: Int) {
         book?.let { book ->
+            if (book.isLocalBook()) return
             if (addLoading(index)) {
                 Coroutine.async {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->

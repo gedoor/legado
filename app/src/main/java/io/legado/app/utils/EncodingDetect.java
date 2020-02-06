@@ -62,10 +62,10 @@ public class EncodingDetect {
             }
         } catch (Exception ignored) {
         }
-        return getJavaEncode(bytes);
+        return getEncode(bytes);
     }
 
-    public static String getJavaEncode(@NonNull byte[] bytes) {
+    public static String getEncode(@NonNull byte[] bytes) {
         int len = bytes.length > 2000 ? 2000 : bytes.length;
         byte[] cBytes = new byte[len];
         System.arraycopy(bytes, 0, cBytes, 0, len);
@@ -83,7 +83,7 @@ public class EncodingDetect {
     /**
      * 得到文件的编码
      */
-    public static String getJavaEncode(@NonNull String filePath) {
+    public static String getEncode(@NonNull String filePath) {
         BytesEncodingDetect s = new BytesEncodingDetect();
         String fileCode = BytesEncodingDetect.javaname[s
                 .detectEncoding(new File(filePath))];
@@ -102,7 +102,7 @@ public class EncodingDetect {
     /**
      * 得到文件的编码
      */
-    public static String getJavaEncode(@NonNull File file) {
+    public static String getEncode(@NonNull File file) {
         BytesEncodingDetect s = new BytesEncodingDetect();
         String fileCode = BytesEncodingDetect.javaname[s.detectEncoding(file)];
         // UTF-16LE 特殊处理

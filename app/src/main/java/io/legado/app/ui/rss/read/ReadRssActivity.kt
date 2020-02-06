@@ -40,15 +40,19 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_read, menu)
-        starMenuItem = menu.findItem(R.id.menu_rss_star)
-        ttsMenuItem = menu.findItem(R.id.menu_aloud)
-        upStarMenu()
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        starMenuItem = menu?.findItem(R.id.menu_rss_star)
+        ttsMenuItem = menu?.findItem(R.id.menu_aloud)
+        upStarMenu()
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_rss_star -> viewModel.star()
+            R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 shareText("链接分享", it.link)
             }
@@ -73,9 +77,15 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
                 val html = viewModel.clHtml(content)
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
+                    webView.loadDataWithBaseURL(
+                        url,
+                        html,
+                        "text/html",
+                        "utf-8",
+                        url
+                    )//不想用baseUrl进else
                 } else {
-                    webView.loadData(html, "text/html", "utf-8")
+                    webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
                 }
             }
         })
@@ -95,10 +105,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     override fun upStarMenu() {
         if (viewModel.star) {
             starMenuItem?.setIcon(R.drawable.ic_star)
-            starMenuItem?.setTitle(R.string.y_store_up)
+            starMenuItem?.setTitle(R.string.in_favorites)
         } else {
             starMenuItem?.setIcon(R.drawable.ic_star_border)
-            starMenuItem?.setTitle(R.string.w_store_up)
+            starMenuItem?.setTitle(R.string.out_favorites)
         }
         DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
     }
@@ -149,7 +159,11 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             webView.settings.javaScriptEnabled = true
             webView.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
-                viewModel.readAloud(Jsoup.clean(html, Whitelist.none()))
+                val text = Jsoup.clean(html, Whitelist.none())
+                    .replace(Regex("""&\w+;"""), "")
+                    .trim()//朗读过程中总是听到一些杂音，清理一下
+                //longToast(需读内容)调试一下
+                viewModel.readAloud(text)
             }
         }
     }

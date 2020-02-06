@@ -2,17 +2,19 @@ package io.legado.app.help.storage
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
-import io.legado.app.constant.AppConst
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.utils.*
+import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
@@ -49,51 +51,23 @@ object Restore {
 
     suspend fun restore(path: String) {
         withContext(IO) {
-            try {
-                val file = FileUtils.createFileIfNotExist(path + File.separator + "bookshelf.json")
-                val json = file.readText()
-                GSON.fromJsonArray<Book>(json)?.let {
-                    App.db.bookDao().insert(*it.toTypedArray())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            fileToListT<Book>(path, "bookshelf.json")?.let {
+                App.db.bookDao().insert(*it.toTypedArray())
             }
-            try {
-                val file = FileUtils.createFileIfNotExist(path + File.separator + "bookGroup.json")
-                val json = file.readText()
-                GSON.fromJsonArray<BookGroup>(json)?.let {
-                    App.db.bookGroupDao().insert(*it.toTypedArray())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            fileToListT<BookGroup>(path, "bookGroup.json")?.let {
+                App.db.bookGroupDao().insert(*it.toTypedArray())
             }
-            try {
-                val file = FileUtils.createFileIfNotExist(path + File.separator + "bookSource.json")
-                val json = file.readText()
-                GSON.fromJsonArray<BookSource>(json)?.let {
-                    App.db.bookSourceDao().insert(*it.toTypedArray())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            fileToListT<BookSource>(path, "bookSource.json")?.let {
+                App.db.bookSourceDao().insert(*it.toTypedArray())
             }
-            try {
-                val file = FileUtils.createFileIfNotExist(path + File.separator + "rssSource.json")
-                val json = file.readText()
-                GSON.fromJsonArray<RssSource>(json)?.let {
-                    App.db.rssSourceDao().insert(*it.toTypedArray())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            fileToListT<RssSource>(path, "rssSource.json")?.let {
+                App.db.rssSourceDao().insert(*it.toTypedArray())
             }
-            try {
-                val file =
-                    FileUtils.createFileIfNotExist(path + File.separator + "replaceRule.json")
-                val json = file.readText()
-                GSON.fromJsonArray<ReplaceRule>(json)?.let {
-                    App.db.replaceRuleDao().insert(*it.toTypedArray())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            fileToListT<RssStar>(path, "rssStar.json")?.let {
+                App.db.rssStarDao().insert(*it.toTypedArray())
+            }
+            fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
+                App.db.replaceRuleDao().insert(*it.toTypedArray())
             }
             try {
                 val file =
@@ -117,9 +91,21 @@ object Restore {
                     is String -> edit.putString(it.key, value)
                     else -> Unit
                 }
+                edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
                 edit.commit()
             }
         }
+    }
+
+    private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
+        try {
+            val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
+            val json = file.readText()
+            return GSON.fromJsonArray(json)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     fun importYueDuData(context: Context) {
@@ -169,43 +155,7 @@ object Restore {
     }
 
     fun importOldBookshelf(json: String): Int {
-        val books = mutableListOf<Book>()
-        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-        val existingBooks = App.db.bookDao().allBookUrls.toSet()
-        for (item in items) {
-            val jsonItem = jsonPath.parse(item)
-            val book = Book()
-            book.bookUrl = jsonItem.readString("$.noteUrl") ?: ""
-            if (book.bookUrl.isBlank()) continue
-            book.name = jsonItem.readString("$.bookInfoBean.name") ?: ""
-            if (book.bookUrl in existingBooks) {
-                Log.d(AppConst.APP_TAG, "Found existing book: ${book.name}")
-                continue
-            }
-            book.origin = jsonItem.readString("$.tag") ?: ""
-            book.originName = jsonItem.readString("$.bookInfoBean.origin") ?: ""
-            book.author = jsonItem.readString("$.bookInfoBean.author") ?: ""
-            book.type =
-                if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
-            book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl
-            book.coverUrl = jsonItem.readString("$.bookInfoBean.coverUrl")
-            book.customCoverUrl = jsonItem.readString("$.customCoverPath")
-            book.lastCheckTime = jsonItem.readLong("$.bookInfoBean.finalRefreshData") ?: 0
-            book.canUpdate = jsonItem.readBool("$.allowUpdate") == true
-            book.totalChapterNum = jsonItem.readInt("$.chapterListSize") ?: 0
-            book.durChapterIndex = jsonItem.readInt("$.durChapter") ?: 0
-            book.durChapterTitle = jsonItem.readString("$.durChapterName")
-            book.durChapterPos = jsonItem.readInt("$.durChapterPage") ?: 0
-            book.durChapterTime = jsonItem.readLong("$.finalDate") ?: 0
-            book.group = jsonItem.readInt("$.group") ?: 0
-            book.intro = jsonItem.readString("$.bookInfoBean.introduce")
-            book.latestChapterTitle = jsonItem.readString("$.lastChapterName")
-            book.lastCheckCount = jsonItem.readInt("$.newChapters") ?: 0
-            book.order = jsonItem.readInt("$.serialNumber") ?: 0
-            book.useReplaceRule = jsonItem.readBool("$.useReplaceRule") == true
-            book.variable = jsonItem.readString("$.variable")
-            books.add(book)
-        }
+        val books = OldBook.toNewBook(json)
         App.db.bookDao().insert(*books.toTypedArray())
         return books.size
     }

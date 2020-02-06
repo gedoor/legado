@@ -33,9 +33,10 @@
     <string name="enable">启用</string>
     <string name="replace_purify_search">替换净化-搜索</string>
     <string name="bookshelf">书架</string>
-    <string name="store_up">收藏</string>
-    <string name="y_store_up">已收藏</string>
-    <string name="w_store_up">未收藏</string>
+    <string name="favorites">收藏夹</string>
+    <string name="favorite">收藏</string>
+    <string name="in_favorites">已收藏</string>
+    <string name="out_favorites">未收藏</string>
     <string name="rss">订阅</string>
     <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
@@ -251,6 +252,7 @@
     <string name="text_bg_style">文字颜色和背景(长按自定义)</string>
     <string name="immersion_status_bar">沉浸式状态栏</string>
     <string name="un_download">还剩%d章未下载</string>
+    <string name="non_select">没有选择</string>
     <string name="long_click_input_color">长按输入颜色值</string>
     <string name="loading">加载中…</string>
     <string name="group_zg">追更区</string>
@@ -329,7 +331,7 @@
     <string name="faq">常见问题</string>
     <string name="pt_show_all_find">显示所有发现</string>
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
-    <string name="update_chapter">更新目录</string>
+    <string name="update_toc">更新目录</string>
     <string name="txt_chapter_regex">txt目录正则</string>
     <string name="set_charset">设置编码</string>
     <string name="swap_sort">倒序-顺序</string>
@@ -455,6 +457,8 @@
     <string name="network_connection_unavailable">网络连接不可用</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="sure">确认</string>
+    <string name="sure_del">是否确认删除？</string>
     <string name="sure_del_all_book">是否删除全部书籍？</string>
     <string name="sure_del_download_book">是否同时删除已下载的书籍目录？</string>
     <string name="qr_per">扫描二维码需相机权限</string>
@@ -539,6 +543,7 @@
     <string name="group_manage">分组管理</string>
     <string name="group_select">分组选择</string>
     <string name="group_edit">编辑分组</string>
+    <string name="move_to_group">移入分组</string>
     <string name="add_group">添加分组</string>
     <string name="add_replace_rule">新建替换</string>
     <string name="group">分组</string>
@@ -587,5 +592,7 @@
     <string name="auto_dark_mode">自动切换夜间模式</string>
     <string name="auto_dark_mode_s">夜间模式跟随系统</string>
     <string name="go_back">上级</string>
+    <string name="tone_colour">在线朗读音色</string>
+    <string name="select_count">(%d/%d)</string>
 
 </resources>

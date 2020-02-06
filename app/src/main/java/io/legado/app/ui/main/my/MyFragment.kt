@@ -11,11 +11,10 @@ import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
@@ -24,6 +23,7 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.prefs.ATESwitchPreference
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
@@ -100,7 +100,9 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
     fun restore() {
         launch {
-            if (!WebDavHelp.showRestoreDialog(requireContext())) {
+            if (!WebDavHelp.showRestoreDialog(requireContext()) {
+                    toast(R.string.restore_success)
+                }) {
                 val backupPath = getPrefString(PreferKey.backupPath)
                 if (backupPath?.isNotEmpty() == true) {
                     val uri = Uri.parse(backupPath)
@@ -174,15 +176,14 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             if (WebService.isRun) {
-                putPrefBoolean("webService", true)
+                putPrefBoolean(PreferKey.webService, true)
             } else {
-                putPrefBoolean("webService", false)
+                putPrefBoolean(PreferKey.webService, false)
             }
             addPreferencesFromResource(R.xml.pref_main)
-            observeEvent<Boolean>(Bus.WEB_SERVICE_STOP) {
-                findPreference<SwitchPreference>("webService")?.let {
-                    it.isChecked = false
-                }
+            val webServicePre = findPreference<ATESwitchPreference>(PreferKey.webService)
+            observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
+                webServicePre?.isChecked = false
             }
         }
 
@@ -203,8 +204,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             when (key) {
-                "themeMode" -> App.INSTANCE.applyDayNight()
-                "webService" -> {
+                PreferKey.themeMode -> App.INSTANCE.applyDayNight()
+                PreferKey.webService -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())
                         toast("正在启动服务\n具体信息查看通知栏")
@@ -213,8 +214,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                         toast("服务已停止")
                     }
                 }
+                PreferKey.downloadPath -> BookHelp.upDownloadPath()
                 "recordLog" -> LogUtils.upLevel()
-                "downloadPath" -> BookHelp.upDownloadPath()
             }
         }
 

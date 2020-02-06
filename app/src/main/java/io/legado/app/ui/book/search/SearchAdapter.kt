@@ -67,13 +67,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            searchBook.coverUrl.let {
-                ImageLoader.load(context, it)//Glide自动识别http://和file://
-                    .placeholder(R.drawable.image_cover_default)
-                    .error(R.drawable.image_cover_default)
-                    .centerCrop()
-                    .into(iv_cover)
-            }
+            iv_cover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
             onClick {
                 callBack.showBookInfo(searchBook.name, searchBook.author)
             }

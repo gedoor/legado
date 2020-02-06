@@ -6,9 +6,9 @@ import androidx.core.app.NotificationCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.Action
+import io.legado.app.constant.IntentAction
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
@@ -34,7 +34,7 @@ class DownloadService : BaseService() {
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<DownloadService>(this, Action.stop)
+            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.stop)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
     }
@@ -48,12 +48,12 @@ class DownloadService : BaseService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
-                Action.start -> download(
+                IntentAction.start -> download(
                     intent.getStringExtra("bookUrl"),
                     intent.getIntExtra("start", 0),
                     intent.getIntExtra("end", 0)
                 )
-                Action.stop -> stopDownload()
+                IntentAction.stop -> stopDownload()
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -64,7 +64,7 @@ class DownloadService : BaseService() {
         searchPool.close()
         handler.removeCallbacks(runnable)
         super.onDestroy()
-        postEvent(Bus.UP_DOWNLOAD, false)
+        postEvent(EventBus.UP_DOWNLOAD, false)
     }
 
     private fun download(bookUrl: String?, start: Int, end: Int) {
@@ -105,7 +105,7 @@ class DownloadService : BaseService() {
 
     private fun upDownload() {
         updateNotification(notificationContent)
-        postEvent(Bus.UP_DOWNLOAD, true)
+        postEvent(EventBus.UP_DOWNLOAD, true)
         handler.removeCallbacks(runnable)
         handler.postDelayed(runnable, 1000)
     }

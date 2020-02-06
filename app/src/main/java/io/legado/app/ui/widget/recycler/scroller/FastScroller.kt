@@ -482,18 +482,17 @@ class FastScroller : LinearLayout {
         var showTrack = true
         if (attrs != null) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.FastScroller, 0, 0)
-            if (typedArray != null) {
-                try {
-                    bubbleColor = typedArray.getColor(R.styleable.FastScroller_bubbleColor, bubbleColor)
-                    handleColor = typedArray.getColor(R.styleable.FastScroller_handleColor, handleColor)
-                    trackColor = typedArray.getColor(R.styleable.FastScroller_trackColor, trackColor)
-                    textColor = typedArray.getColor(R.styleable.FastScroller_bubbleTextColor, textColor)
-                    fadeScrollbar = typedArray.getBoolean(R.styleable.FastScroller_fadeScrollbar, fadeScrollbar)
-                    showBubble = typedArray.getBoolean(R.styleable.FastScroller_showBubble, showBubble)
-                    showTrack = typedArray.getBoolean(R.styleable.FastScroller_showTrack, showTrack)
-                } finally {
-                    typedArray.recycle()
-                }
+            try {
+                bubbleColor = typedArray.getColor(R.styleable.FastScroller_bubbleColor, bubbleColor)
+                handleColor = typedArray.getColor(R.styleable.FastScroller_handleColor, handleColor)
+                trackColor = typedArray.getColor(R.styleable.FastScroller_trackColor, trackColor)
+                textColor = typedArray.getColor(R.styleable.FastScroller_bubbleTextColor, textColor)
+                fadeScrollbar =
+                    typedArray.getBoolean(R.styleable.FastScroller_fadeScrollbar, fadeScrollbar)
+                showBubble = typedArray.getBoolean(R.styleable.FastScroller_showBubble, showBubble)
+                showTrack = typedArray.getBoolean(R.styleable.FastScroller_showTrack, showTrack)
+            } finally {
+                typedArray.recycle()
             }
         }
         setTrackColor(trackColor)

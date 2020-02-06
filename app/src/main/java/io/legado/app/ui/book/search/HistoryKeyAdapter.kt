@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.search
 
-import android.content.Context
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -15,8 +14,10 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 
-class HistoryKeyAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchKeyword>(context, R.layout.item_text) {
+class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
+    SimpleRecyclerAdapter<SearchKeyword>(activity, R.layout.item_text) {
+
+    private val explosionField = ExplosionField.attach2Window(activity)
 
     override fun convert(holder: ItemViewHolder, item: SearchKeyword, payloads: MutableList<Any>) {
         with(holder.itemView) {
@@ -26,7 +27,7 @@ class HistoryKeyAdapter(context: Context, val callBack: CallBack) :
             }
             onLongClick {
                 it?.let {
-                    ExplosionField(context).explode(it, true)
+                    explosionField.explode(it, true)
                 }
                 GlobalScope.launch(IO) {
                     App.db.searchKeywordDao().delete(item)

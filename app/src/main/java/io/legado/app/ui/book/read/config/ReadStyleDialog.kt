@@ -10,7 +10,7 @@ import android.widget.SeekBar
 import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
@@ -37,8 +37,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
-            it.decorView.setPadding(0, 0, 0, 0)
+            it.setBackgroundDrawableResource(R.color.background)
+            it.decorView.setPadding(0, 5, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
@@ -83,7 +83,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 textBold = !textBold
                 tv_text_bold.isSelected = textBold
             }
-            postEvent(Bus.UP_CONFIG, false)
+            postEvent(EventBus.UP_CONFIG, false)
         }
         tv_text_font.onClick {
             FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
@@ -94,7 +94,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
                 putPrefInt("textIndent", index)
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         }
         tv_padding.onClick {
@@ -112,16 +112,16 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         })
         iv_text_size_add.onClick {
             seek_text_size.progressAdd(1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_text_size_remove.onClick {
             seek_text_size.progressAdd(-1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         seek_text_letter_spacing.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
@@ -134,16 +134,16 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         })
         iv_text_letter_spacing_add.onClick {
             seek_text_letter_spacing.progressAdd(1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_text_letter_spacing_remove.onClick {
             seek_text_letter_spacing.progressAdd(-1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         seek_line_size.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
@@ -156,16 +156,16 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(Bus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, true)
             }
         })
         iv_line_size_add.onClick {
             seek_line_size.progressAdd(1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         iv_line_size_remove.onClick {
             seek_line_size.progressAdd(-1)
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
             for (i in 0 until rg_page_anim.childCount) {
@@ -197,7 +197,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             ReadBookConfig.upBg()
             upStyle()
             upBg()
-            postEvent(Bus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, true)
         }
     }
 
@@ -266,6 +266,6 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     override fun selectFile(path: String) {
         requireContext().putPrefString(PreferKey.readBookFont, path)
-        postEvent(Bus.UP_CONFIG, true)
+        postEvent(EventBus.UP_CONFIG, true)
     }
 }

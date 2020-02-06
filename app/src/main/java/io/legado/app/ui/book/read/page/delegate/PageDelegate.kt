@@ -9,10 +9,9 @@ import android.widget.Scroller
 import androidx.annotation.CallSuper
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.screenshot
 import io.legado.app.utils.snackbar
 import kotlin.math.abs
@@ -256,7 +255,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 setTouchPoint(x, y)
             } else {
                 bitmap = if (x > viewWidth / 2 ||
-                    pageView.context.getPrefBoolean(PreferKey.clickAllNext, false)) {
+                    AppConfig.clickAllNext
+                ) {
                     //设置动画方向
                     if (!hasNext()) {
                         return true

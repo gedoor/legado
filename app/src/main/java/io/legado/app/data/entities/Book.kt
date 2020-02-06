@@ -10,6 +10,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import java.nio.charset.Charset
 import kotlin.math.max
 
 @Parcelize
@@ -19,15 +20,15 @@ data class Book(
     var bookUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
     var origin: String = BookType.local,        // 书源URL(默认BookType.local)
-    var originName: String = "",                //书源名称
-    var name: String = "",                   // 书籍名称(书源获取)
-    var author: String = "",                 // 作者名称(书源获取)
-    override var kind: String? = null,                    // 分类信息(书源获取)
+    var originName: String = "",                //书源名称 or 本地书籍文件名
+    var name: String = "",                      // 书籍名称(书源获取)
+    var author: String = "",                    // 作者名称(书源获取)
+    override var kind: String? = null,          // 分类信息(书源获取)
     var customTag: String? = null,              // 分类信息(用户修改)
     var coverUrl: String? = null,               // 封面Url(书源获取)
     var customCoverUrl: String? = null,         // 封面Url(用户修改)
-    var intro: String? = null,            // 简介内容(书源获取)
-    var customIntro: String? = null,      // 简介内容(用户修改)
+    var intro: String? = null,                  // 简介内容(书源获取)
+    var customIntro: String? = null,            // 简介内容(用户修改)
     var charset: String? = null,                // 自定义字符集名称(仅适用于本地书籍)
     var type: Int = 0,                          // @BookType
     var group: Int = 0,                         // 自定义分组索引号
@@ -50,6 +51,10 @@ data class Book(
 
     fun isLocalBook(): Boolean {
         return origin == BookType.local
+    }
+
+    fun isTxt(): Boolean {
+        return isLocalBook() && originName.endsWith(".txt", true)
     }
 
     @Ignore
@@ -79,6 +84,10 @@ data class Book(
     override fun putVariable(key: String, value: String) {
         variableMap?.put(key, value)
         variable = GSON.toJson(variableMap)
+    }
+
+    fun fileCharset(): Charset {
+        return charset(charset ?: "UTF-8")
     }
 
     fun toSearchBook(): SearchBook {

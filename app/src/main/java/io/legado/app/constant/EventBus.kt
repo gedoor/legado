@@ -1,6 +1,6 @@
 package io.legado.app.constant
 
-object Bus {
+object EventBus {
     const val MEDIA_BUTTON = "mediaButton"
     const val RECREATE = "RECREATE"
     const val UP_BOOK = "sourceDebugLog"
