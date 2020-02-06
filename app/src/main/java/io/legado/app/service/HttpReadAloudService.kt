@@ -148,14 +148,21 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
+    /**
+     * 更新朗读速度
+     */
     override fun upSpeechRate(reset: Boolean) {
         job?.cancel()
         mediaPlayer.reset()
         nowSpeak = 0
         playingIndex = -1
+        readAloudNumber = 0
         play()
     }
 
+    /**
+     * 上一段
+     */
     override fun prevP() {
         if (nowSpeak > 0) {
             mediaPlayer.stop()
@@ -165,6 +172,9 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
+    /**
+     * 下一段
+     */
     override fun nextP() {
         if (nowSpeak < contentList.size - 1) {
             mediaPlayer.stop()
