@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activity_arrange_book),
@@ -47,6 +48,9 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
+        cb_selected_all.onClick {
+            adapter.selectAll(cb_selected_all.isChecked)
+        }
     }
 
     private fun initData() {

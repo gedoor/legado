@@ -13,7 +13,21 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book) {
 
-    val selectedBooks: ArrayList<String> = arrayListOf()
+    val selectedBooks: HashSet<String> = hashSetOf()
+
+    fun selectAll(selectAll: Boolean) {
+        if (selectAll) {
+            selectedBooks.clear()
+            notifyDataSetChanged()
+            callBack.upSelectCount()
+        } else {
+            getItems().forEach {
+                selectedBooks.add(it.bookUrl)
+            }
+            notifyDataSetChanged()
+            callBack.upSelectCount()
+        }
+    }
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
