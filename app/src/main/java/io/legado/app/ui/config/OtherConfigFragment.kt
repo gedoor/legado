@@ -27,7 +27,6 @@ import io.legado.app.utils.*
 
 class OtherConfigFragment : PreferenceFragmentCompat(),
     FileChooserDialog.CallBack,
-    Preference.OnPreferenceChangeListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val requestCodeDownloadPath = 25324
@@ -40,8 +39,8 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean("process_text", isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
-        bindPreferenceSummaryToValue(findPreference(PreferKey.downloadPath))
-        bindPreferenceSummaryToValue(findPreference(PreferKey.threadCount))
+        upPreferenceSummary(findPreference(PreferKey.downloadPath), BookHelp.downloadPath)
+        upPreferenceSummary(findPreference(PreferKey.threadCount), AppConfig.threadCount.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,7 +83,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         when (key) {
             PreferKey.downloadPath -> {
                 BookHelp.upDownloadPath()
-                findPreference<Preference>(key)?.summary = getPreferenceString(key).toString()
+                findPreference<Preference>(key)?.summary = BookHelp.downloadPath
             }
             PreferKey.recordLog -> LogUtils.upLevel()
             PreferKey.processText -> sharedPreferences?.let {
@@ -94,38 +93,16 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         }
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        val stringValue = newValue.toString()
-        when {
-            preference is ListPreference -> {
-                val index = preference.findIndexOfValue(stringValue)
+    private fun upPreferenceSummary(preference: Preference?, value: String) {
+        when (preference) {
+            is ListPreference -> {
+                val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.
-                preference.setSummary(if (index >= 0) preference.entries[index] else null)
+                preference.summary = if (index >= 0) preference.entries[index] else null
             }
-            preference?.key == PreferKey.threadCount -> preference.summary =
-                getString(R.string.threads_num, stringValue)
-            else -> preference?.summary = stringValue
-        }
-        return false
-    }
-
-    private fun bindPreferenceSummaryToValue(preference: Preference?) {
-        preference?.let {
-            preference.onPreferenceChangeListener = this
-            onPreferenceChange(
-                preference,
-                getPreferenceString(preference.key)
-            )
-        }
-    }
-
-    private fun getPreferenceString(key: String): Any {
-        return when (key) {
-            PreferKey.downloadPath -> getPrefString(PreferKey.downloadPath)
-                ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
-                ?: App.INSTANCE.cacheDir.absolutePath
-            PreferKey.threadCount -> AppConfig.threadCount
-            else -> getPrefString(key) ?: ""
+            else -> {
+                preference?.summary = value
+            }
         }
     }
 
@@ -166,7 +143,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                     childFragmentManager,
                     requestCodeDownloadPath,
                     mode = FileChooserDialog.DIRECTORY,
-                    initPath = getPreferenceString(PreferKey.downloadPath).toString()
+                    initPath = BookHelp.downloadPath
                 )
             }
             .request()
