@@ -10,14 +10,17 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
 
 
-class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activity_arrange_book) {
+class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activity_arrange_book),
+    ArrangeBookAdapter.CallBack {
     override val viewModel: ArrangeBookViewModel
         get() = getViewModel(ArrangeBookViewModel::class.java)
+    override val groupList: List<BookGroup> = arrayListOf()
     private lateinit var adapter: ArrangeBookAdapter
     private var booksLiveData: LiveData<List<Book>>? = null
 
@@ -41,7 +44,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        adapter = ArrangeBookAdapter(this)
+        adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
     }
 
@@ -52,5 +55,6 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             adapter.setItems(it)
         })
     }
+
 
 }
