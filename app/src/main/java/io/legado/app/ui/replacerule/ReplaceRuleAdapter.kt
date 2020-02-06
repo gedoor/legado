@@ -92,6 +92,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             } else {
                 bundle.keySet().map {
                     when (it) {
+                        "selected" -> cb_name.isChecked = selectedIds.contains(item.id)
                         "name", "group" ->
                             if (item.group.isNullOrEmpty()) {
                                 cb_name.text = item.name
@@ -100,7 +101,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                                     String.format("%s (%s)", item.name, item.group)
                             }
                         "enabled" -> swt_enabled.isChecked = item.isEnabled
-                        "selected" -> cb_name.isChecked = selectedIds.contains(item.id)
                     }
                 }
             }
