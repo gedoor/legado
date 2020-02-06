@@ -27,6 +27,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 } else {
                     selectedBooks.remove(item.bookUrl)
                 }
+                callBack.upSelectCount()
             }
             onClick {
                 checkbox.isChecked = !checkbox.isChecked
@@ -35,6 +36,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 } else {
                     selectedBooks.remove(item.bookUrl)
                 }
+                callBack.upSelectCount()
             }
         }
     }

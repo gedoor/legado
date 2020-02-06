@@ -61,6 +61,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         booksLiveData = App.db.bookDao().observeAll()
         booksLiveData?.observe(this, Observer {
             adapter.setItems(it)
+            upSelectCount()
         })
     }
 
