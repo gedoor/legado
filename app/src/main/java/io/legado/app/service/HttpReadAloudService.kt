@@ -94,11 +94,11 @@ class HttpReadAloudService : BaseReadAloudService(),
     @Synchronized
     private fun playAudio(fd: FileDescriptor) {
         if (playingIndex != nowSpeak && requestFocus()) {
-            playingIndex = nowSpeak
             try {
                 mediaPlayer.reset()
                 mediaPlayer.setDataSource(fd)
                 mediaPlayer.prepareAsync()
+                playingIndex = nowSpeak
                 postEvent(EventBus.TTS_START, readAloudNumber + 1)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -154,9 +154,8 @@ class HttpReadAloudService : BaseReadAloudService(),
      */
     override fun upSpeechRate(reset: Boolean) {
         job?.cancel()
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
-        }
+        mediaPlayer.stop()
+        playingIndex = -1
         downloadAudio()
     }
 
