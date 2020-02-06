@@ -104,7 +104,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                         .setTitle("切换默认主题")
                         .setItems(items){
                                 _,which ->
-                            preference.summary = "${items[which]}"
+                            preference.summary = items[which]
                             putPrefInt("default_theme", which)
                             when (which) {
                                 0 -> {
