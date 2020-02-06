@@ -71,7 +71,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 toast(R.string.non_select)
                 return@onClick
             }
-
+            selectGroup()
         }
     }
 
@@ -89,6 +89,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             adapter.setItems(it)
             upSelectCount()
         })
+    }
+
+    override fun selectGroup() {
+
     }
 
     override fun upSelectCount() {
