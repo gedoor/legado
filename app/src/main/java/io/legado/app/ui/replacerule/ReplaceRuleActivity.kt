@@ -127,7 +127,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             if (dataInit) {
                 setResult(Activity.RESULT_OK)
             }
-            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
+            val diffResult =
+                DiffUtil.calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
             dataInit = true

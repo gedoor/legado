@@ -1,8 +1,10 @@
 package io.legado.app.ui.replacerule
 
 import android.content.Context
+import android.os.Bundle
 import android.view.Menu
 import android.widget.PopupMenu
+import androidx.core.os.bundleOf
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -23,7 +25,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         getItems().forEach {
             selectedIds.add(it.id)
         }
-        notifyItemRangeChanged(0, itemCount, 1)
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
     }
 
     fun revertSelection() {
@@ -34,7 +36,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 selectedIds.add(it.id)
             }
         }
-        notifyItemRangeChanged(0, itemCount, 1)
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
     }
 
     fun getSelectionIds(): LinkedHashSet<Long> {
@@ -49,7 +51,8 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
     override fun convert(holder: ItemViewHolder, item: ReplaceRule, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            if (payloads.isEmpty()) {
+            val bundle = payloads.getOrNull(0) as? Bundle
+            if (bundle == null) {
                 this.setBackgroundColor(context.backgroundColor)
                 if (item.group.isNullOrEmpty()) {
                     cb_name.text = item.name
@@ -87,9 +90,18 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                     popupMenu.show()
                 }
             } else {
-                when (payloads[0]) {
-                    1 -> cb_name.isChecked = selectedIds.contains(item.id)
-                    2 -> swt_enabled.isChecked = item.isEnabled
+                bundle.keySet().map {
+                    when (it) {
+                        "name", "group" ->
+                            if (item.group.isNullOrEmpty()) {
+                                cb_name.text = item.name
+                            } else {
+                                cb_name.text =
+                                    String.format("%s (%s)", item.name, item.group)
+                            }
+                        "enabled" -> swt_enabled.isChecked = item.isEnabled
+                        "selected" -> cb_name.isChecked = selectedIds.contains(item.id)
+                    }
                 }
             }
         }

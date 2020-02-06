@@ -109,7 +109,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             } else {
                 payload.keySet().map {
                     when (it) {
-                        "select" -> cb_book_source.isChecked = selected.contains(item)
+                        "selected" -> cb_book_source.isChecked = selected.contains(item)
                         "name", "group" -> if (item.bookSourceGroup.isNullOrEmpty()) {
                             cb_book_source.text = item.bookSourceName
                         } else {
