@@ -6,4 +6,9 @@ import io.legado.app.base.BaseViewModel
 
 class ArrangeBookViewModel(application: Application) : BaseViewModel(application) {
 
+
+    fun deleteBook(vararg bookUrl: String) {
+
+    }
+
 }

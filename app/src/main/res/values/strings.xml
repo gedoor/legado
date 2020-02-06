@@ -457,6 +457,8 @@
     <string name="network_connection_unavailable">网络连接不可用</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="sure">确认</string>
+    <string name="sure_del">是否确认删除？</string>
     <string name="sure_del_all_book">是否删除全部书籍？</string>
     <string name="sure_del_download_book">是否同时删除已下载的书籍目录？</string>
     <string name="qr_per">扫描二维码需相机权限</string>

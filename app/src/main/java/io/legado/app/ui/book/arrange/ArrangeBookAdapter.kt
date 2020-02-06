@@ -60,6 +60,9 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 }
                 callBack.upSelectCount()
             }
+            tv_delete.onClick {
+                callBack.deleteBook(item.bookUrl)
+            }
         }
     }
 
@@ -75,5 +78,6 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     interface CallBack {
         val groupList: List<BookGroup>
         fun upSelectCount()
+        fun deleteBook(bookUrl: String)
     }
 }

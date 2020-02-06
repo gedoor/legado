@@ -11,10 +11,14 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.toast
 
 
 class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activity_arrange_book),
@@ -51,6 +55,17 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         cb_selected_all.onClick {
             adapter.selectAll(!adapter.isSelectAll())
         }
+        btn_delete.onClick {
+            if (adapter.selectedBooks.isEmpty()) {
+                toast(R.string.non_select)
+                return@onClick
+            }
+            alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                okButton {
+                    viewModel.deleteBook(*adapter.selectedBooks.toTypedArray())
+                }
+            }.show().applyTint()
+        }
     }
 
     private fun initData() {
@@ -81,4 +96,11 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             getString(R.string.select_count, adapter.selectedBooks.size, adapter.getItems().size)
     }
 
+    override fun deleteBook(bookUrl: String) {
+        alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+            okButton {
+                viewModel.deleteBook(bookUrl)
+            }
+        }.show().applyTint()
+    }
 }
