@@ -65,9 +65,9 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
 
     fun enableSelection(rules: LinkedHashSet<ReplaceRule>) {
         execute {
-            val list = ArrayList(rules)
-            list.forEach {
-                it.isEnabled = true
+            val list = arrayListOf<ReplaceRule>()
+            rules.forEach {
+                list.add(it.copy(isEnabled = true))
             }
             App.db.replaceRuleDao().update(*list.toTypedArray())
         }
@@ -75,9 +75,9 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
 
     fun disableSelection(rules: LinkedHashSet<ReplaceRule>) {
         execute {
-            val list = ArrayList(rules)
-            list.forEach {
-                it.isEnabled = false
+            val list = arrayListOf<ReplaceRule>()
+            rules.forEach {
+                list.add(it.copy(isEnabled = false))
             }
             App.db.replaceRuleDao().update(*list.toTypedArray())
         }

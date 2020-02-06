@@ -45,9 +45,9 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun enableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            val list = ArrayList(sources)
-            list.forEach {
-                it.enabled = true
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = true))
             }
             App.db.bookSourceDao().update(*list.toTypedArray())
         }
@@ -55,9 +55,9 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun disableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            val list = ArrayList(sources)
-            list.forEach {
-                it.enabled = false
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = false))
             }
             App.db.bookSourceDao().update(*list.toTypedArray())
         }
@@ -65,9 +65,9 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun enableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            val list = ArrayList(sources)
-            list.forEach {
-                it.enabledExplore = true
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabledExplore = true))
             }
             App.db.bookSourceDao().update(*list.toTypedArray())
         }
@@ -75,9 +75,9 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun disableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            val list = ArrayList(sources)
-            list.forEach {
-                it.enabledExplore = false
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabledExplore = false))
             }
             App.db.bookSourceDao().update(*list.toTypedArray())
         }
