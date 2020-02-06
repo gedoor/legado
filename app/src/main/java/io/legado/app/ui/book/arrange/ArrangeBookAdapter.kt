@@ -15,7 +15,7 @@ class ArrangeBookAdapter(context: Context) :
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
             tv_name.text = item.name
-            tv_author.text = item.author
+            tv_author.text = context.getString(R.string.author_show, item.author)
         }
     }
 
