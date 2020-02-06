@@ -154,9 +154,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun upSpeechRate(reset: Boolean) {
         job?.cancel()
         mediaPlayer.reset()
-        nowSpeak = 0
-        playingIndex = -1
-        readAloudNumber = 0
+        downloadAudio()
         play()
     }
 
