@@ -49,7 +49,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         booksLiveData?.removeObservers(this)
         booksLiveData = App.db.bookDao().observeAll()
         booksLiveData?.observe(this, Observer {
-
+            adapter.setItems(it)
         })
     }
 
