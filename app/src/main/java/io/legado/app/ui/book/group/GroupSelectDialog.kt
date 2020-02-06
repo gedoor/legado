@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.bookshelf
+package io.legado.app.ui.book.group
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,13 +11,16 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ItemTouchCallback
@@ -25,6 +28,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.ui.main.bookshelf.BookshelfViewModel
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
@@ -33,7 +37,20 @@ import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
+
+    companion object {
+        const val tag = "groupSelectDialog"
+
+        fun show(manager: FragmentManager) {
+            val fragment = GroupSelectDialog()
+            fragment.show(
+                manager,
+                tag
+            )
+        }
+    }
+
     private lateinit var viewModel: BookshelfViewModel
     private lateinit var adapter: GroupAdapter
     private var callBack: CallBack? = null
@@ -56,19 +73,17 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        callBack = parentFragment as? CallBack
+        callBack = activity as? CallBack
         initData()
     }
 
     private fun initData() {
-        tool_bar.title = getString(R.string.group_manage)
+        tool_bar.title = getString(R.string.group_select)
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
-        tool_bar.menu.findItem(R.id.menu_group_local)
-            .isChecked = AppConst.bookGroupLocalShow
-        tool_bar.menu.findItem(R.id.menu_group_audio)
-            .isChecked = AppConst.bookGroupAudioShow
+        tool_bar.menu.findItem(R.id.menu_group_local).isVisible = false
+        tool_bar.menu.findItem(R.id.menu_group_audio).isVisible = false
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(
@@ -76,10 +91,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         )
         recycler_view.adapter = adapter
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
-            val diffResult =
-                DiffUtil.calculateDiff(GroupDiffCallBack(adapter.getItems(), it))
-            adapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(adapter)
+            adapter.setItems(it)
         })
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
@@ -90,16 +102,6 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> addGroup()
-            R.id.menu_group_local -> {
-                item.isChecked = !item.isChecked
-                AppConst.bookGroupLocalShow = item.isChecked
-                callBack?.upGroup()
-            }
-            R.id.menu_group_audio -> {
-                item.isChecked = !item.isChecked
-                AppConst.bookGroupAudioShow = item.isChecked
-                callBack?.upGroup()
-            }
         }
         return true
     }
@@ -145,34 +147,6 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         }.show().applyTint().requestInputMethod()
     }
 
-    private class GroupDiffCallBack(
-        private val oldItems: List<BookGroup>,
-        private val newItems: List<BookGroup>
-    ) :
-        DiffUtil.Callback() {
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldItems[oldItemPosition]
-            val newItem = newItems[newItemPosition]
-            return oldItem.groupId == newItem.groupId
-        }
-
-        override fun getOldListSize(): Int {
-            return oldItems.size
-        }
-
-        override fun getNewListSize(): Int {
-            return newItems.size
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldItems[oldItemPosition]
-            val newItem = newItems[newItemPosition]
-            return oldItem.groupName == newItem.groupName
-                    && oldItem.order == newItem.order
-        }
-
-    }
-
     private inner class GroupAdapter(context: Context) :
         SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage),
         ItemTouchCallback.OnItemTouchCallbackListener {
@@ -182,6 +156,10 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 tv_group.text = item.groupName
                 tv_edit.onClick { editGroup(item) }
                 tv_del.onClick { viewModel.delGroup(item) }
+                this.onClick {
+                    callBack?.upGroup(item)
+                    dismiss()
+                }
             }
         }
 
@@ -203,6 +181,6 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     interface CallBack {
-        fun upGroup()
+        fun upGroup(group: BookGroup)
     }
 }

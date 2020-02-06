@@ -22,6 +22,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
+import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.ui.importbook.ImportBookActivity
