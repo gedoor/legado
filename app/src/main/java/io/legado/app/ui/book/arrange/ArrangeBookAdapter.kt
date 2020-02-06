@@ -13,7 +13,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book) {
 
-    val selectedBooks: HashSet<String> = hashSetOf()
+    val selectedBooks: HashSet<Book> = hashSetOf()
 
     fun isSelectAll(): Boolean {
         return if (selectedBooks.isEmpty()) {
@@ -26,7 +26,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
             getItems().forEach {
-                selectedBooks.add(it.bookUrl)
+                selectedBooks.add(it)
             }
             notifyDataSetChanged()
             callBack.upSelectCount()
@@ -42,26 +42,26 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
             tv_name.text = item.name
             tv_author.text = context.getString(R.string.author_show, item.author)
             tv_group.text = getGroupName(item.group)
-            checkbox.isChecked = selectedBooks.contains(item.bookUrl)
+            checkbox.isChecked = selectedBooks.contains(item)
             checkbox.onClick {
                 if (checkbox.isChecked) {
-                    selectedBooks.add(item.bookUrl)
+                    selectedBooks.add(item)
                 } else {
-                    selectedBooks.remove(item.bookUrl)
+                    selectedBooks.remove(item)
                 }
                 callBack.upSelectCount()
             }
             onClick {
                 checkbox.isChecked = !checkbox.isChecked
                 if (checkbox.isChecked) {
-                    selectedBooks.add(item.bookUrl)
+                    selectedBooks.add(item)
                 } else {
-                    selectedBooks.remove(item.bookUrl)
+                    selectedBooks.remove(item)
                 }
                 callBack.upSelectCount()
             }
             tv_delete.onClick {
-                callBack.deleteBook(item.bookUrl)
+                callBack.deleteBook(item)
             }
             tv_group.onClick {
                 callBack.selectGroup()
@@ -81,7 +81,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     interface CallBack {
         val groupList: List<BookGroup>
         fun upSelectCount()
-        fun deleteBook(bookUrl: String)
+        fun deleteBook(book: Book)
         fun selectGroup()
     }
 }

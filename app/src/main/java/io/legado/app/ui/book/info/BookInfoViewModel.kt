@@ -137,7 +137,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             if (inBookshelf) {
                 bookData.value?.let {
-                    App.db.bookDao().delete(it.bookUrl)
+                    App.db.bookDao().delete(it)
                 }
                 App.db.bookDao().insert(book)
             }
@@ -202,7 +202,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun delBook(success: (() -> Unit)?) {
         execute {
             bookData.value?.let {
-                App.db.bookDao().delete(it.bookUrl)
+                App.db.bookDao().delete(it)
             }
             inBookshelf = false
         }.onSuccess {

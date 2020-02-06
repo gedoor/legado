@@ -128,7 +128,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun changeTo(book1: Book) {
         execute {
             ReadBook.book?.let {
-                App.db.bookDao().delete(it.bookUrl)
+                App.db.bookDao().delete(it)
             }
             ReadBook.prevTextChapter = null
             ReadBook.curTextChapter = null
@@ -185,7 +185,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
             ReadBook.book?.let {
-                App.db.bookDao().delete(it.bookUrl)
+                App.db.bookDao().delete(it)
             }
         }.onSuccess {
             success?.invoke()

@@ -60,7 +60,10 @@ interface BookDao {
     fun insert(vararg book: Book)
 
     @Update
-    fun update(vararg books: Book)
+    fun update(vararg book: Book)
+
+    @Delete
+    fun delete(vararg book: Book)
 
     @Query("delete from books where bookUrl = :bookUrl")
     fun delete(bookUrl: String)

@@ -107,10 +107,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             getString(R.string.select_count, adapter.selectedBooks.size, adapter.getItems().size)
     }
 
-    override fun deleteBook(bookUrl: String) {
+    override fun deleteBook(book: Book) {
         alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
             okButton {
-                viewModel.deleteBook(bookUrl)
+                viewModel.deleteBook(book)
             }
         }.show().applyTint()
     }
