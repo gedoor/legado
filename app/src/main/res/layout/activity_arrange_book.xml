@@ -46,7 +46,7 @@
             tools:ignore="RelativeOverlap" />
 
         <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
-            android:id="@+id/btn_add_group"
+            android:id="@+id/btn_to_group"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_alignParentRight="true"
@@ -63,7 +63,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:gravity="center"
-            android:layout_toLeftOf="@id/btn_add_group"
+            android:layout_toLeftOf="@id/btn_to_group"
             android:text="@string/delete" />
     </RelativeLayout>
 </LinearLayout>

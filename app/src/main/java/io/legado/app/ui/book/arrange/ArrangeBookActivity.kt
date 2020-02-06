@@ -66,6 +66,13 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 }
             }.show().applyTint()
         }
+        btn_to_group.onClick {
+            if (adapter.selectedBooks.isEmpty()) {
+                toast(R.string.non_select)
+                return@onClick
+            }
+
+        }
     }
 
     private fun initData() {
