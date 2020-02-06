@@ -112,7 +112,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun getAudioBody(content: String): Map<String, String> {
         return mapOf(
             Pair("tex", encodeTwo(content)),
-            Pair("spd", ((AppConfig.ttsSpeechRate + 5) / 5).toString()),
+            Pair("spd", ((AppConfig.ttsSpeechRate + 5) / 10 + 4).toString()),
             Pair("per", getPrefString(PreferKey.ttsSpeechPer) ?: "0"),
             Pair("cuid", "baidu_speech_demo"),
             Pair("idx", "1"),
@@ -151,9 +151,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun upSpeechRate(reset: Boolean) {
         job?.cancel()
         mediaPlayer.reset()
-        for (i in 0 until nowSpeak) {
-            contentList.removeAt(0)
-        }
         nowSpeak = 0
         playingIndex = -1
         play()
