@@ -30,11 +30,20 @@
 
         <io.legado.app.lib.theme.view.ATECheckBox
             android:id="@+id/cb_selected_all"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:text="@string/select_all"
             android:textColor="@color/tv_text_default" />
+
+        <TextView
+            android:id="@+id/tv_select_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/select_count"
+            android:layout_toRightOf="@+id/cb_selected_all"
+            tools:ignore="RelativeOverlap" />
 
         <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
             android:id="@+id/btn_add_group"
