@@ -56,8 +56,10 @@ class BooksDiffCallBack(private val oldItems: List<Book>, private val newItems: 
             bundle.putString("cover", null)
         if (oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum()
             || oldItem.lastCheckCount != newItem.lastCheckCount
-        )
+        ) {
             bundle.putString("refresh", null)
+        }
+
         if (bundle.isEmpty) {
             return null
         }
