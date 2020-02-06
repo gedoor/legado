@@ -19,31 +19,31 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     SimpleRecyclerAdapter<ReplaceRule>(context, R.layout.item_replace_rule),
     ItemTouchCallback.OnItemTouchCallbackListener {
 
-    private val selectedIds = linkedSetOf<Long>()
+    private val selected = linkedSetOf<ReplaceRule>()
 
     fun selectAll() {
         getItems().forEach {
-            selectedIds.add(it.id)
+            selected.add(it)
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
     }
 
     fun revertSelection() {
         getItems().forEach {
-            if (selectedIds.contains(it.id)) {
-                selectedIds.remove(it.id)
+            if (selected.contains(it)) {
+                selected.remove(it)
             } else {
-                selectedIds.add(it.id)
+                selected.add(it)
             }
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
     }
 
-    fun getSelectionIds(): LinkedHashSet<Long> {
-        val selection = linkedSetOf<Long>()
+    fun getSelection(): LinkedHashSet<ReplaceRule> {
+        val selection = linkedSetOf<ReplaceRule>()
         getItems().map {
-            if (selectedIds.contains(it.id)) {
-                selection.add(it.id)
+            if (selected.contains(it)) {
+                selection.add(it)
             }
         }
         return selection
@@ -68,12 +68,12 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 iv_edit.onClick {
                     callBack.edit(item)
                 }
-                cb_name.isChecked = selectedIds.contains(item.id)
+                cb_name.isChecked = selected.contains(item)
                 cb_name.onClick {
                     if (cb_name.isChecked) {
-                        selectedIds.add(item.id)
+                        selected.add(item)
                     } else {
-                        selectedIds.remove(item.id)
+                        selected.remove(item)
                     }
                 }
                 iv_menu_more.onClick {
@@ -92,7 +92,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             } else {
                 bundle.keySet().map {
                     when (it) {
-                        "selected" -> cb_name.isChecked = selectedIds.contains(item.id)
+                        "selected" -> cb_name.isChecked = selected.contains(item)
                         "name", "group" ->
                             if (item.group.isNullOrEmpty()) {
                                 cb_name.text = item.name

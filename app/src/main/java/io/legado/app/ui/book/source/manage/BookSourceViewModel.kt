@@ -45,37 +45,41 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun enableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            sources.forEach {
+            val list = ArrayList(sources)
+            list.forEach {
                 it.enabled = true
             }
-            App.db.bookSourceDao().update(*sources.toTypedArray())
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
     fun disableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            sources.forEach {
+            val list = ArrayList(sources)
+            list.forEach {
                 it.enabled = false
             }
-            App.db.bookSourceDao().update(*sources.toTypedArray())
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
     fun enableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            sources.forEach {
+            val list = ArrayList(sources)
+            list.forEach {
                 it.enabledExplore = true
             }
-            App.db.bookSourceDao().update(*sources.toTypedArray())
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
     fun disableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            sources.forEach {
+            val list = ArrayList(sources)
+            list.forEach {
                 it.enabledExplore = false
             }
-            App.db.bookSourceDao().update(*sources.toTypedArray())
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 

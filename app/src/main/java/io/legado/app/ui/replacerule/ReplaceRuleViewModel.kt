@@ -63,34 +63,38 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun enableSelection(ids: LinkedHashSet<Long>) {
+    fun enableSelection(rules: LinkedHashSet<ReplaceRule>) {
         execute {
-            App.db.replaceRuleDao().enableSection(*ids.toLongArray())
-        }
-    }
-
-    fun disableSelection(ids: LinkedHashSet<Long>) {
-        execute {
-            App.db.replaceRuleDao().disableSection(*ids.toLongArray())
-        }
-    }
-
-    fun delSelection(ids: LinkedHashSet<Long>) {
-        execute {
-            App.db.replaceRuleDao().delSection(*ids.toLongArray())
-        }
-    }
-
-    fun exportSelection(ids: LinkedHashSet<Long>) {
-        execute {
-            ids.map {
-                App.db.replaceRuleDao().findById(it)
-            }.let {
-                val json = GSON.toJson(it)
-                val file =
-                    FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportReplaceRule.json")
-                file.writeText(json)
+            val list = ArrayList(rules)
+            list.forEach {
+                it.isEnabled = true
             }
+            App.db.replaceRuleDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun disableSelection(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            val list = ArrayList(rules)
+            list.forEach {
+                it.isEnabled = false
+            }
+            App.db.replaceRuleDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun delSelection(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            App.db.replaceRuleDao().delete(*rules.toTypedArray())
+        }
+    }
+
+    fun exportSelection(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            val json = GSON.toJson(rules)
+            val file =
+                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportReplaceRule.json")
+            file.writeText(json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {

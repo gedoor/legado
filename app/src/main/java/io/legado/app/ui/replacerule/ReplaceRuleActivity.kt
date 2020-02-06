@@ -80,12 +80,12 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_select_all -> adapter.selectAll()
             R.id.menu_revert_selection -> adapter.revertSelection()
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_local -> selectFileSys()
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
+            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
         }
         return super.onCompatOptionsItemSelected(item)
     }
