@@ -57,6 +57,17 @@ data class Book(
         return isLocalBook() && originName.endsWith(".txt", true)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other is Book) {
+            return other.bookUrl == bookUrl
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return bookUrl.hashCode()
+    }
+
     @Ignore
     @IgnoredOnParcel
     override var variableMap: HashMap<String, String>? = null
