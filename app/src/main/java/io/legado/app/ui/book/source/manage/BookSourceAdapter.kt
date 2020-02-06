@@ -16,31 +16,31 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource>(context, R.layout.item_book_source),
     OnItemTouchCallbackListener {
 
-    private val selectedIds = linkedSetOf<String>()
+    private val selected = linkedSetOf<BookSource>()
 
     fun selectAll() {
         getItems().forEach {
-            selectedIds.add(it.bookSourceUrl)
+            selected.add(it)
         }
         notifyItemRangeChanged(0, itemCount, 1)
     }
 
     fun revertSelection() {
         getItems().forEach {
-            if (selectedIds.contains(it.bookSourceUrl)) {
-                selectedIds.remove(it.bookSourceUrl)
+            if (selected.contains(it)) {
+                selected.remove(it)
             } else {
-                selectedIds.add(it.bookSourceUrl)
+                selected.add(it)
             }
         }
         notifyItemRangeChanged(0, itemCount, 1)
     }
 
-    fun getSelectionIds(): LinkedHashSet<String> {
-        val selection = linkedSetOf<String>()
+    fun getSelection(): LinkedHashSet<BookSource> {
+        val selection = linkedSetOf<BookSource>()
         getItems().map {
-            if (selectedIds.contains(it.bookSourceUrl)) {
-                selection.add(it.bookSourceUrl)
+            if (selected.contains(it)) {
+                selection.add(it)
             }
         }
         return selection
@@ -81,12 +81,12 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     item.enabled = swt_enabled.isChecked
                     callBack.update(item)
                 }
-                cb_book_source.isChecked = selectedIds.contains(item.bookSourceUrl)
+                cb_book_source.isChecked = selected.contains(item)
                 cb_book_source.setOnClickListener {
                     if (cb_book_source.isChecked) {
-                        selectedIds.add(item.bookSourceUrl)
+                        selected.add(item)
                     } else {
-                        selectedIds.remove(item.bookSourceUrl)
+                        selected.remove(item)
                     }
                 }
                 iv_edit.onClick { callBack.edit(item) }
@@ -105,7 +105,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
             } else {
                 when (payloads[0]) {
-                    1 -> cb_book_source.isChecked = selectedIds.contains(item.bookSourceUrl)
+                    1 -> cb_book_source.isChecked = selected.contains(item)
                     2 -> swt_enabled.isChecked = item.enabled
                 }
             }

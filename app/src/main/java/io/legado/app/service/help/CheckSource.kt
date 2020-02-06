@@ -4,15 +4,20 @@ import android.content.Context
 import android.content.Intent
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
+import io.legado.app.data.entities.BookSource
 import io.legado.app.service.CheckSourceService
 import org.jetbrains.anko.toast
 
 object CheckSource {
 
-    fun start(context: Context, selectedIds: ArrayList<String>) {
-        if (selectedIds.isEmpty()) {
+    fun start(context: Context, sources: LinkedHashSet<BookSource>) {
+        if (sources.isEmpty()) {
             context.toast(R.string.non_select)
             return
+        }
+        val selectedIds: ArrayList<String> = arrayListOf()
+        sources.map {
+            selectedIds.add(it.bookSourceUrl)
         }
         Intent(context, CheckSourceService::class.java).let {
             it.action = IntentAction.start

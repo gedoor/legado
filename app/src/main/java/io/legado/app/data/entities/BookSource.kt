@@ -47,6 +47,18 @@ data class BookSource(
     var ruleToc: String? = null,                    // 目录页规则
     var ruleContent: String? = null                 // 正文页规则
 ) : Parcelable, JsExtensions {
+
+    override fun hashCode(): Int {
+        return bookSourceUrl.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is BookSource) {
+            return other.bookSourceUrl == bookSourceUrl
+        }
+        return false
+    }
+
     @Ignore
     @IgnoredOnParcel
     private var searchRuleV: SearchRule? = null

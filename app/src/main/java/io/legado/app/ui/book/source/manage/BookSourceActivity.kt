@@ -80,20 +80,18 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         when (item.itemId) {
             R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
-            R.id.menu_group_manage -> GroupManageDialog().show(
-                supportFragmentManager,
-                "groupManage"
-            )
+            R.id.menu_group_manage ->
+                GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> selectFileSys()
             R.id.menu_select_all -> adapter.selectAll()
             R.id.menu_revert_selection -> adapter.revertSelection()
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
-            R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelectionIds())
-            R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelectionIds())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
-            R.id.menu_check_source -> CheckSource.start(this, ArrayList(adapter.getSelectionIds()))
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
+            R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
+            R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
+            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
