@@ -64,5 +64,20 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         })
     }
 
+    override fun upSelectCount() {
+        if (adapter.selectedBooks.size == 0) {
+            cb_selected_all.isChecked = false
+        } else {
+            cb_selected_all.isChecked = adapter.selectedBooks.size >= adapter.getItems().size
+        }
+        //重置全选的文字
+        if (cb_selected_all.isChecked) {
+            cb_selected_all.setText(R.string.cancel)
+        } else {
+            cb_selected_all.setText(R.string.select_all)
+        }
+        tv_select_count.text =
+            getString(R.string.select_count, adapter.selectedBooks.size, adapter.getItems().size)
+    }
 
 }
