@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.bookshelf.books
 
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.Book
 
@@ -22,13 +23,45 @@ class BooksDiffCallBack(private val oldItems: List<Book>, private val newItems: 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
-        return oldItem.name == newItem.name
-                && oldItem.author == newItem.author
-                && oldItem.durChapterTitle == newItem.durChapterTitle
-                && oldItem.latestChapterTitle == newItem.latestChapterTitle
-                && oldItem.getDisplayCover() == newItem.getDisplayCover()
-                && oldItem.getUnreadChapterNum() == newItem.getUnreadChapterNum()
-                && oldItem.lastCheckCount == newItem.lastCheckCount
+        if (oldItem.name != newItem.name)
+            return false
+        if (oldItem.author != newItem.author)
+            return false
+        if (oldItem.durChapterTitle != newItem.durChapterTitle)
+            return false
+        if (oldItem.latestChapterTitle != newItem.latestChapterTitle)
+            return false
+        if (oldItem.lastCheckCount != newItem.lastCheckCount)
+            return false
+        if (oldItem.getDisplayCover() != newItem.getDisplayCover())
+            return false
+        if (oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum())
+            return false
+        return true
+    }
+
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
+        val bundle = bundleOf()
+        if (oldItem.name != newItem.name)
+            bundle.putString("name", null)
+        if (oldItem.author != newItem.author)
+            bundle.putString("author", null)
+        if (oldItem.durChapterTitle != newItem.durChapterTitle)
+            bundle.putString("durTitle", null)
+        if (oldItem.latestChapterTitle != newItem.latestChapterTitle)
+            bundle.putString("latestTitle", null)
+        if (oldItem.getDisplayCover() != newItem.getDisplayCover())
+            bundle.putString("cover", null)
+        if (oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum()
+            || oldItem.lastCheckCount != newItem.lastCheckCount
+        )
+            bundle.putString("refresh", null)
+        if (bundle.isEmpty) {
+            return null
+        }
+        return bundle
     }
 
 }

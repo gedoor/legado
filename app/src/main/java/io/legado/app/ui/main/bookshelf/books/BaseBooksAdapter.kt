@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf.books
 
 import android.content.Context
+import androidx.core.os.bundleOf
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 
@@ -11,7 +12,7 @@ abstract class BaseBooksAdapter(context: Context, layoutId: Int) :
         for (i in 0 until itemCount) {
             getItem(i)?.let {
                 if (it.bookUrl == bookUrl) {
-                    notifyItemChanged(i, 5)
+                    notifyItemChanged(i, bundleOf(Pair("refresh", null)))
                     return
                 }
             }

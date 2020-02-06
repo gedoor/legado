@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf.books
 
 import android.content.Context
+import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.constant.BookType
@@ -15,8 +16,9 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
     BaseBooksAdapter(context, R.layout.item_bookshelf_list) {
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
+        val bundle = payloads.getOrNull(0) as? Bundle
         with(holder.itemView) {
-            if (payloads.isEmpty()) {
+            if (bundle == null) {
                 ATH.applyBackgroundTint(this)
                 tv_name.text = item.name
                 tv_author.text = item.author
@@ -37,9 +39,14 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                     bv_unread.setHighlight(item.lastCheckCount > 0)
                 }
             } else {
-                when (payloads[0]) {
-                    5 -> {
-                        if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
+                bundle.keySet().map {
+                    when (it) {
+                        "name" -> tv_name.text = item.name
+                        "author" -> tv_author.text = item.author
+                        "durTitle" -> tv_read.text = item.durChapterTitle
+                        "latestTitle" -> tv_last.text = item.latestChapterTitle
+                        "cover" -> iv_cover.load(item.getDisplayCover(), item.name, item.author)
+                        "refresh" -> if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
                             bv_unread.invisible()
                             rl_loading.show()
                         } else {
