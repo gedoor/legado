@@ -49,7 +49,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
         cb_selected_all.onClick {
-            adapter.selectAll(cb_selected_all.isChecked)
+            adapter.selectAll(!adapter.isSelectAll())
         }
     }
 
@@ -70,11 +70,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     }
 
     override fun upSelectCount() {
-        if (adapter.selectedBooks.size == 0) {
-            cb_selected_all.isChecked = false
-        } else {
-            cb_selected_all.isChecked = adapter.selectedBooks.size >= adapter.getItems().size
-        }
+        cb_selected_all.isChecked = adapter.isSelectAll()
         //重置全选的文字
         if (cb_selected_all.isChecked) {
             cb_selected_all.setText(R.string.cancel)

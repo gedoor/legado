@@ -15,15 +15,23 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
 
     val selectedBooks: HashSet<String> = hashSetOf()
 
+    fun isSelectAll(): Boolean {
+        return if (selectedBooks.isEmpty()) {
+            false
+        } else {
+            selectedBooks.size >= itemCount
+        }
+    }
+
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
-            selectedBooks.clear()
-            notifyDataSetChanged()
-            callBack.upSelectCount()
-        } else {
             getItems().forEach {
                 selectedBooks.add(it.bookUrl)
             }
+            notifyDataSetChanged()
+            callBack.upSelectCount()
+        } else {
+            selectedBooks.clear()
             notifyDataSetChanged()
             callBack.upSelectCount()
         }
