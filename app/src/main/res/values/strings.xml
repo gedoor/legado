@@ -590,5 +590,6 @@
     <string name="auto_dark_mode">自动切换夜间模式</string>
     <string name="auto_dark_mode_s">夜间模式跟随系统</string>
     <string name="go_back">上级</string>
+    <string name="tone_colour">在线朗读音色</string>
 
 </resources>

@@ -3,7 +3,6 @@ package io.legado.app.service
 import android.app.PendingIntent
 import android.media.MediaPlayer
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.http.HttpHelper
@@ -11,7 +10,6 @@ import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.LogUtils
-import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -114,7 +112,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         return mapOf(
             Pair("tex", encodeTwo(content)),
             Pair("spd", ((AppConfig.ttsSpeechRate + 5) / 10 + 4).toString()),
-            Pair("per", getPrefString(PreferKey.ttsSpeechPer) ?: "0"),
+            Pair("per", AppConfig.ttsSpeechPer),
             Pair("cuid", "baidu_speech_demo"),
             Pair("idx", "1"),
             Pair("cod", "2"),
