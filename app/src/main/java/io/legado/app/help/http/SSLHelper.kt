@@ -139,7 +139,7 @@ object SSLHelper {
         val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
         keyStore.load(null)
         for ((index, certStream) in certificates.withIndex()) {
-            val certificateAlias = Integer.toString(index)
+            val certificateAlias = index.toString()
             // 证书工厂根据证书文件的流生成证书 cert
             val cert = certificateFactory.generateCertificate(certStream)
             // 将 cert 作为可信证书放入到keyStore中

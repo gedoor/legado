@@ -34,7 +34,7 @@ class FontSelectDialog : DialogFragment(),
     Toolbar.OnMenuItemClickListener,
     CoroutineScope,
     FontAdapter.CallBack {
-    lateinit var job: Job
+    private lateinit var job: Job
     private val fontFolderRequestCode = 35485
     private val fontFolder =
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
