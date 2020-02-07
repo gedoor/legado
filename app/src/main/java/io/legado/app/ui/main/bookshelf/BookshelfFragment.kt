@@ -81,7 +81,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         return bookGroups[position]
     }
 
-    val selectedGroup: BookGroup
+    private val selectedGroup: BookGroup
         get() = bookGroups[view_pager_bookshelf.currentItem]
 
     private fun initRecyclerView() {
