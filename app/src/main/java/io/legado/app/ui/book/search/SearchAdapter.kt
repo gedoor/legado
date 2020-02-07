@@ -1,12 +1,12 @@
 package io.legado.app.ui.book.search
 
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.iv_cover
@@ -18,10 +18,11 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_search) {
 
     override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) {
+        val bundle = payloads.getOrNull(0) as? Bundle
+        if (bundle == null) {
             bind(holder.itemView, item)
         } else {
-            bindChange(holder.itemView, item, payloads)
+            bindChange(holder.itemView, item, bundle)
         }
     }
 
@@ -30,43 +31,9 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             tv_name.text = searchBook.name
             tv_author.text = context.getString(R.string.author_show, searchBook.author)
             bv_originCount.setBadgeCount(searchBook.origins?.size ?: 1)
-            if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                tv_lasted.gone()
-            } else {
-                tv_lasted.text = context.getString(R.string.lasted_show, searchBook.latestChapterTitle)
-                tv_lasted.visible()
-            }
+            upLasted(itemView, searchBook.latestChapterTitle)
             tv_introduce.text = context.getString(R.string.intro_show, searchBook.intro)
-            val kinds = searchBook.getKindList()
-            if (kinds.isEmpty()) {
-                ll_kind.gone()
-            } else {
-                ll_kind.visible()
-                for (index in 0..2) {
-                    if (kinds.size > index) {
-                        when (index) {
-                            0 -> {
-                                tv_kind.text = kinds[index]
-                                tv_kind.visible()
-                            }
-                            1 -> {
-                                tv_kind_1.text = kinds[index]
-                                tv_kind_1.visible()
-                            }
-                            2 -> {
-                                tv_kind_2.text = kinds[index]
-                                tv_kind_2.visible()
-                            }
-                        }
-                    } else {
-                        when (index) {
-                            0 -> tv_kind.gone()
-                            1 -> tv_kind_1.gone()
-                            2 -> tv_kind_2.gone()
-                        }
-                    }
-                }
-            }
+            upKind(itemView, searchBook.getKindList())
             iv_cover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
             onClick {
                 callBack.showBookInfo(searchBook.name, searchBook.author)
@@ -74,63 +41,70 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun bindChange(itemView: View, searchBook: SearchBook, payloads: MutableList<Any>) {
+    private fun bindChange(itemView: View, searchBook: SearchBook, bundle: Bundle) {
         with(itemView) {
-            when (payloads[0]) {
-                1 -> bv_originCount.setBadgeCount(searchBook.origins?.size ?: 1)
-                2 -> searchBook.coverUrl.let {
-                    ImageLoader.load(context, it)//Glide自动识别http://和file://
-                        .placeholder(R.drawable.image_cover_default)
-                        .error(R.drawable.image_cover_default)
-                        .centerCrop()
-                        .into(iv_cover)
+            bundle.keySet().map {
+                when (it) {
+                    "name" -> tv_name.text = searchBook.name
+                    "author" -> tv_author.text =
+                        context.getString(R.string.author_show, searchBook.author)
+                    "originCount" -> bv_originCount.setBadgeCount(searchBook.origins?.size ?: 1)
+                    "lasted" -> upLasted(itemView, searchBook.latestChapterTitle)
+                    "introduce" -> tv_introduce.text =
+                        context.getString(R.string.intro_show, searchBook.intro)
+                    "kind" -> upKind(itemView, searchBook.getKindList())
+                    "cover" -> iv_cover.load(
+                        searchBook.coverUrl,
+                        searchBook.name,
+                        searchBook.author
+                    )
                 }
-                3 -> {
-                    val kinds = searchBook.getKindList()
-                    if (kinds.isEmpty()) {
-                        ll_kind.gone()
-                    } else {
-                        ll_kind.visible()
-                        for (index in 0..2) {
-                            if (kinds.size > index) {
-                                when (index) {
-                                    0 -> {
-                                        tv_kind.text = kinds[index]
-                                        tv_kind.visible()
-                                    }
-                                    1 -> {
-                                        tv_kind_1.text = kinds[index]
-                                        tv_kind_1.visible()
-                                    }
-                                    2 -> {
-                                        tv_kind_2.text = kinds[index]
-                                        tv_kind_2.visible()
-                                    }
-                                }
-                            } else {
-                                when (index) {
-                                    0 -> tv_kind.gone()
-                                    1 -> tv_kind_1.gone()
-                                    2 -> tv_kind_2.gone()
-                                }
-                            }
+            }
+        }
+    }
+
+    private fun upLasted(itemView: View, latestChapterTitle: String?) {
+        with(itemView) {
+            if (latestChapterTitle.isNullOrEmpty()) {
+                tv_lasted.gone()
+            } else {
+                tv_lasted.text =
+                    context.getString(
+                        R.string.lasted_show,
+                        latestChapterTitle
+                    )
+                tv_lasted.visible()
+            }
+        }
+    }
+
+    private fun upKind(itemView: View, kinds: List<String>) = with(itemView) {
+        if (kinds.isEmpty()) {
+            ll_kind.gone()
+        } else {
+            ll_kind.visible()
+            for (index in 0..2) {
+                if (kinds.size > index) {
+                    when (index) {
+                        0 -> {
+                            tv_kind.text = kinds[index]
+                            tv_kind.visible()
+                        }
+                        1 -> {
+                            tv_kind_1.text = kinds[index]
+                            tv_kind_1.visible()
+                        }
+                        2 -> {
+                            tv_kind_2.text = kinds[index]
+                            tv_kind_2.visible()
                         }
                     }
-                }
-                4 -> {
-                    if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                        tv_lasted.gone()
-                    } else {
-                        tv_lasted.text = context.getString(
-                            R.string.lasted_show,
-                            searchBook.latestChapterTitle
-                        )
-                        tv_lasted.visible()
+                } else {
+                    when (index) {
+                        0 -> tv_kind.gone()
+                        1 -> tv_kind_1.gone()
+                        2 -> tv_kind_2.gone()
                     }
-                }
-                5 -> tv_introduce.text =
-                    context.getString(R.string.intro_show, searchBook.intro)
-                else -> {
                 }
             }
         }
