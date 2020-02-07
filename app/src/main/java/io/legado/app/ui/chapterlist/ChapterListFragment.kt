@@ -4,9 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
@@ -14,6 +12,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
+import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -40,12 +39,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         adapter = ChapterListAdapter(requireContext(), this)
         mLayoutManager = UpLinearLayoutManager(requireContext())
         recycler_view.layoutManager = mLayoutManager
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(
-                requireContext(),
-                LinearLayout.VERTICAL
-            )
-        )
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         recycler_view.adapter = adapter
     }
 

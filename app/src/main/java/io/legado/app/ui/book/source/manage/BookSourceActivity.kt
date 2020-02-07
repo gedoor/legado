@@ -8,11 +8,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -119,12 +117,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
-                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
-                    this.setDrawable(it)
-                }
-            })
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         adapter = BookSourceAdapter(this, this)
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()

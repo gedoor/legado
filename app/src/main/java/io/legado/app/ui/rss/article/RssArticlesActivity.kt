@@ -3,10 +3,8 @@ package io.legado.app.ui.rss.article
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
@@ -17,6 +15,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.widget.LoadMoreView
+import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
 import kotlinx.android.synthetic.main.view_load_more.view.*
@@ -71,12 +70,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
-                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
-                    this.setDrawable(it)
-                }
-            })
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         adapter = RssArticlesAdapter(this, this)
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(this)

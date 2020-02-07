@@ -12,7 +12,9 @@ import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -27,6 +29,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.ui.main.bookshelf.BookshelfViewModel
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -72,9 +75,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             .isChecked = AppConst.bookGroupAudioShow
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
-        )
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         recycler_view.adapter = adapter
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
             val diffResult =

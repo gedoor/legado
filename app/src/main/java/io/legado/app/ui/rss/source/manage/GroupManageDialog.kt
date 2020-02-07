@@ -12,9 +12,7 @@ import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -24,10 +22,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModelOfActivity
-import io.legado.app.utils.requestInputMethod
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
@@ -65,9 +60,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
-        )
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         recycler_view.adapter = adapter
         App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, Observer {
             val groups = linkedSetOf<String>()

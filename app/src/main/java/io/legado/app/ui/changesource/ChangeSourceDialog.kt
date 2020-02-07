@@ -5,16 +5,15 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
@@ -89,9 +88,7 @@ class ChangeSourceDialog : DialogFragment(),
     private fun initRecyclerView() {
         changeSourceAdapter = ChangeSourceAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(requireContext(), LinearLayout.VERTICAL)
-        )
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         recycler_view.adapter = changeSourceAdapter
     }
 

@@ -1,10 +1,8 @@
 package io.legado.app.ui.rss.favorites
 
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -12,6 +10,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.RssStar
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
+import io.legado.app.utils.getVerticalDivider
 import kotlinx.android.synthetic.main.view_refresh_recycler.*
 import org.jetbrains.anko.startActivity
 
@@ -30,12 +29,7 @@ class RssFavoritesActivity : BaseActivity(R.layout.activity_rss_favorites),
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
-                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
-                    this.setDrawable(it)
-                }
-            })
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         adapter = RssFavoritesAdapter(this, this)
         recycler_view.adapter = adapter
     }
