@@ -66,7 +66,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 .show(childFragmentManager, "groupManageDialog")
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> addBookByUrl()
-            R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity>()
+            R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity>(
+                Pair("groupId", selectedGroup.groupId),
+                Pair("groupName", selectedGroup.groupName)
+            )
             R.id.menu_download -> startActivity<DownloadActivity>()
         }
     }
@@ -77,6 +80,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     override fun getGroup(position: Int): BookGroup {
         return bookGroups[position]
     }
+
+    val selectedGroup: BookGroup
+        get() = bookGroups[view_pager_bookshelf.currentItem]
 
     private fun initRecyclerView() {
         tab_layout.isTabIndicatorFullWidth = false

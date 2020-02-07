@@ -37,6 +37,8 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     private var groupId: Int = -1
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        groupId = intent.getIntExtra("groupId", -1)
+        title_bar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)
         initView()
         initGroupData()
         initBookData()
