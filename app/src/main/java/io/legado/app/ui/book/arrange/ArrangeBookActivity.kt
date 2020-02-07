@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
@@ -22,10 +23,11 @@ import org.jetbrains.anko.toast
 
 
 class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activity_arrange_book),
-    ArrangeBookAdapter.CallBack {
+    ArrangeBookAdapter.CallBack, GroupSelectDialog.CallBack {
     override val viewModel: ArrangeBookViewModel
         get() = getViewModel(ArrangeBookViewModel::class.java)
     override val groupList: ArrayList<BookGroup> = arrayListOf()
+    private val groupRequestCode = 22
     private lateinit var adapter: ArrangeBookAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
     private var booksLiveData: LiveData<List<Book>>? = null
@@ -71,7 +73,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 toast(R.string.non_select)
                 return@onClick
             }
-            selectGroup()
+            selectGroup(groupRequestCode)
         }
     }
 
@@ -91,8 +93,25 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         })
     }
 
-    override fun selectGroup() {
+    override fun selectGroup(requestCode: Int) {
+        GroupSelectDialog.show(supportFragmentManager, requestCode)
+    }
 
+    override fun upGroup(requestCode: Int, group: BookGroup) {
+        when (requestCode) {
+            groupRequestCode -> {
+                val books = arrayListOf<Book>()
+                adapter.selectedBooks.forEach {
+                    books.add(it.copy(group = group.groupId))
+                }
+                viewModel.updateBook(*books.toTypedArray())
+            }
+            adapter.groupRequestCode -> {
+                adapter.actionItem?.let {
+                    viewModel.updateBook(it.copy(group = group.groupId))
+                }
+            }
+        }
     }
 
     override fun upSelectCount() {

@@ -8,6 +8,11 @@ import io.legado.app.data.entities.Book
 
 class ArrangeBookViewModel(application: Application) : BaseViewModel(application) {
 
+    fun updateBook(vararg book: Book) {
+        execute {
+            App.db.bookDao().update(*book)
+        }
+    }
 
     fun deleteBook(vararg book: Book) {
         execute {

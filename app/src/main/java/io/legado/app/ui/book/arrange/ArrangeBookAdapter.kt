@@ -12,8 +12,9 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book) {
-
+    val groupRequestCode = 12
     val selectedBooks: HashSet<Book> = hashSetOf()
+    var actionItem: Book? = null
 
     fun isSelectAll(): Boolean {
         return if (selectedBooks.isEmpty()) {
@@ -64,7 +65,8 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 callBack.deleteBook(item)
             }
             tv_group.onClick {
-                callBack.selectGroup()
+                actionItem = item
+                callBack.selectGroup(groupRequestCode)
             }
         }
     }
@@ -82,6 +84,6 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         val groupList: List<BookGroup>
         fun upSelectCount()
         fun deleteBook(book: Book)
-        fun selectGroup()
+        fun selectGroup(requestCode: Int)
     }
 }
