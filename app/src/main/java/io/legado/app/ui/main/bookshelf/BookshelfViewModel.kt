@@ -5,37 +5,12 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.WebBook
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.Dispatchers.IO
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
-
-
-    fun addGroup(groupName: String) {
-        execute {
-            val bookGroup = BookGroup(
-                groupId = App.db.bookGroupDao().maxId.plus(1),
-                groupName = groupName,
-                order = App.db.bookGroupDao().maxOrder.plus(1)
-            )
-            App.db.bookGroupDao().insert(bookGroup)
-        }
-    }
-
-    fun upGroup(vararg bookGroup: BookGroup) {
-        execute {
-            App.db.bookGroupDao().update(*bookGroup)
-        }
-    }
-
-    fun delGroup(vararg bookGroup: BookGroup) {
-        execute {
-            App.db.bookGroupDao().delete(*bookGroup)
-        }
-    }
 
     fun addBookByUrl(bookUrls: String) {
         var successCount = 0

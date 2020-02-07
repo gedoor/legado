@@ -27,7 +27,6 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
-import io.legado.app.ui.main.bookshelf.BookshelfViewModel
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
@@ -38,7 +37,7 @@ import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
-    private lateinit var viewModel: BookshelfViewModel
+    private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
     private var callBack: CallBack? = null
 
@@ -54,7 +53,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModel(BookshelfViewModel::class.java)
+        viewModel = getViewModel(GroupViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
