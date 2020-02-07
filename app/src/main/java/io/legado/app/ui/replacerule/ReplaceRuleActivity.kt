@@ -8,11 +8,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -95,12 +93,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ReplaceRuleAdapter(this, this)
         recycler_view.adapter = adapter
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
-                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
-                    this.setDrawable(it)
-                }
-            })
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
