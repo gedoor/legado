@@ -91,6 +91,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         ReadBook.titleDate.observe(this, Observer {
             title_bar.title = it
             upMenu()
+            upView()
         })
         viewModel.initData(intent)
     }
