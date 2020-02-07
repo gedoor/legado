@@ -63,7 +63,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 adapter.selectedBooks.clear()
                 initBookData()
             }
-            else -> {
+            else -> if (item.groupId == R.id.menu_group) {
                 title_bar.subtitle = item.title
                 groupId = item.itemId
                 adapter.selectedBooks.clear()
