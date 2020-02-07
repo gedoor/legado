@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getVerticalDivider
@@ -32,10 +33,13 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     private lateinit var adapter: ArrangeBookAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
     private var booksLiveData: LiveData<List<Book>>? = null
+    private var menu: Menu? = null
+    private var groupId: Int = -1
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
-        initData()
+        initGroupData()
+        initBookData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -43,9 +47,28 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        this.menu = menu
+        upMenu()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-
+            R.id.menu_group_manage -> GroupManageDialog()
+                .show(supportFragmentManager, "groupManage")
+            R.id.menu_all -> {
+                title_bar.subtitle = item.title
+                groupId = -1
+                adapter.selectedBooks.clear()
+                initBookData()
+            }
+            else -> {
+                title_bar.subtitle = item.title
+                groupId = item.itemId
+                adapter.selectedBooks.clear()
+                initBookData()
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -79,20 +102,38 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         }
     }
 
-    private fun initData() {
+    private fun initGroupData() {
         groupLiveData?.removeObservers(this)
         groupLiveData = App.db.bookGroupDao().liveDataAll()
         groupLiveData?.observe(this, Observer {
             groupList.clear()
             groupList.addAll(it)
             adapter.notifyDataSetChanged()
+            upMenu()
         })
+    }
+
+    private fun initBookData() {
         booksLiveData?.removeObservers(this)
-        booksLiveData = App.db.bookDao().observeAll()
+        booksLiveData =
+            if (groupId == -1) {
+                App.db.bookDao().observeAll()
+            } else {
+                App.db.bookDao().observeByGroup(groupId)
+            }
         booksLiveData?.observe(this, Observer {
             adapter.setItems(it)
             upSelectCount()
         })
+    }
+
+    private fun upMenu() {
+        menu?.findItem(R.id.menu_book_group)?.subMenu?.let { subMenu ->
+            subMenu.removeGroup(R.id.menu_group)
+            groupList.forEach { bookGroup ->
+                subMenu.add(R.id.menu_group, bookGroup.groupId, Menu.NONE, bookGroup.groupName)
+            }
+        }
     }
 
     override fun selectGroup(requestCode: Int) {
