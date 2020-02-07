@@ -36,9 +36,11 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         path1 = path1.replace(sdCardDirectory, "")
         paths.clear()
         if (path1 != "/" && path1 != "") {
-            val tmps = path1.substring(path1.indexOf("/") + 1).split("/".toRegex())
-                .dropLastWhile { it.isEmpty() }.toTypedArray()
-            Collections.addAll(paths, *tmps)
+            val subDirs = path1.substring(path1.indexOf("/") + 1)
+                .split("/".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .toTypedArray()
+            Collections.addAll(paths, *subDirs)
         }
         paths.addFirst(ROOT_HINT)
         setItems(paths)
