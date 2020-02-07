@@ -78,12 +78,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         recycler_view.adapter = adapter
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
             val diffResult =
-                DiffUtil.calculateDiff(
-                    GroupDiffCallBack(
-                        adapter.getItems(),
-                        it
-                    )
-                )
+                DiffUtil.calculateDiff(GroupDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
         })
@@ -154,13 +149,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private class GroupDiffCallBack(
         private val oldItems: List<BookGroup>,
         private val newItems: List<BookGroup>
-    ) :
-        DiffUtil.Callback() {
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldItems[oldItemPosition]
-            val newItem = newItems[newItemPosition]
-            return oldItem.groupId == newItem.groupId
-        }
+    ) : DiffUtil.Callback() {
 
         override fun getOldListSize(): Int {
             return oldItems.size
@@ -170,11 +159,14 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             return newItems.size
         }
 
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return true
+        }
+
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldItems[oldItemPosition]
             val newItem = newItems[newItemPosition]
             return oldItem.groupName == newItem.groupName
-                    && oldItem.order == newItem.order
         }
 
     }
