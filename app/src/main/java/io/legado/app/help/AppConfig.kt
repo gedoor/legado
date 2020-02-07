@@ -29,7 +29,7 @@ object AppConfig {
         }
 
     var isShowRSS: Boolean
-        get() = App.INSTANCE.getPrefBoolean(PreferKey.showRss)
+        get() = App.INSTANCE.getPrefBoolean(PreferKey.showRss, true)
         set(value) {
             App.INSTANCE.putPrefBoolean(PreferKey.showRss, value)
         }
