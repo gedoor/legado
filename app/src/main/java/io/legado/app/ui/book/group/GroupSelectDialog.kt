@@ -42,15 +42,17 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     companion object {
         const val tag = "groupSelectDialog"
 
-        fun show(manager: FragmentManager) {
-            val fragment = GroupSelectDialog()
-            fragment.show(
-                manager,
-                tag
-            )
+        fun show(manager: FragmentManager, requestCode: Int = -1) {
+            val fragment = GroupSelectDialog().apply {
+                val bundle = Bundle()
+                bundle.putInt("requestCode", requestCode)
+                arguments = bundle
+            }
+            fragment.show(manager, tag)
         }
     }
 
+    private var requestCode: Int = -1
     private lateinit var viewModel: BookshelfViewModel
     private lateinit var adapter: GroupAdapter
     private var callBack: CallBack? = null
@@ -74,6 +76,9 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         callBack = activity as? CallBack
+        arguments?.getInt("requestCode")?.let {
+            requestCode = it
+        }
         initData()
     }
 
@@ -157,7 +162,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 tv_edit.onClick { editGroup(item) }
                 tv_del.onClick { viewModel.delGroup(item) }
                 this.onClick {
-                    callBack?.upGroup(item)
+                    callBack?.upGroup(requestCode, item)
                     dismiss()
                 }
             }
@@ -181,6 +186,6 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     interface CallBack {
-        fun upGroup(group: BookGroup)
+        fun upGroup(requestCode: Int, group: BookGroup)
     }
 }

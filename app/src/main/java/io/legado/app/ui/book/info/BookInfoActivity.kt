@@ -306,7 +306,7 @@ class BookInfoActivity :
         return viewModel.durChapterIndex
     }
 
-    override fun upGroup(group: BookGroup) {
+    override fun upGroup(requestCode: Int, group: BookGroup) {
         viewModel.groupData.postValue(group)
         viewModel.bookData.value?.group = group.groupId
         if (viewModel.inBookshelf) {
