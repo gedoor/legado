@@ -16,7 +16,15 @@
 
             <item
                 android:id="@+id/menu_all"
-                android:title="@string/all_book" />
+                android:title="@string/all" />
+
+            <item
+                android:id="@+id/menu_local"
+                android:title="@string/local" />
+
+            <item
+                android:id="@+id/menu_audio"
+                android:title="@string/audio" />
 
         </menu>
 
