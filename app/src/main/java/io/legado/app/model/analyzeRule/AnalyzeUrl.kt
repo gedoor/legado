@@ -162,7 +162,7 @@ class AnalyzeUrl(
         }
         if (urlArray.size > 1) {
             val options = GSON.fromJsonObject<Map<String, String>>(urlArray[1])
-            options?.let {
+            options?.let { _ ->
                 options["method"]?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
                 options["headers"]?.let { headers ->
                     GSON.fromJsonObject<Map<String, String>>(headers)?.let { headerMap.putAll(it) }
