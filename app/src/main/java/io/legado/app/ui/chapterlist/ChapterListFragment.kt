@@ -18,6 +18,7 @@ import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
@@ -50,8 +51,11 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initBook() {
-        launch(IO) {
-            book = App.db.bookDao().getBook(viewModel.bookUrl)
+        launch {
+            withContext(IO) {
+                book = App.db.bookDao().getBook(viewModel.bookUrl)
+            }
+            tv_current_chapter_info.text = book?.durChapterTitle
         }
     }
 
@@ -63,7 +67,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             if (it.isEmpty()) return@Observer
             book?.let { book ->
                 durChapterIndex = book.durChapterIndex
-                tv_current_chapter_info.text = it[durChapterIndex()].title
+                tv_current_chapter_info.text = it[durChapterIndex].title
                 mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
             }
         })
