@@ -140,7 +140,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             if (getPrefBoolean("bookGroupLocal", true)) {
                 bookGroups.add(1, AppConst.bookGroupLocal)
             }
-            view_pager_bookshelf.adapter?.notifyDataSetChanged()
+            bookshelfAdapter.notifyDataSetChanged()
         }
     }
 
