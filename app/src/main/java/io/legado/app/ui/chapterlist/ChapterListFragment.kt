@@ -55,7 +55,11 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             withContext(IO) {
                 book = App.db.bookDao().getBook(viewModel.bookUrl)
             }
-            tv_current_chapter_info.text = book?.durChapterTitle
+            book?.let {
+                durChapterIndex = it.durChapterIndex
+                tv_current_chapter_info.text = it.durChapterTitle
+                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+            }
         }
     }
 
@@ -64,12 +68,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
         tocLiveData?.observe(viewLifecycleOwner, Observer {
             adapter.setItems(it)
-            if (it.isEmpty()) return@Observer
-            book?.let { book ->
-                durChapterIndex = book.durChapterIndex
-                tv_current_chapter_info.text = it[durChapterIndex].title
-                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-            }
+            mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
         })
     }
 
@@ -96,7 +95,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             tocLiveData = App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl, newText)
             tocLiveData?.observe(viewLifecycleOwner, Observer {
                 adapter.setItems(it)
-                mLayoutManager.scrollToPositionWithOffset(0, 0)
             })
         }
     }
