@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.base.adapter.ItemViewHolder
 
-class ToTopListUpCallback : ListUpdateCallback {
+class FirstTopListUpCallback : ListUpdateCallback {
     var firstInsert = -1
     lateinit var adapter: RecyclerView.Adapter<ItemViewHolder>
 
