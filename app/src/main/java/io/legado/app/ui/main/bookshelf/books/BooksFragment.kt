@@ -15,6 +15,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.ToTopListUpCallback
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -88,6 +89,8 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, Observer {
+            val listUpCallback = ToTopListUpCallback()
+            listUpCallback.adapter = booksAdapter
             val diffResult =
                 DiffUtil.calculateDiff(
                     BooksDiffCallBack(
@@ -96,7 +99,8 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
                     )
                 )
             booksAdapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(booksAdapter)
+            diffResult.dispatchUpdatesTo(listUpCallback)
+            rv_bookshelf.scrollToPosition(listUpCallback.firstInsert)
         })
     }
 
