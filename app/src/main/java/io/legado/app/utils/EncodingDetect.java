@@ -120,26 +120,23 @@ public class EncodingDetect {
 class BytesEncodingDetect extends Encoding {
     // Frequency tables to hold the GB, Big5, and EUC-TW character
     // frequencies
-    int[][] GBFreq;
+    private int[][] GBFreq;
 
-    int[][] GBKFreq;
+    private int[][] GBKFreq;
 
-    int[][] Big5Freq;
+    private int[][] Big5Freq;
 
-    int[][] Big5PFreq;
+    private int[][] Big5PFreq;
 
-    int[][] EUC_TWFreq;
+    private int[][] EUC_TWFreq;
 
-    int[][] KRFreq;
+    private int[][] KRFreq;
 
-    int[][] JPFreq;
+    private int[][] JPFreq;
 
-    // int UnicodeFreq[94][128];
-    // public static String[] nicename;
-    // public static String[] codings;
     public boolean debug;
 
-    public BytesEncodingDetect() {
+    BytesEncodingDetect() {
         super();
         debug = false;
         GBFreq = new int[94][94];
@@ -187,12 +184,12 @@ class BytesEncodingDetect extends Encoding {
      * score for each encoding type. The encoding type with the highest
      * probability is returned.
      */
-    public int detectEncoding(File testfile) {
+    int detectEncoding(File testfile) {
         byte[] rawtext = getFileBytes(testfile);
         return detectEncoding(rawtext);
     }
 
-    public static byte[] getFileBytes(File testfile) {
+    static byte[] getFileBytes(File testfile) {
         FileInputStream chinesefile;
         byte[] rawtext;
         rawtext = new byte[2000];
@@ -214,7 +211,7 @@ class BytesEncodingDetect extends Encoding {
      * it a probability score for each encoding type. The encoding type with the
      * highest probability is returned.
      */
-    public int detectEncoding(byte[] rawtext) {
+    int detectEncoding(byte[] rawtext) {
         int[] scores;
         int index, maxscore = 0;
         int encoding_guess = OTHER;
@@ -423,15 +420,6 @@ class BytesEncodingDetect extends Encoding {
                         && (byte) 0x30 <= rawtext[i + 3]
                         && rawtext[i + 3] <= (byte) 0x39) {
                     gbchars++;
-                    /*
-                     * totalfreq += 500; row = rawtext[i] + 256 - 0x81; if (0x40
-                     * <= rawtext[i+1] && rawtext[i+1] <= 0x7E) { column =
-                     * rawtext[i+1] - 0x40; } else { column = rawtext[i+1] + 256
-                     * - 0x40; } //System.out.println("extended row " + row + "
-                     * column " + column + " rawtext[i] " + rawtext[i]); if
-                     * (GBKFreq[row][column] != 0) { gbfreq +=
-                     * GBKFreq[row][column]; }
-                     */
                 }
                 i++;
             }
@@ -812,33 +800,12 @@ class BytesEncodingDetect extends Encoding {
      * Unicode, guess based on BOM // NOT VERY GENERAL, NEEDS MUCH MORE WORK
      */
     int utf16_probability(byte[] rawtext) {
-        // int score = 0;
-        // int i, rawtextlen = 0;
-        // int goodbytes = 0, asciibytes = 0;
         if (rawtext.length > 1
                 && ((byte) 0xFE == rawtext[0] && (byte) 0xFF == rawtext[1]) || // Big-endian
                 ((byte) 0xFF == rawtext[0] && (byte) 0xFE == rawtext[1])) { // Little-endian
             return 100;
         }
         return 0;
-        /*
-         * // Check to see if characters fit into acceptable ranges rawtextlen =
-         * rawtext.length; for (i = 0; i < rawtextlen; i++) { if ((rawtext[i] &
-         * (byte)0x7F) == rawtext[i]) { // One byte goodbytes += 1;
-         * asciibytes++; } else if ((rawtext[i] & (byte)0xDF) == rawtext[i]) {
-         * // Two bytes if (i+1 < rawtextlen && (rawtext[i+1] & (byte)0xBF) ==
-         * rawtext[i+1]) { goodbytes += 2; i++; } } else if ((rawtext[i] &
-         * (byte)0xEF) == rawtext[i]) { // Three bytes if (i+2 < rawtextlen &&
-         * (rawtext[i+1] & (byte)0xBF) == rawtext[i+1] && (rawtext[i+2] &
-         * (byte)0xBF) == rawtext[i+2]) { goodbytes += 3; i+=2; } } }
-         *
-         * score = (int)(100 * ((float)goodbytes/(float)rawtext.length)); // An
-         * all ASCII file is also a good UTF8 file, but I'd rather it // get
-         * identified as ASCII. Can delete following 3 lines otherwise if
-         * (goodbytes == asciibytes) { score = 0; } // If not above 90, reduce
-         * to zero to prevent coincidental matches if (score > 90) { return
-         * score; } else { return 0; }
-         */
     }
 
     /*
@@ -1091,22 +1058,16 @@ class BytesEncodingDetect extends Encoding {
                 GBKFreq[i][j] = 0;
             }
         }
-        // for (i = 0; i < 94; i++) {
-        // for (j = 0; j < 158; j++) {
         for (i = 93; i >= 0; i--) {
             for (j = 157; j >= 0; j--) {
                 Big5Freq[i][j] = 0;
             }
         }
-        // for (i = 0; i < 126; i++) {
-        // for (j = 0; j < 191; j++) {
         for (i = 125; i >= 0; i--) {
             for (j = 190; j >= 0; j--) {
                 Big5PFreq[i][j] = 0;
             }
         }
-        // for (i = 0; i < 94; i++) {
-        // for (j = 0; j < 94; j++) {
         for (i = 93; i >= 0; i--) {
             for (j = 93; j >= 0; j--) {
                 EUC_TWFreq[i][j] = 0;
@@ -1517,76 +1478,7 @@ class BytesEncodingDetect extends Encoding {
         GBFreq[20][24] = 202;
         GBFreq[45][19] = 201;
         GBFreq[18][53] = 200;
-        /*
-         * GBFreq[39][0] = 199; GBFreq[40][71] = 198; GBFreq[41][27] = 197;
-         * GBFreq[15][69] = 196; GBFreq[42][10] = 195; GBFreq[31][89] = 194;
-         * GBFreq[51][28] = 193; GBFreq[41][22] = 192; GBFreq[40][43] = 191;
-         * GBFreq[38][6] = 190; GBFreq[37][11] = 189; GBFreq[39][60] = 188;
-         * GBFreq[48][47] = 187; GBFreq[46][80] = 186; GBFreq[52][49] = 185;
-         * GBFreq[50][48] = 184; GBFreq[25][1] = 183; GBFreq[52][29] = 182;
-         * GBFreq[24][66] = 181; GBFreq[23][35] = 180; GBFreq[49][72] = 179;
-         * GBFreq[47][45] = 178; GBFreq[45][14] = 177; GBFreq[51][70] = 176;
-         * GBFreq[22][30] = 175; GBFreq[49][83] = 174; GBFreq[26][79] = 173;
-         * GBFreq[27][41] = 172; GBFreq[51][81] = 171; GBFreq[41][54] = 170;
-         * GBFreq[20][4] = 169; GBFreq[29][60] = 168; GBFreq[20][27] = 167;
-         * GBFreq[50][15] = 166; GBFreq[41][6] = 165; GBFreq[35][34] = 164;
-         * GBFreq[44][87] = 163; GBFreq[46][66] = 162; GBFreq[42][37] = 161;
-         * GBFreq[42][24] = 160; GBFreq[54][7] = 159; GBFreq[41][14] = 158;
-         * GBFreq[39][83] = 157; GBFreq[16][87] = 156; GBFreq[20][59] = 155;
-         * GBFreq[42][12] = 154; GBFreq[47][2] = 153; GBFreq[21][32] = 152;
-         * GBFreq[53][29] = 151; GBFreq[22][40] = 150; GBFreq[24][58] = 149;
-         * GBFreq[52][88] = 148; GBFreq[29][30] = 147; GBFreq[15][91] = 146;
-         * GBFreq[54][72] = 145; GBFreq[51][75] = 144; GBFreq[33][67] = 143;
-         * GBFreq[41][50] = 142; GBFreq[27][34] = 141; GBFreq[46][17] = 140;
-         * GBFreq[31][74] = 139; GBFreq[42][67] = 138; GBFreq[54][87] = 137;
-         * GBFreq[27][14] = 136; GBFreq[16][63] = 135; GBFreq[16][5] = 134;
-         * GBFreq[43][23] = 133; GBFreq[23][13] = 132; GBFreq[31][12] = 131;
-         * GBFreq[25][57] = 130; GBFreq[38][49] = 129; GBFreq[42][69] = 128;
-         * GBFreq[23][80] = 127; GBFreq[29][0] = 126; GBFreq[28][2] = 125;
-         * GBFreq[28][17] = 124; GBFreq[17][27] = 123; GBFreq[40][16] = 122;
-         * GBFreq[45][1] = 121; GBFreq[36][33] = 120; GBFreq[35][23] = 119;
-         * GBFreq[20][86] = 118; GBFreq[29][53] = 117; GBFreq[23][88] = 116;
-         * GBFreq[51][87] = 115; GBFreq[54][27] = 114; GBFreq[44][36] = 113;
-         * GBFreq[21][45] = 112; GBFreq[53][52] = 111; GBFreq[31][53] = 110;
-         * GBFreq[38][47] = 109; GBFreq[27][21] = 108; GBFreq[30][42] = 107;
-         * GBFreq[29][10] = 106; GBFreq[35][35] = 105; GBFreq[24][56] = 104;
-         * GBFreq[41][29] = 103; GBFreq[18][68] = 102; GBFreq[29][24] = 101;
-         * GBFreq[25][84] = 100; GBFreq[35][47] = 99; GBFreq[29][56] = 98;
-         * GBFreq[30][44] = 97; GBFreq[53][3] = 96; GBFreq[30][63] = 95;
-         * GBFreq[52][52] = 94; GBFreq[54][1] = 93; GBFreq[22][48] = 92;
-         * GBFreq[54][66] = 91; GBFreq[21][90] = 90; GBFreq[52][47] = 89;
-         * GBFreq[39][25] = 88; GBFreq[39][39] = 87; GBFreq[44][37] = 86;
-         * GBFreq[44][76] = 85; GBFreq[46][75] = 84; GBFreq[18][37] = 83;
-         * GBFreq[47][42] = 82; GBFreq[19][92] = 81; GBFreq[51][27] = 80;
-         * GBFreq[48][83] = 79; GBFreq[23][70] = 78; GBFreq[29][9] = 77;
-         * GBFreq[33][79] = 76; GBFreq[52][90] = 75; GBFreq[53][6] = 74;
-         * GBFreq[24][36] = 73; GBFreq[25][25] = 72; GBFreq[44][26] = 71;
-         * GBFreq[25][36] = 70; GBFreq[29][87] = 69; GBFreq[48][0] = 68;
-         * GBFreq[15][40] = 67; GBFreq[17][45] = 66; GBFreq[30][14] = 65;
-         * GBFreq[48][38] = 64; GBFreq[23][19] = 63; GBFreq[40][42] = 62;
-         * GBFreq[31][63] = 61; GBFreq[16][23] = 60; GBFreq[26][21] = 59;
-         * GBFreq[32][76] = 58; GBFreq[23][58] = 57; GBFreq[41][37] = 56;
-         * GBFreq[30][43] = 55; GBFreq[47][38] = 54; GBFreq[21][46] = 53;
-         * GBFreq[18][33] = 52; GBFreq[52][37] = 51; GBFreq[36][8] = 50;
-         * GBFreq[49][24] = 49; GBFreq[15][66] = 48; GBFreq[35][77] = 47;
-         * GBFreq[27][58] = 46; GBFreq[35][51] = 45; GBFreq[24][69] = 44;
-         * GBFreq[20][54] = 43; GBFreq[24][41] = 42; GBFreq[41][0] = 41;
-         * GBFreq[33][71] = 40; GBFreq[23][52] = 39; GBFreq[29][67] = 38;
-         * GBFreq[46][51] = 37; GBFreq[46][90] = 36; GBFreq[49][33] = 35;
-         * GBFreq[33][28] = 34; GBFreq[37][86] = 33; GBFreq[39][22] = 32;
-         * GBFreq[37][37] = 31; GBFreq[29][62] = 30; GBFreq[29][50] = 29;
-         * GBFreq[36][89] = 28; GBFreq[42][44] = 27; GBFreq[51][82] = 26;
-         * GBFreq[28][83] = 25; GBFreq[15][78] = 24; GBFreq[46][62] = 23;
-         * GBFreq[19][69] = 22; GBFreq[51][23] = 21; GBFreq[37][69] = 20;
-         * GBFreq[25][5] = 19; GBFreq[51][85] = 18; GBFreq[48][77] = 17;
-         * GBFreq[32][46] = 16; GBFreq[53][60] = 15; GBFreq[28][57] = 14;
-         * GBFreq[54][82] = 13; GBFreq[54][15] = 12; GBFreq[49][54] = 11;
-         * GBFreq[53][87] = 10; GBFreq[27][16] = 9; GBFreq[29][34] = 8;
-         * GBFreq[20][44] = 7; GBFreq[42][73] = 6; GBFreq[47][71] = 5;
-         * GBFreq[29][37] = 4; GBFreq[25][50] = 3; GBFreq[18][84] = 2;
-         * GBFreq[50][45] = 1; GBFreq[48][46] = 0;
-         */
-        // GBFreq[43][89] = -1; GBFreq[54][68] = -2;
+
         Big5Freq[9][89] = 600;
         Big5Freq[11][15] = 599;
         Big5Freq[3][66] = 598;
@@ -1987,81 +1879,7 @@ class BytesEncodingDetect extends Encoding {
         Big5Freq[26][124] = 203;
         Big5Freq[4][19] = 202;
         Big5Freq[9][152] = 201;
-        /*
-         * Big5Freq[5][0] = 200; Big5Freq[26][57] = 199; Big5Freq[13][155] =
-         * 198; Big5Freq[3][38] = 197; Big5Freq[9][155] = 196; Big5Freq[28][53]
-         * = 195; Big5Freq[15][71] = 194; Big5Freq[21][95] = 193;
-         * Big5Freq[15][112] = 192; Big5Freq[14][138] = 191; Big5Freq[8][18] =
-         * 190; Big5Freq[20][151] = 189; Big5Freq[37][27] = 188;
-         * Big5Freq[32][48] = 187; Big5Freq[23][66] = 186; Big5Freq[9][2] = 185;
-         * Big5Freq[13][133] = 184; Big5Freq[7][127] = 183; Big5Freq[3][11] =
-         * 182; Big5Freq[12][118] = 181; Big5Freq[13][101] = 180;
-         * Big5Freq[30][153] = 179; Big5Freq[4][65] = 178; Big5Freq[5][25] =
-         * 177; Big5Freq[5][140] = 176; Big5Freq[6][25] = 175; Big5Freq[4][52] =
-         * 174; Big5Freq[30][156] = 173; Big5Freq[16][13] = 172; Big5Freq[21][8]
-         * = 171; Big5Freq[19][74] = 170; Big5Freq[15][145] = 169;
-         * Big5Freq[9][15] = 168; Big5Freq[13][82] = 167; Big5Freq[26][86] =
-         * 166; Big5Freq[18][52] = 165; Big5Freq[6][109] = 164; Big5Freq[10][99]
-         * = 163; Big5Freq[18][101] = 162; Big5Freq[25][49] = 161;
-         * Big5Freq[31][79] = 160; Big5Freq[28][20] = 159; Big5Freq[12][115] =
-         * 158; Big5Freq[15][66] = 157; Big5Freq[11][104] = 156;
-         * Big5Freq[23][106] = 155; Big5Freq[34][157] = 154; Big5Freq[32][94] =
-         * 153; Big5Freq[29][88] = 152; Big5Freq[10][46] = 151;
-         * Big5Freq[13][118] = 150; Big5Freq[20][37] = 149; Big5Freq[12][30] =
-         * 148; Big5Freq[21][4] = 147; Big5Freq[16][33] = 146; Big5Freq[13][52]
-         * = 145; Big5Freq[4][7] = 144; Big5Freq[21][49] = 143; Big5Freq[3][27]
-         * = 142; Big5Freq[16][91] = 141; Big5Freq[5][155] = 140;
-         * Big5Freq[29][130] = 139; Big5Freq[3][125] = 138; Big5Freq[14][26] =
-         * 137; Big5Freq[15][39] = 136; Big5Freq[24][110] = 135;
-         * Big5Freq[7][141] = 134; Big5Freq[21][15] = 133; Big5Freq[32][104] =
-         * 132; Big5Freq[8][31] = 131; Big5Freq[34][112] = 130; Big5Freq[10][75]
-         * = 129; Big5Freq[21][23] = 128; Big5Freq[34][131] = 127;
-         * Big5Freq[12][3] = 126; Big5Freq[10][62] = 125; Big5Freq[9][120] =
-         * 124; Big5Freq[32][149] = 123; Big5Freq[8][44] = 122; Big5Freq[24][2]
-         * = 121; Big5Freq[6][148] = 120; Big5Freq[15][103] = 119;
-         * Big5Freq[36][54] = 118; Big5Freq[36][134] = 117; Big5Freq[11][7] =
-         * 116; Big5Freq[3][90] = 115; Big5Freq[36][73] = 114; Big5Freq[8][102]
-         * = 113; Big5Freq[12][87] = 112; Big5Freq[25][64] = 111; Big5Freq[9][1]
-         * = 110; Big5Freq[24][121] = 109; Big5Freq[5][75] = 108;
-         * Big5Freq[17][83] = 107; Big5Freq[18][57] = 106; Big5Freq[8][95] =
-         * 105; Big5Freq[14][36] = 104; Big5Freq[28][113] = 103;
-         * Big5Freq[12][56] = 102; Big5Freq[14][61] = 101; Big5Freq[25][138] =
-         * 100; Big5Freq[4][34] = 99; Big5Freq[11][152] = 98; Big5Freq[35][0] =
-         * 97; Big5Freq[4][15] = 96; Big5Freq[8][82] = 95; Big5Freq[20][73] =
-         * 94; Big5Freq[25][52] = 93; Big5Freq[24][6] = 92; Big5Freq[21][78] =
-         * 91; Big5Freq[17][32] = 90; Big5Freq[17][91] = 89; Big5Freq[5][76] =
-         * 88; Big5Freq[15][60] = 87; Big5Freq[15][150] = 86; Big5Freq[5][80] =
-         * 85; Big5Freq[15][81] = 84; Big5Freq[28][108] = 83; Big5Freq[18][14] =
-         * 82; Big5Freq[19][109] = 81; Big5Freq[28][133] = 80; Big5Freq[21][97]
-         * = 79; Big5Freq[5][105] = 78; Big5Freq[18][114] = 77; Big5Freq[16][95]
-         * = 76; Big5Freq[5][51] = 75; Big5Freq[3][148] = 74; Big5Freq[22][102]
-         * = 73; Big5Freq[4][123] = 72; Big5Freq[8][88] = 71; Big5Freq[25][111]
-         * = 70; Big5Freq[8][149] = 69; Big5Freq[9][48] = 68; Big5Freq[16][126]
-         * = 67; Big5Freq[33][150] = 66; Big5Freq[9][54] = 65; Big5Freq[29][104]
-         * = 64; Big5Freq[3][3] = 63; Big5Freq[11][49] = 62; Big5Freq[24][109] =
-         * 61; Big5Freq[28][116] = 60; Big5Freq[34][113] = 59; Big5Freq[5][3] =
-         * 58; Big5Freq[21][106] = 57; Big5Freq[4][98] = 56; Big5Freq[12][135] =
-         * 55; Big5Freq[16][101] = 54; Big5Freq[12][147] = 53; Big5Freq[27][55]
-         * = 52; Big5Freq[3][5] = 51; Big5Freq[11][101] = 50; Big5Freq[16][157]
-         * = 49; Big5Freq[22][114] = 48; Big5Freq[18][46] = 47; Big5Freq[4][29]
-         * = 46; Big5Freq[8][103] = 45; Big5Freq[16][151] = 44; Big5Freq[8][29]
-         * = 43; Big5Freq[15][114] = 42; Big5Freq[22][70] = 41;
-         * Big5Freq[13][121] = 40; Big5Freq[7][112] = 39; Big5Freq[20][83] = 38;
-         * Big5Freq[3][36] = 37; Big5Freq[10][103] = 36; Big5Freq[3][96] = 35;
-         * Big5Freq[21][79] = 34; Big5Freq[25][120] = 33; Big5Freq[29][121] =
-         * 32; Big5Freq[23][71] = 31; Big5Freq[21][22] = 30; Big5Freq[18][89] =
-         * 29; Big5Freq[25][104] = 28; Big5Freq[10][124] = 27; Big5Freq[26][4] =
-         * 26; Big5Freq[21][136] = 25; Big5Freq[6][112] = 24; Big5Freq[12][103]
-         * = 23; Big5Freq[17][66] = 22; Big5Freq[13][151] = 21;
-         * Big5Freq[33][152] = 20; Big5Freq[11][148] = 19; Big5Freq[13][57] =
-         * 18; Big5Freq[13][41] = 17; Big5Freq[7][60] = 16; Big5Freq[21][29] =
-         * 15; Big5Freq[9][157] = 14; Big5Freq[24][95] = 13; Big5Freq[15][148] =
-         * 12; Big5Freq[15][122] = 11; Big5Freq[6][125] = 10; Big5Freq[11][25] =
-         * 9; Big5Freq[20][55] = 8; Big5Freq[19][84] = 7; Big5Freq[21][82] = 6;
-         * Big5Freq[24][3] = 5; Big5Freq[13][70] = 4; Big5Freq[6][21] = 3;
-         * Big5Freq[21][86] = 2; Big5Freq[12][23] = 1; Big5Freq[3][85] = 0;
-         * EUC_TWFreq[45][90] = 600;
-         */
+
         Big5PFreq[41][122] = 600;
         Big5PFreq[35][0] = 599;
         Big5PFreq[43][15] = 598;
@@ -3062,94 +2880,7 @@ class BytesEncodingDetect extends Encoding {
         EUC_TWFreq[74][69] = 203;
         EUC_TWFreq[36][82] = 202;
         EUC_TWFreq[46][59] = 201;
-        /*
-         * EUC_TWFreq[38][32] = 200; EUC_TWFreq[74][2] = 199; EUC_TWFreq[53][31]
-         * = 198; EUC_TWFreq[35][38] = 197; EUC_TWFreq[46][62] = 196;
-         * EUC_TWFreq[77][31] = 195; EUC_TWFreq[55][74] = 194; EUC_TWFreq[66][6]
-         * = 193; EUC_TWFreq[56][21] = 192; EUC_TWFreq[54][78] = 191;
-         * EUC_TWFreq[43][51] = 190; EUC_TWFreq[64][93] = 189; EUC_TWFreq[92][7]
-         * = 188; EUC_TWFreq[83][89] = 187; EUC_TWFreq[69][9] = 186;
-         * EUC_TWFreq[45][4] = 185; EUC_TWFreq[53][9] = 184; EUC_TWFreq[43][2] =
-         * 183; EUC_TWFreq[35][11] = 182; EUC_TWFreq[51][25] = 181;
-         * EUC_TWFreq[52][71] = 180; EUC_TWFreq[81][67] = 179;
-         * EUC_TWFreq[37][33] = 178; EUC_TWFreq[38][57] = 177;
-         * EUC_TWFreq[39][77] = 176; EUC_TWFreq[40][26] = 175;
-         * EUC_TWFreq[37][21] = 174; EUC_TWFreq[81][70] = 173;
-         * EUC_TWFreq[56][80] = 172; EUC_TWFreq[65][14] = 171;
-         * EUC_TWFreq[62][47] = 170; EUC_TWFreq[56][54] = 169;
-         * EUC_TWFreq[45][17] = 168; EUC_TWFreq[52][52] = 167;
-         * EUC_TWFreq[74][30] = 166; EUC_TWFreq[60][57] = 165;
-         * EUC_TWFreq[41][15] = 164; EUC_TWFreq[47][69] = 163;
-         * EUC_TWFreq[61][11] = 162; EUC_TWFreq[72][25] = 161;
-         * EUC_TWFreq[82][56] = 160; EUC_TWFreq[76][92] = 159;
-         * EUC_TWFreq[51][22] = 158; EUC_TWFreq[55][69] = 157;
-         * EUC_TWFreq[49][43] = 156; EUC_TWFreq[69][49] = 155;
-         * EUC_TWFreq[88][42] = 154; EUC_TWFreq[84][41] = 153;
-         * EUC_TWFreq[79][33] = 152; EUC_TWFreq[47][17] = 151;
-         * EUC_TWFreq[52][88] = 150; EUC_TWFreq[63][74] = 149;
-         * EUC_TWFreq[50][32] = 148; EUC_TWFreq[65][10] = 147; EUC_TWFreq[57][6]
-         * = 146; EUC_TWFreq[52][23] = 145; EUC_TWFreq[36][70] = 144;
-         * EUC_TWFreq[65][55] = 143; EUC_TWFreq[35][27] = 142;
-         * EUC_TWFreq[57][63] = 141; EUC_TWFreq[39][92] = 140;
-         * EUC_TWFreq[79][75] = 139; EUC_TWFreq[36][30] = 138;
-         * EUC_TWFreq[53][60] = 137; EUC_TWFreq[55][43] = 136;
-         * EUC_TWFreq[71][22] = 135; EUC_TWFreq[43][16] = 134;
-         * EUC_TWFreq[65][21] = 133; EUC_TWFreq[84][51] = 132;
-         * EUC_TWFreq[43][64] = 131; EUC_TWFreq[87][91] = 130;
-         * EUC_TWFreq[47][45] = 129; EUC_TWFreq[65][29] = 128;
-         * EUC_TWFreq[88][16] = 127; EUC_TWFreq[50][5] = 126; EUC_TWFreq[47][33]
-         * = 125; EUC_TWFreq[46][27] = 124; EUC_TWFreq[85][2] = 123;
-         * EUC_TWFreq[43][77] = 122; EUC_TWFreq[70][9] = 121; EUC_TWFreq[41][54]
-         * = 120; EUC_TWFreq[56][12] = 119; EUC_TWFreq[90][65] = 118;
-         * EUC_TWFreq[91][50] = 117; EUC_TWFreq[48][41] = 116;
-         * EUC_TWFreq[35][89] = 115; EUC_TWFreq[90][83] = 114;
-         * EUC_TWFreq[44][40] = 113; EUC_TWFreq[50][88] = 112;
-         * EUC_TWFreq[72][39] = 111; EUC_TWFreq[45][3] = 110; EUC_TWFreq[71][33]
-         * = 109; EUC_TWFreq[39][12] = 108; EUC_TWFreq[59][24] = 107;
-         * EUC_TWFreq[60][62] = 106; EUC_TWFreq[44][33] = 105;
-         * EUC_TWFreq[53][70] = 104; EUC_TWFreq[77][90] = 103;
-         * EUC_TWFreq[50][58] = 102; EUC_TWFreq[54][1] = 101; EUC_TWFreq[73][19]
-         * = 100; EUC_TWFreq[37][3] = 99; EUC_TWFreq[49][91] = 98;
-         * EUC_TWFreq[88][43] = 97; EUC_TWFreq[36][78] = 96; EUC_TWFreq[44][20]
-         * = 95; EUC_TWFreq[64][15] = 94; EUC_TWFreq[72][28] = 93;
-         * EUC_TWFreq[70][13] = 92; EUC_TWFreq[65][83] = 91; EUC_TWFreq[58][68]
-         * = 90; EUC_TWFreq[59][32] = 89; EUC_TWFreq[39][13] = 88;
-         * EUC_TWFreq[55][64] = 87; EUC_TWFreq[56][59] = 86; EUC_TWFreq[39][17]
-         * = 85; EUC_TWFreq[55][84] = 84; EUC_TWFreq[77][85] = 83;
-         * EUC_TWFreq[60][19] = 82; EUC_TWFreq[62][82] = 81; EUC_TWFreq[78][16]
-         * = 80; EUC_TWFreq[66][8] = 79; EUC_TWFreq[39][42] = 78;
-         * EUC_TWFreq[61][24] = 77; EUC_TWFreq[57][67] = 76; EUC_TWFreq[38][83]
-         * = 75; EUC_TWFreq[36][53] = 74; EUC_TWFreq[67][76] = 73;
-         * EUC_TWFreq[37][91] = 72; EUC_TWFreq[44][26] = 71; EUC_TWFreq[72][86]
-         * = 70; EUC_TWFreq[44][87] = 69; EUC_TWFreq[45][50] = 68;
-         * EUC_TWFreq[58][4] = 67; EUC_TWFreq[86][65] = 66; EUC_TWFreq[45][56] =
-         * 65; EUC_TWFreq[79][49] = 64; EUC_TWFreq[35][3] = 63;
-         * EUC_TWFreq[48][83] = 62; EUC_TWFreq[71][21] = 61; EUC_TWFreq[77][93]
-         * = 60; EUC_TWFreq[87][92] = 59; EUC_TWFreq[38][35] = 58;
-         * EUC_TWFreq[66][17] = 57; EUC_TWFreq[37][66] = 56; EUC_TWFreq[51][42]
-         * = 55; EUC_TWFreq[57][73] = 54; EUC_TWFreq[51][54] = 53;
-         * EUC_TWFreq[75][64] = 52; EUC_TWFreq[35][5] = 51; EUC_TWFreq[49][40] =
-         * 50; EUC_TWFreq[58][35] = 49; EUC_TWFreq[67][88] = 48;
-         * EUC_TWFreq[60][51] = 47; EUC_TWFreq[36][92] = 46; EUC_TWFreq[44][41]
-         * = 45; EUC_TWFreq[58][29] = 44; EUC_TWFreq[43][62] = 43;
-         * EUC_TWFreq[56][23] = 42; EUC_TWFreq[67][44] = 41; EUC_TWFreq[52][91]
-         * = 40; EUC_TWFreq[42][81] = 39; EUC_TWFreq[64][25] = 38;
-         * EUC_TWFreq[35][36] = 37; EUC_TWFreq[47][73] = 36; EUC_TWFreq[36][1] =
-         * 35; EUC_TWFreq[65][84] = 34; EUC_TWFreq[73][1] = 33;
-         * EUC_TWFreq[79][66] = 32; EUC_TWFreq[69][14] = 31; EUC_TWFreq[65][28]
-         * = 30; EUC_TWFreq[60][93] = 29; EUC_TWFreq[72][79] = 28;
-         * EUC_TWFreq[48][0] = 27; EUC_TWFreq[73][43] = 26; EUC_TWFreq[66][47] =
-         * 25; EUC_TWFreq[41][18] = 24; EUC_TWFreq[51][10] = 23;
-         * EUC_TWFreq[59][7] = 22; EUC_TWFreq[53][27] = 21; EUC_TWFreq[86][67] =
-         * 20; EUC_TWFreq[49][87] = 19; EUC_TWFreq[52][28] = 18;
-         * EUC_TWFreq[52][12] = 17; EUC_TWFreq[42][30] = 16; EUC_TWFreq[65][35]
-         * = 15; EUC_TWFreq[46][64] = 14; EUC_TWFreq[71][7] = 13;
-         * EUC_TWFreq[56][57] = 12; EUC_TWFreq[56][31] = 11; EUC_TWFreq[41][31]
-         * = 10; EUC_TWFreq[48][59] = 9; EUC_TWFreq[63][92] = 8;
-         * EUC_TWFreq[62][57] = 7; EUC_TWFreq[65][87] = 6; EUC_TWFreq[70][10] =
-         * 5; EUC_TWFreq[52][40] = 4; EUC_TWFreq[40][22] = 3; EUC_TWFreq[65][91]
-         * = 2; EUC_TWFreq[50][25] = 1; EUC_TWFreq[35][84] = 0;
-         */
+
         GBKFreq[52][132] = 600;
         GBKFreq[73][135] = 599;
         GBKFreq[49][123] = 598;
@@ -3452,113 +3183,7 @@ class BytesEncodingDetect extends Encoding {
         GBKFreq[58][174] = 301;
         GBKFreq[80][144] = 300;
         GBKFreq[85][113] = 299;
-        /*
-         * GBKFreq[83][15] = 298; GBKFreq[105][80] = 297; GBKFreq[7][179] = 296;
-         * GBKFreq[93][4] = 295; GBKFreq[123][40] = 294; GBKFreq[85][120] = 293;
-         * GBKFreq[77][165] = 292; GBKFreq[86][67] = 291; GBKFreq[25][162] =
-         * 290; GBKFreq[77][183] = 289; GBKFreq[83][71] = 288; GBKFreq[78][99] =
-         * 287; GBKFreq[72][177] = 286; GBKFreq[71][97] = 285; GBKFreq[58][111]
-         * = 284; GBKFreq[77][175] = 283; GBKFreq[76][181] = 282;
-         * GBKFreq[71][142] = 281; GBKFreq[64][150] = 280; GBKFreq[5][142] =
-         * 279; GBKFreq[73][128] = 278; GBKFreq[73][156] = 277; GBKFreq[60][188]
-         * = 276; GBKFreq[64][56] = 275; GBKFreq[74][128] = 274;
-         * GBKFreq[48][163] = 273; GBKFreq[54][116] = 272; GBKFreq[73][127] =
-         * 271; GBKFreq[16][176] = 270; GBKFreq[62][149] = 269; GBKFreq[105][96]
-         * = 268; GBKFreq[55][186] = 267; GBKFreq[4][51] = 266; GBKFreq[48][113]
-         * = 265; GBKFreq[48][152] = 264; GBKFreq[23][9] = 263; GBKFreq[56][102]
-         * = 262; GBKFreq[11][81] = 261; GBKFreq[82][112] = 260; GBKFreq[65][85]
-         * = 259; GBKFreq[69][125] = 258; GBKFreq[68][31] = 257; GBKFreq[5][20]
-         * = 256; GBKFreq[60][176] = 255; GBKFreq[82][81] = 254;
-         * GBKFreq[72][107] = 253; GBKFreq[3][52] = 252; GBKFreq[71][157] = 251;
-         * GBKFreq[24][46] = 250; GBKFreq[69][108] = 249; GBKFreq[78][178] =
-         * 248; GBKFreq[9][69] = 247; GBKFreq[73][144] = 246; GBKFreq[63][187] =
-         * 245; GBKFreq[68][36] = 244; GBKFreq[47][151] = 243; GBKFreq[14][74] =
-         * 242; GBKFreq[47][114] = 241; GBKFreq[80][171] = 240; GBKFreq[75][152]
-         * = 239; GBKFreq[86][40] = 238; GBKFreq[93][43] = 237; GBKFreq[2][50] =
-         * 236; GBKFreq[62][66] = 235; GBKFreq[1][183] = 234; GBKFreq[74][124] =
-         * 233; GBKFreq[58][104] = 232; GBKFreq[83][106] = 231; GBKFreq[60][144]
-         * = 230; GBKFreq[48][99] = 229; GBKFreq[54][157] = 228;
-         * GBKFreq[70][179] = 227; GBKFreq[61][127] = 226; GBKFreq[57][135] =
-         * 225; GBKFreq[59][190] = 224; GBKFreq[77][116] = 223; GBKFreq[26][17]
-         * = 222; GBKFreq[60][13] = 221; GBKFreq[71][38] = 220; GBKFreq[85][177]
-         * = 219; GBKFreq[59][73] = 218; GBKFreq[50][150] = 217;
-         * GBKFreq[79][102] = 216; GBKFreq[76][118] = 215; GBKFreq[67][132] =
-         * 214; GBKFreq[73][146] = 213; GBKFreq[83][184] = 212; GBKFreq[86][159]
-         * = 211; GBKFreq[95][120] = 210; GBKFreq[23][139] = 209;
-         * GBKFreq[64][183] = 208; GBKFreq[85][103] = 207; GBKFreq[41][90] =
-         * 206; GBKFreq[87][72] = 205; GBKFreq[62][104] = 204; GBKFreq[79][168]
-         * = 203; GBKFreq[79][150] = 202; GBKFreq[104][20] = 201;
-         * GBKFreq[56][114] = 200; GBKFreq[84][26] = 199; GBKFreq[57][99] = 198;
-         * GBKFreq[62][154] = 197; GBKFreq[47][98] = 196; GBKFreq[61][64] = 195;
-         * GBKFreq[112][18] = 194; GBKFreq[123][19] = 193; GBKFreq[4][98] = 192;
-         * GBKFreq[47][163] = 191; GBKFreq[66][188] = 190; GBKFreq[81][85] =
-         * 189; GBKFreq[82][30] = 188; GBKFreq[65][83] = 187; GBKFreq[67][24] =
-         * 186; GBKFreq[68][179] = 185; GBKFreq[55][177] = 184; GBKFreq[2][122]
-         * = 183; GBKFreq[47][139] = 182; GBKFreq[79][158] = 181;
-         * GBKFreq[64][143] = 180; GBKFreq[100][24] = 179; GBKFreq[73][103] =
-         * 178; GBKFreq[50][148] = 177; GBKFreq[86][97] = 176; GBKFreq[59][116]
-         * = 175; GBKFreq[64][173] = 174; GBKFreq[99][91] = 173; GBKFreq[11][99]
-         * = 172; GBKFreq[78][179] = 171; GBKFreq[18][17] = 170;
-         * GBKFreq[58][185] = 169; GBKFreq[47][165] = 168; GBKFreq[67][131] =
-         * 167; GBKFreq[94][40] = 166; GBKFreq[74][153] = 165; GBKFreq[79][142]
-         * = 164; GBKFreq[57][98] = 163; GBKFreq[1][164] = 162; GBKFreq[55][168]
-         * = 161; GBKFreq[13][141] = 160; GBKFreq[51][31] = 159;
-         * GBKFreq[57][178] = 158; GBKFreq[50][189] = 157; GBKFreq[60][167] =
-         * 156; GBKFreq[80][34] = 155; GBKFreq[109][80] = 154; GBKFreq[85][54] =
-         * 153; GBKFreq[69][183] = 152; GBKFreq[67][143] = 151; GBKFreq[47][120]
-         * = 150; GBKFreq[45][75] = 149; GBKFreq[82][98] = 148; GBKFreq[83][22]
-         * = 147; GBKFreq[13][103] = 146; GBKFreq[49][174] = 145;
-         * GBKFreq[57][181] = 144; GBKFreq[64][127] = 143; GBKFreq[61][131] =
-         * 142; GBKFreq[52][180] = 141; GBKFreq[74][134] = 140; GBKFreq[84][187]
-         * = 139; GBKFreq[81][189] = 138; GBKFreq[47][160] = 137;
-         * GBKFreq[66][148] = 136; GBKFreq[7][4] = 135; GBKFreq[85][134] = 134;
-         * GBKFreq[88][13] = 133; GBKFreq[88][80] = 132; GBKFreq[69][166] = 131;
-         * GBKFreq[86][18] = 130; GBKFreq[79][141] = 129; GBKFreq[50][108] =
-         * 128; GBKFreq[94][69] = 127; GBKFreq[81][110] = 126; GBKFreq[69][119]
-         * = 125; GBKFreq[72][161] = 124; GBKFreq[106][45] = 123;
-         * GBKFreq[73][124] = 122; GBKFreq[94][28] = 121; GBKFreq[63][174] =
-         * 120; GBKFreq[3][149] = 119; GBKFreq[24][160] = 118; GBKFreq[113][94]
-         * = 117; GBKFreq[56][138] = 116; GBKFreq[64][185] = 115;
-         * GBKFreq[86][56] = 114; GBKFreq[56][150] = 113; GBKFreq[110][55] =
-         * 112; GBKFreq[28][13] = 111; GBKFreq[54][190] = 110; GBKFreq[8][180] =
-         * 109; GBKFreq[73][149] = 108; GBKFreq[80][155] = 107; GBKFreq[83][172]
-         * = 106; GBKFreq[67][174] = 105; GBKFreq[64][180] = 104;
-         * GBKFreq[84][46] = 103; GBKFreq[91][74] = 102; GBKFreq[69][134] = 101;
-         * GBKFreq[61][107] = 100; GBKFreq[47][171] = 99; GBKFreq[59][51] = 98;
-         * GBKFreq[109][74] = 97; GBKFreq[64][174] = 96; GBKFreq[52][151] = 95;
-         * GBKFreq[51][176] = 94; GBKFreq[80][157] = 93; GBKFreq[94][31] = 92;
-         * GBKFreq[79][155] = 91; GBKFreq[72][174] = 90; GBKFreq[69][113] = 89;
-         * GBKFreq[83][167] = 88; GBKFreq[83][122] = 87; GBKFreq[8][178] = 86;
-         * GBKFreq[70][186] = 85; GBKFreq[59][153] = 84; GBKFreq[84][68] = 83;
-         * GBKFreq[79][39] = 82; GBKFreq[47][180] = 81; GBKFreq[88][53] = 80;
-         * GBKFreq[57][154] = 79; GBKFreq[47][153] = 78; GBKFreq[3][153] = 77;
-         * GBKFreq[76][134] = 76; GBKFreq[51][166] = 75; GBKFreq[58][176] = 74;
-         * GBKFreq[27][138] = 73; GBKFreq[73][126] = 72; GBKFreq[76][185] = 71;
-         * GBKFreq[52][186] = 70; GBKFreq[81][151] = 69; GBKFreq[26][50] = 68;
-         * GBKFreq[76][173] = 67; GBKFreq[106][56] = 66; GBKFreq[85][142] = 65;
-         * GBKFreq[11][103] = 64; GBKFreq[69][159] = 63; GBKFreq[53][142] = 62;
-         * GBKFreq[7][6] = 61; GBKFreq[84][59] = 60; GBKFreq[86][3] = 59;
-         * GBKFreq[64][144] = 58; GBKFreq[1][187] = 57; GBKFreq[82][128] = 56;
-         * GBKFreq[3][66] = 55; GBKFreq[68][133] = 54; GBKFreq[55][167] = 53;
-         * GBKFreq[52][130] = 52; GBKFreq[61][133] = 51; GBKFreq[72][181] = 50;
-         * GBKFreq[25][98] = 49; GBKFreq[84][149] = 48; GBKFreq[91][91] = 47;
-         * GBKFreq[47][188] = 46; GBKFreq[68][130] = 45; GBKFreq[22][44] = 44;
-         * GBKFreq[81][121] = 43; GBKFreq[72][140] = 42; GBKFreq[55][133] = 41;
-         * GBKFreq[55][185] = 40; GBKFreq[56][105] = 39; GBKFreq[60][30] = 38;
-         * GBKFreq[70][103] = 37; GBKFreq[62][141] = 36; GBKFreq[70][144] = 35;
-         * GBKFreq[59][111] = 34; GBKFreq[54][17] = 33; GBKFreq[18][190] = 32;
-         * GBKFreq[65][164] = 31; GBKFreq[83][125] = 30; GBKFreq[61][121] = 29;
-         * GBKFreq[48][13] = 28; GBKFreq[51][189] = 27; GBKFreq[65][68] = 26;
-         * GBKFreq[7][0] = 25; GBKFreq[76][188] = 24; GBKFreq[85][117] = 23;
-         * GBKFreq[45][33] = 22; GBKFreq[78][187] = 21; GBKFreq[106][48] = 20;
-         * GBKFreq[59][52] = 19; GBKFreq[86][185] = 18; GBKFreq[84][121] = 17;
-         * GBKFreq[82][189] = 16; GBKFreq[68][156] = 15; GBKFreq[55][125] = 14;
-         * GBKFreq[65][175] = 13; GBKFreq[7][140] = 12; GBKFreq[50][106] = 11;
-         * GBKFreq[59][124] = 10; GBKFreq[67][115] = 9; GBKFreq[82][114] = 8;
-         * GBKFreq[74][121] = 7; GBKFreq[106][69] = 6; GBKFreq[94][27] = 5;
-         * GBKFreq[78][98] = 4; GBKFreq[85][186] = 3; GBKFreq[108][90] = 2;
-         * GBKFreq[62][160] = 1; GBKFreq[60][169] = 0;
-         */
+
         KRFreq[31][43] = 600;
         KRFreq[19][56] = 599;
         KRFreq[38][46] = 598;
@@ -4766,71 +4391,47 @@ class BytesEncodingDetect extends Encoding {
 
 class Encoding {
     // Supported Encoding Types
-    public static int GB2312 = 0;
-
-    public static int GBK = 1;
-
-    public static int GB18030 = 2;
-
-    public static int HZ = 3;
-
-    public static int BIG5 = 4;
-
-    public static int CNS11643 = 5;
-
-    public static int UTF8 = 6;
-
-    public static int UTF8T = 7;
-
-    public static int UTF8S = 8;
-
-    public static int UNICODE = 9;
-
-    public static int UNICODET = 10;
-
-    public static int UNICODES = 11;
-
-    public static int ISO2022CN = 12;
-
-    public static int ISO2022CN_CNS = 13;
-
-    public static int ISO2022CN_GB = 14;
-
-    public static int EUC_KR = 15;
-
-    public static int CP949 = 16;
-
-    public static int ISO2022KR = 17;
-
-    public static int JOHAB = 18;
-
-    public static int SJIS = 19;
-
-    public static int EUC_JP = 20;
-
-    public static int ISO2022JP = 21;
-
-    public static int ASCII = 22;
-
-    public static int OTHER = 23;
-
-    public static int TOTALTYPES = 24;
+    static int GB2312 = 0;
+    static int GBK = 1;
+    static int GB18030 = 2;
+    static int HZ = 3;
+    static int BIG5 = 4;
+    static int CNS11643 = 5;
+    static int UTF8 = 6;
+    static int UTF8T = 7;
+    static int UTF8S = 8;
+    static int UNICODE = 9;
+    static int UNICODET = 10;
+    static int UNICODES = 11;
+    static int ISO2022CN = 12;
+    static int ISO2022CN_CNS = 13;
+    static int ISO2022CN_GB = 14;
+    static int EUC_KR = 15;
+    static int CP949 = 16;
+    static int ISO2022KR = 17;
+    static int JOHAB = 18;
+    static int SJIS = 19;
+    static int EUC_JP = 20;
+    static int ISO2022JP = 21;
+    static int ASCII = 22;
+    static int OTHER = 23;
+    static int TOTALTYPES = 24;
 
     public final static int SIMP = 0;
 
     public final static int TRAD = 1;
 
     // Names of the encodings as understood by Java
-    public static String[] javaname;
+    static String[] javaname;
 
     // Names of the encodings for human viewing
-    public static String[] nicename;
+    static String[] nicename;
 
     // Names of charsets as used in charset parameter of HTML Meta tag
-    public static String[] htmlname;
+    static String[] htmlname;
 
     // Constructor
-    public Encoding() {
+    Encoding() {
         javaname = new String[TOTALTYPES];
         nicename = new String[TOTALTYPES];
         htmlname = new String[TOTALTYPES];
