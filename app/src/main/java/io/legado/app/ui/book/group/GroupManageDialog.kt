@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -35,6 +36,8 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
+import kotlin.collections.ArrayList
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
@@ -175,6 +178,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage),
         ItemTouchCallback.OnItemTouchCallbackListener {
 
+        private var isMoved = false
+
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 tv_group.text = item.groupName
@@ -184,19 +189,20 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         }
 
         override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-            val srcItem = getItem(srcPosition)
-            val targetItem = getItem(targetPosition)
-            if (srcItem != null && targetItem != null) {
-                val order = srcItem.order
-                srcItem.order = targetItem.order
-                targetItem.order = order
-                viewModel.upGroup(srcItem, targetItem)
-            }
+            Collections.swap(getItems(), srcPosition, targetPosition)
+            notifyItemMoved(srcPosition, targetPosition)
+            isMoved = true
             return true
         }
 
-        override fun onSwiped(adapterPosition: Int) {
-
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            if (isMoved) {
+                for ((index, item) in getItems().withIndex()) {
+                    item.order = index + 1
+                }
+                viewModel.upGroup(*getItems().toTypedArray())
+            }
+            isMoved = false
         }
     }
 

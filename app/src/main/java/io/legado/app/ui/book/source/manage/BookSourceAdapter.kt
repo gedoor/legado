@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -13,6 +14,7 @@ import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
 import io.legado.app.lib.theme.backgroundColor
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource>(context, R.layout.item_book_source),
@@ -46,26 +48,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             }
         }
         return selection
-    }
-
-    override fun onSwiped(adapterPosition: Int) {
-
-    }
-
-    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-        val srcItem = getItem(srcPosition)
-        val targetItem = getItem(targetPosition)
-        if (srcItem != null && targetItem != null) {
-            if (srcItem.customOrder == targetItem.customOrder) {
-                callBack.upOrder()
-            } else {
-                val srcOrder = srcItem.customOrder
-                srcItem.customOrder = targetItem.customOrder
-                targetItem.customOrder = srcOrder
-                callBack.update(srcItem, targetItem)
-            }
-        }
-        return true
     }
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
@@ -120,6 +102,35 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
+        }
+
+    }
+
+    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        val srcItem = getItem(srcPosition)
+        val targetItem = getItem(targetPosition)
+        if (srcItem != null && targetItem != null) {
+            if (srcItem.customOrder == targetItem.customOrder) {
+                callBack.upOrder()
+            } else {
+                val srcOrder = srcItem.customOrder
+                srcItem.customOrder = targetItem.customOrder
+                targetItem.customOrder = srcOrder
+                movedItems.add(srcItem)
+                movedItems.add(targetItem)
+            }
+        }
+        Collections.swap(getItems(), srcPosition, targetPosition)
+        notifyItemMoved(srcPosition, targetPosition)
+        return true
+    }
+
+    private val movedItems = hashSetOf<BookSource>()
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        if (movedItems.isNotEmpty()) {
+            callBack.update(*movedItems.toTypedArray())
+            movedItems.clear()
         }
     }
 

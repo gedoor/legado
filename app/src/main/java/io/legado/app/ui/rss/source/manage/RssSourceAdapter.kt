@@ -3,6 +3,7 @@ package io.legado.app.ui.rss.source.manage
 import android.content.Context
 import android.view.Menu
 import android.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -11,6 +12,7 @@ import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
 import kotlinx.android.synthetic.main.item_rss_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss_source),
@@ -92,11 +94,6 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-
-    override fun onSwiped(adapterPosition: Int) {
-
-    }
-
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
@@ -107,10 +104,22 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 val srcOrder = srcItem.customOrder
                 srcItem.customOrder = targetItem.customOrder
                 targetItem.customOrder = srcOrder
-                callBack.update(srcItem, targetItem)
+                movedItems.add(srcItem)
+                movedItems.add(targetItem)
             }
         }
+        Collections.swap(getItems(), srcPosition, targetPosition)
+        notifyItemMoved(srcPosition, targetPosition)
         return true
+    }
+
+    private val movedItems = hashSetOf<RssSource>()
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        if (movedItems.isNotEmpty()) {
+            callBack.update(*movedItems.toTypedArray())
+            movedItems.clear()
+        }
     }
 
     interface CallBack {

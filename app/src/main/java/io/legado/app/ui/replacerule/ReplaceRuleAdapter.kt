@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -13,6 +14,7 @@ import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
 import kotlinx.android.synthetic.main.item_replace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
 
 
 class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
@@ -117,14 +119,22 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 val srcOrder = srcItem.order
                 srcItem.order = targetItem.order
                 targetItem.order = srcOrder
-                callBack.update(srcItem, targetItem)
+                movedItems.add(srcItem)
+                movedItems.add(targetItem)
             }
         }
+        Collections.swap(getItems(), srcPosition, targetPosition)
+        notifyItemMoved(srcPosition, targetPosition)
         return true
     }
 
-    override fun onSwiped(adapterPosition: Int) {
+    private val movedItems = linkedSetOf<ReplaceRule>()
 
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        if (movedItems.isNotEmpty()) {
+            callBack.update(*movedItems.toTypedArray())
+            movedItems.clear()
+        }
     }
 
     interface CallBack {
