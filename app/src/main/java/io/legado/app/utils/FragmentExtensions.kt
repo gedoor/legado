@@ -13,6 +13,7 @@ import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.internals.AnkoInternals
 
+@Suppress("DEPRECATION")
 fun Fragment.isOnline() = requireContext().connectivityManager.activeNetworkInfo?.isConnected == true
 
 fun Fragment.getPrefBoolean(key: String, defValue: Boolean = false) =

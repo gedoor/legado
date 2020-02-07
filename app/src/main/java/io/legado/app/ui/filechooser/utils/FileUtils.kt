@@ -147,15 +147,15 @@ object FileUtils {
         if (!f.isDirectory) {
             return arrayOfNulls(0)
         }
-        val files = f.listFiles(FileFilter { f ->
-            if (f == null) {
+        val files = f.listFiles(FileFilter { file ->
+            if (file == null) {
                 return@FileFilter false
             }
-            if (f.isDirectory) {
+            if (file.isDirectory) {
                 return@FileFilter false
             }
 
-            filterPattern?.matcher(f.name)?.find() ?: true
+            filterPattern?.matcher(file.name)?.find() ?: true
         })
             ?: return arrayOfNulls(0)
         for (file in files) {
