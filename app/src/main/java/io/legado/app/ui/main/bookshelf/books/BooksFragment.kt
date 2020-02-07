@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -15,7 +16,6 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.help.ToTopListUpCallback
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.audio.AudioPlayActivity
@@ -78,6 +78,21 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterGrid(requireContext(),this)
         }
         rv_bookshelf.adapter = booksAdapter
+        booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    rv_bookshelf.scrollToPosition(0)
+                }
+            }
+
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                if (toPosition == 0) {
+                    rv_bookshelf.scrollToPosition(0)
+                }
+            }
+        })
     }
 
     private fun upRecyclerData() {
@@ -89,8 +104,6 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, Observer {
-            val listUpCallback = ToTopListUpCallback()
-            listUpCallback.adapter = booksAdapter
             val diffResult =
                 DiffUtil.calculateDiff(
                     BooksDiffCallBack(
@@ -99,8 +112,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
                     )
                 )
             booksAdapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(listUpCallback)
-            rv_bookshelf.scrollToPosition(listUpCallback.firstInsert)
+            diffResult.dispatchUpdatesTo(booksAdapter)
         })
     }
 
