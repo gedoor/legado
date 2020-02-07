@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import io.legado.app.App
 import io.legado.app.R
@@ -15,6 +16,8 @@ import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
@@ -24,15 +27,18 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
     lateinit var adapter: ChapterListAdapter
+    private var book: Book? = null
     private var durChapterIndex = 0
     private lateinit var mLayoutManager: UpLinearLayoutManager
+    private var tocLiveData: LiveData<List<BookChapter>>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.chapterCallBack = this
         initRecyclerView()
         initView()
-        initData()
+        initBook()
+        initDoc()
     }
 
     private fun initRecyclerView() {
@@ -43,18 +49,24 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         recycler_view.adapter = adapter
     }
 
-    private fun initData() {
-        viewModel.bookUrl?.let { bookUrl ->
-            App.db.bookChapterDao().observeByBook(bookUrl).observe(viewLifecycleOwner, Observer {
-                adapter.setItems(it)
-                if (it.isEmpty()) return@Observer
-                viewModel.book?.let { book ->
-                    durChapterIndex = book.durChapterIndex
-                    tv_current_chapter_info.text = it[durChapterIndex()].title
-                    mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-                }
-            })
+    private fun initBook() {
+        launch(IO) {
+            book = App.db.bookDao().getBook(viewModel.bookUrl)
         }
+    }
+
+    private fun initDoc() {
+        tocLiveData?.removeObservers(this@ChapterListFragment)
+        tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
+        tocLiveData?.observe(viewLifecycleOwner, Observer {
+            adapter.setItems(it)
+            if (it.isEmpty()) return@Observer
+            book?.let { book ->
+                durChapterIndex = book.durChapterIndex
+                tv_current_chapter_info.text = it[durChapterIndex()].title
+                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+            }
+        })
     }
 
     private fun initView() {
@@ -66,7 +78,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             }
         }
         tv_current_chapter_info.onClick {
-            viewModel.book?.let {
+            book?.let {
                 mLayoutManager.scrollToPositionWithOffset(it.durChapterIndex, 0)
             }
         }
@@ -74,9 +86,11 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     override fun startChapterListSearch(newText: String?) {
         if (newText.isNullOrBlank()) {
-            initData()
+            initDoc()
         } else {
-            App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl ?: "", newText).observe(viewLifecycleOwner, Observer {
+            tocLiveData?.removeObservers(this)
+            tocLiveData = App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl, newText)
+            tocLiveData?.observe(viewLifecycleOwner, Observer {
                 adapter.setItems(it)
                 mLayoutManager.scrollToPositionWithOffset(0, 0)
             })
@@ -93,6 +107,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     override fun book(): Book? {
-        return viewModel.book
+        return book
     }
 }

@@ -28,11 +28,9 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         tab_layout.isTabIndicatorFullWidth = false
         tab_layout.setSelectedTabIndicatorColor(accentColor)
-        viewModel.bookUrl = intent.getStringExtra("bookUrl")
-        viewModel.loadBook {
-            view_pager.adapter = TabFragmentPageAdapter(supportFragmentManager)
-            tab_layout.setupWithViewPager(view_pager)
-        }
+        viewModel.bookUrl = intent.getStringExtra("bookUrl") ?: ""
+        view_pager.adapter = TabFragmentPageAdapter(supportFragmentManager)
+        tab_layout.setupWithViewPager(view_pager)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
