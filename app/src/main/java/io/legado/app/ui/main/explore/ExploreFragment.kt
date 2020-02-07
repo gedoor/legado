@@ -5,7 +5,9 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
@@ -61,6 +63,15 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
         rv_find.layoutManager = linearLayoutManager
         adapter = ExploreAdapter(requireContext(), this, this)
         rv_find.adapter = adapter
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    rv_find.scrollToPosition(0)
+                }
+            }
+        })
     }
 
     private fun initData(key: String? = null) {
@@ -71,7 +82,10 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
             App.db.bookSourceDao().liveExplore("%$key%")
         }
         liveExplore?.observe(viewLifecycleOwner, Observer {
+            val diffResult = DiffUtil
+                .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it)
+            diffResult.dispatchUpdatesTo(adapter)
         })
     }
 

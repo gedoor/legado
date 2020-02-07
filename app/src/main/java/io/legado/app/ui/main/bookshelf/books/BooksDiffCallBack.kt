@@ -7,17 +7,16 @@ import io.legado.app.data.entities.Book
 class BooksDiffCallBack(private val oldItems: List<Book>, private val newItems: List<Book>) :
     DiffUtil.Callback() {
 
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldItems[oldItemPosition].bookUrl == newItems[newItemPosition].bookUrl
-    }
-
     override fun getOldListSize(): Int {
         return oldItems.size
     }
 
     override fun getNewListSize(): Int {
         return newItems.size
+    }
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition].bookUrl == newItems[newItemPosition].bookUrl
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

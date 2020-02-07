@@ -104,13 +104,8 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, Observer {
-            val diffResult =
-                DiffUtil.calculateDiff(
-                    BooksDiffCallBack(
-                        booksAdapter.getItems(),
-                        it
-                    )
-                )
+            val diffResult = DiffUtil
+                .calculateDiff(BooksDiffCallBack(ArrayList(booksAdapter.getItems()), it))
             booksAdapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(booksAdapter)
         })
