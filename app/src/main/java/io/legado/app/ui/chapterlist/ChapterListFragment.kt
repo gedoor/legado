@@ -39,7 +39,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         initRecyclerView()
         initView()
         initBook()
-        initDoc()
     }
 
     private fun initRecyclerView() {
@@ -60,6 +59,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
                 tv_current_chapter_info.text = it.durChapterTitle
                 mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
             }
+            initDoc()
         }
     }
 
@@ -81,9 +81,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             }
         }
         tv_current_chapter_info.onClick {
-            book?.let {
-                mLayoutManager.scrollToPositionWithOffset(it.durChapterIndex, 0)
-            }
+            mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
         }
     }
 
