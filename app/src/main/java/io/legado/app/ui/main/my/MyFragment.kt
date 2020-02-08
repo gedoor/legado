@@ -208,10 +208,10 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                 PreferKey.webService -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())
-                        toast("正在启动服务\n具体信息查看通知栏")
+                        toast(R.string.service_start)
                     }else{
                         WebService.stop(requireContext())
-                        toast("服务已停止")
+                        toast(R.string.service_stop)
                     }
                 }
                 PreferKey.downloadPath -> BookHelp.upDownloadPath()

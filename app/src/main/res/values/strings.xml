@@ -595,5 +595,7 @@
     <string name="tone_colour">在线朗读音色</string>
     <string name="select_count">(%d/%d)</string>
     <string name="show_rss">显示订阅</string>
+    <string name="service_stop">服务已停止</string>
+    <string name="service_start">正在启动服务\n具体信息查看通知栏</string>
 
 </resources>
