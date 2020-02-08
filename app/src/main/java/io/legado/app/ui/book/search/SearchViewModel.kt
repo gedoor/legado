@@ -11,9 +11,10 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -56,7 +57,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     context = searchPool
                 )
                     .timeout(30000L)
-                    .onSuccess(Dispatchers.IO) {
+                    .onSuccess {
                         it?.let { list ->
                             searchSuccess(list)
                         }
@@ -70,22 +71,24 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun searchSuccess(searchBooks: List<SearchBook>) {
-        val books = arrayListOf<SearchBook>()
-        searchBooks.forEach { searchBook ->
-            if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                if (searchBook.name.equals(searchKey, true)
-                    || searchBook.author.equals(searchKey, true)
-                ) books.add(searchBook)
-            } else
-                books.add(searchBook)
+    private suspend fun searchSuccess(searchBooks: List<SearchBook>) {
+        withContext(IO) {
+            val books = arrayListOf<SearchBook>()
+            searchBooks.forEach { searchBook ->
+                if (context.getPrefBoolean(PreferKey.precisionSearch)) {
+                    if (searchBook.name.equals(searchKey, true)
+                        || searchBook.author.equals(searchKey, true)
+                    ) books.add(searchBook)
+                } else
+                    books.add(searchBook)
+            }
+            App.db.searchBookDao().insert(*books.toTypedArray())
+            addToAdapter(books)
         }
-        App.db.searchBookDao().insert(*books.toTypedArray())
-        addToAdapter(books)
     }
 
     @Synchronized
-    private fun addToAdapter(newDataS: List<SearchBook>) {
+    private suspend fun addToAdapter(newDataS: List<SearchBook>) {
         if (newDataS.isNotEmpty()) {
             val copyDataS = ArrayList(searchBooks)
             val searchBooksAdd = ArrayList<SearchBook>()
@@ -93,46 +96,46 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 copyDataS.addAll(newDataS)
             } else {
                 //存在
-                for (temp in newDataS) {
+                newDataS.forEach { item ->
                     var hasSame = false
                     for (i in copyDataS.indices) {
                         val searchBook = copyDataS[i]
-                        if (temp.name == searchBook.name
-                            && temp.author == searchBook.author
+                        if (item.name == searchBook.name
+                            && item.author == searchBook.author
                         ) {
                             hasSame = true
-                            searchBook.addOrigin(temp.bookUrl)
+                            searchBook.addOrigin(item.bookUrl)
                             break
                         }
                     }
                     if (!hasSame) {
-                        searchBooksAdd.add(temp)
+                        searchBooksAdd.add(item)
                     }
                 }
                 //添加
-                for (temp in searchBooksAdd) {
-                    if (searchKey == temp.name) {
+                searchBooksAdd.forEach { item ->
+                    if (searchKey == item.name) {
                         for (i in copyDataS.indices) {
                             val searchBook = copyDataS[i]
                             if (searchKey != searchBook.name) {
-                                copyDataS.add(i, temp)
+                                copyDataS.add(i, item)
                                 break
                             }
                         }
-                    } else if (searchKey == temp.author) {
+                    } else if (searchKey == item.author) {
                         for (i in copyDataS.indices) {
                             val searchBook = copyDataS[i]
                             if (searchKey != searchBook.name && searchKey == searchBook.author) {
-                                copyDataS.add(i, temp)
+                                copyDataS.add(i, item)
                                 break
                             }
                         }
                     } else {
-                        copyDataS.add(temp)
+                        copyDataS.add(item)
                     }
                 }
             }
-            launch {
+            withContext(Main) {
                 searchBooks = copyDataS
                 callBack?.adapter?.setItems(searchBooks)
             }

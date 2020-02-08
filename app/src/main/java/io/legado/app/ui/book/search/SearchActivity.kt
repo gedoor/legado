@@ -141,6 +141,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         adapter = SearchAdapter(this, this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    recycler_view.scrollToPosition(0)
+                }
+            }
+        })
         loadMoreView = LoadMoreView(this)
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
