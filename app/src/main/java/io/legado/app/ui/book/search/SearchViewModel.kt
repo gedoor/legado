@@ -115,16 +115,14 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 //添加
                 searchBooksAdd.forEach { item ->
                     if (searchKey == item.name) {
-                        for (i in copyDataS.indices) {
-                            val searchBook = copyDataS[i]
+                        for ((index, searchBook) in copyDataS.withIndex()) {
                             if (searchKey != searchBook.name) {
-                                copyDataS.add(i, item)
+                                copyDataS.add(index, item)
                                 break
                             }
                         }
                     } else if (searchKey == item.author) {
-                        for (i in copyDataS.indices) {
-                            val searchBook = copyDataS[i]
+                        for ((i, searchBook) in copyDataS.withIndex()) {
                             if (searchKey != searchBook.name && searchKey == searchBook.author) {
                                 copyDataS.add(i, item)
                                 break
