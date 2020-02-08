@@ -71,21 +71,13 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ATH.applyEdgeEffectColor(listView)
-    }
-
-    override fun onResume() {
-        super.onResume()
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onPause() {
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        super.onPause()
+        ATH.applyEdgeEffectColor(listView)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         job.cancel()
     }
 
