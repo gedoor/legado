@@ -162,7 +162,6 @@ object AnalyzeTxtFile {
             }
 
             //当添加的block太多的时候，执行GC
-            //当添加的block太多的时候，执行GC
             if (blockPos % 15 == 0) {
                 System.gc()
                 System.runFinalization()
