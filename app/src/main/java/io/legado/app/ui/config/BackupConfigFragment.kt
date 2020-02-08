@@ -93,7 +93,10 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.webDavUrl, PreferKey.webDavAccount, PreferKey.webDavPassword, PreferKey.backupPath -> {
+            PreferKey.webDavUrl,
+            PreferKey.webDavAccount,
+            PreferKey.webDavPassword,
+            PreferKey.backupPath -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
         }
@@ -188,7 +191,6 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                         .onGranted {
                             launch {
                                 AppConfig.backupPath = Backup.legadoPath
-                                toast(R.string.backup_success)
                             }
                         }
                         .request()
