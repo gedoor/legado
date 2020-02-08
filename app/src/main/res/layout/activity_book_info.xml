@@ -192,7 +192,6 @@
             android:maxHeight="160dp"
             android:minHeight="100dp"
             android:scrollbars="vertical"
-            android:textIsSelectable="true"
             android:textSize="14sp" />
 
         <View
