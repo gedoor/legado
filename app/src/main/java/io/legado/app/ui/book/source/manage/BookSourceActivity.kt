@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import android.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -43,6 +44,7 @@ import org.jetbrains.anko.toast
 import java.io.FileNotFoundException
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
+    PopupMenu.OnMenuItemClickListener,
     BookSourceAdapter.CallBack,
     FileChooserDialog.CallBack,
     SearchView.OnQueryTextListener {
@@ -55,6 +57,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
+    private lateinit var selMenu: PopupMenu
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initUriScheme()
@@ -83,13 +86,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> selectFileSys()
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
-            R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
-            R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
-            R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
@@ -132,6 +128,9 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         search_view.queryHint = getString(R.string.search_book_source)
         search_view.clearFocus()
         search_view.setOnQueryTextListener(this)
+        selMenu = PopupMenu(this, iv_menu_more)
+        selMenu.inflate(R.menu.book_source_sel)
+        selMenu.setOnMenuItemClickListener(this)
     }
 
     private fun initLiveDataBookSource(searchKey: String? = null) {
@@ -171,7 +170,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         btn_revert_selection.onClick {
             adapter.revertSelection()
         }
+        iv_menu_more.onClick {
+            selMenu.show()
+        }
+    }
 
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
+            R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
+            R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
+            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
+        }
+        return true
     }
 
     private fun upGroupMenu() {

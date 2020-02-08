@@ -23,7 +23,10 @@
         android:layout_height="wrap_content"
         android:background="@color/background"
         android:gravity="center_vertical"
-        android:padding="6dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:elevation="2dp">
 
         <io.legado.app.lib.theme.view.ATECheckBox
@@ -42,7 +45,7 @@
             android:layout_margin="5dp"
             android:padding="5dp"
             android:gravity="center"
-            android:minWidth="90dp"
+            android:minWidth="80dp"
             android:text="@string/move_to_group" />
 
         <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
@@ -51,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:padding="5dp"
-            android:minWidth="90dp"
+            android:minWidth="80dp"
             android:gravity="center"
             android:text="@string/delete" />
 
