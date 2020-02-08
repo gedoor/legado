@@ -162,7 +162,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     private fun initViewEvent() {
         cb_selected_all.onClick {
-            adapter.selectAll()
+            if (adapter.getSelection().size == adapter.getActualItemCount()) {
+                adapter.revertSelection()
+            } else {
+                adapter.selectAll()
+            }
         }
         btn_revert_selection.onClick {
             adapter.revertSelection()
