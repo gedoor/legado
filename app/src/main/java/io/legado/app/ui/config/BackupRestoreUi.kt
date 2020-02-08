@@ -67,7 +67,7 @@ object BackupRestoreUi {
     fun selectBackupFolder(fragment: Fragment) {
         fragment.alert {
             titleResource = R.string.select_folder
-            items(arrayListOf("默认路径", "系统文件夹选择器", "自带文件夹选择器")) { _, index ->
+            items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
                 when (index) {
                     0 -> PermissionsCompat.Builder(fragment)
                         .addPermissions(*Permissions.Group.STORAGE)
@@ -118,23 +118,38 @@ object BackupRestoreUi {
     }
 
     private fun selectRestoreFolder(fragment: Fragment) {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            fragment.startActivityForResult(intent, restoreSelectRequestCode)
-        } catch (e: java.lang.Exception) {
-            PermissionsCompat.Builder(fragment)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted {
-                    Coroutine.async {
-                        Restore.restore(Backup.legadoPath)
-                    }.onSuccess {
-                        fragment.toast(R.string.restore_success)
+        fragment.alert {
+            titleResource = R.string.select_folder
+            items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
+                when (index) {
+                    0 -> PermissionsCompat.Builder(fragment)
+                        .addPermissions(*Permissions.Group.STORAGE)
+                        .rationale(R.string.tip_perm_request_storage)
+                        .onGranted {
+                            Coroutine.async {
+                                AppConfig.backupPath = Backup.legadoPath
+                                Restore.restore(Backup.legadoPath)
+                            }.onSuccess {
+                                fragment.toast(R.string.restore_success)
+                            }
+                        }
+                        .request()
+                    1 -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            fragment.startActivityForResult(intent, restoreSelectRequestCode)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                            fragment.toast(e.localizedMessage ?: "ERROR")
+                        }
+                    }
+                    2 -> {
+
                     }
                 }
-                .request()
-        }
+            }
+        }.show()
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
