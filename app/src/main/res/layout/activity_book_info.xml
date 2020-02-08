@@ -189,9 +189,7 @@
             android:layout_weight="1"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:maxHeight="160dp"
             android:minHeight="100dp"
-            android:scrollbars="vertical"
             android:textSize="14sp" />
 
         <View
