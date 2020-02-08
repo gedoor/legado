@@ -8,6 +8,7 @@ import android.view.View.VISIBLE
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
@@ -15,6 +16,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -40,7 +42,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override val viewModel: SearchViewModel
         get() = getViewModel(SearchViewModel::class.java)
 
-    override lateinit var adapter: SearchAdapter
+    lateinit var adapter: SearchAdapter
     private lateinit var bookAdapter: BookAdapter
     private lateinit var historyKeyAdapter: HistoryKeyAdapter
     private lateinit var loadMoreView: LoadMoreView
@@ -176,6 +178,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             }
             upGroupMenu()
         })
+        viewModel.searchBookLiveData.observe(this, Observer {
+            setSearchItems(it)
+        })
     }
 
     private fun initIntent() {
@@ -251,9 +256,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         })
     }
 
+    private fun setSearchItems(items: List<SearchBook>) {
+        val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), items))
+        adapter.setItems(items, false)
+        diffResult.dispatchUpdatesTo(adapter)
+    }
+
     override fun startSearch() {
         refresh_progress_bar.isAutoLoading = true
-        initData()
         fb_stop.visible()
     }
 

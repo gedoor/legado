@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.search
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
@@ -12,7 +13,6 @@ import io.legado.app.model.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
@@ -22,6 +22,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
     var callBack: CallBack? = null
+    var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
     var searchPage = 1
     var isLoading = false
@@ -83,12 +84,12 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     books.add(searchBook)
             }
             App.db.searchBookDao().insert(*books.toTypedArray())
-            addToAdapter(books)
+            mergeItems(books)
         }
     }
 
     @Synchronized
-    private suspend fun addToAdapter(newDataS: List<SearchBook>) {
+    private fun mergeItems(newDataS: List<SearchBook>) {
         if (newDataS.isNotEmpty()) {
             val copyDataS = ArrayList(searchBooks)
             val searchBooksAdd = ArrayList<SearchBook>()
@@ -134,10 +135,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
             }
-            withContext(Main) {
-                searchBooks = copyDataS
-                callBack?.adapter?.setItems(searchBooks)
-            }
+            searchBooks = copyDataS
+            searchBookLiveData.postValue(copyDataS)
         }
     }
 
@@ -173,7 +172,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     interface CallBack {
-        var adapter: SearchAdapter
         fun startSearch()
         fun searchFinally()
     }
