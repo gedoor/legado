@@ -186,17 +186,6 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     override fun upCountView() {
-        if (adapter.selectedUris.isEmpty()) {
-            btn_add_book.setText(R.string.nb_file_add_shelf)
-            //设置某些按钮的是否可点击
-            setMenuClickable(false)
-        } else {
-            btn_add_book.text =
-                getString(R.string.nb_file_add_shelves, adapter.selectedUris.size)
-            //设置某些按钮的是否可点击
-            setMenuClickable(true)
-        }
-
         if (adapter.checkableCount == 0) {
             cb_selected_all.isChecked = false
         } else {
@@ -205,10 +194,19 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
         //重置全选的文字
         if (cb_selected_all.isChecked) {
-            cb_selected_all.setText(R.string.cancel)
+            cb_selected_all.text = getString(
+                R.string.select_cancel_count,
+                adapter.selectedUris.size,
+                adapter.checkableCount
+            )
         } else {
-            cb_selected_all.setText(R.string.select_all)
+            cb_selected_all.text = getString(
+                R.string.select_all_count,
+                adapter.selectedUris.size,
+                adapter.checkableCount
+            )
         }
+        setMenuClickable(adapter.selectedUris.isNotEmpty())
     }
 
     private fun setMenuClickable(isClickable: Boolean) {

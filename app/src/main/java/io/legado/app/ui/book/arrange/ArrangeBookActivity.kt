@@ -175,12 +175,28 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         cb_selected_all.isChecked = adapter.isSelectAll()
         //重置全选的文字
         if (cb_selected_all.isChecked) {
-            cb_selected_all.setText(R.string.cancel)
+            cb_selected_all.text = getString(
+                R.string.select_cancel_count,
+                adapter.selectedBooks.size,
+                adapter.getItems().size
+            )
         } else {
-            cb_selected_all.setText(R.string.select_all)
+            cb_selected_all.text = getString(
+                R.string.select_all_count,
+                adapter.selectedBooks.size,
+                adapter.getItems().size
+            )
         }
-        tv_select_count.text =
-            getString(R.string.select_count, adapter.selectedBooks.size, adapter.getItems().size)
+        setMenuClickable(adapter.selectedBooks.isNotEmpty())
+    }
+
+    private fun setMenuClickable(isClickable: Boolean) {
+        //设置是否可删除
+        btn_delete.isEnabled = isClickable
+        btn_delete.isClickable = isClickable
+        //设置是否可添加书籍
+        btn_to_group.isEnabled = isClickable
+        btn_to_group.isClickable = isClickable
     }
 
     override fun deleteBook(book: Book) {
