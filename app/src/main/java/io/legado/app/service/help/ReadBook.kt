@@ -39,14 +39,16 @@ object ReadBook {
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
-        webBook = null
-        App.db.bookSourceDao().getBookSource(book.origin)?.let {
-            webBook = WebBook(it)
-        }
         chapterSize = 0
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
+        upWebBook(book.origin)
+    }
+
+    fun upWebBook(origin: String) {
+        val bookSource = App.db.bookSourceDao().getBookSource(origin)
+        webBook = if (bookSource != null) WebBook(bookSource) else null
     }
 
     fun moveToNextPage() {
