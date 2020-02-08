@@ -109,7 +109,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                         .onGranted {
                             launch {
                                 AppConfig.backupPath = Backup.legadoPath
-                                toast(R.string.backup_success)
                             }
                         }
                         .request()
