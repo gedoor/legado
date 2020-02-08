@@ -22,4 +22,10 @@
         android:title="@string/export_selection"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_check_source"
+        android:icon="@drawable/ic_check_source"
+        android:title="@string/check_select_source"
+        app:showAsAction="never" />
+
 </menu>
