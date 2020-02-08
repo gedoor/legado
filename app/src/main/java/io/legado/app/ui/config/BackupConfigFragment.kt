@@ -92,8 +92,10 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        key?.let {
-            upPreferenceSummary(it, getPrefString(it))
+        when (key) {
+            PreferKey.webDavUrl, PreferKey.webDavAccount, PreferKey.webDavPassword, PreferKey.backupPath -> {
+                upPreferenceSummary(key, getPrefString(key))
+            }
         }
     }
 
