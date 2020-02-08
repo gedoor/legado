@@ -42,16 +42,16 @@
             android:layout_margin="5dp"
             android:padding="5dp"
             android:gravity="center"
-            android:minWidth="100dp"
+            android:minWidth="90dp"
             android:text="@string/move_to_group" />
 
         <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
             android:id="@+id/btn_delete"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:padding="5dp"
-            android:minWidth="100dp"
+            android:minWidth="90dp"
             android:gravity="center"
             android:text="@string/delete" />
 

@@ -27,6 +27,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             selected.add(it)
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
     }
 
     fun revertSelection() {
@@ -38,6 +39,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             }
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
     }
 
     fun getSelection(): LinkedHashSet<BookSource> {
@@ -73,6 +75,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     } else {
                         selected.remove(item)
                     }
+                    callBack.upCountView()
                 }
                 iv_edit.onClick { callBack.edit(item) }
                 iv_menu_more.onClick {
@@ -140,5 +143,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun update(vararg bookSource: BookSource)
         fun toTop(bookSource: BookSource)
         fun upOrder()
+        fun upCountView()
     }
 }

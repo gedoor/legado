@@ -36,6 +36,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -61,6 +62,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         initSearchView()
         initLiveDataBookSource()
         initLiveDataGroup()
+        initViewEvent()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -81,8 +83,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> selectFileSys()
-            R.id.menu_select_all -> adapter.selectAll()
-            R.id.menu_revert_selection -> adapter.revertSelection()
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
@@ -142,11 +142,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             App.db.bookSourceDao().liveDataSearch("%$searchKey%")
         }
         bookSourceLiveDate?.observe(this, Observer {
-            search_view.queryHint = getString(R.string.search_book_source_num, it.size)
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
+            upCountView()
         })
     }
 
@@ -158,6 +158,16 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
             upGroupMenu()
         })
+    }
+
+    private fun initViewEvent() {
+        cb_selected_all.onClick {
+            adapter.selectAll()
+        }
+        btn_revert_selection.onClick {
+            adapter.revertSelection()
+        }
+
     }
 
     private fun upGroupMenu() {
@@ -228,6 +238,40 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             supportFragmentManager, importSource,
             allowExtensions = arrayOf("txt", "json")
         )
+    }
+
+    override fun upCountView() {
+        val selectCount = adapter.getSelection().size
+        if (selectCount == 0) {
+            cb_selected_all.isChecked = false
+        } else {
+            cb_selected_all.isChecked = selectCount >= adapter.getActualItemCount()
+        }
+
+        //重置全选的文字
+        if (cb_selected_all.isChecked) {
+            cb_selected_all.text = getString(
+                R.string.select_cancel_count,
+                selectCount,
+                adapter.getActualItemCount()
+            )
+        } else {
+            cb_selected_all.text = getString(
+                R.string.select_all_count,
+                selectCount,
+                adapter.getActualItemCount()
+            )
+        }
+        setMenuClickable(selectCount > 0)
+    }
+
+    private fun setMenuClickable(isClickable: Boolean) {
+        //设置是否可删除
+        btn_delete.isEnabled = isClickable
+        btn_delete.isClickable = isClickable
+        //设置是否可添加书籍
+        btn_revert_selection.isEnabled = isClickable
+        btn_revert_selection.isClickable = isClickable
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {

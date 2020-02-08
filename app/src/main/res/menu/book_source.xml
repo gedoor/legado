@@ -13,16 +13,6 @@
         <menu>
 
             <item
-                android:id="@+id/menu_select_all"
-                android:title="@string/select_all"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_revert_selection"
-                android:title="@string/revert_selection"
-                app:showAsAction="never" />
-
-            <item
                 android:id="@+id/menu_enable_selection"
                 android:title="@string/enable_selection"
                 app:showAsAction="never" />

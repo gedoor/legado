@@ -16,7 +16,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
             android:id="@+id/recycler_view"
@@ -25,5 +26,44 @@
 
     </FrameLayout>
 
+    <!--文件点击按钮-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:padding="6dp"
+        android:elevation="2dp">
+
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_selected_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text="@string/select_all_count"
+            android:textColor="@color/tv_text_default" />
+
+        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+            android:id="@+id/btn_revert_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:minWidth="90dp"
+            android:text="@string/revert_selection" />
+
+        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:minWidth="90dp"
+            android:gravity="center"
+            android:text="@string/delete" />
+
+    </LinearLayout>
 
 </LinearLayout>
