@@ -38,6 +38,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     private var pagePosition = 0
     private val fragmentList = arrayListOf<Fragment>()
+    private var rssFragment: RssFragment? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(view_pager_main)
@@ -69,7 +70,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             fragmentList.add(MyFragment())
         }
         if (AppConfig.isShowRSS && fragmentList.size < 4) {
-            fragmentList.add(2, RssFragment())
+            fragmentList.add(2,
+                rssFragment ?: RssFragment().apply { rssFragment = this })
         }
         if (!AppConfig.isShowRSS && fragmentList.size == 4) {
             fragmentList.removeAt(2)
