@@ -2,8 +2,8 @@ package io.legado.app.ui.main.explore
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.Menu
 import android.widget.PopupMenu
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -40,9 +40,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 }
                 ll_title.onLongClick {
                     val popupMenu = PopupMenu(context, ll_title)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_edit, Menu.NONE, R.string.edit)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_refresh, Menu.NONE, R.string.refresh)
+                    popupMenu.inflate(R.menu.explore_item)
                     popupMenu.setOnMenuItemClickListener {
                         when (it.itemId) {
                             R.id.menu_edit -> callBack.editSource(item.bookSourceUrl)
@@ -50,6 +48,11 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                             R.id.menu_refresh -> {
                                 ACache.get(context, "explore").remove(item.bookSourceUrl)
                                 notifyItemChanged(holder.layoutPosition)
+                            }
+                            R.id.menu_del -> {
+                                Coroutine.async(scope) {
+                                    App.db.bookSourceDao().delete(item)
+                                }
                             }
                         }
                         true
