@@ -10,6 +10,7 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.ZipUtils
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.selector
 import java.io.File
@@ -58,9 +59,11 @@ object WebDavHelp {
     suspend fun showRestoreDialog(context: Context, restoreSuccess: () -> Unit): Boolean {
         val names = withContext(IO) { getWebDavFileNames() }
         return if (names.isNotEmpty()) {
-            context.selector(title = "选择恢复文件", items = names) { _, index ->
-                if (index in 0 until names.size) {
-                    restoreWebDav(names[index], restoreSuccess)
+            withContext(Main) {
+                context.selector(title = "选择恢复文件", items = names) { _, index ->
+                    if (index in 0 until names.size) {
+                        restoreWebDav(names[index], restoreSuccess)
+                    }
                 }
             }
             true

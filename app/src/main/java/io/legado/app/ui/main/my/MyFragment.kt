@@ -1,14 +1,11 @@
 package io.legado.app.ui.main.my
 
-import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
@@ -16,31 +13,22 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.Restore
-import io.legado.app.help.storage.WebDavHelp
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.prefs.ATESwitchPreference
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import io.legado.app.ui.config.BackupRestoreUi
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
 class MyFragment : BaseFragment(R.layout.fragment_my_config) {
-    private val backupSelectRequestCode = 22
-    private val restoreSelectRequestCode = 33
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -58,150 +46,14 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
             R.id.menu_help -> startActivity<AboutActivity>()
-            R.id.menu_backup -> backup()
-            R.id.menu_restore -> restore()
-        }
-    }
-
-    private fun backup() {
-        val backupPath = AppConfig.backupPath
-        if (backupPath.isNullOrEmpty()) {
-            selectBackupFolder()
-        } else {
-            if (backupPath.isContentPath()) {
-                val uri = Uri.parse(backupPath)
-                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                if (doc?.canWrite() == true) {
-                    launch {
-                        Backup.backup(requireContext(), backupPath)
-                        toast(R.string.backup_success)
-                    }
-                } else {
-                    selectBackupFolder()
-                }
-            } else {
-                backupUsePermission()
-            }
-        }
-    }
-
-    private fun backupUsePermission(path: String = Backup.legadoPath) {
-        PermissionsCompat.Builder(this)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                launch {
-                    Backup.backup(requireContext(), path)
-                    toast(R.string.backup_success)
-                }
-            }
-            .request()
-    }
-
-    private fun selectBackupFolder() {
-        alert {
-            titleResource = R.string.select_folder
-            items(arrayListOf("默认路径", "系统文件夹选择器", "自带文件夹选择器")) { _, index ->
-                when (index) {
-                    0 -> PermissionsCompat.Builder(this@MyFragment)
-                        .addPermissions(*Permissions.Group.STORAGE)
-                        .rationale(R.string.tip_perm_request_storage)
-                        .onGranted {
-                            launch {
-                                AppConfig.backupPath = Backup.legadoPath
-                                backupUsePermission()
-                            }
-                        }
-                        .request()
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            startActivityForResult(intent, backupSelectRequestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                            toast(e.localizedMessage ?: "ERROR")
-                        }
-                    }
-                    2 -> {
-
-                    }
-                }
-            }
-        }.show()
-    }
-
-    fun restore() {
-        launch {
-            if (!WebDavHelp.showRestoreDialog(requireContext()) {
-                    toast(R.string.restore_success)
-                }) {
-                val backupPath = getPrefString(PreferKey.backupPath)
-                if (backupPath?.isNotEmpty() == true) {
-                    val uri = Uri.parse(backupPath)
-                    val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                    if (doc?.canWrite() == true) {
-                        Restore.restore(requireContext(), uri)
-                        toast(R.string.restore_success)
-                    } else {
-                        selectBackupFolder()
-                    }
-                } else {
-                    selectRestoreFolder()
-                }
-            }
-        }
-    }
-
-    private fun selectRestoreFolder() {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, restoreSelectRequestCode)
-        } catch (e: java.lang.Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted {
-                    launch {
-                        Restore.restore(Backup.legadoPath)
-                        toast(R.string.restore_success)
-                    }
-                }
-                .request()
+            R.id.menu_backup -> BackupRestoreUi.backup(this)
+            R.id.menu_restore -> BackupRestoreUi.restore(this)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            backupSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    requireContext().contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    AppConfig.backupPath = uri.toString()
-                    launch {
-                        Backup.backup(requireContext(), uri.toString())
-                        toast(R.string.backup_success)
-                    }
-                }
-            }
-            restoreSelectRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    requireContext().contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    AppConfig.backupPath = uri.toString()
-                    launch {
-                        Restore.restore(requireContext(), uri)
-                        toast(R.string.restore_success)
-                    }
-                }
-            }
-        }
+        BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
     }
 
     class PreferenceFragment : PreferenceFragmentCompat(),
