@@ -49,10 +49,8 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                                 ACache.get(context, "explore").remove(item.bookSourceUrl)
                                 notifyItemChanged(holder.layoutPosition)
                             }
-                            R.id.menu_del -> {
-                                Coroutine.async(scope) {
-                                    App.db.bookSourceDao().delete(item)
-                                }
+                            R.id.menu_del -> Coroutine.async(scope) {
+                                App.db.bookSourceDao().delete(item)
                             }
                         }
                         true
