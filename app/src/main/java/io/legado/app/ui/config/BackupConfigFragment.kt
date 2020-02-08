@@ -2,6 +2,7 @@ package io.legado.app.ui.config
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -33,7 +34,7 @@ import org.jetbrains.anko.toast
 import kotlin.coroutines.CoroutineContext
 
 class BackupConfigFragment : PreferenceFragmentCompat(),
-    Preference.OnPreferenceChangeListener,
+    SharedPreferences.OnSharedPreferenceChangeListener,
     CoroutineScope {
     private lateinit var job: Job
     private val oldDataRequestCode = 11
@@ -45,24 +46,17 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         job = Job()
-        fun bindPreferenceSummaryToValue(preference: Preference?) {
-            preference?.apply {
-                onPreferenceChangeListener = this@BackupConfigFragment
-                onPreferenceChange(this, context.getPrefString(key))
-            }
-        }
         addPreferencesFromResource(R.xml.pref_config_backup)
         findPreference<EditTextPreference>(PreferKey.webDavUrl)?.let {
             it.setOnBindEditTextListener { editText ->
                 ATH.setTint(editText, requireContext().accentColor)
             }
-            bindPreferenceSummaryToValue(it)
+
         }
         findPreference<EditTextPreference>(PreferKey.webDavAccount)?.let {
             it.setOnBindEditTextListener { editText ->
                 ATH.setTint(editText, requireContext().accentColor)
             }
-            bindPreferenceSummaryToValue(it)
         }
         findPreference<EditTextPreference>(PreferKey.webDavPassword)?.let {
             it.setOnBindEditTextListener { editText ->
@@ -70,9 +64,11 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                 editText.inputType =
                     InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
             }
-            bindPreferenceSummaryToValue(it)
         }
-        bindPreferenceSummaryToValue(findPreference(PreferKey.backupPath))
+        upPreferenceSummary(PreferKey.webDavUrl, getPrefString(PreferKey.webDavUrl))
+        upPreferenceSummary(PreferKey.webDavAccount, getPrefString(PreferKey.webDavAccount))
+        upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
+        upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,41 +76,58 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
         ATH.applyEdgeEffectColor(listView)
     }
 
+    override fun onResume() {
+        super.onResume()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onPause() {
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        super.onPause()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        when (preference?.key) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        key?.let {
+            upPreferenceSummary(it, getPrefString(it))
+        }
+    }
+
+    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+        val preference = findPreference<Preference>(preferenceKey) ?: return
+        when (preferenceKey) {
             PreferKey.webDavUrl ->
-                if (newValue == null) {
+                if (value == null) {
                     preference.summary = getString(R.string.web_dav_url_s)
                 } else {
-                    preference.summary = newValue.toString()
+                    preference.summary = value.toString()
                 }
             PreferKey.webDavAccount ->
-                if (newValue == null) {
+                if (value == null) {
                     preference.summary = getString(R.string.web_dav_account_s)
                 } else {
-                    preference.summary = newValue.toString()
+                    preference.summary = value.toString()
                 }
             PreferKey.webDavPassword ->
-                if (newValue == null) {
+                if (value == null) {
                     preference.summary = getString(R.string.web_dav_pw_s)
                 } else {
-                    preference.summary = "*".repeat(newValue.toString().length)
+                    preference.summary = "*".repeat(value.toString().length)
                 }
-            else ->
+            else -> {
                 if (preference is ListPreference) {
-                    val index = preference.findIndexOfValue(newValue?.toString())
+                    val index = preference.findIndexOfValue(value)
                     // Set the summary to reflect the new value.
-                    preference.setSummary(if (index >= 0) preference.entries[index] else null)
+                    preference.summary = if (index >= 0) preference.entries[index] else null
                 } else {
-                    preference?.summary = newValue?.toString()
+                    preference.summary = value
                 }
+            }
         }
-        return false
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
@@ -346,7 +359,6 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     AppConfig.backupPath = uri.toString()
-                    findPreference<Preference>(PreferKey.backupPath)?.summary = uri.toString()
                     launch {
                         Backup.backup(requireContext(), uri.toString())
                         toast(R.string.backup_success)
@@ -360,7 +372,6 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     AppConfig.backupPath = uri.toString()
-                    findPreference<Preference>(PreferKey.backupPath)?.summary = uri.toString()
                     launch {
                         Restore.restore(requireContext(), uri)
                         toast(R.string.restore_success)
