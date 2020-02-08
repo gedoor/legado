@@ -101,6 +101,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_check_source -> {
+            }
         }
         return true
     }
