@@ -75,7 +75,7 @@ object BookHelp {
                 )?.uri?.writeText(App.INSTANCE, content)
             }
         } else {
-            FileUtils.createFileIfNotExist(
+            FileUtils.createFolderIfNotExist(
                 File(downloadPath),
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
             ).listFiles()?.forEach {
@@ -101,7 +101,7 @@ object BookHelp {
                 )?.listFiles()?.size ?: 0
             }
         } else {
-            return FileUtils.createFileIfNotExist(
+            return FileUtils.createFolderIfNotExist(
                 File(downloadPath),
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
             ).list()?.size ?: 0

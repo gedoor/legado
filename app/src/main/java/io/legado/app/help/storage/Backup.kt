@@ -8,6 +8,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.isContentPath
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
@@ -43,7 +44,7 @@ object Backup {
         )
     }
 
-    suspend fun backup(context: Context, uri: Uri?) {
+    suspend fun backup(context: Context, path: String = legadoPath) {
         withContext(IO) {
             writeListToJson(App.db.bookDao().all, "bookshelf.json", backupPath)
             writeListToJson(App.db.bookGroupDao().all, "bookGroup.json", backupPath)
@@ -70,10 +71,10 @@ object Backup {
                 edit.commit()
             }
             WebDavHelp.backUpWebDav(backupPath)
-            if (uri != null) {
-                copyBackup(context, uri)
+            if (path.isContentPath()) {
+                copyBackup(context, Uri.parse(path))
             } else {
-                copyBackup()
+                copyBackup(File(path))
             }
         }
     }
@@ -100,12 +101,12 @@ object Backup {
         }
     }
 
-    private fun copyBackup() {
+    private fun copyBackup(file: File) {
         try {
             for (fileName in backupFileNames) {
-                FileUtils.createFileIfNotExist(backupPath + File.separator + "bookshelf.json")
+                FileUtils.createFileIfNotExist(backupPath + File.separator + fileName)
                     .copyTo(
-                        FileUtils.createFileIfNotExist(legadoPath + File.separator + "bookshelf.json"),
+                        FileUtils.createFileIfNotExist(file, fileName),
                         true
                     )
             }

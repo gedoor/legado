@@ -28,6 +28,16 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("transparentStatusBar", value)
         }
 
+    var backupPath: String?
+        get() = App.INSTANCE.getPrefString(PreferKey.backupPath)
+        set(value) {
+            if (value.isNullOrEmpty()) {
+                App.INSTANCE.removePref(PreferKey.backupPath)
+            } else {
+                App.INSTANCE.putPrefString(PreferKey.backupPath, value)
+            }
+        }
+
     var isShowRSS: Boolean
         get() = App.INSTANCE.getPrefBoolean(PreferKey.showRss, true)
         set(value) {

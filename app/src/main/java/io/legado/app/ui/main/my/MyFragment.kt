@@ -16,12 +16,14 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.prefs.ATESwitchPreference
 import io.legado.app.service.WebService
@@ -45,7 +47,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         val fragmentTag = "prefFragment"
         var preferenceFragment = childFragmentManager.findFragmentByTag(fragmentTag)
         if (preferenceFragment == null) preferenceFragment = PreferenceFragment()
-        childFragmentManager.beginTransaction().replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
+        childFragmentManager.beginTransaction()
+            .replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -60,42 +63,72 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         }
     }
 
-
     private fun backup() {
-        val backupPath = getPrefString(PreferKey.backupPath)
-        if (backupPath?.isNotEmpty() == true) {
-            val uri = Uri.parse(backupPath)
-            val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-            if (doc?.canWrite() == true) {
-                launch {
-                    Backup.backup(requireContext(), uri)
-                    toast(R.string.backup_success)
+        val backupPath = AppConfig.backupPath
+        if (backupPath.isNullOrEmpty()) {
+            selectBackupFolder()
+        } else {
+            if (backupPath.isContentPath()) {
+                val uri = Uri.parse(backupPath)
+                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                if (doc?.canWrite() == true) {
+                    launch {
+                        Backup.backup(requireContext(), backupPath)
+                        toast(R.string.backup_success)
+                    }
+                } else {
+                    selectBackupFolder()
                 }
             } else {
-                selectBackupFolder()
+                backupUsePermission()
             }
-        } else {
-            selectBackupFolder()
         }
     }
 
+    private fun backupUsePermission(path: String = Backup.legadoPath) {
+        PermissionsCompat.Builder(this)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                launch {
+                    Backup.backup(requireContext(), path)
+                    toast(R.string.backup_success)
+                }
+            }
+            .request()
+    }
+
     private fun selectBackupFolder() {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, backupSelectRequestCode)
-        } catch (e: java.lang.Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted {
-                    launch {
-                        Backup.backup(requireContext(), null)
-                        toast(R.string.backup_success)
+        alert {
+            titleResource = R.string.select_folder
+            items(arrayListOf("默认路径", "系统文件夹选择器", "自带文件夹选择器")) { _, index ->
+                when (index) {
+                    0 -> PermissionsCompat.Builder(this@MyFragment)
+                        .addPermissions(*Permissions.Group.STORAGE)
+                        .rationale(R.string.tip_perm_request_storage)
+                        .onGranted {
+                            launch {
+                                AppConfig.backupPath = Backup.legadoPath
+                                toast(R.string.backup_success)
+                            }
+                        }
+                        .request()
+                    1 -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            startActivityForResult(intent, backupSelectRequestCode)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                            toast(e.localizedMessage ?: "ERROR")
+                        }
+                    }
+                    2 -> {
+
                     }
                 }
-                .request()
-        }
+            }
+        }.show()
     }
 
     fun restore() {
@@ -148,9 +181,9 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-                    putPrefString(PreferKey.backupPath, uri.toString())
+                    AppConfig.backupPath = uri.toString()
                     launch {
-                        Backup.backup(requireContext(), uri)
+                        Backup.backup(requireContext(), uri.toString())
                         toast(R.string.backup_success)
                     }
                 }
@@ -161,7 +194,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-                    putPrefString(PreferKey.backupPath, uri.toString())
+                    AppConfig.backupPath = uri.toString()
                     launch {
                         Restore.restore(requireContext(), uri)
                         toast(R.string.restore_success)
@@ -202,14 +235,17 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             super.onPause()
         }
 
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        override fun onSharedPreferenceChanged(
+            sharedPreferences: SharedPreferences?,
+            key: String?
+        ) {
             when (key) {
                 PreferKey.themeMode -> App.INSTANCE.applyDayNight()
                 PreferKey.webService -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())
                         toast(R.string.service_start)
-                    }else{
+                    } else {
                         WebService.stop(requireContext())
                         toast(R.string.service_stop)
                     }

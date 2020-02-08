@@ -22,7 +22,7 @@ object FileUtils {
         return createFileIfNotExist(filePath)
     }
 
-    fun createFileIfNotExist(root: File, vararg subDirs: String): File {
+    fun createFolderIfNotExist(root: File, vararg subDirs: String): File {
         val filePath = root.absolutePath + File.separator + subDirs.joinToString(File.separator)
         return createFolderIfNotExist(filePath)
     }

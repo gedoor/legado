@@ -128,14 +128,16 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private fun backup() {
         Coroutine.async {
             val backupPath = getPrefString(PreferKey.backupPath)
-            if (backupPath?.isNotEmpty() == true) {
+            if (backupPath.isNullOrEmpty()) {
+                Backup.backup(this@MainActivity)
+            } else {
                 val uri = Uri.parse(backupPath)
                 val doc = DocumentFile.fromTreeUri(this@MainActivity, uri)
                 if (doc?.canWrite() == true) {
-                    Backup.backup(this@MainActivity, uri)
+                    Backup.backup(this@MainActivity, backupPath)
+                } else {
+                    Backup.backup(this@MainActivity)
                 }
-            } else {
-                Backup.backup(this@MainActivity, null)
             }
         }
     }

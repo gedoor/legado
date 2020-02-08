@@ -24,7 +24,7 @@ object AnalyzeTxtFile {
         val rootFile = App.INSTANCE.getExternalFilesDir(null)
             ?: App.INSTANCE.externalCacheDir
             ?: App.INSTANCE.cacheDir
-        FileUtils.createFileIfNotExist(rootFile, subDirs = *arrayOf(folderName))
+        FileUtils.createFolderIfNotExist(rootFile, subDirs = *arrayOf(folderName))
     }
 
     fun analyze(context: Context, book: Book): ArrayList<BookChapter> {
