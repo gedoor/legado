@@ -2,7 +2,6 @@ package io.legado.app.ui.replacerule
 
 import android.content.Context
 import android.os.Bundle
-import android.view.Menu
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
@@ -80,8 +79,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 }
                 iv_menu_more.onClick {
                     val popupMenu = PopupMenu(context, it)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
+                    popupMenu.inflate(R.menu.replace_rule_item)
                     popupMenu.setOnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
                             R.id.menu_top -> callBack.toTop(item)

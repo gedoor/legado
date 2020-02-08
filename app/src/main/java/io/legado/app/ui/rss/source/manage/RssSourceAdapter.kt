@@ -1,7 +1,6 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.content.Context
-import android.view.Menu
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -77,8 +76,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 iv_edit.onClick { callBack.edit(item) }
                 iv_menu_more.onClick {
                     val popupMenu = PopupMenu(context, it)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
+                    popupMenu.inflate(R.menu.rss_source_item)
                     popupMenu.setOnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
                             R.id.menu_top -> callBack.toTop(item)
