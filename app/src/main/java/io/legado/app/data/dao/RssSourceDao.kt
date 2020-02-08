@@ -31,20 +31,11 @@ interface RssSourceDao {
     @Query("select sourceGroup from rssSources where sourceGroup is not null and sourceGroup <> ''")
     fun liveGroup(): LiveData<List<String>>
 
-    @Query("update rssSources set enabled = 1 where sourceUrl in (:sourceUrls)")
-    fun enableSection(vararg sourceUrls: String)
-
-    @Query("update rssSources set enabled = 0 where sourceUrl in (:sourceUrls)")
-    fun disableSection(vararg sourceUrls: String)
-
     @get:Query("select min(customOrder) from rssSources")
     val minOrder: Int
 
     @get:Query("select max(customOrder) from rssSources")
     val maxOrder: Int
-
-    @Query("delete from rssSources where sourceUrl in (:sourceUrls)")
-    fun delSection(vararg sourceUrls: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rssSource: RssSource)
@@ -54,9 +45,6 @@ interface RssSourceDao {
 
     @Delete
     fun delete(vararg rssSource: RssSource)
-
-    @Query("delete from rssSources where sourceUrl = :sourceUrl")
-    fun delete(sourceUrl: String)
 
     @get:Query("select * from rssSources where sourceGroup is null or sourceGroup = ''")
     val noGroup: List<RssSource>

@@ -18,31 +18,33 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss_source),
     ItemTouchCallback.OnItemTouchCallbackListener {
 
-    private val selectedIds = linkedSetOf<String>()
+    private val selected = linkedSetOf<RssSource>()
 
     fun selectAll() {
         getItems().forEach {
-            selectedIds.add(it.sourceUrl)
+            selected.add(it)
         }
         notifyItemRangeChanged(0, itemCount, 1)
+        callBack.upCountView()
     }
 
     fun revertSelection() {
         getItems().forEach {
-            if (selectedIds.contains(it.sourceUrl)) {
-                selectedIds.remove(it.sourceUrl)
+            if (selected.contains(it)) {
+                selected.remove(it)
             } else {
-                selectedIds.add(it.sourceUrl)
+                selected.add(it)
             }
         }
         notifyItemRangeChanged(0, itemCount, 1)
+        callBack.upCountView()
     }
 
-    fun getSelectionIds(): LinkedHashSet<String> {
-        val selection = linkedSetOf<String>()
+    fun getSelection(): LinkedHashSet<RssSource> {
+        val selection = linkedSetOf<RssSource>()
         getItems().forEach {
-            if (selectedIds.contains(it.sourceUrl)) {
-                selection.add(it.sourceUrl)
+            if (selected.contains(it)) {
+                selection.add(it)
             }
         }
         return selection
@@ -63,13 +65,14 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                     item.enabled = swt_enabled.isChecked
                     callBack.update(item)
                 }
-                cb_source.isChecked = selectedIds.contains(item.sourceUrl)
+                cb_source.isChecked = selected.contains(item)
                 cb_source.setOnClickListener {
                     if (cb_source.isChecked) {
-                        selectedIds.add(item.sourceUrl)
+                        selected.add(item)
                     } else {
-                        selectedIds.remove(item.sourceUrl)
+                        selected.remove(item)
                     }
+                    callBack.upCountView()
                 }
                 iv_edit.onClick { callBack.edit(item) }
                 iv_menu_more.onClick {
@@ -87,7 +90,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 }
             } else {
                 when (payloads[0]) {
-                    1 -> cb_source.isChecked = selectedIds.contains(item.sourceUrl)
+                    1 -> cb_source.isChecked = selected.contains(item)
                     2 -> swt_enabled.isChecked = item.enabled
                 }
             }
@@ -128,5 +131,6 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         fun update(vararg source: RssSource)
         fun toTop(source: RssSource)
         fun upOrder()
+        fun upCountView()
     }
 }

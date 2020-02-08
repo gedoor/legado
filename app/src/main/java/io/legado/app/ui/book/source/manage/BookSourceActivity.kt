@@ -128,9 +128,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         search_view.queryHint = getString(R.string.search_book_source)
         search_view.clearFocus()
         search_view.setOnQueryTextListener(this)
-        selMenu = PopupMenu(this, iv_menu_more)
-        selMenu.inflate(R.menu.book_source_sel)
-        selMenu.setOnMenuItemClickListener(this)
     }
 
     private fun initLiveDataBookSource(searchKey: String? = null) {
@@ -160,6 +157,9 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun initViewEvent() {
+        selMenu = PopupMenu(this, iv_menu_more)
+        selMenu.inflate(R.menu.book_source_sel)
+        selMenu.setOnMenuItemClickListener(this)
         cb_selected_all.onClick {
             if (adapter.getSelection().size == adapter.getActualItemCount()) {
                 adapter.revertSelection()

@@ -41,32 +41,38 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun enableSelection(ids: LinkedHashSet<String>) {
+    fun enableSelection(sources: LinkedHashSet<RssSource>) {
         execute {
-            App.db.rssSourceDao().enableSection(*ids.toTypedArray())
-        }
-    }
-
-    fun disableSelection(ids: LinkedHashSet<String>) {
-        execute {
-            App.db.rssSourceDao().disableSection(*ids.toTypedArray())
-        }
-    }
-
-    fun delSelection(ids: LinkedHashSet<String>) {
-        execute {
-            App.db.rssSourceDao().delSection(*ids.toTypedArray())
-        }
-    }
-
-    fun exportSelection(ids: LinkedHashSet<String>) {
-        execute {
-            App.db.rssSourceDao().getRssSources(*ids.toTypedArray()).let {
-                val json = GSON.toJson(it)
-                val file =
-                    FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportRssSource.json")
-                file.writeText(json)
+            val list = arrayListOf<RssSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = true))
             }
+            App.db.rssSourceDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun disableSelection(sources: LinkedHashSet<RssSource>) {
+        execute {
+            val list = arrayListOf<RssSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = false))
+            }
+            App.db.rssSourceDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun delSelection(sources: LinkedHashSet<RssSource>) {
+        execute {
+            App.db.rssSourceDao().delete(*sources.toTypedArray())
+        }
+    }
+
+    fun exportSelection(sources: LinkedHashSet<RssSource>) {
+        execute {
+            val json = GSON.toJson(sources)
+            val file =
+                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportRssSource.json")
+            file.writeText(json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {

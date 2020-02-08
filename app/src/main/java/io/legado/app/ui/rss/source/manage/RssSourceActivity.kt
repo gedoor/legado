@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import android.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -35,6 +36,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -42,6 +44,7 @@ import java.io.FileNotFoundException
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
+    PopupMenu.OnMenuItemClickListener,
     FileChooserDialog.CallBack,
     RssSourceAdapter.CallBack {
 
@@ -54,12 +57,14 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
+    private lateinit var selMenu: PopupMenu
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
         initLiveDataGroup()
         initLiveDataSource()
+        initViewEvent()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -76,12 +81,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
-            R.id.menu_select_all -> adapter.selectAll()
-            R.id.menu_revert_selection -> adapter.revertSelection()
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
             R.id.menu_import_source_local -> selectFileSys()
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
@@ -92,6 +91,18 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             search_view.setQuery(item.title, true)
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_select_all -> adapter.selectAll()
+            R.id.menu_revert_selection -> adapter.revertSelection()
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
+            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+        }
+        return true
     }
 
     private fun initRecyclerView() {
@@ -133,6 +144,25 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         })
     }
 
+    private fun initViewEvent() {
+        selMenu = PopupMenu(this, iv_menu_more)
+        selMenu.inflate(R.menu.rss_source_sel)
+        selMenu.setOnMenuItemClickListener(this)
+        cb_selected_all.onClick {
+            if (adapter.getSelection().size == adapter.getActualItemCount()) {
+                adapter.revertSelection()
+            } else {
+                adapter.selectAll()
+            }
+        }
+        btn_revert_selection.onClick {
+            adapter.revertSelection()
+        }
+        iv_menu_more.onClick {
+            selMenu.show()
+        }
+    }
+
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
         groups.map {
@@ -153,7 +183,42 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                 .calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
+            upCountView()
         })
+    }
+
+    override fun upCountView() {
+        val selectCount = adapter.getSelection().size
+        if (selectCount == 0) {
+            cb_selected_all.isChecked = false
+        } else {
+            cb_selected_all.isChecked = selectCount >= adapter.getActualItemCount()
+        }
+
+        //重置全选的文字
+        if (cb_selected_all.isChecked) {
+            cb_selected_all.text = getString(
+                R.string.select_cancel_count,
+                selectCount,
+                adapter.getActualItemCount()
+            )
+        } else {
+            cb_selected_all.text = getString(
+                R.string.select_all_count,
+                selectCount,
+                adapter.getActualItemCount()
+            )
+        }
+        setMenuClickable(selectCount > 0)
+    }
+
+    private fun setMenuClickable(isClickable: Boolean) {
+        //设置是否可删除
+        btn_delete.isEnabled = isClickable
+        btn_delete.isClickable = isClickable
+        //设置是否可添加书籍
+        btn_revert_selection.isEnabled = isClickable
+        btn_revert_selection.isClickable = isClickable
     }
 
     @SuppressLint("InflateParams")
