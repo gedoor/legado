@@ -46,6 +46,9 @@ interface RssSourceDao {
     @Delete
     fun delete(vararg rssSource: RssSource)
 
+    @Query("delete from rssSources where sourceUrl = :sourceUrl")
+    fun delete(sourceUrl: String)
+
     @get:Query("select * from rssSources where sourceGroup is null or sourceGroup = ''")
     val noGroup: List<RssSource>
 
