@@ -98,8 +98,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 //存在
                 newDataS.forEach { item ->
                     var hasSame = false
-                    for (i in copyDataS.indices) {
-                        val searchBook = copyDataS[i]
+                    for (searchBook in copyDataS) {
                         if (item.name == searchBook.name
                             && item.author == searchBook.author
                         ) {
