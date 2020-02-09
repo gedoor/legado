@@ -40,14 +40,14 @@
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="true"
         android:key="process_text"
-        android:summary="长按文字在操作菜单中显示阅读·搜索"
-        android:title="文字操作显示搜索"
+        android:summary="@string/add_to_text_context_menu_s"
+        android:title="@string/add_to_text_context_menu_t"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:key="recordLog"
-        android:title="记录日志"
+        android:title="@string/record_log"
         app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>
