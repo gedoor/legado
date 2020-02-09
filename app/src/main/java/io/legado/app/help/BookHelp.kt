@@ -15,17 +15,10 @@ import kotlin.math.min
 
 object BookHelp {
     private const val cacheFolderName = "book_cache"
-    var downloadPath: String =
-        App.INSTANCE.getPrefString(PreferKey.downloadPath)
+    val downloadPath: String
+        get() = App.INSTANCE.getPrefString(PreferKey.downloadPath)
             ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
             ?: App.INSTANCE.cacheDir.absolutePath
-
-    fun upDownloadPath() {
-        downloadPath =
-            App.INSTANCE.getPrefString(PreferKey.downloadPath)
-                ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
-                        ?: App.INSTANCE.cacheDir.absolutePath
-    }
 
     private val downloadUri get() = Uri.parse(downloadPath)
 

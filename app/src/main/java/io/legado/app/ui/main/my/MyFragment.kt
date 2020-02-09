@@ -13,7 +13,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.prefs.ATESwitchPreference
 import io.legado.app.service.WebService
@@ -107,7 +106,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                         toast(R.string.service_stop)
                     }
                 }
-                PreferKey.downloadPath -> BookHelp.upDownloadPath()
                 "recordLog" -> LogUtils.upLevel()
             }
         }

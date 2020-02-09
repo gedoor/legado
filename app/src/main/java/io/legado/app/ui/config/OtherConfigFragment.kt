@@ -18,6 +18,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -37,25 +38,21 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        putPrefBoolean("process_text", isProcessTextEnabled())
+        putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
-        upPreferenceSummary(findPreference(PreferKey.downloadPath), BookHelp.downloadPath)
-        upPreferenceSummary(findPreference(PreferKey.threadCount), AppConfig.threadCount.toString())
+        upPreferenceSummary(PreferKey.downloadPath, BookHelp.downloadPath)
+        upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         ATH.applyEdgeEffectColor(listView)
     }
 
-    override fun onResume() {
-        super.onResume()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onPause() {
+    override fun onDestroy() {
+        super.onDestroy()
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        super.onPause()
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
@@ -66,11 +63,9 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 .setMinValue(1)
                 .setValue(AppConfig.threadCount)
                 .show {
-                    requireContext().putPrefInt(PreferKey.threadCount, it)
-                    findPreference<Preference>(PreferKey.threadCount)?.summary =
-                        getString(R.string.threads_num, it.toString())
+                    AppConfig.threadCount = it
                 }
-            PreferKey.downloadPath -> selectDownloadPathSys()
+            PreferKey.downloadPath -> selectDownloadPath()
             PreferKey.cleanCache -> {
                 BookHelp.clearCache()
                 toast(R.string.clear_cache_success)
@@ -82,26 +77,30 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             PreferKey.downloadPath -> {
-                BookHelp.upDownloadPath()
-                findPreference<Preference>(key)?.summary = BookHelp.downloadPath
+                upPreferenceSummary(key, BookHelp.downloadPath)
             }
+            PreferKey.threadCount -> upPreferenceSummary(
+                PreferKey.threadCount,
+                AppConfig.threadCount.toString()
+            )
             PreferKey.recordLog -> LogUtils.upLevel()
             PreferKey.processText -> sharedPreferences?.let {
-                setProcessTextEnable(it.getBoolean("process_text", true))
+                setProcessTextEnable(it.getBoolean(key, true))
             }
             PreferKey.showRss -> postEvent(EventBus.SHOW_RSS, "unused")
         }
     }
 
-    private fun upPreferenceSummary(preference: Preference?, value: String) {
-        when (preference) {
-            is ListPreference -> {
+    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+        val preference = findPreference<Preference>(preferenceKey) ?: return
+        when (preferenceKey) {
+            PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
+            else -> if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.
                 preference.summary = if (index >= 0) preference.entries[index] else null
-            }
-            else -> {
-                preference?.summary = value
+            } else {
+                preference.summary = value
             }
         }
     }
@@ -124,29 +123,39 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         }
     }
 
-    private fun selectDownloadPathSys() {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, requestCodeDownloadPath)
-        } catch (e: Exception) {
-            selectDownloadPath()
-        }
-    }
-
     private fun selectDownloadPath() {
-        PermissionsCompat.Builder(this)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                FileChooserDialog.show(
-                    childFragmentManager,
-                    requestCodeDownloadPath,
-                    mode = FileChooserDialog.DIRECTORY,
-                    initPath = BookHelp.downloadPath
-                )
+        alert {
+            titleResource = R.string.select_folder
+            items(resources.getStringArray(R.array.select_folder).toList()) { _, i ->
+                when (i) {
+                    1 -> {
+                        removePref(PreferKey.downloadPath)
+                    }
+                    2 -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            startActivityForResult(intent, requestCodeDownloadPath)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            toast(e.localizedMessage ?: "ERROR")
+                        }
+                    }
+                    3 -> PermissionsCompat.Builder(this@OtherConfigFragment)
+                        .addPermissions(*Permissions.Group.STORAGE)
+                        .rationale(R.string.tip_perm_request_storage)
+                        .onGranted {
+                            FileChooserDialog.show(
+                                childFragmentManager,
+                                requestCodeDownloadPath,
+                                mode = FileChooserDialog.DIRECTORY,
+                                initPath = BookHelp.downloadPath
+                            )
+                        }
+                        .request()
+                }
             }
-            .request()
+        }
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
@@ -165,8 +174,6 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     putPrefString(PreferKey.downloadPath, uri.toString())
-                    findPreference<Preference>(PreferKey.downloadPath)?.summary = uri.toString()
-                    BookHelp.upDownloadPath()
                 }
             }
         }
