@@ -55,7 +55,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         initBookGroupData()
         if (AppConfig.autoRefreshBook) {
             tab_layout.postDelayed({
-                getViewModelOfActivity(MainViewModel::class.java).updateList
+                getViewModelOfActivity(MainViewModel::class.java).upChapterList()
             }, 1000)
         }
     }
