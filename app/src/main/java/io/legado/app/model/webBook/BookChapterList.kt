@@ -83,9 +83,13 @@ object BookChapterList {
                 else -> {
                     val chapterDataList = arrayListOf<ChapterData<String>>()
                     for (item in chapterData.nextUrl) {
-                        val data = ChapterData(nextUrl = item)
-                        chapterDataList.add(data)
+                        if (!nextUrlList.contains(item)) {
+                            val data = ChapterData(nextUrl = item)
+                            chapterDataList.add(data)
+                            nextUrlList.add(item)
+                        }
                     }
+                    Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
                     for (item in chapterDataList) {
                         Coroutine.async(scope = coroutineScope) {
                             val nextBody = AnalyzeUrl(
