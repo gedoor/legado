@@ -7,7 +7,9 @@ import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
+import io.legado.app.utils.getPrefBoolean
 import kotlinx.android.synthetic.main.activity_welcome.*
 import org.jetbrains.anko.startActivity
 
@@ -28,7 +30,11 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         }
         welAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
-                startActivity<MainActivity>()
+                if (getPrefBoolean(getString(R.string.pk_default_read))) {
+                    startActivity<ReadBookActivity>()
+                } else {
+                    startActivity<MainActivity>()
+                }
                 finish()
             }
 
