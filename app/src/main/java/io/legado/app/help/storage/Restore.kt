@@ -40,7 +40,21 @@ object Restore {
                     }
                 }
             } else {
-
+                try {
+                    val file = File(path)
+                    for (fileName in Backup.backupFileNames) {
+                        FileUtils.getFile(file, fileName).let {
+                            if (it.exists()) {
+                                it.copyTo(
+                                    FileUtils.createFileIfNotExist(Backup.backupPath + File.separator + fileName),
+                                    true
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
         restore(Backup.backupPath)
