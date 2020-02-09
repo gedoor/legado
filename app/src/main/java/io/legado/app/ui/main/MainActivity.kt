@@ -1,10 +1,8 @@
 package io.legado.app.ui.main
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
-import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -131,13 +129,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             if (backupPath.isNullOrEmpty()) {
                 Backup.backup(this@MainActivity)
             } else {
-                val uri = Uri.parse(backupPath)
-                val doc = DocumentFile.fromTreeUri(this@MainActivity, uri)
-                if (doc?.canWrite() == true) {
-                    Backup.backup(this@MainActivity, backupPath)
-                } else {
-                    Backup.backup(this@MainActivity)
-                }
+                Backup.backup(this@MainActivity, backupPath)
             }
         }
     }
