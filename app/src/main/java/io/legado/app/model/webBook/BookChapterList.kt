@@ -22,7 +22,7 @@ object BookChapterList {
         bookSource: BookSource,
         baseUrl: String
     ): List<BookChapter> {
-        var chapterList = arrayListOf<BookChapter>()
+        var chapterList = ArrayList<BookChapter>()
         body ?: throw Exception(
             App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
         )
