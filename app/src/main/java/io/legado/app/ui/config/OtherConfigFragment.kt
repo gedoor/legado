@@ -155,7 +155,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                         .request()
                 }
             }
-        }
+        }.show()
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
