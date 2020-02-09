@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.constant.Theme
-import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
 import io.legado.app.utils.*
@@ -90,8 +89,7 @@ class FileChooserDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ATH.applyBackgroundTint(view)
-        ATH.applyBackgroundTint(rv_path)
+        view.setBackgroundResource(R.color.background_card)
         arguments?.let {
             requestCode = it.getInt("requestCode")
             mode = it.getInt("mode", FILE)
