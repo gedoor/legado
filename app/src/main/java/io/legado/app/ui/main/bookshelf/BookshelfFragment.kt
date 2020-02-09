@@ -29,7 +29,6 @@ import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.ui.importbook.ImportBookActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_change_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
@@ -52,10 +51,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
-        initRecyclerView()
+        initView()
         initBookGroupData()
         if (AppConfig.autoRefreshBook) {
-            recycler_view.postDelayed({
+            tab_layout.postDelayed({
                 getViewModelOfActivity(MainViewModel::class.java).updateList
             }, 1000)
         }
@@ -92,7 +91,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private val selectedGroup: BookGroup
         get() = bookGroups[view_pager_bookshelf.currentItem]
 
-    private fun initRecyclerView() {
+    private fun initView() {
         tab_layout.isTabIndicatorFullWidth = false
         tab_layout.tabMode = TabLayout.MODE_SCROLLABLE
         tab_layout.setSelectedTabIndicatorColor(requireContext().accentColor)
