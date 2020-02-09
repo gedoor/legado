@@ -496,6 +496,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    /**
+     * colorSelectDialog
+     */
     override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.getConfig()) {
         when (dialogId) {
             TEXT_COLOR -> {

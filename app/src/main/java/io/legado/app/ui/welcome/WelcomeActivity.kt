@@ -30,10 +30,9 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         }
         welAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
+                startActivity<MainActivity>()
                 if (getPrefBoolean(getString(R.string.pk_default_read))) {
                     startActivity<ReadBookActivity>()
-                } else {
-                    startActivity<MainActivity>()
                 }
                 finish()
             }
