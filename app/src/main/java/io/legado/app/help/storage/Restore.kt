@@ -13,12 +13,8 @@ import io.legado.app.data.entities.*
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.toast
 import java.io.File
 
 object Restore {
@@ -109,81 +105,4 @@ object Restore {
         return null
     }
 
-    fun importYueDuData(context: Context) {
-        GlobalScope.launch(IO) {
-            try {// 导入书架
-                val shelfFile =
-                    FileUtils.createFileIfNotExist(Backup.defaultPath + File.separator + "myBookShelf.json")
-                val json = shelfFile.readText()
-                val importCount = importOldBookshelf(json)
-                withContext(Main) {
-                    context.toast("成功导入书籍${importCount}")
-                }
-            } catch (e: Exception) {
-                withContext(Main) {
-                    context.toast("导入书籍失败\n${e.localizedMessage}")
-                }
-            }
-
-            try {// Book source
-                val sourceFile =
-                    FileUtils.createFileIfNotExist(Backup.defaultPath + File.separator + "myBookSource.json")
-                val json = sourceFile.readText()
-                val importCount = importOldSource(json)
-                withContext(Main) {
-                    context.toast("成功导入书源${importCount}")
-                }
-            } catch (e: Exception) {
-                withContext(Main) {
-                    context.toast("导入源失败\n${e.localizedMessage}")
-                }
-            }
-
-            try {// Replace rules
-                val ruleFile =
-                    FileUtils.createFileIfNotExist(Backup.defaultPath + File.separator + "myBookReplaceRule.json")
-                val json = ruleFile.readText()
-                val importCount = importOldReplaceRule(json)
-                withContext(Main) {
-                    context.toast("成功导入替换规则${importCount}")
-                }
-            } catch (e: Exception) {
-                withContext(Main) {
-                    context.toast("导入替换规则失败\n${e.localizedMessage}")
-                }
-            }
-        }
-    }
-
-    fun importOldBookshelf(json: String): Int {
-        val books = OldBook.toNewBook(json)
-        App.db.bookDao().insert(*books.toTypedArray())
-        return books.size
-    }
-
-    fun importOldSource(json: String): Int {
-        val bookSources = mutableListOf<BookSource>()
-        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-        for (item in items) {
-            val jsonItem = jsonPath.parse(item)
-            OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
-                bookSources.add(it)
-            }
-        }
-        App.db.bookSourceDao().insert(*bookSources.toTypedArray())
-        return bookSources.size
-    }
-
-    fun importOldReplaceRule(json: String): Int {
-        val replaceRules = mutableListOf<ReplaceRule>()
-        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-        for (item in items) {
-            val jsonItem = jsonPath.parse(item)
-            OldRule.jsonToReplaceRule(jsonItem.jsonString())?.let {
-                replaceRules.add(it)
-            }
-        }
-        App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
-        return replaceRules.size
-    }
 }

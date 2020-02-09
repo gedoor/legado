@@ -19,10 +19,6 @@ object Backup {
 
     val backupPath = App.INSTANCE.filesDir.absolutePath + File.separator + "backup"
 
-    val defaultPath by lazy {
-        FileUtils.getSdCardPath() + File.separator + "YueDu"
-    }
-
     val legadoPath by lazy {
         FileUtils.getSdCardPath() + File.separator + "YueDu3.0"
     }

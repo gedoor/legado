@@ -13,10 +13,14 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
+import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentPath
 import io.legado.app.utils.toast
@@ -27,6 +31,7 @@ object BackupRestoreUi {
 
     private const val backupSelectRequestCode = 22
     private const val restoreSelectRequestCode = 33
+    private const val oldDataRequestCode = 11
 
     fun backup(fragment: Fragment) {
         val backupPath = AppConfig.backupPath
@@ -163,6 +168,29 @@ object BackupRestoreUi {
         }.show()
     }
 
+    fun importOldData(fragment: Fragment) {
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            fragment.startActivityForResult(intent, oldDataRequestCode)
+        } catch (e: Exception) {
+            fragment.alert(title = "导入") {
+                message = "是否导入旧版本数据"
+                yesButton {
+                    PermissionsCompat.Builder(fragment)
+                        .addPermissions(*Permissions.Group.STORAGE)
+                        .rationale(R.string.tip_perm_request_storage)
+                        .onGranted {
+                            ImportOldData.import(fragment.requireContext())
+                        }
+                        .request()
+                }
+                noButton {
+                }
+            }.show().applyTint()
+        }
+    }
+
     fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             backupSelectRequestCode -> {
@@ -214,6 +242,10 @@ object BackupRestoreUi {
                     }
                 }
             }
+            oldDataRequestCode ->
+                if (resultCode == RESULT_OK) data?.data?.let { uri ->
+                    ImportOldData.importUri(uri)
+                }
         }
     }
 

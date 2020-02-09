@@ -8,7 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.Restore
+import io.legado.app.help.storage.ImportOldData
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.isAbsUrl
@@ -22,10 +22,10 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         execute {
             if (text.isAbsUrl()) {
                 HttpHelper.simpleGet(text)?.let {
-                    Restore.importOldReplaceRule(it)
+                    ImportOldData.importOldReplaceRule(it)
                 }
             } else {
-                Restore.importOldReplaceRule(text)
+                ImportOldData.importOldReplaceRule(text)
             }
         }.onError {
             showMsg(it.localizedMessage ?: "ERROR")
