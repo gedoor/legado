@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
-    val updateList = arrayListOf<String>()
+    val updateList = hashSetOf<String>()
 
     fun upChapterList() {
         execute {

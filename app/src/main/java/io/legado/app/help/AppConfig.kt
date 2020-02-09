@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.utils.*
 
@@ -43,6 +44,9 @@ object AppConfig {
         set(value) {
             App.INSTANCE.putPrefBoolean(PreferKey.showRss, value)
         }
+
+    val autoRefreshBook: Boolean
+        get() = App.INSTANCE.getPrefBoolean(App.INSTANCE.getString(R.string.pk_auto_refresh))
 
     var threadCount: Int
         get() = App.INSTANCE.getPrefInt(PreferKey.threadCount, 16)

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="@string/pk_auto_refresh"
         android:summary="@string/ps_auto_refresh"
         android:title="@string/pt_auto_refresh"

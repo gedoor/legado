@@ -17,6 +17,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -26,7 +27,9 @@ import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.ui.importbook.ImportBookActivity
+import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.*
+import kotlinx.android.synthetic.main.dialog_change_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
@@ -51,6 +54,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         setSupportToolbar(toolbar)
         initRecyclerView()
         initBookGroupData()
+        if (AppConfig.autoRefreshBook) {
+            recycler_view.postDelayed({
+                getViewModelOfActivity(MainViewModel::class.java).updateList
+            }, 1000)
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
