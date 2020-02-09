@@ -23,12 +23,13 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.config.BackupRestoreUi
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
-class MyFragment : BaseFragment(R.layout.fragment_my_config) {
+class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.CallBack {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -49,6 +50,10 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             R.id.menu_backup -> BackupRestoreUi.backup(this)
             R.id.menu_restore -> BackupRestoreUi.restore(this)
         }
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        BackupRestoreUi.onFilePicked(requestCode, currentPath)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -16,6 +16,7 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentPath
 import io.legado.app.utils.toast
@@ -56,6 +57,7 @@ object BackupRestoreUi {
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
                 Coroutine.async {
+                    AppConfig.backupPath = Backup.legadoPath
                     Backup.backup(fragment.requireContext(), path)
                 }.onSuccess {
                     fragment.toast(R.string.backup_success)
@@ -69,14 +71,7 @@ object BackupRestoreUi {
             titleResource = R.string.select_folder
             items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
                 when (index) {
-                    0 -> PermissionsCompat.Builder(fragment)
-                        .addPermissions(*Permissions.Group.STORAGE)
-                        .rationale(R.string.tip_perm_request_storage)
-                        .onGranted {
-                            AppConfig.backupPath = Backup.legadoPath
-                            backupUsePermission(fragment)
-                        }
-                        .request()
+                    0 -> backupUsePermission(fragment)
                     1 -> {
                         try {
                             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -88,7 +83,11 @@ object BackupRestoreUi {
                         }
                     }
                     2 -> {
-
+                        FileChooserDialog.show(
+                            fragment.childFragmentManager,
+                            backupSelectRequestCode,
+                            mode = FileChooserDialog.DIRECTORY
+                        )
                     }
                 }
             }
@@ -102,13 +101,17 @@ object BackupRestoreUi {
                 }) {
                 val backupPath = fragment.getPrefString(PreferKey.backupPath)
                 if (backupPath?.isNotEmpty() == true) {
-                    val uri = Uri.parse(backupPath)
-                    val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
-                    if (doc?.canWrite() == true) {
-                        Restore.restore(fragment.requireContext(), uri)
-                        fragment.toast(R.string.restore_success)
+                    if (backupPath.isContentPath()) {
+                        val uri = Uri.parse(backupPath)
+                        val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
+                        if (doc?.canWrite() == true) {
+                            Restore.restore(fragment.requireContext(), backupPath)
+                            fragment.toast(R.string.restore_success)
+                        } else {
+                            selectRestoreFolder(fragment)
+                        }
                     } else {
-                        selectRestoreFolder(fragment)
+                        restoreUsePermission(fragment, backupPath)
                     }
                 } else {
                     selectRestoreFolder(fragment)
@@ -117,23 +120,27 @@ object BackupRestoreUi {
         }
     }
 
+    private fun restoreUsePermission(fragment: Fragment, path: String = Backup.legadoPath) {
+        PermissionsCompat.Builder(fragment)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                Coroutine.async {
+                    AppConfig.backupPath = path
+                    Restore.restore(path)
+                }.onSuccess {
+                    fragment.toast(R.string.restore_success)
+                }
+            }
+            .request()
+    }
+
     private fun selectRestoreFolder(fragment: Fragment) {
         fragment.alert {
             titleResource = R.string.select_folder
             items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
                 when (index) {
-                    0 -> PermissionsCompat.Builder(fragment)
-                        .addPermissions(*Permissions.Group.STORAGE)
-                        .rationale(R.string.tip_perm_request_storage)
-                        .onGranted {
-                            Coroutine.async {
-                                AppConfig.backupPath = Backup.legadoPath
-                                Restore.restore(Backup.legadoPath)
-                            }.onSuccess {
-                                fragment.toast(R.string.restore_success)
-                            }
-                        }
-                        .request()
+                    0 -> restoreUsePermission(fragment)
                     1 -> {
                         try {
                             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -145,11 +152,36 @@ object BackupRestoreUi {
                         }
                     }
                     2 -> {
-
+                        FileChooserDialog.show(
+                            fragment.childFragmentManager,
+                            restoreSelectRequestCode,
+                            mode = FileChooserDialog.DIRECTORY
+                        )
                     }
                 }
             }
         }.show()
+    }
+
+    fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            backupSelectRequestCode -> {
+                AppConfig.backupPath = currentPath
+                Coroutine.async {
+                    Backup.backup(App.INSTANCE, currentPath)
+                }.onSuccess {
+                    App.INSTANCE.toast(R.string.backup_success)
+                }
+            }
+            restoreSelectRequestCode -> {
+                AppConfig.backupPath = currentPath
+                Coroutine.async {
+                    Restore.restore(App.INSTANCE, currentPath)
+                }.onSuccess {
+                    App.INSTANCE.toast(R.string.restore_success)
+                }
+            }
+        }
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -176,7 +208,7 @@ object BackupRestoreUi {
                     )
                     AppConfig.backupPath = uri.toString()
                     Coroutine.async {
-                        Restore.restore(App.INSTANCE, uri)
+                        Restore.restore(App.INSTANCE, uri.toString())
                     }.onSuccess {
                         App.INSTANCE.toast(R.string.restore_success)
                     }

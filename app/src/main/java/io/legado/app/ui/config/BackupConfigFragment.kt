@@ -24,6 +24,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.applyTint
@@ -35,6 +36,7 @@ import kotlin.coroutines.CoroutineContext
 
 class BackupConfigFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener,
+    FileChooserDialog.CallBack,
     CoroutineScope {
     private lateinit var job: Job
     private val oldDataRequestCode = 11
@@ -229,6 +231,10 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
             LogUtils.d("xxx", "import old")
             callback()
         }
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        BackupRestoreUi.onFilePicked(requestCode, currentPath)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

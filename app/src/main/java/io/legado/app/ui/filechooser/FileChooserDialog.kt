@@ -42,21 +42,19 @@ class FileChooserDialog : DialogFragment(),
             allowExtensions: Array<String?>? = null,
             menus: Array<String>? = null
         ) {
-            val fragment = (manager.findFragmentByTag(tag) as? FileChooserDialog)
-                ?: FileChooserDialog().apply {
-                    val bundle = Bundle()
-                    bundle.putInt("mode", mode)
-                    bundle.putInt("requestCode", requestCode)
-                    bundle.putString("title", title)
-                    bundle.putBoolean("isShowHomeDir", isShowHomeDir)
-                    bundle.putBoolean("isShowUpDir", isShowUpDir)
-                    bundle.putBoolean("isShowHideDir", isShowHideDir)
-                    bundle.putString("initPath", initPath)
-                    bundle.putStringArray("allowExtensions", allowExtensions)
-                    bundle.putStringArray("menus", menus)
-                    arguments = bundle
-                }
-            fragment.show(manager, tag)
+            FileChooserDialog().apply {
+                val bundle = Bundle()
+                bundle.putInt("mode", mode)
+                bundle.putInt("requestCode", requestCode)
+                bundle.putString("title", title)
+                bundle.putBoolean("isShowHomeDir", isShowHomeDir)
+                bundle.putBoolean("isShowUpDir", isShowUpDir)
+                bundle.putBoolean("isShowHideDir", isShowHideDir)
+                bundle.putString("initPath", initPath)
+                bundle.putStringArray("allowExtensions", allowExtensions)
+                bundle.putStringArray("menus", menus)
+                arguments = bundle
+            }.show(manager, tag)
         }
     }
 

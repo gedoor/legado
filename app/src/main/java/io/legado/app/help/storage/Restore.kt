@@ -11,10 +11,7 @@ import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
@@ -33,17 +30,21 @@ object Restore {
         )
     }
 
-    suspend fun restore(context: Context, uri: Uri) {
+    suspend fun restore(context: Context, path: String) {
         withContext(IO) {
-            DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach { doc ->
-                for (fileName in Backup.backupFileNames) {
-                    if (doc.name == fileName) {
-                        DocumentUtils.readText(context, doc.uri)?.let {
-                            FileUtils.createFileIfNotExist(Backup.backupPath + File.separator + fileName)
-                                .writeText(it)
+            if (path.isContentPath()) {
+                DocumentFile.fromTreeUri(context, Uri.parse(path))?.listFiles()?.forEach { doc ->
+                    for (fileName in Backup.backupFileNames) {
+                        if (doc.name == fileName) {
+                            DocumentUtils.readText(context, doc.uri)?.let {
+                                FileUtils.createFileIfNotExist(Backup.backupPath + File.separator + fileName)
+                                    .writeText(it)
+                            }
                         }
                     }
                 }
+            } else {
+
             }
         }
         restore(Backup.backupPath)
