@@ -148,6 +148,7 @@ object BookChapterList {
         val lh = LinkedHashSet(chapterList)
         val list = ArrayList(lh)
         list.reverse()
+        Debug.log(book.origin, "◇目录总数:${list.size}")
         for ((index, item) in list.withIndex()) {
             item.index = index
         }
