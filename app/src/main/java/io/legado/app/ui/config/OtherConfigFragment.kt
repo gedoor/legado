@@ -128,10 +128,10 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
             titleResource = R.string.select_folder
             items(resources.getStringArray(R.array.select_folder).toList()) { _, i ->
                 when (i) {
-                    1 -> {
+                    0 -> {
                         removePref(PreferKey.downloadPath)
                     }
-                    2 -> {
+                    1 -> {
                         try {
                             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -141,7 +141,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                             toast(e.localizedMessage ?: "ERROR")
                         }
                     }
-                    3 -> PermissionsCompat.Builder(this@OtherConfigFragment)
+                    2 -> PermissionsCompat.Builder(this@OtherConfigFragment)
                         .addPermissions(*Permissions.Group.STORAGE)
                         .rationale(R.string.tip_perm_request_storage)
                         .onGranted {
