@@ -45,6 +45,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     ReplaceRuleAdapter.CallBack {
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
+    private val importRecordKey = "replaceRuleRecordKey"
     private val importSource = 132
     private lateinit var adapter: ReplaceRuleAdapter
     private var groups = hashSetOf<String>()
@@ -149,7 +150,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private fun showImportDialog() {
         val aCache = ACache.get(this, cacheDir = false)
         val cacheUrls: MutableList<String> = aCache
-            .getAsString("replaceRuleUrl")
+            .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_replace_rule_on_line) {
@@ -159,7 +160,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                     editText = edit_view
                     edit_view.setFilterValues(cacheUrls) {
                         cacheUrls.remove(it)
-                        aCache.put("replaceRuleUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                 }
             }
@@ -168,7 +169,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 text?.let {
                     if (!cacheUrls.contains(it)) {
                         cacheUrls.add(0, it)
-                        aCache.put("replaceRuleUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                     viewModel.importSource(it) { msg ->

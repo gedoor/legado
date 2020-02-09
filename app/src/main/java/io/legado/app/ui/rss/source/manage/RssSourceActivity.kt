@@ -50,7 +50,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     override val viewModel: RssSourceViewModel
         get() = getViewModel(RssSourceViewModel::class.java)
-
+    private val importRecordKey = "rssSourceRecordKey"
     private val qrRequestCode = 101
     private val importSource = 13141
     private lateinit var adapter: RssSourceAdapter
@@ -227,7 +227,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private fun showImportDialog() {
         val aCache = ACache.get(this, cacheDir = false)
         val cacheUrls: MutableList<String> = aCache
-            .getAsString("sourceUrl")
+            .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_book_source_on_line) {
@@ -237,7 +237,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                     editText = edit_view
                     edit_view.setFilterValues(cacheUrls) {
                         cacheUrls.remove(it)
-                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                 }
             }
@@ -246,7 +246,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                 text?.let {
                     if (!cacheUrls.contains(it)) {
                         cacheUrls.add(0, it)
-                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                     viewModel.importSource(it) { msg ->

@@ -50,7 +50,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     SearchView.OnQueryTextListener {
     override val viewModel: BookSourceViewModel
         get() = getViewModel(BookSourceViewModel::class.java)
-
+    private val importRecordKey = "bookSourceRecordKey"
     private val qrRequestCode = 101
     private val importSource = 132
     private lateinit var adapter: BookSourceAdapter
@@ -199,7 +199,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private fun showImportDialog() {
         val aCache = ACache.get(this, cacheDir = false)
         val cacheUrls: MutableList<String> = aCache
-            .getAsString("sourceUrl")
+            .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_book_source_on_line) {
@@ -209,7 +209,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     editText = edit_view
                     edit_view.setFilterValues(cacheUrls) {
                         cacheUrls.remove(it)
-                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                 }
             }
@@ -218,7 +218,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 text?.let {
                     if (!cacheUrls.contains(it)) {
                         cacheUrls.add(0, it)
-                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                     viewModel.importSource(it) { msg ->
