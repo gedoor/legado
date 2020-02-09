@@ -45,12 +45,16 @@ object WebDavHelp {
         val url = getWebDavUrl()
         val names = arrayListOf<String>()
         if (!url.isNullOrBlank() && initWebDav()) {
-            var files = WebDav(url + "legado/").listFiles()
-            files = files.reversed()
-            for (index: Int in 0 until min(10, files.size)) {
-                files[index].displayName?.let {
-                    names.add(it)
+            try {
+                var files = WebDav(url + "legado/").listFiles()
+                files = files.reversed()
+                for (index: Int in 0 until min(10, files.size)) {
+                    files[index].displayName?.let {
+                        names.add(it)
+                    }
                 }
+            } catch (e: Exception) {
+                return names
             }
         }
         return names
