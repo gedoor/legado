@@ -205,10 +205,7 @@ object ATH {
                 .setSelectedColor(ThemeStore.accentColor(bottom_navigation_view.context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
-            itemBackgroundResource = when (AppConfig.isNightTheme) {
-                true -> R.drawable.item_bg_dark
-                false -> R.drawable.item_bg_light
-            }
+            itemBackgroundResource = R.color.background_menu
         }
     }
 
