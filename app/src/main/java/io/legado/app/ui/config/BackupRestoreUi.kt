@@ -3,6 +3,7 @@ package io.legado.app.ui.config
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import io.legado.app.App
@@ -17,10 +18,7 @@ import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentPath
 import io.legado.app.utils.toast
@@ -169,26 +167,44 @@ object BackupRestoreUi {
     }
 
     fun importOldData(fragment: Fragment) {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            fragment.startActivityForResult(intent, oldDataRequestCode)
-        } catch (e: Exception) {
-            fragment.alert(title = "导入") {
-                message = "是否导入旧版本数据"
-                yesButton {
-                    PermissionsCompat.Builder(fragment)
-                        .addPermissions(*Permissions.Group.STORAGE)
-                        .rationale(R.string.tip_perm_request_storage)
-                        .onGranted {
-                            ImportOldData.import(fragment.requireContext())
+        fragment.alert {
+            titleResource = R.string.select_folder
+            items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
+                when (index) {
+                    0 -> importOldUsePermission(fragment)
+                    1 -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            fragment.startActivityForResult(intent, oldDataRequestCode)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                            fragment.toast(e.localizedMessage ?: "ERROR")
                         }
-                        .request()
+                    }
+                    2 -> {
+                        FileChooserDialog.show(
+                            fragment.childFragmentManager,
+                            oldDataRequestCode,
+                            mode = FileChooserDialog.DIRECTORY
+                        )
+                    }
                 }
-                noButton {
-                }
-            }.show().applyTint()
+            }
+        }.show()
+    }
+
+    private fun importOldUsePermission(fragment: Fragment) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            fragment.toast(R.string.a10_permission_toast)
         }
+        PermissionsCompat.Builder(fragment)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                ImportOldData.import(fragment.requireContext())
+            }
+            .request()
     }
 
     fun onFilePicked(requestCode: Int, currentPath: String) {

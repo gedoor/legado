@@ -601,6 +601,7 @@
     <string name="service_start">正在启动服务\n具体信息查看通知栏</string>
     <string name="default_path">默认路径</string>
     <string name="sys_folder_picker">系统文件夹选择器</string>
-    <string name="app_folder_picker">自带选择器(Android10以上可能会失效)</string>
+    <string name="app_folder_picker">自带选择器</string>
+    <string name="a10_permission_toast">Android10以上因为权限限制可能无法读取文件</string>
 
 </resources>
