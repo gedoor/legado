@@ -56,8 +56,7 @@ class BookInfoActivity :
         title_bar.background.alpha = 0
         tv_intro.movementMethod = ScrollingMovementMethod.getInstance()
         viewModel.bookData.observe(this, Observer { showBook(it) })
-        viewModel.isLoadingData.observe(this, Observer { upLoading(it) })
-        viewModel.chapterListData.observe(this, Observer { showChapter(it) })
+        viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.groupData.observe(this, Observer {
             if (it == null) {
                 tv_group.text = getString(R.string.group_s, getString(R.string.no_group))
@@ -115,8 +114,9 @@ class BookInfoActivity :
         tv_author.text = getString(R.string.author_show, book.author)
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
-        tv_toc.text = getString(R.string.toc_s, book.latestChapterTitle)
+        tv_toc.text = getString(R.string.toc_s, getString(R.string.loading))
         tv_intro.text = book.getDisplayIntro()
+        upTvBookshelf()
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {
             ll_kind.gone()
@@ -164,27 +164,32 @@ class BookInfoActivity :
             .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
-    private fun showChapter(chapterList: List<BookChapter>) {
-        viewModel.bookData.value?.let {
-            if (it.durChapterIndex < chapterList.size) {
-                tv_toc.text = getString(R.string.toc_s, chapterList[it.durChapterIndex].title)
-            } else {
-                tv_toc.text = getString(R.string.toc_s, chapterList.last().title)
+    private fun upLoading(isLoading: Boolean, chapterList: List<BookChapter>? = null) {
+        when {
+            isLoading -> {
+                tv_toc.text = getString(R.string.toc_s, getString(R.string.loading))
+            }
+            chapterList.isNullOrEmpty() -> {
+                tv_toc.text = getString(R.string.toc_s, getString(R.string.error_load_toc))
+            }
+            else -> {
+                viewModel.bookData.value?.let {
+                    if (it.durChapterIndex < chapterList.size) {
+                        tv_toc.text =
+                            getString(R.string.toc_s, chapterList[it.durChapterIndex].title)
+                    } else {
+                        tv_toc.text = getString(R.string.toc_s, chapterList.last().title)
+                    }
+                }
             }
         }
-        upLoading(false)
     }
 
-    private fun upLoading(isLoading: Boolean) {
-        if (isLoading) {
-            tv_loading.visible()
+    private fun upTvBookshelf() {
+        if (viewModel.inBookshelf) {
+            tv_shelf.text = getString(R.string.remove_from_bookshelf)
         } else {
-            if (viewModel.inBookshelf) {
-                tv_shelf.text = getString(R.string.remove_from_bookshelf)
-            } else {
-                tv_shelf.text = getString(R.string.add_to_shelf)
-            }
-            tv_loading.gone()
+            tv_shelf.text = getString(R.string.add_to_shelf)
         }
     }
 
@@ -202,17 +207,12 @@ class BookInfoActivity :
         tv_shelf.onClick {
             if (viewModel.inBookshelf) {
                 viewModel.delBook {
-                    tv_shelf.text = getString(R.string.add_to_shelf)
+                    upTvBookshelf()
                 }
             } else {
                 viewModel.addToBookshelf {
-                    tv_shelf.text = getString(R.string.remove_from_bookshelf)
+                    upTvBookshelf()
                 }
-            }
-        }
-        tv_loading.onClick {
-            viewModel.bookData.value?.let {
-                viewModel.loadBookInfo(it)
             }
         }
         tv_origin.onClick {

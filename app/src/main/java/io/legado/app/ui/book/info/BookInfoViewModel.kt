@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers.IO
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
-    val isLoadingData = MutableLiveData<Boolean>()
     var durChapterIndex = 0
     var inBookshelf = false
     var groupData = MutableLiveData<BookGroup>()
@@ -45,7 +44,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val chapterList = App.db.bookChapterDao().getChapterList(book.bookUrl)
             if (chapterList.isNotEmpty()) {
                 chapterListData.postValue(chapterList)
-                isLoadingData.postValue(false)
             } else {
                 loadChapter(book)
             }
@@ -60,7 +58,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocalBook()) {
                 loadChapter(book, changeDruChapterIndex)
             } else {
-                isLoadingData.postValue(true)
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                     WebBook(bookSource).getBookInfo(book, this)
                         .onSuccess(IO) {
@@ -72,11 +69,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 loadChapter(it, changeDruChapterIndex)
                             }
                         }.onError {
-                            isLoadingData.postValue(false)
                             toast(R.string.error_get_book_info)
                         }
                 } ?: let {
-                    isLoadingData.postValue(false)
+                    chapterListData.postValue(null)
                     toast(R.string.error_no_source)
                 }
             }
@@ -88,17 +84,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            isLoadingData.postValue(true)
             if (book.isLocalBook()) {
                 AnalyzeTxtFile.analyze(context, book).let {
                     App.db.bookDao().update(book)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
-                    if (changeDruChapterIndex == null) {
-                        chapterListData.postValue(it)
-                        isLoadingData.postValue(false)
-                    } else {
-                        changeDruChapterIndex(it)
-                    }
+                    chapterListData.postValue(it)
                 }
             } else {
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
@@ -112,21 +102,19 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                     }
                                     if (changeDruChapterIndex == null) {
                                         chapterListData.postValue(it)
-                                        isLoadingData.postValue(false)
                                     } else {
                                         changeDruChapterIndex(it)
                                     }
                                 } else {
-                                    isLoadingData.postValue(false)
                                     toast(R.string.chapter_list_empty)
                                 }
                             }
                         }.onError {
-                            isLoadingData.postValue(false)
+                            chapterListData.postValue(null)
                             toast(R.string.error_get_chapter_list)
                         }
                 } ?: let {
-                    isLoadingData.postValue(false)
+                    chapterListData.postValue(null)
                     toast(R.string.error_no_source)
                 }
             }

@@ -229,63 +229,40 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/fl_action"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/background_menu"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_shelf"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="@string/remove_from_bookshelf"
-                android:textColor="@color/tv_text_default"
-                android:textSize="15sp" />
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_read"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/selector_btn_accent_bg"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="@string/reading"
-                android:textColor="@color/tv_text_button_nor"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/tv_loading"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_shelf"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/tv_text_button_nor"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:text="@string/data_loading"
-            android:textColor="#767676"
-            android:textSize="16sp" />
+            android:includeFontPadding="false"
+            android:text="@string/remove_from_bookshelf"
+            android:textColor="@color/tv_text_default"
+            android:textSize="15sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/bg_divider_line" />
+        <io.legado.app.lib.theme.view.ATEAccentBgTextView
+            android:id="@+id/tv_read"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_btn_accent_bg"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="@string/reading"
+            android:textColor="@color/tv_text_button_nor"
+            android:textSize="15sp" />
 
-    </FrameLayout>
-
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
