@@ -19,6 +19,7 @@ import java.util.*
 import kotlin.math.min
 
 object WebDavHelp {
+    private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
     private val zipFilePath = FileUtils.getCachePath() + "/backup" + ".zip"
     private val unzipFilesPath by lazy {
         FileUtils.getCachePath()
@@ -26,7 +27,9 @@ object WebDavHelp {
 
     private fun getWebDavUrl(): String? {
         var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
-        if (url.isNullOrBlank()) return null
+        if (url.isNullOrEmpty()) {
+            url = defaultWebDavUrl
+        }
         if (!url.endsWith("/")) url += "/"
         return url
     }
