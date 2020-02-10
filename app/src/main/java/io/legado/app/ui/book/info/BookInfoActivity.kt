@@ -242,6 +242,10 @@ class BookInfoActivity :
     }
 
     private fun openChapterList() {
+        if (viewModel.chapterListData.value.isNullOrEmpty()) {
+            toast(R.string.chapter_list_empty)
+            return
+        }
         viewModel.bookData.value?.let {
             startActivityForResult<ChapterListActivity>(
                 requestCodeChapterList,
