@@ -3,22 +3,28 @@ package io.legado.app.ui.changesource
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
 class ChangeSourceDialog : DialogFragment(),
+    Toolbar.OnMenuItemClickListener,
     ChangeSourceViewModel.CallBack,
     ChangeSourceAdapter.CallBack {
 
@@ -64,25 +70,24 @@ class ChangeSourceDialog : DialogFragment(),
         viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
         })
-        arguments?.let { bundle ->
-            bundle.getString("name")?.let {
-                viewModel.name = it
-            }
-            bundle.getString("author")?.let {
-                viewModel.author = it
-            }
-        }
-        tool_bar.inflateMenu(R.menu.search_view)
+        tool_bar.inflateMenu(R.menu.change_source)
+        tool_bar.setOnMenuItemClickListener(this)
         showTitle()
         initRecyclerView()
+        initMenu()
         initSearchView()
-        viewModel.initData()
+        viewModel.loadDbSearchBook()
         viewModel.search()
     }
 
     private fun showTitle() {
         tool_bar.title = viewModel.name
         tool_bar.subtitle = getString(R.string.author_show, viewModel.author)
+    }
+
+    private fun initMenu() {
+        tool_bar.menu.findItem(R.id.menu_load_toc)?.isChecked =
+            getPrefBoolean(PreferKey.changeSourceLoadToc)
     }
 
     private fun initRecyclerView() {
@@ -113,6 +118,16 @@ class ChangeSourceDialog : DialogFragment(),
             }
 
         })
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_load_toc -> {
+                putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
+                item.isChecked = !item.isChecked
+            }
+        }
+        return false
     }
 
     override fun changeTo(searchBook: SearchBook) {

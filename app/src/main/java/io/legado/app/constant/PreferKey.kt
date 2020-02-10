@@ -30,4 +30,5 @@ object PreferKey {
     const val webDavUrl = "web_dav_url"
     const val webDavAccount = "web_dav_account"
     const val webDavPassword = "web_dav_password"
+    const val changeSourceLoadToc = "changeSourceLoadToc"
 }
