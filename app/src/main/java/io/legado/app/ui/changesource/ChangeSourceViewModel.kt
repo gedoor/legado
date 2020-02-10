@@ -52,8 +52,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private fun upAdapter() {
         execute {
             val books = searchBooks.toList()
-            books.sortedBy { it.originOrder }
-            searchBooksLiveData.postValue(books)
+            searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
         }
     }
 
