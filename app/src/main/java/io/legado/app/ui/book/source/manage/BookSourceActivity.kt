@@ -55,7 +55,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private val importSource = 132
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
-    private var groups = hashSetOf<String>()
+    private var groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
     private lateinit var selMenu: PopupMenu
 
