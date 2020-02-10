@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -25,7 +26,6 @@ import kotlinx.android.synthetic.main.dialog_change_source.*
 
 class ChangeSourceDialog : DialogFragment(),
     Toolbar.OnMenuItemClickListener,
-    ChangeSourceViewModel.CallBack,
     ChangeSourceAdapter.CallBack {
 
     companion object {
@@ -45,7 +45,7 @@ class ChangeSourceDialog : DialogFragment(),
 
     private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeSourceViewModel
-    override lateinit var changeSourceAdapter: ChangeSourceAdapter
+    lateinit var adapter: ChangeSourceAdapter
 
     override fun onStart() {
         super.onStart()
@@ -61,22 +61,19 @@ class ChangeSourceDialog : DialogFragment(),
     ): View? {
         callBack = activity as? CallBack
         viewModel = getViewModel(ChangeSourceViewModel::class.java)
-        viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
-            refresh_progress_bar.isAutoLoading = it
-        })
         viewModel.initData(arguments)
+        showTitle()
         tool_bar.inflateMenu(R.menu.change_source)
         tool_bar.setOnMenuItemClickListener(this)
-        showTitle()
         initRecyclerView()
         initMenu()
         initSearchView()
+        initLiveData()
         viewModel.loadDbSearchBook()
         viewModel.search()
     }
@@ -92,10 +89,10 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     private fun initRecyclerView() {
-        changeSourceAdapter = ChangeSourceAdapter(requireContext(), this)
+        adapter = ChangeSourceAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
-        recycler_view.adapter = changeSourceAdapter
+        recycler_view.adapter = adapter
     }
 
     private fun initSearchView() {
@@ -118,6 +115,17 @@ class ChangeSourceDialog : DialogFragment(),
                 return false
             }
 
+        })
+    }
+
+    private fun initLiveData() {
+        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
+            refresh_progress_bar.isAutoLoading = it
+        })
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
+            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
+            adapter.setItems(it)
+            diffResult.dispatchUpdatesTo(adapter)
         })
     }
 

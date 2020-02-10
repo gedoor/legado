@@ -3,7 +3,6 @@ package io.legado.app.ui.changesource
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
@@ -15,17 +14,15 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.debug
 import java.util.concurrent.Executors
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    var callBack: CallBack? = null
     val searchStateData = MutableLiveData<Boolean>()
+    val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
     var name: String = ""
     var author: String = ""
     private var task: Coroutine<*>? = null
@@ -54,16 +51,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     private fun upAdapter() {
         execute {
-            callBack?.changeSourceAdapter?.let {
-                val books = searchBooks.toList()
-                val diffResult = DiffUtil.calculateDiff(DiffCallBack(it.getItems(), books))
-                withContext(Main) {
-                    synchronized(this) {
-                        it.setItems(books, false)
-                        diffResult.dispatchUpdatesTo(it)
-                    }
-                }
-            }
+            val books = searchBooks.toList()
+            books.sortedBy { it.originOrder }
+            searchBooksLiveData.postValue(books)
         }
     }
 
@@ -152,10 +142,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     override fun onCleared() {
         super.onCleared()
         searchPool.close()
-    }
-
-    interface CallBack {
-        var changeSourceAdapter: ChangeSourceAdapter
     }
 
 }
