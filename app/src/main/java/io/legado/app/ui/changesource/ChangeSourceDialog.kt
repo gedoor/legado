@@ -70,6 +70,7 @@ class ChangeSourceDialog : DialogFragment(),
         viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
         })
+        viewModel.initData(arguments)
         tool_bar.inflateMenu(R.menu.change_source)
         tool_bar.setOnMenuItemClickListener(this)
         showTitle()
