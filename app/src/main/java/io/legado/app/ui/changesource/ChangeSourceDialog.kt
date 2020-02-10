@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
@@ -93,6 +94,19 @@ class ChangeSourceDialog : DialogFragment(),
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         recycler_view.adapter = adapter
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    recycler_view.scrollToPosition(0)
+                }
+            }
+
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                if (toPosition == 0) {
+                    recycler_view.scrollToPosition(0)
+                }
+            }
+        })
     }
 
     private fun initSearchView() {
