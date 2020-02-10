@@ -19,7 +19,7 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
             if (payloads.isEmpty()) {
                 this.onClick { callBack.changeTo(item) }
                 tv_origin.text = item.originName
-                tv_last.text = item.latestChapterTitle
+                tv_last.text = item.getDisplayLastChapterTitle()
                 if (callBack.bookUrl == item.bookUrl) {
                     iv_checked.visible()
                 } else {
@@ -27,7 +27,7 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
                 }
             } else {
                 tv_origin.text = item.originName
-                tv_last.text = item.latestChapterTitle
+                tv_last.text = item.getDisplayLastChapterTitle()
             }
         }
     }
