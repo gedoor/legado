@@ -1,6 +1,8 @@
 package io.legado.app.help.storage
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
@@ -13,6 +15,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.selector
+import org.jetbrains.anko.toast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,7 +28,7 @@ object WebDavHelp {
         FileUtils.getCachePath()
     }
 
-    private fun getWebDavUrl(): String? {
+    private fun getWebDavUrl(): String {
         var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
         if (url.isNullOrEmpty()) {
             url = defaultWebDavUrl
@@ -47,7 +50,7 @@ object WebDavHelp {
     private fun getWebDavFileNames(): ArrayList<String> {
         val url = getWebDavUrl()
         val names = arrayListOf<String>()
-        if (!url.isNullOrBlank() && initWebDav()) {
+        if (initWebDav()) {
             try {
                 var files = WebDav(url + "legado/").listFiles()
                 files = files.reversed()
@@ -81,7 +84,7 @@ object WebDavHelp {
 
     private fun restoreWebDav(name: String, success: () -> Unit) {
         Coroutine.async {
-            getWebDavUrl()?.let {
+            getWebDavUrl().let {
                 val file = WebDav(it + "legado/" + name)
                 file.downloadTo(zipFilePath, true)
                 @Suppress("BlockingMethodInNonBlockingContext")
@@ -94,18 +97,24 @@ object WebDavHelp {
     }
 
     fun backUpWebDav(path: String) {
-        if (initWebDav()) {
-            val paths = arrayListOf(*Backup.backupFileNames)
-            for (i in 0 until paths.size) {
-                paths[i] = path + File.separator + paths[i]
+        try {
+            if (initWebDav()) {
+                val paths = arrayListOf(*Backup.backupFileNames)
+                for (i in 0 until paths.size) {
+                    paths[i] = path + File.separator + paths[i]
+                }
+                FileUtils.deleteFile(zipFilePath)
+                if (ZipUtils.zipFiles(paths, zipFilePath)) {
+                    WebDav(getWebDavUrl() + "legado").makeAsDir()
+                    val putUrl = getWebDavUrl() + "legado/backup" +
+                            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                .format(Date(System.currentTimeMillis())) + ".zip"
+                    WebDav(putUrl).upload(zipFilePath)
+                }
             }
-            FileUtils.deleteFile(zipFilePath)
-            if (ZipUtils.zipFiles(paths, zipFilePath)) {
-                WebDav(getWebDavUrl() + "legado").makeAsDir()
-                val putUrl = getWebDavUrl() + "legado/backup" +
-                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                            .format(Date(System.currentTimeMillis())) + ".zip"
-                WebDav(putUrl).upload(zipFilePath)
+        } catch (e: Exception) {
+            Handler(Looper.getMainLooper()).post {
+                App.INSTANCE.toast("WebDav\n${e.localizedMessage}")
             }
         }
     }
