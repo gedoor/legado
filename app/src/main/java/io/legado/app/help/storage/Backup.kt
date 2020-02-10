@@ -29,14 +29,8 @@ object Backup {
 
     val backupFileNames by lazy {
         arrayOf(
-            "bookshelf.json",
-            "bookGroup.json",
-            "bookSource.json",
-            "rssSource.json",
-            "rssStar.json",
-            "replaceRule.json",
-            ReadBookConfig.readConfigFileName,
-            "config.xml"
+            "bookshelf.json", "bookGroup.json", "bookSource.json", "rssSource.json",
+            "rssStar.json", "replaceRule.json", ReadBookConfig.readConfigFileName, "config.xml"
         )
     }
 
