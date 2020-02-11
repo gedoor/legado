@@ -92,23 +92,23 @@ object ReadBookConfig {
     }
 
     data class Config(
-        var bgStr: String = "#EEEEEE",
-        var bgStrNight: String = "#000000",
-        var bgType: Int = 0,
-        var bgTypeNight: Int = 0,
-        var darkStatusIcon: Boolean = true,
-        var darkStatusIconNight: Boolean = false,
-        var letterSpacing: Float = 1f,
-        var lineSpacingExtra: Int = 12,
-        var lineSpacingMultiplier: Float = 1.2f,
+        var bgStr: String = "#EEEEEE",//白天背景
+        var bgStrNight: String = "#000000",//夜间背景
+        var bgType: Int = 0,//白天背景类型
+        var bgTypeNight: Int = 0,//夜间背景类型
+        var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
+        var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
+        var textColor: String = "#3E3D3B",//白天文字颜色
+        var textColorNight: String = "#adadad",//夜间文字颜色
+        var letterSpacing: Float = 1f,//字间距
+        var lineSpacingExtra: Int = 12,//行间距
+        var lineSpacingMultiplier: Float = 1.2f,//行倍距
         var paddingBottom: Int = 0,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
         var paddingTop: Int = 0,
-        var textBold: Boolean = false,
-        var textColor: String = "#3E3D3B",
-        var textColorNight: String = "#adadad",
-        var textSize: Int = 15
+        var textBold: Boolean = false,//是否粗体字
+        var textSize: Int = 15//文字大小
     ) {
         fun setBg(bgType: Int, bg: String) {
             if (AppConfig.isNightTheme) {
