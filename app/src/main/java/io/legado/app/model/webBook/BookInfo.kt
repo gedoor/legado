@@ -42,9 +42,11 @@ object BookInfo {
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.author}")
         Debug.log(bookSource.bookSourceUrl, "┌获取分类")
-        analyzeRule.getString(infoRule.kind).let {
-            if (it.isNotEmpty()) book.kind = it
-        }
+        analyzeRule.getStringList(infoRule.kind)
+            ?.joinToString(",")
+            ?.let {
+                if (it.isNotEmpty()) book.kind = it
+            }
         Debug.log(bookSource.bookSourceUrl, "└${book.kind}")
         Debug.log(bookSource.bookSourceUrl, "┌获取字数")
         analyzeRule.getString(infoRule.wordCount).let {

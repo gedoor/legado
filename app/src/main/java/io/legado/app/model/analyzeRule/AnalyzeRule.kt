@@ -115,7 +115,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     }
 
     @Throws(Exception::class)
-    fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean): List<String>? {
+    fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
         content?.let { o ->
             if (ruleList.isNotEmpty()) {

@@ -170,7 +170,7 @@ object BookList {
             searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(ruleAuthor))
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.author}", log)
             Debug.log(bookSource.bookSourceUrl, "┌获取分类", log)
-            searchBook.kind = analyzeRule.getString(ruleKind)
+            searchBook.kind = analyzeRule.getStringList(ruleKind)?.joinToString(",")
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}", log)
             Debug.log(bookSource.bookSourceUrl, "┌获取字数", log)
             searchBook.wordCount = analyzeRule.getString(ruleWordCount)
