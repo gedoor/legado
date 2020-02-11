@@ -111,7 +111,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
             override fun onClickMainAction() {
                 this@ReplaceRuleActivity
-                    .alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                    .alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
                         okButton { viewModel.delSelection(adapter.getSelection()) }
                         noButton { }
                     }

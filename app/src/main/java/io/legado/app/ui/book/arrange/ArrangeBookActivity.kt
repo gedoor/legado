@@ -141,7 +141,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_del_selection ->
-                alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
                     okButton { viewModel.deleteBook(*adapter.selectedBooks.toTypedArray()) }
                     noButton { }
                 }.show().applyTint()
@@ -184,7 +184,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     }
 
     override fun deleteBook(book: Book) {
-        alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+        alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton {
                 viewModel.deleteBook(book)
             }

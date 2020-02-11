@@ -171,7 +171,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
             override fun onClickMainAction() {
                 this@BookSourceActivity
-                    .alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                    .alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
                         okButton { viewModel.delSelection(adapter.getSelection()) }
                         noButton { }
                     }
