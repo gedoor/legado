@@ -117,9 +117,12 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     @Throws(Exception::class)
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
-        content?.let { o ->
-            if (ruleList.isNotEmpty()) {
-                if (ruleList.isNotEmpty()) result = o
+        val content = this.content
+        if (content != null && ruleList.isNotEmpty()) {
+            result = content
+            if (content is NativeObject) {
+                result = content[ruleList[0].rule]?.toString()
+            } else {
                 for (sourceRule in ruleList) {
                     putRule(sourceRule.putMap)
                     sourceRule.makeUpRule(result)
