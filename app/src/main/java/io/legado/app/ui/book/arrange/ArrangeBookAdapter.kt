@@ -16,14 +16,6 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     val selectedBooks: HashSet<Book> = hashSetOf()
     var actionItem: Book? = null
 
-    fun isSelectAll(): Boolean {
-        return if (selectedBooks.isEmpty()) {
-            false
-        } else {
-            selectedBooks.size >= itemCount
-        }
-    }
-
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
             getItems().forEach {
@@ -36,6 +28,10 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
             notifyDataSetChanged()
             callBack.upSelectCount()
         }
+    }
+
+    fun revertSelection() {
+
     }
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {

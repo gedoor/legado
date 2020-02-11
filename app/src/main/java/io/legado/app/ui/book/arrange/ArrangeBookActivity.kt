@@ -3,6 +3,7 @@ package io.legado.app.ui.book.arrange
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,19 +13,20 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
+import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.toast
 
 
 class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activity_arrange_book),
+    PopupMenu.OnMenuItemClickListener,
     ArrangeBookAdapter.CallBack, GroupSelectDialog.CallBack {
     override val viewModel: ArrangeBookViewModel
         get() = getViewModel(ArrangeBookViewModel::class.java)
@@ -87,33 +89,39 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         return super.onCompatOptionsItemSelected(item)
     }
 
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_del_selection ->
+                alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                    okButton { viewModel.deleteBook(*adapter.selectedBooks.toTypedArray()) }
+                    noButton { }
+                }.show().applyTint()
+        }
+        return false
+    }
+
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
-        cb_selected_all.onClick {
-            adapter.selectAll(!adapter.isSelectAll())
-        }
-        btn_delete.onClick {
-            if (adapter.selectedBooks.isEmpty()) {
-                toast(R.string.non_select)
-                return@onClick
+        select_action_bar.setMainActionText(R.string.move_to_group)
+        select_action_bar.inflateMenu(R.menu.arrange_book)
+        select_action_bar.setOnMenuItemClickListener(this)
+        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
+            override fun selectAll(selectAll: Boolean) {
+                adapter.selectAll(selectAll)
             }
-            alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
-                okButton {
-                    viewModel.deleteBook(*adapter.selectedBooks.toTypedArray())
-                }
-            }.show().applyTint()
-        }
-        btn_to_group.onClick {
-            if (adapter.selectedBooks.isEmpty()) {
-                toast(R.string.non_select)
-                return@onClick
+
+            override fun revertSelection() {
+                adapter.revertSelection()
             }
-            selectGroup(groupRequestCode)
-        }
+
+            override fun onClickMainAction() {
+                selectGroup(groupRequestCode)
+            }
+        })
     }
 
     private fun initGroupData() {
@@ -172,31 +180,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     }
 
     override fun upSelectCount() {
-        cb_selected_all.isChecked = adapter.isSelectAll()
-        //重置全选的文字
-        if (cb_selected_all.isChecked) {
-            cb_selected_all.text = getString(
-                R.string.select_cancel_count,
-                adapter.selectedBooks.size,
-                adapter.getItems().size
-            )
-        } else {
-            cb_selected_all.text = getString(
-                R.string.select_all_count,
-                adapter.selectedBooks.size,
-                adapter.getItems().size
-            )
-        }
-        setMenuClickable(adapter.selectedBooks.isNotEmpty())
-    }
-
-    private fun setMenuClickable(isClickable: Boolean) {
-        //设置是否可删除
-        btn_delete.isEnabled = isClickable
-        btn_delete.isClickable = isClickable
-        //设置是否可添加书籍
-        btn_to_group.isEnabled = isClickable
-        btn_to_group.isClickable = isClickable
+        select_action_bar.upCountView(adapter.selectedBooks.size, adapter.getItems().size)
     }
 
     override fun deleteBook(book: Book) {
@@ -206,4 +190,5 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             }
         }.show().applyTint()
     }
+
 }

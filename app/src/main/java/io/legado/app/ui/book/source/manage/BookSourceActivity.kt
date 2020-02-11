@@ -175,7 +175,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                         okButton { viewModel.delSelection(adapter.getSelection()) }
                         noButton { }
                     }
-                    .show()
+                    .show().applyTint()
             }
         })
 

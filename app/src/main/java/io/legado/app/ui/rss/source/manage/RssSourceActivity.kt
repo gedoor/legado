@@ -165,7 +165,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                         okButton { viewModel.delSelection(adapter.getSelection()) }
                         noButton { }
                     }
-                    .show()
+                    .show().applyTint()
             }
         })
     }
