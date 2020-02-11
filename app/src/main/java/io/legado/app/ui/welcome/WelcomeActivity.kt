@@ -13,7 +13,7 @@ import io.legado.app.utils.getPrefBoolean
 import kotlinx.android.synthetic.main.activity_welcome.*
 import org.jetbrains.anko.startActivity
 
-class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
+open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         iv_bg.setColorFilter(accentColor)
@@ -37,19 +37,15 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 finish()
             }
 
-            override fun onAnimationEnd(animation: Animator) {
+            override fun onAnimationEnd(animation: Animator) = Unit
 
-            }
+            override fun onAnimationCancel(animation: Animator) = Unit
 
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
+            override fun onAnimationRepeat(animation: Animator) = Unit
         })
         welAnimator.start()
     }
 
 }
+
+class Icon1Activity : WelcomeActivity()

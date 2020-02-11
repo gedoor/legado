@@ -27,9 +27,19 @@
         android:theme="@style/AppTheme.Light"
         android:requestLegacyExternalStorage="false"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
+        <activity android:name=".ui.welcome.WelcomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
         <activity
-            android:name=".ui.welcome.WelcomeActivity"
-            android:label="@string/app_name">
+            android:name=".ui.welcome.Icon1Activity"
+            android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
