@@ -27,6 +27,7 @@
         android:theme="@style/AppTheme.Light"
         android:requestLegacyExternalStorage="false"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
+        <!--主入口-->
         <activity android:name=".ui.welcome.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,6 +38,7 @@
                 android:resource="@xml/shortcuts"
                 android:launchMode="singleTask" />
         </activity>
+        <!--图标1-->
         <activity
             android:name=".ui.welcome.Icon1Activity"
             android:enabled="false">
@@ -49,10 +51,12 @@
                 android:resource="@xml/shortcuts"
                 android:launchMode="singleTask" />
         </activity>
+        <!--主界面-->
         <activity
             android:name=".ui.main.MainActivity"
             android:launchMode="singleTask"
             android:alwaysRetainTaskState="true" />
+        <!--阅读界面-->
         <activity
             android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
