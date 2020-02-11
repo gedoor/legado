@@ -28,6 +28,9 @@ interface SearchBookDao {
     @Query("select * from searchBooks where name = :name and author = :author and origin in (select bookSourceUrl from book_sources where enabled = 1) order by originOrder")
     fun getByNameAuthorEnable(name: String, author: String): List<SearchBook>
 
+    @Query("select * from searchBooks where name = :name and author = :author and originName like '%'||:key||'%' and origin in (select bookSourceUrl from book_sources where enabled = 1) order by originOrder")
+    fun getChangeSourceSearch(name: String, author: String, key: String): List<SearchBook>
+
     @Query(
         """select * from searchBooks
                      where name = :name and author = :author and origin in (select bookSourceUrl from book_sources where enabled = 1)

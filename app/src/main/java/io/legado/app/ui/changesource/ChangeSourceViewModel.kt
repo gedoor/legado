@@ -56,6 +56,16 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
+    private fun searchFinish(searchBook: SearchBook) {
+        App.db.searchBookDao().insert(searchBook)
+        if (screenKey.isEmpty()) {
+            searchBooks.add(searchBook)
+        } else if (searchBook.originName.contains(screenKey)) {
+            searchBooks.add(searchBook)
+        }
+        upAdapter()
+    }
+
     fun search() {
         task = execute {
             searchStateData.postValue(true)
@@ -74,9 +84,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                                         loadChapter(searchBook.toBook())
                                     }
                                 } else {
-                                    App.db.searchBookDao().insert(searchBook)
-                                    searchBooks.add(searchBook)
-                                    upAdapter()
+                                    searchFinish(searchBook)
                                 }
                                 return@onSuccess
                             }
@@ -111,10 +119,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         it?.let { chapters ->
                             if (chapters.isNotEmpty()) {
                                 book.latestChapterTitle = chapters.last().title
-                                val searchBook = book.toSearchBook()
-                                App.db.searchBookDao().insert(searchBook)
-                                searchBooks.add(searchBook)
-                                upAdapter()
+                                val searchBook: SearchBook = book.toSearchBook()
+                                searchFinish(searchBook)
                             }
                         }
                     }.onError {
@@ -133,7 +139,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             if (key.isNullOrEmpty()) {
                 loadDbSearchBook()
             } else {
-                App.db.searchBookDao()
+                val items = App.db.searchBookDao().getChangeSourceSearch(name, author, screenKey)
+                searchBooks.clear()
+                searchBooks.addAll(items)
+                upAdapter()
             }
         }
     }
