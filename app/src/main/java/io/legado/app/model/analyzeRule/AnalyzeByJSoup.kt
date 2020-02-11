@@ -51,7 +51,7 @@ class AnalyzeByJSoup {
         val textS = getStringList(ruleStr)
         return if (textS.isEmpty()) {
             null
-        } else join(",", textS).trim { it <= ' ' }
+        } else join("\n", textS).trim { it <= ' ' }
     }
 
     /**
