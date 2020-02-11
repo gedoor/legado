@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -21,15 +22,13 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.cancelButton
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
+import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -41,6 +40,7 @@ import java.io.FileNotFoundException
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
     SearchView.OnQueryTextListener,
+    PopupMenu.OnMenuItemClickListener,
     FileChooserDialog.CallBack,
     ReplaceRuleAdapter.CallBack {
     override val viewModel: ReplaceRuleViewModel
@@ -56,6 +56,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
+        initSelectActionView()
         observeReplaceRuleData()
         observeGroupData()
     }
@@ -69,24 +70,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
         upGroupMenu()
         return super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_add_replace_rule ->
-                ReplaceEditDialog().show(supportFragmentManager, "replaceNew")
-            R.id.menu_group_manage ->
-                GroupManageDialog().show(supportFragmentManager, "groupManage")
-            R.id.menu_select_all -> adapter.selectAll()
-            R.id.menu_revert_selection -> adapter.revertSelection()
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
-            R.id.menu_import_source_onLine -> showImportDialog()
-            R.id.menu_import_source_local -> selectFileSys()
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
-        }
-        return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initRecyclerView() {
@@ -109,6 +92,34 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         search_view.setOnQueryTextListener(this)
     }
 
+    private fun initSelectActionView() {
+        select_action_bar.setMainActionText(R.string.delete)
+        select_action_bar.inflateMenu(R.menu.replace_rule_sel)
+        select_action_bar.setOnMenuItemClickListener(this)
+        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
+            override fun selectAll(selectAll: Boolean) {
+                if (selectAll) {
+                    adapter.selectAll()
+                } else {
+                    adapter.revertSelection()
+                }
+            }
+
+            override fun revertSelection() {
+                adapter.revertSelection()
+            }
+
+            override fun onClickMainAction() {
+                this@ReplaceRuleActivity
+                    .alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                        okButton { viewModel.delSelection(adapter.getSelection()) }
+                        noButton { }
+                    }
+                    .show().applyTint()
+            }
+        })
+    }
+
     private fun observeReplaceRuleData(key: String? = null) {
         replaceRuleLiveData?.removeObservers(this)
         dataInit = false
@@ -126,6 +137,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             adapter.setItems(it, false)
             diffResult.dispatchUpdatesTo(adapter)
             dataInit = true
+            upCountView()
         })
     }
 
@@ -137,6 +149,29 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             }
             upGroupMenu()
         })
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_add_replace_rule ->
+                ReplaceEditDialog().show(supportFragmentManager, "replaceNew")
+            R.id.menu_group_manage ->
+                GroupManageDialog().show(supportFragmentManager, "groupManage")
+
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
+            R.id.menu_import_source_onLine -> showImportDialog()
+            R.id.menu_import_source_local -> selectFileSys()
+        }
+        return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
+            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+        }
+        return false
     }
 
     private fun upGroupMenu() {
@@ -257,6 +292,10 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 }
             }
         }
+    }
+
+    override fun upCountView() {
+        select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
     }
 
     override fun update(vararg rule: ReplaceRule) {

@@ -27,6 +27,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             selected.add(it)
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
     }
 
     fun revertSelection() {
@@ -38,6 +39,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             }
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
     }
 
     fun getSelection(): LinkedHashSet<ReplaceRule> {
@@ -76,6 +78,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                     } else {
                         selected.remove(item)
                     }
+                    callBack.upCountView()
                 }
                 iv_menu_more.onClick {
                     val popupMenu = PopupMenu(context, it)
@@ -141,5 +144,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         fun edit(rule: ReplaceRule)
         fun toTop(rule: ReplaceRule)
         fun upOrder()
+        fun upCountView()
     }
 }

@@ -91,8 +91,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_select_all -> adapter.selectAll()
-            R.id.menu_revert_selection -> adapter.revertSelection()
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.ImageView
+import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
@@ -43,5 +44,12 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         }
     }
 
+    override fun onClick() {
+
+    }
+
+    inner class IconDialog : DialogFragment() {
+
+    }
 
 }
