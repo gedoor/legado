@@ -31,4 +31,5 @@ object PreferKey {
     const val webDavAccount = "web_dav_account"
     const val webDavPassword = "web_dav_password"
     const val changeSourceLoadToc = "changeSourceLoadToc"
+    const val isChineseConverterEnable = "isChineseConverterEnable"
 }

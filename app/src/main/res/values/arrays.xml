@@ -142,4 +142,15 @@
         <item>@string/icon_book</item>
     </string-array>
 
+    <string-array name="chinese_mode">
+        <item>关闭</item>
+        <item>简体转繁体</item>
+        <item>繁体转简体</item>
+    </string-array>
+
+    <string-array name="chinese_mode_v">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>
