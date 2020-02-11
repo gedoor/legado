@@ -26,10 +26,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -167,7 +164,7 @@ class BgTextConfigDialog : DialogFragment() {
             resultSelectBg -> {
                 if (resultCode == RESULT_OK) {
                     data?.data?.let { uri ->
-                        if (DocumentFile.isDocumentUri(requireContext(), uri)) {
+                        if (uri.toString().isContentPath()) {
                             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
                             doc?.let {
                                 var file = requireContext().getExternalFilesDir(null)
