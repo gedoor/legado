@@ -48,6 +48,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
         bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
         upVersion()
+        if (AppConfig.autoRefreshBook) {
+            view_pager_main.postDelayed({
+                viewModel.upChapterList()
+            }, 1000)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
