@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -16,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_import_book.*
@@ -28,6 +30,7 @@ import java.io.File
 
 
 class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book),
+    PopupMenu.OnMenuItemClickListener,
     ImportBookAdapter.CallBack {
     private val requestCodeSelectFolder = 342
     private var rootDoc: DocumentFile? = null
@@ -50,6 +53,37 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    private fun initView() {
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        adapter = ImportBookAdapter(this, this)
+        recycler_view.adapter = adapter
+        rotate_loading.loadingColor = accentColor
+        select_action_bar.setMainActionText(R.string.add_to_shelf)
+        select_action_bar.inflateMenu(R.menu.import_book_sel)
+        select_action_bar.setOnMenuItemClickListener(this)
+        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
+            override fun selectAll(selectAll: Boolean) {
+                adapter.selectAll(selectAll)
+            }
+
+            override fun revertSelection() {
+                adapter.revertSelection()
+            }
+
+            override fun onClickMainAction() {
+                viewModel.addToBookshelf(adapter.selectedUris) {
+                    upPath()
+                }
+            }
+        })
+    }
+
+    private fun initEvent() {
+        tv_go_back.onClick {
+            goBackDir()
+        }
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_select_folder -> selectImportFolder()
@@ -57,30 +91,14 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun initView() {
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        adapter = ImportBookAdapter(this, this)
-        recycler_view.adapter = adapter
-        rotate_loading.loadingColor = accentColor
-    }
-
-    private fun initEvent() {
-        tv_go_back.onClick {
-            goBackDir()
-        }
-        btn_add_book.onClick {
-            viewModel.addToBookshelf(adapter.selectedUris) {
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_del_selection ->
+                viewModel.deleteDoc(adapter.selectedUris) {
                 upPath()
             }
         }
-        btn_delete.onClick {
-            viewModel.deleteDoc(adapter.selectedUris) {
-                upPath()
-            }
-        }
-        cb_selected_all.onClick {
-            adapter.selectAll(cb_selected_all.isChecked)
-        }
+        return false
     }
 
     private fun initData() {
@@ -186,36 +204,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     override fun upCountView() {
-        if (adapter.checkableCount == 0) {
-            cb_selected_all.isChecked = false
-        } else {
-            cb_selected_all.isChecked = adapter.selectedUris.size >= adapter.checkableCount
-        }
-
-        //重置全选的文字
-        if (cb_selected_all.isChecked) {
-            cb_selected_all.text = getString(
-                R.string.select_cancel_count,
-                adapter.selectedUris.size,
-                adapter.checkableCount
-            )
-        } else {
-            cb_selected_all.text = getString(
-                R.string.select_all_count,
-                adapter.selectedUris.size,
-                adapter.checkableCount
-            )
-        }
-        setMenuClickable(adapter.selectedUris.isNotEmpty())
-    }
-
-    private fun setMenuClickable(isClickable: Boolean) {
-        //设置是否可删除
-        btn_delete.isEnabled = isClickable
-        btn_delete.isClickable = isClickable
-        //设置是否可添加书籍
-        btn_add_book.isEnabled = isClickable
-        btn_add_book.isClickable = isClickable
+        select_action_bar.upCountView(adapter.selectedUris.size, adapter.checkableCount)
     }
 
 }

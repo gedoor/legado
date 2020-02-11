@@ -13,7 +13,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<DocItem>(context, R.layout.item_import_book) {
-    var selectedUris = linkedSetOf<String>()
+    var selectedUris = hashSetOf<String>()
     var checkableCount = 0
     private var bookshelf = arrayListOf<String>()
 
@@ -53,6 +53,19 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
             notifyDataSetChanged()
             callBack.upCountView()
         }
+    }
+
+    fun revertSelection() {
+        getItems().forEach {
+            if (!it.isDir) {
+                if (selectedUris.contains(it.uri.toString())) {
+                    selectedUris.remove(it.uri.toString())
+                } else {
+                    selectedUris.add(it.uri.toString())
+                }
+            }
+        }
+        callBack.upCountView()
     }
 
     override fun convert(holder: ItemViewHolder, item: DocItem, payloads: MutableList<Any>) {

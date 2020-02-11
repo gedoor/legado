@@ -68,47 +68,9 @@
 
     </FrameLayout>
 
-    <!--文件点击按钮-->
-    <LinearLayout
+    <io.legado.app.ui.widget.SelectActionBar
+        android:id="@+id/select_action_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_menu"
-        android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:elevation="2dp">
-
-        <io.legado.app.lib.theme.view.ATECheckBox
-            android:id="@+id/cb_selected_all"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text="@string/select_all_count"
-            android:textColor="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
-            android:id="@+id/btn_add_book"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:gravity="center"
-            android:minWidth="80dp"
-            android:text="@string/add_to_shelf" />
-
-        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
-            android:id="@+id/btn_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:minWidth="80dp"
-            android:gravity="center"
-            android:text="@string/delete" />
-
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

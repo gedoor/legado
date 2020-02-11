@@ -31,7 +31,14 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     }
 
     fun revertSelection() {
-
+        getItems().forEach {
+            if (selectedBooks.contains(it)) {
+                selectedBooks.remove(it)
+            } else {
+                selectedBooks.add(it)
+            }
+        }
+        callBack.upSelectCount()
     }
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
