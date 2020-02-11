@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <io.legado.app.ui.widget.TitleBar
@@ -27,57 +26,9 @@
 
     </FrameLayout>
 
-    <!--文件点击按钮-->
-    <LinearLayout
+    <io.legado.app.ui.widget.SelectActionBar
+        android:id="@+id/select_action_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_menu"
-        android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:elevation="2dp">
-
-        <io.legado.app.lib.theme.view.ATECheckBox
-            android:id="@+id/cb_selected_all"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text="@string/select_all_count"
-            android:textColor="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
-            android:id="@+id/btn_revert_selection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:gravity="center"
-            android:minWidth="80dp"
-            android:text="@string/revert_selection" />
-
-        <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
-            android:id="@+id/btn_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:minWidth="80dp"
-            android:gravity="center"
-            android:text="@string/delete" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_menu_more"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="6dp"
-            android:src="@drawable/ic_more_vert"
-            android:tint="@color/tv_text_default"
-            tools:ignore="RtlHardcoded" />
-
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

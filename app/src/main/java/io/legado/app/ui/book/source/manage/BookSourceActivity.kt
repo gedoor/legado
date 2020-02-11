@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
-import android.widget.PopupMenu
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -33,11 +33,11 @@ import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
-import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -57,7 +57,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
-    private lateinit var selMenu: PopupMenu
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initUriScheme()
@@ -65,7 +64,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         initSearchView()
         initLiveDataBookSource()
         initLiveDataGroup()
-        initViewEvent()
+        initSelectActionBar()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -156,23 +155,28 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         })
     }
 
-    private fun initViewEvent() {
-        selMenu = PopupMenu(this, iv_menu_more)
-        selMenu.inflate(R.menu.book_source_sel)
-        selMenu.setOnMenuItemClickListener(this)
-        cb_selected_all.onClick {
-            if (adapter.getSelection().size == adapter.getActualItemCount()) {
-                adapter.revertSelection()
-            } else {
-                adapter.selectAll()
+    private fun initSelectActionBar() {
+        select_action_bar.setMainActionText(R.string.delete)
+        select_action_bar.inflateMenu(R.menu.book_source_sel)
+        select_action_bar.setOnMenuItemClickListener(this)
+        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
+            override fun selectAll(selectAll: Boolean) {
+                if (selectAll) {
+                    adapter.selectAll()
+                } else {
+                    adapter.revertSelection()
+                }
             }
-        }
-        btn_revert_selection.onClick {
-            adapter.revertSelection()
-        }
-        iv_menu_more.onClick {
-            selMenu.show()
-        }
+
+            override fun revertSelection() {
+                adapter.revertSelection()
+            }
+
+            override fun onClickMainAction() {
+                super.onClickMainAction()
+            }
+        })
+
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -259,37 +263,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     override fun upCountView() {
-        val selectCount = adapter.getSelection().size
-        if (selectCount == 0) {
-            cb_selected_all.isChecked = false
-        } else {
-            cb_selected_all.isChecked = selectCount >= adapter.getActualItemCount()
-        }
-
-        //重置全选的文字
-        if (cb_selected_all.isChecked) {
-            cb_selected_all.text = getString(
-                R.string.select_cancel_count,
-                selectCount,
-                adapter.getActualItemCount()
-            )
-        } else {
-            cb_selected_all.text = getString(
-                R.string.select_all_count,
-                selectCount,
-                adapter.getActualItemCount()
-            )
-        }
-        setMenuClickable(selectCount > 0)
-    }
-
-    private fun setMenuClickable(isClickable: Boolean) {
-        //设置是否可删除
-        btn_delete.isEnabled = isClickable
-        btn_delete.isClickable = isClickable
-        //设置是否可添加书籍
-        btn_revert_selection.isEnabled = isClickable
-        btn_revert_selection.isClickable = isClickable
+        select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {

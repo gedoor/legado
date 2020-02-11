@@ -65,6 +65,9 @@ fun Context.getCompatDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.g
 fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
     ContextCompat.getColorStateList(this, id)
 
+/**
+ * 系统息屏时间
+ */
 fun Context.getScreenOffTime(): Int {
     var screenOffTime = 0
     try {
