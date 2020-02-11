@@ -46,13 +46,11 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     selectedUris.add(it.uri.toString())
                 }
             }
-            notifyDataSetChanged()
-            callBack.upCountView()
         } else {
             selectedUris.clear()
-            notifyDataSetChanged()
-            callBack.upCountView()
         }
+        notifyDataSetChanged()
+        callBack.upCountView()
     }
 
     fun revertSelection() {

@@ -57,6 +57,55 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         return super.onPrepareOptionsMenu(menu)
     }
 
+    private fun initView() {
+        ATH.applyEdgeEffectColor(recycler_view)
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        adapter = ArrangeBookAdapter(this, this)
+        recycler_view.adapter = adapter
+        select_action_bar.setMainActionText(R.string.move_to_group)
+        select_action_bar.inflateMenu(R.menu.arrange_book_sel)
+        select_action_bar.setOnMenuItemClickListener(this)
+        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
+            override fun selectAll(selectAll: Boolean) {
+                adapter.selectAll(selectAll)
+            }
+
+            override fun revertSelection() {
+                adapter.revertSelection()
+            }
+
+            override fun onClickMainAction() {
+                selectGroup(groupRequestCode)
+            }
+        })
+    }
+
+    private fun initGroupData() {
+        groupLiveData?.removeObservers(this)
+        groupLiveData = App.db.bookGroupDao().liveDataAll()
+        groupLiveData?.observe(this, Observer {
+            groupList.clear()
+            groupList.addAll(it)
+            adapter.notifyDataSetChanged()
+            upMenu()
+        })
+    }
+
+    private fun initBookData() {
+        booksLiveData?.removeObservers(this)
+        booksLiveData =
+            if (groupId == -1) {
+                App.db.bookDao().observeAll()
+            } else {
+                App.db.bookDao().observeByGroup(groupId)
+            }
+        booksLiveData?.observe(this, Observer {
+            adapter.setItems(it)
+            upSelectCount()
+        })
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_group_manage -> GroupManageDialog()
@@ -98,55 +147,6 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 }.show().applyTint()
         }
         return false
-    }
-
-    private fun initView() {
-        ATH.applyEdgeEffectColor(recycler_view)
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
-        adapter = ArrangeBookAdapter(this, this)
-        recycler_view.adapter = adapter
-        select_action_bar.setMainActionText(R.string.move_to_group)
-        select_action_bar.inflateMenu(R.menu.arrange_book)
-        select_action_bar.setOnMenuItemClickListener(this)
-        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
-            override fun selectAll(selectAll: Boolean) {
-                adapter.selectAll(selectAll)
-            }
-
-            override fun revertSelection() {
-                adapter.revertSelection()
-            }
-
-            override fun onClickMainAction() {
-                selectGroup(groupRequestCode)
-            }
-        })
-    }
-
-    private fun initGroupData() {
-        groupLiveData?.removeObservers(this)
-        groupLiveData = App.db.bookGroupDao().liveDataAll()
-        groupLiveData?.observe(this, Observer {
-            groupList.clear()
-            groupList.addAll(it)
-            adapter.notifyDataSetChanged()
-            upMenu()
-        })
-    }
-
-    private fun initBookData() {
-        booksLiveData?.removeObservers(this)
-        booksLiveData =
-            if (groupId == -1) {
-                App.db.bookDao().observeAll()
-            } else {
-                App.db.bookDao().observeByGroup(groupId)
-            }
-        booksLiveData?.observe(this, Observer {
-            adapter.setItems(it)
-            upSelectCount()
-        })
     }
 
     private fun upMenu() {

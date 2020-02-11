@@ -21,13 +21,11 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
             getItems().forEach {
                 selectedBooks.add(it)
             }
-            notifyDataSetChanged()
-            callBack.upSelectCount()
         } else {
             selectedBooks.clear()
-            notifyDataSetChanged()
-            callBack.upSelectCount()
         }
+        notifyDataSetChanged()
+        callBack.upSelectCount()
     }
 
     fun revertSelection() {
@@ -38,6 +36,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 selectedBooks.add(it)
             }
         }
+        notifyDataSetChanged()
         callBack.upSelectCount()
     }
 
