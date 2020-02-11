@@ -61,6 +61,11 @@
             android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask" />
+        <!--音频播放界面-->
+        <activity
+            android:name=".ui.audio.AudioPlayActivity"
+            android:launchMode="singleTask" />
+        <!--授权界面-->
         <activity
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
@@ -109,9 +114,6 @@
         </activity>
         <activity android:name=".ui.chapterlist.ChapterListActivity" />
         <activity android:name=".ui.rss.read.ReadRssActivity" />
-        <activity
-            android:name=".ui.audio.AudioPlayActivity"
-            android:launchMode="singleTask" />
         <activity android:name=".ui.importbook.ImportBookActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
         <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
