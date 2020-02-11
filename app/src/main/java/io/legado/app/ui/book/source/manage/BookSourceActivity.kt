@@ -22,10 +22,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.cancelButton
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
@@ -173,7 +170,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
 
             override fun onClickMainAction() {
-                super.onClickMainAction()
+                this@BookSourceActivity
+                    .alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                        okButton { viewModel.delSelection(adapter.getSelection()) }
+                        noButton { }
+                    }
+                    .show()
             }
         })
 
@@ -185,7 +187,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
             R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
             R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
         }
