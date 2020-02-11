@@ -6,14 +6,9 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 
 /**
  * 阅读界面配置
@@ -67,18 +62,9 @@ object ReadBookConfig {
     }
 
     fun save() {
-        GlobalScope.launch(IO) {
+        Coroutine.async {
             val json = GSON.toJson(configList)
-            val configFile = File(configFilePath)
-            //获取流并存储
-            try {
-                BufferedWriter(FileWriter(configFile)).use { writer ->
-                    writer.write(json)
-                    writer.flush()
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+            FileUtils.createFileIfNotExist(configFilePath).writeText(json)
         }
     }
 
