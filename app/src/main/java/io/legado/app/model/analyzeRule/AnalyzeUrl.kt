@@ -248,19 +248,19 @@ class AnalyzeUrl(
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postMap(url, fieldMap, headerMap)
                 } else {
                     HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postBody(url, body!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .get(url, headerMap)
             else -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .getMap(url, fieldMap, headerMap)
         }
     }
@@ -284,22 +284,22 @@ class AnalyzeUrl(
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postMapAsync(url, fieldMap, headerMap)
                         .await()
                 } else {
                     HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postBodyAsync(url, body!!, headerMap)
                         .await()
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .getAsync(url, headerMap)
                 .await()
             else -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .getMapAsync(url, fieldMap, headerMap)
                 .await()
         }
