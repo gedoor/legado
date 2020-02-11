@@ -21,7 +21,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
-    var callBack: CallBack? = null
+    var isSearchLiveData = MutableLiveData<Boolean>()
     var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
     var searchPage = 1
@@ -41,7 +41,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchKey = key
             searchBooks.clear()
         }
-        callBack?.startSearch()
+        isSearchLiveData.postValue(true)
         task = execute {
             val searchGroup = context.getPrefString("searchGroup") ?: ""
             val bookSourceList = if (searchGroup.isBlank()) {
@@ -67,7 +67,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
 
         task?.invokeOnCompletion {
-            callBack?.searchFinally()
+            isSearchLiveData.postValue(false)
             isLoading = false
         }
     }
@@ -169,8 +169,4 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         searchPool.close()
     }
 
-    interface CallBack {
-        fun startSearch()
-        fun searchFinally()
-    }
 }

@@ -34,7 +34,6 @@ import org.jetbrains.anko.startActivity
 
 
 class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_search),
-    SearchViewModel.CallBack,
     BookAdapter.CallBack,
     HistoryKeyAdapter.CallBack,
     SearchAdapter.CallBack {
@@ -53,7 +52,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var groups = hashSetOf<String>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel.callBack = this
         initRecyclerView()
         initSearchView()
         initOtherView()
@@ -181,6 +179,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         viewModel.searchBookLiveData.observe(this, Observer {
             setSearchItems(it)
         })
+        viewModel.isSearchLiveData.observe(this, Observer {
+            if (it) {
+                startSearch()
+            } else {
+                searchFinally()
+            }
+        })
     }
 
     private fun initIntent() {
@@ -256,18 +261,19 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         })
     }
 
+    @Synchronized
     private fun setSearchItems(items: List<SearchBook>) {
-        val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), items))
+        val diffResult = DiffUtil.calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), items))
         adapter.setItems(items, false)
         diffResult.dispatchUpdatesTo(adapter)
     }
 
-    override fun startSearch() {
+    fun startSearch() {
         refresh_progress_bar.isAutoLoading = true
         fb_stop.visible()
     }
 
-    override fun searchFinally() {
+    fun searchFinally() {
         refresh_progress_bar.isAutoLoading = false
         loadMoreView.startLoad()
         fb_stop.invisible()
