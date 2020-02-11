@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme.prefs
+package io.legado.app.ui.widget.prefs
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -15,7 +15,7 @@ import androidx.preference.PreferenceViewHolder
 import com.jaredrummler.android.colorpicker.*
 import io.legado.app.lib.theme.ATH
 
-class ATEColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
+class ColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
     ColorPickerDialogListener {
 
     private val sizeNormal = 0
@@ -86,7 +86,7 @@ class ATEColorPreference(context: Context, attrs: AttributeSet) : Preference(con
         }
     }
 
-    fun getActivity(): FragmentActivity {
+    private fun getActivity(): FragmentActivity {
         val context = context
         if (context is FragmentActivity) {
             return context
@@ -397,7 +397,8 @@ class ATEColorPreference(context: Context, attrs: AttributeSet) : Preference(con
              * @see .show
              */
             fun create(): ColorPickerDialog {
-                val dialog = ColorPickerDialogCompat()
+                val dialog =
+                    ColorPickerDialogCompat()
                 val args = Bundle()
                 args.putInt(ARG_ID, dialogId)
                 args.putInt(ARG_TYPE, dialogType)

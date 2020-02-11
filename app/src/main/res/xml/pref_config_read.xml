@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.lib.theme.prefs.ATEListPreference
+    <io.legado.app.ui.widget.prefs.NameListPreference
         android:key="keep_light"
         android:defaultValue="0"
         android:entryValues="@array/screen_time_out_value"

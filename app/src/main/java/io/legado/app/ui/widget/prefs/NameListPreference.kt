@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme.prefs
+package io.legado.app.ui.widget.prefs
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,7 +8,7 @@ import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 
 
-class ATEListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
+class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
 
     init {
         widgetLayoutResource = R.layout.item_text

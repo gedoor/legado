@@ -26,7 +26,7 @@
         android:title="白天"
         app:iconSpaceReserved="false">
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
+        <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_light_blue_600"
             android:key="colorPrimary"
             android:summary="白天，主色调"
@@ -34,7 +34,7 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
+        <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_pink_800"
             android:key="colorAccent"
             android:summary="白天，强调色"
@@ -42,7 +42,7 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
+        <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_100"
             android:key="colorBackground"
             android:summary="白天，背景色"
@@ -56,7 +56,7 @@
         android:title="夜间"
         app:iconSpaceReserved="false">
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
+        <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_900"
             android:key="colorPrimaryNight"
             android:summary="夜间，主色调"
@@ -64,7 +64,7 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
+        <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_deep_orange_800"
             android:key="colorAccentNight"
             android:summary="夜间，强调色"
@@ -72,7 +72,7 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
+        <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_black_1000"
             android:key="colorBackgroundNight"
             android:summary="夜间，背景色"

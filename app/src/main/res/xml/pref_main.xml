@@ -12,7 +12,7 @@
         android:title="@string/replace_purify"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEListPreference
+    <io.legado.app.ui.widget.prefs.NameListPreference
         android:defaultValue="0"
         android:entries="@array/theme_mode"
         android:entryValues="@array/theme_mode_v"
