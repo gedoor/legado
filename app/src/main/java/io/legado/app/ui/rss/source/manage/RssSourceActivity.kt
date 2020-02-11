@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
-import android.widget.PopupMenu
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -22,21 +22,18 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.cancelButton
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
+import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
-import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -57,7 +54,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
-    private lateinit var selMenu: PopupMenu
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -147,22 +143,31 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     private fun initViewEvent() {
-        selMenu = PopupMenu(this, iv_menu_more)
-        selMenu.inflate(R.menu.rss_source_sel)
-        selMenu.setOnMenuItemClickListener(this)
-        cb_selected_all.onClick {
-            if (adapter.getSelection().size == adapter.getActualItemCount()) {
-                adapter.revertSelection()
-            } else {
-                adapter.selectAll()
+        select_action_bar.setMainActionText(R.string.delete)
+        select_action_bar.inflateMenu(R.menu.rss_source_sel)
+        select_action_bar.setOnMenuItemClickListener(this)
+        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
+            override fun selectAll(selectAll: Boolean) {
+                if (selectAll) {
+                    adapter.selectAll()
+                } else {
+                    adapter.revertSelection()
+                }
             }
-        }
-        btn_revert_selection.onClick {
-            adapter.revertSelection()
-        }
-        iv_menu_more.onClick {
-            selMenu.show()
-        }
+
+            override fun revertSelection() {
+                adapter.revertSelection()
+            }
+
+            override fun onClickMainAction() {
+                this@RssSourceActivity
+                    .alert(titleResource = R.string.sure, messageResource = R.string.sure_del) {
+                        okButton { viewModel.delSelection(adapter.getSelection()) }
+                        noButton { }
+                    }
+                    .show()
+            }
+        })
     }
 
     private fun upGroupMenu() {
@@ -190,37 +195,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     override fun upCountView() {
-        val selectCount = adapter.getSelection().size
-        if (selectCount == 0) {
-            cb_selected_all.isChecked = false
-        } else {
-            cb_selected_all.isChecked = selectCount >= adapter.getActualItemCount()
-        }
-
-        //重置全选的文字
-        if (cb_selected_all.isChecked) {
-            cb_selected_all.text = getString(
-                R.string.select_cancel_count,
-                selectCount,
-                adapter.getActualItemCount()
-            )
-        } else {
-            cb_selected_all.text = getString(
-                R.string.select_all_count,
-                selectCount,
-                adapter.getActualItemCount()
-            )
-        }
-        setMenuClickable(selectCount > 0)
-    }
-
-    private fun setMenuClickable(isClickable: Boolean) {
-        //设置是否可删除
-        btn_delete.isEnabled = isClickable
-        btn_delete.isClickable = isClickable
-        //设置是否可添加书籍
-        btn_revert_selection.isEnabled = isClickable
-        btn_revert_selection.isClickable = isClickable
+        select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
     }
 
     @SuppressLint("InflateParams")
