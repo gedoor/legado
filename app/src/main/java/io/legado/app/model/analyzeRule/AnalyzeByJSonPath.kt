@@ -72,7 +72,7 @@ class AnalyzeByJSonPath {
                     }
                 }
             }
-            return TextUtils.join(",", textList)
+            return textList.joinToString("\n")
         }
     }
 

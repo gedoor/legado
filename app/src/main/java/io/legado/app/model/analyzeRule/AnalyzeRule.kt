@@ -108,8 +108,8 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     @Throws(Exception::class)
     @JvmOverloads
-    fun getStringList(rule: String, isUrl: Boolean = false): List<String>? {
-        if (TextUtils.isEmpty(rule)) return null
+    fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
+        if (rule.isNullOrEmpty()) return null
         val ruleList = splitSourceRule(rule)
         return getStringList(ruleList, isUrl)
     }
