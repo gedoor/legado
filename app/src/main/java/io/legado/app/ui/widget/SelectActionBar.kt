@@ -88,6 +88,8 @@ class SelectActionBar(context: Context, attrs: AttributeSet?) : LinearLayoutComp
         btn_revert_selection.isClickable = isClickable
         btn_select_action_main.isEnabled = isClickable
         btn_select_action_main.isClickable = isClickable
+        iv_menu_more.isEnabled = isClickable
+        iv_menu_more.isClickable = isClickable
     }
 
     interface CallBack {
