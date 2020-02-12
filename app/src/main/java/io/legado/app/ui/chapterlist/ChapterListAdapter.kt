@@ -6,6 +6,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.visible
@@ -15,6 +16,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
     SimpleRecyclerAdapter<BookChapter>(context, R.layout.item_chapter_list) {
+
+    val cacheFileNames = arrayListOf<String>()
 
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         with(holder.itemView) {
@@ -32,9 +35,11 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 this.onClick {
                     callback.openChapter(item)
                 }
+                tv_chapter_name.paint.isFakeBoldText =
+                    cacheFileNames.contains(BookHelp.formatChapterName(item))
             } else {
-                val hasContent = payloads[0] as Boolean
-                tv_chapter_name.paint.isFakeBoldText = hasContent
+                tv_chapter_name.paint.isFakeBoldText =
+                    cacheFileNames.contains(BookHelp.formatChapterName(item))
             }
         }
     }

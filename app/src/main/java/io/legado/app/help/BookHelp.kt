@@ -27,7 +27,7 @@ object BookHelp {
         return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
     }
 
-    private fun bookChapterName(bookChapter: BookChapter): String {
+    fun formatChapterName(bookChapter: BookChapter): String {
         return String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode16(bookChapter.title))
     }
 
@@ -53,14 +53,14 @@ object BookHelp {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                 DocumentUtils.createFileIfNotExist(
                     root,
-                    "${bookChapterName(bookChapter)}.nb",
+                    "${formatChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )?.uri?.writeText(App.INSTANCE, content)
             }
         } else {
             FileUtils.createFileIfNotExist(
                 File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
+                "${formatChapterName(bookChapter)}.nb",
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
             ).writeText(content)
         }
@@ -99,7 +99,7 @@ object BookHelp {
                 DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
                     return DocumentUtils.exists(
                         root,
-                        "${bookChapterName(bookChapter)}.nb",
+                        "${formatChapterName(bookChapter)}.nb",
                         subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                     )
                 }
@@ -107,7 +107,7 @@ object BookHelp {
             else -> {
                 return FileUtils.exists(
                     File(downloadPath),
-                    "${bookChapterName(bookChapter)}.nb",
+                    "${formatChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )
             }
@@ -125,14 +125,14 @@ object BookHelp {
                     return DocumentUtils.getDirDocument(
                         root,
                         subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                    )?.findFile("${bookChapterName(bookChapter)}.nb")
+                    )?.findFile("${formatChapterName(bookChapter)}.nb")
                         ?.uri?.readText(App.INSTANCE)
                 }
             }
             else -> {
                 val file = FileUtils.getFile(
                     File(downloadPath),
-                    "${bookChapterName(bookChapter)}.nb",
+                    "${formatChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 )
                 if (file.exists()) {
@@ -151,14 +151,14 @@ object BookHelp {
                     DocumentUtils.getDirDocument(
                         root,
                         subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                    )?.findFile("${bookChapterName(bookChapter)}.nb")
+                    )?.findFile("${formatChapterName(bookChapter)}.nb")
                         ?.delete()
                 }
             }
             else -> {
                 FileUtils.createFileIfNotExist(
                     File(downloadPath),
-                    "${bookChapterName(bookChapter)}.nb",
+                    "${formatChapterName(bookChapter)}.nb",
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
                 ).delete()
             }

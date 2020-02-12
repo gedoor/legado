@@ -11,12 +11,14 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -49,17 +51,31 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         recycler_view.adapter = adapter
     }
 
+    private fun initView() {
+        ll_chapter_base_info.setBackgroundColor(backgroundColor)
+        iv_chapter_top.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
+        iv_chapter_bottom.onClick {
+            if (adapter.itemCount > 0) {
+                mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
+            }
+        }
+        tv_current_chapter_info.onClick {
+            mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+        }
+    }
+
     private fun initBook() {
         launch {
             withContext(IO) {
                 book = App.db.bookDao().getBook(viewModel.bookUrl)
             }
+            initDoc()
             book?.let {
                 durChapterIndex = it.durChapterIndex
                 tv_current_chapter_info.text = it.durChapterTitle
                 mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+                initCatchFileNames(it)
             }
-            initDoc()
         }
     }
 
@@ -72,16 +88,12 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         })
     }
 
-    private fun initView() {
-        ll_chapter_base_info.setBackgroundColor(backgroundColor)
-        iv_chapter_top.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
-        iv_chapter_bottom.onClick {
-            if (adapter.itemCount > 0) {
-                mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
+    private fun initCatchFileNames(book: Book) {
+        launch(IO) {
+            adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
+            withContext(Main) {
+                adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
             }
-        }
-        tv_current_chapter_info.onClick {
-            mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
         }
     }
 
