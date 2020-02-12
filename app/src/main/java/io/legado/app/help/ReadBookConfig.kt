@@ -18,6 +18,10 @@ object ReadBookConfig {
     private val configFilePath =
         App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName
     val configList: ArrayList<Config> = arrayListOf()
+    private val defaultConfigs by lazy {
+        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
+        GSON.fromJsonArray<Config>(json)!!
+    }
 
     var styleSelect
         get() = App.INSTANCE.getPrefInt("readStyleSelect")
@@ -37,7 +41,7 @@ object ReadBookConfig {
     }
 
     fun upConfig() {
-        (getConfigs() ?: getDefaultConfigs()).let {
+        (getConfigs() ?: defaultConfigs).let {
             configList.clear()
             configList.addAll(it)
         }
@@ -53,11 +57,6 @@ object ReadBookConfig {
             }
         }
         return null
-    }
-
-    private fun getDefaultConfigs(): List<Config> {
-        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
-        return GSON.fromJsonArray(json)!!
     }
 
     fun upBg() {
@@ -76,7 +75,7 @@ object ReadBookConfig {
     }
 
     fun resetDur() {
-        getDefaultConfigs()[styleSelect].let {
+        defaultConfigs[styleSelect].let {
             getConfig().setBg(it.bgType(), it.bgStr())
             getConfig().setTextColor(it.textColor())
             upBg()
@@ -85,7 +84,7 @@ object ReadBookConfig {
     }
 
     private fun resetAll() {
-        getDefaultConfigs().let {
+        defaultConfigs.let {
             configList.clear()
             configList.addAll(it)
             save()
