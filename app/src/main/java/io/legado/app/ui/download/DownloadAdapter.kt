@@ -1,12 +1,10 @@
 package io.legado.app.ui.download
 
 import android.content.Context
-import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
-import io.legado.app.help.BookHelp
 import kotlinx.android.synthetic.main.item_download.view.*
 
 
@@ -17,20 +15,14 @@ class DownloadAdapter(context: Context) :
         with(holder.itemView) {
             if (payloads.isEmpty()) {
                 tv_name.text = item.name
-                tv_author.text = item.author
-                upDownloadCount(this, item)
+                tv_author.text = context.getString(R.string.author_show, item.getRealAuthor())
+                tv_download.setText(R.string.loading)
             } else {
-                upDownloadCount(this, item)
+                val count = payloads[0] as Int
+                tv_download.text =
+                    context.getString(R.string.download_count, count, item.totalChapterNum)
             }
         }
-    }
-
-    private fun upDownloadCount(view: View, book: Book) {
-        view.tv_download.text = context.getString(
-            R.string.download_count,
-            BookHelp.getChapterCount(book),
-            book.totalChapterNum
-        )
     }
 
 }

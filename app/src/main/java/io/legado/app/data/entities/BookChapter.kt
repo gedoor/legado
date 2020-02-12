@@ -33,7 +33,7 @@ data class BookChapter(
     var tag: String? = null,            //
     var start: Long? = null,            // 章节起始位置
     var end: Long? = null,               // 章节终止位置
-    var variable: String? = null
+    var variable: String? = null        //变量
 ) : Parcelable {
 
     @Ignore

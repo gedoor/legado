@@ -86,6 +86,8 @@ data class Book(
     @IgnoredOnParcel
     override var tocHtml: String? = null
 
+    fun getRealAuthor() = author.replace("作者：", "")
+
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl

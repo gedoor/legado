@@ -51,17 +51,6 @@ object BookHelp {
         if (content.isEmpty()) return
         if (downloadPath.isContentPath()) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
-                DocumentUtils.getDirDocument(
-                    root,
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.uri?.let { uri ->
-                    DocumentUtils.listFiles(App.INSTANCE, uri).forEach {
-                        if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
-                            DocumentFile.fromSingleUri(App.INSTANCE, it.uri)?.delete()
-                            return@forEach
-                        }
-                    }
-                }
                 DocumentUtils.createFileIfNotExist(
                     root,
                     "${bookChapterName(bookChapter)}.nb",
@@ -69,15 +58,6 @@ object BookHelp {
                 )?.uri?.writeText(App.INSTANCE, content)
             }
         } else {
-            FileUtils.createFolderIfNotExist(
-                File(downloadPath),
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).listFiles()?.forEach {
-                if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
-                    it.delete()
-                    return@forEach
-                }
-            }
             FileUtils.createFileIfNotExist(
                 File(downloadPath),
                 "${bookChapterName(bookChapter)}.nb",
@@ -86,21 +66,28 @@ object BookHelp {
         }
     }
 
-    fun getChapterCount(book: Book): Int {
+    fun getChapterFiles(book: Book): List<String> {
+        val fileNameList = arrayListOf<String>()
         if (downloadPath.isContentPath()) {
             DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
-                return DocumentUtils.createFolderIfNotExist(
+                DocumentUtils.createFolderIfNotExist(
                     root,
                     subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.listFiles()?.size ?: 0
+                )?.let { bookDoc ->
+                    DocumentUtils.listFiles(App.INSTANCE, bookDoc.uri).forEach {
+                        fileNameList.add(it.name)
+                    }
+                }
             }
         } else {
-            return FileUtils.createFolderIfNotExist(
+            FileUtils.createFolderIfNotExist(
                 File(downloadPath),
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).list()?.size ?: 0
+            ).list()?.let {
+                fileNameList.addAll(it)
+            }
         }
-        return 0
+        return fileNameList
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
