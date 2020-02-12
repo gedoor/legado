@@ -6,7 +6,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
 import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
@@ -57,13 +56,23 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         initData()
-        initOnClick()
+        initViewEvent()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         ReadBookConfig.save()
+    }
+
+    private fun initView() {
+        dsb_text_size.valueFormat = {
+            (it + 5).toString()
+        }
+        dsb_text_letter_spacing.valueFormat = {
+            ((it - 5) / 10f).toString()
+        }
     }
 
     private fun initData() {
@@ -77,7 +86,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         upBg()
     }
 
-    private fun initOnClick() {
+    private fun initViewEvent() {
         chinese_converter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
@@ -107,67 +116,16 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 activity.showPaddingConfig()
             }
         }
-        seek_text_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                ReadBookConfig.getConfig().textSize = progress + 5
-                tv_text_size.text = ReadBookConfig.getConfig().textSize.toString()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(EventBus.UP_CONFIG, true)
-            }
-        })
-        iv_text_size_add.onClick {
-            seek_text_size.progressAdd(1)
+        dsb_text_size.onChanged = {
+            ReadBookConfig.getConfig().textSize = it + 5
             postEvent(EventBus.UP_CONFIG, true)
         }
-        iv_text_size_remove.onClick {
-            seek_text_size.progressAdd(-1)
+        dsb_text_letter_spacing.onChanged = {
+            ReadBookConfig.getConfig().letterSpacing = (it - 5) / 10f
             postEvent(EventBus.UP_CONFIG, true)
         }
-        seek_text_letter_spacing.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                with(ReadBookConfig.getConfig()) {
-                    letterSpacing = (seek_text_letter_spacing.progress - 5) / 10f
-                    tv_text_letter_spacing.text = letterSpacing.toString()
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(EventBus.UP_CONFIG, true)
-            }
-        })
-        iv_text_letter_spacing_add.onClick {
-            seek_text_letter_spacing.progressAdd(1)
-            postEvent(EventBus.UP_CONFIG, true)
-        }
-        iv_text_letter_spacing_remove.onClick {
-            seek_text_letter_spacing.progressAdd(-1)
-            postEvent(EventBus.UP_CONFIG, true)
-        }
-        seek_line_size.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                with(ReadBookConfig.getConfig()) {
-                    lineSpacingExtra = seek_line_size.progress
-                    tv_line_size.text = lineSpacingExtra.toString()
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                postEvent(EventBus.UP_CONFIG, true)
-            }
-        })
-        iv_line_size_add.onClick {
-            seek_line_size.progressAdd(1)
-            postEvent(EventBus.UP_CONFIG, true)
-        }
-        iv_line_size_remove.onClick {
-            seek_line_size.progressAdd(-1)
+        dsb_line_size.onChanged = {
+            ReadBookConfig.getConfig().lineSpacingExtra = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
@@ -217,12 +175,9 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     private fun upStyle() {
         ReadBookConfig.getConfig().let {
             tv_text_bold.isSelected = it.textBold
-            seek_text_size.progress = it.textSize - 5
-            tv_text_size.text = it.textSize.toString()
-            seek_text_letter_spacing.progress = (it.letterSpacing * 10).toInt() + 5
-            tv_text_letter_spacing.text = it.letterSpacing.toString()
-            seek_line_size.progress = it.lineSpacingExtra
-            tv_line_size.text = it.lineSpacingExtra.toString()
+            dsb_text_size.progress = it.textSize - 5
+            dsb_text_letter_spacing.progress = (it.letterSpacing * 10).toInt() + 5
+            dsb_line_size.progress = it.lineSpacingExtra
         }
     }
 

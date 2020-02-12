@@ -4,8 +4,6 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     android:gravity="center">
 
     <TextView

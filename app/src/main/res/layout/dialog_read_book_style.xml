@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -82,155 +81,43 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/ll_text_size"
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
+        app:max="45"
+        app:title="@string/text_size"
+        app:layout_constraintTop_toBottomOf="@+id/tv_text_bold" />
 
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="@string/text_size" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_size_remove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_text_size"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:max="45" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_size_add"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_add"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <TextView
-            android:id="@+id/tv_text_size"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            tools:ignore="RtlHardcoded" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_text_letter_spacing"
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_letter_spacing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/ll_text_size">
+        app:max="10"
+        app:title="@string/text_letter_spacing"
+        app:layout_constraintTop_toBottomOf="@+id/dsb_text_size" />
 
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="@string/text_letter_spacing" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_letter_spacing_remove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_text_letter_spacing"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:max="10" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_letter_spacing_add"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_add"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <TextView
-            android:id="@+id/tv_text_letter_spacing"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            tools:ignore="RtlHardcoded" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_line_size"
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_line_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/ll_text_letter_spacing">
-
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="@string/line_size" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_line_size_remove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_line_size"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:max="50" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_line_size_add"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_add"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <TextView
-            android:id="@+id/tv_line_size"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            tools:ignore="RtlHardcoded" />
-    </LinearLayout>
+        app:max="50"
+        app:title="@string/line_size"
+        app:layout_constraintTop_toBottomOf="@+id/dsb_text_letter_spacing" />
 
     <View
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
         android:background="@color/btn_bg_press"
-        app:layout_constraintTop_toBottomOf="@+id/ll_line_size" />
+        app:layout_constraintTop_toBottomOf="@+id/dsb_line_size" />
 
     <TextView
         android:id="@+id/tv_page_anim"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:padding="8dp"
+    android:padding="10dp"
     android:orientation="vertical">
 
     <io.legado.app.ui.widget.DetailSeekBar
