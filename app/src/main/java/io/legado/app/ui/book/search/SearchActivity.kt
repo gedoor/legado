@@ -295,10 +295,16 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
     override fun searchHistory(key: String) {
         launch {
-            if (withContext(IO) { App.db.bookDao().findByName(key).isEmpty() }) {
-                search_view.setQuery(key, true)
-            } else {
-                search_view.setQuery(key, false)
+            when {
+                search_view.query == key -> {
+                    search_view.setQuery(key, true)
+                }
+                withContext(IO) { App.db.bookDao().findByName(key).isEmpty() } -> {
+                    search_view.setQuery(key, true)
+                }
+                else -> {
+                    search_view.setQuery(key, false)
+                }
             }
         }
     }
