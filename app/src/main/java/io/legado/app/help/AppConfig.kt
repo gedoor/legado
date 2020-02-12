@@ -78,6 +78,9 @@ object AppConfig {
 
     val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
 
-    val isChineseConverterEnable: String?
-        get() = App.INSTANCE.getPrefString(PreferKey.isChineseConverterEnable)
+    var chineseConverterType: Int
+        get() = App.INSTANCE.getPrefInt(PreferKey.chineseConverterType)
+        set(value) {
+            App.INSTANCE.putPrefInt(PreferKey.chineseConverterType, value)
+        }
 }

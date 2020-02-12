@@ -65,6 +65,20 @@
         android:gravity="center"
         android:textSize="14sp"
         app:layout_constraintLeft_toRightOf="@+id/tv_text_indent"
+        app:layout_constraintRight_toLeftOf="@id/chinese_converter"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.legado.app.ui.widget.ChineseConverter
+        android:id="@+id/chinese_converter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@+id/tv_padding"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -2,6 +2,7 @@ package io.legado.app.help
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import com.github.houbb.opencc4j.util.ZhConverterUtil
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
@@ -274,6 +275,10 @@ object BookHelp {
                     }
                 }
             }
+        }
+        when (AppConfig.chineseConverterType) {
+            2 -> c = ZhConverterUtil.toTraditional(c)
+            1 -> c = ZhConverterUtil.toSimple(c)
         }
         val indent = App.INSTANCE.getPrefInt("textIndent", 2)
         return c.replace("\\s*\\n+\\s*".toRegex(), "\n" + "　".repeat(indent))

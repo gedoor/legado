@@ -78,6 +78,9 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun initOnClick() {
+        chinese_converter.onChanged {
+            postEvent(EventBus.UP_CONFIG, true)
+        }
         tv_text_bold.onClick {
             with(ReadBookConfig.getConfig()) {
                 textBold = !textBold

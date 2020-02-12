@@ -28,14 +28,6 @@
         android:key="volumeKeyPage"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.ui.widget.prefs.NameListPreference
-        android:defaultValue="0"
-        android:key="isChineseConverterEnable"
-        android:entries="@array/chinese_mode"
-        android:entryValues="@array/chinese_mode_v"
-        android:title="@string/is_chinese_converter_enable"
-        app:iconSpaceReserved="false" />
-
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="false"
         android:title="@string/click_all_next_page"
