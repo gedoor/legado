@@ -35,4 +35,11 @@
     <dimen name="fastscroll_scrollbar_margin_bottom">8dp</dimen>
     <dimen name="fastscroll_scrollbar_padding_start">8dp</dimen>
     <dimen name="fastscroll_scrollbar_padding_end">8dp</dimen>
+
+    <dimen name="about_page_header_height">212dp</dimen>
+    <dimen name="about_page_baseline">16dp</dimen>
+    <dimen name="about_page_baseline_half">8dp</dimen>
+    <dimen name="about_page_baseline_quarter">4dp</dimen>
+    <dimen name="about_page_action_item_image_width">24dp</dimen>
+    <dimen name="about_page_action_item_image_height">32dp</dimen>
 </resources>

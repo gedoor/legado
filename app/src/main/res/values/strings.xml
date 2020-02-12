@@ -86,10 +86,10 @@
     <string name="download_offline_s">下载选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
-        \u3000\u3000这是一款开源的阅读软件，你可以fork我们的代码自己编译APK。欢迎提交代码帮助改善应用。\n\u3000\u3000公众号[开源阅读软件]！
+        这是一款开源的阅读软件，你可以 fork 我们的代码自己编译 APK。欢迎提交代码帮助改善应用。\n\n\公众号「开源阅读软件」！
     </string>
     <string name="app_share_description">
-        阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
+        阅读 3.0 下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
     </string>
     <string name="version_name">Version %s</string>
     <string name="pt_auto_refresh">自动刷新</string>
@@ -606,4 +606,12 @@
     <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
     <string name="record_log">记录日志</string>
     <string name="chinese_converter">中文简繁体转换</string>
+    <string name="slogan">享受美好时光</string>
+    <string name="send_feedback_hint">遇到问题？在此反馈</string>
+    <string name="contact_us">联系我们</string>
+    <string name="wechat_public_account">公众号</string>
+    <string name="wechat_public_account_name">[ 开源阅读软件 ]</string>
+    <string name="developers">开发者</string>
+    <string name="developer_description">开发人员主要为 gedoor,Invinciblelee 等</string>
+    <string name="developer_detail">详情请在 GitHub 中查看</string>
 </resources>

@@ -73,6 +73,78 @@
         <item name="android:popupBackground">@drawable/bg_popup_menu</item>
     </style>
 
+    <style name="AboutPage">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="AboutPage.Header"/>
+
+    <style name="AboutPage.Header.ToolbarTitleExpanded" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+
+    <style name="AboutPage.Header.Icon">
+        <item name="android:layout_width">92dp</item>
+        <item name="android:layout_height">92dp</item>
+        <item name="android:padding">@dimen/about_page_baseline_half</item>
+    </style>
+
+    <style name="AboutPage.Header.Slogan">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:paddingLeft">@dimen/about_page_baseline</item>
+        <item name="android:paddingRight">@dimen/about_page_baseline</item>
+    </style>
+
+    <style name="AboutPage.Header.Version">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/about_page_baseline_half</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+    </style>
+
+    <style name="AboutPage.Item">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="AboutPage.Item.Category">
+        <item name="android:layout_marginLeft">1dp</item>
+        <item name="android:layout_marginRight">1dp</item>
+        <item name="android:paddingTop">@dimen/about_page_baseline_half</item>
+        <item name="android:paddingBottom">@dimen/about_page_baseline_half</item>
+        <item name="android:paddingLeft">@dimen/about_page_baseline</item>
+        <item name="android:paddingRight">@dimen/about_page_baseline</item>
+        <item name="android:paddingStart">@dimen/about_page_baseline</item>
+        <item name="android:paddingEnd">@dimen/about_page_baseline</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AboutPage.Item.MainContent">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:textColorLink">?colorPrimary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textIsSelectable">false</item>
+    </style>
+
+    <style name="AboutPage.Item.SubContent">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:textColorLink">?colorPrimary</item>
+        <item name="android:layout_marginTop">@dimen/about_page_baseline_quarter</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
 
     <style name="Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>

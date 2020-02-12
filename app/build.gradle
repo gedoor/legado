@@ -178,6 +178,10 @@ dependencies {
     // 转换繁体
     implementation 'com.github.houbb:opencc4j:1.4.0'
 
+    //About
+    implementation 'com.drakeet.multitype:multitype:4.0.0'
+    implementation "com.mikepenz:iconics-core:4.0.2"
+    implementation 'com.mikepenz:community-material-typeface:3.7.95.4-kotlin@aar'
 }
 
 apply plugin: 'com.google.gms.google-services'

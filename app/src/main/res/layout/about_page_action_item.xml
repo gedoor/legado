@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/about_page_baseline_half"
+    android:paddingBottom="@dimen/about_page_baseline_half"
+    android:paddingEnd="@dimen/about_page_baseline"
+    android:paddingStart="@dimen/about_page_baseline"
+    android:paddingRight="@dimen/about_page_baseline"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/about_page_baseline">
+
+    <ImageView
+        android:id="@+id/mal_item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/about_page_action_item_image_width"
+        android:minHeight="@dimen/about_page_action_item_image_height"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/about_page_baseline"
+        android:adjustViewBounds="false"
+        android:contentDescription="@null"
+        android:cropToPadding="false"
+        android:scaleType="centerInside" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/about_page_action_item_image_height"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/AboutPage.Item.MainContent"
+            android:id="@+id/mal_item_text"
+            tools:text="Version" />
+
+        <TextView
+            style="@style/AboutPage.Item.SubContent"
+            android:id="@+id/mal_action_item_subtext"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="Current Version Of App" />
+    </LinearLayout>
+
+</LinearLayout>
