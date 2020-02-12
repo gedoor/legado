@@ -29,12 +29,10 @@ class DetailSeekBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat
 
         iv_seek_add.onClick {
             seek_bar.progressAdd(1)
-            upValue()
             onChanged?.invoke(seek_bar.progress)
         }
         iv_seek_remove.onClick {
             seek_bar.progressAdd(-1)
-            upValue()
             onChanged?.invoke(seek_bar.progress)
         }
         seek_bar.setOnSeekBarChangeListener(this)
@@ -57,7 +55,6 @@ class DetailSeekBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat
     }
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
-        upValue()
         onChanged?.invoke(seek_bar.progress)
     }
 
