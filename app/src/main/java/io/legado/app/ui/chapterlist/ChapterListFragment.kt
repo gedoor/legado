@@ -35,8 +35,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var tocLiveData: LiveData<List<BookChapter>>? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.chapterCallBack = this
         initRecyclerView()
         initView()
@@ -77,6 +76,10 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
                 initCacheFileNames(it)
             }
         }
+    }
+
+    override fun observeLiveBus() {
+        super.observeLiveBus()
     }
 
     private fun initDoc() {

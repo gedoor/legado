@@ -28,8 +28,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     private lateinit var adapter: BookmarkAdapter
     private var bookmarkLiveData: LiveData<PagedList<Bookmark>>? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.bookMarkCallBack = this
         initRecyclerView()
         initData()

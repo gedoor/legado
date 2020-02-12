@@ -32,6 +32,14 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onFragmentCreated(view, savedInstanceState)
+        observeLiveBus()
+    }
+
+    abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
@@ -52,6 +60,8 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
         }
     }
 
+    open fun observeLiveBus() {
+    }
 
     open fun onCompatCreateOptionsMenu(menu: Menu) {
     }

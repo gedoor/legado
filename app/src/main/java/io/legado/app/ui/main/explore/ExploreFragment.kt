@@ -39,7 +39,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
     private var liveExplore: LiveData<List<BookSource>>? = null
     private var groupsMenu: SubMenu? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         initSearchView()
         initRecyclerView()

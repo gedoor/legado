@@ -25,7 +25,7 @@ class RssFragment : BaseFragment(R.layout.fragment_rss),
 
     private lateinit var adapter: RssAdapter
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         initRecyclerView()
         initData()

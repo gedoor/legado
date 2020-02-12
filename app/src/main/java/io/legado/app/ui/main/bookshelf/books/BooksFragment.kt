@@ -49,7 +49,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private var position = 0
     private var groupId = -1
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
         arguments?.let {
             position = it.getInt("position", 0)

@@ -47,7 +47,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         initView()
         initBookGroupData()

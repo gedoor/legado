@@ -30,7 +30,7 @@ import org.jetbrains.anko.startActivity
 
 class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.CallBack {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         val fragmentTag = "prefFragment"
         var preferenceFragment = childFragmentManager.findFragmentByTag(fragmentTag)
