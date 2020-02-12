@@ -6,7 +6,6 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
@@ -20,7 +19,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ChineseConverter(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
 
     private val spannableString = SpannableString("简/繁")
-    private val enabledSpan = ForegroundColorSpan(App.INSTANCE.accentColor)
+    private var enabledSpan: ForegroundColorSpan = ForegroundColorSpan(context.accentColor)
     private var onChanged: (() -> Unit)? = null
 
     init {
@@ -39,7 +38,10 @@ class ChineseConverter(context: Context, attrs: AttributeSet?) : AppCompatTextVi
                 .setDisabledColor(context.getCompatColor(R.color.md_grey_500))
                 .create()
         )
-        upUi(AppConfig.chineseConverterType)
+        text = spannableString
+        if (!isInEditMode) {
+            upUi(AppConfig.chineseConverterType)
+        }
         onClick {
             selectType()
         }

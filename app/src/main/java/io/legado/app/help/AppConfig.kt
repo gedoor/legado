@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import android.content.Context
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -7,14 +8,16 @@ import io.legado.app.utils.*
 
 object AppConfig {
 
-    var isNightTheme: Boolean
-        get() {
-            return when (App.INSTANCE.getPrefString(PreferKey.themeMode, "0")) {
-                "1" -> false
-                "2" -> true
-                else -> App.INSTANCE.sysIsDarkMode()
-            }
+    fun isNightTheme(context: Context): Boolean {
+        return when (context.getPrefString(PreferKey.themeMode, "0")) {
+            "1" -> false
+            "2" -> true
+            else -> context.sysIsDarkMode()
         }
+    }
+
+    var isNightTheme: Boolean
+        get() = isNightTheme(App.INSTANCE)
         set(value) {
             if (value) {
                 App.INSTANCE.putPrefString(PreferKey.themeMode, "2")

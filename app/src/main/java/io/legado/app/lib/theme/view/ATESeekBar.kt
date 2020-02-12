@@ -12,8 +12,6 @@ import io.legado.app.lib.theme.accentColor
 class ATESeekBar(context: Context, attrs: AttributeSet) : AppCompatSeekBar(context, attrs) {
 
     init {
-        if (!isInEditMode) {
-            ATH.setTint(this, context.accentColor)
-        }
+        ATH.setTint(this, context.accentColor)
     }
 }

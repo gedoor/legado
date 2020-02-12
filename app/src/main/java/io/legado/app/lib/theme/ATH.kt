@@ -130,7 +130,7 @@ object ATH {
     fun setTint(
         view: View,
         @ColorInt color: Int,
-        isDark: Boolean = AppConfig.isNightTheme
+        isDark: Boolean = AppConfig.isNightTheme(view.context)
     ) {
         TintHelper.setTintAuto(view, color, false, isDark)
     }
