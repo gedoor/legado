@@ -11,6 +11,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.service.help.Download
 import io.legado.app.utils.applyTint
@@ -93,11 +94,14 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
             if (it) {
                 menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_stop_black_24dp)
                 menu?.applyTint(this)
-                adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
+                adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
             } else {
                 menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_play_24dp)
                 menu?.applyTint(this)
             }
+        }
+        observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
+            adapter.cacheChapters[it.bookUrl]?.add(it.url)
         }
     }
 }

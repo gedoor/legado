@@ -21,4 +21,5 @@ object EventBus {
     const val WEB_SERVICE_STOP = "webServiceStop"
     const val UP_DOWNLOAD = "upDownload"
     const val UP_TABS = "upTabs"
+    const val SAVE_CONTENT = "saveContent"
 }

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.github.houbb.opencc4j.util.ZhConverterUtil
 import io.legado.app.App
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -68,6 +69,7 @@ object BookHelp {
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
             ).writeText(content)
         }
+        postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
     fun getChapterFiles(book: Book): List<String> {
