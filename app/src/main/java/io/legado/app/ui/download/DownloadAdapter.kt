@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.item_download.view.*
 class DownloadAdapter(context: Context) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_download) {
 
+    val cacheChapters = hashMapOf<String, HashSet<String>>()
+
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
             if (payloads.isEmpty()) {
@@ -18,9 +20,9 @@ class DownloadAdapter(context: Context) :
                 tv_author.text = context.getString(R.string.author_show, item.getRealAuthor())
                 tv_download.setText(R.string.loading)
             } else {
-                val count = payloads[0] as Int
+                val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
                 tv_download.text =
-                    context.getString(R.string.download_count, count, item.totalChapterNum)
+                    context.getString(R.string.download_count, cacheSize, item.totalChapterNum)
             }
         }
     }

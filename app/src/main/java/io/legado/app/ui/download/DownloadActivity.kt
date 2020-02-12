@@ -11,12 +11,15 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
+import io.legado.app.help.BookHelp
 import io.legado.app.service.help.Download
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_download.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class DownloadActivity : BaseActivity(R.layout.activity_download) {
@@ -63,7 +66,26 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
         bookshelfLiveData = App.db.bookDao().observeDownload()
         bookshelfLiveData?.observe(this, Observer {
             adapter.setItems(it)
+            initCacheSize(it)
         })
+    }
+
+    private fun initCacheSize(books: List<Book>) {
+        launch(IO) {
+            books.forEach { book ->
+                val chapterCaches = hashSetOf<String>()
+                val cacheNames = BookHelp.getChapterFiles(book)
+                App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
+                    if (cacheNames.contains(BookHelp.formatChapterName(chapter))) {
+                        chapterCaches.add(chapter.url)
+                    }
+                }
+                adapter.cacheChapters[book.bookUrl] = chapterCaches
+                withContext(Dispatchers.Main) {
+                    adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+                }
+            }
+        }
     }
 
     override fun observeLiveBus() {
