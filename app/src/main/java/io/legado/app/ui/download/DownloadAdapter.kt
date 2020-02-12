@@ -18,7 +18,13 @@ class DownloadAdapter(context: Context) :
             if (payloads.isEmpty()) {
                 tv_name.text = item.name
                 tv_author.text = context.getString(R.string.author_show, item.getRealAuthor())
-                tv_download.setText(R.string.loading)
+                val cs = cacheChapters[item.bookUrl]
+                if (cs == null) {
+                    tv_download.setText(R.string.loading)
+                } else {
+                    tv_download.text =
+                        context.getString(R.string.download_count, cs.size, item.totalChapterNum)
+                }
             } else {
                 val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
                 tv_download.text =
