@@ -1,7 +1,7 @@
 [
   {
     "bgStr": "#EBD9BB",
-    "bgStrNight": "#3C3F43",
+    "bgStrNight": "#1E2021",
     "textColor": "#63543C",
     "textColorNight": "#DCDFE1",
     "bgType": 0,
@@ -18,7 +18,7 @@
   },
   {
     "bgStr": "#DDC090",
-    "bgStrNight": "#1E2021",
+    "bgStrNight": "#3C3F43",
     "textColor": "#3E3422",
     "textColorNight": "#DCDFE1",
     "bgType": 0,

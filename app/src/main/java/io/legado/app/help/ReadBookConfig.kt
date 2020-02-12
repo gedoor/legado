@@ -79,6 +79,7 @@ object ReadBookConfig {
         getDefaultConfigs()[styleSelect].let {
             getConfig().setBg(it.bgType(), it.bgStr())
             getConfig().setTextColor(it.textColor())
+            upBg()
             save()
         }
     }
