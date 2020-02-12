@@ -65,6 +65,10 @@
         <attr name="speed" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="DetailSeekBar">
+        <attr name="title" format="string" />
+    </declare-styleable>
+
     <declare-styleable name="SmoothCheckBox">
         <attr name="duration" format="integer"/>
         <attr name="stroke_width" format="dimension"/>
