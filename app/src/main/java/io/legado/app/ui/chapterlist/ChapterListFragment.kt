@@ -74,7 +74,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
                 durChapterIndex = it.durChapterIndex
                 tv_current_chapter_info.text = it.durChapterTitle
                 mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-                initCatchFileNames(it)
+                initCacheFileNames(it)
             }
         }
     }
@@ -88,7 +88,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         })
     }
 
-    private fun initCatchFileNames(book: Book) {
+    private fun initCacheFileNames(book: Book) {
         launch(IO) {
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Main) {
