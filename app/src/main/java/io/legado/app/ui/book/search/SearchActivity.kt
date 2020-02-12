@@ -22,7 +22,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
-import io.legado.app.ui.widget.LoadMoreView
+import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_search.*
 import kotlinx.android.synthetic.main.view_search.*
@@ -268,12 +268,12 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         diffResult.dispatchUpdatesTo(adapter)
     }
 
-    fun startSearch() {
+    private fun startSearch() {
         refresh_progress_bar.isAutoLoading = true
         fb_stop.visible()
     }
 
-    fun searchFinally() {
+    private fun searchFinally() {
         refresh_progress_bar.isAutoLoading = false
         loadMoreView.startLoad()
         fb_stop.invisible()

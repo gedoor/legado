@@ -149,7 +149,7 @@ dependencies {
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
     //JS rhino
-    implementation 'io.apisense:rhino-android:1.1.1'
+    implementation 'com.github.gedoor:rhino-android:1.4'
 
     //Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'

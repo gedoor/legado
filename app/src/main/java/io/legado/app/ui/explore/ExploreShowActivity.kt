@@ -9,7 +9,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.ui.book.info.BookInfoActivity
-import io.legado.app.ui.widget.LoadMoreView
+import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_explore_show.*

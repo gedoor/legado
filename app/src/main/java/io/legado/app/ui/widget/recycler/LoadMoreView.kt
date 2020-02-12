@@ -1,7 +1,7 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.widget.recycler
 
 import android.content.Context
-import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import io.legado.app.R
@@ -15,7 +15,7 @@ class LoadMoreView(context: Context) : FrameLayout(context) {
         private set
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_load_more, this, true)
+        View.inflate(context, R.layout.view_load_more, this)
     }
 
     override fun onAttachedToWindow() {

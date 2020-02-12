@@ -14,7 +14,7 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
-import io.legado.app.ui.widget.LoadMoreView
+import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
