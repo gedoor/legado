@@ -24,7 +24,6 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
-        android:requestLegacyExternalStorage="false"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <!--主入口-->
         <activity android:name=".ui.welcome.WelcomeActivity">
