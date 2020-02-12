@@ -77,4 +77,7 @@ object AppConfig {
         get() = App.INSTANCE.getPrefBoolean("isEInkMode")
 
     val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
+
+    val isChineseConverterEnable: String?
+        get() = App.INSTANCE.getPrefString(PreferKey.isChineseConverterEnable)
 }
