@@ -95,6 +95,7 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.hideStatusBar -> postEvent(EventBus.UP_CONFIG, true)
                 PreferKey.hideNavigationBar -> postEvent(EventBus.UP_CONFIG, true)
                 PreferKey.keepLight -> postEvent(PreferKey.keepLight, true)
+                PreferKey.isChineseConverterEnable -> postEvent(EventBus.UP_CONFIG, true)
             }
         }
 

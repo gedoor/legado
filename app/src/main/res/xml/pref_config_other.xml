@@ -50,12 +50,4 @@
         android:title="@string/record_log"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEListPreference
-        android:defaultValue="0"
-        android:key="isChineseConverterEnable"
-        android:entries="@array/chinese_mode"
-        android:entryValues="@array/chinese_mode_v"
-        android:title="@string/is_chinese_converter_enable"
-        app:iconSpaceReserved="false" />
-
 </androidx.preference.PreferenceScreen>
