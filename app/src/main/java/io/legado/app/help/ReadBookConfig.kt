@@ -31,26 +31,33 @@ object ReadBookConfig {
     @Synchronized
     fun getConfig(index: Int = styleSelect): Config {
         if (configList.size < 5) {
-            reset()
+            resetAll()
         }
         return configList[index]
     }
 
     fun upConfig() {
+        (getConfigs() ?: getDefaultConfigs()).let {
+            configList.clear()
+            configList.addAll(it)
+        }
+    }
+
+    private fun getConfigs(): List<Config>? {
         val configFile = File(configFilePath)
-        val json = if (configFile.exists()) {
-            configFile.readText()
-        } else {
-            String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
+        if (configFile.exists()) {
+            try {
+                val json = configFile.readText()
+                return GSON.fromJsonArray(json)
+            } catch (e: Exception) {
+            }
         }
-        try {
-            GSON.fromJsonArray<Config>(json)?.let {
-                configList.clear()
-                configList.addAll(it)
-            } ?: reset()
-        } catch (e: Exception) {
-            reset()
-        }
+        return null
+    }
+
+    private fun getDefaultConfigs(): List<Config> {
+        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
+        return GSON.fromJsonArray(json)!!
     }
 
     fun upBg() {
@@ -68,13 +75,20 @@ object ReadBookConfig {
         }
     }
 
-    private fun reset() {
-        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
-        GSON.fromJsonArray<Config>(json)?.let {
+    fun resetDur() {
+        getDefaultConfigs()[styleSelect].let {
+            getConfig().setBg(it.bgType(), it.bgStr())
+            getConfig().setTextColor(it.textColor())
+            save()
+        }
+    }
+
+    private fun resetAll() {
+        getDefaultConfigs().let {
             configList.clear()
             configList.addAll(it)
+            save()
         }
-        save()
     }
 
     data class Config(

@@ -128,7 +128,8 @@ class BgTextConfigDialog : DialogFragment() {
                 .show(requireActivity())
         }
         tv_default.onClick {
-
+            ReadBookConfig.resetDur()
+            postEvent(EventBus.UP_CONFIG, false)
         }
     }
 
