@@ -118,7 +118,4 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         activity?.finish()
     }
 
-    override fun book(): Book? {
-        return book
-    }
 }

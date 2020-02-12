@@ -1,10 +1,10 @@
 package io.legado.app.ui.chapterlist
 
 import android.content.Context
+import android.widget.TextView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.accentColor
@@ -35,17 +35,24 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 this.onClick {
                     callback.openChapter(item)
                 }
-                tv_chapter_name.paint.isFakeBoldText =
+                upHasCache(
+                    tv_chapter_name,
                     cacheFileNames.contains(BookHelp.formatChapterName(item))
+                )
             } else {
-                tv_chapter_name.paint.isFakeBoldText =
+                upHasCache(
+                    tv_chapter_name,
                     cacheFileNames.contains(BookHelp.formatChapterName(item))
+                )
             }
         }
     }
 
+    private fun upHasCache(textView: TextView, contains: Boolean) {
+        textView.paint.isFakeBoldText = contains
+    }
+
     interface Callback {
-        fun book(): Book?
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
     }
