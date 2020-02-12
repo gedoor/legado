@@ -67,6 +67,7 @@
 
     <declare-styleable name="DetailSeekBar">
         <attr name="title" format="string" />
+        <attr name="max" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="SmoothCheckBox">

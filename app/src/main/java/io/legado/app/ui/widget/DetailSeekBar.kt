@@ -14,10 +14,18 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class DetailSeekBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat(context, attrs),
     SeekBar.OnSeekBarChangeListener {
 
-    private var valueFormat: String? = null
-    private var onChanged: ((progress: Int) -> Unit)? = null
-    val progress: Int
+    var valueFormat: ((progress: Int) -> String)? = null
+    var onChanged: ((progress: Int) -> Unit)? = null
+    var progress: Int
         get() = seek_bar.progress
+        set(value) {
+            seek_bar.progress = value
+        }
+    var max: Int
+        get() = seek_bar.max
+        set(value) {
+            seek_bar.max = value
+        }
 
     init {
         gravity = Gravity.CENTER_VERTICAL
@@ -25,6 +33,7 @@ class DetailSeekBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.DetailSeekBar)
         tv_seek_title.text = typedArray.getText(R.styleable.DetailSeekBar_title)
+        seek_bar.max = typedArray.getInteger(R.styleable.DetailSeekBar_max, 0)
         typedArray.recycle()
 
         iv_seek_add.onClick {
@@ -40,7 +49,7 @@ class DetailSeekBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat
 
     private fun upValue(progress: Int = seek_bar.progress) {
         valueFormat?.let {
-            tv_seek_value.text = String.format(it, progress)
+            tv_seek_value.text = it.invoke(progress)
         } ?: let {
             tv_seek_value.text = progress.toString()
         }
