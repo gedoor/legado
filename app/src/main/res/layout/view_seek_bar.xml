@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_seek_title"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="@string/text_letter_spacing" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_seek_remove"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_remove"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:tint="@color/tv_text_default" />
+
+    <io.legado.app.lib.theme.view.ATESeekBar
+        android:id="@+id/seek_bar"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="4"
+        android:max="10" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_seek_add"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_add"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:tint="@color/tv_text_default" />
+
+    <TextView
+        android:id="@+id/tv_seek_value"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        tools:ignore="RtlHardcoded" />
+
+</LinearLayout>
