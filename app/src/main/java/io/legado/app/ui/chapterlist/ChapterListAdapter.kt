@@ -17,7 +17,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ChapterListAdapter(context: Context, val callback: Callback) :
     SimpleRecyclerAdapter<BookChapter>(context, R.layout.item_chapter_list) {
 
-    val cacheFileNames = arrayListOf<String>()
+    val cacheFileNames = hashSetOf<String>()
 
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         with(holder.itemView) {

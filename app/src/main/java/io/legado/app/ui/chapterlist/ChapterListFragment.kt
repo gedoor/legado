@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -16,6 +17,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -78,10 +80,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         }
     }
 
-    override fun observeLiveBus() {
-        super.observeLiveBus()
-    }
-
     private fun initDoc() {
         tocLiveData?.removeObservers(this@ChapterListFragment)
         tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
@@ -96,6 +94,17 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Main) {
                 adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+            }
+        }
+    }
+
+    override fun observeLiveBus() {
+        observeEvent<BookChapter>(EventBus.SAVE_CONTENT) { chapter ->
+            book?.bookUrl?.let { bookUrl ->
+                if (chapter.bookUrl == bookUrl) {
+                    adapter.cacheFileNames.add(BookHelp.formatChapterName(chapter))
+                    adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+                }
             }
         }
     }
