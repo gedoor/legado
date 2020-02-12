@@ -9,11 +9,9 @@ import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
-import com.github.houbb.opencc4j.util.ZhConverterUtil
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
@@ -113,13 +111,7 @@ class ContentView : FrameLayout {
     fun setContent(textPage: TextPage?) {
         if (textPage != null) {
             content_text_view.gravity = Gravity.START
-            content_text_view.text = if ("0" != AppConfig.isChineseConverterEnable) {
-                if ("1" == AppConfig.isChineseConverterEnable)
-                    ZhConverterUtil.toTraditional(textPage.text.toString())
-                else ZhConverterUtil.toSimple(textPage.text.toString())
-            } else {
-                textPage.text
-            }
+            content_text_view.text = textPage.text
             tv_bottom_left.text = textPage.title
             pageSize = textPage.pageSize
             setPageIndex(textPage.index)

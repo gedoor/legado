@@ -6,8 +6,10 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
+import com.github.houbb.opencc4j.util.ZhConverterUtil
 import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.accentColor
 
 
@@ -27,7 +29,7 @@ object ChapterProvider {
             val textPages = arrayListOf<TextPage>()
             val pageLines = arrayListOf<Int>()
             val pageLengths = arrayListOf<Int>()
-            var surplusText = content
+            var surplusText = convertChinese(content)
             var pageIndex = 0
             while (surplusText.isNotEmpty()) {
                 val spannableStringBuilder =
@@ -65,7 +67,7 @@ object ChapterProvider {
                                 lastCharNum,
                                 spannableStringBuilder.length
                             ),
-                            title = bookChapter.title,
+                            title = convertChinese(bookChapter.title),
                             chapterSize = chapterSize,
                             chapterIndex = bookChapter.index
                         )
@@ -101,4 +103,11 @@ object ChapterProvider {
     fun upReadAloudSpan() {
         readAloudSpan = ForegroundColorSpan(App.INSTANCE.accentColor)
     }
+
+    private fun convertChinese(string: String): String =
+        when (AppConfig.isChineseConverterEnable) {
+            "1" -> ZhConverterUtil.toTraditional(string)
+            "2" -> ZhConverterUtil.toSimple(string)
+            else -> string
+        }
 }
