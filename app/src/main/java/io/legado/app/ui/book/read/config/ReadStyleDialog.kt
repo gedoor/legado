@@ -140,16 +140,16 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 }
             }
         }
-        tv_bg0.onClick { changeBg(0) }
-        tv_bg0.onLongClick { showBgTextConfig(0) }
-        tv_bg1.onClick { changeBg(1) }
-        tv_bg1.onLongClick { showBgTextConfig(1) }
-        tv_bg2.onClick { changeBg(2) }
-        tv_bg2.onLongClick { showBgTextConfig(2) }
-        tv_bg3.onClick { changeBg(3) }
-        tv_bg3.onLongClick { showBgTextConfig(3) }
-        tv_bg4.onClick { changeBg(4) }
-        tv_bg4.onLongClick { showBgTextConfig(4) }
+        bg0.onClick { changeBg(0) }
+        bg0.onLongClick { showBgTextConfig(0) }
+        bg1.onClick { changeBg(1) }
+        bg1.onLongClick { showBgTextConfig(1) }
+        bg2.onClick { changeBg(2) }
+        bg2.onLongClick { showBgTextConfig(2) }
+        bg3.onClick { changeBg(3) }
+        bg3.onLongClick { showBgTextConfig(3) }
+        bg4.onClick { changeBg(4) }
+        bg4.onLongClick { showBgTextConfig(4) }
     }
 
     private fun changeBg(index: Int) {
@@ -182,11 +182,11 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun setBg() {
-        tv_bg0.setTextColor(ReadBookConfig.getConfig(0).textColor())
-        tv_bg1.setTextColor(ReadBookConfig.getConfig(1).textColor())
-        tv_bg2.setTextColor(ReadBookConfig.getConfig(2).textColor())
-        tv_bg3.setTextColor(ReadBookConfig.getConfig(3).textColor())
-        tv_bg4.setTextColor(ReadBookConfig.getConfig(4).textColor())
+        bg0.setTextColor(ReadBookConfig.getConfig(0).textColor())
+        bg1.setTextColor(ReadBookConfig.getConfig(1).textColor())
+        bg2.setTextColor(ReadBookConfig.getConfig(2).textColor())
+        bg3.setTextColor(ReadBookConfig.getConfig(3).textColor())
+        bg4.setTextColor(ReadBookConfig.getConfig(4).textColor())
         for (i in 0..4) {
             val iv = when (i) {
                 1 -> bg1

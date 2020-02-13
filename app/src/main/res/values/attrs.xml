@@ -131,6 +131,8 @@
         <attr name="civ_border_color" format="color" />
         <attr name="civ_border_overlay" format="boolean" />
         <attr name="civ_circle_background_color" format="color" />
+        <attr name="text" format="string" />
+        <attr name="textColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="VerticalSeekBar">

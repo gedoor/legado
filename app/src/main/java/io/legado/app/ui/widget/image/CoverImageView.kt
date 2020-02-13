@@ -19,8 +19,22 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     internal var height: Float = 0.toFloat()
     private var nameHeight = 0f
     private var authorHeight = 0f
-    private val namePaint = TextPaint()
-    private val authorPaint = TextPaint()
+    private val namePaint by lazy {
+        val textPaint = TextPaint()
+        textPaint.typeface = Typeface.DEFAULT_BOLD
+        textPaint.isAntiAlias = true
+        textPaint.textAlign = Paint.Align.CENTER
+        textPaint.textSkewX = -0.2f
+        textPaint
+    }
+    private val authorPaint by lazy {
+        val textPaint = TextPaint()
+        textPaint.typeface = Typeface.DEFAULT
+        textPaint.isAntiAlias = true
+        textPaint.textAlign = Paint.Align.CENTER
+        textPaint.textSkewX = -0.1f
+        textPaint
+    }
     private var name: String? = null
     private var author: String? = null
     private var loadFailed = false
@@ -34,17 +48,6 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         attrs,
         defStyleAttr
     )
-
-    init {
-        namePaint.typeface = Typeface.DEFAULT_BOLD
-        namePaint.isAntiAlias = true
-        namePaint.textAlign = Paint.Align.CENTER
-        namePaint.textSkewX = -0.2f
-        authorPaint.typeface = Typeface.DEFAULT
-        authorPaint.isAntiAlias = true
-        authorPaint.textAlign = Paint.Align.CENTER
-        authorPaint.textSkewX = -0.1f
-    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -63,8 +66,9 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
         namePaint.strokeWidth = namePaint.textSize / 10
         authorPaint.textSize = width / 9
         authorPaint.strokeWidth = authorPaint.textSize / 10
-        nameHeight = height / 2
-        authorHeight = nameHeight + authorPaint.fontSpacing
+        val fm = namePaint.fontMetrics
+        nameHeight = height * 0.5f + (fm.bottom - fm.top) * 0.5f
+        authorHeight = nameHeight + (fm.bottom - fm.top) * 0.6f
     }
 
     override fun onDraw(canvas: Canvas) {
