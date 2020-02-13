@@ -70,10 +70,10 @@ class App : Application() {
         if (AppConfig.isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
+                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
                 )
                 .accentColor(
-                    getPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
+                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_brown_800))
                 )
                 .backgroundColor(
                     getPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
@@ -82,10 +82,10 @@ class App : Application() {
         } else {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
+                    getPrefInt("colorPrimary", getCompatColor(R.color.md_indigo_800))
                 )
                 .accentColor(
-                    getPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
+                    getPrefInt("colorAccent", getCompatColor(R.color.md_red_600))
                 )
                 .backgroundColor(
                     getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
