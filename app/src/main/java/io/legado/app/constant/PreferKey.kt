@@ -32,4 +32,5 @@ object PreferKey {
     const val webDavPassword = "web_dav_password"
     const val changeSourceLoadToc = "changeSourceLoadToc"
     const val chineseConverterType = "chineseConverterType"
+    const val launcherIcon = "launcherIcon"
 }

@@ -13,8 +13,8 @@ interface BookGroupDao {
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun liveDataAll(): LiveData<List<BookGroup>>
 
-    @get:Query("SELECT count(groupId) FROM book_groups")
-    val idsCount: Int
+    @get:Query("SELECT sum(groupId) FROM book_groups")
+    val idsSum: Int
 
     @get:Query("SELECT MAX(`order`) FROM book_groups")
     val maxOrder: Int

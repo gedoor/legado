@@ -162,7 +162,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             holder.itemView.apply {
                 cb_group.text = item.groupName
-                cb_group.isChecked = (groupId or item.groupId) > 0
+                cb_group.isChecked = (groupId and item.groupId) > 0
                 cb_group.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         groupId = if (isChecked) {

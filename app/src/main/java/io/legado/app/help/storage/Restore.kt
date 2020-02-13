@@ -10,6 +10,7 @@ import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
+import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -106,6 +107,7 @@ object Restore {
                 edit.commit()
             }
         }
+        LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
     }
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
