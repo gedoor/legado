@@ -42,9 +42,12 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            tv_name.text = item.name
-            tv_author.text = context.getString(R.string.author_show, item.author)
-            tv_group.text = getGroupName(item.group)
+            tv_name.text = if (item.author.isEmpty()) {
+                item.name
+            } else {
+                "${item.name}(${item.author})"
+            }
+            tv_author.text = getGroupName(item.group)
             checkbox.isChecked = selectedBooks.contains(item)
             checkbox.onClick {
                 if (checkbox.isChecked) {
@@ -74,12 +77,16 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     }
 
     private fun getGroupName(groupId: Int): String {
+        val groupNames = arrayListOf<String>()
         callBack.groupList.forEach {
-            if (it.groupId == groupId) {
-                return it.groupName
+            if (it.groupId and groupId > 0) {
+                groupNames.add(it.groupName)
             }
         }
-        return context.getString(R.string.group)
+        if (groupNames.isEmpty()) {
+            return context.getString(R.string.no_group)
+        }
+        return groupNames.joinToString(",")
     }
 
     interface CallBack {
