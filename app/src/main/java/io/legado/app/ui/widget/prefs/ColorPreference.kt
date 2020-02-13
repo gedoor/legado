@@ -417,14 +417,6 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
                 return dialog
             }
 
-            /**
-             * Create and show the [ColorPickerDialog] created with this builder.
-             *
-             * @param activity The current activity.
-             */
-            fun show(activity: FragmentActivity) {
-                create().show(activity.supportFragmentManager, "color-picker-dialog")
-            }
         }
 
     }

@@ -60,8 +60,9 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onClick() {
         getActivity()?.let {
-            IconDialog().apply {
+            val dialog = IconDialog().apply {
                 val args = Bundle()
+                args.putString("value", value)
                 args.putCharSequenceArray("entries", entries)
                 args.putCharSequenceArray("entryValues", entryValues)
                 args.putCharSequenceArray("iconNames", iconNames)
@@ -69,7 +70,11 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 onChanged = { value ->
                     this@IconListPreference.value = value
                 }
-            }.show(it.supportFragmentManager, "iconDialog")
+            }
+            it.supportFragmentManager
+                .beginTransaction()
+                .add(dialog, getFragmentTag())
+                .commitAllowingStateLoss()
         }
     }
 
@@ -86,10 +91,14 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         return null
     }
 
+    fun getFragmentTag(): String {
+        return "icon_$key"
+    }
 
     class IconDialog : DialogFragment() {
 
         var onChanged: ((value: String) -> Unit)? = null
+        var dialogValue: String? = null
         var dialogEntries: Array<CharSequence>? = null
         var dialogEntryValues: Array<CharSequence>? = null
         var dialogIconNames: Array<CharSequence>? = null
@@ -119,6 +128,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
             val adapter = Adapter(requireContext())
             recycler_view.adapter = adapter
             arguments?.let {
+                dialogValue = it.getString("value")
                 dialogEntries = it.getCharSequenceArray("entries")
                 dialogEntryValues = it.getCharSequenceArray("entryValues")
                 dialogIconNames = it.getCharSequenceArray("iconNames")
@@ -148,6 +158,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                         val d = context.getCompatDrawable(resId)
                         icon.setImageDrawable(d)
                     }
+                    label.isChecked = item.toString() == dialogValue
                     onClick {
                         onChanged?.invoke(item.toString())
                         this@IconDialog.dismiss()
