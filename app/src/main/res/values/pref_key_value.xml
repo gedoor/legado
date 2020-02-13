@@ -13,11 +13,6 @@
     <string name="pk_download_path">downloadPath</string>
     <string name="pk_check_update">checkUpdate</string>
 
-    <string name="icon_main">ic_launcher</string>
-    <string name="icon_1">ic_launcher_1</string>
-
-    <string name="pv_user_agent">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.2357.134 Safari/537.36</string>
-
     <string name="source_rule_url">https://gitee.com/alanskycn/yuedu/blob/master/Rule/README.md</string>
     <string name="this_github_url">https://github.com/gedoor/legado</string>
     <string name="contributors_url">https://github.com/gedoor/legado/graphs/contributors</string>
