@@ -2,16 +2,15 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.SeekBar
-import androidx.appcompat.widget.LinearLayoutCompat
 import io.legado.app.R
 import io.legado.app.utils.progressAdd
 import kotlinx.android.synthetic.main.view_detail_seek_bar.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class DetailSeekBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat(context, attrs),
+class DetailSeekBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs),
     SeekBar.OnSeekBarChangeListener {
 
     var valueFormat: ((progress: Int) -> String)? = null
@@ -28,7 +27,6 @@ class DetailSeekBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat
         }
 
     init {
-        gravity = Gravity.CENTER_VERTICAL
         View.inflate(context, R.layout.view_detail_seek_bar, this)
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.DetailSeekBar)

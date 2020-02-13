@@ -7,7 +7,7 @@ import androidx.preference.PreferenceViewHolder
 import androidx.preference.SwitchPreferenceCompat
 import io.legado.app.R
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
 
 class ATESwitchPreference(context: Context, attrs: AttributeSet) :
     SwitchPreferenceCompat(context, attrs) {
@@ -17,7 +17,7 @@ class ATESwitchPreference(context: Context, attrs: AttributeSet) :
         holder?.let {
             val view = it.findViewById(R.id.switchWidget)
             if (view is SwitchCompat) {
-                ATH.setTint(view, ThemeStore.accentColor(view.getContext()))
+                ATH.setTint(view, context.accentColor)
             }
         }
     }

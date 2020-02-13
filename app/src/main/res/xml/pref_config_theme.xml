@@ -2,6 +2,15 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <io.legado.app.ui.widget.prefs.IconListPreference
+        android:defaultValue="icon_main"
+        android:key="launcherIcon"
+        android:title="@string/change_icon"
+        android:entryValues="@array/icons"
+        android:entries="@array/icon_names"
+        app:icons="@array/icons"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
         android:defaultValue="true"
         android:key="transparentStatusBar"

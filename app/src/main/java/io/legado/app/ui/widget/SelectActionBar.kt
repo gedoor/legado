@@ -2,27 +2,23 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.Menu
 import android.view.View
+import android.widget.FrameLayout
 import androidx.annotation.MenuRes
 import androidx.annotation.StringRes
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
-import io.legado.app.utils.dp
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_select_action_bar.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class SelectActionBar(context: Context, attrs: AttributeSet?) : LinearLayoutCompat(context, attrs) {
+class SelectActionBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private var callBack: CallBack? = null
     private var selMenu: PopupMenu? = null
 
     init {
         setBackgroundResource(R.color.background_menu)
-        setPadding(16.dp, 6.dp, 16.dp, 6.dp)
-        gravity = Gravity.CENTER_VERTICAL
         View.inflate(context, R.layout.view_select_action_bar, this)
         cb_selected_all.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
