@@ -237,7 +237,9 @@ class BookInfoActivity :
             }
         }
         tv_group.onClick {
-            GroupSelectDialog.show(supportFragmentManager)
+            viewModel.bookData.value?.let {
+                GroupSelectDialog.show(supportFragmentManager, it.group)
+            }
         }
     }
 

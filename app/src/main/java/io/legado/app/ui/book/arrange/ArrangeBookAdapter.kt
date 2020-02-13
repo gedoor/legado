@@ -68,7 +68,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
             }
             tv_group.onClick {
                 actionItem = item
-                callBack.selectGroup(groupRequestCode)
+                callBack.selectGroup(item.group, groupRequestCode)
             }
         }
     }
@@ -86,6 +86,6 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         val groupList: List<BookGroup>
         fun upSelectCount()
         fun deleteBook(book: Book)
-        fun selectGroup(requestCode: Int)
+        fun selectGroup(groupId: Int, requestCode: Int)
     }
 }

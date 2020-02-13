@@ -76,7 +76,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             }
 
             override fun onClickMainAction() {
-                selectGroup(groupRequestCode)
+                selectGroup(0, groupRequestCode)
             }
         })
     }
@@ -158,8 +158,8 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         }
     }
 
-    override fun selectGroup(requestCode: Int) {
-        GroupSelectDialog.show(supportFragmentManager, requestCode)
+    override fun selectGroup(groupId: Int, requestCode: Int) {
+        GroupSelectDialog.show(supportFragmentManager, groupId, requestCode)
     }
 
     override fun upGroup(requestCode: Int, group: BookGroup) {
