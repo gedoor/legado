@@ -181,7 +181,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         private var isMoved = false
 
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
-            with(holder.itemView) {
+            holder.itemView.apply {
                 tv_group.text = item.groupName
                 tv_edit.onClick { editGroup(item) }
                 tv_del.onClick { viewModel.delGroup(item) }

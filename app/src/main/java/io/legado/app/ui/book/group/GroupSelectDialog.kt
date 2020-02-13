@@ -42,9 +42,10 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     companion object {
         const val tag = "groupSelectDialog"
 
-        fun show(manager: FragmentManager, requestCode: Int = -1) {
+        fun show(manager: FragmentManager, groupId: Int, requestCode: Int = -1) {
             val fragment = GroupSelectDialog().apply {
                 val bundle = Bundle()
+                bundle.putInt("groupId", groupId)
                 bundle.putInt("requestCode", requestCode)
                 arguments = bundle
             }
@@ -56,6 +57,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
     private var callBack: CallBack? = null
+    private var groupId = 0
 
     override fun onStart() {
         super.onStart()
@@ -76,8 +78,9 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         callBack = activity as? CallBack
-        arguments?.getInt("requestCode")?.let {
-            requestCode = it
+        arguments?.let {
+            groupId = it.getInt("groupId")
+            requestCode = it.getInt("requestCode", -1)
         }
         initData()
     }
@@ -157,13 +160,19 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         private var isMoved: Boolean = false
 
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
-            with(holder.itemView) {
+            holder.itemView.apply {
                 cb_group.text = item.groupName
-                tv_edit.onClick { editGroup(item) }
-                this.onClick {
-                    callBack?.upGroup(requestCode, item)
-                    dismiss()
+                cb_group.isChecked = (groupId or item.groupId) > 0
+                cb_group.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (buttonView.isPressed) {
+                        groupId = if (isChecked) {
+                            groupId + item.groupId
+                        } else {
+                            groupId - item.groupId
+                        }
+                    }
                 }
+                tv_edit.onClick { editGroup(item) }
             }
         }
 
