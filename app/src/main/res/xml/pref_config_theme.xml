@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <io.legado.app.ui.widget.prefs.IconListPreference
-        android:defaultValue="icon_main"
+        android:defaultValue="ic_launcher"
         android:key="launcherIcon"
         android:title="@string/change_icon"
         android:summary="@string/change_icon_summary"
