@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Build
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.ui.welcome.Launcher1
 import io.legado.app.ui.welcome.WelcomeActivity
 import org.jetbrains.anko.toast
@@ -21,7 +22,7 @@ object LauncherIconHelp {
     fun changeIcon(icon: String?) {
         if (icon.isNullOrEmpty()) return
         if (Build.VERSION.SDK_INT < 26) {
-            App.INSTANCE.toast("图标为矢量图标,Android8.0一下不支持")
+            App.INSTANCE.toast(R.string.chage_icon_error)
             return
         }
         var hasEnabled = false
