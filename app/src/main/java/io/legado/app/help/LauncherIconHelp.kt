@@ -43,7 +43,13 @@ object LauncherIconHelp {
                 )
             }
         }
-        if (!hasEnabled) {
+        if (hasEnabled) {
+            packageManager.setComponentEnabledSetting(
+                ComponentName(App.INSTANCE, WelcomeActivity::class.java.name),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+        } else {
             packageManager.setComponentEnabledSetting(
                 ComponentName(App.INSTANCE, WelcomeActivity::class.java.name),
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
