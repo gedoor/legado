@@ -119,9 +119,9 @@ class IconDialog : DialogFragment() {
         val adapter = Adapter(requireContext())
         recycler_view.adapter = adapter
         arguments?.let {
-            entries = it.getCharSequenceArray("entries")!!
-            entryValues = it.getCharSequenceArray("entryValues")!!
-            iconNames = it.getCharSequenceArray("iconNames")!!
+            entries = it.getCharSequenceArray("entries")
+            entryValues = it.getCharSequenceArray("entryValues")
+            iconNames = it.getCharSequenceArray("iconNames")
             entryValues?.let { values ->
                 adapter.setItems(values.toList())
             }
