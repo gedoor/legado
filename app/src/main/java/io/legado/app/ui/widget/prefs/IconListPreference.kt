@@ -51,7 +51,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         super.onBindViewHolder(holder)
         holder?.itemView?.findViewById<ImageView>(R.id.preview)?.let {
             val selectedIndex = findIndexOfValue(value)
-            if (selectedIndex > 0) {
+            if (selectedIndex >= 0) {
                 val drawable = mEntryDrawables[selectedIndex]
                 it.setImageDrawable(drawable)
             }
