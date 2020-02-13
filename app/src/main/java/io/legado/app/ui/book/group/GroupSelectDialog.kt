@@ -108,6 +108,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.onClick {
             callBack?.upGroup(requestCode, groupId)
+            dismiss()
         }
     }
 
