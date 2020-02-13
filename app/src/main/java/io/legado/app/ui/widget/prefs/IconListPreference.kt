@@ -78,6 +78,15 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         }
     }
 
+    override fun onAttached() {
+        super.onAttached()
+        val fragment =
+            getActivity()?.supportFragmentManager?.findFragmentByTag(getFragmentTag()) as IconDialog?
+        fragment?.onChanged = { value ->
+            this@IconListPreference.value = value
+        }
+    }
+
     private fun getActivity(): FragmentActivity? {
         val context = context
         if (context is FragmentActivity) {
@@ -91,7 +100,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         return null
     }
 
-    fun getFragmentTag(): String {
+    private fun getFragmentTag(): String {
         return "icon_$key"
     }
 
