@@ -11,6 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
+import io.legado.app.help.LauncherIconHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
@@ -26,7 +27,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
 
-        findPreference<Preference>("defaultTheme")?.summary = "${items[getPrefInt("default_theme", 0)]}"
+        findPreference<Preference>("defaultTheme")?.summary = items[getPrefInt("default_theme", 0)]
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,6 +48,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
+            "launcherIcon" -> LauncherIconHelp.changeIcon(getPrefString(key))
             "transparentStatusBar" -> {
                 recreateActivities()
             }

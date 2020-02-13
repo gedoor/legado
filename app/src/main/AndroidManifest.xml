@@ -38,8 +38,8 @@
         </activity>
         <!--图标1-->
         <activity
-            android:name=".ui.welcome.Icon1Activity"
-            android:icon="@mipmap/ic_launcher_1"
+            android:name=".ui.welcome.Launcher1"
+            android:icon="@mipmap/launcher1"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

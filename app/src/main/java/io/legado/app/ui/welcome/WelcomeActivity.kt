@@ -48,4 +48,4 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
 }
 
-class Icon1Activity : WelcomeActivity()
+class Launcher1 : WelcomeActivity()
