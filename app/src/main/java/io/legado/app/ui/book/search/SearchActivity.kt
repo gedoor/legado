@@ -50,6 +50,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = hashSetOf<String>()
+    private var refreshTime = System.currentTimeMillis()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -263,6 +264,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
 
     @Synchronized
     private fun setSearchItems(items: List<SearchBook>) {
+        if (System.currentTimeMillis() - refreshTime < 1000) {
+            return
+        }
+        refreshTime = System.currentTimeMillis()
         val diffResult = DiffUtil.calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), items))
         adapter.setItems(items, false)
         diffResult.dispatchUpdatesTo(adapter)
