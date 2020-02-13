@@ -33,7 +33,7 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_group_manage.view.*
+import kotlinx.android.synthetic.main.item_group_select.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
@@ -151,16 +151,15 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private inner class GroupAdapter(context: Context) :
-        SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage),
+        SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_select),
         ItemTouchCallback.OnItemTouchCallbackListener {
 
         private var isMoved: Boolean = false
 
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             with(holder.itemView) {
-                tv_group.text = item.groupName
+                cb_group.text = item.groupName
                 tv_edit.onClick { editGroup(item) }
-                tv_del.onClick { viewModel.delGroup(item) }
                 this.onClick {
                     callBack?.upGroup(requestCode, item)
                     dismiss()
