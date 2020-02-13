@@ -26,7 +26,7 @@ object LauncherIconHelp {
         }
         var hasEnabled = false
         componentNames.forEach {
-            if (it.className.equals(icon, true)) {
+            if (icon.equals(it.className.substringAfterLast("."), true)) {
                 hasEnabled = true
                 //启用
                 packageManager.setComponentEnabledSetting(
