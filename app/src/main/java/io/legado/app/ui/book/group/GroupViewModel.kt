@@ -9,8 +9,13 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
 
     fun addGroup(groupName: String) {
         execute {
+            var id = 1
+            val idsCount = App.db.bookGroupDao().idsCount
+            while (id and idsCount != 0) {
+                id *= 2
+            }
             val bookGroup = BookGroup(
-                groupId = App.db.bookGroupDao().maxId.plus(1),
+                groupId = id,
                 groupName = groupName,
                 order = App.db.bookGroupDao().maxOrder.plus(1)
             )
