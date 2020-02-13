@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
@@ -18,16 +17,16 @@ import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.utils.*
+import org.jetbrains.anko.defaultSharedPreferences
 
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    val items = arrayOf("极简", "曜夜", "经典", "黑白", "A屏黑")
+    val items = arrayListOf("极简", "曜夜", "经典", "黑白", "A屏黑")
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
-
-        findPreference<Preference>("defaultTheme")?.summary = items[getPrefInt("default_theme", 0)]
+        onSharedPreferenceChanged(requireContext().defaultSharedPreferences, "defaultTheme")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,64 +93,57 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                     upTheme(true)
                 }
             }
+            "defaultTheme" -> findPreference<Preference>(key)?.summary = items[getPrefInt(key)]
         }
 
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "defaultTheme" -> {
-                activity?.let {
-                    AlertDialog.Builder(it)
-                        .setTitle("切换默认主题")
-                        .setItems(items){
-                                _,which ->
-                            preference.summary = items[which]
-                            putPrefInt("default_theme", which)
-                            when (which) {
-                                0 -> {
-                                    putPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
-                                    putPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
-                                    putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                                    AppConfig.isNightTheme = false
-                                }
-                                1 -> {
-                                    putPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
-                                    putPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
-                                    putPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
-                                    AppConfig.isNightTheme = true
-                                }
-                                2 -> {
-                                    putPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
-                                    putPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
-                                    putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                                    AppConfig.isNightTheme = false
-                                }
-                                3 -> {
-                                    putPrefInt("colorPrimary", getCompatColor(R.color.white))
-                                    putPrefInt("colorAccent", getCompatColor(R.color.black))
-                                    putPrefInt("colorBackground", getCompatColor(R.color.white))
-                                    AppConfig.isNightTheme = false
-                                }
-                                4 -> {
-                                    putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
-                                    putPrefInt(
-                                        "colorAccentNight",
-                                        getCompatColor(R.color.md_grey_600)
-                                    )
-                                    putPrefInt(
-                                        "colorBackgroundNight",
-                                        getCompatColor(R.color.black)
-                                    )
-                                    AppConfig.isNightTheme = true
-                                }
-                            }
-                            App.INSTANCE.applyDayNight()
-                            recreateActivities()
+            "defaultTheme" -> alert(title = "切换默认主题") {
+                items(items) { _, which ->
+                    when (which) {
+                        0 -> {
+                            putPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
+                            putPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
+                            putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
+                            AppConfig.isNightTheme = false
                         }
-                        .show().applyTint()
+                        1 -> {
+                            putPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
+                            putPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
+                            putPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
+                            AppConfig.isNightTheme = true
+                        }
+                        2 -> {
+                            putPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
+                            putPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
+                            putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
+                            AppConfig.isNightTheme = false
+                        }
+                        3 -> {
+                            putPrefInt("colorPrimary", getCompatColor(R.color.white))
+                            putPrefInt("colorAccent", getCompatColor(R.color.black))
+                            putPrefInt("colorBackground", getCompatColor(R.color.white))
+                            AppConfig.isNightTheme = false
+                        }
+                        4 -> {
+                            putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
+                            putPrefInt(
+                                "colorAccentNight",
+                                getCompatColor(R.color.md_grey_600)
+                            )
+                            putPrefInt(
+                                "colorBackgroundNight",
+                                getCompatColor(R.color.black)
+                            )
+                            AppConfig.isNightTheme = true
+                        }
+                    }
+                    App.INSTANCE.applyDayNight()
+                    recreateActivities()
                 }
-            }
+            }.show().applyTint()
         }
         return super.onPreferenceTreeClick(preference)
     }
