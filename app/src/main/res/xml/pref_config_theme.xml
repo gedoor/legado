@@ -6,6 +6,7 @@
         android:defaultValue="icon_main"
         android:key="launcherIcon"
         android:title="@string/change_icon"
+        android:summary="@string/change_icon_summary"
         android:entryValues="@array/icons"
         android:entries="@array/icon_names"
         app:icons="@array/icons"

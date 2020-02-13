@@ -85,84 +85,86 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         }
         return null
     }
-}
 
-class IconDialog : DialogFragment() {
 
-    var onChanged: ((value: String) -> Unit)? = null
-    var entries: Array<CharSequence>? = null
-    var entryValues: Array<CharSequence>? = null
-    var iconNames: Array<CharSequence>? = null
+    class IconDialog : DialogFragment() {
 
-    override fun onStart() {
-        super.onStart()
-        val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
-        dialog?.window?.setLayout(
-            (dm.widthPixels * 0.9).toInt(),
-            (dm.heightPixels * 0.9).toInt()
-        )
-    }
+        var onChanged: ((value: String) -> Unit)? = null
+        var dialogEntries: Array<CharSequence>? = null
+        var dialogEntryValues: Array<CharSequence>? = null
+        var dialogIconNames: Array<CharSequence>? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_recycler_view, container)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        tool_bar.setTitle(R.string.change_icon)
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = Adapter(requireContext())
-        recycler_view.adapter = adapter
-        arguments?.let {
-            entries = it.getCharSequenceArray("entries")
-            entryValues = it.getCharSequenceArray("entryValues")
-            iconNames = it.getCharSequenceArray("iconNames")
-            entryValues?.let { values ->
-                adapter.setItems(values.toList())
-            }
+        override fun onStart() {
+            super.onStart()
+            val dm = DisplayMetrics()
+            activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+            dialog?.window?.setLayout(
+                (dm.widthPixels * 0.8).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
         }
-    }
 
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
+            return inflater.inflate(R.layout.dialog_recycler_view, container)
+        }
 
-    inner class Adapter(context: Context) :
-        SimpleRecyclerAdapter<CharSequence>(context, R.layout.item_icon_preference) {
-
-        override fun convert(
-            holder: ItemViewHolder,
-            item: CharSequence,
-            payloads: MutableList<Any>
-        ) {
-            with(holder.itemView) {
-                val index = findIndexOfValue(item.toString())
-                entries?.let {
-                    label.text = it[index]
-                }
-                iconNames?.let {
-                    val resId = context.resources
-                        .getIdentifier(it[index].toString(), "mipmap", context.packageName)
-                    val d = context.getCompatDrawable(resId)
-                    icon.setImageDrawable(d)
-                }
-                onClick {
-                    onChanged?.invoke(item.toString())
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            tool_bar.setTitle(R.string.change_icon)
+            recycler_view.layoutManager = LinearLayoutManager(requireContext())
+            val adapter = Adapter(requireContext())
+            recycler_view.adapter = adapter
+            arguments?.let {
+                dialogEntries = it.getCharSequenceArray("entries")
+                dialogEntryValues = it.getCharSequenceArray("entryValues")
+                dialogIconNames = it.getCharSequenceArray("iconNames")
+                dialogEntryValues?.let { values ->
+                    adapter.setItems(values.toList())
                 }
             }
         }
 
-        private fun findIndexOfValue(value: String?): Int {
-            entryValues?.let { values ->
-                for (i in values.indices.reversed()) {
-                    if (values[i] == value) {
-                        return i
+
+        inner class Adapter(context: Context) :
+            SimpleRecyclerAdapter<CharSequence>(context, R.layout.item_icon_preference) {
+
+            override fun convert(
+                holder: ItemViewHolder,
+                item: CharSequence,
+                payloads: MutableList<Any>
+            ) {
+                with(holder.itemView) {
+                    val index = findIndexOfValue(item.toString())
+                    dialogEntries?.let {
+                        label.text = it[index]
+                    }
+                    dialogIconNames?.let {
+                        val resId = context.resources
+                            .getIdentifier(it[index].toString(), "mipmap", context.packageName)
+                        val d = context.getCompatDrawable(resId)
+                        icon.setImageDrawable(d)
+                    }
+                    onClick {
+                        onChanged?.invoke(item.toString())
+                        this@IconDialog.dismiss()
                     }
                 }
             }
-            return -1
+
+            private fun findIndexOfValue(value: String?): Int {
+                dialogEntryValues?.let { values ->
+                    for (i in values.indices.reversed()) {
+                        if (values[i] == value) {
+                            return i
+                        }
+                    }
+                }
+                return -1
+            }
         }
     }
 }
