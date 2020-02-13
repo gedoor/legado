@@ -12,7 +12,7 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
             var id = 1
             val idsSum = App.db.bookGroupDao().idsSum
             while (id and idsSum != 0) {
-                id *= 2
+                id = id.shl(1)
             }
             val bookGroup = BookGroup(
                 groupId = id,
