@@ -17,7 +17,6 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
@@ -57,13 +56,6 @@ class BookInfoActivity :
         tv_intro.movementMethod = ScrollingMovementMethod.getInstance()
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
-        viewModel.groupData.observe(this, Observer {
-            if (it == null) {
-                tv_group.text = getString(R.string.group_s, getString(R.string.no_group))
-            } else {
-                tv_group.text = getString(R.string.group_s, it.groupName)
-            }
-        })
         viewModel.initData(intent)
         initOnClick()
     }
@@ -147,6 +139,7 @@ class BookInfoActivity :
                 }
             }
         }
+        upGroup(book.group)
     }
 
     private fun showCover(book: Book) {
@@ -190,6 +183,16 @@ class BookInfoActivity :
             tv_shelf.text = getString(R.string.remove_from_bookshelf)
         } else {
             tv_shelf.text = getString(R.string.add_to_shelf)
+        }
+    }
+
+    private fun upGroup(groupId: Int) {
+        viewModel.loadGroup(groupId) {
+            if (it.isNullOrEmpty()) {
+                tv_group.text = getString(R.string.group_s, getString(R.string.no_group))
+            } else {
+                tv_group.text = getString(R.string.group_s, it)
+            }
         }
     }
 
@@ -314,9 +317,9 @@ class BookInfoActivity :
         return viewModel.durChapterIndex
     }
 
-    override fun upGroup(requestCode: Int, group: BookGroup) {
-        viewModel.groupData.postValue(group)
-        viewModel.bookData.value?.group = group.groupId
+    override fun upGroup(requestCode: Int, groupId: Int) {
+        upGroup(groupId)
+        viewModel.bookData.value?.group = groupId
         if (viewModel.inBookshelf) {
             viewModel.saveBook()
         }

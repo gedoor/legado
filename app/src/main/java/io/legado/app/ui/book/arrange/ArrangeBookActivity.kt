@@ -162,18 +162,18 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         GroupSelectDialog.show(supportFragmentManager, groupId, requestCode)
     }
 
-    override fun upGroup(requestCode: Int, group: BookGroup) {
+    override fun upGroup(requestCode: Int, groupId: Int) {
         when (requestCode) {
             groupRequestCode -> {
                 val books = arrayListOf<Book>()
                 adapter.selectedBooks.forEach {
-                    books.add(it.copy(group = group.groupId))
+                    books.add(it.copy(group = groupId))
                 }
                 viewModel.updateBook(*books.toTypedArray())
             }
             adapter.groupRequestCode -> {
                 adapter.actionItem?.let {
-                    viewModel.updateBook(it.copy(group = group.groupId))
+                    viewModel.updateBook(it.copy(group = groupId))
                 }
             }
         }

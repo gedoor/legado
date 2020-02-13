@@ -8,7 +8,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.model.localBook.AnalyzeTxtFile
@@ -19,13 +18,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val chapterListData = MutableLiveData<List<BookChapter>>()
     var durChapterIndex = 0
     var inBookshelf = false
-    var groupData = MutableLiveData<BookGroup>()
 
     fun initData(intent: Intent) {
         execute {
             intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
-                    groupData.postValue(App.db.bookGroupDao().getByID(book.group))
                     inBookshelf = true
                     setBook(book)
                 } ?: App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
@@ -118,6 +115,20 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     toast(R.string.error_no_source)
                 }
             }
+        }
+    }
+
+    fun loadGroup(groupId: Int, success: ((groupNames: String?) -> Unit)) {
+        execute {
+            val groupNames = arrayListOf<String>()
+            App.db.bookGroupDao().all.forEach {
+                if (groupId and it.groupId > 0) {
+                    groupNames.add(it.groupName)
+                }
+            }
+            groupNames.joinToString(",")
+        }.onSuccess {
+            success.invoke(it)
         }
     }
 

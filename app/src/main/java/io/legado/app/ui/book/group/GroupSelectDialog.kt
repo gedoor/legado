@@ -27,12 +27,15 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
+import kotlinx.android.synthetic.main.dialog_book_group_picker.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_recycler_view.*
+import kotlinx.android.synthetic.main.dialog_recycler_view.recycler_view
+import kotlinx.android.synthetic.main.dialog_recycler_view.tool_bar
 import kotlinx.android.synthetic.main.item_group_select.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
@@ -72,7 +75,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = getViewModel(GroupViewModel::class.java)
-        return inflater.inflate(R.layout.dialog_recycler_view, container)
+        return inflater.inflate(R.layout.dialog_book_group_picker, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,10 +85,11 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             groupId = it.getInt("groupId")
             requestCode = it.getInt("requestCode", -1)
         }
+        initView()
         initData()
     }
 
-    private fun initData() {
+    private fun initView() {
         tool_bar.title = getString(R.string.group_select)
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
@@ -96,13 +100,21 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
         recycler_view.adapter = adapter
-        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
-            adapter.setItems(it)
-        })
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
+        tv_cancel.onClick { dismiss() }
+        tv_ok.setTextColor(requireContext().accentColor)
+        tv_ok.onClick {
+            callBack?.upGroup(requestCode, groupId)
+        }
+    }
+
+    private fun initData() {
+        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
+            adapter.setItems(it)
+        })
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -195,6 +207,6 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     interface CallBack {
-        fun upGroup(requestCode: Int, group: BookGroup)
+        fun upGroup(requestCode: Int, groupId: Int)
     }
 }
