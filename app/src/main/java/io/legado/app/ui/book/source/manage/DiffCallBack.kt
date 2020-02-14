@@ -32,7 +32,9 @@ class DiffCallBack(
             return false
         if (oldItem.enabled != newItem.enabled)
             return false
-        if (oldItem.showExplore() != newItem.showExplore()) {
+        if (oldItem.enabledExplore != newItem.enabledExplore
+            || oldItem.exploreUrl != newItem.exploreUrl
+        ) {
             return false
         }
         return true
@@ -51,8 +53,10 @@ class DiffCallBack(
         if (oldItem.enabled != newItem.enabled) {
             payload.putBoolean("enabled", newItem.enabled)
         }
-        if (oldItem.showExplore() != newItem.showExplore()) {
-            payload.putBoolean("showExplore", newItem.enabledExplore)
+        if (oldItem.enabledExplore != newItem.enabledExplore
+            || oldItem.exploreUrl != newItem.exploreUrl
+        ) {
+            payload.putBoolean("showExplore", true)
         }
         if (payload.isEmpty) {
             return null

@@ -1,7 +1,9 @@
 package io.legado.app.ui.book.source.manage
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +13,7 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -98,14 +101,14 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                             R.id.menu_enable_explore -> {
                                 item.enabledExplore = !item.enabledExplore
                                 callBack.update(item)
-                                iv_explore.visible(item.showExplore())
+                                upShowExplore(iv_explore, item)
                             }
                         }
                         true
                     }
                     popupMenu.show()
                 }
-                iv_explore.visible(item.showExplore())
+                upShowExplore(iv_explore, item)
             } else {
                 payload.keySet().map {
                     when (it) {
@@ -117,9 +120,25 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                                 String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
                         }
                         "enabled" -> swt_enabled.isChecked = payload.getBoolean(it)
-                        "showExplore" -> iv_explore.visible(payload.getBoolean(it))
+                        "showExplore" -> upShowExplore(iv_explore, item)
                     }
                 }
+            }
+        }
+    }
+
+    private fun upShowExplore(iv: ImageView, source: BookSource) {
+        when {
+            source.exploreUrl.isNullOrEmpty() -> {
+                iv.invisible()
+            }
+            source.enabledExplore -> {
+                iv.setColorFilter(Color.GREEN)
+                iv.visible()
+            }
+            else -> {
+                iv.setColorFilter(Color.RED)
+                iv.visible()
             }
         }
     }
