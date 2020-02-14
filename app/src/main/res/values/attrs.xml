@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <attr name="radius" format="dimension" />
+
     <declare-styleable name="TitleBar">
         <attr name="title"/>
         <attr name="subtitle"/>
@@ -102,7 +104,7 @@
     </declare-styleable>
 
     <declare-styleable name="FilletImageView">
-        <attr name="radius" format="dimension"/>
+        <attr name="radius" />
         <attr name="left_top_radius" format="dimension"/>
         <attr name="right_top_radius" format="dimension"/>
         <attr name="right_bottom_radius" format="dimension"/>
@@ -145,11 +147,11 @@
     </declare-styleable>
 
     <declare-styleable name="AccentBgTextView">
-        <attr name="bg_radius" format="dimension" />
+        <attr name="radius" />
     </declare-styleable>
 
     <declare-styleable name="BadgeView">
-        <attr name="bv_radius" format="dimension" />
+        <attr name="radius" />
         <attr name="up_flat_angle" format="boolean" />
     </declare-styleable>
 </resources>

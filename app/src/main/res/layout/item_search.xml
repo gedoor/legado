@@ -74,7 +74,7 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textSize="12sp"
-                app:bg_radius="2dp" />
+                app:radius="2dp" />
 
             <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_kind_1"
@@ -86,7 +86,7 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textSize="12sp"
-                app:bg_radius="2dp" />
+                app:radius="2dp" />
 
             <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_kind_2"
@@ -98,7 +98,7 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textSize="12sp"
-                app:bg_radius="2dp" />
+                app:radius="2dp" />
 
         </LinearLayout>
 

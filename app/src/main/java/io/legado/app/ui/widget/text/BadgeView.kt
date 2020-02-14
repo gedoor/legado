@@ -77,7 +77,7 @@ class BadgeView @JvmOverloads constructor(
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BadgeView)
         val radios =
-            typedArray.getDimensionPixelOffset(R.styleable.BadgeView_bv_radius, 8)
+            typedArray.getDimensionPixelOffset(R.styleable.BadgeView_radius, 8)
         flatangle =
             typedArray.getBoolean(R.styleable.BadgeView_up_flat_angle, false)
         typedArray.recycle()

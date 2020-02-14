@@ -15,7 +15,7 @@ class AccentBgTextView(context: Context, attrs: AttributeSet) :
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AccentBgTextView)
         val radios =
-            typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_bg_radius, 0)
+            typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_radius, 0)
         typedArray.recycle()
         background = Selector.shapeBuild()
             .setCornerRadius(radios)

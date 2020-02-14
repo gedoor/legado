@@ -55,7 +55,7 @@
         android:layout_gravity="center"
         android:includeFontPadding="false"
         android:singleLine="true"
-        app:bv_radius="1dp"
+        app:radius="1dp"
         app:up_flat_angle="true"
         app:layout_constraintLeft_toLeftOf="@id/iv_cover"
         app:layout_constraintBottom_toBottomOf="@id/iv_cover"
