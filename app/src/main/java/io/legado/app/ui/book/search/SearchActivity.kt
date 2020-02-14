@@ -198,12 +198,18 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
+    /**
+     * 滚动到底部事件
+     */
     private fun scrollToBottom() {
         if (!viewModel.isLoading && viewModel.searchKey.isNotEmpty() && loadMoreView.hasMore) {
             viewModel.search("")
         }
     }
 
+    /**
+     * 打开关闭历史界面
+     */
     private fun openOrCloseHistory(open: Boolean) {
         if (open) {
             upHistory(search_view.query.toString())
@@ -213,6 +219,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
+    /**
+     * 更新分组菜单
+     */
     private fun upGroupMenu() {
         val selectedGroup = getPrefString("searchGroup") ?: ""
         menu?.removeGroup(R.id.source_group)
@@ -229,6 +238,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         menu?.setGroupCheckable(R.id.source_group, true, true)
     }
 
+    /**
+     * 更新搜索历史
+     */
     private fun upHistory(key: String? = null) {
         bookData?.removeObservers(this)
         if (key.isNullOrBlank()) {
@@ -263,6 +275,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         })
     }
 
+    /**
+     * 更新搜索结果
+     */
     @Synchronized
     private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
         if (!isMandatoryUpdate && System.currentTimeMillis() - refreshTime < 1000) {
@@ -274,17 +289,26 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         diffResult.dispatchUpdatesTo(adapter)
     }
 
+    /**
+     * 开始搜索
+     */
     private fun startSearch() {
         refresh_progress_bar.isAutoLoading = true
         fb_stop.visible()
     }
 
+    /**
+     * 搜索结束
+     */
     private fun searchFinally() {
         refresh_progress_bar.isAutoLoading = false
         loadMoreView.startLoad()
         fb_stop.invisible()
     }
 
+    /**
+     * 显示书籍详情
+     */
     override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
@@ -293,16 +317,22 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
+    /**
+     * 显示书籍详情
+     */
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
             Pair("bookUrl", book.bookUrl)
         )
     }
 
+    /**
+     * 点击历史关键字
+     */
     override fun searchHistory(key: String) {
         launch {
             when {
-                search_view.query == key -> {
+                search_view.query.toString() == key -> {
                     search_view.setQuery(key, true)
                 }
                 withContext(IO) { App.db.bookDao().findByName(key).isEmpty() } -> {
