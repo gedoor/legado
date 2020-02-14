@@ -1,7 +1,9 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.view.MotionEvent
+import io.legado.app.constant.PreferKey
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
@@ -45,5 +47,11 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             setTouchPoint(e2.x, e2.y)
         }
         return isMoved
+    }
+
+    override fun upSelectAble() {
+        pageView.curPage
+            ?.contentTextView()
+            ?.isSelected = context.getPrefBoolean(PreferKey.selectText)
     }
 }

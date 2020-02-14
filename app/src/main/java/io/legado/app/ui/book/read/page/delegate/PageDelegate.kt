@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.delegate
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
@@ -21,6 +22,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
         pageView.width * 0.33f, pageView.height * 0.33f,
         pageView.width * 0.66f, pageView.height * 0.66f
     )
+    protected val context: Context = pageView.context
     //起始点
     protected var startX: Float = 0.toFloat()
     protected var startY: Float = 0.toFloat()
@@ -204,6 +206,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
         }
         return detector.onTouchEvent(event)
     }
+
+    abstract fun upSelectAble()
 
     abstract fun onScrollStart()//scroller start
 

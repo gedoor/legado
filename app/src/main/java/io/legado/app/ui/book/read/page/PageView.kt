@@ -98,6 +98,7 @@ class PageView(context: Context, attrs: AttributeSet) :
             3 -> ScrollPageDelegate(this)
             else -> NoAnimPageDelegate(this)
         }
+        pageDelegate?.upSelectAble()
         upContent()
     }
 
