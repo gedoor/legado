@@ -174,6 +174,10 @@ class PageView(context: Context, attrs: AttributeSet) :
         nextPage?.upBattery(battery)
     }
 
+    fun upSelectAble() {
+        pageDelegate?.upSelectAble()
+    }
+
     override val isScrollDelegate: Boolean
         get() = pageDelegate is ScrollPageDelegate
 

@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.delegate
 
+import android.text.method.ScrollingMovementMethod
 import android.view.MotionEvent
 import io.legado.app.constant.PreferKey
 import io.legado.app.ui.book.read.page.PageView
@@ -50,8 +51,13 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     }
 
     override fun upSelectAble() {
-        pageView.curPage
-            ?.contentTextView()
-            ?.isSelected = context.getPrefBoolean(PreferKey.selectText)
+        pageView.curPage?.contentTextView()?.apply {
+            if (context.getPrefBoolean(PreferKey.selectText)) {
+                isSelected = false
+            } else {
+                movementMethod = ScrollingMovementMethod.getInstance()
+                isSelected = true
+            }
+        }
     }
 }

@@ -121,13 +121,14 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun upSelectAble() {
-        if (context.getPrefBoolean(PreferKey.selectText)) {
-            pageView.curPage?.contentTextView()?.isSelected = true
-        } else {
-            pageView.curPage?.isSelected = false
-            pageView.curPage
-                ?.contentTextView()
-                ?.movementMethod = ScrollingMovementMethod.getInstance()
+        pageView.curPage?.contentTextView()?.apply {
+            if (context.getPrefBoolean(PreferKey.selectText)) {
+                isSelected = false
+                movementMethod = ScrollingMovementMethod.getInstance()
+            } else {
+                movementMethod = ScrollingMovementMethod.getInstance()
+                isSelected = true
+            }
         }
     }
 }
