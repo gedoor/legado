@@ -40,6 +40,12 @@
         android:key="volumeKeyPageOnPlay"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        android:defaultValue="true"
+        android:title="@string/selectText"
+        android:key="selectText"
+        app:iconSpaceReserved="false" />
+
     <Preference
         android:key="customPageKey"
         android:title="@string/custom_page_key"

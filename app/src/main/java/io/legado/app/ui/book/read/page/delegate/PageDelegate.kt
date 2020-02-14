@@ -45,7 +45,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected var atTop: Boolean = false
     protected var atBottom: Boolean = false
 
-    private var snackbar: Snackbar? = null
+    private var snackBar: Snackbar? = null
 
     private val scroller: Scroller by lazy {
         Scroller(
@@ -291,10 +291,10 @@ abstract class PageDelegate(protected val pageView: PageView) {
         direction = Direction.PREV
         val hasPrev = pageView.pageFactory?.hasPrev() == true
         if (!hasPrev) {
-            snackbar ?: let {
-                snackbar = pageView.snackbar("没有上一页")
+            snackBar ?: let {
+                snackBar = pageView.snackbar("没有上一页")
             }
-            snackbar?.let {
+            snackBar?.let {
                 if (!it.isShown) {
                     it.setText("没有上一页")
                     it.show()
@@ -309,10 +309,10 @@ abstract class PageDelegate(protected val pageView: PageView) {
         direction = Direction.NEXT
         val hasNext = pageView.pageFactory?.hasNext() == true
         if (!hasNext) {
-            snackbar ?: let {
-                snackbar = pageView.snackbar("没有下一页")
+            snackBar ?: let {
+                snackBar = pageView.snackbar("没有下一页")
             }
-            snackbar?.let {
+            snackBar?.let {
                 if (!it.isShown) {
                     it.setText("没有下一页")
                     it.show()
