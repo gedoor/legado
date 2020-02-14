@@ -48,6 +48,9 @@ class DiffCallBack(
         if (oldItem.enabled != newItem.enabled) {
             payload.putBoolean("enabled", newItem.enabled)
         }
+        if (oldItem.showExplore() != newItem.showExplore()) {
+            payload.putBoolean("showExplore", newItem.enabledExplore)
+        }
         if (payload.isEmpty) {
             return null
         }

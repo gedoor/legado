@@ -182,6 +182,10 @@ data class BookSource(
         return exploreKinds
     }
 
+    fun showExplore(): Boolean {
+        return enabledExplore && !exploreUrl.isNullOrEmpty()
+    }
+
     /**
      * 执行JS
      */
