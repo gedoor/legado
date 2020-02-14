@@ -3,6 +3,7 @@ package io.legado.app.ui.book.source.manage
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -82,31 +83,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
                 iv_edit.onClick { callBack.edit(item) }
                 iv_menu_more.onClick {
-                    val popupMenu = PopupMenu(context, it)
-                    popupMenu.inflate(R.menu.book_source_item)
-                    val qyMenu = popupMenu.menu.findItem(R.id.menu_enable_explore)
-                    if (item.exploreUrl.isNullOrEmpty()) {
-                        qyMenu.isVisible = false
-                    } else {
-                        if (item.enabledExplore) {
-                            qyMenu.setTitle(R.string.disable_explore)
-                        } else {
-                            qyMenu.setTitle(R.string.enable_explore)
-                        }
-                    }
-                    popupMenu.setOnMenuItemClickListener { menuItem ->
-                        when (menuItem.itemId) {
-                            R.id.menu_top -> callBack.toTop(item)
-                            R.id.menu_del -> callBack.del(item)
-                            R.id.menu_enable_explore -> {
-                                item.enabledExplore = !item.enabledExplore
-                                callBack.update(item)
-                                upShowExplore(iv_explore, item)
-                            }
-                        }
-                        true
-                    }
-                    popupMenu.show()
+                    showMenu(iv_menu_more, getItem(holder.layoutPosition))
                 }
                 upShowExplore(iv_explore, item)
             } else {
@@ -125,6 +102,33 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
             }
         }
+    }
+
+    private fun showMenu(view: View, source: BookSource?) {
+        if (source == null) return
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.inflate(R.menu.book_source_item)
+        val qyMenu = popupMenu.menu.findItem(R.id.menu_enable_explore)
+        if (source.exploreUrl.isNullOrEmpty()) {
+            qyMenu.isVisible = false
+        } else {
+            if (source.enabledExplore) {
+                qyMenu.setTitle(R.string.disable_explore)
+            } else {
+                qyMenu.setTitle(R.string.enable_explore)
+            }
+        }
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_top -> callBack.toTop(source)
+                R.id.menu_del -> callBack.del(source)
+                R.id.menu_enable_explore -> {
+                    callBack.update(source.copy(enabledExplore = !source.enabledExplore))
+                }
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     private fun upShowExplore(iv: ImageView, source: BookSource) {
