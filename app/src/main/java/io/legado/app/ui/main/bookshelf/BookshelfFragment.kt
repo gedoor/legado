@@ -103,6 +103,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
+            viewModel.checkGroup(it)
             synchronized(this) {
                 tab_layout.removeOnTabSelectedListener(this)
                 bookGroups.clear()

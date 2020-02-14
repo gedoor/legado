@@ -64,4 +64,7 @@ interface BookDao {
 
     @Query("update books set durChapterPos = :pos where bookUrl = :bookUrl")
     fun upProgress(bookUrl: String, pos: Int)
+
+    @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
+    fun upGroup(oldGroupId: Int, newGroupId: Int)
 }

@@ -5,6 +5,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.WebBook
 import io.legado.app.utils.NetworkUtils
@@ -59,6 +60,23 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             }
         }.onError {
             toast(it.localizedMessage ?: "ERROR")
+        }
+    }
+
+    fun checkGroup(groups: List<BookGroup>) {
+        execute {
+            groups.forEach { group ->
+                if (group.groupId and (group.groupId - 1) != 0) {
+                    var id = 1
+                    val idsSum = App.db.bookGroupDao().idsSum
+                    while (id and idsSum != 0) {
+                        id = id.shl(1)
+                    }
+                    App.db.bookGroupDao().delete(group)
+                    App.db.bookGroupDao().insert(group.copy(groupId = id))
+                    App.db.bookDao().upGroup(group.groupId, id)
+                }
+            }
         }
     }
 
