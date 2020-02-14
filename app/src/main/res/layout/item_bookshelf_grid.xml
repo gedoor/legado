@@ -29,7 +29,7 @@
         app:layout_constraintRight_toRightOf="@id/iv_cover"
         app:layout_constraintTop_toTopOf="@id/iv_cover">
 
-        <io.legado.app.ui.widget.BadgeView
+        <io.legado.app.ui.widget.text.BadgeView
             android:id="@+id/bv_unread"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             tools:ignore="RtlHardcoded" />
     </FrameLayout>
 
-    <io.legado.app.ui.widget.BadgeView
+    <io.legado.app.ui.widget.text.BadgeView
         android:id="@+id/bv_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

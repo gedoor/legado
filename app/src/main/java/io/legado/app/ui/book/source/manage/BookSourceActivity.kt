@@ -25,12 +25,12 @@ import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -208,7 +208,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_book_source_on_line) {
-            var editText: ATEAutoCompleteTextView? = null
+            var editText: AutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view

@@ -20,12 +20,12 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.ui.importbook.ImportBookActivity
+import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
@@ -159,7 +159,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private fun addBookByUrl() {
         requireContext()
             .alert(titleResource = R.string.add_book_url) {
-                var editText: ATEAutoCompleteTextView? = null
+                var editText: AutoCompleteTextView? = null
                 customView {
                     layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                         editText = edit_view

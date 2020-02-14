@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme.view
+package io.legado.app.ui.widget.text
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,7 +9,7 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 
-class ATEAccentStrokeTextView(context: Context, attrs: AttributeSet) :
+class AccentStrokeTextView(context: Context, attrs: AttributeSet) :
     AppCompatTextView(context, attrs) {
 
     init {

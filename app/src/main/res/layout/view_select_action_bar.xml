@@ -20,7 +20,7 @@
         android:text="@string/select_all_count"
         android:textColor="@color/tv_text_default" />
 
-    <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+    <io.legado.app.ui.widget.text.AccentStrokeTextView
         android:id="@+id/btn_revert_selection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         android:minWidth="80dp"
         android:text="@string/revert_selection" />
 
-    <io.legado.app.lib.theme.view.ATEAccentStrokeTextView
+    <io.legado.app.ui.widget.text.AccentStrokeTextView
         android:id="@+id/btn_select_action_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

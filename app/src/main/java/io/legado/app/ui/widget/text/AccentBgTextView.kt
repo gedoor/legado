@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme.view
+package io.legado.app.ui.widget.text
 
 import android.content.Context
 import android.graphics.Color
@@ -9,13 +9,13 @@ import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 
-class ATEAccentBgTextView(context: Context, attrs: AttributeSet) :
+class AccentBgTextView(context: Context, attrs: AttributeSet) :
     AppCompatTextView(context, attrs) {
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ATEAccentBgTextView)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AccentBgTextView)
         val radios =
-            typedArray.getDimensionPixelOffset(R.styleable.ATEAccentBgTextView_abt_radius, 0)
+            typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_bg_radius, 0)
         typedArray.recycle()
         background = Selector.shapeBuild()
             .setCornerRadius(radios)

@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.widget.text
 
 import android.content.Context
 import android.graphics.Color

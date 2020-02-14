@@ -87,7 +87,7 @@
                 android:textColor="@color/md_white_1000"
                 tools:ignore="NestedWeights" />
 
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+            <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_change_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 android:paddingRight="5dp"
                 android:text="@string/change_origin"
                 android:textSize="16sp"
-                app:abt_radius="2dp" />
+                app:bg_radius="2dp" />
 
         </LinearLayout>
 
@@ -108,7 +108,7 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+            <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_kind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,9 +118,9 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textSize="14sp"
-                app:abt_radius="2dp" />
+                app:bg_radius="2dp" />
 
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+            <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_kind_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,9 +129,9 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textSize="14sp"
-                app:abt_radius="2dp" />
+                app:bg_radius="2dp" />
 
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+            <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_kind_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textSize="14sp"
-                app:abt_radius="2dp" />
+                app:bg_radius="2dp" />
 
         </LinearLayout>
 
@@ -253,7 +253,7 @@
             android:textColor="@color/tv_text_default"
             android:textSize="15sp" />
 
-        <io.legado.app.lib.theme.view.ATEAccentBgTextView
+        <io.legado.app.ui.widget.text.AccentBgTextView
             android:id="@+id/tv_read"
             android:layout_width="0dp"
             android:layout_height="match_parent"

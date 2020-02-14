@@ -144,8 +144,8 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ATEAccentBgTextView">
-        <attr name="abt_radius" format="dimension" />
+    <declare-styleable name="AccentBgTextView">
+        <attr name="bg_radius" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="BadgeView">

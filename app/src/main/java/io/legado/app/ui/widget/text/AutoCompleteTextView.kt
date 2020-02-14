@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme.view
+package io.legado.app.ui.widget.text
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.item_1line_text_and_del.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class ATEAutoCompleteTextView : AppCompatAutoCompleteTextView {
+class AutoCompleteTextView : AppCompatAutoCompleteTextView {
 
     constructor(context: Context) : super(context)
 

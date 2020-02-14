@@ -58,7 +58,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+            <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 android:text="TXT"
                 android:maxLines="1"
                 android:maxWidth="50dp"
-                app:abt_radius="2dp"
+                app:bg_radius="2dp"
                 tools:ignore="HardcodedText,RtlHardcoded" />
 
             <TextView
