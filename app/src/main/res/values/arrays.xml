@@ -133,6 +133,7 @@
     </declare-styleable>
 
     <string-array name="icon_names">
+        <item>iconMain</item>
         <item>icon1</item>
         <item>icon2</item>
     </string-array>
@@ -140,6 +141,7 @@
     <string-array name="icons">
         <item>ic_launcher</item>
         <item>launcher1</item>
+        <item>launcher2</item>
     </string-array>
 
     <string-array name="chinese_mode">

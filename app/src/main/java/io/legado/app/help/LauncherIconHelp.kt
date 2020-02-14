@@ -6,6 +6,7 @@ import android.os.Build
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.ui.welcome.Launcher1
+import io.legado.app.ui.welcome.Launcher2
 import io.legado.app.ui.welcome.WelcomeActivity
 import org.jetbrains.anko.toast
 
@@ -16,7 +17,8 @@ import org.jetbrains.anko.toast
 object LauncherIconHelp {
     private val packageManager: PackageManager = App.INSTANCE.packageManager
     private val componentNames = arrayListOf(
-        ComponentName(App.INSTANCE, Launcher1::class.java.name)
+        ComponentName(App.INSTANCE, Launcher1::class.java.name),
+        ComponentName(App.INSTANCE, Launcher2::class.java.name)
     )
 
     fun changeIcon(icon: String?) {
