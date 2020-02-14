@@ -32,6 +32,9 @@ class DiffCallBack(
             return false
         if (oldItem.enabled != newItem.enabled)
             return false
+        if (oldItem.showExplore() != newItem.showExplore()) {
+            return false
+        }
         return true
     }
 

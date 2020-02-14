@@ -49,6 +49,14 @@ fun View.visible() {
     visibility = VISIBLE
 }
 
+fun View.visible(visible: Boolean) {
+    visibility = if (visible) {
+        VISIBLE
+    } else {
+        INVISIBLE
+    }
+}
+
 fun View.screenshot(): Bitmap? {
     return runCatching {
         val screenshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)

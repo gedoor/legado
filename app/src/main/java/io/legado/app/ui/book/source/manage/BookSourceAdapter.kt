@@ -11,7 +11,6 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -82,20 +81,31 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 iv_menu_more.onClick {
                     val popupMenu = PopupMenu(context, it)
                     popupMenu.inflate(R.menu.book_source_item)
+                    val qyMenu = popupMenu.menu.findItem(R.id.menu_enable_explore)
+                    if (item.exploreUrl.isNullOrEmpty()) {
+                        qyMenu.isVisible = false
+                    } else {
+                        if (item.enabledExplore) {
+                            qyMenu.setTitle(R.string.disable_explore)
+                        } else {
+                            qyMenu.setTitle(R.string.enable_explore)
+                        }
+                    }
                     popupMenu.setOnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
                             R.id.menu_top -> callBack.toTop(item)
                             R.id.menu_del -> callBack.del(item)
+                            R.id.menu_enable_explore -> {
+                                item.enabledExplore = !item.enabledExplore
+                                callBack.update(item)
+                                iv_explore.visible(item.showExplore())
+                            }
                         }
                         true
                     }
                     popupMenu.show()
                 }
-                if (item.showExplore()) {
-                    iv_explore.visible()
-                } else {
-                    iv_explore.invisible()
-                }
+                iv_explore.visible(item.showExplore())
             } else {
                 payload.keySet().map {
                     when (it) {
@@ -107,16 +117,11 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                                 String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
                         }
                         "enabled" -> swt_enabled.isChecked = payload.getBoolean(it)
-                        "showExplore" -> if (payload.getBoolean(it)) {
-                            iv_explore.visible()
-                        } else {
-                            iv_explore.invisible()
-                        }
+                        "showExplore" -> iv_explore.visible(payload.getBoolean(it))
                     }
                 }
             }
         }
-
     }
 
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {

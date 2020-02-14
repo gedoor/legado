@@ -9,4 +9,8 @@
         android:id="@+id/menu_del"
         android:title="@string/delete" />
 
+    <item
+        android:id="@+id/menu_enable_explore"
+        android:title="@string/enable_explore" />
+
 </menu>
