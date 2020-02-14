@@ -186,8 +186,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         sourceLiveData?.observe(this, Observer {
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(adapter.getItems(), it))
-            adapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(adapter)
+            adapter.setItems(it, diffResult)
             upCountView()
         })
     }

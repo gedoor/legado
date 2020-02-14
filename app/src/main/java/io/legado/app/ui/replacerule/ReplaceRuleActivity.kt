@@ -134,8 +134,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             }
             val diffResult =
                 DiffUtil.calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), it))
-            adapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(adapter)
+            adapter.setItems(it, diffResult)
             dataInit = true
             upCountView()
         })

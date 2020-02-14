@@ -82,8 +82,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
             val diffResult =
                 DiffUtil.calculateDiff(GroupDiffCallBack(ArrayList(adapter.getItems()), it))
-            adapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(adapter)
+            adapter.setItems(it, diffResult)
         })
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter

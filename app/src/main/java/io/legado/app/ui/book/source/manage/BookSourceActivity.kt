@@ -136,8 +136,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         bookSourceLiveDate?.observe(this, Observer {
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), it))
-            adapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(adapter)
+            adapter.setItems(it, diffResult)
             upCountView()
         })
     }

@@ -285,8 +285,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
         refreshTime = System.currentTimeMillis()
         val diffResult = DiffUtil.calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), items))
-        adapter.setItems(items, false)
-        diffResult.dispatchUpdatesTo(adapter)
+        adapter.setItems(items, diffResult)
     }
 
     /**
