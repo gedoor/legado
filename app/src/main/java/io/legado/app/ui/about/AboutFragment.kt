@@ -9,6 +9,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.toast
 
 class AboutFragment : PreferenceFragmentCompat() {
@@ -30,7 +31,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "contributors" -> openIntent(Intent.ACTION_VIEW, R.string.contributors_url)
-            "update_log" -> UpdateLog().show(childFragmentManager, "update_log")
+            "update_log" -> showUpdateLog()
             "check_update" -> openIntent(Intent.ACTION_VIEW, R.string.latest_release_url)
             "mail" -> openIntent(Intent.ACTION_SENDTO, "mailto:kunfei.ge@gmail.com")
             "git" -> openIntent(Intent.ACTION_VIEW, R.string.this_github_url)
@@ -54,6 +55,11 @@ class AboutFragment : PreferenceFragmentCompat() {
         } catch (e: Exception) {
             toast(R.string.can_not_open)
         }
+    }
+
+    private fun showUpdateLog() {
+        val log = String(requireContext().assets.open("updateLog.md").readBytes())
+        TextDialog.show(childFragmentManager, log, TextDialog.MD)
     }
 
 }

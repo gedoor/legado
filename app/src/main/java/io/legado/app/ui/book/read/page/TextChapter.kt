@@ -92,5 +92,13 @@ data class TextChapter(
         }
         return 0
     }
+
+    fun getContent(): String {
+        val stringBuilder = StringBuilder()
+        pages.forEach {
+            stringBuilder.append(it.text)
+        }
+        return stringBuilder.toString()
+    }
 }
 

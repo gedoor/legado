@@ -20,11 +20,11 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.ui.about.UpdateLog
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -85,7 +85,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         if (getPrefInt(PreferKey.versionCode) != App.INSTANCE.versionCode) {
             putPrefInt(PreferKey.versionCode, App.INSTANCE.versionCode)
             if (!BuildConfig.DEBUG) {
-                UpdateLog().show(supportFragmentManager, "updateLog")
+                val log = String(assets.open("updateLog.md").readBytes())
+                TextDialog.show(supportFragmentManager, log, TextDialog.MD)
             }
         }
     }

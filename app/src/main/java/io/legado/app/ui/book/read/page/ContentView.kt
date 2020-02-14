@@ -7,15 +7,12 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
-import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.sdk27.listeners.onScrollChange
 import java.io.File
 import java.util.*
@@ -25,10 +22,6 @@ class ContentView : FrameLayout {
     var callBack: CallBack? = null
     private var isScroll: Boolean = false
     private var pageSize: Int = 0
-    private val bgImage: AppCompatImageView = AppCompatImageView(context)
-        .apply {
-            scaleType = ImageView.ScaleType.CENTER_CROP
-        }
 
     constructor(context: Context) : super(context) {
         this.isScroll = true
@@ -42,7 +35,6 @@ class ContentView : FrameLayout {
     fun init() {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
-        addView(bgImage, LayoutParams(matchParent, matchParent))
         inflate(context, R.layout.view_book_page, this)
         top_bar.layoutParams.height = context.getStatusBarHeight()
         upStyle()
@@ -97,7 +89,7 @@ class ContentView : FrameLayout {
     }
 
     fun setBg(bg: Drawable?) {
-        bgImage.background = bg
+        page_panel.background = bg
     }
 
     fun upTime() {

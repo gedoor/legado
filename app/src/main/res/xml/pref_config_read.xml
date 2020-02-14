@@ -41,7 +41,7 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="@string/selectText"
         android:key="selectText"
         app:iconSpaceReserved="false" />
