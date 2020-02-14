@@ -50,10 +50,24 @@
                 android:resource="@xml/shortcuts"
                 android:launchMode="singleTask" />
         </activity>
-        <!--图标1-->
+        <!--图标2-->
         <activity
             android:name=".ui.welcome.Launcher2"
             android:icon="@mipmap/launcher2"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--图标3-->
+        <activity
+            android:name=".ui.welcome.Launcher3"
+            android:icon="@mipmap/launcher3"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
