@@ -14,7 +14,6 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -28,6 +27,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var isLoading = false
     var searchBooks = arrayListOf<SearchBook>()
 
+    /**
+     * 开始搜索
+     */
     fun search(key: String) {
         task?.cancel()
         if (key.isEmpty() && searchKey.isEmpty()) {
@@ -58,9 +60,14 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     context = searchPool
                 )
                     .timeout(30000L)
-                    .onSuccess {
+                    .onSuccess(IO) {
                         it?.let { list ->
-                            searchSuccess(list)
+                            if (context.getPrefBoolean(PreferKey.precisionSearch)) {
+                                precisionSearch(list)
+                            } else {
+                                App.db.searchBookDao().insert(*list.toTypedArray())
+                                mergeItems(list)
+                            }
                         }
                     }
             }
@@ -72,22 +79,23 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun searchSuccess(searchBooks: List<SearchBook>) {
-        withContext(IO) {
-            val books = arrayListOf<SearchBook>()
-            searchBooks.forEach { searchBook ->
-                if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                    if (searchBook.name.equals(searchKey, true)
-                        || searchBook.author.equals(searchKey, true)
-                    ) books.add(searchBook)
-                } else
-                    books.add(searchBook)
-            }
-            App.db.searchBookDao().insert(*books.toTypedArray())
-            mergeItems(books)
+    /**
+     * 精确搜索处理
+     */
+    private fun precisionSearch(searchBooks: List<SearchBook>) {
+        val books = arrayListOf<SearchBook>()
+        searchBooks.forEach { searchBook ->
+            if (searchBook.name.equals(searchKey, true)
+                || searchBook.author.equals(searchKey, true)
+            ) books.add(searchBook)
         }
+        App.db.searchBookDao().insert(*books.toTypedArray())
+        mergeItems(books)
     }
 
+    /**
+     * 合并搜索结果并排序
+     */
     @Synchronized
     private fun mergeItems(newDataS: List<SearchBook>) {
         if (newDataS.isNotEmpty()) {
@@ -138,10 +146,16 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 停止搜索
+     */
     fun stop() {
         task?.cancel()
     }
 
+    /**
+     * 按书名和作者获取书源排序最前的搜索结果
+     */
     fun getSearchBook(name: String, author: String, success: ((searchBook: SearchBook?) -> Unit)?) {
         execute {
             val searchBook = App.db.searchBookDao().getFirstByNameAuthor(name, author)
@@ -149,6 +163,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 保存搜索关键字
+     */
     fun saveSearchKey(key: String) {
         execute {
             App.db.searchKeywordDao().get(key)?.let {
@@ -158,6 +175,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 清楚搜索关键字
+     */
     fun clearHistory() {
         execute {
             App.db.searchKeywordDao().deleteAll()
