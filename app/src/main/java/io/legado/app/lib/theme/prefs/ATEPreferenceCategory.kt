@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.widget.TextView
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
 
 
 class ATEPreferenceCategory(context: Context, attrs: AttributeSet) :
@@ -16,7 +16,7 @@ class ATEPreferenceCategory(context: Context, attrs: AttributeSet) :
         holder?.let {
             val view = it.findViewById(android.R.id.title)
             if (view is TextView) {
-                view.setTextColor(ThemeStore.accentColor(view.getContext()))//设置title文本的颜色
+                view.setTextColor(context.accentColor)//设置title文本的颜色
             }
         }
     }
