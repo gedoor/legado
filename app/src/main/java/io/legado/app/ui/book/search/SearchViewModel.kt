@@ -26,7 +26,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var searchKey: String = ""
     var searchPage = 1
     var isLoading = false
-    private var searchBooks = arrayListOf<SearchBook>()
+    var searchBooks = arrayListOf<SearchBook>()
 
     fun search(key: String) {
         task?.cancel()

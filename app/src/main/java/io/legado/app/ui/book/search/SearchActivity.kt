@@ -56,7 +56,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         initRecyclerView()
         initSearchView()
         initOtherView()
-        initData()
+        initLiveData()
         initIntent()
     }
 
@@ -169,7 +169,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
-    private fun initData() {
+    private fun initLiveData() {
         App.db.bookSourceDao().liveGroupEnabled().observe(this, Observer {
             groups.clear()
             it.map { group ->
@@ -178,13 +178,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             upGroupMenu()
         })
         viewModel.searchBookLiveData.observe(this, Observer {
-            setSearchItems(it)
+            upSearchItems(it, false)
         })
         viewModel.isSearchLiveData.observe(this, Observer {
             if (it) {
                 startSearch()
             } else {
                 searchFinally()
+                upSearchItems(viewModel.searchBooks, true)
             }
         })
     }
@@ -263,8 +264,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     @Synchronized
-    private fun setSearchItems(items: List<SearchBook>) {
-        if (System.currentTimeMillis() - refreshTime < 1000) {
+    private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
+        if (!isMandatoryUpdate && System.currentTimeMillis() - refreshTime < 1000) {
             return
         }
         refreshTime = System.currentTimeMillis()
