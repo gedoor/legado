@@ -21,10 +21,13 @@ class AboutFragment : PreferenceFragmentCompat() {
     private val licenseUrl = "https://github.com/gedoor/legado/blob/master/LICENSE"
     private val disclaimerUrl = "https://gedoor.github.io/MyBookshelf/disclaimer.html"
     private val qqGroups = linkedMapOf(
-        Pair("(QQ群)701903217", "-iolizL4cbJSutKRpeImHlXlpLDZnzeF"),
-        Pair("(QQ群)805192012", "6GlFKjLeIk5RhQnR3PNVDaKB6j10royo"),
-        Pair("(QQ群)773736122", "5Bm5w6OgLupXnICbYvbgzpPUgf0UlsJF"),
-        Pair("(QQ群)981838750", "g_Sgmp2nQPKqcZQ5qPcKLHziwX_mpps9")
+        Pair("(QQ群VIP1)701903217", "-iolizL4cbJSutKRpeImHlXlpLDZnzeF"),
+        Pair("(QQ群VIP2)263949160", "xwfh7_csb2Gf3Aw2qexEcEtviLfLfd4L"),
+        Pair("(QQ群1)805192012", "6GlFKjLeIk5RhQnR3PNVDaKB6j10royo"),
+        Pair("(QQ群2)773736122", "5Bm5w6OgLupXnICbYvbgzpPUgf0UlsJF"),
+        Pair("(QQ群3)981838750", "g_Sgmp2nQPKqcZQ5qPcKLHziwX_mpps9"),
+        Pair("(QQ群4)256929088", "czEJPLDnT4Pd9SKQ6RoRVzKhDxLchZrO"),
+        Pair("(QQ群5)811843556", "zKZ2UYGZ7o5CzcA6ylxzlqi21si_iqaX")
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
