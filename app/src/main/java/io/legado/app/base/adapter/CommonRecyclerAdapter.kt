@@ -16,9 +16,12 @@ import java.util.*
  *
  * 通用的adapter 可添加header，footer，以及不同类型item
  */
-abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : RecyclerView.Adapter<ItemViewHolder>() {
+abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
+    RecyclerView.Adapter<ItemViewHolder>() {
 
-    constructor(context: Context, vararg delegates: Pair<Int, ItemViewDelegate<ITEM>>) : this(context) {
+    constructor(context: Context, vararg delegates: Pair<Int, ItemViewDelegate<ITEM>>) : this(
+        context
+    ) {
         addItemViewDelegates(*delegates)
     }
 
@@ -247,7 +250,11 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         synchronized(lock) {
             val size = getActualItemCount()
             if (fromPosition in 0 until size && toPosition in 0 until size) {
-                notifyItemRangeChanged(fromPosition + getHeaderCount(), toPosition - fromPosition + 1, payloads)
+                notifyItemRangeChanged(
+                    fromPosition + getHeaderCount(),
+                    toPosition - fromPosition + 1,
+                    payloads
+                )
             }
         }
     }
@@ -282,7 +289,8 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         return footerItems?.size() ?: 0
     }
 
-    fun getItem(position: Int): ITEM? = if (position in 0 until items.size) items[position] else null
+    fun getItem(position: Int): ITEM? =
+        if (position in 0 until items.size) items[position] else null
 
     fun getItems(): List<ITEM> = items
 
@@ -305,7 +313,9 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
         return when {
             isHeader(position) -> TYPE_HEADER_VIEW + position
             isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount() - getHeaderCount()
-            else -> getItem(getActualPosition(position))?.let { getItemViewType(it, getActualPosition(position)) } ?: 0
+            else -> getItem(getActualPosition(position))?.let {
+                getItemViewType(it, getActualPosition(position))
+            } ?: 0
         }
     }
 
@@ -320,7 +330,13 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
             }
 
             else -> {
-                val holder = ItemViewHolder(inflater.inflate(itemDelegates.getValue(viewType).layoutId, parent, false))
+                val holder = ItemViewHolder(
+                    inflater.inflate(
+                        itemDelegates.getValue(viewType).layoutId,
+                        parent,
+                        false
+                    )
+                )
 
                 if (itemClickListener != null) {
                     holder.itemView.setOnClickListener {
@@ -347,7 +363,11 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
     }
 
-    final override fun onBindViewHolder(holder: ItemViewHolder, position: Int, payloads: MutableList<Any>) {
+    final override fun onBindViewHolder(
+        holder: ItemViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
             getItem(holder.layoutPosition - getHeaderCount())?.let {
                 itemDelegates.getValue(getItemViewType(holder.layoutPosition))
@@ -396,10 +416,6 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) : Rec
     }
 
     private fun addAnimation(holder: ItemViewHolder) {
-        if (itemAnimation == null) {
-            itemAnimation = ItemAnimation.create().enabled(true)
-        }
-
         itemAnimation?.let {
             if (it.itemAnimEnabled) {
                 if (!it.itemAnimFirstOnly || holder.layoutPosition > it.itemAnimStartPosition) {
