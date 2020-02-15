@@ -2,17 +2,17 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/aloud_config"
         app:iconSpaceReserved="false">
 
-        <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="false"
             android:title="@string/read_aloud_by_page"
             android:key="readAloudByPage"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATESwitchPreference
+        <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="false"
             android:title="@string/read_aloud_on_line"
             android:key="readAloudOnLine"
@@ -26,6 +26,6 @@
             android:entryValues="@array/tts_speech_per_value"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

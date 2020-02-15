@@ -12,14 +12,14 @@
         app:icons="@array/icons"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
         android:key="transparentStatusBar"
         android:summary="@string/status_bar_immersion"
         android:title="@string/immersion_status_bar"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="navigationBarColorChange"
         android:summary="@string/navigation_bar_color_change_s"
@@ -32,7 +32,7 @@
         android:title="@string/default_theme"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="白天"
         app:iconSpaceReserved="false">
 
@@ -60,9 +60,9 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="夜间"
         app:iconSpaceReserved="false">
 
@@ -90,6 +90,6 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

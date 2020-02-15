@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="微信"
         app:iconSpaceReserved="false">
 
@@ -18,9 +18,9 @@
             android:summary="点击打开"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="支付宝"
         app:iconSpaceReserved="false">
 
@@ -48,9 +48,9 @@
             android:summary="点击打开"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="QQ"
         app:iconSpaceReserved="false">
 
@@ -60,6 +60,6 @@
             android:summary="点击打开"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme.prefs
+package io.legado.app.ui.widget.prefs
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,7 +9,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 
-class ATESwitchPreference(context: Context, attrs: AttributeSet) :
+class SwitchPreference(context: Context, attrs: AttributeSet) :
     SwitchPreferenceCompat(context, attrs) {
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {

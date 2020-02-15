@@ -14,7 +14,6 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.prefs.ATESwitchPreference
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
@@ -24,6 +23,7 @@ import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
@@ -70,7 +70,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                 putPrefBoolean(PreferKey.webService, false)
             }
             addPreferencesFromResource(R.xml.pref_main)
-            val webServicePre = findPreference<ATESwitchPreference>(PreferKey.webService)
+            val webServicePre = findPreference<SwitchPreference>(PreferKey.webService)
             observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
                 webServicePre?.isChecked = false
             }

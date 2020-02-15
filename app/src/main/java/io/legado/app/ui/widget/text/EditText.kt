@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme.view
+package io.legado.app.ui.widget.text
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,9 +9,11 @@ import io.legado.app.lib.theme.ThemeStore
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ATEEditText(context: Context, attrs: AttributeSet) : AppCompatEditText(context, attrs) {
+class EditText(context: Context, attrs: AttributeSet) : AppCompatEditText(context, attrs) {
 
     init {
-        ATH.setTint(this, ThemeStore.accentColor(context))
+        if (!isInEditMode) {
+            ATH.setTint(this, ThemeStore.accentColor(context))
+        }
     }
 }
