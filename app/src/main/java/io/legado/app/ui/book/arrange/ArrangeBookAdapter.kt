@@ -49,29 +49,40 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
             }
             tv_author.text = getGroupName(item.group)
             checkbox.isChecked = selectedBooks.contains(item)
-            checkbox.onClick {
-                if (checkbox.isChecked) {
-                    selectedBooks.add(item)
-                } else {
-                    selectedBooks.remove(item)
+            checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                getItem(holder.layoutPosition)?.let {
+                    if (buttonView.isPressed) {
+                        if (isChecked) {
+                            selectedBooks.add(it)
+                        } else {
+                            selectedBooks.remove(it)
+                        }
+                        callBack.upSelectCount()
+                    }
+
                 }
-                callBack.upSelectCount()
             }
             onClick {
-                checkbox.isChecked = !checkbox.isChecked
-                if (checkbox.isChecked) {
-                    selectedBooks.add(item)
-                } else {
-                    selectedBooks.remove(item)
+                getItem(holder.layoutPosition)?.let {
+                    checkbox.isChecked = !checkbox.isChecked
+                    if (checkbox.isChecked) {
+                        selectedBooks.add(it)
+                    } else {
+                        selectedBooks.remove(it)
+                    }
+                    callBack.upSelectCount()
                 }
-                callBack.upSelectCount()
             }
             tv_delete.onClick {
-                callBack.deleteBook(item)
+                getItem(holder.layoutPosition)?.let {
+                    callBack.deleteBook(it)
+                }
             }
             tv_group.onClick {
-                actionItem = item
-                callBack.selectGroup(item.group, groupRequestCode)
+                getItem(holder.layoutPosition)?.let {
+                    actionItem = it
+                    callBack.selectGroup(it.group, groupRequestCode)
+                }
             }
         }
     }
