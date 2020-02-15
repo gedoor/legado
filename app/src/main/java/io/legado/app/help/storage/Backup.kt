@@ -4,15 +4,15 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.isContentPath
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 object Backup {
@@ -34,7 +34,23 @@ object Backup {
         )
     }
 
+    fun autoBack(context: Context) {
+        val lastBackup = context.getPrefLong(PreferKey.lastBackup)
+        if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
+            return
+        }
+        Coroutine.async {
+            val backupPath = context.getPrefString(PreferKey.backupPath)
+            if (backupPath.isNullOrEmpty()) {
+                backup(context)
+            } else {
+                backup(context, backupPath)
+            }
+        }
+    }
+
     suspend fun backup(context: Context, path: String = legadoPath) {
+        context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
         withContext(IO) {
             writeListToJson(App.db.bookDao().all, "bookshelf.json", backupPath)
             writeListToJson(App.db.bookGroupDao().all, "bookGroup.json", backupPath)

@@ -34,4 +34,5 @@ object PreferKey {
     const val chineseConverterType = "chineseConverterType"
     const val launcherIcon = "launcherIcon"
     const val selectText = "selectText"
+    const val lastBackup = "lastBackup"
 }

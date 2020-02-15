@@ -15,7 +15,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -131,20 +130,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
     override fun finish() {
         if (!BuildConfig.DEBUG) {
-            backup()
+            Backup.autoBack(this)
         }
         super.finish()
-    }
-
-    private fun backup() {
-        Coroutine.async {
-            val backupPath = getPrefString(PreferKey.backupPath)
-            if (backupPath.isNullOrEmpty()) {
-                Backup.backup(this@MainActivity)
-            } else {
-                Backup.backup(this@MainActivity, backupPath)
-            }
-        }
     }
 
     override fun onDestroy() {
