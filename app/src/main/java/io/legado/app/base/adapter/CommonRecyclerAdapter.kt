@@ -19,13 +19,14 @@ import java.util.*
 abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
     RecyclerView.Adapter<ItemViewHolder>() {
 
-    constructor(context: Context, vararg delegates: Pair<Int, ItemViewDelegate<ITEM>>) : this(
-        context
-    ) {
+    constructor(context: Context, vararg delegates: ItemViewDelegate<ITEM>) : this(context) {
         addItemViewDelegates(*delegates)
     }
 
-    constructor(context: Context, vararg delegates: ItemViewDelegate<ITEM>) : this(context) {
+    constructor(
+        context: Context,
+        vararg delegates: Pair<Int, ItemViewDelegate<ITEM>>
+    ) : this(context) {
         addItemViewDelegates(*delegates)
     }
 
