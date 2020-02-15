@@ -11,7 +11,8 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:text="@string/text_letter_spacing" />
+        android:text="seek"
+        tools:ignore="HardcodedText" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_seek_remove"
