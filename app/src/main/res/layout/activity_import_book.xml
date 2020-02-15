@@ -34,7 +34,7 @@
             android:focusable="true"
             tools:text="/" />
 
-        <io.legado.app.lib.theme.view.ATEStrokeTextView
+        <io.legado.app.ui.widget.text.StrokeTextView
             android:id="@+id/tv_go_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

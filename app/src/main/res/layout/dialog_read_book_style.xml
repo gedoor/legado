@@ -7,7 +7,7 @@
     android:background="@color/background"
     android:padding="10dp">
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_text_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         app:layout_constraintRight_toLeftOf="@+id/tv_text_font"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_text_font"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         app:layout_constraintRight_toLeftOf="@+id/tv_text_indent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_text_indent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
         app:layout_constraintRight_toLeftOf="@+id/tv_padding"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
