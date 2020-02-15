@@ -177,7 +177,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:singleLine="true"
-            android:text="@string/group"
+            android:text="@string/group_s"
             android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
