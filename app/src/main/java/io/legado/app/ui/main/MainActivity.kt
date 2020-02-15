@@ -59,7 +59,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
         view_pager_main.postDelayed({
             viewModel.clearDb()
-        }, 5000)
+        }, 3000)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
