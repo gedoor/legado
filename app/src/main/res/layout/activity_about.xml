@@ -11,18 +11,14 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/about" />
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        app:cardBackgroundColor="@color/background_card">
+        app:title="@string/about">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/shape_card_view"
             android:orientation="vertical"
+            android:layout_margin="6dp"
             android:padding="10dp">
 
             <TextView
@@ -40,10 +36,11 @@
                 android:text="@string/about_description" />
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </io.legado.app.ui.widget.TitleBar>
 
     <FrameLayout
         android:id="@+id/fl_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </LinearLayout>
