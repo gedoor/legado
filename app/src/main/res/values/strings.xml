@@ -284,6 +284,14 @@
     <string name="padding_bottom">下边距</string>
     <string name="padding_left">左边距</string>
     <string name="padding_right">右边距</string>
+    <string name="header_padding_top">页眉上</string>
+    <string name="header_padding_bottom">页眉下</string>
+    <string name="header_padding_left">页眉左</string>
+    <string name="header_padding_right">页眉右</string>
+    <string name="footer_padding_top">页脚上</string>
+    <string name="footer_padding_bottom">页脚下</string>
+    <string name="footer_padding_left">页脚左</string>
+    <string name="footer_padding_right">页脚右</string>
     <string name="check_book_source">校验书源</string>
     <string name="check_select_source">校验所选</string>
     <string name="progress_show">进度 %d/%d</string>
