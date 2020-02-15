@@ -58,4 +58,6 @@ interface SearchBookDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg searchBook: SearchBook): List<Long>
 
+    @Query("delete from searchBooks where time < :time")
+    fun clearOld(time: Long)
 }

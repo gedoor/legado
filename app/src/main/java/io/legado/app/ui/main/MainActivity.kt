@@ -47,12 +47,19 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
         bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         upVersion()
         if (AppConfig.autoRefreshBook) {
             view_pager_main.postDelayed({
                 viewModel.upChapterList()
             }, 1000)
         }
+        view_pager_main.postDelayed({
+            viewModel.clearDb()
+        }, 5000)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

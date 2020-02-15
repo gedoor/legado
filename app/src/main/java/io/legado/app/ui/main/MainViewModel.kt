@@ -13,6 +13,7 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
+import java.util.concurrent.TimeUnit
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
     val updateList = hashSetOf<String>()
@@ -50,6 +51,12 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 delay(50)
             }
+        }
+    }
+
+    fun clearDb() {
+        execute {
+            App.db.searchBookDao().clearOld(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
         }
     }
 
