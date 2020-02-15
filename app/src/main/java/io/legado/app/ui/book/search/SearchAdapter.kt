@@ -83,30 +83,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             ll_kind.gone()
         } else {
             ll_kind.visible()
-            for (index in 0..2) {
-                if (kinds.size > index) {
-                    when (index) {
-                        0 -> {
-                            tv_kind.text = kinds[index]
-                            tv_kind.visible()
-                        }
-                        1 -> {
-                            tv_kind_1.text = kinds[index]
-                            tv_kind_1.visible()
-                        }
-                        2 -> {
-                            tv_kind_2.text = kinds[index]
-                            tv_kind_2.visible()
-                        }
-                    }
-                } else {
-                    when (index) {
-                        0 -> tv_kind.gone()
-                        1 -> tv_kind_1.gone()
-                        2 -> tv_kind_2.gone()
-                    }
-                }
-            }
+            ll_kind.setLabels(kinds)
         }
     }
 
