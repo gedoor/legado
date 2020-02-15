@@ -52,6 +52,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "license" -> openIntent(Intent.ACTION_VIEW, licenseUrl)
             "disclaimer" -> openIntent(Intent.ACTION_VIEW, disclaimerUrl)
             "qq" -> showQqGroups()
+            "gzGzh" -> sendToClip("开源阅读软件")
         }
         return super.onPreferenceTreeClick(preference)
     }
