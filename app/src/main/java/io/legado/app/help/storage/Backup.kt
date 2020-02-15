@@ -76,32 +76,35 @@ object Backup {
         }
     }
 
+    @Throws(java.lang.Exception::class)
     private fun copyBackup(context: Context, uri: Uri) {
         DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
             for (fileName in backupFileNames) {
-                val doc = treeDoc.findFile(fileName) ?: treeDoc.createFile("", fileName)
-                doc?.let {
-                    DocumentUtils.writeText(
-                        context,
-                        FileUtils.createFileIfNotExist(backupPath + File.separator + fileName).readText(),
-                        doc.uri
-                    )
+                val file = File(backupPath + File.separator + fileName)
+                if (file.exists()) {
+                    val doc = treeDoc.findFile(fileName) ?: treeDoc.createFile("", fileName)
+                    doc?.let {
+                        DocumentUtils.writeText(
+                            context,
+                            file.readText(),
+                            doc.uri
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun copyBackup(file: File) {
-        try {
-            for (fileName in backupFileNames) {
-                FileUtils.createFileIfNotExist(backupPath + File.separator + fileName)
-                    .copyTo(
-                        FileUtils.createFileIfNotExist(file, fileName),
-                        true
-                    )
+    @Throws(java.lang.Exception::class)
+    private fun copyBackup(rootFile: File) {
+        for (fileName in backupFileNames) {
+            val file = File(backupPath + File.separator + fileName)
+            if (file.exists()) {
+                file.copyTo(
+                    FileUtils.createFileIfNotExist(rootFile, fileName),
+                    true
+                )
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 }
