@@ -123,11 +123,10 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     override fun upSelectAble() {
         pageView.curPage?.contentTextView()?.apply {
             if (context.getPrefBoolean(PreferKey.selectText)) {
-                isSelected = false
-                movementMethod = ScrollingMovementMethod.getInstance()
+                setTextIsSelectable(true)
             } else {
+                setTextIsSelectable(false)
                 movementMethod = ScrollingMovementMethod.getInstance()
-                isSelected = true
             }
         }
     }
