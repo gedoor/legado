@@ -8,20 +8,31 @@ import io.legado.app.R
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.dp
 
-class AccentBgTextView(context: Context, attrs: AttributeSet) :
+class AccentBgTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {
+
+    private var radios = 0
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AccentBgTextView)
-        val radios =
-            typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_radius, 0)
+        radios = typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_radius, radios)
         typedArray.recycle()
+        upBackground()
+        setTextColor(Color.WHITE)
+    }
+
+    fun setRadios(radio: Int) {
+        this.radios = radio.dp
+        upBackground()
+    }
+
+    private fun upBackground() {
         background = Selector.shapeBuild()
             .setCornerRadius(radios)
             .setDefaultBgColor(ThemeStore.accentColor(context))
             .setPressedBgColor(ColorUtils.darkenColor(ThemeStore.accentColor(context)))
             .create()
-        setTextColor(Color.WHITE)
     }
 }

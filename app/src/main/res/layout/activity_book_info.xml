@@ -100,50 +100,12 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_kind"
+        <io.legado.app.ui.widget.LabelsBar
+            android:id="@+id/lb_kind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <io.legado.app.ui.widget.text.AccentBgTextView
-                android:id="@+id/tv_kind"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="14sp"
-                app:radius="2dp" />
-
-            <io.legado.app.ui.widget.text.AccentBgTextView
-                android:id="@+id/tv_kind_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="14sp"
-                app:radius="2dp" />
-
-            <io.legado.app.ui.widget.text.AccentBgTextView
-                android:id="@+id/tv_kind_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="14sp"
-                app:radius="2dp" />
-
-        </LinearLayout>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_lasted"
