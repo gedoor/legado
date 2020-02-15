@@ -1,6 +1,7 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.content.Context
+import android.view.View
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -60,31 +61,34 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                         String.format("%s (%s)", item.sourceName, item.sourceGroup)
                 }
                 swt_enabled.isChecked = item.enabled
-                swt_enabled.onClick {
-                    item.enabled = swt_enabled.isChecked
-                    callBack.update(item)
+                swt_enabled.setOnCheckedChangeListener { view, checked ->
+                    getItem(holder.layoutPosition)?.let {
+                        if (view.isPressed) {
+                            it.enabled = checked
+                            callBack.update(it)
+                        }
+                    }
                 }
                 cb_source.isChecked = selected.contains(item)
-                cb_source.setOnClickListener {
-                    if (cb_source.isChecked) {
-                        selected.add(item)
-                    } else {
-                        selected.remove(item)
-                    }
-                    callBack.upCountView()
-                }
-                iv_edit.onClick { callBack.edit(item) }
-                iv_menu_more.onClick {
-                    val popupMenu = PopupMenu(context, it)
-                    popupMenu.inflate(R.menu.rss_source_item)
-                    popupMenu.setOnMenuItemClickListener { menuItem ->
-                        when (menuItem.itemId) {
-                            R.id.menu_top -> callBack.toTop(item)
-                            R.id.menu_del -> callBack.del(item)
+                cb_source.setOnCheckedChangeListener { view, checked ->
+                    getItem(holder.layoutPosition)?.let {
+                        if (view.isPressed) {
+                            if (checked) {
+                                selected.add(it)
+                            } else {
+                                selected.remove(it)
+                            }
+                            callBack.upCountView()
                         }
-                        true
                     }
-                    popupMenu.show()
+                }
+                iv_edit.onClick {
+                    getItem(holder.layoutPosition)?.let {
+                        callBack.edit(it)
+                    }
+                }
+                iv_menu_more.onClick {
+                    showMenu(iv_menu_more, getItem(holder.layoutPosition))
                 }
             } else {
                 when (payloads[0]) {
@@ -93,6 +97,20 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 }
             }
         }
+    }
+
+    private fun showMenu(view: View, source: RssSource?) {
+        if (source == null) return
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.inflate(R.menu.rss_source_item)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_top -> callBack.toTop(source)
+                R.id.menu_del -> callBack.del(source)
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {

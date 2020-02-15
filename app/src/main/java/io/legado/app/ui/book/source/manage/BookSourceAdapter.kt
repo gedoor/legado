@@ -68,20 +68,32 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                         String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
                 }
                 swt_enabled.isChecked = item.enabled
-                swt_enabled.onClick {
-                    item.enabled = swt_enabled.isChecked
-                    callBack.update(item)
+                swt_enabled.setOnCheckedChangeListener { view, checked ->
+                    getItem(holder.layoutPosition)?.let {
+                        if (view.isPressed) {
+                            it.enabled = checked
+                            callBack.update(it)
+                        }
+                    }
                 }
                 cb_book_source.isChecked = selected.contains(item)
-                cb_book_source.setOnClickListener {
-                    if (cb_book_source.isChecked) {
-                        selected.add(item)
-                    } else {
-                        selected.remove(item)
+                cb_book_source.setOnCheckedChangeListener { view, checked ->
+                    getItem(holder.layoutPosition)?.let {
+                        if (view.isPressed) {
+                            if (checked) {
+                                selected.add(it)
+                            } else {
+                                selected.remove(it)
+                            }
+                            callBack.upCountView()
+                        }
                     }
-                    callBack.upCountView()
                 }
-                iv_edit.onClick { callBack.edit(item) }
+                iv_edit.onClick {
+                    getItem(holder.layoutPosition)?.let {
+                        callBack.edit(it)
+                    }
+                }
                 iv_menu_more.onClick {
                     showMenu(iv_menu_more, getItem(holder.layoutPosition))
                 }
