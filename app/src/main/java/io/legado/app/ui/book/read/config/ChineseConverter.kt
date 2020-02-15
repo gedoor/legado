@@ -5,39 +5,20 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
-import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.Selector
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.utils.dp
-import io.legado.app.utils.getCompatColor
+import io.legado.app.ui.widget.text.StrokeTextView
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class ChineseConverter(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
+class ChineseConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(context, attrs) {
 
     private val spannableString = SpannableString("简/繁")
     private var enabledSpan: ForegroundColorSpan = ForegroundColorSpan(context.accentColor)
     private var onChanged: (() -> Unit)? = null
 
     init {
-        background = Selector.shapeBuild()
-            .setCornerRadius(1.dp)
-            .setStrokeWidth(1.dp)
-            .setDisabledStrokeColor(context.getCompatColor(R.color.md_grey_500))
-            .setDefaultStrokeColor(ThemeStore.textColorSecondary(context))
-            .setSelectedStrokeColor(ThemeStore.accentColor(context))
-            .setPressedBgColor(context.getCompatColor(R.color.transparent30))
-            .create()
-        setTextColor(
-            Selector.colorBuild()
-                .setDefaultColor(ThemeStore.textColorSecondary(context))
-                .setSelectedColor(ThemeStore.accentColor(context))
-                .setDisabledColor(context.getCompatColor(R.color.md_grey_500))
-                .create()
-        )
         text = spannableString
         if (!isInEditMode) {
             upUi(AppConfig.chineseConverterType)

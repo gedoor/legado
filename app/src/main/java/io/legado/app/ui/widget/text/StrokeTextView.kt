@@ -9,7 +9,8 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 
-class StrokeTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs) {
+open class StrokeTextView(context: Context, attrs: AttributeSet?) :
+    AppCompatTextView(context, attrs) {
 
     init {
         if (isInEditMode) {
@@ -21,7 +22,7 @@ class StrokeTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(
                 .setSelectedStrokeColor(context.getCompatColor(R.color.colorAccent))
                 .setPressedBgColor(context.getCompatColor(R.color.transparent30))
                 .create()
-            setTextColor(
+            this.setTextColor(
                 Selector.colorBuild()
                     .setDefaultColor(context.getCompatColor(R.color.tv_text_secondary))
                     .setSelectedColor(context.getCompatColor(R.color.colorAccent))
@@ -37,7 +38,7 @@ class StrokeTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(
                 .setSelectedStrokeColor(ThemeStore.accentColor(context))
                 .setPressedBgColor(context.getCompatColor(R.color.transparent30))
                 .create()
-            setTextColor(
+            this.setTextColor(
                 Selector.colorBuild()
                     .setDefaultColor(ThemeStore.textColorSecondary(context))
                     .setSelectedColor(ThemeStore.accentColor(context))
