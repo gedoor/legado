@@ -15,8 +15,10 @@ class ATEPreferenceCategory(context: Context, attrs: AttributeSet) :
         super.onBindViewHolder(holder)
         holder?.let {
             val view = it.findViewById(android.R.id.title)
-            if (view is TextView) {
-                view.setTextColor(context.accentColor)//设置title文本的颜色
+            if (!view.isInEditMode) {
+                if (view is TextView) {
+                    view.setTextColor(context.accentColor)//设置title文本的颜色
+                }
             }
         }
     }
