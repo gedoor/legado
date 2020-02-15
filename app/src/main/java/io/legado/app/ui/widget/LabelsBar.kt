@@ -21,7 +21,7 @@ class LabelsBar(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
     }
 
     fun setLabels(labels: List<String>) {
-        removeAllViews()
+        clear()
         labels.forEach {
             addLabel(it)
         }
@@ -53,5 +53,4 @@ class LabelsBar(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
         tv.text = label
         addView(tv)
     }
-
 }
