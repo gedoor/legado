@@ -42,6 +42,7 @@ class LabelsBar(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
                 lp.setMargins(0, 0, 2.dp, 0)
                 layoutParams = lp
                 text = label
+                maxLines = 1
                 usedViews.add(this)
             }
         } else {
