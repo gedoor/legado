@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.search
 
+import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.SearchBook
 
@@ -27,6 +28,12 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         if (oldItem.author != newItem.author) {
             return false
         }
+        if (oldItem.origins?.size != newItem.origins?.size) {
+            return false
+        }
+        if (oldItem.coverUrl != newItem.coverUrl) {
+            return false
+        }
         if (oldItem.kind != newItem.kind) {
             return false
         }
@@ -36,22 +43,34 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         if (oldItem.intro != newItem.intro) {
             return false
         }
-        if (oldItem.coverUrl != newItem.coverUrl) {
-            return false
-        }
         return true
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
-        return when {
-            oldItem.origins?.size != newItem.origins?.size -> 1
-            oldItem.coverUrl != newItem.coverUrl -> 2
-            oldItem.kind != newItem.kind -> 3
-            oldItem.latestChapterTitle != newItem.latestChapterTitle -> 4
-            oldItem.intro != newItem.intro -> 5
-            else -> null
+        val payload = Bundle()
+        if (oldItem.name != newItem.name) {
+            payload.putString("name", newItem.name)
         }
+        if (oldItem.author != newItem.author) {
+            payload.putString("author", newItem.author)
+        }
+        if (oldItem.origins?.size != newItem.origins?.size) {
+            payload.putInt("origins", newItem.origins?.size ?: 1)
+        }
+        if (oldItem.coverUrl != newItem.coverUrl) {
+            payload.putString("group", newItem.coverUrl)
+        }
+        if (oldItem.kind != newItem.kind) {
+            payload.putString("enabled", newItem.kind)
+        }
+        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
+            payload.putString("enabled", newItem.latestChapterTitle)
+        }
+        if (oldItem.intro != newItem.intro) {
+            payload.putString("enabled", newItem.intro)
+        }
+        return payload
     }
 }
