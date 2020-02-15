@@ -67,7 +67,7 @@
         app:layout_constraintRight_toLeftOf="@id/chinese_converter"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.ui.widget.ChineseConverter
+    <io.legado.app.ui.book.read.config.ChineseConverter
         android:id="@+id/chinese_converter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

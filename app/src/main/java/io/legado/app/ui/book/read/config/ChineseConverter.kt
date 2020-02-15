@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.book.read.config
 
 import android.content.Context
 import android.text.Spannable
