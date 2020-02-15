@@ -27,7 +27,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     var author: String = ""
     private var task: Coroutine<*>? = null
     private var screenKey: String = ""
-    private val searchBooks = linkedSetOf<SearchBook>()
+    private val searchBooks = hashSetOf<SearchBook>()
 
     fun initData(arguments: Bundle?) {
         arguments?.let { bundle ->
@@ -50,10 +50,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun upAdapter() {
-        execute {
-            val books = searchBooks.toList()
-            searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
-        }
+        val books = searchBooks.toList()
+        searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
     }
 
     private fun searchFinish(searchBook: SearchBook) {
