@@ -2,6 +2,7 @@ package io.legado.app.ui.replacerule
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
@@ -81,16 +82,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                     callBack.upCountView()
                 }
                 iv_menu_more.onClick {
-                    val popupMenu = PopupMenu(context, it)
-                    popupMenu.inflate(R.menu.replace_rule_item)
-                    popupMenu.setOnMenuItemClickListener { menuItem ->
-                        when (menuItem.itemId) {
-                            R.id.menu_top -> callBack.toTop(item)
-                            R.id.menu_del -> callBack.delete(item)
-                        }
-                        true
-                    }
-                    popupMenu.show()
+                    showMenu(iv_menu_more, holder.layoutPosition)
                 }
             } else {
                 bundle.keySet().map {
@@ -108,6 +100,20 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 }
             }
         }
+    }
+
+    private fun showMenu(view: View, position: Int) {
+        val item = getItem(position) ?: return
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.inflate(R.menu.replace_rule_item)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_top -> callBack.toTop(item)
+                R.id.menu_del -> callBack.delete(item)
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {

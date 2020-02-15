@@ -95,7 +95,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
                 iv_menu_more.onClick {
-                    showMenu(iv_menu_more, getItem(holder.layoutPosition))
+                    showMenu(iv_menu_more, holder.layoutPosition)
                 }
                 upShowExplore(iv_explore, item)
             } else {
@@ -116,8 +116,8 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun showMenu(view: View, source: BookSource?) {
-        if (source == null) return
+    private fun showMenu(view: View, position: Int) {
+        val source = getItem(position) ?: return
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.book_source_item)
         val qyMenu = popupMenu.menu.findItem(R.id.menu_enable_explore)

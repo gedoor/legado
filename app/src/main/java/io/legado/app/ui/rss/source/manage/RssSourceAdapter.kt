@@ -88,7 +88,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
                 iv_menu_more.onClick {
-                    showMenu(iv_menu_more, getItem(holder.layoutPosition))
+                    showMenu(iv_menu_more, holder.layoutPosition)
                 }
             } else {
                 when (payloads[0]) {
@@ -99,8 +99,8 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun showMenu(view: View, source: RssSource?) {
-        if (source == null) return
+    private fun showMenu(view: View, position: Int) {
+        val source = getItem(position) ?: return
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.rss_source_item)
         popupMenu.setOnMenuItemClickListener { menuItem ->

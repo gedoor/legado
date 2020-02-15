@@ -40,7 +40,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     callBack.scrollTo(holder.layoutPosition)
                 }
                 ll_title.onLongClick {
-                    showMenu(ll_title, getItem(holder.layoutPosition), holder.layoutPosition)
+                    showMenu(ll_title, holder.layoutPosition)
                 }
             }
             if (exIndex == holder.layoutPosition) {
@@ -80,8 +80,8 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
         }
     }
 
-    private fun showMenu(view: View, source: BookSource?, position: Int): Boolean {
-        if (source == null) return true
+    private fun showMenu(view: View, position: Int): Boolean {
+        val source = getItem(position) ?: return true
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.explore_item)
         popupMenu.setOnMenuItemClickListener {
