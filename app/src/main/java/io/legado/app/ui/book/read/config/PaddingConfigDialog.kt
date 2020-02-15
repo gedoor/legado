@@ -45,13 +45,25 @@ class PaddingConfigDialog : DialogFragment() {
     }
 
     private fun initData() = with(ReadBookConfig.getConfig()) {
+        //正文
         dsb_padding_top.progress = paddingTop
         dsb_padding_bottom.progress = paddingBottom
         dsb_padding_left.progress = paddingLeft
         dsb_padding_right.progress = paddingRight
+        //页眉
+        dsb_header_padding_top.progress = headerPaddingTop
+        dsb_header_padding_bottom.progress = headerPaddingBottom
+        dsb_header_padding_left.progress = headerPaddingLeft
+        dsb_header_padding_right.progress = headerPaddingRight
+        //页脚
+        dsb_footer_padding_top.progress = footerPaddingTop
+        dsb_footer_padding_bottom.progress = footerPaddingBottom
+        dsb_footer_padding_left.progress = footerPaddingLeft
+        dsb_footer_padding_right.progress = footerPaddingRight
     }
 
     private fun initView() = with(ReadBookConfig.getConfig()) {
+        //正文
         dsb_padding_top.onChanged = {
             paddingTop = it
             postEvent(EventBus.UP_CONFIG, true)
@@ -66,6 +78,40 @@ class PaddingConfigDialog : DialogFragment() {
         }
         dsb_padding_right.onChanged = {
             paddingRight = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        //页眉
+        dsb_header_padding_top.onChanged = {
+            headerPaddingTop = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsb_header_padding_bottom.onChanged = {
+            headerPaddingBottom = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsb_header_padding_left.onChanged = {
+            headerPaddingLeft = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsb_header_padding_right.onChanged = {
+            headerPaddingRight = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        //页脚
+        dsb_footer_padding_top.onChanged = {
+            footerPaddingTop = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsb_footer_padding_bottom.onChanged = {
+            footerPaddingBottom = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsb_footer_padding_left.onChanged = {
+            footerPaddingLeft = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsb_footer_padding_right.onChanged = {
+            footerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, true)
         }
     }
