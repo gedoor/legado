@@ -100,6 +100,8 @@ object ReadBookConfig {
         var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
         var textColor: String = "#3E3D3B",//白天文字颜色
         var textColorNight: String = "#adadad",//夜间文字颜色
+        var textBold: Boolean = false,//是否粗体字
+        var textSize: Int = 15,//文字大小
         var letterSpacing: Float = 1f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
         var lineSpacingMultiplier: Float = 1.2f,//行倍距
@@ -107,8 +109,14 @@ object ReadBookConfig {
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
         var paddingTop: Int = 0,
-        var textBold: Boolean = false,//是否粗体字
-        var textSize: Int = 15//文字大小
+        var headerPaddingBottom: Int = 0,
+        var headerPaddingLeft: Int = 0,
+        var headerPaddingRight: Int = 0,
+        var headerPaddingTop: Int = 0,
+        var footerPaddingBottom: Int = 0,
+        var footerPaddingLeft: Int = 0,
+        var footerPaddingRight: Int = 0,
+        var footerPaddingTop: Int = 0
     ) {
         fun setBg(bgType: Int, bg: String) {
             if (AppConfig.isNightTheme) {
