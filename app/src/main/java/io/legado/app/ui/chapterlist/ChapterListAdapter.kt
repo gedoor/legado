@@ -45,9 +45,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.onClick {
-            getItem(position)?.let {
+            getItem(holder.layoutPosition)?.let {
                 callback.openChapter(it)
             }
         }

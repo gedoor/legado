@@ -71,7 +71,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             swt_enabled.setOnCheckedChangeListener { view, checked ->
                 getItem(holder.layoutPosition)?.let {

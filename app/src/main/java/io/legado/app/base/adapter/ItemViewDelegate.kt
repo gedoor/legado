@@ -20,6 +20,6 @@ abstract class ItemViewDelegate<ITEM>(protected val context: Context, val layout
     /**
      * 注册事件
      */
-    abstract fun registerListener(holder: ItemViewHolder, position: Int)
+    abstract fun registerListener(holder: ItemViewHolder)
 
 }

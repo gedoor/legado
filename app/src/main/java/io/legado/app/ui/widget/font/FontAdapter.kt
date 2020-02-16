@@ -28,9 +28,9 @@ class FontAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.onClick {
-            getItem(position)?.let {
+            getItem(holder.layoutPosition)?.let {
                 callBack.onClick(it)
             }
         }

@@ -175,9 +175,9 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 }
             }
 
-            override fun registerListener(holder: ItemViewHolder, position: Int) {
+            override fun registerListener(holder: ItemViewHolder) {
                 holder.itemView.onClick {
-                    getItem(position)?.let {
+                    getItem(holder.layoutPosition)?.let {
                         onChanged?.invoke(it.toString())
                     }
                 }

@@ -15,8 +15,8 @@ abstract class SimpleRecyclerAdapter<ITEM>(context: Context, private val layoutI
                 this@SimpleRecyclerAdapter.convert(holder, item, payloads)
             }
 
-            override fun registerListener(holder: ItemViewHolder, position: Int) {
-                this@SimpleRecyclerAdapter.registerListener(holder, position)
+            override fun registerListener(holder: ItemViewHolder) {
+                this@SimpleRecyclerAdapter.registerListener(holder)
             }
         })
     }
@@ -30,5 +30,5 @@ abstract class SimpleRecyclerAdapter<ITEM>(context: Context, private val layoutI
     /**
      * 注册事件
      */
-    abstract fun registerListener(holder: ItemViewHolder, position: Int)
+    abstract fun registerListener(holder: ItemViewHolder)
 }

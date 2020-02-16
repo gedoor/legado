@@ -25,10 +25,10 @@ class ChapterListAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             this.onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     callBack.openChapter(it)
                 }
             }

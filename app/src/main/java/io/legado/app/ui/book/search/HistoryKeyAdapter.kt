@@ -25,10 +25,10 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     callBack.searchHistory(it.word)
                 }
             }
@@ -36,7 +36,7 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
                 it?.let {
                     explosionField.explode(it, true)
                 }
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     GlobalScope.launch(IO) {
                         App.db.searchKeywordDao().delete(it)
                     }

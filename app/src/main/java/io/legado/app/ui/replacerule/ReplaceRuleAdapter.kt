@@ -84,21 +84,21 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             swt_enabled.setOnCheckedChangeListener { _, isChecked ->
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     it.isEnabled = isChecked
                     callBack.update(it)
                 }
             }
             iv_edit.onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
             cb_name.onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     if (cb_name.isChecked) {
                         selected.add(it)
                     } else {

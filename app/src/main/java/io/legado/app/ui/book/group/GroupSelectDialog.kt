@@ -179,10 +179,10 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, position: Int) {
+        override fun registerListener(holder: ItemViewHolder) {
             holder.itemView.apply {
                 cb_group.setOnCheckedChangeListener { buttonView, isChecked ->
-                    getItem(position)?.let {
+                    getItem(holder.layoutPosition)?.let {
                         if (buttonView.isPressed) {
                             groupId = if (isChecked) {
                                 groupId + it.groupId
@@ -192,7 +192,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                         }
                     }
                 }
-                tv_edit.onClick { getItem(position)?.let { editGroup(it) } }
+                tv_edit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
             }
         }
 

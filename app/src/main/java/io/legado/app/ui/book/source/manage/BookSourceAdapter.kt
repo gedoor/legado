@@ -88,10 +88,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             swt_enabled.setOnCheckedChangeListener { view, checked ->
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     if (view.isPressed) {
                         it.enabled = checked
                         callBack.update(it)
@@ -99,7 +99,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
             }
             cb_book_source.setOnCheckedChangeListener { view, checked ->
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     if (view.isPressed) {
                         if (checked) {
                             selected.add(it)
@@ -111,12 +111,12 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
             }
             iv_edit.onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
             iv_menu_more.onClick {
-                showMenu(iv_menu_more, position)
+                showMenu(iv_menu_more, holder.layoutPosition)
             }
         }
     }

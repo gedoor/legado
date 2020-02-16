@@ -101,9 +101,9 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.onClick {
-            getItem(position)?.let {
+            getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
                     callBack.nextDoc(DocumentFile.fromSingleUri(context, it.uri)!!)
                 } else if (!bookshelf.contains(it.uri.toString())) {
@@ -115,7 +115,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     callBack.upCountView()
                 }
             }
-            notifyItemChanged(position, true)
+            notifyItemChanged(holder.layoutPosition, true)
             callBack.upCountView()
         }
     }

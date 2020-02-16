@@ -51,16 +51,16 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     callBack.open(it)
                 }
             }
 
             onLongClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     callBack.openBookInfo(it)
                 }
                 true

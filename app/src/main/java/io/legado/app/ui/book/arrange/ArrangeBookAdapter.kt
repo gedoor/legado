@@ -52,10 +52,10 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     if (buttonView.isPressed) {
                         if (isChecked) {
                             selectedBooks.add(it)
@@ -68,7 +68,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 }
             }
             onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     checkbox.isChecked = !checkbox.isChecked
                     if (checkbox.isChecked) {
                         selectedBooks.add(it)
@@ -79,12 +79,12 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 }
             }
             tv_delete.onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     callBack.deleteBook(it)
                 }
             }
             tv_group.onClick {
-                getItem(position)?.let {
+                getItem(holder.layoutPosition)?.let {
                     actionItem = it
                     callBack.selectGroup(it.group, groupRequestCode)
                 }

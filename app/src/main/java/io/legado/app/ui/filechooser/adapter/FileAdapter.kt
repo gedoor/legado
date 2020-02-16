@@ -113,9 +113,9 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.onClick {
-            callBack.onFileClick(position)
+            callBack.onFileClick(holder.layoutPosition)
         }
     }
 

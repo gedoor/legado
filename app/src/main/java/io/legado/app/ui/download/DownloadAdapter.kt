@@ -34,7 +34,7 @@ class DownloadAdapter(context: Context) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, position: Int) {
+    override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.tv_export.onClick {
 
         }
