@@ -4,6 +4,7 @@ import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.utils.screenshot
 import kotlin.math.*
 
 class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
@@ -56,6 +57,9 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var mFrontShadowDrawableVRL: GradientDrawable? = null
 
     private val mPaint: Paint = Paint()
+
+    private var curBitmap: Bitmap? = curPage.screenshot()
+
 
     init {
         mMaxLength = hypot(pageView.width.toDouble(), pageView.height.toDouble()).toFloat()

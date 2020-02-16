@@ -53,11 +53,11 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
             || (direction == Direction.PREV && offsetX < 0)
         ) return
 
-        curPage?.translationX = offsetX
+        curPage.translationX = offsetX
     }
 
     override fun onScrollStop() {
-        curPage?.x = 0.toFloat()
+        curPage.x = 0.toFloat()
 
         if (!isCancel) {
             pageView.fillPage(direction)

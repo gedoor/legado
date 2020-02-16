@@ -17,7 +17,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     ): Boolean {
         if (!isMoved) {
             val event = e1.toAction(MotionEvent.ACTION_UP)
-            curPage?.dispatchTouchEvent(event)
+            curPage.dispatchTouchEvent(event)
             event.recycle()
             if (abs(distanceX) > abs(distanceY)) {
                 if (distanceX < 0) {
@@ -27,7 +27,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         return true
                     }
                     //上一页截图
-                    bitmap = prevPage?.screenshot()
+                    bitmap = prevPage.screenshot()
                 } else {
                     //如果不存在表示没有下一页了
                     if (!hasNext()) {
@@ -35,7 +35,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         return true
                     }
                     //下一页截图
-                    bitmap = nextPage?.screenshot()
+                    bitmap = nextPage.screenshot()
                 }
                 isMoved = true
             }
@@ -50,7 +50,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     }
 
     override fun upSelectAble() {
-        pageView.curPage?.contentTextView()?.apply {
+        pageView.curPage.contentTextView()?.apply {
             if (context.getPrefBoolean(PreferKey.selectText)) {
                 setTextIsSelectable(true)
             } else {

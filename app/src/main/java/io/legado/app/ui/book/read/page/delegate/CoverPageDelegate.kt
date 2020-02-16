@@ -43,7 +43,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     }
 
     override fun onScrollStop() {
-        curPage?.x = 0.toFloat()
+        curPage.x = 0.toFloat()
         if (!isCancel) {
             pageView.fillPage(direction)
         }
@@ -62,7 +62,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
                 bitmapMatrix.setTranslate(distanceX, 0.toFloat())
                 canvas.drawBitmap(it, bitmapMatrix, null)
             } else if (direction == Direction.NEXT) {
-                curPage?.translationX = offsetX
+                curPage.translationX = offsetX
             }
             addShadow(distanceX.toInt(), canvas)
         }

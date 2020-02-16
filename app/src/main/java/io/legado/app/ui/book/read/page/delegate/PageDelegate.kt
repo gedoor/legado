@@ -30,13 +30,13 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected var touchX: Float = 0.toFloat()
     protected var touchY: Float = 0.toFloat()
 
-    protected val nextPage: ContentView?
+    protected val nextPage: ContentView
         get() = pageView.nextPage
 
-    protected val curPage: ContentView?
+    protected val curPage: ContentView
         get() = pageView.curPage
 
-    protected val prevPage: ContentView?
+    protected val prevPage: ContentView
         get() = pageView.prevPage
 
     protected var bitmap: Bitmap? = null
@@ -184,12 +184,12 @@ abstract class PageDelegate(protected val pageView: PageView) {
     @CallSuper
     open fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
-        if (curPage?.isTextSelected() == true) {
-            curPage?.dispatchTouchEvent(event)
+        if (curPage.isTextSelected()) {
+            curPage.dispatchTouchEvent(event)
             return true
         }
         if (event.action == MotionEvent.ACTION_DOWN) {
-            curPage?.let {
+            curPage.let {
                 it.contentTextView()?.let { contentTextView ->
                     atTop = contentTextView.atTop()
                     atBottom = contentTextView.atBottom()
@@ -197,7 +197,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 it.dispatchTouchEvent(event)
             }
         } else if (event.action == MotionEvent.ACTION_UP) {
-            curPage?.dispatchTouchEvent(event)
+            curPage.dispatchTouchEvent(event)
             if (isMoved) {
                 // 开启翻页效果
                 if (!noNext) onScrollStart()
@@ -266,13 +266,13 @@ abstract class PageDelegate(protected val pageView: PageView) {
                         return true
                     }
                     //下一页截图
-                    nextPage?.screenshot()
+                    nextPage.screenshot()
                 } else {
                     if (!hasPrev()) {
                         return true
                     }
                     //上一页截图
-                    prevPage?.screenshot()
+                    prevPage.screenshot()
                 }
                 setTouchPoint(x, y)
                 onScrollStart()
