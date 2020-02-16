@@ -1,5 +1,7 @@
 package io.legado.app.ui.download
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,26 +10,33 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.service.help.Download
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 
 
-class DownloadActivity : BaseActivity(R.layout.activity_download) {
-
+class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_download),
+    DownloadAdapter.CallBack {
+    private val exportRequestCode = 32
     lateinit var adapter: DownloadAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var menu: Menu? = null
+    private var exportPosition = -1
+
+    override val viewModel: DownloadViewModel
+        get() = getViewModel(DownloadViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -58,7 +67,7 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
 
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
-        adapter = DownloadAdapter(this)
+        adapter = DownloadAdapter(this, this)
         recycler_view.adapter = adapter
     }
 
@@ -102,6 +111,31 @@ class DownloadActivity : BaseActivity(R.layout.activity_download) {
         }
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
             adapter.cacheChapters[it.bookUrl]?.add(it.url)
+        }
+    }
+
+    override fun export(position: Int) {
+        exportPosition = position
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, exportRequestCode)
+        } catch (e: Exception) {
+            toast("选择文件夹出错")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            exportRequestCode -> if (resultCode == Activity.RESULT_OK) {
+                data?.data?.let { uri ->
+                    adapter.getItem(exportPosition)?.let {
+                        viewModel.export(it, uri)
+                    }
+                }
+            }
+
         }
     }
 }

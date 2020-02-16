@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.item_download.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class DownloadAdapter(context: Context) :
+class DownloadAdapter(context: Context, private val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_download) {
 
     val cacheChapters = hashMapOf<String, HashSet<String>>()
@@ -36,7 +36,11 @@ class DownloadAdapter(context: Context) :
 
     override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.tv_export.onClick {
-
+            callBack.export(holder.layoutPosition)
         }
+    }
+
+    interface CallBack {
+        fun export(position: Int)
     }
 }
