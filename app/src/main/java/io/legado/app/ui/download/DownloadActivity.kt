@@ -16,6 +16,8 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.service.help.Download
+import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.utils.ACache
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
@@ -24,10 +26,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 
 
 class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_download),
+    FileChooserDialog.CallBack,
     DownloadAdapter.CallBack {
     private val exportRequestCode = 32
     lateinit var adapter: DownloadAdapter
@@ -116,12 +120,49 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
 
     override fun export(position: Int) {
         exportPosition = position
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, exportRequestCode)
-        } catch (e: Exception) {
-            toast("选择文件夹出错")
+        alert {
+            titleResource = R.string.select_folder
+            items(resources.getStringArray(R.array.select_folder).toList()) { _, index ->
+                when (index) {
+                    0 -> {
+                        val path = ACache.get(this@DownloadActivity).getAsString("exportBookPath")
+                        if (path.isNullOrEmpty()) {
+                            toast("没有默认路径")
+                        } else {
+                            adapter.getItem(exportPosition)?.let {
+                                viewModel.export(path, it)
+                            }
+                        }
+                    }
+                    1 -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            startActivityForResult(intent, exportRequestCode)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                            toast(e.localizedMessage ?: "ERROR")
+                        }
+                    }
+                    2 -> {
+                        FileChooserDialog.show(
+                            supportFragmentManager,
+                            exportRequestCode,
+                            mode = FileChooserDialog.DIRECTORY
+                        )
+                    }
+                }
+            }
+        }.show()
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            exportRequestCode -> {
+                adapter.getItem(exportPosition)?.let {
+                    viewModel.export(currentPath, it)
+                }
+            }
         }
     }
 
@@ -131,7 +172,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
             exportRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     adapter.getItem(exportPosition)?.let {
-                        viewModel.export(uri, it)
+                        viewModel.export(uri.toString(), it)
                     }
                 }
             }

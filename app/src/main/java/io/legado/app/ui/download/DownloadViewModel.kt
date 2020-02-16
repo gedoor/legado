@@ -11,8 +11,9 @@ import io.legado.app.data.entities.Book
 class DownloadViewModel(application: Application) : BaseViewModel(application) {
 
 
-    fun export(uri: Uri, book: Book) {
+    fun export(path: String, book: Book) {
         execute {
+            val uri = Uri.parse(path)
             DocumentFile.fromTreeUri(context, uri)
                 ?.createFile("txt", book.name)
                 ?.let {
