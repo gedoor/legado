@@ -44,6 +44,11 @@ class PaddingConfigDialog : DialogFragment() {
         initView()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        ReadBookConfig.save()
+    }
+
     private fun initData() = with(ReadBookConfig.getConfig()) {
         //正文
         dsb_padding_top.progress = paddingTop
