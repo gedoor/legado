@@ -339,6 +339,9 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
                     )
                 )
 
+                itemDelegates.getValue(viewType)
+                    .registerListener(holder)
+
                 if (itemClickListener != null) {
                     holder.itemView.setOnClickListener {
                         getItem(holder.layoutPosition)?.let {
@@ -373,10 +376,6 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
             getItem(holder.layoutPosition - getHeaderCount())?.let {
                 itemDelegates.getValue(getItemViewType(holder.layoutPosition))
                     .convert(holder, it, payloads)
-            }
-            if (payloads.isEmpty()) {
-                itemDelegates.getValue(getItemViewType(holder.layoutPosition))
-                    .registerListener(holder)
             }
         }
     }
