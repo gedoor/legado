@@ -131,7 +131,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
             exportRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     adapter.getItem(exportPosition)?.let {
-                        viewModel.export(it, uri)
+                        viewModel.export(uri, it)
                     }
                 }
             }
