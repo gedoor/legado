@@ -3,7 +3,9 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.utils.screenshot
 import kotlin.math.*
 
 @Suppress("DEPRECATION")
@@ -74,6 +76,9 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         )
         cm.set(array)
         mColorMatrixFilter = ColorMatrixColorFilter(cm)
+
+        touchX = 0.01f //不让x,y为0,否则在点计算时会有问题
+        touchY = 0.01f
     }
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
@@ -98,6 +103,48 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         ) {
             touchY = 1f
         }
+    }
+
+    override fun onScroll(
+        e1: MotionEvent,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        if (!isMoved) {
+            val event = e1.toAction(MotionEvent.ACTION_UP)
+            curPage.dispatchTouchEvent(event)
+            event.recycle()
+            if (abs(distanceX) > abs(distanceY)) {
+                if (distanceX < 0) {
+                    //如果上一页不存在
+                    if (!hasPrev()) {
+                        noNext = true
+                        return true
+                    }
+                    //上一页截图
+                    prevBitmap = prevPage.screenshot()
+                    curBitmap = curPage.screenshot()
+                } else {
+                    //如果不存在表示没有下一页了
+                    if (!hasNext()) {
+                        noNext = true
+                        return true
+                    }
+                    //下一页截图
+                    nextBitmap = nextPage.screenshot()
+                    curBitmap = curPage.screenshot()
+                }
+                isMoved = true
+            }
+        }
+        if (isMoved) {
+            isCancel = if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
+            isRunning = true
+            //设置触摸点
+            setTouchPoint(e2.x, e2.y)
+        }
+        return isMoved
     }
 
     override fun onScrollStart() {
@@ -132,20 +179,18 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onDraw(canvas: Canvas) {
-        bitmap?.let {
-            if (direction === Direction.NEXT) {
-                calcPoints()
-                drawCurrentPageArea(canvas, curBitmap, mPath0) //绘制翻页时的正面页
-                drawNextPageAreaAndShadow(canvas, nextBitmap)
-                drawCurrentPageShadow(canvas)
-                drawCurrentBackArea(canvas, curBitmap)
-            } else {
-                calcPoints()
-                drawCurrentPageArea(canvas, prevBitmap, mPath0)
-                drawNextPageAreaAndShadow(canvas, curBitmap)
-                drawCurrentPageShadow(canvas)
-                drawCurrentBackArea(canvas, prevBitmap)
-            }
+        if (direction === Direction.NEXT) {
+            calcPoints()
+            drawCurrentPageArea(canvas, curBitmap, mPath0)
+            drawNextPageAreaAndShadow(canvas, nextBitmap)
+            drawCurrentPageShadow(canvas)
+            drawCurrentBackArea(canvas, curBitmap)
+        } else {
+            calcPoints()
+            drawCurrentPageArea(canvas, prevBitmap, mPath0)
+            drawNextPageAreaAndShadow(canvas, curBitmap)
+            drawCurrentPageShadow(canvas)
+            drawCurrentBackArea(canvas, prevBitmap)
         }
     }
 
@@ -404,6 +449,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         canvas.restore()
     }
 
+    //绘制翻页时的正面页
     private fun drawCurrentPageArea(
         canvas: Canvas,
         bitmap: Bitmap?,
