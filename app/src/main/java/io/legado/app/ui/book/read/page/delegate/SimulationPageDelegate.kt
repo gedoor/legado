@@ -90,8 +90,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         super.setTouchPoint(x, y, invalidate)
         //触摸y中间位置吧y变成屏幕高度
         //触摸y中间位置吧y变成屏幕高度
-        if (startY > pageView.height / 3.0
-            && startY < pageView.height * 2 / 3.0
+        if ((startY > pageView.height / 3.0
+                    && startY < pageView.height * 2 / 3.0)
             || direction == Direction.PREV
         ) {
             touchY = pageView.height.toFloat()

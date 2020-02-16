@@ -94,10 +94,6 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
             } else {
                 cb_select.isChecked = selectedUris.contains(item.uri.toString())
             }
-
-            onClick {
-
-            }
         }
     }
 
@@ -112,11 +108,10 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     } else {
                         selectedUris.remove(it.uri.toString())
                     }
+                    notifyItemChanged(holder.layoutPosition, true)
                     callBack.upCountView()
                 }
             }
-            notifyItemChanged(holder.layoutPosition, true)
-            callBack.upCountView()
         }
     }
 
