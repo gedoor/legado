@@ -7,6 +7,7 @@ import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.screenshot
 import kotlin.math.*
 
+@Suppress("DEPRECATION")
 class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     private var mCornerX = 1 // 拖拽点对应的页脚
@@ -59,6 +60,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private val mPaint: Paint = Paint()
 
     private var curBitmap: Bitmap? = curPage.screenshot()
+    private var prevBitmap: Bitmap? = prevPage.screenshot()
+    private var nextBitmap: Bitmap? = nextPage.screenshot()
 
 
     init {
@@ -124,7 +127,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onScrollStop() {
-        curPage?.x = 0.toFloat()
+        curPage.x = 0.toFloat()
         if (!isCancel) {
             pageView.fillPage(direction)
         }
@@ -134,16 +137,16 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         bitmap?.let {
             if (direction === Direction.NEXT) {
                 calcPoints()
-                drawCurrentPageArea(canvas, it, mPath0) //绘制翻页时的正面页
-                drawNextPageAreaAndShadow(canvas, it)
+                drawCurrentPageArea(canvas, curBitmap, mPath0) //绘制翻页时的正面页
+                drawNextPageAreaAndShadow(canvas, nextBitmap)
                 drawCurrentPageShadow(canvas)
-                drawCurrentBackArea(canvas, it)
+                drawCurrentBackArea(canvas, curBitmap)
             } else {
                 calcPoints()
-                drawCurrentPageArea(canvas, it, mPath0)
-                drawNextPageAreaAndShadow(canvas, it)
+                drawCurrentPageArea(canvas, prevBitmap, mPath0)
+                drawNextPageAreaAndShadow(canvas, curBitmap)
                 drawCurrentPageShadow(canvas)
-                drawCurrentBackArea(canvas, it)
+                drawCurrentBackArea(canvas, prevBitmap)
             }
         }
     }
@@ -186,8 +189,9 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      */
     private fun drawCurrentBackArea(
         canvas: Canvas,
-        bitmap: Bitmap
+        bitmap: Bitmap?
     ) {
+        bitmap ?: return
         val i = (mBezierStart1.x + mBezierControl1.x).toInt() / 2
         val f1 = abs(i - mBezierControl1.x)
         val i1 = (mBezierStart2.y + mBezierControl2.y).toInt() / 2
@@ -353,8 +357,9 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     private fun drawNextPageAreaAndShadow(
         canvas: Canvas,
-        bitmap: Bitmap
+        bitmap: Bitmap?
     ) {
+        bitmap ?: return
         mPath1.reset()
         mPath1.moveTo(mBezierStart1.x, mBezierStart1.y)
         mPath1.lineTo(mBezierVertex1.x, mBezierVertex1.y)
@@ -403,9 +408,10 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     private fun drawCurrentPageArea(
         canvas: Canvas,
-        bitmap: Bitmap,
+        bitmap: Bitmap?,
         path: Path
     ) {
+        bitmap ?: return
         mPath0.reset()
         mPath0.moveTo(mBezierStart1.x, mBezierStart1.y)
         mPath0.quadTo(
