@@ -88,6 +88,14 @@
             android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask" />
+        <!--书籍详情页-->
+        <activity
+            android:name=".ui.book.info.BookInfoActivity"
+            android:launchMode="singleTask" />
+        <!--书籍信息编辑-->
+        <activity
+            android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity"
+            android:launchMode="singleTask" />
         <!--音频播放界面-->
         <activity
             android:name=".ui.audio.AudioPlayActivity"
@@ -96,11 +104,13 @@
         <activity
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
+        <!--书源编辑-->
         <activity
             android:name=".ui.book.source.edit.BookSourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!--订阅源编辑-->
         <activity
             android:name=".ui.rss.source.edit.RssSourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
@@ -125,8 +135,6 @@
             android:name=".ui.about.DonateActivity"
             android:launchMode="singleTask" />
         <activity android:name=".ui.book.arrange.ArrangeBookActivity" />
-        <activity android:name=".ui.book.info.BookInfoActivity" />
-        <activity android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity" />
         <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
         <activity android:name=".ui.book.source.manage.BookSourceActivity">
             <intent-filter>
