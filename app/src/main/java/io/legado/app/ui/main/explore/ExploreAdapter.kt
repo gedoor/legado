@@ -78,7 +78,9 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 if (exIndex != -1) {
                     notifyItemChanged(position, false)
                 }
-                callBack.scrollTo(position)
+                postDelayed({
+                    callBack.scrollTo(position)
+                }, 200)
             }
             ll_title.onLongClick {
                 showMenu(ll_title, holder.layoutPosition)

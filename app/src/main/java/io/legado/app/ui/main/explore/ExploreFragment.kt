@@ -133,7 +133,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
     }
 
     override fun scrollTo(pos: Int) {
-        rv_find.smoothScrollToPosition(pos)
+        (rv_find.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
     }
 
     override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
