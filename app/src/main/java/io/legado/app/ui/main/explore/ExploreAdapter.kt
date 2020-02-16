@@ -23,8 +23,8 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource>(context, R.layout.item_find_book) {
-
     private var exIndex = 0
+    private var scrollTo = -1
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
         with(holder.itemView) {
@@ -35,6 +35,9 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 iv_status.setImageResource(R.drawable.ic_remove)
                 rotate_loading.loadingColor = context.accentColor
                 rotate_loading.show()
+                if (scrollTo >= 0) {
+                    callBack.scrollTo(scrollTo)
+                }
                 Coroutine.async(scope) {
                     item.getExploreKinds()
                 }.onSuccess { kindList ->
@@ -59,6 +62,10 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     }
                 }.onFinally {
                     rotate_loading.hide()
+                    if (scrollTo >= 0) {
+                        callBack.scrollTo(scrollTo)
+                        scrollTo = -1
+                    }
                 }
             } else {
                 iv_status.setImageResource(R.drawable.ic_add)
@@ -76,11 +83,10 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 exIndex = if (exIndex == position) -1 else position
                 notifyItemChanged(oldEx, false)
                 if (exIndex != -1) {
+                    scrollTo = position
+                    callBack.scrollTo(position)
                     notifyItemChanged(position, false)
                 }
-                postDelayed({
-                    callBack.scrollTo(position)
-                }, 200)
             }
             ll_title.onLongClick {
                 showMenu(ll_title, holder.layoutPosition)
