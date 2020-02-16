@@ -6,6 +6,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import kotlinx.android.synthetic.main.item_download.view.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class DownloadAdapter(context: Context) :
@@ -24,6 +25,9 @@ class DownloadAdapter(context: Context) :
                 } else {
                     tv_download.text =
                         context.getString(R.string.download_count, cs.size, item.totalChapterNum)
+                }
+                tv_export.onClick {
+
                 }
             } else {
                 val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
