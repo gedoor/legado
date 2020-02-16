@@ -15,6 +15,8 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.service.help.Download
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.utils.ACache
@@ -145,11 +147,17 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
                         }
                     }
                     2 -> {
-                        FileChooserDialog.show(
-                            supportFragmentManager,
-                            exportRequestCode,
-                            mode = FileChooserDialog.DIRECTORY
-                        )
+                        PermissionsCompat.Builder(this@DownloadActivity)
+                            .addPermissions(*Permissions.Group.STORAGE)
+                            .rationale(R.string.tip_perm_request_storage)
+                            .onGranted {
+                                FileChooserDialog.show(
+                                    supportFragmentManager,
+                                    exportRequestCode,
+                                    mode = FileChooserDialog.DIRECTORY
+                                )
+                            }
+                            .request()
                     }
                 }
             }

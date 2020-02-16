@@ -183,11 +183,17 @@ object BackupRestoreUi {
                         }
                     }
                     2 -> {
-                        FileChooserDialog.show(
-                            fragment.childFragmentManager,
-                            oldDataRequestCode,
-                            mode = FileChooserDialog.DIRECTORY
-                        )
+                        PermissionsCompat.Builder(fragment)
+                            .addPermissions(*Permissions.Group.STORAGE)
+                            .rationale(R.string.tip_perm_request_storage)
+                            .onGranted {
+                                FileChooserDialog.show(
+                                    fragment.childFragmentManager,
+                                    oldDataRequestCode,
+                                    mode = FileChooserDialog.DIRECTORY
+                                )
+                            }
+                            .request()
                     }
                 }
             }
