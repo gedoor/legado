@@ -23,9 +23,6 @@ class RssFavoritesAdapter(context: Context, val callBack: CallBack) :
         with(holder.itemView) {
             tv_title.text = item.title
             tv_pub_date.text = item.pubDate
-            onClick {
-                callBack.readRss(item)
-            }
             if (item.image.isNullOrBlank()) {
                 image_view.gone()
             } else {
@@ -54,6 +51,14 @@ class RssFavoritesAdapter(context: Context, val callBack: CallBack) :
 
                     })
                     .into(image_view)
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.onClick {
+            getItem(position)?.let {
+                callBack.readRss(it)
             }
         }
     }

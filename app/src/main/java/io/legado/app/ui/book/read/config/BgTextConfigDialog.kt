@@ -149,14 +149,20 @@ class BgTextConfigDialog : DialogFragment() {
                     .centerCrop()
                     .into(iv_bg)
                 tv_name.text = item.substringBeforeLast(".")
-                this.onClick {
-                    ReadBookConfig.getConfig().setBg(1, item)
-                    ReadBookConfig.upBg()
-                    postEvent(EventBus.UP_CONFIG, false)
-                }
             }
         }
 
+        override fun registerListener(holder: ItemViewHolder, position: Int) {
+            holder.itemView.apply {
+                this.onClick {
+                    getItem(position)?.let {
+                        ReadBookConfig.getConfig().setBg(1, it)
+                        ReadBookConfig.upBg()
+                        postEvent(EventBus.UP_CONFIG, false)
+                    }
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -16,8 +16,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ExploreShowAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_search) {
 
-    override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) =
-        with(holder.itemView) {
+    override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
+        holder.itemView.apply {
             tv_name.text = item.name
             tv_author.text = context.getString(R.string.author_show, item.author)
             if (item.latestChapterTitle.isNullOrEmpty()) {
@@ -35,10 +35,16 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                 ll_kind.setLabels(kinds)
             }
             iv_cover.load(item.coverUrl, item.name, item.author)
-            onClick {
-                callBack.showBookInfo(item.toBook())
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.onClick {
+            getItem(position)?.let {
+                callBack.showBookInfo(it.toBook())
             }
         }
+    }
 
     interface CallBack {
         fun showBookInfo(book: Book)

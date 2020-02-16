@@ -175,6 +175,14 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 }
             }
 
+            override fun registerListener(holder: ItemViewHolder, position: Int) {
+                holder.itemView.onClick {
+                    getItem(position)?.let {
+                        onChanged?.invoke(it.toString())
+                    }
+                }
+            }
+
             private fun findIndexOfValue(value: String?): Int {
                 dialogEntryValues?.let { values ->
                     for (i in values.indices.reversed()) {

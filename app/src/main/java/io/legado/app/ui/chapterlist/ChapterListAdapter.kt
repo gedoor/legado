@@ -32,9 +32,6 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     tv_tag.text = item.tag
                     tv_tag.visible()
                 }
-                this.onClick {
-                    callback.openChapter(item)
-                }
                 upHasCache(
                     tv_chapter_name,
                     cacheFileNames.contains(BookHelp.formatChapterName(item))
@@ -44,6 +41,14 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     tv_chapter_name,
                     cacheFileNames.contains(BookHelp.formatChapterName(item))
                 )
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.onClick {
+            getItem(position)?.let {
+                callback.openChapter(it)
             }
         }
     }

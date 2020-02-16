@@ -22,15 +22,24 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
     override fun convert(holder: ItemViewHolder, item: SearchKeyword, payloads: MutableList<Any>) {
         with(holder.itemView) {
             text_view.text = item.word
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.apply {
             onClick {
-                callBack.searchHistory(item.word)
+                getItem(position)?.let {
+                    callBack.searchHistory(it.word)
+                }
             }
             onLongClick {
                 it?.let {
                     explosionField.explode(it, true)
                 }
-                GlobalScope.launch(IO) {
-                    App.db.searchKeywordDao().delete(item)
+                getItem(position)?.let {
+                    GlobalScope.launch(IO) {
+                        App.db.searchKeywordDao().delete(it)
+                    }
                 }
                 true
             }

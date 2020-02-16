@@ -125,8 +125,22 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 tv_group.text = item
-                tv_edit.onClick { editGroup(item) }
-                tv_del.onClick { viewModel.delGroup(item) }
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder, position: Int) {
+            holder.itemView.apply {
+                tv_edit.onClick {
+                    getItem(position)?.let {
+                        editGroup(it)
+                    }
+                }
+
+                tv_del.onClick {
+                    getItem(position)?.let {
+                        viewModel.delGroup(it)
+                    }
+                }
             }
         }
     }

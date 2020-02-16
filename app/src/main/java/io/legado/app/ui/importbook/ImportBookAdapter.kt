@@ -68,41 +68,55 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
 
     override fun convert(holder: ItemViewHolder, item: DocItem, payloads: MutableList<Any>) {
         holder.itemView.apply {
-            if (item.isDir) {
-                iv_icon.setImageResource(R.drawable.ic_folder)
-                iv_icon.visible()
-                cb_select.invisible()
-                ll_brief.gone()
-                cb_select.isChecked = false
-            } else {
-                if (bookshelf.contains(item.uri.toString())) {
-                    iv_icon.setImageResource(R.drawable.ic_book_has)
+            if (payloads.isEmpty()) {
+                if (item.isDir) {
+                    iv_icon.setImageResource(R.drawable.ic_folder)
                     iv_icon.visible()
                     cb_select.invisible()
+                    ll_brief.gone()
+                    cb_select.isChecked = false
                 } else {
-                    iv_icon.invisible()
-                    cb_select.visible()
+                    if (bookshelf.contains(item.uri.toString())) {
+                        iv_icon.setImageResource(R.drawable.ic_book_has)
+                        iv_icon.visible()
+                        cb_select.invisible()
+                    } else {
+                        iv_icon.invisible()
+                        cb_select.visible()
+                    }
+                    ll_brief.visible()
+                    tv_tag.text = item.name.substringAfterLast(".")
+                    tv_size.text = StringUtils.toSize(item.size)
+                    tv_date.text = AppConst.DATE_FORMAT.format(item.date)
+                    cb_select.isChecked = selectedUris.contains(item.uri.toString())
                 }
-                ll_brief.visible()
-                tv_tag.text = item.name.substringAfterLast(".")
-                tv_size.text = StringUtils.toSize(item.size)
-                tv_date.text = AppConst.DATE_FORMAT.format(item.date)
+                tv_name.text = item.name
+            } else {
                 cb_select.isChecked = selectedUris.contains(item.uri.toString())
             }
-            tv_name.text = item.name
+
             onClick {
-                if (item.isDir) {
-                    callBack.nextDoc(DocumentFile.fromSingleUri(context, item.uri)!!)
-                } else if (!bookshelf.contains(item.uri.toString())) {
-                    cb_select.isChecked = !cb_select.isChecked
-                    if (cb_select.isChecked) {
-                        selectedUris.add(item.uri.toString())
+
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.onClick {
+            getItem(position)?.let {
+                if (it.isDir) {
+                    callBack.nextDoc(DocumentFile.fromSingleUri(context, it.uri)!!)
+                } else if (!bookshelf.contains(it.uri.toString())) {
+                    if (!selectedUris.contains(it.uri.toString())) {
+                        selectedUris.add(it.uri.toString())
                     } else {
-                        selectedUris.remove(item.uri.toString())
+                        selectedUris.remove(it.uri.toString())
                     }
                     callBack.upCountView()
                 }
             }
+            notifyItemChanged(position, true)
+            callBack.upCountView()
         }
     }
 

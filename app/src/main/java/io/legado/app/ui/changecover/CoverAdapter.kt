@@ -15,8 +15,15 @@ class CoverAdapter(context: Context, val callBack: CallBack) :
         with(holder.itemView) {
             iv_cover.load(item.coverUrl, item.name, item.author)
             tv_source.text = item.originName
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.apply {
             onClick {
-                callBack.changeTo(item.coverUrl!!)
+                getItem(position)?.let {
+                    callBack.changeTo(it.coverUrl ?: "")
+                }
             }
         }
     }

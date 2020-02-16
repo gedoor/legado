@@ -26,9 +26,6 @@ class DownloadAdapter(context: Context) :
                     tv_download.text =
                         context.getString(R.string.download_count, cs.size, item.totalChapterNum)
                 }
-                tv_export.onClick {
-
-                }
             } else {
                 val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
                 tv_download.text =
@@ -37,4 +34,9 @@ class DownloadAdapter(context: Context) :
         }
     }
 
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.tv_export.onClick {
+
+        }
+    }
 }

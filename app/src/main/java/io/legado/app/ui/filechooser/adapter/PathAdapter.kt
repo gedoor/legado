@@ -50,9 +50,12 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.apply {
             text_view.text = item
             image_view.setImageDrawable(arrowIcon)
-            onClick {
-                callBack.onPathClick(holder.layoutPosition)
-            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.onClick {
+            callBack.onPathClick(position)
         }
     }
 
@@ -61,6 +64,6 @@ class PathAdapter(context: Context, val callBack: CallBack) :
     }
 
     companion object {
-        private val ROOT_HINT = "SD"
+        private const val ROOT_HINT = "SD"
     }
 }

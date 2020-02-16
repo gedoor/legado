@@ -76,7 +76,7 @@ class CompositeCoroutine : CoroutineContainer {
             resources = null
         }
 
-        set?.forEachIndexed { index, coroutine ->
+        set?.forEachIndexed { _, coroutine ->
             coroutine.cancel()
         }
     }

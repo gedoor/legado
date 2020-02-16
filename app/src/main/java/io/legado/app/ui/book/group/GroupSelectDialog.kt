@@ -176,16 +176,23 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             holder.itemView.apply {
                 cb_group.text = item.groupName
                 cb_group.isChecked = (groupId and item.groupId) > 0
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder, position: Int) {
+            holder.itemView.apply {
                 cb_group.setOnCheckedChangeListener { buttonView, isChecked ->
-                    if (buttonView.isPressed) {
-                        groupId = if (isChecked) {
-                            groupId + item.groupId
-                        } else {
-                            groupId - item.groupId
+                    getItem(position)?.let {
+                        if (buttonView.isPressed) {
+                            groupId = if (isChecked) {
+                                groupId + it.groupId
+                            } else {
+                                groupId - it.groupId
+                            }
                         }
                     }
                 }
-                tv_edit.onClick { editGroup(item) }
+                tv_edit.onClick { getItem(position)?.let { editGroup(it) } }
             }
         }
 

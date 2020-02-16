@@ -68,35 +68,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                         String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
                 }
                 swt_enabled.isChecked = item.enabled
-                swt_enabled.setOnCheckedChangeListener { view, checked ->
-                    getItem(holder.layoutPosition)?.let {
-                        if (view.isPressed) {
-                            it.enabled = checked
-                            callBack.update(it)
-                        }
-                    }
-                }
                 cb_book_source.isChecked = selected.contains(item)
-                cb_book_source.setOnCheckedChangeListener { view, checked ->
-                    getItem(holder.layoutPosition)?.let {
-                        if (view.isPressed) {
-                            if (checked) {
-                                selected.add(it)
-                            } else {
-                                selected.remove(it)
-                            }
-                            callBack.upCountView()
-                        }
-                    }
-                }
-                iv_edit.onClick {
-                    getItem(holder.layoutPosition)?.let {
-                        callBack.edit(it)
-                    }
-                }
-                iv_menu_more.onClick {
-                    showMenu(iv_menu_more, holder.layoutPosition)
-                }
                 upShowExplore(iv_explore, item)
             } else {
                 payload.keySet().map {
@@ -112,6 +84,39 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                         "showExplore" -> upShowExplore(iv_explore, item)
                     }
                 }
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.apply {
+            swt_enabled.setOnCheckedChangeListener { view, checked ->
+                getItem(position)?.let {
+                    if (view.isPressed) {
+                        it.enabled = checked
+                        callBack.update(it)
+                    }
+                }
+            }
+            cb_book_source.setOnCheckedChangeListener { view, checked ->
+                getItem(position)?.let {
+                    if (view.isPressed) {
+                        if (checked) {
+                            selected.add(it)
+                        } else {
+                            selected.remove(it)
+                        }
+                        callBack.upCountView()
+                    }
+                }
+            }
+            iv_edit.onClick {
+                getItem(position)?.let {
+                    callBack.edit(it)
+                }
+            }
+            iv_menu_more.onClick {
+                showMenu(iv_menu_more, position)
             }
         }
     }

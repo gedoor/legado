@@ -30,18 +30,6 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
         with(holder.itemView) {
             if (payloads.isEmpty()) {
                 tv_name.text = item.bookSourceName
-                ll_title.onClick {
-                    val oldEx = exIndex
-                    exIndex = if (exIndex == holder.layoutPosition) -1 else holder.layoutPosition
-                    notifyItemChanged(oldEx, false)
-                    if (exIndex != -1) {
-                        notifyItemChanged(holder.layoutPosition, false)
-                    }
-                    callBack.scrollTo(holder.layoutPosition)
-                }
-                ll_title.onLongClick {
-                    showMenu(ll_title, holder.layoutPosition)
-                }
             }
             if (exIndex == holder.layoutPosition) {
                 iv_status.setImageResource(R.drawable.ic_remove)
@@ -76,6 +64,23 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 iv_status.setImageResource(R.drawable.ic_add)
                 rotate_loading.hide()
                 gl_child.gone()
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.apply {
+            ll_title.onClick {
+                val oldEx = exIndex
+                exIndex = if (exIndex == position) -1 else position
+                notifyItemChanged(oldEx, false)
+                if (exIndex != -1) {
+                    notifyItemChanged(position, false)
+                }
+                callBack.scrollTo(position)
+            }
+            ll_title.onLongClick {
+                showMenu(ll_title, position)
             }
         }
     }

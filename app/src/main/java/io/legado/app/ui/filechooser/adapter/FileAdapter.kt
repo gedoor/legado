@@ -110,9 +110,12 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.apply {
             image_view.setImageDrawable(item.icon)
             text_view.text = item.name
-            onClick {
-                callBack.onFileClick(holder.layoutPosition)
-            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.onClick {
+            callBack.onFileClick(position)
         }
     }
 

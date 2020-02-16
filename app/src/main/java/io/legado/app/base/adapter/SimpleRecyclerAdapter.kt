@@ -15,6 +15,9 @@ abstract class SimpleRecyclerAdapter<ITEM>(context: Context, private val layoutI
                 this@SimpleRecyclerAdapter.convert(holder, item, payloads)
             }
 
+            override fun registerListener(holder: ItemViewHolder, position: Int) {
+                this@SimpleRecyclerAdapter.registerListener(holder, position)
+            }
         })
     }
 
@@ -23,4 +26,9 @@ abstract class SimpleRecyclerAdapter<ITEM>(context: Context, private val layoutI
      * 使用getItem(holder.layoutPosition)来获取item
      */
     abstract fun convert(holder: ItemViewHolder, item: ITEM, payloads: MutableList<Any>)
+
+    /**
+     * 注册事件
+     */
+    abstract fun registerListener(holder: ItemViewHolder, position: Int)
 }

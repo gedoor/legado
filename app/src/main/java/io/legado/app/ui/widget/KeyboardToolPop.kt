@@ -45,7 +45,16 @@ class KeyboardToolPop(
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 text_view.text = item
-                onClick { callBack?.sendText(item) }
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder, position: Int) {
+            holder.itemView.apply {
+                onClick {
+                    getItem(position)?.let {
+                        callBack?.sendText(it)
+                    }
+                }
             }
         }
     }

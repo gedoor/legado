@@ -374,6 +374,10 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
                 itemDelegates.getValue(getItemViewType(holder.layoutPosition))
                     .convert(holder, it, payloads)
             }
+            if (payloads.isEmpty()) {
+                itemDelegates.getValue(getItemViewType(holder.layoutPosition))
+                    .registerListener(holder, position)
+            }
         }
     }
 

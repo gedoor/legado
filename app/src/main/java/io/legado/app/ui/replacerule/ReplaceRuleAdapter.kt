@@ -65,25 +65,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                         String.format("%s (%s)", item.name, item.group)
                 }
                 swt_enabled.isChecked = item.isEnabled
-                swt_enabled.onClick {
-                    item.isEnabled = swt_enabled.isChecked
-                    callBack.update(item)
-                }
-                iv_edit.onClick {
-                    callBack.edit(item)
-                }
                 cb_name.isChecked = selected.contains(item)
-                cb_name.onClick {
-                    if (cb_name.isChecked) {
-                        selected.add(item)
-                    } else {
-                        selected.remove(item)
-                    }
-                    callBack.upCountView()
-                }
-                iv_menu_more.onClick {
-                    showMenu(iv_menu_more, holder.layoutPosition)
-                }
             } else {
                 bundle.keySet().map {
                     when (it) {
@@ -98,6 +80,35 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                         "enabled" -> swt_enabled.isChecked = item.isEnabled
                     }
                 }
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.apply {
+            swt_enabled.setOnCheckedChangeListener { _, isChecked ->
+                getItem(position)?.let {
+                    it.isEnabled = isChecked
+                    callBack.update(it)
+                }
+            }
+            iv_edit.onClick {
+                getItem(position)?.let {
+                    callBack.edit(it)
+                }
+            }
+            cb_name.onClick {
+                getItem(position)?.let {
+                    if (cb_name.isChecked) {
+                        selected.add(it)
+                    } else {
+                        selected.remove(it)
+                    }
+                }
+                callBack.upCountView()
+            }
+            iv_menu_more.onClick {
+                showMenu(iv_menu_more, holder.layoutPosition)
             }
         }
     }

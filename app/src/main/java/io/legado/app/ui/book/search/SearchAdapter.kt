@@ -26,6 +26,16 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.apply {
+            onClick {
+                getItem(position)?.let {
+                    callBack.showBookInfo(it.name, it.author)
+                }
+            }
+        }
+    }
+
     private fun bind(itemView: View, searchBook: SearchBook) {
         with(itemView) {
             tv_name.text = searchBook.name
@@ -35,9 +45,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             tv_introduce.text = context.getString(R.string.intro_show, searchBook.intro)
             upKind(itemView, searchBook.getKindList())
             iv_cover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
-            onClick {
-                callBack.showBookInfo(searchBook.name, searchBook.author)
-            }
+
         }
     }
 

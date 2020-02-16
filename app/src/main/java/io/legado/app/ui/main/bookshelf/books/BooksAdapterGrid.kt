@@ -23,11 +23,6 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 tv_name.text = item.name
                 bv_author.text = item.author
                 iv_cover.load(item.getDisplayCover(), item.name, item.author)
-                onClick { callBack.open(item) }
-                onLongClick {
-                    callBack.openBookInfo(item)
-                    true
-                }
                 if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
                     bv_unread.invisible()
                     rl_loading.show()
@@ -56,4 +51,20 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
         }
     }
 
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.apply {
+            onClick {
+                getItem(position)?.let {
+                    callBack.open(it)
+                }
+            }
+
+            onLongClick {
+                getItem(position)?.let {
+                    callBack.openBookInfo(it)
+                }
+                true
+            }
+        }
+    }
 }

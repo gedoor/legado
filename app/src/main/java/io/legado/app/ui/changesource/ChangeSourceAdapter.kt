@@ -19,7 +19,6 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
         val bundle = payloads.getOrNull(0) as? Bundle
         holder.itemView.apply {
             if (bundle == null) {
-                this.onClick { callBack.changeTo(item) }
                 tv_origin.text = item.originName
                 tv_last.text = item.getDisplayLastChapterTitle()
                 if (callBack.bookUrl == item.bookUrl) {
@@ -34,6 +33,14 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
                         "latest" -> tv_last.text = item.getDisplayLastChapterTitle()
                     }
                 }
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, position: Int) {
+        holder.itemView.onClick {
+            getItem(position)?.let {
+                callBack.changeTo(it)
             }
         }
     }
