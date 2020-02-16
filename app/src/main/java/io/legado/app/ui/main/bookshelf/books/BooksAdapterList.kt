@@ -38,8 +38,8 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                     when (it) {
                         "name" -> tv_name.text = item.name
                         "author" -> tv_author.text = item.author
-                        "durTitle" -> tv_read.text = item.durChapterTitle
-                        "latestTitle" -> tv_last.text = item.latestChapterTitle
+                        "dur" -> tv_read.text = item.durChapterTitle
+                        "last" -> tv_last.text = item.latestChapterTitle
                         "cover" -> iv_cover.load(item.getDisplayCover(), item.name, item.author)
                         "refresh" -> if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
                             bv_unread.invisible()
