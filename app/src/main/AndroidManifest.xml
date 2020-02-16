@@ -104,6 +104,10 @@
         <activity
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
+        <!--二维码扫描-->
+        <activity
+            android:name=".ui.qrcode.QrCodeActivity"
+            android:launchMode="singleTask" />
         <!--书源编辑-->
         <activity
             android:name=".ui.book.source.edit.BookSourceEditActivity"
@@ -127,9 +131,6 @@
             android:launchMode="singleTask" />
         <activity
             android:name=".ui.about.AboutActivity"
-            android:launchMode="singleTask" />
-        <activity
-            android:name=".ui.qrcode.QrCodeActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".ui.about.DonateActivity"
