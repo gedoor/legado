@@ -71,13 +71,14 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
     override fun registerListener(holder: ItemViewHolder) {
         holder.itemView.apply {
             ll_title.onClick {
+                val position = holder.layoutPosition
                 val oldEx = exIndex
-                exIndex = if (exIndex == holder.layoutPosition) -1 else holder.layoutPosition
+                exIndex = if (exIndex == position) -1 else position
                 notifyItemChanged(oldEx, false)
                 if (exIndex != -1) {
-                    notifyItemChanged(holder.layoutPosition, false)
+                    notifyItemChanged(position, false)
                 }
-                callBack.scrollTo(holder.layoutPosition)
+                callBack.scrollTo(position)
             }
             ll_title.onLongClick {
                 showMenu(ll_title, holder.layoutPosition)
