@@ -88,6 +88,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                         noNext = true
                         return true
                     }
+                    setDirection(Direction.PREV)
                     //上一页截图
                     bitmap = prevPage.screenshot()
                 }
@@ -101,6 +102,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                         noNext = true
                         return true
                     }
+                    setDirection(Direction.NEXT)
                     //下一页截图
                     bitmap = nextPage.screenshot()
                 }

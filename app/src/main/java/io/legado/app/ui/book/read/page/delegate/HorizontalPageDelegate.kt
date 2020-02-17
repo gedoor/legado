@@ -26,6 +26,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         noNext = true
                         return true
                     }
+                    setDirection(Direction.PREV)
                     //上一页截图
                     bitmap = prevPage.screenshot()
                 } else {
@@ -34,6 +35,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         noNext = true
                         return true
                     }
+                    setDirection(Direction.NEXT)
                     //下一页截图
                     bitmap = nextPage.screenshot()
                 }

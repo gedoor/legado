@@ -47,7 +47,9 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected var atTop: Boolean = false
     protected var atBottom: Boolean = false
 
-    private var snackBar: Snackbar? = null
+    private val snackBar: Snackbar by lazy {
+        pageView.snackbar("")
+    }
 
     private val scroller: Scroller by lazy {
         Scroller(
@@ -269,12 +271,14 @@ abstract class PageDelegate(protected val pageView: PageView) {
                     if (!hasNext()) {
                         return true
                     }
+                    setDirection(Direction.PREV)
                     //下一页截图
                     nextPage.screenshot()
                 } else {
                     if (!hasPrev()) {
                         return true
                     }
+                    setDirection(Direction.NEXT)
                     //上一页截图
                     prevPage.screenshot()
                 }
@@ -296,17 +300,11 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     fun hasPrev(): Boolean {
         //上一页的参数配置
-        setDirection(Direction.PREV)
         val hasPrev = pageView.pageFactory?.hasPrev() == true
         if (!hasPrev) {
-            snackBar ?: let {
-                snackBar = pageView.snackbar("没有上一页")
-            }
-            snackBar?.let {
-                if (!it.isShown) {
-                    it.setText("没有上一页")
-                    it.show()
-                }
+            if (!snackBar.isShown) {
+                snackBar.setText("没有上一页")
+                snackBar.show()
             }
         }
         return hasPrev
@@ -314,17 +312,11 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     fun hasNext(): Boolean {
         //进行下一页的配置
-        setDirection(Direction.NEXT)
         val hasNext = pageView.pageFactory?.hasNext() == true
         if (!hasNext) {
-            snackBar ?: let {
-                snackBar = pageView.snackbar("没有下一页")
-            }
-            snackBar?.let {
-                if (!it.isShown) {
-                    it.setText("没有下一页")
-                    it.show()
-                }
+            if (!snackBar.isShown) {
+                snackBar.setText("没有下一页")
+                snackBar.show()
             }
         }
         return hasNext
