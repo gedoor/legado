@@ -26,7 +26,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
     private var iconNames: Array<CharSequence>
-    private val mEntryDrawables = arrayListOf<Drawable>()
+    private val mEntryDrawables = arrayListOf<Drawable?>()
 
     init {
         widgetLayoutResource = R.layout.view_icon
@@ -42,8 +42,11 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         for (iconName in iconNames) {
             val resId = context.resources
                 .getIdentifier(iconName.toString(), "mipmap", context.packageName)
-            val d = context.getCompatDrawable(resId)
-            mEntryDrawables.add(d!!)
+            var d: Drawable? = null
+            kotlin.runCatching {
+                d = context.getCompatDrawable(resId)
+            }
+            mEntryDrawables.add(d)
         }
     }
 
