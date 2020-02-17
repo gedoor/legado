@@ -17,7 +17,9 @@ import java.util.concurrent.TimeUnit
 
 object Backup {
 
-    val backupPath = App.INSTANCE.filesDir.absolutePath + File.separator + "backup"
+    val backupPath: String by lazy {
+        FileUtils.getDirFile(App.INSTANCE.filesDir, "backup").absolutePath
+    }
 
     val legadoPath by lazy {
         FileUtils.getSdCardPath() + File.separator + "YueDu3.0"
