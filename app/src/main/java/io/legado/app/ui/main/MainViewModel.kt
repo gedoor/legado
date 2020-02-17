@@ -54,9 +54,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun clearDb() {
+    fun clearExpiredData() {
         execute {
-            App.db.searchBookDao().clearOld(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+            App.db.searchBookDao()
+                .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
         }
     }
 

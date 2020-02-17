@@ -52,17 +52,20 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         upVersion()
+        //初始化简繁转换引擎
         when (AppConfig.chineseConverterType) {
             1 -> ZhConverterUtil.toSimple("初始化")
             2 -> ZhConverterUtil.toTraditional("初始化")
         }
+        //自动更新书籍
         if (AppConfig.autoRefreshBook) {
             view_pager_main.postDelayed({
                 viewModel.upChapterList()
             }, 1000)
         }
+        //清楚过期数据
         view_pager_main.postDelayed({
-            viewModel.clearDb()
+            viewModel.clearExpiredData()
         }, 3000)
     }
 
