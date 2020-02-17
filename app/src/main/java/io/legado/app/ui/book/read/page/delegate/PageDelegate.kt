@@ -14,7 +14,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.screenshot
-import io.legado.app.utils.snackbar
 import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) {
@@ -48,7 +47,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected var atBottom: Boolean = false
 
     private val snackBar: Snackbar by lazy {
-        pageView.snackbar("")
+        Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
     }
 
     private val scroller: Scroller by lazy {
