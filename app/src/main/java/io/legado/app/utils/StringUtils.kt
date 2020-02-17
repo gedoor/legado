@@ -12,6 +12,7 @@ import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
 
+@Suppress("unused")
 object StringUtils {
     private const val HOUR_OF_DAY = 24
     private const val DAY_OF_YESTERDAY = 2

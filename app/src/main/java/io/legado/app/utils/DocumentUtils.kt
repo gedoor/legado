@@ -7,6 +7,7 @@ import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import java.util.*
 
+@Suppress("unused")
 object DocumentUtils {
 
     fun exists(root: DocumentFile, fileName: String, vararg subDirs: String): Boolean {

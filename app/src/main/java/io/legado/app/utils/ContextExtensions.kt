@@ -3,10 +3,12 @@ package io.legado.app.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.BatteryManager
 import android.provider.Settings
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -133,4 +135,13 @@ fun Context.shareWithQr(title: String, text: String) {
 fun Context.sysIsDarkMode(): Boolean {
     val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
     return mode == Configuration.UI_MODE_NIGHT_YES
+}
+
+/**
+ * 获取电量
+ */
+fun Context.getBettery(): Int {
+    val iFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+    val batteryStatus = registerReceiver(null, iFilter)
+    return batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
 }

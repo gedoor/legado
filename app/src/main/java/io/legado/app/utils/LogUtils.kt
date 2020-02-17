@@ -8,7 +8,7 @@ import java.util.*
 import java.util.logging.*
 import java.util.logging.Formatter
 
-
+@Suppress("unused")
 object LogUtils {
     const val TIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
 

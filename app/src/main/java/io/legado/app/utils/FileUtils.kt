@@ -10,7 +10,7 @@ import io.legado.app.App
 import java.io.File
 import java.io.IOException
 
-
+@Suppress("unused")
 object FileUtils {
 
     fun exists(root: File, fileName: String, vararg subDirs: String): Boolean {
