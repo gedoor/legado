@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.github.houbb.opencc4j.util.ZhConverterUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.App
 import io.legado.app.BuildConfig
@@ -51,6 +52,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         upVersion()
+        when (AppConfig.chineseConverterType) {
+            1 -> ZhConverterUtil.toSimple("初始化")
+            2 -> ZhConverterUtil.toTraditional("初始化")
+        }
         if (AppConfig.autoRefreshBook) {
             view_pager_main.postDelayed({
                 viewModel.upChapterList()

@@ -270,8 +270,8 @@ object BookHelp {
             }
         }
         when (AppConfig.chineseConverterType) {
-            2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
+            2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
         }
         val indent = App.INSTANCE.getPrefInt("textIndent", 2)
         return c.replace("\\s*\\n+\\s*".toRegex(), "\n" + "　".repeat(indent))
