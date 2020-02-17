@@ -67,7 +67,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     var noNext = true
 
     //移动方向
-    var direction = Direction.NONE
+    var mDirection = Direction.NONE
     var isCancel = false
     var isRunning = false
     var isStarted = false
@@ -229,6 +229,10 @@ abstract class PageDelegate(protected val pageView: PageView) {
         NONE, PREV, NEXT
     }
 
+    open fun setDirection(direction: Direction) {
+        mDirection = direction
+    }
+
     /**
      * 触摸事件处理
      */
@@ -245,7 +249,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             //取消
             isCancel = false
             //是下一章还是前一章
-            direction = Direction.NONE
+            setDirection(Direction.NONE)
             //设置起始位置的触摸点
             setStartPoint(e.x, e.y)
             return true
@@ -292,7 +296,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     fun hasPrev(): Boolean {
         //上一页的参数配置
-        direction = Direction.PREV
+        setDirection(Direction.PREV)
         val hasPrev = pageView.pageFactory?.hasPrev() == true
         if (!hasPrev) {
             snackBar ?: let {
@@ -310,7 +314,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     fun hasNext(): Boolean {
         //进行下一页的配置
-        direction = Direction.NEXT
+        setDirection(Direction.NEXT)
         val hasNext = pageView.pageFactory?.hasNext() == true
         if (!hasNext) {
             snackBar ?: let {

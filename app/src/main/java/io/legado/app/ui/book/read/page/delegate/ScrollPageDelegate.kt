@@ -20,7 +20,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             return
         }
         val distanceY: Float
-        when (direction) {
+        when (mDirection) {
             Direction.NEXT -> distanceY =
                 if (isCancel) {
                     var dis = viewHeight - startY + touchY
@@ -46,17 +46,17 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         if (atTop || atBottom) {
             val offsetY = touchY - startY
 
-            if ((direction == Direction.NEXT && offsetY > 0)
-                || (direction == Direction.PREV && offsetY < 0)
+            if ((mDirection == Direction.NEXT && offsetY > 0)
+                || (mDirection == Direction.PREV && offsetY < 0)
             ) return
 
             val distanceY = if (offsetY > 0) offsetY - viewHeight else offsetY + viewHeight
-            if (atTop && direction == Direction.PREV) {
+            if (atTop && mDirection == Direction.PREV) {
                 bitmap?.let {
                     bitmapMatrix.setTranslate(0.toFloat(), distanceY)
                     canvas.drawBitmap(it, bitmapMatrix, null)
                 }
-            } else if (atBottom && direction == Direction.NEXT) {
+            } else if (atBottom && mDirection == Direction.NEXT) {
                 bitmap?.let {
                     bitmapMatrix.setTranslate(0.toFloat(), distanceY)
                     canvas.drawBitmap(it, bitmapMatrix, null)
@@ -67,7 +67,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     override fun onScrollStop() {
         if (!isCancel) {
-            pageView.fillPage(direction)
+            pageView.fillPage(mDirection)
         }
     }
 
@@ -107,12 +107,12 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             }
             isMoved = true
         }
-        if ((atTop && direction != Direction.PREV) || (atBottom && direction != Direction.NEXT) || direction == Direction.NONE) {
+        if ((atTop && mDirection != Direction.PREV) || (atBottom && mDirection != Direction.NEXT) || mDirection == Direction.NONE) {
             //传递触摸事件到textView
             curPage.dispatchTouchEvent(e2)
         }
         if (isMoved) {
-            isCancel = if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
+            isCancel = if (mDirection == Direction.NEXT) distanceY < 0 else distanceY > 0
             isRunning = true
             //设置触摸点
             setTouchPoint(e2.x, e2.y)

@@ -92,14 +92,14 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         //触摸y中间位置吧y变成屏幕高度
         if ((startY > pageView.height / 3.0
                     && startY < pageView.height * 2 / 3.0)
-            || direction == Direction.PREV
+            || mDirection == Direction.PREV
         ) {
             touchY = pageView.height.toFloat()
         }
 
         if (startY > pageView.height / 3.0
             && startY < pageView.height / 2.0
-            && direction == Direction.NEXT
+            && mDirection == Direction.NEXT
         ) {
             touchY = 1f
         }
@@ -139,7 +139,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             }
         }
         if (isMoved) {
-            isCancel = if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
+            isCancel = if (mDirection == Direction.NEXT) distanceX < 0 else distanceX > 0
             isRunning = true
             //设置触摸点
             setTouchPoint(e2.x, e2.y)
@@ -147,9 +147,29 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         return isMoved
     }
 
+    override fun setDirection(direction: Direction) {
+        super.setDirection(direction)
+        when (direction) {
+            Direction.PREV -> {
+                //上一页滑动不出现对角
+                if (startX > viewWidth / 2.0) {
+                    calcCornerXY(startX, viewHeight.toFloat())
+                } else {
+                    calcCornerXY(viewWidth - startX, viewHeight.toFloat())
+                }
+            }
+            Direction.NEXT -> {
+                if (viewWidth / 2.0 > startX) {
+                    calcCornerXY(viewWidth - startX, startY)
+                }
+            }
+            else -> Unit
+        }
+    }
+
     override fun onScrollStart() {
         val distanceX: Float
-        when (direction) {
+        when (mDirection) {
             Direction.NEXT -> distanceX =
                 if (isCancel) {
                     var dis = viewWidth - startX + touchX
@@ -174,12 +194,12 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun onScrollStop() {
         curPage.x = 0.toFloat()
         if (!isCancel) {
-            pageView.fillPage(direction)
+            pageView.fillPage(mDirection)
         }
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (direction === Direction.NEXT) {
+        if (mDirection === Direction.NEXT) {
             calcPoints()
             drawCurrentPageArea(canvas, curBitmap, mPath0)
             drawNextPageAreaAndShadow(canvas, nextBitmap)

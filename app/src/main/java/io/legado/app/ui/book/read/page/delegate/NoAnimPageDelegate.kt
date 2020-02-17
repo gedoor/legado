@@ -13,7 +13,7 @@ class NoAnimPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) 
 
     override fun onScrollStop() {
         if (!isCancel) {
-            pageView.fillPage(direction)
+            pageView.fillPage(mDirection)
         }
     }
 }

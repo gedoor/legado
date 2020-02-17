@@ -41,7 +41,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             }
         }
         if (isMoved) {
-            isCancel = if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
+            isCancel = if (mDirection == Direction.NEXT) distanceX < 0 else distanceX > 0
             isRunning = true
             //设置触摸点
             setTouchPoint(e2.x, e2.y)
