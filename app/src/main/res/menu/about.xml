@@ -13,6 +13,6 @@
     <item
         android:id="@+id/menu_scoring"
         android:title="@string/scoring"
-        android:icon="@drawable/ic_star_border"
+        android:icon="@drawable/ic_scoring"
         app:showAsAction="always" />
 </menu>
