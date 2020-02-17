@@ -14,6 +14,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * 异常管理类
@@ -140,8 +141,13 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             val timestamp = System.currentTimeMillis()
             val time = format.format(Date())
             val fileName = "crash-$time-$timestamp.log"
-            mContext?.externalCacheDir?.let {
-                FileUtils.createFileIfNotExist(it, fileName, "crash")
+            mContext?.externalCacheDir?.let { rootFile ->
+                FileUtils.getDirFile(rootFile, "crash").listFiles()?.forEach {
+                    if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)) {
+                        it.delete()
+                    }
+                }
+                FileUtils.createFileIfNotExist(rootFile, fileName, "crash")
                     .writeText(sb.toString())
             }
         }

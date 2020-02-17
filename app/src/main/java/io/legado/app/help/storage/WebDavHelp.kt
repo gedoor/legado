@@ -23,10 +23,7 @@ import kotlin.math.min
 
 object WebDavHelp {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
-    private val zipFilePath = FileUtils.getCachePath() + "/backup" + ".zip"
-    private val unzipFilesPath by lazy {
-        FileUtils.getCachePath()
-    }
+    private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
 
     private fun getWebDavUrl(): String {
         var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
@@ -88,8 +85,8 @@ object WebDavHelp {
                 val file = WebDav(it + "legado/" + name)
                 file.downloadTo(zipFilePath, true)
                 @Suppress("BlockingMethodInNonBlockingContext")
-                ZipUtils.unzipFile(zipFilePath, unzipFilesPath)
-                Restore.restore(unzipFilesPath)
+                ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
+                Restore.restore(Backup.backupPath)
             }
         }.onSuccess {
             success.invoke()
