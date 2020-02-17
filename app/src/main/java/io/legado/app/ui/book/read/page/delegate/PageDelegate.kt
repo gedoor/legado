@@ -231,8 +231,17 @@ abstract class PageDelegate(protected val pageView: PageView) {
         NONE, PREV, NEXT
     }
 
+    @CallSuper
     open fun setDirection(direction: Direction) {
         mDirection = direction
+    }
+
+    open fun setBitmap() {
+        bitmap = when (mDirection) {
+            Direction.NEXT -> nextPage.screenshot()
+            Direction.PREV -> prevPage.screenshot()
+            else -> null
+        }
     }
 
     /**
@@ -264,7 +273,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 pageView.callBack?.clickCenter()
                 setTouchPoint(x, y)
             } else {
-                bitmap = if (x > viewWidth / 2 ||
+                if (x > viewWidth / 2 ||
                     AppConfig.clickAllNext
                 ) {
                     //设置动画方向
@@ -272,15 +281,13 @@ abstract class PageDelegate(protected val pageView: PageView) {
                         return true
                     }
                     setDirection(Direction.PREV)
-                    //下一页截图
-                    nextPage.screenshot()
+                    setBitmap()
                 } else {
                     if (!hasPrev()) {
                         return true
                     }
                     setDirection(Direction.NEXT)
-                    //上一页截图
-                    prevPage.screenshot()
+                    setBitmap()
                 }
                 setTouchPoint(x, y)
                 onScrollStart()

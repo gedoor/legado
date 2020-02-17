@@ -4,6 +4,7 @@ import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.utils.screenshot
 import kotlin.math.*
 
 @Suppress("DEPRECATION")
@@ -87,7 +88,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setTouchPoint(x, y, invalidate)
         //触摸y中间位置吧y变成屏幕高度
-        //触摸y中间位置吧y变成屏幕高度
         if ((startY > pageView.height / 3.0
                     && startY < pageView.height * 2 / 3.0)
             || mDirection == Direction.PREV
@@ -118,6 +118,20 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 if (viewWidth / 2.0 > startX) {
                     calcCornerXY(viewWidth - startX, startY)
                 }
+            }
+            else -> Unit
+        }
+    }
+
+    override fun setBitmap() {
+        when (mDirection) {
+            Direction.PREV -> {
+                prevBitmap = prevPage.screenshot()
+                curBitmap = curPage.screenshot()
+            }
+            Direction.NEXT -> {
+                nextBitmap = nextPage.screenshot()
+                curBitmap = curPage.screenshot()
             }
             else -> Unit
         }

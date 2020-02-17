@@ -4,7 +4,6 @@ import android.view.MotionEvent
 import io.legado.app.constant.PreferKey
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
@@ -27,8 +26,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         return true
                     }
                     setDirection(Direction.PREV)
-                    //上一页截图
-                    bitmap = prevPage.screenshot()
+                    setBitmap()
                 } else {
                     //如果不存在表示没有下一页了
                     if (!hasNext()) {
@@ -36,8 +34,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         return true
                     }
                     setDirection(Direction.NEXT)
-                    //下一页截图
-                    bitmap = nextPage.screenshot()
+                    setBitmap()
                 }
                 isMoved = true
             }

@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import io.legado.app.constant.PreferKey
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
@@ -89,8 +88,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                         return true
                     }
                     setDirection(Direction.PREV)
-                    //上一页截图
-                    bitmap = prevPage.screenshot()
+                    setBitmap()
                 }
             } else {
                 if (atBottom) {
@@ -103,8 +101,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                         return true
                     }
                     setDirection(Direction.NEXT)
-                    //下一页截图
-                    bitmap = nextPage.screenshot()
+                    setBitmap()
                 }
             }
             isMoved = true
