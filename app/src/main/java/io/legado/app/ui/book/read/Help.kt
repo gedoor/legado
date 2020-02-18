@@ -1,19 +1,33 @@
 package io.legado.app.ui.book.read
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.os.AsyncTask
 import android.os.Build
-import android.view.View
+import android.view.*
 import android.view.View.NO_ID
-import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
+import android.widget.EditText
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.service.help.Download
+import io.legado.app.service.help.ReadBook
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.requestInputMethod
+import kotlinx.android.synthetic.main.dialog_download_choice.view.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
+import org.jetbrains.anko.layoutInflater
 
 
 object Help {
@@ -96,4 +110,62 @@ object Help {
         }
     }
 
+    @SuppressLint("InflateParams")
+    fun showDownloadDialog(context: Context) {
+        ReadBook.book?.let { book ->
+            context.alert(titleResource = R.string.download_offline) {
+                var view: View? = null
+                customView {
+                    LayoutInflater.from(context).inflate(R.layout.dialog_download_choice, null)
+                        .apply {
+                            view = this
+                            edit_start.setText(book.durChapterIndex.toString())
+                            edit_end.setText(book.totalChapterNum.toString())
+                        }
+                }
+                yesButton {
+                    view?.apply {
+                        val start = edit_start?.text?.toString()?.toInt() ?: 0
+                        val end = edit_end?.text?.toString()?.toInt() ?: book.totalChapterNum
+                        Download.start(context, book.bookUrl, start, end)
+                    }
+                }
+                noButton()
+            }.show().applyTint()
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    fun showBookMark(context: Context) = with(context) {
+        val book = ReadBook.book ?: return
+        val textChapter = ReadBook.curTextChapter ?: return
+        context.alert(title = getString(R.string.bookmark_add)) {
+            var editText: EditText? = null
+            message = book.name + " • " + textChapter.title
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view.apply {
+                        hint = "备注内容"
+                    }
+                }
+            }
+            yesButton {
+                editText?.text?.toString()?.let { editContent ->
+                    AsyncTask.execute {
+                        val bookmark = Bookmark(
+                            book.durChapterTime,
+                            book.bookUrl,
+                            book.name,
+                            ReadBook.durChapterIndex,
+                            ReadBook.durPageIndex,
+                            textChapter.title,
+                            editContent
+                        )
+                        App.db.bookmarkDao().insert(bookmark)
+                    }
+                }
+            }
+            noButton()
+        }.show().applyTint().requestInputMethod()
+    }
 }

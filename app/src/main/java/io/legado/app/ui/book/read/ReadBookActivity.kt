@@ -1,24 +1,19 @@
 package io.legado.app.ui.book.read
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask.execute
 import android.os.Bundle
 import android.os.Handler
 import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.EditText
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
@@ -26,12 +21,12 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.service.help.Download
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.info.BookInfoActivity
@@ -49,8 +44,6 @@ import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
-import kotlinx.android.synthetic.main.dialog_download_choice.view.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -186,7 +179,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 菜单
      */
-    @SuppressLint("InflateParams")
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> {
@@ -202,58 +194,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     viewModel.refreshContent(it)
                 }
             }
-            R.id.menu_download -> ReadBook.book?.let { book ->
-                alert(titleResource = R.string.download_offline) {
-                    var view: View? = null
-                    customView {
-                        layoutInflater.inflate(R.layout.dialog_download_choice, null).apply {
-                            view = this
-                            edit_start.setText(book.durChapterIndex.toString())
-                            edit_end.setText(book.totalChapterNum.toString())
-                        }
-                    }
-                    yesButton {
-                        view?.apply {
-                            val start = edit_start?.text?.toString()?.toInt() ?: 0
-                            val end = edit_end?.text?.toString()?.toInt() ?: book.totalChapterNum
-                            Download.start(this@ReadBookActivity, book.bookUrl, start, end)
-                        }
-                    }
-                    noButton()
-                }.show().applyTint()
-            }
-            R.id.menu_add_bookmark -> {
-                val book = ReadBook.book ?: return true
-                val textChapter = ReadBook.curTextChapter
-                alert(title = getString(R.string.bookmark_add)) {
-                    var editText: EditText? = null
-                    message = book.name + " • " + textChapter?.title
-                    customView {
-                        layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                            editText = edit_view.apply {
-                                hint = "备注内容"
-                            }
-                        }
-                    }
-                    yesButton {
-                        editText?.text?.toString()?.let { editContent ->
-                            execute {
-                                val bookmark = Bookmark(
-                                    book.durChapterTime,
-                                    book.bookUrl,
-                                    book.name,
-                                    ReadBook.durChapterIndex,
-                                    ReadBook.durPageIndex,
-                                    textChapter!!.title,
-                                    editContent
-                                )
-                                App.db.bookmarkDao().insert(bookmark)
-                            }
-                        }
-                    }
-                    noButton()
-                }.show().applyTint().requestInputMethod()
-            }
+            R.id.menu_download -> Help.showDownloadDialog(this)
+            R.id.menu_add_bookmark -> Help.showBookMark(this)
             R.id.menu_copy_text ->
                 TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
             R.id.menu_update_toc -> ReadBook.book?.let {
