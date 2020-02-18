@@ -48,7 +48,7 @@ object HttpHelper {
         return null
     }
 
-    suspend fun simpleGetSync(url: String, encode: String? = null): String? {
+    suspend fun simpleGetAsync(url: String, encode: String? = null): String? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             val response = getApiService<HttpGetApi>(baseUrl, encode)
                 .getAsync(url, mapOf())
