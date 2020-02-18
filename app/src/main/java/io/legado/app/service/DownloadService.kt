@@ -67,6 +67,8 @@ class DownloadService : BaseService() {
         tasks.clear()
         searchPool.close()
         handler.removeCallbacks(runnable)
+        downloadMap.clear()
+        finalMap.clear()
         super.onDestroy()
         postEvent(EventBus.UP_DOWNLOAD, downloadMap)
     }

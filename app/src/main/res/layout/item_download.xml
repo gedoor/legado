@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        app:layout_constraintRight_toLeftOf="@+id/tv_export"
+        app:layout_constraintRight_toLeftOf="@+id/iv_download"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -19,7 +19,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        app:layout_constraintRight_toLeftOf="@+id/tv_export"
+        app:layout_constraintRight_toLeftOf="@+id/iv_download"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -28,9 +28,22 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        app:layout_constraintRight_toLeftOf="@+id/tv_export"
+        app:layout_constraintRight_toLeftOf="@+id/iv_download"
         app:layout_constraintTop_toBottomOf="@id/tv_author"
         app:layout_constraintLeft_toLeftOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_download"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="6dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="@color/tv_text_default"
+        android:src="@drawable/ic_play_24dp"
+        android:contentDescription="@string/start"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/tv_export" />
 
     <TextView
         android:id="@+id/tv_export"
