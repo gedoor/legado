@@ -477,18 +477,18 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      * 计算拖拽点对应的拖拽脚
      */
     private fun calcCornerXY(x: Float, y: Float) {
-        mCornerX = if (x <= pageView.width / 2.0) {
+        mCornerX = if (x <= viewWidth / 2.0) {
             0
         } else {
-            pageView.width
+            viewWidth
         }
-        mCornerY = if (y <= pageView.height / 2.0) {
+        mCornerY = if (y <= viewHeight / 2.0) {
             0
         } else {
-            pageView.height
+            viewHeight
         }
-        mIsRT_LB = (mCornerX == 0 && mCornerY == pageView.height)
-                || (mCornerX == pageView.width && mCornerY == 0)
+        mIsRT_LB = (mCornerX == 0 && mCornerY == viewHeight)
+                || (mCornerX == viewWidth && mCornerY == 0)
     }
 
     private fun calcPoints() {
@@ -509,11 +509,11 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mBezierStart1.y = mCornerY.toFloat()
         // 当mBezierStart1.x < 0或者mBezierStart1.x > 480时
         // 如果继续翻页，会出现BUG故在此限制
-        if (touchX > 0 && touchX < pageView.width) {
-            if (mBezierStart1.x < 0 || mBezierStart1.x > pageView.width) {
-                if (mBezierStart1.x < 0) mBezierStart1.x = pageView.width - mBezierStart1.x
+        if (touchX > 0 && touchX < viewWidth) {
+            if (mBezierStart1.x < 0 || mBezierStart1.x > viewWidth) {
+                if (mBezierStart1.x < 0) mBezierStart1.x = viewWidth - mBezierStart1.x
                 val f1: Float = abs(mCornerX - touchX)
-                val f2: Float = pageView.width * f1 / mBezierStart1.x
+                val f2: Float = viewWidth * f1 / mBezierStart1.x
                 touchX = abs(mCornerX - f2)
                 val f3: Float = abs(mCornerX - touchX) * abs(mCornerY - touchX) / f1
                 touchX = abs(mCornerY - f3)
@@ -531,8 +531,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                     mBezierControl2.y =
                         mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
                 }
-                mBezierStart1.x = (mBezierControl1.x
-                        - (mCornerX - mBezierControl1.x) / 2)
+                mBezierStart1.x = (mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2)
             }
         }
         mBezierStart2.x = mCornerX.toFloat()
