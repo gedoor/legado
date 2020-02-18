@@ -417,39 +417,37 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             )
         ).toFloat()
         val leftX: Int
-        val rightY: Int
+        val rightX: Int
         val mBackShadowDrawable: GradientDrawable
         if (mIsRtOrLb) { //左下及右上
             leftX = mBezierStart1.x.toInt()
-            rightY = (mBezierStart1.x + mTouchToCornerDis / 4).toInt()
+            rightX = (mBezierStart1.x + mTouchToCornerDis / 4).toInt()
             mBackShadowDrawable = mBackShadowDrawableLR!!
         } else {
             leftX = (mBezierStart1.x - mTouchToCornerDis / 4).toInt()
-            rightY = mBezierStart1.x.toInt()
+            rightX = mBezierStart1.x.toInt()
             mBackShadowDrawable = mBackShadowDrawableRL!!
         }
         canvas.save()
-        try {
+        kotlin.runCatching {
             canvas.clipPath(mPath0)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 canvas.clipPath(mPath1)
             } else {
                 canvas.clipPath(mPath1, Region.Op.INTERSECT)
             }
-            //canvas.clipPath(mPath1, Region.Op.INTERSECT);
-        } catch (ignored: java.lang.Exception) {
         }
+
         canvas.drawBitmap(bitmap, 0f, 0f, null)
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y)
         mBackShadowDrawable.setBounds(
-            leftX, mBezierStart1.y.toInt(), rightY,
-            (mMaxLength + mBezierStart1.y).toInt()
+            leftX, mBezierStart1.y.toInt(),
+            rightX, (mMaxLength + mBezierStart1.y).toInt()
         ) //左上及右下角的xy坐标值,构成一个矩形
         mBackShadowDrawable.draw(canvas)
         canvas.restore()
     }
 
-    //绘制翻页时的正面页
     private fun drawCurrentPageArea(
         canvas: Canvas,
         bitmap: Bitmap?,
@@ -458,16 +456,10 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         bitmap ?: return
         mPath0.reset()
         mPath0.moveTo(mBezierStart1.x, mBezierStart1.y)
-        mPath0.quadTo(
-            mBezierControl1.x, mBezierControl1.y, mBezierEnd1.x,
-            mBezierEnd1.y
-        )
+        mPath0.quadTo(mBezierControl1.x, mBezierControl1.y, mBezierEnd1.x, mBezierEnd1.y)
         mPath0.lineTo(touchX, touchY)
         mPath0.lineTo(mBezierEnd2.x, mBezierEnd2.y)
-        mPath0.quadTo(
-            mBezierControl2.x, mBezierControl2.y, mBezierStart2.x,
-            mBezierStart2.y
-        )
+        mPath0.quadTo(mBezierControl2.x, mBezierControl2.y, mBezierStart2.x, mBezierStart2.y)
         mPath0.lineTo(mCornerX.toFloat(), mCornerY.toFloat())
         mPath0.close()
         canvas.save()
@@ -477,10 +469,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             canvas.clipPath(path, Region.Op.XOR)
         }
         canvas.drawBitmap(bitmap, 0f, 0f, null)
-        try {
+        kotlin.runCatching {
             canvas.restore()
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
         }
     }
 
