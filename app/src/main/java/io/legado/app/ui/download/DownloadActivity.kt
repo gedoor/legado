@@ -36,6 +36,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     FileChooserDialog.CallBack,
     DownloadAdapter.CallBack {
     private val exportRequestCode = 32
+    private val exportBookPathKey = "exportBookPath"
     lateinit var adapter: DownloadAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var menu: Menu? = null
@@ -132,7 +133,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
             items(resources.getStringArray(R.array.select_folder).toList()) { _, index ->
                 when (index) {
                     0 -> {
-                        val path = ACache.get(this@DownloadActivity).getAsString("exportBookPath")
+                        val path = ACache.get(this@DownloadActivity).getAsString(exportBookPathKey)
                         if (path.isNullOrEmpty()) {
                             toast("没有默认路径")
                         } else {
@@ -172,6 +173,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             exportRequestCode -> {
+                ACache.get(this@DownloadActivity).put(exportBookPathKey, currentPath)
                 adapter.getItem(exportPosition)?.let {
                     viewModel.export(currentPath, it)
                 }
@@ -184,6 +186,11 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
         when (requestCode) {
             exportRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
+                    contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    ACache.get(this@DownloadActivity).put(exportBookPathKey, uri.toString())
                     adapter.getItem(exportPosition)?.let {
                         viewModel.export(uri.toString(), it)
                     }
