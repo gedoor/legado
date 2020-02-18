@@ -162,6 +162,12 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onScrollStop() {
+        prevBitmap?.recycle()
+        prevBitmap = null
+        nextBitmap?.recycle()
+        nextBitmap = null
+        curBitmap?.recycle()
+        curBitmap = null
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
