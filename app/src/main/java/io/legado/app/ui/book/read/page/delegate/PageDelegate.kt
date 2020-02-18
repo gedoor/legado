@@ -279,13 +279,13 @@ abstract class PageDelegate(protected val pageView: PageView) {
                     if (!hasNext()) {
                         return true
                     }
-                    setDirection(Direction.PREV)
+                    setDirection(Direction.NEXT)
                     setBitmap()
                 } else {
                     if (!hasPrev()) {
                         return true
                     }
-                    setDirection(Direction.NEXT)
+                    setDirection(Direction.PREV)
                     setBitmap()
                 }
                 setTouchPoint(x, y)
