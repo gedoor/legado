@@ -55,8 +55,6 @@ object HttpHelper {
         return Retrofit.Builder().baseUrl(baseUrl)
             //增加返回值为字符串的支持(以实体类返回)
             .addConverterFactory(EncodeConverter(encode))
-            //增加返回值为Observable<T>的支持
-            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
             .client(client)
             .build()
     }
@@ -64,8 +62,6 @@ object HttpHelper {
     fun getByteRetrofit(baseUrl: String): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl)
             .addConverterFactory(ByteConverter())
-            //增加返回值为Observable<T>的支持
-            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
             .client(client)
             .build()
     }

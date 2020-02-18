@@ -73,8 +73,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         .postMapByteAsync(
                             "http://tts.baidu.com/text2audio",
                             getAudioBody(contentList[index]), mapOf()
-                        ).await()
-                        .body()
+                        ).body()
                     if (bytes != null && isActive) {
                         val file = getSpeakFile(index)
                         file.writeBytes(bytes)

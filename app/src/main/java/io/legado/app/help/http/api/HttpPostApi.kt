@@ -1,6 +1,5 @@
 package io.legado.app.help.http.api
 
-import kotlinx.coroutines.Deferred
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
@@ -15,18 +14,18 @@ interface HttpPostApi {
 
     @FormUrlEncoded
     @POST
-    fun postMapAsync(
+    suspend fun postMapAsync(
         @Url url: String,
         @FieldMap(encoded = true) fieldMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
-    ): Deferred<Response<String>>
+    ): Response<String>
 
     @POST
-    fun postBodyAsync(
+    suspend fun postBodyAsync(
         @Url url: String,
         @Body body: RequestBody,
         @HeaderMap headers: Map<String, String>
-    ): Deferred<Response<String>>
+    ): Response<String>
 
     @FormUrlEncoded
     @POST
@@ -45,9 +44,9 @@ interface HttpPostApi {
 
     @FormUrlEncoded
     @POST
-    fun postMapByteAsync(
+    suspend fun postMapByteAsync(
         @Url url: String,
         @FieldMap(encoded = true) fieldMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
-    ): Deferred<Response<ByteArray>>
+    ): Response<ByteArray>
 }

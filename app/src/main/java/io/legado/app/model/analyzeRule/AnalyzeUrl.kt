@@ -286,22 +286,18 @@ class AnalyzeUrl(
                     HttpHelper
                         .getApiService<HttpPostApi>(baseUrl, charset)
                         .postMapAsync(url, fieldMap, headerMap)
-                        .await()
                 } else {
                     HttpHelper
                         .getApiService<HttpPostApi>(baseUrl, charset)
                         .postBodyAsync(url, body!!, headerMap)
-                        .await()
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
                 .getApiService<HttpGetApi>(baseUrl, charset)
                 .getAsync(url, headerMap)
-                .await()
             else -> HttpHelper
                 .getApiService<HttpGetApi>(baseUrl, charset)
                 .getMapAsync(url, fieldMap, headerMap)
-                .await()
         }
         return Res(NetworkUtils.getUrl(res), res.body())
     }
