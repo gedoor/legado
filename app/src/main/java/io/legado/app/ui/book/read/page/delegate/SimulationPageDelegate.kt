@@ -237,9 +237,9 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         bitmap: Bitmap?
     ) {
         bitmap ?: return
-        val i = (mBezierStart1.x + mBezierControl1.x).toInt() / 2
+        val i = ((mBezierStart1.x + mBezierControl1.x) / 2).toInt()
         val f1 = abs(i - mBezierControl1.x)
-        val i1 = (mBezierStart2.y + mBezierControl2.y).toInt() / 2
+        val i1 = ((mBezierStart2.y + mBezierControl2.y) / 2).toInt()
         val f2 = abs(i1 - mBezierControl2.y)
         val f3 = min(f1, f2)
         mPath1.reset()
@@ -253,7 +253,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         val left: Int
         val right: Int
         if (mIsRtOrLb) {
-            left = (mBezierStart1.x - 1).toInt()
+            left = mBezierStart1.x.toInt() - 1
             right = (mBezierStart1.x + f3 + 1).toInt()
             mFolderShadowDrawable = mFolderShadowDrawableLR!!
         } else {
@@ -262,14 +262,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             mFolderShadowDrawable = mFolderShadowDrawableRL!!
         }
         canvas.save()
-        try {
+        kotlin.runCatching {
             canvas.clipPath(mPath0)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 canvas.clipPath(mPath1)
             } else {
                 canvas.clipPath(mPath1, Region.Op.INTERSECT)
             }
-        } catch (ignored: Exception) {
         }
         mPaint.colorFilter = mColorMatrixFilter
         val dis = hypot(
@@ -290,8 +289,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mPaint.colorFilter = null
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y)
         mFolderShadowDrawable.setBounds(
-            left, mBezierStart1.y.toInt(), right,
-            (mBezierStart1.y + mMaxLength).toInt()
+            left, mBezierStart1.y.toInt(),
+            right, (mBezierStart1.y + mMaxLength).toInt()
         )
         mFolderShadowDrawable.draw(canvas)
         canvas.restore()
