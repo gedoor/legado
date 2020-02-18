@@ -171,6 +171,7 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.login.SourceLogin" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
