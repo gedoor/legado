@@ -12,9 +12,9 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 object BookChapterList {
 
@@ -24,7 +24,7 @@ object BookChapterList {
         body: String?,
         bookSource: BookSource,
         baseUrl: String
-    ): List<BookChapter> = suspendCoroutine { block ->
+    ): List<BookChapter> = suspendCancellableCoroutine { block ->
         try {
             val chapterList = ArrayList<BookChapter>()
             body ?: throw Exception(
