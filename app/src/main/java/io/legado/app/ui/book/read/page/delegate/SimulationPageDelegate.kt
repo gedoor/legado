@@ -40,7 +40,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private val mMatrixArray = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 1.0f)
 
     // 是否属于右上左下
-    private var mIsRT_LB = false
+    private var mIsRtOrLb = false
     private var mMaxLength = 0f
     // 背面颜色组
     private var mBackShadowColors: IntArray? = null
@@ -239,7 +239,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         val mFolderShadowDrawable: GradientDrawable
         val left: Int
         val right: Int
-        if (mIsRT_LB) {
+        if (mIsRtOrLb) {
             left = (mBezierStart1.x - 1).toInt()
             right = (mBezierStart1.x + f3 + 1).toInt()
             mFolderShadowDrawable = mFolderShadowDrawableLR!!
@@ -288,7 +288,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      * 绘制翻起页的阴影
      */
     private fun drawCurrentPageShadow(canvas: Canvas) {
-        val degree: Double = if (mIsRT_LB) {
+        val degree: Double = if (mIsRtOrLb) {
             (Math.PI / 4 - atan2(mBezierControl1.y - touchX, touchY - mBezierControl1.x))
         } else {
             (Math.PI / 4 - atan2(touchY - mBezierControl1.y, touchX - mBezierControl1.x))
@@ -298,7 +298,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         val d2 = 25.toFloat() * 1.414 * sin(degree)
         val x = (touchX + d1).toFloat()
         val y: Float
-        y = if (mIsRT_LB) {
+        y = if (mIsRtOrLb) {
             (touchY + d2).toFloat()
         } else {
             (touchY - d2).toFloat()
@@ -322,7 +322,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         var leftX: Int
         var rightX: Int
         var mCurrentPageShadow: GradientDrawable
-        if (mIsRT_LB) {
+        if (mIsRtOrLb) {
             leftX = mBezierControl1.x.toInt()
             rightX = mBezierControl1.x.toInt() + 25
             mCurrentPageShadow = mFrontShadowDrawableVLR!!
@@ -358,7 +358,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             canvas.clipPath(mPath1)
         } catch (ignored: java.lang.Exception) {
         }
-        if (mIsRT_LB) {
+        if (mIsRtOrLb) {
             leftX = mBezierControl2.y.toInt()
             rightX = (mBezierControl2.y + 25).toInt()
             mCurrentPageShadow = mFrontShadowDrawableHTB!!
@@ -408,7 +408,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         val leftX: Int
         val rightY: Int
         val mBackShadowDrawable: GradientDrawable
-        if (mIsRT_LB) { //左下及右上
+        if (mIsRtOrLb) { //左下及右上
             leftX = mBezierStart1.x.toInt()
             rightY = (mBezierStart1.x + mTouchToCornerDis / 4).toInt()
             mBackShadowDrawable = mBackShadowDrawableLR!!
@@ -479,7 +479,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private fun calcCornerXY(x: Float, y: Float) {
         mCornerX = if (x <= viewWidth / 2.0) 0 else viewWidth
         mCornerY = if (y <= viewHeight / 2.0) 0 else viewHeight
-        mIsRT_LB = (mCornerX == 0 && mCornerY == viewHeight)
+        mIsRtOrLb = (mCornerX == 0 && mCornerY == viewHeight)
                 || (mCornerX == viewWidth && mCornerY == 0)
     }
 
