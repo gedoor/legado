@@ -101,9 +101,9 @@ class AboutFragment : PreferenceFragmentCompat() {
         // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return try {
             startActivity(intent)
-            false
-        } catch (e: java.lang.Exception) {
             true
+        } catch (e: java.lang.Exception) {
+            false
         }
     }
 
