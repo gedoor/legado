@@ -58,13 +58,17 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_download -> launch(IO) {
-                App.db.bookDao().webBooks.forEach { book ->
-                    Download.start(
-                        this@DownloadActivity,
-                        book.bookUrl,
-                        book.durChapterIndex,
-                        book.totalChapterNum
-                    )
+                if (adapter.downloadMap.isNullOrEmpty()) {
+                    App.db.bookDao().webBooks.forEach { book ->
+                        Download.start(
+                            this@DownloadActivity,
+                            book.bookUrl,
+                            book.durChapterIndex,
+                            book.totalChapterNum
+                        )
+                    }
+                } else {
+                    Download.stop(this@DownloadActivity)
                 }
             }
         }

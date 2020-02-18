@@ -17,4 +17,11 @@ object Download {
         }
     }
 
+    fun stop(context: Context) {
+        Intent(context, DownloadService::class.java).let {
+            it.action = IntentAction.stop
+            context.startService(it)
+        }
+    }
+
 }
