@@ -197,26 +197,33 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mFolderShadowDrawableRL = GradientDrawable(
             GradientDrawable.Orientation.RIGHT_LEFT, color
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
+
         mFolderShadowDrawableLR = GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT, color
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
+
         mBackShadowColors = intArrayOf(-0xeeeeef, 0x111111)
         mBackShadowDrawableRL = GradientDrawable(
             GradientDrawable.Orientation.RIGHT_LEFT, mBackShadowColors
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
+
         mBackShadowDrawableLR = GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT, mBackShadowColors
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
+
         mFrontShadowColors = intArrayOf(-0x7feeeeef, 0x111111)
         mFrontShadowDrawableVLR = GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT, mFrontShadowColors
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
+
         mFrontShadowDrawableVRL = GradientDrawable(
             GradientDrawable.Orientation.RIGHT_LEFT, mFrontShadowColors
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
+
         mFrontShadowDrawableHTB = GradientDrawable(
             GradientDrawable.Orientation.TOP_BOTTOM, mFrontShadowColors
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
+
         mFrontShadowDrawableHBT = GradientDrawable(
             GradientDrawable.Orientation.BOTTOM_TOP, mFrontShadowColors
         ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
@@ -295,7 +302,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      */
     private fun drawCurrentPageShadow(canvas: Canvas) {
         val degree: Double = if (mIsRtOrLb) {
-            (Math.PI / 4 - atan2(mBezierControl1.y - touchX, touchY - mBezierControl1.x))
+            (Math.PI / 4 - atan2(mBezierControl1.y - touchX, touchX - mBezierControl1.x))
         } else {
             (Math.PI / 4 - atan2(touchY - mBezierControl1.y, touchX - mBezierControl1.x))
         }
@@ -303,8 +310,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         val d1 = 25.toFloat() * 1.414 * cos(degree)
         val d2 = 25.toFloat() * 1.414 * sin(degree)
         val x = (touchX + d1).toFloat()
-        val y: Float
-        y = if (mIsRtOrLb) {
+        val y: Float = if (mIsRtOrLb) {
             (touchY + d2).toFloat()
         } else {
             (touchY - d2).toFloat()
@@ -316,14 +322,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mPath1.lineTo(mBezierStart1.x, mBezierStart1.y)
         mPath1.close()
         canvas.save()
-        try {
+        kotlin.runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 canvas.clipOutPath(mPath0)
             } else {
                 canvas.clipPath(mPath0, Region.Op.XOR)
             }
             canvas.clipPath(mPath1, Region.Op.INTERSECT)
-        } catch (ignored: java.lang.Exception) {
         }
         var leftX: Int
         var rightX: Int
@@ -333,7 +338,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             rightX = mBezierControl1.x.toInt() + 25
             mCurrentPageShadow = mFrontShadowDrawableVLR!!
         } else {
-            leftX = (mBezierControl1.x - 25).toInt()
+            leftX = mBezierControl1.x.toInt() - 25
             rightX = mBezierControl1.x.toInt() + 1
             mCurrentPageShadow = mFrontShadowDrawableVRL!!
         }
@@ -342,12 +347,12 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 .toFloat()
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y)
         mCurrentPageShadow.setBounds(
-            leftX,
-            (mBezierControl1.y - mMaxLength).toInt(), rightX,
-            mBezierControl1.y.toInt()
+            leftX, (mBezierControl1.y - mMaxLength).toInt(),
+            rightX, mBezierControl1.y.toInt()
         )
         mCurrentPageShadow.draw(canvas)
         canvas.restore()
+
         mPath1.reset()
         mPath1.moveTo(x, y)
         mPath1.lineTo(touchX, touchY)
@@ -355,22 +360,21 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mPath1.lineTo(mBezierStart2.x, mBezierStart2.y)
         mPath1.close()
         canvas.save()
-        try {
+        kotlin.runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 canvas.clipOutPath(mPath0)
             } else {
                 canvas.clipPath(mPath0, Region.Op.XOR)
             }
             canvas.clipPath(mPath1)
-        } catch (ignored: java.lang.Exception) {
         }
         if (mIsRtOrLb) {
             leftX = mBezierControl2.y.toInt()
-            rightX = (mBezierControl2.y + 25).toInt()
+            rightX = mBezierControl2.y.toInt() + 25
             mCurrentPageShadow = mFrontShadowDrawableHTB!!
         } else {
-            leftX = (mBezierControl2.y - 25).toInt()
-            rightX = (mBezierControl2.y + 1).toInt()
+            leftX = mBezierControl2.y.toInt() - 25
+            rightX = mBezierControl2.y.toInt() + 1
             mCurrentPageShadow = mFrontShadowDrawableHBT!!
         }
         rotateDegrees = Math.toDegrees(
@@ -378,17 +382,19 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         ).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl2.x, mBezierControl2.y)
         val temp: Float =
-            if (mBezierControl2.y < 0) mBezierControl2.y - pageView.height else mBezierControl2.y
+            if (mBezierControl2.y < 0) mBezierControl2.y - viewHeight else mBezierControl2.y
         val hmg = hypot(mBezierControl2.x.toDouble(), temp.toDouble()).toInt()
-        if (hmg > mMaxLength) mCurrentPageShadow
-            .setBounds(
+        if (hmg > mMaxLength)
+            mCurrentPageShadow.setBounds(
                 (mBezierControl2.x - 25).toInt() - hmg, leftX,
                 (mBezierControl2.x + mMaxLength).toInt() - hmg,
                 rightX
-            ) else mCurrentPageShadow.setBounds(
-            (mBezierControl2.x - mMaxLength).toInt(), leftX,
-            mBezierControl2.x.toInt(), rightX
-        )
+            )
+        else
+            mCurrentPageShadow.setBounds(
+                (mBezierControl2.x - mMaxLength).toInt(), leftX,
+                mBezierControl2.x.toInt(), rightX
+            )
         mCurrentPageShadow.draw(canvas)
         canvas.restore()
     }
