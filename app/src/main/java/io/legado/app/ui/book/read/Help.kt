@@ -20,6 +20,9 @@ object Help {
 
     private const val NAVIGATION = "navigationBarBackground"
 
+    /**
+     * 更新状态栏,导航栏
+     */
     fun upSystemUiVisibility(activity: Activity, toolBarHide: Boolean = true) {
         var flag = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -70,6 +73,9 @@ object Help {
         return false
     }
 
+    /**
+     * 保持亮屏
+     */
     fun keepScreenOn(window: Window, on: Boolean) {
         if (on) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
