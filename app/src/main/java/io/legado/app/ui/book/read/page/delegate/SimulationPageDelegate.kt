@@ -162,7 +162,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onScrollStop() {
-        curPage.x = 0.toFloat()
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
