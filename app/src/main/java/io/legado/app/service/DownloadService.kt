@@ -18,6 +18,7 @@ import io.legado.app.model.WebBook
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.isActive
 import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
 
@@ -93,12 +94,14 @@ class DownloadService : BaseService() {
     private fun download() {
         val task = Coroutine.async(this, context = searchPool) {
             downloadMap.forEach { entry ->
+                if (!isActive) return@async
                 if (!finalMap.containsKey(entry.key)) {
                     val book = App.db.bookDao().getBook(entry.key) ?: return@async
                     val bookSource =
                         App.db.bookSourceDao().getBookSource(book.origin) ?: return@async
                     val webBook = WebBook(bookSource)
                     entry.value.forEach { chapter ->
+                        if (!isActive) return@async
                         if (!BookHelp.hasContent(book, chapter)) {
                             webBook.getContent(book, chapter, scope = this, context = searchPool)
                                 .onStart {
