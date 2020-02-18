@@ -68,7 +68,7 @@ class DownloadService : BaseService() {
         searchPool.close()
         handler.removeCallbacks(runnable)
         super.onDestroy()
-        postEvent(EventBus.UP_DOWNLOAD, false)
+        postEvent(EventBus.UP_DOWNLOAD, downloadMap)
     }
 
     private fun addDownloadData(bookUrl: String?, start: Int, end: Int) {
@@ -144,7 +144,7 @@ class DownloadService : BaseService() {
 
     private fun upDownload() {
         updateNotification(notificationContent)
-        postEvent(EventBus.UP_DOWNLOAD, true)
+        postEvent(EventBus.UP_DOWNLOAD, downloadMap)
         handler.removeCallbacks(runnable)
         handler.postDelayed(runnable, 1000)
     }

@@ -105,15 +105,16 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     }
 
     override fun observeLiveBus() {
-        observeEvent<Boolean>(EventBus.UP_DOWNLOAD) {
-            if (it) {
-                menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_stop_black_24dp)
-                menu?.applyTint(this)
-                adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
-            } else {
+        observeEvent<HashMap<String, LinkedHashSet<BookChapter>>>(EventBus.UP_DOWNLOAD) {
+            if (it.isEmpty()) {
                 menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_play_24dp)
                 menu?.applyTint(this)
+            } else {
+                menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_stop_black_24dp)
+                menu?.applyTint(this)
             }
+            adapter.downloadMap = it
+            adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
         }
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
             adapter.cacheChapters[it.bookUrl]?.add(it.url)
