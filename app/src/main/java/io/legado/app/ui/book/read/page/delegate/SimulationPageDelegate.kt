@@ -487,8 +487,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         } else {
             pageView.height
         }
-        mIsRT_LB = (mCornerX == 0 && mCornerY == pageView.height
-                || mCornerX == pageView.width && mCornerY == 0)
+        mIsRT_LB = (mCornerX == 0 && mCornerY == pageView.height)
+                || (mCornerX == pageView.width && mCornerY == 0)
     }
 
     private fun calcPoints() {
