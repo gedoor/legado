@@ -192,6 +192,7 @@ object TintHelper {
         }
     }
 
+    @SuppressLint("PrivateResource")
     fun setTint(radioButton: RadioButton, @ColorInt color: Int, useDarker: Boolean) {
         val sl = ColorStateList(
             arrayOf(
@@ -290,6 +291,7 @@ object TintHelper {
         setCursorTint(editText, color)
     }
 
+    @SuppressLint("PrivateResource")
     fun setTint(box: CheckBox, @ColorInt color: Int, useDarker: Boolean) {
         val sl = ColorStateList(
             arrayOf(
