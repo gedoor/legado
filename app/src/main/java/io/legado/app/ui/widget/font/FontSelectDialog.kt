@@ -123,10 +123,11 @@ class FontSelectDialog : DialogFragment(),
     private fun getFontFiles(uri: Uri) {
         launch(IO) {
             FileUtils.deleteFile(fontCacheFolder)
-            DocumentFile.fromTreeUri(App.INSTANCE, uri)?.listFiles()?.forEach { file ->
-                if (file.name?.toLowerCase()?.matches(".*\\.[ot]tf".toRegex()) == true) {
-                    DocumentUtils.readBytes(App.INSTANCE, file.uri)?.let {
-                        FileUtils.createFileIfNotExist(fontCacheFolder + file.name).writeBytes(it)
+            DocumentUtils.listFiles(App.INSTANCE, uri).forEach { item ->
+                if (item.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())) {
+                    DocumentUtils.readBytes(App.INSTANCE, item.uri)?.let { byteArray ->
+                        FileUtils.createFileIfNotExist(fontCacheFolder + item.name)
+                            .writeBytes(byteArray)
                     }
                 }
             }
