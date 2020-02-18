@@ -52,5 +52,16 @@ data class BookChapter(
         variable = GSON.toJson(variableMap)
     }
 
+    override fun hashCode(): Int {
+        return url.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is BookChapter) {
+            return other.url == url
+        }
+        return false
+    }
+
 }
 
