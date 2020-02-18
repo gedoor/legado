@@ -58,6 +58,7 @@ class DownloadService : BaseService() {
                     intent.getIntExtra("start", 0),
                     intent.getIntExtra("end", 0)
                 )
+                IntentAction.remove -> removeDownload(intent.getStringExtra("bookUrl"))
                 IntentAction.stop -> stopDownload()
             }
         }
@@ -91,6 +92,11 @@ class DownloadService : BaseService() {
         }
     }
 
+    private fun removeDownload(bookUrl: String?) {
+        downloadMap.remove(bookUrl)
+        finalMap.remove(bookUrl)
+    }
+
     private fun download() {
         val task = Coroutine.async(this, context = searchPool) {
             downloadMap.forEach { entry ->
@@ -102,30 +108,37 @@ class DownloadService : BaseService() {
                     val webBook = WebBook(bookSource)
                     entry.value.forEach { chapter ->
                         if (!isActive) return@async
-                        if (!BookHelp.hasContent(book, chapter)) {
-                            webBook.getContent(book, chapter, scope = this, context = searchPool)
-                                .onStart {
-                                    notificationContent = chapter.title
-                                }
-                                .onSuccess(IO) { content ->
-                                    content?.let {
-                                        BookHelp.saveContent(book, chapter, content)
+                        if (downloadMap.containsKey(book.bookUrl)) {
+                            if (!BookHelp.hasContent(book, chapter)) {
+                                webBook.getContent(
+                                    book,
+                                    chapter,
+                                    scope = this,
+                                    context = searchPool
+                                )
+                                    .onStart {
+                                        notificationContent = chapter.title
                                     }
-                                }
-                                .onFinally(IO) {
-                                    synchronized(this@DownloadService) {
-                                        val chapterMap =
-                                            finalMap[book.bookUrl]
-                                                ?: linkedSetOf<BookChapter>().apply {
-                                                    finalMap[book.bookUrl] = this
-                                                }
-                                        chapterMap.add(chapter)
-                                        if (chapterMap.size == entry.value.size) {
-                                            downloadMap.remove(book.bookUrl)
-                                            finalMap.remove(book.bookUrl)
+                                    .onSuccess(IO) { content ->
+                                        content?.let {
+                                            BookHelp.saveContent(book, chapter, content)
                                         }
                                     }
-                                }
+                                    .onFinally(IO) {
+                                        synchronized(this@DownloadService) {
+                                            val chapterMap =
+                                                finalMap[book.bookUrl]
+                                                    ?: linkedSetOf<BookChapter>().apply {
+                                                        finalMap[book.bookUrl] = this
+                                                    }
+                                            chapterMap.add(chapter)
+                                            if (chapterMap.size == entry.value.size) {
+                                                downloadMap.remove(book.bookUrl)
+                                                finalMap.remove(book.bookUrl)
+                                            }
+                                        }
+                                    }
+                            }
                         }
                     }
                 }

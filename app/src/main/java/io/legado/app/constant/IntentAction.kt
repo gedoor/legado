@@ -17,4 +17,5 @@ object IntentAction {
     const val next = "next"
     const val moveTo = "moveTo"
     const val init = "init"
+    const val remove = "remove"
 }

@@ -45,7 +45,11 @@ class DownloadAdapter(context: Context, private val callBack: CallBack) :
         holder.itemView.apply {
             iv_download.onClick {
                 getItem(holder.layoutPosition)?.let {
-                    Download.start(context, it.bookUrl, 0, it.totalChapterNum)
+                    if (downloadMap?.containsKey(it.bookUrl) == true) {
+                        Download.remove(context, it.bookUrl)
+                    } else {
+                        Download.start(context, it.bookUrl, 0, it.totalChapterNum)
+                    }
                 }
             }
             tv_export.onClick {

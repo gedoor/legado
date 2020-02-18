@@ -17,6 +17,14 @@ object Download {
         }
     }
 
+    fun remove(context: Context, bookUrl: String) {
+        Intent(context, DownloadService::class.java).let {
+            it.action = IntentAction.remove
+            it.putExtra("bookUrl", bookUrl)
+            context.startService(it)
+        }
+    }
+
     fun stop(context: Context) {
         Intent(context, DownloadService::class.java).let {
             it.action = IntentAction.stop
