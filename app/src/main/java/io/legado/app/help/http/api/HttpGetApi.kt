@@ -11,7 +11,7 @@ import retrofit2.http.Url
  * Created by GKF on 2018/1/21.
  * get web content
  */
-
+@Suppress("unused")
 interface HttpGetApi {
     @GET
     suspend fun getAsync(
@@ -38,4 +38,11 @@ interface HttpGetApi {
         @QueryMap(encoded = true) queryMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
     ): Call<String>
+
+    @GET
+    suspend fun getMapByteAsync(
+        @Url url: String,
+        @QueryMap(encoded = true) queryMap: Map<String, String>,
+        @HeaderMap headers: Map<String, String>
+    ): Response<ByteArray>
 }
