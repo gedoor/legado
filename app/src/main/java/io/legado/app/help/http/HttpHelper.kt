@@ -9,6 +9,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
+@Suppress("unused")
 object HttpHelper {
 
     val client: OkHttpClient by lazy {
@@ -42,6 +43,15 @@ object HttpHelper {
             val response = getApiService<HttpGetApi>(baseUrl, encode)
                 .get(url, mapOf())
                 .execute()
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun simpleGetSync(url: String, encode: String? = null): String? {
+        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
+            val response = getApiService<HttpGetApi>(baseUrl, encode)
+                .getAsync(url, mapOf())
             return response.body()
         }
         return null
