@@ -387,8 +387,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (hmg > mMaxLength)
             mCurrentPageShadow.setBounds(
                 (mBezierControl2.x - 25).toInt() - hmg, leftX,
-                (mBezierControl2.x + mMaxLength).toInt() - hmg,
-                rightX
+                (mBezierControl2.x + mMaxLength).toInt() - hmg, rightX
             )
         else
             mCurrentPageShadow.setBounds(
