@@ -34,6 +34,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.Download
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
@@ -57,6 +58,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
@@ -260,6 +262,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             R.id.menu_enable_replace -> ReadBook.book?.let {
                 it.useReplaceRule = !it.useReplaceRule
                 menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.useReplaceRule
+            }
+            R.id.menu_book_info -> ReadBook.book?.let {
+                startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
             }
         }
         return super.onCompatOptionsItemSelected(item)
