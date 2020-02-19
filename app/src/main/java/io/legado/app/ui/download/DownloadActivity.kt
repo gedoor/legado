@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -19,10 +20,7 @@ import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.service.help.Download
 import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.utils.ACache
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.observeEvent
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -137,9 +135,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
                         if (path.isNullOrEmpty()) {
                             toast("没有默认路径")
                         } else {
-                            adapter.getItem(exportPosition)?.let {
-                                viewModel.export(path, it)
-                            }
+                            startExport(path)
                         }
                     }
                     1 -> {
@@ -170,13 +166,21 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
         }.show()
     }
 
+    private fun startExport(path: String) {
+        adapter.getItem(exportPosition)?.let { book ->
+            Snackbar.make(title_bar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
+                .show()
+            viewModel.export(path, book) {
+                title_bar.snackbar(it)
+            }
+        }
+    }
+
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             exportRequestCode -> {
                 ACache.get(this@DownloadActivity).put(exportBookPathKey, currentPath)
-                adapter.getItem(exportPosition)?.let {
-                    viewModel.export(currentPath, it)
-                }
+                startExport(currentPath)
             }
         }
     }
@@ -191,9 +195,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     ACache.get(this@DownloadActivity).put(exportBookPathKey, uri.toString())
-                    adapter.getItem(exportPosition)?.let {
-                        viewModel.export(uri.toString(), it)
-                    }
+                    startExport(uri.toString())
                 }
             }
 

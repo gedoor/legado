@@ -18,7 +18,7 @@ import java.io.File
 class DownloadViewModel(application: Application) : BaseViewModel(application) {
 
 
-    fun export(path: String, book: Book) {
+    fun export(path: String, book: Book, finally: (msg: String) -> Unit) {
         execute {
             if (path.isContentPath()) {
                 val uri = Uri.parse(path)
@@ -29,7 +29,9 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
                 export(FileUtils.createFolderIfNotExist(path), book)
             }
         }.onError {
-            toast(it.localizedMessage ?: "ERROR")
+            finally(it.localizedMessage ?: "ERROR")
+        }.onSuccess {
+            finally(context.getString(R.string.success))
         }
     }
 

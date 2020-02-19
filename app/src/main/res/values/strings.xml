@@ -580,6 +580,7 @@
     <string name="book_type_audio">音频</string>
     <string name="to_backstage">转到后台</string>
     <string name="importing">正在导入</string>
+    <string name="exporting">正在导出</string>
     <string name="custom_page_key">自定义翻页按键</string>
     <string name="prev_page_key">上一页按键</string>
     <string name="next_page_key">下一页按键</string>
