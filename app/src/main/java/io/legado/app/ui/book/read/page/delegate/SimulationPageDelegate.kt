@@ -12,7 +12,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     //不让x,y为0,否则在点计算时会有问题
     private var mTouchX = 0.1f
     private var mTouchY = 0.1f
-    private var mCornerX = 1 // 拖拽点对应的页脚
+    // 拖拽点对应的页脚
+    private var mCornerX = 1
     private var mCornerY = 1
     private val mPath0: Path = Path()
     private val mPath1: Path = Path()
@@ -85,6 +86,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setStartPoint(x, y, invalidate)
+        mTouchX = x
+        mTouchY = y
         calcCornerXY(x, y)
     }
 
@@ -171,15 +174,15 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onScrollStop() {
+        if (!isCancel) {
+            pageView.fillPage(mDirection)
+        }
         prevBitmap?.recycle()
         prevBitmap = null
         nextBitmap?.recycle()
         nextBitmap = null
         curBitmap?.recycle()
         curBitmap = null
-        if (!isCancel) {
-            pageView.fillPage(mDirection)
-        }
     }
 
     override fun onDraw(canvas: Canvas) {
