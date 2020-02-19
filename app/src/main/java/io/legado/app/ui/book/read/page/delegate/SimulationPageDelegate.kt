@@ -263,14 +263,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             mFolderShadowDrawable = mFolderShadowDrawableRL
         }
         canvas.save()
-        kotlin.runCatching {
-            canvas.clipPath(mPath0)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                canvas.clipPath(mPath1)
-            } else {
-                canvas.clipPath(mPath1, Region.Op.INTERSECT)
-            }
+        canvas.clipPath(mPath0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipPath(mPath1)
+        } else {
+            canvas.clipPath(mPath1, Region.Op.INTERSECT)
         }
+
         mPaint.colorFilter = mColorMatrixFilter
         val dis = hypot(
             mCornerX - mBezierControl1.x.toDouble(),
@@ -322,14 +321,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mPath1.lineTo(mBezierStart1.x, mBezierStart1.y)
         mPath1.close()
         canvas.save()
-        kotlin.runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                canvas.clipOutPath(mPath0)
-            } else {
-                canvas.clipPath(mPath0, Region.Op.XOR)
-            }
-            canvas.clipPath(mPath1, Region.Op.INTERSECT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipOutPath(mPath0)
+        } else {
+            canvas.clipPath(mPath0, Region.Op.XOR)
         }
+        canvas.clipPath(mPath1, Region.Op.INTERSECT)
+
         var leftX: Int
         var rightX: Int
         var mCurrentPageShadow: GradientDrawable
@@ -362,14 +360,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mPath1.lineTo(mBezierStart2.x, mBezierStart2.y)
         mPath1.close()
         canvas.save()
-        kotlin.runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                canvas.clipOutPath(mPath0)
-            } else {
-                canvas.clipPath(mPath0, Region.Op.XOR)
-            }
-            canvas.clipPath(mPath1)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipOutPath(mPath0)
+        } else {
+            canvas.clipPath(mPath0, Region.Op.XOR)
         }
+        canvas.clipPath(mPath1)
+
         if (mIsRtOrLb) {
             leftX = mBezierControl2.y.toInt()
             rightX = mBezierControl2.y.toInt() + 25
@@ -431,15 +428,12 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             mBackShadowDrawable = mBackShadowDrawableRL
         }
         canvas.save()
-        kotlin.runCatching {
-            canvas.clipPath(mPath0)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                canvas.clipPath(mPath1)
-            } else {
-                canvas.clipPath(mPath1, Region.Op.INTERSECT)
-            }
+        canvas.clipPath(mPath0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipPath(mPath1)
+        } else {
+            canvas.clipPath(mPath1, Region.Op.INTERSECT)
         }
-
         canvas.drawBitmap(bitmap, 0f, 0f, null)
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y)
         mBackShadowDrawable.setBounds(
@@ -471,9 +465,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             canvas.clipPath(path, Region.Op.XOR)
         }
         canvas.drawBitmap(bitmap, 0f, 0f, null)
-        kotlin.runCatching {
-            canvas.restore()
-        }
+        canvas.restore()
     }
 
     /**
