@@ -86,8 +86,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setStartPoint(x, y, invalidate)
-        mTouchX = x
-        mTouchY = y
         calcCornerXY(x, y)
     }
 
@@ -97,13 +95,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if ((startY > viewHeight * 0.33 && startY < viewHeight * 0.66)
             || mDirection == Direction.PREV
         ) {
-            mTouchY = viewHeight.toFloat()
+            touchY = viewHeight.toFloat()
         }
 
         if (startY > viewHeight * 0.33 && startY < viewHeight / 2.0
             && mDirection == Direction.NEXT
         ) {
-            mTouchY = 1f
+            touchY = 1f
         }
     }
 
@@ -355,10 +353,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         }
         var rotateDegrees: Float =
             Math.toDegrees(
-                atan2(
-                    mTouchX - mBezierControl1.x,
-                    mBezierControl1.y - mTouchY
-                ).toDouble()
+                atan2(mTouchX - mBezierControl1.x, mBezierControl1.y - mTouchY).toDouble()
             )
                 .toFloat()
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y)
