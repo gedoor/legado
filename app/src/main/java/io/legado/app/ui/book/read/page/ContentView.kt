@@ -36,7 +36,6 @@ class ContentView : FrameLayout {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
         inflate(context, R.layout.view_book_page, this)
-        top_bar.layoutParams.height = context.getStatusBarHeight()
         upStyle()
         upTime()
         content_text_view.customSelectionActionModeCallback =
@@ -53,15 +52,35 @@ class ContentView : FrameLayout {
 
     fun upStyle() {
         ReadBookConfig.getConfig().apply {
-            val pt = if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
-                top_bar.visible()
+            val rootPaddingTop = if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+                //显示状态栏时隐藏header
+                ll_header.visible()
+                ll_header.layoutParams =
+                    ll_header.layoutParams.apply { height = context.getStatusBarHeight() }
+                ll_header.setPadding(
+                    headerPaddingLeft,
+                    headerPaddingTop,
+                    headerPaddingRight,
+                    headerPaddingBottom
+                )
                 0
             } else {
-                top_bar.gone()
+                ll_header.gone()
                 context.getStatusBarHeight()
             }
-            page_panel.setPadding(paddingLeft.dp, pt, paddingRight.dp, 0)
-            content_text_view.setPadding(0, paddingTop.dp, 0, paddingBottom.dp)
+            page_panel.setPadding(0.dp, rootPaddingTop, 0, 0)
+            content_text_view.setPadding(
+                paddingLeft.dp,
+                paddingTop.dp,
+                paddingRight.dp,
+                paddingBottom.dp
+            )
+            ll_footer.setPadding(
+                footerPaddingLeft.dp,
+                footerPaddingTop.dp,
+                footerPaddingRight.dp,
+                footerPaddingBottom.dp
+            )
             content_text_view.textSize = textSize.toFloat()
             content_text_view.setLineSpacing(lineSpacingExtra.toFloat(), lineSpacingMultiplier)
             content_text_view.letterSpacing = letterSpacing

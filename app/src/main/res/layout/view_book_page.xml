@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/top_bar"
+        android:id="@+id/ll_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -46,7 +46,7 @@
         android:visibility="invisible" />
 
     <LinearLayout
-        android:id="@+id/bottom_bar"
+        android:id="@+id/ll_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
