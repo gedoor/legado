@@ -37,7 +37,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var mTouchToCornerDis = 0f
     private var mColorMatrixFilter: ColorMatrixColorFilter? = null
     private val mMatrix: Matrix = Matrix()
-    private val mMatrixArray = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 1.0f)
+    private val mMatrixArray = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 1f)
 
     // 是否属于右上左下
     private var mIsRtOrLb = false
