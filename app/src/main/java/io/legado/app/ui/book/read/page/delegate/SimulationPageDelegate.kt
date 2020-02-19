@@ -9,9 +9,10 @@ import kotlin.math.*
 
 @Suppress("DEPRECATION")
 class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
-
+    //不让x,y为0,否则在点计算时会有问题
+    private var mTouchX = 0.1f
+    private var mTouchY = 0.1f
     private var mCornerX = 1 // 拖拽点对应的页脚
-
     private var mCornerY = 1
     private val mPath0: Path = Path()
     private val mPath1: Path = Path()
@@ -80,9 +81,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             )
         )
         mColorMatrixFilter = ColorMatrixColorFilter(cm)
-
-        touchX = 0.01f //不让x,y为0,否则在点计算时会有问题
-        touchY = 0.01f
     }
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
@@ -96,13 +94,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if ((startY > viewHeight * 0.33 && startY < viewHeight * 0.66)
             || mDirection == Direction.PREV
         ) {
-            touchY = viewHeight.toFloat()
+            mTouchY = viewHeight.toFloat()
         }
 
         if (startY > viewHeight * 0.33 && startY < viewHeight / 2.0
             && mDirection == Direction.NEXT
         ) {
-            touchY = 1f
+            mTouchY = 1f
         }
     }
 
@@ -257,7 +255,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mPath1.moveTo(mBezierVertex2.x, mBezierVertex2.y)
         mPath1.lineTo(mBezierVertex1.x, mBezierVertex1.y)
         mPath1.lineTo(mBezierEnd1.x, mBezierEnd1.y)
-        mPath1.lineTo(touchX, touchY)
+        mPath1.lineTo(mTouchX, mTouchY)
         mPath1.lineTo(mBezierEnd2.x, mBezierEnd2.y)
         mPath1.close()
         val mFolderShadowDrawable: GradientDrawable
@@ -312,22 +310,22 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      */
     private fun drawCurrentPageShadow(canvas: Canvas) {
         val degree: Double = if (mIsRtOrLb) {
-            (Math.PI / 4 - atan2(mBezierControl1.y - touchX, touchX - mBezierControl1.x))
+            (Math.PI / 4 - atan2(mBezierControl1.y - mTouchX, mTouchX - mBezierControl1.x))
         } else {
-            (Math.PI / 4 - atan2(touchY - mBezierControl1.y, touchX - mBezierControl1.x))
+            (Math.PI / 4 - atan2(mTouchY - mBezierControl1.y, mTouchX - mBezierControl1.x))
         }
         // 翻起页阴影顶点与touch点的距离
         val d1 = 25.toFloat() * 1.414 * cos(degree)
         val d2 = 25.toFloat() * 1.414 * sin(degree)
-        val x = (touchX + d1).toFloat()
+        val x = (mTouchX + d1).toFloat()
         val y: Float = if (mIsRtOrLb) {
-            (touchY + d2).toFloat()
+            (mTouchY + d2).toFloat()
         } else {
-            (touchY - d2).toFloat()
+            (mTouchY - d2).toFloat()
         }
         mPath1.reset()
         mPath1.moveTo(x, y)
-        mPath1.lineTo(touchX, touchY)
+        mPath1.lineTo(mTouchX, mTouchY)
         mPath1.lineTo(mBezierControl1.x, mBezierControl1.y)
         mPath1.lineTo(mBezierStart1.x, mBezierStart1.y)
         mPath1.close()
@@ -353,7 +351,12 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             mCurrentPageShadow = mFrontShadowDrawableVRL!!
         }
         var rotateDegrees: Float =
-            Math.toDegrees(atan2(touchX - mBezierControl1.x, mBezierControl1.y - touchY).toDouble())
+            Math.toDegrees(
+                atan2(
+                    mTouchX - mBezierControl1.x,
+                    mBezierControl1.y - mTouchY
+                ).toDouble()
+            )
                 .toFloat()
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y)
         mCurrentPageShadow.setBounds(
@@ -365,7 +368,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
         mPath1.reset()
         mPath1.moveTo(x, y)
-        mPath1.lineTo(touchX, touchY)
+        mPath1.lineTo(mTouchX, mTouchY)
         mPath1.lineTo(mBezierControl2.x, mBezierControl2.y)
         mPath1.lineTo(mBezierStart2.x, mBezierStart2.y)
         mPath1.close()
@@ -388,7 +391,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             mCurrentPageShadow = mFrontShadowDrawableHBT!!
         }
         rotateDegrees = Math.toDegrees(
-            atan2(mBezierControl2.y - touchY, mBezierControl2.x - touchX).toDouble()
+            atan2(mBezierControl2.y - mTouchY, mBezierControl2.x - mTouchX).toDouble()
         ).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl2.x, mBezierControl2.y)
         val temp: Float =
@@ -467,7 +470,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mPath0.reset()
         mPath0.moveTo(mBezierStart1.x, mBezierStart1.y)
         mPath0.quadTo(mBezierControl1.x, mBezierControl1.y, mBezierEnd1.x, mBezierEnd1.y)
-        mPath0.lineTo(touchX, touchY)
+        mPath0.lineTo(mTouchX, mTouchY)
         mPath0.lineTo(mBezierEnd2.x, mBezierEnd2.y)
         mPath0.quadTo(mBezierControl2.x, mBezierControl2.y, mBezierStart2.x, mBezierStart2.y)
         mPath0.lineTo(mCornerX.toFloat(), mCornerY.toFloat())
@@ -495,8 +498,10 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     private fun calcPoints() {
-        mMiddleX = (touchX + mCornerX) / 2
-        mMiddleY = (touchY + mCornerY) / 2
+        mTouchX = touchX
+        mTouchY = touchY
+        mMiddleX = (mTouchX + mCornerX) / 2
+        mMiddleY = (mTouchY + mCornerY) / 2
         mBezierControl1.x =
             mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
         mBezierControl1.y = mCornerY.toFloat()
@@ -511,18 +516,19 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mBezierStart1.y = mCornerY.toFloat()
         // 当mBezierStart1.x < 0或者mBezierStart1.x > 480时
         // 如果继续翻页，会出现BUG故在此限制
-        if (touchX > 0 && touchX < viewWidth) {
+        if (mTouchX > 0 && mTouchX < viewWidth) {
             if (mBezierStart1.x < 0 || mBezierStart1.x > viewWidth) {
                 if (mBezierStart1.x < 0)
                     mBezierStart1.x = viewWidth - mBezierStart1.x
 
-                val f1: Float = abs(mCornerX - touchX)
+                val f1: Float = abs(mCornerX - mTouchX)
                 val f2: Float = viewWidth * f1 / mBezierStart1.x
-                touchX = abs(mCornerX - f2)
-                val f3: Float = abs(mCornerX - touchX) * abs(mCornerY - touchX) / f1
-                touchX = abs(mCornerY - f3)
-                mMiddleX = (touchX + mCornerX) / 2
-                mMiddleY = (touchY + mCornerY) / 2
+                mTouchX = abs(mCornerX - f2)
+                val f3: Float = abs(mCornerX - mTouchX) * abs(mCornerY - mTouchY) / f1
+                mTouchY = abs(mCornerY - f3)
+
+                mMiddleX = (mTouchX + mCornerX) / 2
+                mMiddleY = (mTouchY + mCornerY) / 2
                 mBezierControl1.x =
                     mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
                 mBezierControl1.y = mCornerY.toFloat()
@@ -538,12 +544,12 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mBezierStart2.x = mCornerX.toFloat()
         mBezierStart2.y = mBezierControl2.y - (mCornerY - mBezierControl2.y) / 2
 
-        mTouchToCornerDis = hypot(touchX - mCornerX, touchY - mCornerY)
+        mTouchToCornerDis = hypot(mTouchX - mCornerX, touchY - mCornerY)
 
         mBezierEnd1 =
-            getCross(PointF(touchX, touchY), mBezierControl1, mBezierStart1, mBezierStart2)
+            getCross(PointF(mTouchX, mTouchY), mBezierControl1, mBezierStart1, mBezierStart2)
         mBezierEnd2 =
-            getCross(PointF(touchX, touchY), mBezierControl2, mBezierStart1, mBezierStart2)
+            getCross(PointF(mTouchX, mTouchY), mBezierControl2, mBezierStart1, mBezierStart2)
 
         mBezierVertex1.x = (mBezierStart1.x + 2 * mBezierControl1.x + mBezierEnd1.x) / 4
         mBezierVertex1.y = (2 * mBezierControl1.y + mBezierStart1.y + mBezierEnd1.y) / 4
