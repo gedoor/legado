@@ -64,16 +64,18 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var nextBitmap: Bitmap? = null
 
     init {
-        mMaxLength = hypot(pageView.width.toDouble(), pageView.height.toDouble()).toFloat()
+        mMaxLength = hypot(viewWidth.toDouble(), viewWidth.toDouble()).toFloat()
         mPaint.style = Paint.Style.FILL
         //设置颜色数组
         createDrawable()
-        val cm = ColorMatrix()
-        val array = floatArrayOf(
-            1f, 0f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f,
-            0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 1f, 0f
+        val cm = ColorMatrix(
+            floatArrayOf(
+                1f, 0f, 0f, 0f, 0f,
+                0f, 1f, 0f, 0f, 0f,
+                0f, 0f, 1f, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+            )
         )
-        cm.set(array)
         mColorMatrixFilter = ColorMatrixColorFilter(cm)
 
         touchX = 0.01f //不让x,y为0,否则在点计算时会有问题
@@ -88,15 +90,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setTouchPoint(x, y, invalidate)
         //触摸y中间位置吧y变成屏幕高度
-        if ((startY > pageView.height / 3.0
-                    && startY < pageView.height * 2 / 3.0)
+        if ((startY > viewHeight * 0.33 && startY < viewHeight * 0.66)
             || mDirection == Direction.PREV
         ) {
-            touchY = pageView.height.toFloat()
+            touchY = viewHeight.toFloat()
         }
 
-        if (startY > pageView.height / 3.0
-            && startY < pageView.height / 2.0
+        if (startY > viewHeight * 0.33 && startY < viewHeight / 2.0
             && mDirection == Direction.NEXT
         ) {
             touchY = 1f
