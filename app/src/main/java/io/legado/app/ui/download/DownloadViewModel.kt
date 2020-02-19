@@ -36,13 +36,13 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun export(doc: DocumentFile, book: Book) {
-        DocumentUtils.createFileIfNotExist(doc, book.name)
-            ?.uri
+        DocumentUtils.createFileIfNotExist(doc, "${book.name}.txt")
             ?.writeText(context, getAllContents(book))
     }
 
     private fun export(file: File, book: Book) {
-        FileUtils.createFileIfNotExist(file, book.name).writeText(getAllContents(book))
+        FileUtils.createFileIfNotExist(file, "${book.name}.txt")
+            .writeText(getAllContents(book))
     }
 
     private fun getAllContents(book: Book): String {

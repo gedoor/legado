@@ -7,7 +7,7 @@ import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import java.util.*
 
-@Suppress("unused")
+
 object DocumentUtils {
 
     fun exists(root: DocumentFile, fileName: String, vararg subDirs: String): Boolean {
@@ -138,4 +138,24 @@ data class DocItem(
     val isDir: Boolean by lazy {
         DocumentsContract.Document.MIME_TYPE_DIR == attr
     }
+}
+
+@Throws(Exception::class)
+fun DocumentFile.writeText(context: Context, data: String) {
+    DocumentUtils.writeText(context, data, this.uri)
+}
+
+@Throws(Exception::class)
+fun DocumentFile.writeBytes(context: Context, data: ByteArray) {
+    DocumentUtils.writeBytes(context, data, this.uri)
+}
+
+@Throws(Exception::class)
+fun DocumentFile.readText(context: Context): String? {
+    return DocumentUtils.readText(context, this.uri)
+}
+
+@Throws(Exception::class)
+fun DocumentFile.readBytes(context: Context): ByteArray? {
+    return DocumentUtils.readBytes(context, this.uri)
 }
