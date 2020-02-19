@@ -31,6 +31,7 @@ import org.jetbrains.anko.toast
 import java.io.File
 
 class FontSelectDialog : BaseDialogFragment(),
+    FileChooserDialog.CallBack,
     Toolbar.OnMenuItemClickListener,
     FontAdapter.CallBack {
     private val fontFolderRequestCode = 35485
@@ -216,6 +217,15 @@ class FontSelectDialog : BaseDialogFragment(),
         return (parentFragment as? CallBack)?.curFontPath
             ?: (activity as? CallBack)?.curFontPath
             ?: ""
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            fontFolderRequestCode -> {
+                putPrefString(PreferKey.fontFolder, currentPath)
+                getFontFilesByPermission(currentPath)
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
