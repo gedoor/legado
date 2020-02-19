@@ -25,10 +25,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var mBezierEnd1 = PointF()
 
     // 另一条贝塞尔曲线
+    // 贝塞尔曲线起始点
     private val mBezierStart2 = PointF()
-
+    // 贝塞尔曲线控制点
     private val mBezierControl2 = PointF()
+    // 贝塞尔曲线顶点
     private val mBezierVertex2 = PointF()
+    // 贝塞尔曲线结束点
     private var mBezierEnd2 = PointF()
 
     private var mMiddleX = 0f
@@ -497,6 +500,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mBezierControl1.x =
             mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
         mBezierControl1.y = mCornerY.toFloat()
+
         mBezierControl2.x = mCornerX.toFloat()
         mBezierControl2.y = if ((mCornerY - mMiddleY).toInt() == 0) {
             mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
@@ -511,6 +515,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             if (mBezierStart1.x < 0 || mBezierStart1.x > viewWidth) {
                 if (mBezierStart1.x < 0)
                     mBezierStart1.x = viewWidth - mBezierStart1.x
+
                 val f1: Float = abs(mCornerX - touchX)
                 val f2: Float = viewWidth * f1 / mBezierStart1.x
                 touchX = abs(mCornerX - f2)
@@ -532,11 +537,14 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         }
         mBezierStart2.x = mCornerX.toFloat()
         mBezierStart2.y = mBezierControl2.y - (mCornerY - mBezierControl2.y) / 2
+
         mTouchToCornerDis = hypot(touchX - mCornerX, touchY - mCornerY)
+
         mBezierEnd1 =
             getCross(PointF(touchX, touchY), mBezierControl1, mBezierStart1, mBezierStart2)
         mBezierEnd2 =
             getCross(PointF(touchX, touchY), mBezierControl2, mBezierStart1, mBezierStart2)
+
         mBezierVertex1.x = (mBezierStart1.x + 2 * mBezierControl1.x + mBezierEnd1.x) / 4
         mBezierVertex1.y = (2 * mBezierControl1.y + mBezierStart1.y + mBezierEnd1.y) / 4
         mBezierVertex2.x = (mBezierStart2.x + 2 * mBezierControl2.x + mBezierEnd2.x) / 4
