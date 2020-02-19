@@ -8,8 +8,10 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
+import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentPath
+import io.legado.app.utils.writeText
 import java.io.File
 
 
@@ -20,28 +22,25 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
         execute {
             if (path.isContentPath()) {
                 val uri = Uri.parse(path)
-                DocumentFile.fromTreeUri(context, uri)
-                    ?.createFile("txt", book.name)
-                    ?.let {
-                        export(it.uri, book)
-                    }
-            } else {
-                FileUtils.createFolderIfNotExist(path).let {
+                DocumentFile.fromTreeUri(context, uri)?.let {
                     export(it, book)
                 }
+            } else {
+                export(FileUtils.createFolderIfNotExist(path), book)
             }
         }.onError {
             toast(it.localizedMessage ?: "ERROR")
         }
     }
 
-
-    private fun export(uri: Uri, book: Book) {
-
+    private fun export(doc: DocumentFile, book: Book) {
+        DocumentUtils.createFileIfNotExist(doc, book.name)
+            ?.uri
+            ?.writeText(context, getAllContents(book))
     }
 
     private fun export(file: File, book: Book) {
-
+        FileUtils.createFileIfNotExist(file, book.name).writeText(getAllContents(book))
     }
 
     private fun getAllContents(book: Book): String {
