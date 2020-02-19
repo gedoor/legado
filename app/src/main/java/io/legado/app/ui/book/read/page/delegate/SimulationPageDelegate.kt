@@ -106,19 +106,17 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun setDirection(direction: Direction) {
         super.setDirection(direction)
         when (direction) {
-            Direction.PREV -> {
+            Direction.PREV ->
                 //上一页滑动不出现对角
                 if (startX > viewWidth / 2.0) {
                     calcCornerXY(startX, viewHeight.toFloat())
                 } else {
                     calcCornerXY(viewWidth - startX, viewHeight.toFloat())
                 }
-            }
-            Direction.NEXT -> {
+            Direction.NEXT ->
                 if (viewWidth / 2.0 > startX) {
                     calcCornerXY(viewWidth - startX, startY)
                 }
-            }
             else -> Unit
         }
     }
