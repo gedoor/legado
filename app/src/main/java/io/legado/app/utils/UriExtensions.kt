@@ -10,7 +10,7 @@ fun Uri.readBytes(context: Context): ByteArray? {
     if (DocumentFile.isDocumentUri(context, this)) {
         return DocumentUtils.readBytes(context, this)
     } else {
-        val path = FileUtils.getPath(context, this)
+        val path = FileUtils.getRealPath(context, this)
         if (path?.isNotEmpty() == true) {
             return File(path).readBytes()
         }
@@ -23,7 +23,7 @@ fun Uri.readText(context: Context): String? {
     if (DocumentFile.isDocumentUri(context, this)) {
         return DocumentUtils.readText(context, this)
     } else {
-        val path = FileUtils.getPath(context, this)
+        val path = FileUtils.getRealPath(context, this)
         if (path?.isNotEmpty() == true) {
             return File(path).readText()
         }
@@ -36,7 +36,7 @@ fun Uri.writeBytes(context: Context, byteArray: ByteArray): Boolean {
     if (DocumentFile.isDocumentUri(context, this)) {
         return DocumentUtils.writeBytes(context, byteArray, this)
     } else {
-        val path = FileUtils.getPath(context, this)
+        val path = FileUtils.getRealPath(context, this)
         if (path?.isNotEmpty() == true) {
             File(path).writeBytes(byteArray)
             return true
@@ -50,7 +50,7 @@ fun Uri.writeText(context: Context, text: String): Boolean {
     if (DocumentFile.isDocumentUri(context, this)) {
         return DocumentUtils.writeText(context, text, this)
     } else {
-        val path = FileUtils.getPath(context, this)
+        val path = FileUtils.getRealPath(context, this)
         if (path?.isNotEmpty() == true) {
             File(path).writeText(text)
             return true

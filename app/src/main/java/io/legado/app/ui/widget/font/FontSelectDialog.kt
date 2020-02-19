@@ -38,8 +38,9 @@ class FontSelectDialog : DialogFragment(),
     private val fontFolderRequestCode = 35485
     private val fontFolder =
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
-    private val fontCacheFolder =
-        App.INSTANCE.cacheDir.absolutePath + File.separator + "Fonts" + File.separator
+    private val fontCacheFolder by lazy {
+        FileUtils.createFolderIfNotExist(App.INSTANCE.cacheDir, "Fonts")
+    }
     override val coroutineContext: CoroutineContext
         get() = job + Main
     private var adapter: FontAdapter? = null
@@ -122,18 +123,31 @@ class FontSelectDialog : DialogFragment(),
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(uri: Uri) {
         launch(IO) {
-            FileUtils.deleteFile(fontCacheFolder)
-            DocumentUtils.listFiles(App.INSTANCE, uri).forEach { item ->
+            val docItems = DocumentUtils.listFiles(App.INSTANCE, uri)
+            fontCacheFolder.listFiles()?.forEach { fontFile ->
+                var contain = false
+                for (item in docItems) {
+                    if (fontFile.name == item.name) {
+                        contain = true
+                        break
+                    }
+                }
+                if (!contain) {
+                    fontFile.delete()
+                }
+            }
+            docItems.forEach { item ->
                 if (item.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())) {
-                    DocumentUtils.readBytes(App.INSTANCE, item.uri)?.let { byteArray ->
-                        FileUtils.createFileIfNotExist(fontCacheFolder + item.name)
-                            .writeBytes(byteArray)
+                    val fontFile = FileUtils.getFile(fontCacheFolder, item.name)
+                    if (!fontFile.exists()) {
+                        DocumentUtils.readBytes(App.INSTANCE, item.uri)?.let { byteArray ->
+                            fontFile.writeBytes(byteArray)
+                        }
                     }
                 }
             }
             try {
-                val file = File(fontCacheFolder)
-                file.listFiles { pathName ->
+                fontCacheFolder.listFiles { pathName ->
                     pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
                 }?.let {
                     withContext(Main) {

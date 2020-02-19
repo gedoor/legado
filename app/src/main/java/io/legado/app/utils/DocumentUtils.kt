@@ -85,12 +85,12 @@ object DocumentUtils {
 
     fun listFiles(context: Context, uri: Uri): ArrayList<DocItem> {
         val docList = arrayListOf<DocItem>()
-        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
-            uri,
-            DocumentsContract.getDocumentId(uri)
-        )
         var c: Cursor? = null
         try {
+            val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+                uri,
+                DocumentsContract.getDocumentId(uri)
+            )
             c = context.contentResolver.query(
                 childrenUri, arrayOf(
                     DocumentsContract.Document.COLUMN_DOCUMENT_ID,
@@ -118,7 +118,8 @@ object DocumentUtils {
                     docList.add(item)
                 } while (c.moveToNext())
             }
-        } catch (e: java.lang.Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
         } finally {
             c?.close()
         }

@@ -98,7 +98,7 @@ class QrCodeActivity : BaseActivity(R.layout.activity_qrcode_capture), QRCodeVie
             zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
 
             if (resultCode == Activity.RESULT_OK && requestCode == requestQrImage) {
-                val picturePath = FileUtils.getPath(this, it)
+                val picturePath = FileUtils.getRealPath(this, it)
                 // 本来就用到 QRCodeView 时可直接调 QRCodeView 的方法，走通用的回调
                 zxingview.decodeQRCode(picturePath)
             }

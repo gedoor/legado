@@ -105,7 +105,7 @@ object FileUtils {
         return sdCardDirectory
     }
 
-    fun getPath(context: Context, uri: Uri): String? {
+    fun getRealPath(context: Context, uri: Uri): String? {
         // DocumentProvider
         if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
