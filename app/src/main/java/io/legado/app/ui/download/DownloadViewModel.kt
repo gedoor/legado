@@ -50,8 +50,11 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
             .append("\n")
             .append(context.getString(R.string.author_show, book.author))
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
-            BookHelp.getContent(book, chapter)?.let {
-                stringBuilder.append("\n").append(it)
+            BookHelp.getContent(book, chapter).let {
+                stringBuilder.append("\n\n")
+                    .append(chapter.title)
+                    .append("\n")
+                    .append(it)
             }
         }
         return stringBuilder.toString()
