@@ -193,7 +193,7 @@ class BgTextConfigDialog : DialogFragment() {
                                 )
                                 .rationale(R.string.bg_image_per)
                                 .onGranted {
-                                    FileUtils.getRealPath(requireContext(), uri)?.let { path ->
+                                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
                                         ReadBookConfig.getConfig().setBg(2, path)
                                         ReadBookConfig.upBg()
                                         postEvent(EventBus.UP_CONFIG, false)
