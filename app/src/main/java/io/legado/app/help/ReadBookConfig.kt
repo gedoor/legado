@@ -105,10 +105,10 @@ object ReadBookConfig {
         var letterSpacing: Float = 1f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
         var lineSpacingMultiplier: Float = 1.2f,//行倍距
-        var paddingBottom: Int = 0,
+        var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
-        var paddingTop: Int = 0,
+        var paddingTop: Int = 6,
         var headerPaddingBottom: Int = 0,
         var headerPaddingLeft: Int = 0,
         var headerPaddingRight: Int = 0,
