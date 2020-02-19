@@ -12,37 +12,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_font_select.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import kotlin.coroutines.CoroutineContext
 
-class FontSelectDialog : DialogFragment(),
+class FontSelectDialog : BaseDialogFragment(),
     Toolbar.OnMenuItemClickListener,
-    CoroutineScope,
     FontAdapter.CallBack {
-    private lateinit var job: Job
     private val fontFolderRequestCode = 35485
     private val fontFolder =
         App.INSTANCE.filesDir.absolutePath + File.separator + "Fonts" + File.separator
     private val fontCacheFolder by lazy {
         FileUtils.createFolderIfNotExist(App.INSTANCE.cacheDir, "Fonts")
     }
-    override val coroutineContext: CoroutineContext
-        get() = job + Main
     private var adapter: FontAdapter? = null
 
     override fun onStart() {
@@ -57,7 +50,6 @@ class FontSelectDialog : DialogFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        job = Job()
         return inflater.inflate(R.layout.dialog_font_select, container)
     }
 
@@ -99,11 +91,6 @@ class FontSelectDialog : DialogFragment(),
             }
         }
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     private fun openFolder() {
