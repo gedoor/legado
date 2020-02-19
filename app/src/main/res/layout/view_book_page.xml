@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/page_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    app:showDividers="middle">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/top_bar"
@@ -27,11 +25,25 @@
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/vw_top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/divider"
+        android:visibility="invisible" />
+
     <io.legado.app.ui.book.read.page.ContentTextView
         android:id="@+id/content_text_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <View
+        android:id="@+id/vw_bottom_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/divider"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/bottom_bar"
