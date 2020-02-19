@@ -301,9 +301,9 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      */
     private fun drawCurrentPageShadow(canvas: Canvas) {
         val degree: Double = if (mIsRtOrLb) {
-            (Math.PI / 4 - atan2(mBezierControl1.y - mTouchX, mTouchX - mBezierControl1.x))
+            Math.PI / 4 - atan2(mBezierControl1.y - mTouchY, mTouchX - mBezierControl1.x)
         } else {
-            (Math.PI / 4 - atan2(mTouchY - mBezierControl1.y, mTouchX - mBezierControl1.x))
+            Math.PI / 4 - atan2(mTouchY - mBezierControl1.y, mTouchX - mBezierControl1.x)
         }
         // 翻起页阴影顶点与touch点的距离
         val d1 = 25.toFloat() * 1.414 * cos(degree)
@@ -343,8 +343,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         var rotateDegrees: Float =
             Math.toDegrees(
                 atan2(mTouchX - mBezierControl1.x, mBezierControl1.y - mTouchY).toDouble()
-            )
-                .toFloat()
+            ).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y)
         mCurrentPageShadow.setBounds(
             leftX, (mBezierControl1.y - mMaxLength).toInt(),
