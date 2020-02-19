@@ -58,10 +58,10 @@ class ContentView : FrameLayout {
                 ll_header.layoutParams =
                     ll_header.layoutParams.apply { height = context.getStatusBarHeight() }
                 ll_header.setPadding(
-                    headerPaddingLeft,
-                    headerPaddingTop,
-                    headerPaddingRight,
-                    headerPaddingBottom
+                    headerPaddingLeft.dp,
+                    headerPaddingTop.dp,
+                    headerPaddingRight.dp,
+                    headerPaddingBottom.dp
                 )
                 0
             } else {
