@@ -509,7 +509,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         // 如果继续翻页，会出现BUG故在此限制
         if (touchX > 0 && touchX < viewWidth) {
             if (mBezierStart1.x < 0 || mBezierStart1.x > viewWidth) {
-                if (mBezierStart1.x < 0) mBezierStart1.x = viewWidth - mBezierStart1.x
+                if (mBezierStart1.x < 0)
+                    mBezierStart1.x = viewWidth - mBezierStart1.x
                 val f1: Float = abs(mCornerX - touchX)
                 val f2: Float = viewWidth * f1 / mBezierStart1.x
                 touchX = abs(mCornerX - f2)
