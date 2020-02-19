@@ -71,11 +71,15 @@ class FontSelectDialog : BaseDialogFragment(),
         if (fontPath.isNullOrEmpty()) {
             openFolder()
         } else {
-            val doc = DocumentFile.fromTreeUri(requireContext(), Uri.parse(fontPath))
-            if (doc?.canRead() == true) {
-                getFontFiles(doc)
+            if (fontPath.isContentPath()) {
+                val doc = DocumentFile.fromTreeUri(requireContext(), Uri.parse(fontPath))
+                if (doc?.canRead() == true) {
+                    getFontFiles(doc)
+                } else {
+                    openFolder()
+                }
             } else {
-                openFolder()
+                getFontFilesByPermission(fontPath)
             }
         }
     }
