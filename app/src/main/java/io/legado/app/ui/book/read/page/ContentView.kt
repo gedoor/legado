@@ -68,7 +68,7 @@ class ContentView : FrameLayout {
                 ll_header.gone()
                 context.getStatusBarHeight()
             }
-            page_panel.setPadding(0.dp, rootPaddingTop, 0, 0)
+            page_panel.setPadding(0, rootPaddingTop, 0, 0)
             content_text_view.setPadding(
                 paddingLeft.dp,
                 paddingTop.dp,
