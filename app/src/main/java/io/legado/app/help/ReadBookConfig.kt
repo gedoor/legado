@@ -113,10 +113,10 @@ object ReadBookConfig {
         var headerPaddingLeft: Int = 0,
         var headerPaddingRight: Int = 0,
         var headerPaddingTop: Int = 0,
-        var footerPaddingBottom: Int = 0,
-        var footerPaddingLeft: Int = 0,
-        var footerPaddingRight: Int = 0,
-        var footerPaddingTop: Int = 0
+        var footerPaddingBottom: Int = 6,
+        var footerPaddingLeft: Int = 16,
+        var footerPaddingRight: Int = 16,
+        var footerPaddingTop: Int = 6
     ) {
         fun setBg(bgType: Int, bg: String) {
             if (AppConfig.isNightTheme) {
