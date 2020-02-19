@@ -110,7 +110,8 @@ class FontSelectDialog : BaseDialogFragment(),
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(uri: Uri) {
         launch(IO) {
-            val docItems = DocumentUtils.listFiles(App.INSTANCE, uri)
+            val doc = DocumentFile.fromTreeUri(App.INSTANCE, uri) ?: return@launch
+            val docItems = DocumentUtils.listFiles(App.INSTANCE, doc.uri)
             fontCacheFolder.listFiles()?.forEach { fontFile ->
                 var contain = false
                 for (item in docItems) {
