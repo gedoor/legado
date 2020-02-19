@@ -138,27 +138,37 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onScrollStart() {
-        val distanceX: Float
-        when (mDirection) {
-            Direction.NEXT -> distanceX =
-                if (isCancel) {
-                    var dis = viewWidth - startX + touchX
-                    if (dis > viewWidth) {
-                        dis = viewWidth.toFloat()
-                    }
-                    viewWidth - dis
-                } else {
-                    -(touchX + (viewWidth - startX))
-                }
-            else -> distanceX =
-                if (isCancel) {
-                    -(touchX - startX)
-                } else {
-                    viewWidth - (touchX - startX)
-                }
+        var dx: Float
+        val dy: Float
+        // dx 水平方向滑动的距离，负值会使滚动向左滚动
+        // dy 垂直方向滑动的距离，负值会使滚动向上滚动
+        if (isCancel) {
+            dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {
+                (viewWidth - touchX)
+            } else {
+                -touchX
+            }
+            if (mDirection != Direction.NEXT) {
+                dx = -(viewWidth + touchX)
+            }
+            dy = if (mCornerY > 0) {
+                (viewHeight - touchY)
+            } else {
+                -touchY // 防止mTouchY最终变为0
+            }
+        } else {
+            dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {
+                -(viewWidth + touchX)
+            } else {
+                (viewWidth - touchX + viewWidth)
+            }
+            dy = if (mCornerY > 0) {
+                (viewHeight - touchY)
+            } else {
+                (1 - touchY) // 防止mTouchY最终变为0
+            }
         }
-
-        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
+        startScroll(touchX.toInt(), touchY.toInt(), dx.toInt(), dy.toInt())
     }
 
     override fun onScrollStop() {
