@@ -40,7 +40,16 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var mMiddleY = 0f
     private var mDegrees = 0f
     private var mTouchToCornerDis = 0f
-    private var mColorMatrixFilter: ColorMatrixColorFilter? = null
+    private var mColorMatrixFilter: ColorMatrixColorFilter = ColorMatrixColorFilter(
+        ColorMatrix(
+            floatArrayOf(
+                1f, 0f, 0f, 0f, 0f,
+                0f, 1f, 0f, 0f, 0f,
+                0f, 0f, 1f, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
+    )
     private val mMatrix: Matrix = Matrix()
     private val mMatrixArray = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 1f)
 
@@ -48,19 +57,19 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var mIsRtOrLb = false
     private var mMaxLength = 0f
     // 背面颜色组
-    private var mBackShadowColors: IntArray? = null
+    private var mBackShadowColors: IntArray
     // 前面颜色组
-    private var mFrontShadowColors: IntArray? = null
+    private var mFrontShadowColors: IntArray
     // 有阴影的GradientDrawable
-    private var mBackShadowDrawableLR: GradientDrawable? = null
-    private var mBackShadowDrawableRL: GradientDrawable? = null
-    private var mFolderShadowDrawableLR: GradientDrawable? = null
-    private var mFolderShadowDrawableRL: GradientDrawable? = null
+    private var mBackShadowDrawableLR: GradientDrawable
+    private var mBackShadowDrawableRL: GradientDrawable
+    private var mFolderShadowDrawableLR: GradientDrawable
+    private var mFolderShadowDrawableRL: GradientDrawable
 
-    private var mFrontShadowDrawableHBT: GradientDrawable? = null
-    private var mFrontShadowDrawableHTB: GradientDrawable? = null
-    private var mFrontShadowDrawableVLR: GradientDrawable? = null
-    private var mFrontShadowDrawableVRL: GradientDrawable? = null
+    private var mFrontShadowDrawableHBT: GradientDrawable
+    private var mFrontShadowDrawableHTB: GradientDrawable
+    private var mFrontShadowDrawableVLR: GradientDrawable
+    private var mFrontShadowDrawableVRL: GradientDrawable
 
     private val mPaint: Paint = Paint()
 
@@ -72,16 +81,38 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMaxLength = hypot(viewWidth.toDouble(), viewWidth.toDouble()).toFloat()
         mPaint.style = Paint.Style.FILL
         //设置颜色数组
-        createDrawable()
-        val cm = ColorMatrix(
-            floatArrayOf(
-                1f, 0f, 0f, 0f, 0f,
-                0f, 1f, 0f, 0f, 0f,
-                0f, 0f, 1f, 0f, 0f,
-                0f, 0f, 0f, 1f, 0f
-            )
-        )
-        mColorMatrixFilter = ColorMatrixColorFilter(cm)
+        val color = intArrayOf(0x333333, -0x4fcccccd)
+        mFolderShadowDrawableRL = GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, color)
+        mFolderShadowDrawableRL.gradientType = GradientDrawable.LINEAR_GRADIENT
+
+        mFolderShadowDrawableLR = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, color)
+        mFolderShadowDrawableLR.gradientType = GradientDrawable.LINEAR_GRADIENT
+
+        mBackShadowColors = intArrayOf(-0xeeeeef, 0x111111)
+        mBackShadowDrawableRL =
+            GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, mBackShadowColors)
+        mBackShadowDrawableRL.gradientType = GradientDrawable.LINEAR_GRADIENT
+
+        mBackShadowDrawableLR =
+            GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, mBackShadowColors)
+        mBackShadowDrawableLR.gradientType = GradientDrawable.LINEAR_GRADIENT
+
+        mFrontShadowColors = intArrayOf(-0x7feeeeef, 0x111111)
+        mFrontShadowDrawableVLR =
+            GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, mFrontShadowColors)
+        mFrontShadowDrawableVLR.gradientType = GradientDrawable.LINEAR_GRADIENT
+
+        mFrontShadowDrawableVRL =
+            GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, mFrontShadowColors)
+        mFrontShadowDrawableVRL.gradientType = GradientDrawable.LINEAR_GRADIENT
+
+        mFrontShadowDrawableHTB =
+            GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, mFrontShadowColors)
+        mFrontShadowDrawableHTB.gradientType = GradientDrawable.LINEAR_GRADIENT
+
+        mFrontShadowDrawableHBT =
+            GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, mFrontShadowColors)
+        mFrontShadowDrawableHBT.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
@@ -200,46 +231,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     /**
-     * 创建阴影的GradientDrawable
-     */
-    private fun createDrawable() {
-        val color = intArrayOf(0x333333, -0x4fcccccd)
-        mFolderShadowDrawableRL = GradientDrawable(
-            GradientDrawable.Orientation.RIGHT_LEFT, color
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-
-        mFolderShadowDrawableLR = GradientDrawable(
-            GradientDrawable.Orientation.LEFT_RIGHT, color
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-
-        mBackShadowColors = intArrayOf(-0xeeeeef, 0x111111)
-        mBackShadowDrawableRL = GradientDrawable(
-            GradientDrawable.Orientation.RIGHT_LEFT, mBackShadowColors
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-
-        mBackShadowDrawableLR = GradientDrawable(
-            GradientDrawable.Orientation.LEFT_RIGHT, mBackShadowColors
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-
-        mFrontShadowColors = intArrayOf(-0x7feeeeef, 0x111111)
-        mFrontShadowDrawableVLR = GradientDrawable(
-            GradientDrawable.Orientation.LEFT_RIGHT, mFrontShadowColors
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-
-        mFrontShadowDrawableVRL = GradientDrawable(
-            GradientDrawable.Orientation.RIGHT_LEFT, mFrontShadowColors
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-
-        mFrontShadowDrawableHTB = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM, mFrontShadowColors
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-
-        mFrontShadowDrawableHBT = GradientDrawable(
-            GradientDrawable.Orientation.BOTTOM_TOP, mFrontShadowColors
-        ).apply { gradientType = GradientDrawable.LINEAR_GRADIENT }
-    }
-
-    /**
      * 绘制翻起页背面
      */
     private fun drawCurrentBackArea(
@@ -265,11 +256,11 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (mIsRtOrLb) {
             left = mBezierStart1.x.toInt() - 1
             right = (mBezierStart1.x + f3 + 1).toInt()
-            mFolderShadowDrawable = mFolderShadowDrawableLR!!
+            mFolderShadowDrawable = mFolderShadowDrawableLR
         } else {
             left = (mBezierStart1.x - f3 - 1).toInt()
             right = (mBezierStart1.x + 1).toInt()
-            mFolderShadowDrawable = mFolderShadowDrawableRL!!
+            mFolderShadowDrawable = mFolderShadowDrawableRL
         }
         canvas.save()
         kotlin.runCatching {
@@ -345,11 +336,11 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (mIsRtOrLb) {
             leftX = mBezierControl1.x.toInt()
             rightX = mBezierControl1.x.toInt() + 25
-            mCurrentPageShadow = mFrontShadowDrawableVLR!!
+            mCurrentPageShadow = mFrontShadowDrawableVLR
         } else {
             leftX = mBezierControl1.x.toInt() - 25
             rightX = mBezierControl1.x.toInt() + 1
-            mCurrentPageShadow = mFrontShadowDrawableVRL!!
+            mCurrentPageShadow = mFrontShadowDrawableVRL
         }
         var rotateDegrees: Float =
             Math.toDegrees(
@@ -382,11 +373,11 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (mIsRtOrLb) {
             leftX = mBezierControl2.y.toInt()
             rightX = mBezierControl2.y.toInt() + 25
-            mCurrentPageShadow = mFrontShadowDrawableHTB!!
+            mCurrentPageShadow = mFrontShadowDrawableHTB
         } else {
             leftX = mBezierControl2.y.toInt() - 25
             rightX = mBezierControl2.y.toInt() + 1
-            mCurrentPageShadow = mFrontShadowDrawableHBT!!
+            mCurrentPageShadow = mFrontShadowDrawableHBT
         }
         rotateDegrees = Math.toDegrees(
             atan2(mBezierControl2.y - mTouchY, mBezierControl2.x - mTouchX).toDouble()
@@ -433,11 +424,11 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (mIsRtOrLb) { //左下及右上
             leftX = mBezierStart1.x.toInt()
             rightX = (mBezierStart1.x + mTouchToCornerDis / 4).toInt()
-            mBackShadowDrawable = mBackShadowDrawableLR!!
+            mBackShadowDrawable = mBackShadowDrawableLR
         } else {
             leftX = (mBezierStart1.x - mTouchToCornerDis / 4).toInt()
             rightX = mBezierStart1.x.toInt()
-            mBackShadowDrawable = mBackShadowDrawableRL!!
+            mBackShadowDrawable = mBackShadowDrawableRL
         }
         canvas.save()
         kotlin.runCatching {
