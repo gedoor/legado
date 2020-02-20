@@ -20,6 +20,7 @@ import io.legado.app.utils.getPrefString
 import io.legado.app.utils.removePref
 
 
+@Suppress("DEPRECATION")
 object ChapterProvider {
     var viewWidth = 0
     var viewHeight = 0
@@ -31,6 +32,7 @@ object ChapterProvider {
     private var paragraphSpacing = 0
     var titlePaint = TextPaint()
     var contentPaint = TextPaint()
+    private var bodyIndent = BookHelp.bodyIndent
 
     init {
         upStyle(ReadBookConfig.durConfig)
@@ -64,6 +66,9 @@ object ChapterProvider {
         paragraphSpacing = config.paragraphSpacing.dp
         titlePaint.textSize = (config.textSize + 2).dp.toFloat()
         contentPaint.textSize = config.textSize.dp.toFloat()
+
+        bodyIndent = BookHelp.bodyIndent
+
         upSize(config)
     }
 
@@ -74,14 +79,12 @@ object ChapterProvider {
         visibleHeight = viewHeight - paddingTop - config.paddingBottom.dp
     }
 
-    @Suppress("DEPRECATION")
     fun getTextChapter(
         bookChapter: BookChapter,
         content: String,
         chapterSize: Int,
         isHtml: Boolean = false
     ): TextChapter {
-        val bodyIndent = BookHelp.bodyIndent
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
@@ -95,71 +98,7 @@ object ChapterProvider {
                 if (end > 0) {
                     val title = surplusText.substring(0, end)
                     surplusText = surplusText.substring(end + 1)
-                    val layout = StaticLayout(
-                        title, titlePaint, visibleWidth,
-                        Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, false
-                    )
-                    for (lineIndex in 0 until layout.lineCount) {
-                        durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-                        val textLine = TextLine(isTitle = true)
-                        if (durY < visibleHeight) {
-                            textPages.last().textLines.add(textLine)
-                        } else {
-                            durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-                            textPages.add(TextPage())
-                            textPages.last().textLines.add(textLine)
-                        }
-                        textLine.lineBottom = layout.getLineBottom(lineIndex)
-                        textLine.lineTop = layout.getLineTop(lineIndex)
-                        val words = title.substring(
-                            layout.getLineStart(lineIndex),
-                            layout.getLineEnd(lineIndex)
-                        )
-                        val desiredWidth = layout.getLineMax(lineIndex)
-                        if (lineIndex != layout.lineCount - 1) {
-                            val gapCount: Int = words.length - 1
-                            val d = (visibleWidth - desiredWidth) / gapCount
-                            var x = 0
-                            for (i in words.indices) {
-                                val char = words[i].toString()
-                                val cw = StaticLayout.getDesiredWidth(char, titlePaint)
-                                val x1 = if (i != words.lastIndex) {
-                                    (x + cw + d).toInt()
-                                } else {
-                                    (x + cw).toInt()
-                                }
-                                val textChar = TextChar(
-                                    charData = char,
-                                    leftBottomPosition = Point(paddingLeft + x, paddingTop + durY),
-                                    rightTopPosition = Point(
-                                        paddingLeft + x1,
-                                        paddingTop + durY - (textLine.lineBottom - textLine.lineTop)
-                                    )
-                                )
-                                textLine.textChars.add(textChar)
-                                x = x1
-                            }
-                        } else {
-                            //最后一行
-                            var x = 0
-                            for (i in words.indices) {
-                                val char = words[i].toString()
-                                val cw = StaticLayout.getDesiredWidth(char, titlePaint)
-                                val x1 = (x + cw).toInt()
-                                val textChar = TextChar(
-                                    charData = char,
-                                    leftBottomPosition = Point(paddingLeft + x, paddingTop + durY),
-                                    rightTopPosition = Point(
-                                        paddingLeft + x1,
-                                        paddingTop + durY - (textLine.lineBottom - textLine.lineTop)
-                                    )
-                                )
-                                textLine.textChars.add(textChar)
-                                x = x1
-                            }
-                        }
-                    }
-                    durY += paragraphSpacing
+                    durY = joinTitle(title, durY, textPages)
                 }
             } else {
                 //正文
@@ -172,107 +111,7 @@ object ChapterProvider {
                     text = surplusText
                     surplusText = ""
                 }
-                val layout = StaticLayout(
-                    text, contentPaint, visibleWidth,
-                    Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, false
-                )
-                for (lineIndex in 0 until layout.lineCount) {
-                    val textLine = TextLine(isTitle = false)
-                    durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-                    if (durY < visibleHeight) {
-                        textPages.last().textLines.add(textLine)
-                    } else {
-                        durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-                        textPages.add(TextPage())
-                        textPages.last().textLines.add(textLine)
-                    }
-                    textLine.lineBottom = layout.getLineBottom(lineIndex)
-                    textLine.lineTop = layout.getLineTop(lineIndex)
-                    var words =
-                        text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
-                    val desiredWidth = layout.getLineMax(lineIndex)
-                    if (lineIndex == 0 && layout.lineCount > 1) {
-                        //第一行
-                        var x = 0
-                        val icw = StaticLayout.getDesiredWidth(bodyIndent, contentPaint)
-                        var x1 = (x + icw).toInt()
-                        val textChar = TextChar(
-                            charData = bodyIndent,
-                            leftBottomPosition = Point(paddingLeft + x, paddingTop + durY),
-                            rightTopPosition = Point(
-                                paddingLeft + x1,
-                                paddingTop + durY - (textLine.lineBottom - textLine.lineTop)
-                            )
-                        )
-                        textLine.textChars.add(textChar)
-                        x = x1
-                        words = words.replaceFirst(bodyIndent, "")
-                        val gapCount: Int = words.length - 1
-                        val d = (visibleWidth - desiredWidth) / gapCount
-                        for (i in words.indices) {
-                            val char = words[i].toString()
-                            val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                            x1 = if (i != words.lastIndex) {
-                                (x + cw + d).toInt()
-                            } else {
-                                (x + cw).toInt()
-                            }
-                            val textChar1 = TextChar(
-                                charData = char,
-                                leftBottomPosition = Point(paddingLeft + x, paddingTop + durY),
-                                rightTopPosition = Point(
-                                    paddingLeft + x1,
-                                    paddingTop + durY - (textLine.lineBottom - textLine.lineTop)
-                                )
-                            )
-                            textLine.textChars.add(textChar1)
-                            x = x1
-                        }
-                    } else if (lineIndex == layout.lineCount - 1) {
-                        //最后一行
-                        var x = 0
-                        for (i in words.indices) {
-                            val char = words[i].toString()
-                            val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                            val x1 = (x + cw).toInt()
-                            val textChar = TextChar(
-                                charData = char,
-                                leftBottomPosition = Point(paddingLeft + x, paddingTop + durY),
-                                rightTopPosition = Point(
-                                    paddingLeft + x1,
-                                    paddingTop + durY - (textLine.lineBottom - textLine.lineTop)
-                                )
-                            )
-                            textLine.textChars.add(textChar)
-                            x = x1
-                        }
-                    } else {
-                        //中间行
-                        val gapCount: Int = words.length - 1
-                        val d = (visibleWidth - desiredWidth) / gapCount
-                        var x = 0
-                        for (i in words.indices) {
-                            val char = words[i].toString()
-                            val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                            val x1 = if (i != words.lastIndex) {
-                                (x + cw + d).toInt()
-                            } else {
-                                (x + cw).toInt()
-                            }
-                            val textChar = TextChar(
-                                charData = char,
-                                leftBottomPosition = Point(paddingLeft + x, paddingTop + durY),
-                                rightTopPosition = Point(
-                                    paddingLeft + x1,
-                                    paddingTop + durY - (textLine.lineBottom - textLine.lineTop)
-                                )
-                            )
-                            textLine.textChars.add(textChar)
-                            x = x1
-                        }
-                    }
-                }
-                durY += paragraphSpacing
+                durY = joinBody(text, durY, textPages)
             }
         }
         for ((index, item) in textPages.withIndex()) {
@@ -291,5 +130,173 @@ object ChapterProvider {
             pageLengths,
             chapterSize
         )
+    }
+
+    private fun joinTitle(title: String, y: Int, textPages: ArrayList<TextPage>): Int {
+        var durY = y
+        val layout = StaticLayout(
+            title, titlePaint, visibleWidth,
+            Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
+        )
+        for (lineIndex in 0 until layout.lineCount) {
+            durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+            val textLine = TextLine(isTitle = true)
+            if (durY < visibleHeight) {
+                textPages.last().textLines.add(textLine)
+            } else {
+                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                textPages.add(TextPage())
+                textPages.last().textLines.add(textLine)
+            }
+            textLine.lineBottom =
+                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineBaseline(
+                    lineIndex
+                )
+            textLine.lineTop =
+                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineTop(lineIndex)
+            val words = title.substring(
+                layout.getLineStart(lineIndex),
+                layout.getLineEnd(lineIndex)
+            )
+            val desiredWidth = layout.getLineMax(lineIndex)
+            if (lineIndex != layout.lineCount - 1) {
+                val gapCount: Int = words.length - 1
+                val d = (visibleWidth - desiredWidth) / gapCount
+                var x = 0
+                for (i in words.indices) {
+                    val char = words[i].toString()
+                    val cw = StaticLayout.getDesiredWidth(char, titlePaint)
+                    val x1 = if (i != words.lastIndex) {
+                        (x + cw + d).toInt()
+                    } else {
+                        (x + cw).toInt()
+                    }
+                    val textChar = TextChar(
+                        charData = char,
+                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                    )
+                    textLine.textChars.add(textChar)
+                    x = x1
+                }
+            } else {
+                //最后一行
+                var x = 0
+                for (i in words.indices) {
+                    val char = words[i].toString()
+                    val cw = StaticLayout.getDesiredWidth(char, titlePaint)
+                    val x1 = (x + cw).toInt()
+                    val textChar = TextChar(
+                        charData = char,
+                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                    )
+                    textLine.textChars.add(textChar)
+                    x = x1
+                }
+            }
+        }
+        durY += paragraphSpacing
+        return durY
+    }
+
+    private fun joinBody(text: String, y: Int, textPages: ArrayList<TextPage>): Int {
+        var durY = y
+        val layout = StaticLayout(
+            text, contentPaint, visibleWidth,
+            Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
+        )
+        for (lineIndex in 0 until layout.lineCount) {
+            val textLine = TextLine(isTitle = false)
+            durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+            if (durY < visibleHeight) {
+                textPages.last().textLines.add(textLine)
+            } else {
+                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                textPages.add(TextPage())
+                textPages.last().textLines.add(textLine)
+            }
+            textLine.lineBottom =
+                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineBaseline(
+                    lineIndex
+                )
+            textLine.lineTop =
+                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineTop(
+                    lineIndex
+                )
+            var words =
+                text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
+            val desiredWidth = layout.getLineMax(lineIndex)
+            if (lineIndex == 0 && layout.lineCount > 1) {
+                //第一行
+                var x = 0
+                val icw = StaticLayout.getDesiredWidth(bodyIndent, contentPaint)
+                var x1 = (x + icw).toInt()
+                val textChar = TextChar(
+                    charData = bodyIndent,
+                    leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
+                    rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                )
+                textLine.textChars.add(textChar)
+                x = x1
+                words = words.replaceFirst(bodyIndent, "")
+                val gapCount: Int = words.length - 1
+                val d = (visibleWidth - desiredWidth) / gapCount
+                for (i in words.indices) {
+                    val char = words[i].toString()
+                    val cw = StaticLayout.getDesiredWidth(char, contentPaint)
+                    x1 = if (i != words.lastIndex) {
+                        (x + cw + d).toInt()
+                    } else {
+                        (x + cw).toInt()
+                    }
+                    val textChar1 = TextChar(
+                        charData = char,
+                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                    )
+                    textLine.textChars.add(textChar1)
+                    x = x1
+                }
+            } else if (lineIndex == layout.lineCount - 1) {
+                //最后一行
+                var x = 0
+                for (i in words.indices) {
+                    val char = words[i].toString()
+                    val cw = StaticLayout.getDesiredWidth(char, contentPaint)
+                    val x1 = (x + cw).toInt()
+                    val textChar = TextChar(
+                        charData = char,
+                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                    )
+                    textLine.textChars.add(textChar)
+                    x = x1
+                }
+            } else {
+                //中间行
+                val gapCount: Int = words.length - 1
+                val d = (visibleWidth - desiredWidth) / gapCount
+                var x = 0
+                for (i in words.indices) {
+                    val char = words[i].toString()
+                    val cw = StaticLayout.getDesiredWidth(char, contentPaint)
+                    val x1 = if (i != words.lastIndex) {
+                        (x + cw + d).toInt()
+                    } else {
+                        (x + cw).toInt()
+                    }
+                    val textChar = TextChar(
+                        charData = char,
+                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                    )
+                    textLine.textChars.add(textChar)
+                    x = x1
+                }
+            }
+        }
+        durY += paragraphSpacing
+        return durY
     }
 }
