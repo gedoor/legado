@@ -105,7 +105,7 @@ object ChapterProvider {
                         if (durY < visibleHeight) {
                             textPages.last().textLines.add(textLine)
                         } else {
-                            durY = 0
+                            durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
                             textPages.add(TextPage())
                             textPages.last().textLines.add(textLine)
                         }
@@ -182,7 +182,7 @@ object ChapterProvider {
                     if (durY < visibleHeight) {
                         textPages.last().textLines.add(textLine)
                     } else {
-                        durY = 0
+                        durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
                         textPages.add(TextPage())
                         textPages.last().textLines.add(textLine)
                     }
