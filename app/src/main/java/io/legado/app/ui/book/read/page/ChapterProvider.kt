@@ -88,6 +88,7 @@ object ChapterProvider {
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
+        val stringBuilder = StringBuilder()
         var surplusText = content
         var durY = 0
         textPages.add(TextPage())
@@ -98,7 +99,7 @@ object ChapterProvider {
                 if (end > 0) {
                     val title = surplusText.substring(0, end)
                     surplusText = surplusText.substring(end + 1)
-                    durY = joinTitle(title, durY, textPages)
+                    durY = joinTitle(title, durY, textPages, pageLines, pageLengths, stringBuilder)
                 }
             } else {
                 //正文
@@ -111,8 +112,14 @@ object ChapterProvider {
                     text = surplusText
                     surplusText = ""
                 }
-                durY = joinBody(text, durY, textPages)
+                durY = joinBody(text, durY, textPages, pageLines, pageLengths, stringBuilder)
             }
+        }
+        if (pageLines.size < textPages.size) {
+            pageLines.add(textPages.last().textLines.size)
+        }
+        if (pageLengths.size < textPages.size) {
+            pageLengths.add(textPages.last().text.length)
         }
         for ((index, item) in textPages.withIndex()) {
             item.index = index
@@ -132,7 +139,14 @@ object ChapterProvider {
         )
     }
 
-    private fun joinTitle(title: String, y: Int, textPages: ArrayList<TextPage>): Int {
+    private fun joinTitle(
+        title: String,
+        y: Int,
+        textPages: ArrayList<TextPage>,
+        pageLines: ArrayList<Int>,
+        pageLengths: ArrayList<Int>,
+        stringBuilder: StringBuilder
+    ): Int {
         var durY = y
         val layout = StaticLayout(
             title, titlePaint, visibleWidth,
@@ -145,6 +159,10 @@ object ChapterProvider {
                 textPages.last().textLines.add(textLine)
             } else {
                 durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                textPages.last().text = stringBuilder.toString()
+                stringBuilder.clear()
+                pageLines.add(textPages.last().textLines.size)
+                pageLengths.add(textPages.last().text.length)
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
@@ -154,10 +172,9 @@ object ChapterProvider {
                 )
             textLine.lineTop =
                 paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineTop(lineIndex)
-            val words = title.substring(
-                layout.getLineStart(lineIndex),
-                layout.getLineEnd(lineIndex)
-            )
+            val words =
+                title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
+            stringBuilder.append(words)
             val desiredWidth = layout.getLineMax(lineIndex)
             if (lineIndex != layout.lineCount - 1) {
                 val gapCount: Int = words.length - 1
@@ -181,6 +198,7 @@ object ChapterProvider {
                 }
             } else {
                 //最后一行
+                stringBuilder.append("\n")
                 var x = 0
                 for (i in words.indices) {
                     val char = words[i].toString()
@@ -200,7 +218,14 @@ object ChapterProvider {
         return durY
     }
 
-    private fun joinBody(text: String, y: Int, textPages: ArrayList<TextPage>): Int {
+    private fun joinBody(
+        text: String,
+        y: Int,
+        textPages: ArrayList<TextPage>,
+        pageLines: ArrayList<Int>,
+        pageLengths: ArrayList<Int>,
+        stringBuilder: StringBuilder
+    ): Int {
         var durY = y
         val layout = StaticLayout(
             text, contentPaint, visibleWidth,
@@ -213,6 +238,10 @@ object ChapterProvider {
                 textPages.last().textLines.add(textLine)
             } else {
                 durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                textPages.last().text = stringBuilder.toString()
+                stringBuilder.clear()
+                pageLines.add(textPages.last().textLines.size)
+                pageLengths.add(textPages.last().text.length)
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
