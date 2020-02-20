@@ -112,12 +112,22 @@
         app:title="@string/line_size"
         app:layout_constraintTop_toBottomOf="@+id/dsb_text_letter_spacing" />
 
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_paragraph_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:max="50"
+        app:title="@string/paragraph_size"
+        app:layout_constraintTop_toBottomOf="@+id/dsb_line_size" />
+
     <View
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
         android:background="@color/btn_bg_press"
-        app:layout_constraintTop_toBottomOf="@+id/dsb_line_size" />
+        app:layout_constraintTop_toBottomOf="@+id/dsb_paragraph_spacing" />
 
     <TextView
         android:id="@+id/tv_page_anim"

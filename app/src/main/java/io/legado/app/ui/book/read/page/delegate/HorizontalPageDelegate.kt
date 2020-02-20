@@ -51,9 +51,9 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     override fun upSelectAble() {
         pageView.curPage.contentTextView()?.apply {
             if (context.getPrefBoolean(PreferKey.selectText)) {
-                setTextIsSelectable(true)
+//                setTextIsSelectable(true)
             } else {
-                setTextIsSelectable(false)
+//                setTextIsSelectable(false)
             }
         }
     }

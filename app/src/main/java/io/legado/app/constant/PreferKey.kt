@@ -35,4 +35,5 @@ object PreferKey {
     const val launcherIcon = "launcherIcon"
     const val selectText = "selectText"
     const val lastBackup = "lastBackup"
+    const val bodyIndent = "textIndent"
 }

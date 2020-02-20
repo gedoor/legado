@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.*
 import java.io.File
 
@@ -22,6 +23,8 @@ object ReadBookConfig {
         val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
         GSON.fromJsonArray<Config>(json)!!
     }
+    val durConfig
+        get() = getConfig(styleSelect)
 
     var styleSelect
         get() = App.INSTANCE.getPrefInt("readStyleSelect")
@@ -33,7 +36,7 @@ object ReadBookConfig {
     }
 
     @Synchronized
-    fun getConfig(index: Int = styleSelect): Config {
+    fun getConfig(index: Int): Config {
         if (configList.size < 5) {
             resetAll()
         }
@@ -64,7 +67,7 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        bg = getConfig().bgDrawable(width, height)
+        bg = durConfig.bgDrawable(width, height)
     }
 
     fun save() {
@@ -76,8 +79,8 @@ object ReadBookConfig {
 
     fun resetDur() {
         defaultConfigs[styleSelect].let {
-            getConfig().setBg(it.bgType(), it.bgStr())
-            getConfig().setTextColor(it.textColor())
+            durConfig.setBg(it.bgType(), it.bgStr())
+            durConfig.setTextColor(it.textColor())
             upBg()
             save()
         }
@@ -104,7 +107,7 @@ object ReadBookConfig {
         var textSize: Int = 15,//文字大小
         var letterSpacing: Float = 1f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
-        var lineSpacingMultiplier: Float = 1.2f,//行倍距
+        var paragraphSpacing: Int = 12,
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
@@ -134,6 +137,7 @@ object ReadBookConfig {
             } else {
                 textColor = "#${color.hexString}"
             }
+            ChapterProvider.upStyle(this)
         }
 
         fun setStatusIconDark(isDark: Boolean) {

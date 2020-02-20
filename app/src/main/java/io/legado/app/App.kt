@@ -19,7 +19,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
 
@@ -92,7 +91,7 @@ class App : Application() {
                 )
                 .apply()
         }
-        ChapterProvider.upReadAloudSpan()
+//        ChapterProvider.upReadAloudSpan()
     }
 
     fun applyDayNight() {

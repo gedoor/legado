@@ -9,8 +9,7 @@
     "darkStatusIcon": true,
     "textSize": 24,
     "letterSpacing": 0,
-    "lineSpacingExtra": 10,
-    "lineSpacingMultiplier": 1.2
+    "lineSpacingExtra": 10
   },
   {
     "bgStr": "#DDC090",
@@ -22,8 +21,7 @@
     "darkStatusIcon": true,
     "textSize": 24,
     "letterSpacing": 0,
-    "lineSpacingExtra": 10,
-    "lineSpacingMultiplier": 1.2
+    "lineSpacingExtra": 10
   },
   {
     "bgStr": "#C2D8AA",
@@ -35,8 +33,7 @@
     "darkStatusIcon": false,
     "textSize": 24,
     "letterSpacing": 0,
-    "lineSpacingExtra": 10,
-    "lineSpacingMultiplier": 1.2
+    "lineSpacingExtra": 10
   },
   {
     "bgStr": "#DBB8E2",
@@ -48,8 +45,7 @@
     "darkStatusIcon": false,
     "textSize": 24,
     "letterSpacing": 0,
-    "lineSpacingExtra": 10,
-    "lineSpacingMultiplier": 1.2
+    "lineSpacingExtra": 10
   },
   {
     "bgStr": "#ABCEE0",
@@ -61,7 +57,6 @@
     "darkStatusIcon": false,
     "textSize": 24,
     "letterSpacing": 0,
-    "lineSpacingExtra": 10,
-    "lineSpacingMultiplier": 1.2
+    "lineSpacingExtra": 10
   }
 ]

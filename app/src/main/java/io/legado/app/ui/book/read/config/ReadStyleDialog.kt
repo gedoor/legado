@@ -91,7 +91,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_bold.onClick {
-            with(ReadBookConfig.getConfig()) {
+            with(ReadBookConfig.durConfig) {
                 textBold = !textBold
                 tv_text_bold.isSelected = textBold
             }
@@ -105,7 +105,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
-                putPrefInt("textIndent", index)
+                putPrefInt(PreferKey.bodyIndent, index)
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
@@ -117,15 +117,19 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             }
         }
         dsb_text_size.onChanged = {
-            ReadBookConfig.getConfig().textSize = it + 5
+            ReadBookConfig.durConfig.textSize = it + 5
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_text_letter_spacing.onChanged = {
-            ReadBookConfig.getConfig().letterSpacing = (it - 5) / 10f
+            ReadBookConfig.durConfig.letterSpacing = (it - 5) / 10f
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_line_size.onChanged = {
-            ReadBookConfig.getConfig().lineSpacingExtra = it
+            ReadBookConfig.durConfig.lineSpacingExtra = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsb_paragraph_spacing.onChanged = {
+            ReadBookConfig.durConfig.paragraphSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
@@ -173,11 +177,12 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun upStyle() {
-        ReadBookConfig.getConfig().let {
+        ReadBookConfig.durConfig.let {
             tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 10).toInt() + 5
             dsb_line_size.progress = it.lineSpacingExtra
+            dsb_paragraph_spacing.progress = it.paragraphSpacing
         }
     }
 

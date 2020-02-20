@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import android.text.method.ScrollingMovementMethod
 import android.view.MotionEvent
 import io.legado.app.constant.PreferKey
 import io.legado.app.ui.book.read.page.PageView
@@ -122,10 +121,10 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     override fun upSelectAble() {
         pageView.curPage.contentTextView()?.apply {
             if (context.getPrefBoolean(PreferKey.selectText)) {
-                setTextIsSelectable(true)
+//                setTextIsSelectable(true)
             } else {
-                setTextIsSelectable(false)
-                movementMethod = ScrollingMovementMethod.getInstance()
+//                setTextIsSelectable(false)
+//                movementMethod = ScrollingMovementMethod.getInstance()
             }
         }
     }

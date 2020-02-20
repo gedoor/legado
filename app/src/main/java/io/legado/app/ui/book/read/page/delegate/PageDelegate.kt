@@ -192,8 +192,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
         if (event.action == MotionEvent.ACTION_DOWN) {
             curPage.let {
                 it.contentTextView()?.let { contentTextView ->
-                    atTop = contentTextView.atTop()
-                    atBottom = contentTextView.atBottom()
+                    //                    atTop = contentTextView.atTop()
+//                    atBottom = contentTextView.atBottom()
                 }
                 it.dispatchTouchEvent(event)
             }

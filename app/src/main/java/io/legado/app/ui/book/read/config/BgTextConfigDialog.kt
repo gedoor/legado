@@ -81,7 +81,7 @@ class BgTextConfigDialog : DialogFragment() {
     }
 
     @SuppressLint("InflateParams")
-    private fun initData() = with(ReadBookConfig.getConfig()) {
+    private fun initData() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.isChecked = statusIconDark()
         adapter = BgAdapter(requireContext())
         recycler_view.layoutManager =
@@ -99,7 +99,7 @@ class BgTextConfigDialog : DialogFragment() {
         }
     }
 
-    private fun initView() = with(ReadBookConfig.getConfig()) {
+    private fun initView() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
                 setStatusIconDark(isChecked)
@@ -156,7 +156,7 @@ class BgTextConfigDialog : DialogFragment() {
             holder.itemView.apply {
                 this.onClick {
                     getItem(holder.layoutPosition)?.let {
-                        ReadBookConfig.getConfig().setBg(1, it)
+                        ReadBookConfig.durConfig.setBg(1, it)
                         ReadBookConfig.upBg()
                         postEvent(EventBus.UP_CONFIG, false)
                     }
@@ -180,7 +180,7 @@ class BgTextConfigDialog : DialogFragment() {
                                     FileUtils.createFileIfNotExist(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
                                 DocumentUtils.readBytes(requireContext(), uri)?.let {
                                     file.writeBytes(it)
-                                    ReadBookConfig.getConfig().setBg(2, file.absolutePath)
+                                    ReadBookConfig.durConfig.setBg(2, file.absolutePath)
                                     ReadBookConfig.upBg()
                                     postEvent(EventBus.UP_CONFIG, false)
                                 }
@@ -194,7 +194,7 @@ class BgTextConfigDialog : DialogFragment() {
                                 .rationale(R.string.bg_image_per)
                                 .onGranted {
                                     RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                                        ReadBookConfig.getConfig().setBg(2, path)
+                                        ReadBookConfig.durConfig.setBg(2, path)
                                         ReadBookConfig.upBg()
                                         postEvent(EventBus.UP_CONFIG, false)
                                     }

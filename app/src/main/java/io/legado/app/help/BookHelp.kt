@@ -237,6 +237,8 @@ object BookHelp {
     private var bookName: String? = null
     private var bookOrigin: String? = null
     private var replaceRules: List<ReplaceRule> = arrayListOf()
+    val bodyIndent
+        get() = "　".repeat(App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2))
 
     fun disposeContent(
         title: String,
@@ -273,7 +275,6 @@ object BookHelp {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
         }
-        val indent = App.INSTANCE.getPrefInt("textIndent", 2)
-        return c.replace("\\s*\\n+\\s*".toRegex(), "\n" + "　".repeat(indent))
+        return c.replace("\\s*\\n+\\s*".toRegex(), "\n$bodyIndent")
     }
 }

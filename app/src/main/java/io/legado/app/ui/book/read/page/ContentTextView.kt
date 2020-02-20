@@ -1,11 +1,14 @@
 package io.legado.app.ui.book.read.page
 
 import android.content.Context
+import android.graphics.Canvas
 import android.util.AttributeSet
-import io.legado.app.ui.widget.text.InertiaScrollTextView
+import android.view.View
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.ui.book.read.page.entities.TextPage
 
 
-class ContentTextView : InertiaScrollTextView {
+class ContentTextView : View {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -13,19 +16,45 @@ class ContentTextView : InertiaScrollTextView {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr)
 
-    /**
-     * 获取当前页总字数
-     */
-    fun getCharNum(lineNum: Int = getLineNum()): Int {
-        return layout?.getLineEnd(lineNum) ?: 0
+    var textPage: TextPage? = null
+
+    fun setContent(textPage: TextPage?) {
+        this.textPage = textPage
+        invalidate()
     }
 
-    /**
-     * 获取当前页总行数
-     */
-    fun getLineNum(): Int {
-        val topOfLastLine = height - paddingTop - paddingBottom - lineHeight
-        return layout?.getLineForVertical(topOfLastLine) ?: 0
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        ReadBookConfig.durConfig.let {
+            ChapterProvider.viewWidth = w
+            ChapterProvider.viewHeight = h
+            ChapterProvider.upSize(ReadBookConfig.durConfig)
+        }
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        textPage?.let { textPage ->
+            textPage.textLines.forEach { textLine ->
+                textLine.textChars.forEach {
+                    if (textLine.isTitle) {
+                        canvas.drawText(
+                            it.charData,
+                            it.leftBottomPosition.x.toFloat(),
+                            it.leftBottomPosition.y.toFloat(),
+                            ChapterProvider.titlePaint
+                        )
+                    } else {
+                        canvas.drawText(
+                            it.charData,
+                            it.leftBottomPosition.x.toFloat(),
+                            it.leftBottomPosition.y.toFloat(),
+                            ChapterProvider.contentPaint
+                        )
+                    }
+                }
+            }
+        }
     }
 
 }

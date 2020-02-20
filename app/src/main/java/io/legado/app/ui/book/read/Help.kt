@@ -56,7 +56,7 @@ object Help {
         }
         activity.window.decorView.systemUiVisibility = flag
         if (toolBarHide) {
-            ATH.setLightStatusBar(activity, ReadBookConfig.getConfig().statusIconDark())
+            ATH.setLightStatusBar(activity, ReadBookConfig.durConfig.statusIconDark())
         } else {
             ATH.setLightStatusBarAuto(
                 activity,

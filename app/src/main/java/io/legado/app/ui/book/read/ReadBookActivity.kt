@@ -44,7 +44,6 @@ import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
-import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -117,7 +116,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 初始化View
      */
     private fun initView() {
-        ChapterProvider.textView = content_text_view
         tv_chapter_name.onClick {
             ReadBook.webBook?.let {
                 startActivityForResult<BookSourceEditActivity>(
@@ -446,7 +444,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * colorSelectDialog
      */
-    override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.getConfig()) {
+    override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.durConfig) {
         when (dialogId) {
             TEXT_COLOR -> {
                 setTextColor(color)
@@ -507,7 +505,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 ReadBook.curTextChapter?.let { textChapter ->
                     val page = textChapter.page(ReadBook.durPageIndex)
                     if (page != null && page.text is SpannableStringBuilder) {
-                        page.text.removeSpan(ChapterProvider.readAloudSpan)
+                        page.removePageAloudSpan()
                         page_view.upContent()
                     }
                 }
@@ -531,6 +529,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             content_view.upStyle()
             page_view.upBg()
             page_view.upStyle()
+            ChapterProvider.upStyle(ReadBookConfig.durConfig)
             if (it) {
                 ReadBook.loadContent()
             } else {
