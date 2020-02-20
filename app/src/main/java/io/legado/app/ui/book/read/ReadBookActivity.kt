@@ -345,22 +345,26 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun upView() {
-        ReadBook.curTextChapter?.let {
-            tv_chapter_name.text = it.title
-            tv_chapter_name.visible()
-            if (!ReadBook.isLocalBook) {
-                tv_chapter_url.text = it.url
-                tv_chapter_url.visible()
+        launch {
+            ReadBook.curTextChapter?.let {
+                tv_chapter_name.text = it.title
+                tv_chapter_name.visible()
+                if (!ReadBook.isLocalBook) {
+                    tv_chapter_url.text = it.url
+                    tv_chapter_url.visible()
+                }
+                seek_read_page.max = it.pageSize().minus(1)
+                seek_read_page.progress = ReadBook.durPageIndex
+                tv_pre.isEnabled = ReadBook.durChapterIndex != 0
+                tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
             }
-            seek_read_page.max = it.pageSize().minus(1)
-            seek_read_page.progress = ReadBook.durPageIndex
-            tv_pre.isEnabled = ReadBook.durChapterIndex != 0
-            tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
         }
     }
 
     override fun upPageProgress() {
-        seek_read_page.progress = ReadBook.durPageIndex
+        launch {
+            seek_read_page.progress = ReadBook.durPageIndex
+        }
     }
 
     override fun showMenuBar() {

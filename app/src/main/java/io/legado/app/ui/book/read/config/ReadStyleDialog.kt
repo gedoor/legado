@@ -91,7 +91,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_bold.onClick {
-            with(ReadBookConfig.durConfig) {
+            ReadBookConfig.durConfig.apply {
                 textBold = !textBold
                 tv_text_bold.isSelected = textBold
             }

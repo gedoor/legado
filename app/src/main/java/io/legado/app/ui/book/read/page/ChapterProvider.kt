@@ -1,9 +1,13 @@
 package io.legado.app.ui.book.read.page
 
 import android.graphics.Point
+import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import android.text.TextUtils
+import io.legado.app.App
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
@@ -12,6 +16,8 @@ import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.dp
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.removePref
 
 
 object ChapterProvider {
@@ -31,10 +37,29 @@ object ChapterProvider {
     }
 
     fun upStyle(config: ReadBookConfig.Config) {
+        val typeface: Typeface = try {
+            val fontPath = App.INSTANCE.getPrefString(PreferKey.readBookFont)
+            if (!TextUtils.isEmpty(fontPath)) {
+                Typeface.createFromFile(fontPath)
+            } else {
+                Typeface.SANS_SERIF
+            }
+        } catch (e: Exception) {
+            App.INSTANCE.removePref(PreferKey.readBookFont)
+            Typeface.SANS_SERIF
+        }
+        //标题
+        titlePaint.isAntiAlias = true
         titlePaint.color = config.textColor()
         titlePaint.letterSpacing = config.letterSpacing
+        titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
+        //正文
+        contentPaint.isAntiAlias = true
         contentPaint.color = config.textColor()
         contentPaint.letterSpacing = config.letterSpacing
+        val bold = if (config.textBold) Typeface.BOLD else Typeface.NORMAL
+        contentPaint.typeface = Typeface.create(typeface, bold)
+        //间距
         lineSpacingExtra = config.lineSpacingExtra
         paragraphSpacing = config.paragraphSpacing
         titlePaint.textSize = (config.textSize + 2).dp.toFloat()

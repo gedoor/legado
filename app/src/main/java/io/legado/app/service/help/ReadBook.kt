@@ -13,8 +13,10 @@ import io.legado.app.model.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 object ReadBook {
@@ -264,18 +266,18 @@ object ReadBook {
                     book!!.useReplaceRule
                 )
                 when (chapter.index) {
-                    durChapterIndex -> withContext(Main) {
+                    durChapterIndex -> {
                         curTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent()
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
-                    durChapterIndex - 1 -> withContext(Main) {
+                    durChapterIndex - 1 -> {
                         prevTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent(-1)
                     }
-                    durChapterIndex + 1 -> withContext(Main) {
+                    durChapterIndex + 1 -> {
                         nextTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent(1)
                     }
