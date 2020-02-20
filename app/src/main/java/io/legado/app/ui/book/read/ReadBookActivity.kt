@@ -46,9 +46,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
@@ -543,12 +541,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         observeEventSticky<Int>(EventBus.TTS_START) { chapterStart ->
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
-                    ReadBook.curTextChapter?.let {
-                        val pageStart = chapterStart - it.getReadLength(ReadBook.durPageIndex)
-                        it.page(ReadBook.durPageIndex)?.upPageAloudSpan(pageStart)
-                        withContext(Main) {
-                            page_view.upContent()
-                        }
+                    ReadBook.curTextChapter?.let { textChapter ->
+                        val pageStart =
+                            chapterStart - textChapter.getReadLength(ReadBook.durPageIndex)
+                        textChapter.page(ReadBook.durPageIndex)?.upPageAloudSpan(pageStart)
+                        upContent()
                     }
                 }
             }

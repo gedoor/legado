@@ -24,10 +24,9 @@ data class TextPage(
     fun upPageAloudSpan(pageStart: Int) {
         if (text is SpannableStringBuilder) {
             removePageAloudSpan()
-            var end = text.indexOf("\n", pageStart)
-            if (end == -1) end = text.length
-            var start = text.lastIndexOf("\n", pageStart)
-            if (start == -1) start = 0
+            for (textLine in textLines) {
+
+            }
         }
     }
 }

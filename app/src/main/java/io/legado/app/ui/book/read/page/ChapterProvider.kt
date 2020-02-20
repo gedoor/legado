@@ -178,6 +178,7 @@ object ChapterProvider {
             val words =
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
+            textLine.text = words
             val desiredWidth = layout.getLineMax(lineIndex)
             if (lineIndex != layout.lineCount - 1) {
                 val gapCount: Int = words.length - 1
@@ -201,6 +202,7 @@ object ChapterProvider {
                 }
             } else {
                 //最后一行
+                textLine.text = "$words\n"
                 stringBuilder.append("\n")
                 var x = 0
                 for (i in words.indices) {
@@ -262,6 +264,7 @@ object ChapterProvider {
             var words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
+            textLine.text = words
             val desiredWidth = layout.getLineMax(lineIndex)
             if (lineIndex == 0 && layout.lineCount > 1) {
                 //第一行
@@ -297,6 +300,7 @@ object ChapterProvider {
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
                 stringBuilder.append("\n")
+                textLine.text = "$words\n"
                 var x = 0
                 for (i in words.indices) {
                     val char = words[i].toString()
