@@ -24,8 +24,13 @@ data class TextPage(
     fun upPageAloudSpan(pageStart: Int) {
         if (text is SpannableStringBuilder) {
             removePageAloudSpan()
+            var lineStart = 0
             for (textLine in textLines) {
-
+                if (pageStart > lineStart && pageStart < lineStart + textLine.text.length) {
+                    textLine.isReadAloud = true
+                    break
+                }
+                lineStart += textLine.text.length
             }
         }
     }
