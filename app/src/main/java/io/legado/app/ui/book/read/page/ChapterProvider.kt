@@ -27,7 +27,7 @@ object ChapterProvider {
     private var visibleHeight = 0
     private var paddingLeft = 0
     private var paddingTop = 0
-    private var lineSpacingExtra = 0
+    private var lineSpacingExtra = 0f
     private var paragraphSpacing = 0
     var titlePaint = TextPaint()
     var contentPaint = TextPaint()
@@ -60,8 +60,8 @@ object ChapterProvider {
         val bold = if (config.textBold) Typeface.BOLD else Typeface.NORMAL
         contentPaint.typeface = Typeface.create(typeface, bold)
         //间距
-        lineSpacingExtra = config.lineSpacingExtra
-        paragraphSpacing = config.paragraphSpacing
+        lineSpacingExtra = config.lineSpacingExtra.dp.toFloat()
+        paragraphSpacing = config.paragraphSpacing.dp
         titlePaint.textSize = (config.textSize + 2).dp.toFloat()
         contentPaint.textSize = config.textSize.dp.toFloat()
         upSize(config)
@@ -97,7 +97,7 @@ object ChapterProvider {
                     surplusText = surplusText.substring(end + 1)
                     val layout = StaticLayout(
                         title, titlePaint, visibleWidth,
-                        Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra.toFloat(), false
+                        Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, false
                     )
                     for (lineIndex in 0 until layout.lineCount) {
                         durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
@@ -174,7 +174,7 @@ object ChapterProvider {
                 }
                 val layout = StaticLayout(
                     text, contentPaint, visibleWidth,
-                    Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra.toFloat(), false
+                    Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, false
                 )
                 for (lineIndex in 0 until layout.lineCount) {
                     val textLine = TextLine(isTitle = false)
