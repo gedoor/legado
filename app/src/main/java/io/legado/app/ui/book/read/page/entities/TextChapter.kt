@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.read.page
+package io.legado.app.ui.book.read.page.entities
 
 import android.text.SpannableStringBuilder
 import kotlin.math.min

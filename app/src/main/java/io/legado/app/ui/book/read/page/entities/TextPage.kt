@@ -1,9 +1,10 @@
-package io.legado.app.ui.book.read.page
+package io.legado.app.ui.book.read.page.entities
 
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.ui.book.read.page.ChapterProvider
 
 data class TextPage(
     val index: Int,

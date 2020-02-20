@@ -9,6 +9,8 @@ import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextPage
 
 
 object ChapterProvider {

@@ -1,5 +1,7 @@
 package io.legado.app.ui.book.read.page
 
+import io.legado.app.ui.book.read.page.entities.TextChapter
+
 interface DataSource {
     val isScrollDelegate: Boolean
 

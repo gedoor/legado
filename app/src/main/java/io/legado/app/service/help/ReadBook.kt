@@ -12,7 +12,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.ChapterProvider
-import io.legado.app.ui.book.read.page.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextChapter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 
