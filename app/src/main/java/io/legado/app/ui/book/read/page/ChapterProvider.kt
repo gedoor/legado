@@ -78,8 +78,7 @@ object ChapterProvider {
     fun getTextChapter(
         bookChapter: BookChapter,
         content: String,
-        chapterSize: Int,
-        isHtml: Boolean = false
+        chapterSize: Int
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()

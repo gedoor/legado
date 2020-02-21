@@ -26,7 +26,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             style = Paint.Style.FILL
         }
     }
-    var textPage: TextPage? = null
+    private var textPage: TextPage? = null
 
     fun setContent(textPage: TextPage?) {
         this.textPage = textPage
