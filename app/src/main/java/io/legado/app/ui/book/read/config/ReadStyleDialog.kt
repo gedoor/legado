@@ -71,7 +71,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             (it + 5).toString()
         }
         dsb_text_letter_spacing.valueFormat = {
-            ((it - 5) / 10f).toString()
+            ((it - 50) / 100f).toString()
         }
     }
 
@@ -121,7 +121,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_text_letter_spacing.onChanged = {
-            ReadBookConfig.durConfig.letterSpacing = (it - 5) / 10f
+            ReadBookConfig.durConfig.letterSpacing = (it - 50) / 100f
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_line_size.onChanged = {
@@ -180,7 +180,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         ReadBookConfig.durConfig.let {
             tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
-            dsb_text_letter_spacing.progress = (it.letterSpacing * 10).toInt() + 5
+            dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
             dsb_line_size.progress = it.lineSpacingExtra
             dsb_paragraph_spacing.progress = it.paragraphSpacing
         }

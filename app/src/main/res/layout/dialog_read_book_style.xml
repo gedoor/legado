@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        app:max="10"
+        app:max="100"
         app:title="@string/text_letter_spacing"
         app:layout_constraintTop_toBottomOf="@+id/dsb_text_size" />
 
