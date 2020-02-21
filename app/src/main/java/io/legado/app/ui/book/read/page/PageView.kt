@@ -11,6 +11,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
 
@@ -241,6 +242,8 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     interface CallBack {
 
+        val isInitFinish: Boolean
+
         /**
          * 保存页数
          */
@@ -251,8 +254,8 @@ class PageView(context: Context, attrs: AttributeSet) :
          */
         fun clickCenter()
 
-        val isInitFinish: Boolean
-
         fun screenOffTimerStart()
+
+        fun selectText(textChar: TextChar)
     }
 }

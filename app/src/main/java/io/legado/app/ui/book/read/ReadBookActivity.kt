@@ -35,6 +35,7 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
+import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
@@ -387,6 +388,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         } else {
             read_menu.runMenuIn()
         }
+    }
+
+    override fun selectText(textChar: TextChar) {
+        cursor_left
+        cursor_right
     }
 
     override fun showReadAloudDialog() {
