@@ -16,6 +16,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -54,8 +55,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         upVersion()
         //初始化简繁转换引擎
         when (AppConfig.chineseConverterType) {
-            1 -> ZhConverterUtil.toSimple("初始化")
-            2 -> ZhConverterUtil.toTraditional("初始化")
+            1 -> Coroutine.async { ZhConverterUtil.toSimple("初始化") }
+            2 -> Coroutine.async { ZhConverterUtil.toTraditional("初始化") }
         }
         //自动更新书籍
         if (AppConfig.autoRefreshBook) {
