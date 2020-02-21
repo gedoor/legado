@@ -114,11 +114,56 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun selectStartMove(x: Float, y: Float) {
-
+        textPage?.let { textPage ->
+            for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
+                if (y > textLine.lineTop && y < textLine.lineBottom) {
+                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                        if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                            textChar.selected = true
+                            invalidate()
+                            selectStartLine = lineIndex
+                            selectStartChar = charIndex
+                            selectEndLine = lineIndex
+                            selectEndChar = charIndex
+                            SelectPoint(
+                                textChar.leftBottomPosition.x,
+                                textChar.leftBottomPosition.y.toFloat(),
+                                textChar.rightTopPosition.x,
+                                textChar.leftBottomPosition.y.toFloat()
+                            )
+                            break
+                        }
+                    }
+                    break
+                }
+            }
+        }
     }
 
     fun selectEndMove(x: Float, y: Float) {
-
+        textPage?.let { textPage ->
+            for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
+                if (y > textLine.lineTop && y < textLine.lineBottom) {
+                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                        if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                            textChar.selected = true
+                            invalidate()
+                            selectStartLine = lineIndex
+                            selectStartChar = charIndex
+                            selectEndLine = lineIndex
+                            selectEndChar = charIndex
+                            SelectPoint(
+                                textChar.leftBottomPosition.x,
+                                textChar.leftBottomPosition.y.toFloat(),
+                                textChar.rightTopPosition.x,
+                                textChar.leftBottomPosition.y.toFloat()
+                            )
+                        }
+                    }
+                    break
+                }
+            }
+        }
     }
 
 }
