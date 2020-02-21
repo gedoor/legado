@@ -107,7 +107,8 @@ object ReadBookConfig {
         var textSize: Int = 15,//文字大小
         var letterSpacing: Float = 1f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
-        var paragraphSpacing: Int = 12,
+        var paragraphSpacing: Int = 12,//段距
+        var titleCenter: Boolean = true,//标题居中
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,

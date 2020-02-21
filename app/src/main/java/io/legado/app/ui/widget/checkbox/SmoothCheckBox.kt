@@ -40,7 +40,7 @@ class SmoothCheckBox @JvmOverloads constructor(
     private var mFloorUnCheckedColor = 0
     private var mChecked = false
     private var mTickDrawing = false
-    private var mListener: OnCheckedChangeListener? = null
+    var onCheckedChangeListener: ((checkBox: SmoothCheckBox, isChecked: Boolean) -> Unit)? = null
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.SmoothCheckBox)
@@ -89,9 +89,7 @@ class SmoothCheckBox @JvmOverloads constructor(
         mChecked = checked
         reset()
         invalidate()
-        if (mListener != null) {
-            mListener!!.onCheckedChanged(this@SmoothCheckBox, mChecked)
-        }
+        onCheckedChangeListener?.invoke(this@SmoothCheckBox, mChecked)
     }
 
     override fun toggle() {
@@ -114,9 +112,7 @@ class SmoothCheckBox @JvmOverloads constructor(
             } else {
                 startUnCheckedAnimation()
             }
-            if (mListener != null) {
-                mListener!!.onCheckedChanged(this@SmoothCheckBox, mChecked)
-            }
+            onCheckedChangeListener?.invoke(this@SmoothCheckBox, mChecked)
         } else {
             this.isChecked = checked
         }
@@ -306,14 +302,6 @@ class SmoothCheckBox @JvmOverloads constructor(
             mTickDrawing = true
             postInvalidate()
         }, mAnimDuration.toLong())
-    }
-
-    fun setOnCheckedChangeListener(l: OnCheckedChangeListener?) {
-        mListener = l
-    }
-
-    interface OnCheckedChangeListener {
-        fun onCheckedChanged(checkBox: SmoothCheckBox?, isChecked: Boolean)
     }
 
     companion object {

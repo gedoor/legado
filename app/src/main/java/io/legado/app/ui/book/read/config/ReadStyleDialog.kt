@@ -76,6 +76,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun initData() {
+        cb_share_layout.isChecked = getPrefBoolean(PreferKey.shareLayout)
         requireContext().getPrefInt(PreferKey.pageAnim).let {
             if (it >= 0 && it < rg_page_anim.childCount) {
                 rg_page_anim.check(rg_page_anim[it].id)
@@ -88,6 +89,13 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     private fun initViewEvent() {
         chinese_converter.onChanged {
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        tv_title_center.onClick {
+            ReadBookConfig.durConfig.apply {
+                titleCenter = !titleCenter
+                tv_text_bold.isSelected = titleCenter
+            }
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_bold.onClick {
@@ -144,6 +152,11 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 }
             }
         }
+        cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
+            if (checkBox.isPressed) {
+                putPrefBoolean(PreferKey.shareLayout, isChecked)
+            }
+        }
         bg0.onClick { changeBg(0) }
         bg0.onLongClick { showBgTextConfig(0) }
         bg1.onClick { changeBg(1) }
@@ -178,6 +191,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     private fun upStyle() {
         ReadBookConfig.durConfig.let {
+            tv_title_center.isSelected = it.titleCenter
             tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50

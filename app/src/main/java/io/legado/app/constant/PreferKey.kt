@@ -36,4 +36,5 @@ object PreferKey {
     const val textSelectAble = "selectText"
     const val lastBackup = "lastBackup"
     const val bodyIndent = "textIndent"
+    const val shareLayout = "shareLayout"
 }
