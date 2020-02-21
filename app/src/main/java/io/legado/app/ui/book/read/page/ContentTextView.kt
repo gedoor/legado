@@ -18,14 +18,17 @@ import io.legado.app.utils.getPrefBoolean
 
 
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-
-    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
             style = Paint.Style.FILL
         }
     }
+    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
+    var selectStartLine = 0
+    var selectStartChar = 0
+    var selectEndLine = 0
+    var selectEndChar = 0
     private var textPage: TextPage? = null
 
     fun setContent(textPage: TextPage?) {

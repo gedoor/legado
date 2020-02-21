@@ -257,9 +257,6 @@ object BookHelp {
                 }
             }
         }
-        if (!content.substringBefore("\n").contains(title)) {
-            c = title + "\n" + c
-        }
         for (item in replaceRules) {
             item.pattern.let {
                 if (it.isNotEmpty()) {
@@ -270,6 +267,9 @@ object BookHelp {
                     }
                 }
             }
+        }
+        if (!content.substringBefore("\n").contains(title)) {
+            c = title + "\n" + c
         }
         when (AppConfig.chineseConverterType) {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
