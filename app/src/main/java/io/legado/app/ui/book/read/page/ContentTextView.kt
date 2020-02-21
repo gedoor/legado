@@ -50,7 +50,7 @@ class ContentTextView : View {
                 textLine.textChars.forEach {
                     canvas.drawText(
                         it.charData,
-                        it.leftBottomPosition.x.toFloat(),
+                        it.leftBottomPosition.x,
                         it.leftBottomPosition.y.toFloat(),
                         textPaint
                     )

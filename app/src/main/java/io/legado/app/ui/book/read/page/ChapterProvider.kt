@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.read.page
 
-import android.graphics.Point
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
@@ -11,10 +10,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.entities.TextChar
-import io.legado.app.ui.book.read.page.entities.TextLine
-import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.*
 import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.removePref
@@ -169,12 +165,10 @@ object ChapterProvider {
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineBottom =
-                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineBaseline(
-                    lineIndex
-                )
-            textLine.lineTop =
-                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineTop(lineIndex)
+            textLine.lineBottom = paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))
+            textLine.lineTop = paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))
             val words =
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -183,19 +177,15 @@ object ChapterProvider {
             if (lineIndex != layout.lineCount - 1) {
                 val gapCount: Int = words.length - 1
                 val d = (visibleWidth - desiredWidth) / gapCount
-                var x = 0
+                var x = 0f
                 for (i in words.indices) {
                     val char = words[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, titlePaint)
-                    val x1 = if (i != words.lastIndex) {
-                        (x + cw + d).toInt()
-                    } else {
-                        (x + cw).toInt()
-                    }
+                    val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
                     )
                     textLine.textChars.add(textChar)
                     x = x1
@@ -204,15 +194,15 @@ object ChapterProvider {
                 //最后一行
                 textLine.text = "$words\n"
                 stringBuilder.append("\n")
-                var x = 0
+                var x = 0f
                 for (i in words.indices) {
                     val char = words[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, titlePaint)
-                    val x1 = (x + cw).toInt()
+                    val x1 = x + cw
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
                     )
                     textLine.textChars.add(textChar)
                     x = x1
@@ -253,14 +243,10 @@ object ChapterProvider {
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineBottom =
-                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineBaseline(
-                    lineIndex
-                )
-            textLine.lineTop =
-                paddingTop + durY - layout.getLineBottom(lineIndex) + layout.getLineTop(
-                    lineIndex
-                )
+            textLine.lineBottom = paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))
+            textLine.lineTop = paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))
             var words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -268,13 +254,13 @@ object ChapterProvider {
             val desiredWidth = layout.getLineMax(lineIndex)
             if (lineIndex == 0 && layout.lineCount > 1) {
                 //第一行
-                var x = 0
+                var x = 0f
                 val icw = StaticLayout.getDesiredWidth(bodyIndent, contentPaint)
-                var x1 = (x + icw).toInt()
+                var x1 = x + icw
                 val textChar = TextChar(
                     charData = bodyIndent,
-                    leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
-                    rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                    leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
+                    rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
                 )
                 textLine.textChars.add(textChar)
                 x = x1
@@ -284,15 +270,11 @@ object ChapterProvider {
                 for (i in words.indices) {
                     val char = words[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                    x1 = if (i != words.lastIndex) {
-                        (x + cw + d).toInt()
-                    } else {
-                        (x + cw).toInt()
-                    }
+                    x1 = if (i != words.lastIndex) x + cw + d else x + cw
                     val textChar1 = TextChar(
                         charData = char,
-                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
                     )
                     textLine.textChars.add(textChar1)
                     x = x1
@@ -301,15 +283,15 @@ object ChapterProvider {
                 //最后一行
                 stringBuilder.append("\n")
                 textLine.text = "$words\n"
-                var x = 0
+                var x = 0f
                 for (i in words.indices) {
                     val char = words[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                    val x1 = (x + cw).toInt()
+                    val x1 = x + cw
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
                     )
                     textLine.textChars.add(textChar)
                     x = x1
@@ -318,19 +300,15 @@ object ChapterProvider {
                 //中间行
                 val gapCount: Int = words.length - 1
                 val d = (visibleWidth - desiredWidth) / gapCount
-                var x = 0
+                var x = 0f
                 for (i in words.indices) {
                     val char = words[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                    val x1 = if (i != words.lastIndex) {
-                        (x + cw + d).toInt()
-                    } else {
-                        (x + cw).toInt()
-                    }
+                    val x1 = if (i != words.lastIndex) x + cw + d else x + cw
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = Point(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = Point(paddingLeft + x1, textLine.lineTop)
+                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
                     )
                     textLine.textChars.add(textChar)
                     x = x1
