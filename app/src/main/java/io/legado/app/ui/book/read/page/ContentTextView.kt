@@ -2,11 +2,14 @@ package io.legado.app.ui.book.read.page
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import io.legado.app.R
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.utils.getCompatColor
 
 
 class ContentTextView : View {
@@ -17,6 +20,11 @@ class ContentTextView : View {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr)
 
+    private val selectedPaint by lazy {
+        Paint().apply {
+            color = context.getCompatColor(R.color.btn_bg_press)
+        }
+    }
     var textPage: TextPage? = null
 
     fun setContent(textPage: TextPage?) {
@@ -54,6 +62,15 @@ class ContentTextView : View {
                         it.leftBottomPosition.y.toFloat(),
                         textPaint
                     )
+                    if (it.selected) {
+                        canvas.drawRect(
+                            it.leftBottomPosition.x,
+                            it.rightTopPosition.y.toFloat(),
+                            it.rightTopPosition.x,
+                            it.leftBottomPosition.y.toFloat(),
+                            selectedPaint
+                        )
+                    }
                 }
             }
         }

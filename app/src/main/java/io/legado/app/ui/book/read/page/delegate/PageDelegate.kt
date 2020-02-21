@@ -10,13 +10,16 @@ import android.widget.Scroller
 import androidx.annotation.CallSuper
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.google.android.material.snackbar.Snackbar
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
-abstract class PageDelegate(protected val pageView: PageView) {
+abstract class PageDelegate(protected val pageView: PageView) :
+    GestureDetector.SimpleOnGestureListener() {
     val centerRectF = RectF(
         pageView.width * 0.33f, pageView.height * 0.33f,
         pageView.width * 0.66f, pageView.height * 0.66f
@@ -51,17 +54,13 @@ abstract class PageDelegate(protected val pageView: PageView) {
     }
 
     private val scroller: Scroller by lazy {
-        Scroller(
-            pageView.context,
-            FastOutLinearInInterpolator()
-        )
+        Scroller(pageView.context, FastOutLinearInInterpolator())
     }
 
     private val detector: GestureDetector by lazy {
-        GestureDetector(
-            pageView.context,
-            GestureListener()
-        )
+        GestureDetector(pageView.context, this).apply {
+            setIsLongpressEnabled(context.getPrefBoolean(PreferKey.selectText))
+        }
     }
 
     var isMoved = false
@@ -188,13 +187,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
     open fun onScroll() {//移动contentView， slidePage
     }
 
-    abstract fun onScroll(
-        e1: MotionEvent,
-        e2: MotionEvent,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean
-
     enum class Direction {
         NONE, PREV, NEXT
     }
@@ -223,78 +215,74 @@ abstract class PageDelegate(protected val pageView: PageView) {
     }
 
     /**
-     * 触摸事件处理
+     * 按下
      */
-    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-
-        override fun onDown(e: MotionEvent): Boolean {
+    override fun onDown(e: MotionEvent): Boolean {
 //            abort()
-            //是否移动
-            isMoved = false
-            //是否存在下一章
-            noNext = false
-            //是否正在执行动画
-            isRunning = false
-            //取消
-            isCancel = false
-            //是下一章还是前一章
-            setDirection(Direction.NONE)
-            //设置起始位置的触摸点
-            setStartPoint(e.x, e.y)
-            return true
-        }
-
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
-            val x = e.x
-            val y = e.y
-            if (centerRectF.contains(x, y)) {
-                pageView.callBack?.clickCenter()
-                setTouchPoint(x, y)
-            } else {
-                if (x > viewWidth / 2 ||
-                    AppConfig.clickAllNext
-                ) {
-                    //设置动画方向
-                    if (!hasNext()) {
-                        return true
-                    }
-                    setDirection(Direction.NEXT)
-                    setBitmap()
-                } else {
-                    if (!hasPrev()) {
-                        return true
-                    }
-                    setDirection(Direction.PREV)
-                    setBitmap()
-                }
-                setTouchPoint(x, y)
-                onAnimStart()
-            }
-            return true
-        }
-
-        override fun onScroll(
-            e1: MotionEvent,
-            e2: MotionEvent,
-            distanceX: Float,
-            distanceY: Float
-        ): Boolean {
-            return this@PageDelegate.onScroll(e1, e2, distanceX, distanceY)
-        }
-
-        override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent?,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
-            if (!noNext) onAnimStart()
-            return true
-        }
+        //是否移动
+        isMoved = false
+        //是否存在下一章
+        noNext = false
+        //是否正在执行动画
+        isRunning = false
+        //取消
+        isCancel = false
+        //是下一章还是前一章
+        setDirection(Direction.NONE)
+        //设置起始位置的触摸点
+        setStartPoint(e.x, e.y)
+        return true
     }
 
+    /**
+     * 单击
+     */
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        val x = e.x
+        val y = e.y
+        if (centerRectF.contains(x, y)) {
+            pageView.callBack?.clickCenter()
+            setTouchPoint(x, y)
+        } else {
+            if (x > viewWidth / 2 ||
+                AppConfig.clickAllNext
+            ) {
+                //设置动画方向
+                if (!hasNext()) {
+                    return true
+                }
+                setDirection(Direction.NEXT)
+                setBitmap()
+            } else {
+                if (!hasPrev()) {
+                    return true
+                }
+                setDirection(Direction.PREV)
+                setBitmap()
+            }
+            setTouchPoint(x, y)
+            onAnimStart()
+        }
+        return true
+    }
+
+    /**
+     * 移动结束
+     */
+    override fun onFling(
+        e1: MotionEvent?,
+        e2: MotionEvent?,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        if (!noNext) onAnimStart()
+        return true
+    }
+
+    /**
+     * 判断是否有上一页
+     */
     fun hasPrev(): Boolean {
-        //上一页的参数配置
         val hasPrev = pageView.pageFactory?.hasPrev() == true
         if (!hasPrev) {
             if (!snackBar.isShown) {
@@ -305,8 +293,10 @@ abstract class PageDelegate(protected val pageView: PageView) {
         return hasPrev
     }
 
+    /**
+     * 判断是否有下一页
+     */
     fun hasNext(): Boolean {
-        //进行下一页的配置
         val hasNext = pageView.pageFactory?.hasNext() == true
         if (!hasNext) {
             if (!snackBar.isShown) {
