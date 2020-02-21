@@ -132,6 +132,8 @@ class PageView(context: Context, attrs: AttributeSet) :
             } else {
                 fillPage(PageDelegate.Direction.PREV)
             }
+        } else {
+            pageDelegate?.start(PageDelegate.Direction.PREV)
         }
     }
 
@@ -144,6 +146,8 @@ class PageView(context: Context, attrs: AttributeSet) :
             } else {
                 fillPage(PageDelegate.Direction.NEXT)
             }
+        } else {
+            pageDelegate?.start(PageDelegate.Direction.NEXT)
         }
     }
 

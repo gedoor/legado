@@ -179,23 +179,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
         onScrollStart()
     }
 
-    /**
-     * 触摸事件处理
-     */
-    @CallSuper
-    open fun onTouch(event: MotionEvent): Boolean {
-        if (isStarted) return false
-        curPage.dispatchTouchEvent(event)
-        if (event.action == MotionEvent.ACTION_UP) {
-            if (isMoved) {
-                // 开启翻页效果
-                if (!noNext) onScrollStart()
-                return true
-            }
-        }
-        return detector.onTouchEvent(event)
-    }
-
     abstract fun onScrollStart()//scroller start
 
     abstract fun onDraw(canvas: Canvas)//绘制
@@ -227,6 +210,16 @@ abstract class PageDelegate(protected val pageView: PageView) {
             Direction.PREV -> prevPage.screenshot()
             else -> null
         }
+    }
+
+    /**
+     * 触摸事件处理
+     */
+    @CallSuper
+    open fun onTouch(event: MotionEvent): Boolean {
+        if (isStarted) return false
+        curPage.dispatchTouchEvent(event)
+        return detector.onTouchEvent(event)
     }
 
     /**
@@ -287,6 +280,16 @@ abstract class PageDelegate(protected val pageView: PageView) {
             distanceY: Float
         ): Boolean {
             return this@PageDelegate.onScroll(e1, e2, distanceX, distanceY)
+        }
+
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent?,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            if (!noNext) onScrollStart()
+            return true
         }
     }
 
