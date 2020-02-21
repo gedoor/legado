@@ -152,7 +152,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     ReadBook.moveToNextPage()
                 }
             }
-            postEvent(EventBus.TTS_START, readAloudNumber + 1)
+            postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
         }
 
         override fun onDone(s: String) {
@@ -169,7 +169,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
                     ReadBook.moveToNextPage()
-                    postEvent(EventBus.TTS_START, readAloudNumber + start)
+                    postEvent(EventBus.TTS_PROGRESS, readAloudNumber + start)
                 }
             }
         }

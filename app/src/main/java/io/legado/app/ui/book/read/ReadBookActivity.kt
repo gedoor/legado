@@ -501,17 +501,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<Int>(EventBus.ALOUD_STATE) {
-            if (it == Status.STOP || it == Status.PAUSE) {
-                ReadBook.curTextChapter?.let { textChapter ->
-                    val page = textChapter.page(ReadBook.durPageIndex)
-                    if (page != null) {
-                        page.removePageAloudSpan()
-                        page_view.upContent()
-                    }
-                }
-            }
-        }
         observeEvent<String>(EventBus.TIME_CHANGED) { page_view.upTime() }
         observeEvent<Int>(EventBus.BATTERY_CHANGED) { page_view.upBattery(it) }
         observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
@@ -537,7 +526,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 page_view.upContent()
             }
         }
-        observeEventSticky<Int>(EventBus.TTS_START) { chapterStart ->
+        observeEvent<Int>(EventBus.ALOUD_STATE) {
+            if (it == Status.STOP || it == Status.PAUSE) {
+                ReadBook.curTextChapter?.let { textChapter ->
+                    val page = textChapter.page(ReadBook.durPageIndex)
+                    if (page != null) {
+                        page.removePageAloudSpan()
+                        page_view.upContent()
+                    }
+                }
+            }
+        }
+        observeEventSticky<Int>(EventBus.TTS_PROGRESS) { chapterStart ->
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->

@@ -96,7 +96,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 mediaPlayer.setDataSource(fd)
                 mediaPlayer.prepareAsync()
                 playingIndex = nowSpeak
-                postEvent(EventBus.TTS_START, readAloudNumber + 1)
+                postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -190,7 +190,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 ReadBook.moveToNextPage()
             }
         }
-        postEvent(EventBus.TTS_START, readAloudNumber + 1)
+        postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
