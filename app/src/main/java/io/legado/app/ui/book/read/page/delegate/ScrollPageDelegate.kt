@@ -10,7 +10,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     private val bitmapMatrix = Matrix()
 
-    override fun onScrollStart() {
+    override fun onAnimStart() {
         if (!atTop && !atBottom) {
             stopScroll()
             return
@@ -61,7 +61,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         }
     }
 
-    override fun onScrollStop() {
+    override fun onAnimStop() {
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }

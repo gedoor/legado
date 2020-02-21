@@ -18,7 +18,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         shadowDrawableR.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
-    override fun onScrollStart() {
+    override fun onAnimStart() {
         val distanceX: Float
         when (mDirection) {
             Direction.NEXT -> distanceX =
@@ -42,7 +42,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
     }
 
-    override fun onScrollStop() {
+    override fun onAnimStop() {
         curPage.x = 0.toFloat()
         if (!isCancel) {
             pageView.fillPage(mDirection)

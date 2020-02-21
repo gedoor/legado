@@ -140,7 +140,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
             setTouchPoint(scroller.finalX.toFloat(), scroller.finalY.toFloat(), false)
-            onScrollStop()
+            onAnimStop()
             stopScroll()
         }
     }
@@ -176,14 +176,14 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 return
             }
         }
-        onScrollStart()
+        onAnimStart()
     }
 
-    abstract fun onScrollStart()//scroller start
+    abstract fun onAnimStart()//scroller start
 
     abstract fun onDraw(canvas: Canvas)//绘制
 
-    abstract fun onScrollStop()//scroller finish
+    abstract fun onAnimStop()//scroller finish
 
     open fun onScroll() {//移动contentView， slidePage
     }
@@ -268,7 +268,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
                     setBitmap()
                 }
                 setTouchPoint(x, y)
-                onScrollStart()
+                onAnimStart()
             }
             return true
         }
@@ -288,7 +288,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            if (!noNext) onScrollStart()
+            if (!noNext) onAnimStart()
             return true
         }
     }
