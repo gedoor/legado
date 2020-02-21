@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
@@ -107,6 +108,11 @@ class ContentView : FrameLayout {
 
     fun upSelectAble(selectAble: Boolean) {
         content_text_view.selectAble = selectAble
+    }
+
+    fun selectText(e: MotionEvent) {
+
+
     }
 
     fun scrollTo(pos: Int?) {
