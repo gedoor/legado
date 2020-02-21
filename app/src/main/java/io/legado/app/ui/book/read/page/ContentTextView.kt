@@ -88,12 +88,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     fun selectText(x: Float, y: Float): SelectPoint? {
         textPage?.let { textPage ->
-            for (textLine in textPage.textLines) {
+            for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
                 if (y > textLine.lineTop && y < textLine.lineBottom) {
-                    for (textChar in textLine.textChars) {
+                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
                             textChar.selected = true
                             invalidate()
+                            selectStartLine = lineIndex
+                            selectStartChar = charIndex
+                            selectEndLine = lineIndex
+                            selectEndChar = charIndex
                             return SelectPoint(
                                 textChar.leftBottomPosition.x,
                                 textChar.leftBottomPosition.y.toFloat(),
