@@ -194,7 +194,9 @@ object ChapterProvider {
                 //最后一行
                 textLine.text = "$words\n"
                 stringBuilder.append("\n")
-                var x = 0f
+                var x = if (ReadBookConfig.durConfig.titleCenter)
+                    (visibleWidth - layout.getLineMax(lineIndex)) / 2
+                else 0f
                 for (i in words.indices) {
                     val char = words[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, titlePaint)
