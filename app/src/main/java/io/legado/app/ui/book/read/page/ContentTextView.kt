@@ -13,6 +13,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 
@@ -24,12 +25,17 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             style = Paint.Style.FILL
         }
     }
+    private var activityCallBack: CallBack? = null
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     var selectStartLine = 0
     var selectStartChar = 0
     var selectEndLine = 0
     var selectEndChar = 0
     private var textPage: TextPage? = null
+
+    init {
+        activityCallBack = activity as? CallBack
+    }
 
     fun setContent(textPage: TextPage?) {
         this.textPage = textPage
@@ -175,7 +181,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
             invalidate()
         }
-
+        activityCallBack?.onCancelSelect()
     }
 
     interface CallBack {
