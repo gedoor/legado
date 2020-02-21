@@ -5,9 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
@@ -54,6 +52,7 @@ import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
+    View.OnTouchListener,
     PageView.CallBack,
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
@@ -117,6 +116,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private fun initView() {
         cursor_left.setColorFilter(accentColor)
         cursor_right.setColorFilter(accentColor)
+        cursor_left.setOnTouchListener(this)
+        cursor_right.setOnTouchListener(this)
         tv_chapter_name.onClick {
             ReadBook.webBook?.let {
                 startActivityForResult<BookSourceEditActivity>(
@@ -306,6 +307,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    /**
+     * view触摸
+     */
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+
+
+        return true
     }
 
     /**
