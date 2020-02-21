@@ -18,11 +18,10 @@ import java.util.*
 
 class ContentView : FrameLayout {
     var callBack: CallBack? = null
-    private var isScroll: Boolean = false
+    var headerHeight = 0
     private var pageSize: Int = 0
 
     constructor(context: Context) : super(context) {
-        this.isScroll = true
         init()
     }
 
@@ -40,7 +39,7 @@ class ContentView : FrameLayout {
 
     fun upStyle() {
         ReadBookConfig.durConfig.apply {
-            val rootPaddingTop = if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+            if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
                 //显示状态栏时隐藏header
                 ll_header.visible()
                 ll_header.layoutParams =
@@ -51,12 +50,13 @@ class ContentView : FrameLayout {
                     headerPaddingRight.dp,
                     headerPaddingBottom.dp
                 )
-                0
+                headerHeight = ll_header.height
+                page_panel.setPadding(0, 0, 0, 0)
             } else {
                 ll_header.gone()
-                context.getStatusBarHeight()
+                headerHeight = context.getStatusBarHeight()
+                page_panel.setPadding(0, headerHeight, 0, 0)
             }
-            page_panel.setPadding(0, rootPaddingTop, 0, 0)
             content_text_view.setPadding(
                 paddingLeft.dp,
                 paddingTop.dp,
@@ -111,8 +111,8 @@ class ContentView : FrameLayout {
     }
 
     fun selectText(e: MotionEvent) {
-
-
+        val y = e.y - headerHeight
+        content_text_view.selectText(e.x, y)
     }
 
     fun scrollTo(pos: Int?) {

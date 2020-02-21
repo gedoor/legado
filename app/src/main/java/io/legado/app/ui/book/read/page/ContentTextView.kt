@@ -1,9 +1,11 @@
 package io.legado.app.ui.book.read.page
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -36,6 +38,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             ChapterProvider.viewHeight = h
             ChapterProvider.upSize(ReadBookConfig.durConfig)
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        return true
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -73,4 +81,20 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
+    fun selectText(x: Float, y: Float) {
+        textPage?.let { textPage ->
+            for (textLine in textPage.textLines) {
+                if (y > textLine.lineTop && y < textLine.lineBottom) {
+                    for (textChar in textLine.textChars) {
+                        if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                            textChar.selected = true
+                            invalidate()
+                            break
+                        }
+                    }
+                    break
+                }
+            }
+        }
+    }
 }
