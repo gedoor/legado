@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.utils.postEvent
 
 
@@ -28,11 +28,11 @@ class TimeElectricityReceiver : BroadcastReceiver() {
         intent?.action?.let {
             when (it) {
                 Intent.ACTION_TIME_TICK -> {
-                    postEvent(Bus.TIME_CHANGED, "")
+                    postEvent(EventBus.TIME_CHANGED, "")
                 }
                 Intent.ACTION_BATTERY_CHANGED -> {
                     val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-                    postEvent(Bus.BATTERY_CHANGED, level)
+                    postEvent(EventBus.BATTERY_CHANGED, level)
                 }
             }
         }

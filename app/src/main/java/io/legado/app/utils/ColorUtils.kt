@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 
+@Suppress("unused")
 object ColorUtils {
 
     fun intToString(intColor: Int): String {

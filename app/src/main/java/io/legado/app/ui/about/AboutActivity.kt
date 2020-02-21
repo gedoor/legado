@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.utils.shareText
 import org.jetbrains.anko.toast
 
 class AboutActivity : BaseActivity(R.layout.activity_about) {
@@ -28,6 +29,10 @@ class AboutActivity : BaseActivity(R.layout.activity_about) {
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_scoring -> openIntent("market://details?id=$packageName")
+            R.id.menu_share_it -> shareText(
+                "App Share",
+                getString(R.string.app_share_description)
+            )
         }
         return super.onCompatOptionsItemSelected(item)
     }

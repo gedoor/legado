@@ -90,6 +90,15 @@ data class SearchBook(
         origins?.add(origin)
     }
 
+    fun getDisplayLastChapterTitle(): String {
+        latestChapterTitle?.let {
+            if (it.isNotEmpty()) {
+                return it
+            }
+        }
+        return "无最新章节"
+    }
+
     fun toBook(): Book {
         return Book(
             name = name,

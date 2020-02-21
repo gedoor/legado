@@ -2,244 +2,123 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.VelocityTracker
-import android.view.ViewConfiguration
-import android.view.animation.Interpolator
-import android.widget.OverScroller
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.view.ViewCompat
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
+import android.view.View
+import io.legado.app.R
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.page.entities.SelectPoint
+import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefBoolean
 
 
-class ContentTextView : AppCompatTextView {
-    constructor(context: Context) : super(context)
+class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+    private val selectedPaint by lazy {
+        Paint().apply {
+            color = context.getCompatColor(R.color.btn_bg_press_2)
+            style = Paint.Style.FILL
+        }
+    }
+    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
+    var selectStartLine = 0
+    var selectStartChar = 0
+    var selectEndLine = 0
+    var selectEndChar = 0
+    private var textPage: TextPage? = null
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr)
-
-    private val scrollStateIdle = 0
-    private val scrollStateDragging = 1
-    val scrollStateSettling = 2
-
-    private val mViewFling: ViewFling by lazy { ViewFling() }
-    private var velocityTracker: VelocityTracker? = null
-    private var mScrollState = scrollStateIdle
-    private var mLastTouchY: Int = 0
-    private var mTouchSlop: Int = 0
-    private var mMinFlingVelocity: Int = 0
-    private var mMaxFlingVelocity: Int = 0
-
-    //滑动距离的最大边界
-    private var mOffsetHeight: Int = 0
-
-    //f(x) = (x-1)^5 + 1
-    private val sQuinticInterpolator = Interpolator {
-        var t = it
-        t -= 1.0f
-        t * t * t * t * t + 1.0f
+    fun setContent(textPage: TextPage?) {
+        this.textPage = textPage
+        invalidate()
     }
 
-    init {
-        val vc = ViewConfiguration.get(context)
-        mTouchSlop = vc.scaledTouchSlop
-        mMinFlingVelocity = vc.scaledMinimumFlingVelocity
-        mMaxFlingVelocity = vc.scaledMaximumFlingVelocity
-    }
-
-    fun atTop(): Boolean {
-        return scrollY <= 0
-    }
-
-    fun atBottom(): Boolean {
-        return scrollY >= mOffsetHeight
-    }
-
-    /**
-     * 获取当前页总字数
-     */
-    fun getCharNum(lineNum: Int = getLineNum()): Int {
-        return layout?.getLineEnd(lineNum) ?: 0
-    }
-
-    /**
-     * 获取当前页总行数
-     */
-    fun getLineNum(): Int {
-        val topOfLastLine = height - paddingTop - paddingBottom - lineHeight
-        return layout?.getLineForVertical(topOfLastLine) ?: 0
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        initOffsetHeight()
-    }
-
-    override fun onTextChanged(
-        text: CharSequence?,
-        start: Int,
-        lengthBefore: Int,
-        lengthAfter: Int
-    ) {
-        super.onTextChanged(text, start, lengthBefore, lengthAfter)
-        initOffsetHeight()
-    }
-
-    private fun initOffsetHeight() {
-        val mLayoutHeight: Int
-
-        //获得内容面板
-        val mLayout = layout ?: return
-        //获得内容面板的高度
-        mLayoutHeight = mLayout.height
-
-        //计算滑动距离的边界
-        mOffsetHeight = mLayoutHeight + totalPaddingTop + totalPaddingBottom - measuredHeight
-    }
-
-    override fun scrollTo(x: Int, y: Int) {
-        super.scrollTo(x, min(y, mOffsetHeight))
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        ReadBookConfig.durConfig.let {
+            ChapterProvider.viewWidth = w
+            ChapterProvider.viewHeight = h
+            ChapterProvider.upSize(ReadBookConfig.durConfig)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        event?.let {
-            if (velocityTracker == null) {
-                velocityTracker = VelocityTracker.obtain()
-            }
-            velocityTracker?.addMovement(it)
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    setScrollState(scrollStateIdle)
-                    mLastTouchY = (event.y + 0.5f).toInt()
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val y = (event.y + 0.5f).toInt()
-                    var dy = mLastTouchY - y
-                    if (mScrollState != scrollStateDragging) {
-                        var startScroll = false
 
-                        if (abs(dy) > mTouchSlop) {
-                            if (dy > 0) {
-                                dy -= mTouchSlop
-                            } else {
-                                dy += mTouchSlop
-                            }
-                            startScroll = true
+        return true
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        textPage?.let { textPage ->
+            textPage.textLines.forEach { textLine ->
+                val textPaint = if (textLine.isTitle) {
+                    ChapterProvider.titlePaint
+                } else {
+                    ChapterProvider.contentPaint
+                }
+                textPaint.color = if (textLine.isReadAloud) {
+                    context.accentColor
+                } else {
+                    ReadBookConfig.durConfig.textColor()
+                }
+                textLine.textChars.forEach {
+                    canvas.drawText(
+                        it.charData,
+                        it.leftBottomPosition.x,
+                        it.leftBottomPosition.y.toFloat(),
+                        textPaint
+                    )
+                    if (it.selected) {
+                        canvas.drawRect(
+                            it.leftBottomPosition.x,
+                            it.rightTopPosition.y.toFloat(),
+                            it.rightTopPosition.x,
+                            it.leftBottomPosition.y.toFloat(),
+                            selectedPaint
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun selectText(x: Float, y: Float): SelectPoint? {
+        textPage?.let { textPage ->
+            for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
+                if (y > textLine.lineTop && y < textLine.lineBottom) {
+                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                        if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                            textChar.selected = true
+                            invalidate()
+                            selectStartLine = lineIndex
+                            selectStartChar = charIndex
+                            selectEndLine = lineIndex
+                            selectEndChar = charIndex
+                            return SelectPoint(
+                                textChar.leftBottomPosition.x,
+                                textChar.leftBottomPosition.y.toFloat(),
+                                textChar.rightTopPosition.x,
+                                textChar.leftBottomPosition.y.toFloat()
+                            )
                         }
-                        if (startScroll) {
-                            setScrollState(scrollStateDragging)
-                        }
                     }
-                    if (mScrollState == scrollStateDragging) {
-                        mLastTouchY = y
-                    }
-                }
-                MotionEvent.ACTION_UP -> {
-                    velocityTracker?.computeCurrentVelocity(1000, mMaxFlingVelocity.toFloat())
-                    val yVelocity = velocityTracker?.yVelocity ?: 0f
-                    if (abs(yVelocity) > mMinFlingVelocity) {
-                        mViewFling.fling(-yVelocity.toInt())
-                    } else {
-                        setScrollState(scrollStateIdle)
-                    }
-                    resetTouch()
-                }
-                MotionEvent.ACTION_CANCEL -> {
-                    resetTouch()
+                    break
                 }
             }
         }
-        return super.onTouchEvent(event)
+        return null
     }
 
-    private fun resetTouch() {
-        velocityTracker?.clear()
+    fun selectStartMove(x: Float, y: Float) {
+
     }
 
-    private fun setScrollState(state: Int) {
-        if (state == mScrollState) {
-            return
-        }
-        mScrollState = state
-        if (state != scrollStateSettling) {
-            mViewFling.stop()
-        }
-    }
+    fun selectEndMove(x: Float, y: Float) {
 
-    /**
-     * 惯性滚动
-     */
-    private inner class ViewFling : Runnable {
-
-        private var mLastFlingY = 0
-        private val mScroller: OverScroller = OverScroller(context, sQuinticInterpolator)
-        private var mEatRunOnAnimationRequest = false
-        private var mReSchedulePostAnimationCallback = false
-
-        override fun run() {
-            disableRunOnAnimationRequests()
-            val scroller = mScroller
-            if (scroller.computeScrollOffset()) {
-                val y = scroller.currY
-                val dy = y - mLastFlingY
-                mLastFlingY = y
-                if (dy < 0 && scrollY > 0) {
-                    scrollBy(0, max(dy, -scrollY))
-                } else if (dy > 0 && scrollY < mOffsetHeight) {
-                    scrollBy(0, min(dy, mOffsetHeight - scrollY))
-                }
-                postOnAnimation()
-            }
-            enableRunOnAnimationRequests()
-        }
-
-        fun fling(velocityY: Int) {
-            mLastFlingY = 0
-            setScrollState(scrollStateSettling)
-            mScroller.fling(
-                0,
-                0,
-                0,
-                velocityY,
-                Integer.MIN_VALUE,
-                Integer.MAX_VALUE,
-                Integer.MIN_VALUE,
-                Integer.MAX_VALUE
-            )
-            postOnAnimation()
-        }
-
-        fun stop() {
-            removeCallbacks(this)
-            mScroller.abortAnimation()
-        }
-
-        private fun disableRunOnAnimationRequests() {
-            mReSchedulePostAnimationCallback = false
-            mEatRunOnAnimationRequest = true
-        }
-
-        private fun enableRunOnAnimationRequests() {
-            mEatRunOnAnimationRequest = false
-            if (mReSchedulePostAnimationCallback) {
-                postOnAnimation()
-            }
-        }
-
-        internal fun postOnAnimation() {
-            if (mEatRunOnAnimationRequest) {
-                mReSchedulePostAnimationCallback = true
-            } else {
-                removeCallbacks(this)
-                ViewCompat.postOnAnimation(this@ContentTextView, this)
-            }
-        }
     }
 
 }

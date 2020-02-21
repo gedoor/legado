@@ -4,59 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/menu_select_action"
-        android:icon="@drawable/ic_select_all"
-        android:title="@string/select_action"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction">
-
-        <menu>
-
-            <item
-                android:id="@+id/menu_select_all"
-                android:title="@string/select_all"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_revert_selection"
-                android:title="@string/revert_selection"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_enable_selection"
-                android:title="@string/enable_selection"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_disable_selection"
-                android:title="@string/disable_selection"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_enable_explore"
-                android:title="@string/enable_explore"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_disable_explore"
-                android:title="@string/disable_explore"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_del_selection"
-                android:title="@string/del_select"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/menu_export_selection"
-                android:title="@string/export_selection"
-                app:showAsAction="never" />
-
-        </menu>
-
-    </item>
-
-    <item
         android:id="@+id/menu_group"
         android:icon="@drawable/ic_groups"
         android:title="@string/menu_action_group"
@@ -127,12 +74,6 @@
         android:id="@+id/menu_import_source_qr"
         android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_check_source"
-        android:icon="@drawable/ic_check_source"
-        android:title="@string/check_select_source"
         app:showAsAction="never" />
 
 </menu>

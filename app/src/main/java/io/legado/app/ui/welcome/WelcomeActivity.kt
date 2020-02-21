@@ -7,11 +7,13 @@ import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
+import io.legado.app.utils.getPrefBoolean
 import kotlinx.android.synthetic.main.activity_welcome.*
 import org.jetbrains.anko.startActivity
 
-class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
+open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         iv_bg.setColorFilter(accentColor)
@@ -29,22 +31,23 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         welAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
                 startActivity<MainActivity>()
+                if (getPrefBoolean(getString(R.string.pk_default_read))) {
+                    startActivity<ReadBookActivity>()
+                }
                 finish()
             }
 
-            override fun onAnimationEnd(animation: Animator) {
+            override fun onAnimationEnd(animation: Animator) = Unit
 
-            }
+            override fun onAnimationCancel(animation: Animator) = Unit
 
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
+            override fun onAnimationRepeat(animation: Animator) = Unit
         })
         welAnimator.start()
     }
 
 }
+
+class Launcher1 : WelcomeActivity()
+class Launcher2 : WelcomeActivity()
+class Launcher3 : WelcomeActivity()

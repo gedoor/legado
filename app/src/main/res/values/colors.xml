@@ -7,25 +7,24 @@
 
     <color name="lightBlue_color">#FF578FCC</color>
     <color name="shine_color">#FF212227</color>
-    <color name="item_bg_color">#FF272731</color>
 
     <color name="error">#eb4333</color>
     <color name="success">#439b53</color>
 
     <color name="night_mask">#00000000</color>
 
-    <color name="background">@color/md_grey_100</color>
-    <color name="background_card">#dedede</color>
-    <color name="background_menu">#fcfcfc</color>
+    <color name="background">@color/md_grey_50</color>
+    <color name="background_card">@color/md_grey_100</color>
+    <color name="background_menu">@color/md_grey_300</color>
     <color name="transparent">#00000000</color>
 
     <color name="transparent30">#30000000</color>
 
     <color name="highlight">#d3321b</color>
 
-    <color name="btn_bg_press">#80ACACAC</color>
-    <color name="btn_bg_press_2">#80858585</color>
-    <color name="btn_bg_press_tp">#802C2C2C</color>
+    <color name="btn_bg_press">#63ACACAC</color>
+    <color name="btn_bg_press_2">#63858585</color>
+    <color name="btn_bg_press_tp">#632C2C2C</color>
 
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#adadad</color>

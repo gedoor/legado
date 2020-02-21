@@ -26,4 +26,8 @@ class RssSourceDebugAdapter(context: Context) :
             text_view.text = item
         }
     }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        //nothing
+    }
 }

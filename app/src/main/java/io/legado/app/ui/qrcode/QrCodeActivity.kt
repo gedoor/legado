@@ -11,7 +11,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.utils.FileUtils
+import io.legado.app.utils.RealPathUtil
 import kotlinx.android.synthetic.main.activity_qrcode_capture.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.toast
@@ -98,7 +98,7 @@ class QrCodeActivity : BaseActivity(R.layout.activity_qrcode_capture), QRCodeVie
             zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
 
             if (resultCode == Activity.RESULT_OK && requestCode == requestQrImage) {
-                val picturePath = FileUtils.getPath(this, it)
+                val picturePath = RealPathUtil.getPath(this, it)
                 // 本来就用到 QRCodeView 时可直接调 QRCodeView 的方法，走通用的回调
                 zxingview.decodeQRCode(picturePath)
             }

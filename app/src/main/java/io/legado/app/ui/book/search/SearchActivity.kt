@@ -8,6 +8,7 @@ import android.view.View.VISIBLE
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
@@ -15,12 +16,13 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
-import io.legado.app.ui.widget.LoadMoreView
+import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_search.*
 import kotlinx.android.synthetic.main.view_search.*
@@ -32,7 +34,6 @@ import org.jetbrains.anko.startActivity
 
 
 class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_search),
-    SearchViewModel.CallBack,
     BookAdapter.CallBack,
     HistoryKeyAdapter.CallBack,
     SearchAdapter.CallBack {
@@ -40,7 +41,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override val viewModel: SearchViewModel
         get() = getViewModel(SearchViewModel::class.java)
 
-    override lateinit var adapter: SearchAdapter
+    lateinit var adapter: SearchAdapter
     private lateinit var bookAdapter: BookAdapter
     private lateinit var historyKeyAdapter: HistoryKeyAdapter
     private lateinit var loadMoreView: LoadMoreView
@@ -49,13 +50,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = hashSetOf<String>()
+    private var refreshTime = System.currentTimeMillis()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel.callBack = this
         initRecyclerView()
         initSearchView()
         initOtherView()
-        initData()
+        initLiveData()
         initIntent()
     }
 
@@ -76,6 +77,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                     !getPrefBoolean(PreferKey.precisionSearch)
                 )
                 precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
+                search_view.query?.toString()?.trim()?.let {
+                    search_view.setQuery(it, true)
+                }
             }
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
             else -> if (item.groupId == R.id.source_group) {
@@ -84,6 +88,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                     putPrefString("searchGroup", "")
                 } else {
                     putPrefString("searchGroup", item.title.toString())
+                }
+                search_view.query?.toString()?.trim()?.let {
+                    search_view.setQuery(it, true)
                 }
             }
         }
@@ -135,6 +142,14 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         adapter = SearchAdapter(this, this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    recycler_view.scrollToPosition(0)
+                }
+            }
+        })
         loadMoreView = LoadMoreView(this)
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -154,13 +169,24 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
-    private fun initData() {
+    private fun initLiveData() {
         App.db.bookSourceDao().liveGroupEnabled().observe(this, Observer {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(",", ";"))
             }
             upGroupMenu()
+        })
+        viewModel.searchBookLiveData.observe(this, Observer {
+            upSearchItems(it, false)
+        })
+        viewModel.isSearchLiveData.observe(this, Observer {
+            if (it) {
+                startSearch()
+            } else {
+                searchFinally()
+                upSearchItems(viewModel.searchBooks, true)
+            }
         })
     }
 
@@ -172,12 +198,18 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
+    /**
+     * 滚动到底部事件
+     */
     private fun scrollToBottom() {
         if (!viewModel.isLoading && viewModel.searchKey.isNotEmpty() && loadMoreView.hasMore) {
             viewModel.search("")
         }
     }
 
+    /**
+     * 打开关闭历史界面
+     */
     private fun openOrCloseHistory(open: Boolean) {
         if (open) {
             upHistory(search_view.query.toString())
@@ -187,6 +219,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
+    /**
+     * 更新分组菜单
+     */
     private fun upGroupMenu() {
         val selectedGroup = getPrefString("searchGroup") ?: ""
         menu?.removeGroup(R.id.source_group)
@@ -203,6 +238,9 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         menu?.setGroupCheckable(R.id.source_group, true, true)
     }
 
+    /**
+     * 更新搜索历史
+     */
     private fun upHistory(key: String? = null) {
         bookData?.removeObservers(this)
         if (key.isNullOrBlank()) {
@@ -237,18 +275,39 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         })
     }
 
-    override fun startSearch() {
+    /**
+     * 更新搜索结果
+     */
+    @Synchronized
+    private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
+        if (!isMandatoryUpdate && System.currentTimeMillis() - refreshTime < 1000) {
+            return
+        }
+        refreshTime = System.currentTimeMillis()
+        val diffResult = DiffUtil.calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), items))
+        adapter.setItems(items, diffResult)
+    }
+
+    /**
+     * 开始搜索
+     */
+    private fun startSearch() {
         refresh_progress_bar.isAutoLoading = true
-        initData()
         fb_stop.visible()
     }
 
-    override fun searchFinally() {
+    /**
+     * 搜索结束
+     */
+    private fun searchFinally() {
         refresh_progress_bar.isAutoLoading = false
         loadMoreView.startLoad()
         fb_stop.invisible()
     }
 
+    /**
+     * 显示书籍详情
+     */
     override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
@@ -257,18 +316,30 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         }
     }
 
+    /**
+     * 显示书籍详情
+     */
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
             Pair("bookUrl", book.bookUrl)
         )
     }
 
+    /**
+     * 点击历史关键字
+     */
     override fun searchHistory(key: String) {
         launch {
-            if (withContext(IO) { App.db.bookDao().findByName(key).isEmpty() }) {
-                search_view.setQuery(key, true)
-            } else {
-                search_view.setQuery(key, false)
+            when {
+                search_view.query.toString() == key -> {
+                    search_view.setQuery(key, true)
+                }
+                withContext(IO) { App.db.bookDao().findByName(key).isEmpty() } -> {
+                    search_view.setQuery(key, true)
+                }
+                else -> {
+                    search_view.setQuery(key, false)
+                }
             }
         }
     }

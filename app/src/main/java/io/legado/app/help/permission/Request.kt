@@ -43,7 +43,7 @@ internal class Request : OnRequestPermissionsResultCallback {
     }
 
     fun addPermissions(vararg permissions: String) {
-        this.permissions?.addAll(Arrays.asList(*permissions))
+        this.permissions?.addAll(listOf(*permissions))
     }
 
     fun setRequestCode(requestCode: Int) {

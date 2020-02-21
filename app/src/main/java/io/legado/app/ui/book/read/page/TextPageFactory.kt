@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page
 
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.entities.TextPage
 
 class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
 

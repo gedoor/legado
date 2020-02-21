@@ -87,7 +87,7 @@
                 android:textColor="@color/md_white_1000"
                 tools:ignore="NestedWeights" />
 
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
+            <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_change_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,54 +96,16 @@
                 android:paddingRight="5dp"
                 android:text="@string/change_origin"
                 android:textSize="16sp"
-                app:abt_radius="2dp" />
+                app:radius="2dp" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_kind"
+        <io.legado.app.ui.widget.LabelsBar
+            android:id="@+id/lb_kind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_kind"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="14sp"
-                app:abt_radius="2dp" />
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_kind_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="14sp"
-                app:abt_radius="2dp" />
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_kind_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="14sp"
-                app:abt_radius="2dp" />
-
-        </LinearLayout>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_lasted"
@@ -189,10 +151,7 @@
             android:layout_weight="1"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:maxHeight="160dp"
             android:minHeight="100dp"
-            android:scrollbars="vertical"
-            android:textIsSelectable="true"
             android:textSize="14sp" />
 
         <View
@@ -217,7 +176,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:text="@string/group"
+            android:singleLine="true"
+            android:text="@string/group_s"
             android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
@@ -226,69 +186,47 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
+            android:singleLine="true"
             android:text="@string/toc_s"
             android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/fl_action"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/background_menu"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_shelf"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="@string/remove_from_bookshelf"
-                android:textColor="@color/tv_text_default"
-                android:textSize="15sp" />
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_read"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/selector_btn_accent_bg"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="@string/reading"
-                android:textColor="@color/tv_text_button_nor"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/tv_loading"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_shelf"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/tv_text_button_nor"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:text="@string/data_loading"
-            android:textColor="#767676"
-            android:textSize="16sp" />
+            android:includeFontPadding="false"
+            android:text="@string/remove_from_bookshelf"
+            android:textColor="@color/tv_text_default"
+            android:textSize="15sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/bg_divider_line" />
+        <io.legado.app.ui.widget.text.AccentBgTextView
+            android:id="@+id/tv_read"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_btn_accent_bg"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="@string/reading"
+            android:textColor="@color/tv_text_button_nor"
+            android:textSize="15sp" />
 
-    </FrameLayout>
-
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

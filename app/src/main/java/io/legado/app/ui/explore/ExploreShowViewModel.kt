@@ -21,7 +21,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         execute {
             val sourceUrl = intent.getStringExtra("sourceUrl")
             exploreUrl = intent.getStringExtra("exploreUrl")
-            if (bookSource == null) {
+            if (bookSource == null && sourceUrl != null) {
                 bookSource = App.db.bookSourceDao().getBookSource(sourceUrl)
             }
             explore()

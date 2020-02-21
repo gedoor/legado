@@ -192,6 +192,7 @@ object TintHelper {
         }
     }
 
+    @SuppressLint("PrivateResource")
     fun setTint(radioButton: RadioButton, @ColorInt color: Int, useDarker: Boolean) {
         val sl = ColorStateList(
             arrayOf(
@@ -254,11 +255,10 @@ object TintHelper {
             if (!skipIndeterminate)
                 progressBar.indeterminateTintList = sl
         } else {
-            val mode = PorterDuff.Mode.SRC_IN
             if (!skipIndeterminate && progressBar.indeterminateDrawable != null)
-                progressBar.indeterminateDrawable.setColorFilter(color, mode)
+                progressBar.indeterminateDrawable.setTint(color)
             if (progressBar.progressDrawable != null)
-                progressBar.progressDrawable.setColorFilter(color, mode)
+                progressBar.progressDrawable.setTint(color)
         }
     }
 
@@ -291,6 +291,7 @@ object TintHelper {
         setCursorTint(editText, color)
     }
 
+    @SuppressLint("PrivateResource")
     fun setTint(box: CheckBox, @ColorInt color: Int, useDarker: Boolean) {
         val sl = ColorStateList(
             arrayOf(

@@ -13,8 +13,14 @@ interface BookChapterDao {
     @Query("select * from chapters where bookUrl = :bookUrl")
     fun observeByBook(bookUrl: String): LiveData<List<BookChapter>>
 
+    @Query("SELECT * FROM chapters where bookUrl = :bookUrl and title like '%'||:key||'%'")
+    fun liveDataSearch(bookUrl: String, key: String): LiveData<List<BookChapter>>
+
     @Query("select * from chapters where bookUrl = :bookUrl")
     fun getChapterList(bookUrl: String): List<BookChapter>
+
+    @Query("select * from chapters where bookUrl = :bookUrl and `index` >= :start and `index` <= :end")
+    fun getChapterList(bookUrl: String, start: Int, end: Int): List<BookChapter>
 
     @Query("select * from chapters where bookUrl = :bookUrl and `index` = :index")
     fun getChapter(bookUrl: String, index: Int): BookChapter?

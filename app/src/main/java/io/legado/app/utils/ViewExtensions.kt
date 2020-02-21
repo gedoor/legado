@@ -24,7 +24,7 @@ private tailrec fun getCompatActivity(context: Context?): AppCompatActivity? {
 val View.activity: AppCompatActivity?
     get() = getCompatActivity(context)
 
-inline fun View.hideSoftInput() = run {
+fun View.hideSoftInput() = run {
     val imm = App.INSTANCE.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     imm?.let {
         imm.hideSoftInputFromWindow(this.windowToken, 0)
@@ -47,6 +47,14 @@ fun View.invisible() {
 
 fun View.visible() {
     visibility = VISIBLE
+}
+
+fun View.visible(visible: Boolean) {
+    visibility = if (visible) {
+        VISIBLE
+    } else {
+        INVISIBLE
+    }
 }
 
 fun View.screenshot(): Bitmap? {

@@ -181,7 +181,7 @@ class AnalyzeByXPath {
                     }
                 }
             }
-            return TextUtils.join(",", textList)
+            return textList.joinToString("\n")
         }
     }
 }

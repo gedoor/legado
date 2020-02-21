@@ -1,5 +1,6 @@
 package io.legado.app.ui.chapterlist
 
+import android.os.AsyncTask.execute
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +11,10 @@ import io.legado.app.R
 import io.legado.app.data.entities.Bookmark
 import kotlinx.android.synthetic.main.item_bookmark.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 
-class BookmarkAdapter : PagedListAdapter<Bookmark, BookmarkAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class BookmarkAdapter(val callback: Callback) : PagedListAdapter<Bookmark, BookmarkAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     companion object {
 
@@ -28,8 +30,6 @@ class BookmarkAdapter : PagedListAdapter<Bookmark, BookmarkAdapter.MyViewHolder>
                         && oldItem.content == newItem.content
         }
     }
-
-    var callback: Callback? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bookmark, parent, false))
@@ -49,10 +49,17 @@ class BookmarkAdapter : PagedListAdapter<Bookmark, BookmarkAdapter.MyViewHolder>
             itemView.onClick {
                 callback?.open(bookmark)
             }
+            itemView.onLongClick {
+                execute {
+                    callback?.delBookmark(bookmark)
+                }
+                true
+            }
         }
     }
 
     interface Callback {
         fun open(bookmark: Bookmark)
+        fun delBookmark(bookmark: Bookmark)
     }
 }

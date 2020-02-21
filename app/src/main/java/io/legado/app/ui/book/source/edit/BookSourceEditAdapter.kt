@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.data.entities.EditEntity
 import kotlinx.android.synthetic.main.item_source_edit.view.*
 
 class BookSourceEditAdapter : RecyclerView.Adapter<BookSourceEditAdapter.MyViewHolder>() {

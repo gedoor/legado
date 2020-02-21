@@ -18,9 +18,9 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         shadowDrawableR.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
-    override fun onScrollStart() {
+    override fun onAnimStart() {
         val distanceX: Float
-        when (direction) {
+        when (mDirection) {
             Direction.NEXT -> distanceX =
                 if (isCancel) {
                     var dis = viewWidth - startX + touchX
@@ -42,27 +42,27 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
     }
 
-    override fun onScrollStop() {
-        curPage?.x = 0.toFloat()
+    override fun onAnimStop() {
+        curPage.x = 0.toFloat()
         if (!isCancel) {
-            pageView.fillPage(direction)
+            pageView.fillPage(mDirection)
         }
     }
 
     override fun onDraw(canvas: Canvas) {
         val offsetX = touchX - startX
 
-        if ((direction == Direction.NEXT && offsetX > 0)
-            || (direction == Direction.PREV && offsetX < 0)
+        if ((mDirection == Direction.NEXT && offsetX > 0)
+            || (mDirection == Direction.PREV && offsetX < 0)
         ) return
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         bitmap?.let {
-            if (direction == Direction.PREV) {
+            if (mDirection == Direction.PREV) {
                 bitmapMatrix.setTranslate(distanceX, 0.toFloat())
                 canvas.drawBitmap(it, bitmapMatrix, null)
-            } else if (direction == Direction.NEXT) {
-                curPage?.translationX = offsetX
+            } else if (mDirection == Direction.NEXT) {
+                curPage.translationX = offsetX
             }
             addShadow(distanceX.toInt(), canvas)
         }

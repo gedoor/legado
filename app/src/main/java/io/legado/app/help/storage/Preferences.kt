@@ -30,7 +30,6 @@ object Preferences {
             val fieldMPreferencesDir = objMBase.javaClass.getDeclaredField("mPreferencesDir")
             fieldMPreferencesDir.isAccessible = true
             // 创建自定义路径
-            // String FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android";
             val file = File(dir)
             // 修改mPreferencesDir变量的值
             fieldMPreferencesDir.set(objMBase, file)

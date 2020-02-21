@@ -1,99 +1,174 @@
 package io.legado.app.help
 
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
+import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
 import io.legado.app.App
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getPrefString
+import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.utils.*
 import org.apache.commons.text.similarity.JaccardSimilarity
 import java.io.File
 import kotlin.math.min
 
 object BookHelp {
-
-    private var downloadPath: String =
-        App.INSTANCE.getPrefString(PreferKey.downloadPath)
+    private const val cacheFolderName = "book_cache"
+    val downloadPath: String
+        get() = App.INSTANCE.getPrefString(PreferKey.downloadPath)
             ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
             ?: App.INSTANCE.cacheDir.absolutePath
 
-    fun upDownloadPath() {
-        downloadPath =
-            App.INSTANCE.getPrefString(PreferKey.downloadPath)
-                ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
-                        ?: App.INSTANCE.cacheDir.absolutePath
+    private val downloadUri get() = Uri.parse(downloadPath)
+
+    private fun bookFolderName(book: Book): String {
+        return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
     }
 
-    private fun getBookCachePath(): String {
-        return "$downloadPath${File.separator}book_cache"
+    fun formatChapterName(bookChapter: BookChapter): String {
+        return String.format(
+            "%05d-%s.nb",
+            bookChapter.index,
+            MD5Utils.md5Encode16(bookChapter.title)
+        )
     }
 
     fun clearCache() {
-        FileHelp.deleteFile(getBookCachePath())
-        FileHelp.getFolder(getBookCachePath())
+        if (downloadPath.isContentPath()) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)
+                ?.findFile(cacheFolderName)
+                ?.delete()
+        } else {
+            FileUtils.deleteFile(
+                FileUtils.getPath(
+                    File(downloadPath),
+                    subDirs = *arrayOf(cacheFolderName)
+                )
+            )
+        }
     }
 
     @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
-        FileHelp.getFolder(getBookFolder(book)).listFiles()?.forEach {
-            if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
-                it.delete()
-                return@forEach
+        if (downloadPath.isContentPath()) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                DocumentUtils.createFileIfNotExist(
+                    root,
+                    formatChapterName(bookChapter),
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.uri?.writeText(App.INSTANCE, content)
             }
+        } else {
+            FileUtils.createFileIfNotExist(
+                File(downloadPath),
+                formatChapterName(bookChapter),
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).writeText(content)
         }
-        val filePath = getChapterPath(book, bookChapter)
-        val file = FileHelp.getFile(filePath)
-        file.writeText(content)
+        postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
-    fun getChapterCount(book: Book): Int {
-        return FileHelp.getFolder(getBookFolder(book)).list()?.size ?: 0
+    fun getChapterFiles(book: Book): List<String> {
+        val fileNameList = arrayListOf<String>()
+        if (downloadPath.isContentPath()) {
+            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                DocumentUtils.createFolderIfNotExist(
+                    root,
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )?.let { bookDoc ->
+                    DocumentUtils.listFiles(App.INSTANCE, bookDoc.uri).forEach {
+                        fileNameList.add(it.name)
+                    }
+                }
+            }
+        } else {
+            FileUtils.createFolderIfNotExist(
+                File(downloadPath),
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            ).list()?.let {
+                fileNameList.addAll(it)
+            }
+        }
+        return fileNameList
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        val filePath = getChapterPath(book, bookChapter)
-        runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
+        when {
+            book.isLocalBook() -> {
                 return true
+            }
+            downloadPath.isContentPath() -> {
+                DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                    return DocumentUtils.exists(
+                        root,
+                        formatChapterName(bookChapter),
+                        subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                    )
+                }
+            }
+            else -> {
+                return FileUtils.exists(
+                    File(downloadPath),
+                    formatChapterName(bookChapter),
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )
             }
         }
         return false
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        val filePath = getChapterPath(book, bookChapter)
-        runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                return file.readText()
+        when {
+            book.isLocalBook() -> {
+                return AnalyzeTxtFile.getContent(book, bookChapter)
+            }
+            downloadPath.isContentPath() -> {
+                DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                    return DocumentUtils.getDirDocument(
+                        root,
+                        subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                    )?.findFile(formatChapterName(bookChapter))
+                        ?.uri?.readText(App.INSTANCE)
+                }
+            }
+            else -> {
+                val file = FileUtils.getFile(
+                    File(downloadPath),
+                    formatChapterName(bookChapter),
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                )
+                if (file.exists()) {
+                    return file.readText()
+                }
             }
         }
         return null
     }
 
     fun delContent(book: Book, bookChapter: BookChapter) {
-        val filePath = getChapterPath(book, bookChapter)
-        kotlin.runCatching {
-            val file = File(filePath)
-            if (file.exists()) {
-                file.delete()
+        when {
+            book.isLocalBook() -> return
+            downloadPath.isContentPath() -> {
+                DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let { root ->
+                    DocumentUtils.getDirDocument(
+                        root,
+                        subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                    )?.findFile(formatChapterName(bookChapter))
+                        ?.delete()
+                }
+            }
+            else -> {
+                FileUtils.createFileIfNotExist(
+                    File(downloadPath),
+                    formatChapterName(bookChapter),
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                ).delete()
             }
         }
-    }
-
-    private fun getBookFolder(book: Book): String {
-        val bookFolder = formatFolderName(book.name + book.bookUrl)
-        return "${getBookCachePath()}${File.separator}$bookFolder"
-    }
-
-    private fun getChapterPath(book: Book, bookChapter: BookChapter): String {
-        val chapterFile =
-            String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
-        return "${getBookFolder(book)}${File.separator}$chapterFile.nb"
     }
 
     private fun formatFolderName(folderName: String): String {
@@ -108,6 +183,9 @@ object BookHelp {
             ?: ""
     }
 
+    /**
+     * 找到相似度最高的章节
+     */
     fun getDurChapterIndexByChapterTitle(
         title: String?,
         index: Int,
@@ -121,16 +199,16 @@ object BookHelp {
         }
 
         var newIndex = 0
-        val jaccardSimilarity = JaccardSimilarity()
+        val jSimilarity = JaccardSimilarity()
         var similarity = if (chapters.size > index) {
-            jaccardSimilarity.apply(title, chapters[index].title)
+            jSimilarity.apply(title, chapters[index].title)
         } else 0.0
         if (similarity == 1.0) {
             return index
         } else {
             for (i in 1..50) {
                 if (index - i in chapters.indices) {
-                    jaccardSimilarity.apply(title, chapters[index - i].title).let {
+                    jSimilarity.apply(title, chapters[index - i].title).let {
                         if (it > similarity) {
                             similarity = it
                             newIndex = index - i
@@ -141,7 +219,7 @@ object BookHelp {
                     }
                 }
                 if (index + i in chapters.indices) {
-                    jaccardSimilarity.apply(title, chapters[index + i].title).let {
+                    jSimilarity.apply(title, chapters[index + i].title).let {
                         if (it > similarity) {
                             similarity = it
                             newIndex = index + i
@@ -156,9 +234,11 @@ object BookHelp {
         return newIndex
     }
 
-    var bookName: String? = null
-    var bookOrigin: String? = null
-    var replaceRules: List<ReplaceRule> = arrayListOf()
+    private var bookName: String? = null
+    private var bookOrigin: String? = null
+    private var replaceRules: List<ReplaceRule> = arrayListOf()
+    val bodyIndent
+        get() = "　".repeat(App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2))
 
     fun disposeContent(
         title: String,
@@ -177,9 +257,6 @@ object BookHelp {
                 }
             }
         }
-        if (!content.substringBefore("\n").contains(title)) {
-            c = title + "\n" + c
-        }
         for (item in replaceRules) {
             item.pattern.let {
                 if (it.isNotEmpty()) {
@@ -191,7 +268,13 @@ object BookHelp {
                 }
             }
         }
-        val indent = App.INSTANCE.getPrefInt("textIndent", 2)
-        return c.replace("\\s*\\n+\\s*".toRegex(), "\n" + "　".repeat(indent))
+        if (!content.substringBefore("\n").contains(title)) {
+            c = title + "\n" + c
+        }
+        when (AppConfig.chineseConverterType) {
+            1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
+            2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
+        }
+        return c.replace("\\s*\\n+\\s*".toRegex(), "\n$bodyIndent")
     }
 }

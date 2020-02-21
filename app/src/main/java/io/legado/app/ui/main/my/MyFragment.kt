@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.my
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
@@ -7,36 +8,35 @@ import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.constant.Bus
-import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.WebDavHelp
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import io.legado.app.ui.config.BackupRestoreUi
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
-class MyFragment : BaseFragment(R.layout.fragment_my_config) {
+class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.CallBack {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         val fragmentTag = "prefFragment"
         var preferenceFragment = childFragmentManager.findFragmentByTag(fragmentTag)
         if (preferenceFragment == null) preferenceFragment = PreferenceFragment()
-        childFragmentManager.beginTransaction().replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
+        childFragmentManager.beginTransaction()
+            .replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -46,17 +46,18 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
             R.id.menu_help -> startActivity<AboutActivity>()
-            R.id.menu_backup -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup() }
-                .request()
-            R.id.menu_restore -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { WebDavHelp.showRestoreDialog(requireContext()) }
-                .request()
+            R.id.menu_backup -> BackupRestoreUi.backup(this)
+            R.id.menu_restore -> BackupRestoreUi.restore(this)
         }
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        BackupRestoreUi.onFilePicked(requestCode, currentPath)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
     }
 
     class PreferenceFragment : PreferenceFragmentCompat(),
@@ -64,15 +65,14 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             if (WebService.isRun) {
-                putPrefBoolean("webService", true)
+                putPrefBoolean(PreferKey.webService, true)
             } else {
-                putPrefBoolean("webService", false)
+                putPrefBoolean(PreferKey.webService, false)
             }
             addPreferencesFromResource(R.xml.pref_main)
-            observeEvent<Boolean>(Bus.WEB_SERVICE_STOP) {
-                findPreference<SwitchPreference>("webService")?.let {
-                    it.isChecked = false
-                }
+            val webServicePre = findPreference<SwitchPreference>(PreferKey.webService)
+            observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
+                webServicePre?.isChecked = false
             }
         }
 
@@ -91,20 +91,22 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             super.onPause()
         }
 
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        override fun onSharedPreferenceChanged(
+            sharedPreferences: SharedPreferences?,
+            key: String?
+        ) {
             when (key) {
-                "isNightTheme" -> App.INSTANCE.applyDayNight()
-                "webService" -> {
+                PreferKey.themeMode -> App.INSTANCE.applyDayNight()
+                PreferKey.webService -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())
-                        toast("正在启动服务\n具体信息查看通知栏")
-                    }else{
+                        toast(R.string.service_start)
+                    } else {
                         WebService.stop(requireContext())
-                        toast("服务已停止")
+                        toast(R.string.service_stop)
                     }
                 }
                 "recordLog" -> LogUtils.upLevel()
-                "downloadPath" -> BookHelp.upDownloadPath()
             }
         }
 

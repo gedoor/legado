@@ -7,14 +7,18 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
+import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 @Database(
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
-        RssSource::class, Bookmark::class, RssArticle::class, RssStar::class],
-    version = 5,
+        RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
+        RssStar::class, TxtTocRule::class],
+    version = 8,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -28,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .fallbackToDestructiveMigration()
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
-                        Restore.restore()
+                        GlobalScope.launch { Restore.restore(Backup.backupPath) }
                     }
                 })
                 .build()
@@ -47,4 +51,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun rssArticleDao(): RssArticleDao
     abstract fun rssStarDao(): RssStarDao
     abstract fun cookieDao(): CookieDao
+    abstract fun txtTocRule(): TxtTocRuleDao
 }

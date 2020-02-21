@@ -17,14 +17,14 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
     fun observeLocal(): LiveData<List<Book>>
 
+    @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
+    fun observeLocalUri(): LiveData<List<String>>
+
     @Query("SELECT * FROM books WHERE origin <> '${BookType.local}' and type = 0 order by durChapterTime desc")
     fun observeDownload(): LiveData<List<Book>>
 
-    @Query("SELECT * FROM books WHERE `group` = :group")
+    @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
     fun observeByGroup(group: Int): LiveData<List<Book>>
-
-    @Query("SELECT bookUrl FROM books WHERE `group` = :group")
-    fun observeUrlsByGroup(group: Int): LiveData<List<String>>
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun liveDataSearch(key: String): LiveData<List<Book>>
@@ -42,7 +42,7 @@ interface BookDao {
     val hasUpdateBooks: List<Book>
 
     @get:Query("SELECT * FROM books")
-    val allBooks: List<Book>
+    val all: List<Book>
 
     @get:Query("SELECT * FROM books where type = 0 ORDER BY durChapterTime DESC limit 1")
     val lastReadBook: Book?
@@ -57,11 +57,14 @@ interface BookDao {
     fun insert(vararg book: Book)
 
     @Update
-    fun update(vararg books: Book)
+    fun update(vararg book: Book)
 
-    @Query("delete from books where bookUrl = :bookUrl")
-    fun delete(bookUrl: String)
+    @Delete
+    fun delete(vararg book: Book)
 
     @Query("update books set durChapterPos = :pos where bookUrl = :bookUrl")
     fun upProgress(bookUrl: String, pos: Int)
+
+    @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
+    fun upGroup(oldGroupId: Int, newGroupId: Int)
 }

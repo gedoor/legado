@@ -4,20 +4,19 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     private val bitmapMatrix = Matrix()
 
-    override fun onScrollStart() {
+    override fun onAnimStart() {
         if (!atTop && !atBottom) {
             stopScroll()
             return
         }
         val distanceY: Float
-        when (direction) {
+        when (mDirection) {
             Direction.NEXT -> distanceY =
                 if (isCancel) {
                     var dis = viewHeight - startY + touchY
@@ -43,17 +42,17 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         if (atTop || atBottom) {
             val offsetY = touchY - startY
 
-            if ((direction == Direction.NEXT && offsetY > 0)
-                || (direction == Direction.PREV && offsetY < 0)
+            if ((mDirection == Direction.NEXT && offsetY > 0)
+                || (mDirection == Direction.PREV && offsetY < 0)
             ) return
 
             val distanceY = if (offsetY > 0) offsetY - viewHeight else offsetY + viewHeight
-            if (atTop && direction == Direction.PREV) {
+            if (atTop && mDirection == Direction.PREV) {
                 bitmap?.let {
                     bitmapMatrix.setTranslate(0.toFloat(), distanceY)
                     canvas.drawBitmap(it, bitmapMatrix, null)
                 }
-            } else if (atBottom && direction == Direction.NEXT) {
+            } else if (atBottom && mDirection == Direction.NEXT) {
                 bitmap?.let {
                     bitmapMatrix.setTranslate(0.toFloat(), distanceY)
                     canvas.drawBitmap(it, bitmapMatrix, null)
@@ -62,9 +61,9 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         }
     }
 
-    override fun onScrollStop() {
+    override fun onAnimStop() {
         if (!isCancel) {
-            pageView.fillPage(direction)
+            pageView.fillPage(mDirection)
         }
     }
 
@@ -78,42 +77,38 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             if (distanceY < 0) {
                 if (atTop) {
                     val event = e1.toAction(MotionEvent.ACTION_UP)
-                    curPage?.dispatchTouchEvent(event)
+                    curPage.dispatchTouchEvent(event)
                     event.recycle()
                     //如果上一页不存在
                     if (!hasPrev()) {
                         noNext = true
                         return true
                     }
-                    //上一页截图
-                    bitmap = prevPage?.screenshot()
+                    setDirection(Direction.PREV)
+                    setBitmap()
                 }
             } else {
                 if (atBottom) {
                     val event = e1.toAction(MotionEvent.ACTION_UP)
-                    curPage?.dispatchTouchEvent(event)
+                    curPage.dispatchTouchEvent(event)
                     event.recycle()
                     //如果不存在表示没有下一页了
                     if (!hasNext()) {
                         noNext = true
                         return true
                     }
-                    //下一页截图
-                    bitmap = nextPage?.screenshot()
+                    setDirection(Direction.NEXT)
+                    setBitmap()
                 }
             }
             isMoved = true
         }
-        if ((atTop && direction != Direction.PREV) || (atBottom && direction != Direction.NEXT) || direction == Direction.NONE) {
+        if ((atTop && mDirection != Direction.PREV) || (atBottom && mDirection != Direction.NEXT) || mDirection == Direction.NONE) {
             //传递触摸事件到textView
-            curPage?.dispatchTouchEvent(e2)
+            curPage.dispatchTouchEvent(e2)
         }
         if (isMoved) {
-            isCancel = if (pageView.isScrollDelegate) {
-                if (direction == Direction.NEXT) distanceY < 0 else distanceY > 0
-            } else {
-                if (direction == Direction.NEXT) distanceX < 0 else distanceX > 0
-            }
+            isCancel = if (mDirection == Direction.NEXT) distanceY < 0 else distanceY > 0
             isRunning = true
             //设置触摸点
             setTouchPoint(e2.x, e2.y)

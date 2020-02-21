@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <io.legado.app.ui.widget.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/book_local" />
+
+    <!--path-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:minHeight="36dp"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:elevation="1dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_path"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/tv_text_secondary"
+            android:textSize="13sp"
+            android:focusable="true"
+            tools:text="/" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_go_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_margin="4dp"
+            app:cornerRadius="5dp"
+            android:text="@string/go_back"
+            android:textFontWeight="800"
+            android:textSize="14sp"
+            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <io.legado.app.ui.widget.anima.RotateLoading
+            android:id="@+id/rotate_loading"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+    <io.legado.app.ui.widget.SelectActionBar
+        android:id="@+id/select_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

@@ -24,7 +24,7 @@
 
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
-
+    <string name="draw">提醒</string>
     <string name="edit">编辑</string>
     <string name="delete">删除</string>
     <string name="replace">替换</string>
@@ -33,9 +33,10 @@
     <string name="enable">启用</string>
     <string name="replace_purify_search">替换净化-搜索</string>
     <string name="bookshelf">书架</string>
-    <string name="store_up">收藏</string>
-    <string name="y_store_up">已收藏</string>
-    <string name="w_store_up">未收藏</string>
+    <string name="favorites">收藏夹</string>
+    <string name="favorite">收藏</string>
+    <string name="in_favorites">已收藏</string>
+    <string name="out_favorites">未收藏</string>
     <string name="rss">订阅</string>
     <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
@@ -77,7 +78,7 @@
     <string name="import_books_count">共%s个Text文件</string>
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
-    <string name="web_service">Web服务</string>
+    <string name="web_service">Web 服务</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%s:%d</string>
     <string name="download_offline">离线下载</string>
@@ -96,6 +97,7 @@
     <string name="pt_auto_download">自动下载最新章节</string>
     <string name="ps_auto_download">更新书籍时自动下载最新章节</string>
     <string name="backup_restore">备份与恢复</string>
+    <string name="web_dav_set">WebDav设置</string>
     <string name="web_dav_set_import_old">WebDav设置/导入旧版本数据</string>
     <string name="backup">备份</string>
     <string name="restore">恢复</string>
@@ -203,6 +205,8 @@
     <string name="replace_rule_summary">替换规则名称</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
+    <string name="select_all_count">全选(%d/%d)</string>
+    <string name="select_cancel_count">取消(%d/%d)</string>
     <string name="dark_theme">深色模式</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>
@@ -210,7 +214,7 @@
     <string name="no_download">暂无任务</string>
     <string name="download_count">已下载 %d/%d</string>
     <string name="import_select_book">导入选择书籍</string>
-    <string name="update_search_threads_num">更新和搜索线程数,如感觉卡顿请减小线程数,量力而行</string>
+    <string name="threads_num_title">更新和搜索线程数,太多会卡顿</string>
     <string name="change_icon">切换图标</string>
     <string name="remove_from_bookshelf">删除书籍</string>
     <string name="start_read">开始阅读</string>
@@ -250,6 +254,7 @@
     <string name="text_bg_style">文字颜色和背景(长按自定义)</string>
     <string name="immersion_status_bar">沉浸式状态栏</string>
     <string name="un_download">还剩%d章未下载</string>
+    <string name="non_select">没有选择</string>
     <string name="long_click_input_color">长按输入颜色值</string>
     <string name="loading">加载中…</string>
     <string name="group_zg">追更区</string>
@@ -315,20 +320,20 @@
     <string name="use_to">替换范围，选填书名或者源名</string>
     <string name="menu_action_group">分组</string>
     <string name="download_path">内容缓存路径</string>
-    <string name="cleancache">清理缓存</string>
+    <string name="cleanCache">清理缓存</string>
     <string name="sys_file_picker">系统文件选择器</string>
     <string name="new_version">新版本</string>
     <string name="download_update">下载更新</string>
     <string name="volume_key_page_on_play">朗读时音量键翻页</string>
     <string name="tip_margin_change">Tip边距跟随边距调整</string>
     <string name="allow_update">允许更新</string>
-    <string name="revert_selection">反转选择</string>
+    <string name="revert_selection">反选</string>
     <string name="search_book_key">搜索书名、作者</string>
     <string name="debug_hint">书名、作者、URL</string>
     <string name="faq">常见问题</string>
     <string name="pt_show_all_find">显示所有发现</string>
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
-    <string name="update_chapter">更新目录</string>
+    <string name="update_toc">更新目录</string>
     <string name="txt_chapter_regex">txt目录正则</string>
     <string name="set_charset">设置编码</string>
     <string name="swap_sort">倒序-顺序</string>
@@ -432,6 +437,7 @@
     <string name="scan_qr_code">扫描二维码</string>
     <string name="click_on_selected_show_menu">选中时点击可弹出菜单</string>
     <string name="theme">主题</string>
+    <string name="theme_mode">主题模式</string>
     <string name="default_theme">默认主题</string>
     <string name="restore_default_theme">恢复主题为默认配色</string>
     <string name="join_qq_group">加入QQ群</string>
@@ -446,12 +452,15 @@
     <string name="switch_display_style">切换显示样式</string>
     <string name="import_per">导入本地书籍需存储权限</string>
     <string name="night_theme">夜间模式</string>
+    <string name="eink_theme">E-Ink 模式</string>
     <string name="get_storage_per">本软件需要存储权限来存储备份书籍信息</string>
     <string name="double_click_exit">再按一次退出程序</string>
     <string name="import_book_per">导入本地书籍需存储权限</string>
     <string name="network_connection_unavailable">网络连接不可用</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="sure">确认</string>
+    <string name="sure_del">是否确认删除？</string>
     <string name="sure_del_all_book">是否删除全部书籍？</string>
     <string name="sure_del_download_book">是否同时删除已下载的书籍目录？</string>
     <string name="qr_per">扫描二维码需相机权限</string>
@@ -477,7 +486,7 @@
     <string name="indent_2">二字符缩进</string>
     <string name="indent_3">三字符缩进</string>
     <string name="indent_4">四字符缩进</string>
-    <string name="select_sd_file">选择SD卡</string>
+    <string name="select_folder">选择文件夹</string>
     <string name="no_find">没有发现，可以在书源里添加。</string>
     <string name="restore_default">恢复默认</string>
     <string name="set_download_per">自定义缓存路径需要存储权限</string>
@@ -521,8 +530,6 @@
     <string name="change_icon_summary">切换软件显示在桌面的图标</string>
     <string name="help">帮助</string>
     <string name="my">我的</string>
-    <string name="dsm_start"><![CDATA[<]]></string>
-    <string name="dsm_end"><![CDATA[>]]></string>
     <string name="reading">阅读</string>
     <string name="battery_show">%d%%</string>
     <string name="timer_m">%d分钟</string>
@@ -536,6 +543,7 @@
     <string name="group_manage">分组管理</string>
     <string name="group_select">分组选择</string>
     <string name="group_edit">编辑分组</string>
+    <string name="move_to_group">移入分组</string>
     <string name="add_group">添加分组</string>
     <string name="add_replace_rule">新建替换</string>
     <string name="group">分组</string>
@@ -546,6 +554,8 @@
     <string name="enable_selection">启用所选</string>
     <string name="disable_selection">禁用所选</string>
     <string name="export_selection">导出所选</string>
+    <string name="export">导出</string>
+    <string name="load_toc">加载目录</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
     <string name="web_dav_url_s">输入你的服务器地址</string>
@@ -570,6 +580,7 @@
     <string name="book_type_audio">音频</string>
     <string name="to_backstage">转到后台</string>
     <string name="importing">正在导入</string>
+    <string name="exporting">正在导出</string>
     <string name="custom_page_key">自定义翻页按键</string>
     <string name="prev_page_key">上一页按键</string>
     <string name="next_page_key">下一页按键</string>
@@ -577,5 +588,33 @@
     <string name="no_group">未分组</string>
     <string name="prev_sentence">上一句</string>
     <string name="next_sentence">下一句</string>
-
+    <string name="other_folder">其它目录</string>
+    <string name="text_too_long_qr_error">文字太多,生成二维码失败</string>
+    <string name="share_rss_source">分享RSS源</string>
+    <string name="share_book_source">分享书源</string>
+    <string name="auto_dark_mode">自动切换夜间模式</string>
+    <string name="auto_dark_mode_s">夜间模式跟随系统</string>
+    <string name="go_back">上级</string>
+    <string name="tone_colour">在线朗读音色</string>
+    <string name="select_count">(%d/%d)</string>
+    <string name="show_rss">显示订阅</string>
+    <string name="service_stop">服务已停止</string>
+    <string name="service_start">正在启动服务\n具体信息查看通知栏</string>
+    <string name="default_path">默认路径</string>
+    <string name="sys_folder_picker">系统文件夹选择器</string>
+    <string name="app_folder_picker">自带选择器\n(Android10以上因权限限制可能无法使用)</string>
+    <string name="a10_permission_toast">Android10以上因权限限制可能无法读写文件</string>
+    <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示阅读·搜索</string>
+    <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
+    <string name="record_log">记录日志</string>
+    <string name="chinese_converter">中文简繁体转换</string>
+    <string name="chage_icon_error">图标为矢量图标,Android8.0以前不支持</string>
+    <string name="aloud_config">朗读设置</string>
+    <string name="main_activity">主界面</string>
+    <string name="selectText">选择文本</string>
+    <string name="header">页眉</string>
+    <string name="main_body">正文</string>
+    <string name="footer">页角</string>
+    <string name="select_end">文本选择结束位置</string>
+    <string name="select_start">文本选择开始位置</string>
 </resources>

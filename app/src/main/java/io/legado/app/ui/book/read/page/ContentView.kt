@@ -2,35 +2,27 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.Gravity
+import android.view.MotionEvent
 import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.ui.book.read.page.entities.SelectPoint
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
-import org.jetbrains.anko.matchParent
-import org.jetbrains.anko.sdk27.listeners.onScrollChange
 import java.util.*
 
 
 class ContentView : FrameLayout {
     var callBack: CallBack? = null
-    private var isScroll: Boolean = false
+    private var headerHeight = 0
     private var pageSize: Int = 0
-    private val bgImage: AppCompatImageView = AppCompatImageView(context)
-        .apply {
-            scaleType = ImageView.ScaleType.CENTER_CROP
-        }
 
     constructor(context: Context) : super(context) {
-        this.isScroll = true
         init()
     }
 
@@ -41,57 +33,58 @@ class ContentView : FrameLayout {
     fun init() {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
-        addView(bgImage, LayoutParams(matchParent, matchParent))
         inflate(context, R.layout.view_book_page, this)
-        top_bar.layoutParams.height = context.getStatusBarHeight()
         upStyle()
         upTime()
-        content_text_view.customSelectionActionModeCallback =
-            ContentSelectActionCallback(content_text_view)
-        content_text_view.onScrollChange { _, _, scrollY, _, _ ->
-            content_text_view.layout?.getLineForVertical(scrollY)?.let { line ->
-                callBack?.scrollToLine(line)
-            }
-            if (content_text_view.atBottom()) {
-                callBack?.scrollToLast()
-            }
-        }
     }
 
     fun upStyle() {
-        ReadBookConfig.getConfig().apply {
-            val pt = if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
-                top_bar.visible()
-                0
+        ReadBookConfig.durConfig.apply {
+            tv_top_left.typeface = ChapterProvider.typeface
+            tv_top_right.typeface = ChapterProvider.typeface
+            tv_bottom_left.typeface = ChapterProvider.typeface
+            tv_bottom_right.typeface = ChapterProvider.typeface
+            if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+                //显示状态栏时隐藏header
+                ll_header.visible()
+                ll_header.layoutParams =
+                    ll_header.layoutParams.apply { height = context.getStatusBarHeight() }
+                ll_header.setPadding(
+                    headerPaddingLeft.dp,
+                    headerPaddingTop.dp,
+                    headerPaddingRight.dp,
+                    headerPaddingBottom.dp
+                )
+                headerHeight = ll_header.height
+                page_panel.setPadding(0, 0, 0, 0)
             } else {
-                top_bar.gone()
-                context.getStatusBarHeight()
+                ll_header.gone()
+                headerHeight = context.getStatusBarHeight()
+                page_panel.setPadding(0, headerHeight, 0, 0)
             }
-            page_panel.setPadding(paddingLeft.dp, pt, paddingRight.dp, 0)
-            content_text_view.setPadding(0, paddingTop.dp, 0, paddingBottom.dp)
-            content_text_view.textSize = textSize.toFloat()
-            content_text_view.setLineSpacing(lineSpacingExtra.toFloat(), lineSpacingMultiplier)
-            content_text_view.letterSpacing = letterSpacing
-            content_text_view.paint.isFakeBoldText = textBold
+            content_text_view.setPadding(
+                paddingLeft.dp,
+                paddingTop.dp,
+                paddingRight.dp,
+                paddingBottom.dp
+            )
+            ll_footer.setPadding(
+                footerPaddingLeft.dp,
+                footerPaddingTop.dp,
+                footerPaddingRight.dp,
+                footerPaddingBottom.dp
+            )
             textColor().let {
-                content_text_view.setTextColor(it)
                 tv_top_left.setTextColor(it)
                 tv_top_right.setTextColor(it)
                 tv_bottom_left.setTextColor(it)
                 tv_bottom_right.setTextColor(it)
             }
         }
-        context.getPrefString(PreferKey.readBookFont)?.let {
-            if (it.isNotEmpty()) {
-                content_text_view.typeface = Typeface.createFromFile(it)
-            } else {
-                content_text_view.typeface = Typeface.DEFAULT
-            }
-        }
     }
 
     fun setBg(bg: Drawable?) {
-        bgImage.background = bg
+        page_panel.background = bg
     }
 
     fun upTime() {
@@ -103,15 +96,11 @@ class ContentView : FrameLayout {
     }
 
     fun setContent(textPage: TextPage?) {
+        content_text_view.setContent(textPage)
         if (textPage != null) {
-            content_text_view.gravity = Gravity.START
-            content_text_view.text = textPage.text
             tv_bottom_left.text = textPage.title
             pageSize = textPage.pageSize
             setPageIndex(textPage.index)
-        } else {
-            content_text_view.gravity = Gravity.CENTER
-            content_text_view.setText(R.string.data_loading)
         }
     }
 
@@ -122,30 +111,39 @@ class ContentView : FrameLayout {
         }
     }
 
-    fun isTextSelected(): Boolean {
-        return content_text_view.selectionEnd - content_text_view.selectionStart != 0
+    fun upSelectAble(selectAble: Boolean) {
+        content_text_view.selectAble = selectAble
     }
 
-    fun contentTextView(): ContentTextView? {
-        return content_text_view
+    fun selectText(e: MotionEvent): SelectPoint? {
+        val y = e.y - headerHeight
+        val selectPoint = content_text_view.selectText(e.x, y)
+        selectPoint?.let {
+            it.startY = it.startY + headerHeight
+            it.endY = it.endY + headerHeight
+        }
+        return selectPoint
+    }
+
+    fun selectStartMove(x: Float, y: Float) {
+        content_text_view.selectStartMove(x, y)
+    }
+
+    fun selectEndMove(x: Float, y: Float) {
+        content_text_view.selectEndMove(x, y)
     }
 
     fun scrollTo(pos: Int?) {
         if (pos != null) {
             content_text_view.post {
-                if (content_text_view.layout.lineCount >= pos) {
-                    content_text_view.scrollTo(0, content_text_view.layout.getLineTop(pos))
-                }
+
             }
         }
     }
 
     fun scrollToBottom() {
         content_text_view.post {
-            content_text_view.scrollTo(
-                0,
-                content_text_view.layout.getLineTop(content_text_view.lineCount)
-            )
+
         }
     }
 

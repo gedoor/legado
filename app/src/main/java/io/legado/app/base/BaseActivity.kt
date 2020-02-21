@@ -53,8 +53,11 @@ abstract class BaseActivity(
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
-        menu?.applyOpenTint(this)
-        return super.onMenuOpened(featureId, menu)
+        menu?.let {
+            menu.applyOpenTint(this)
+            return super.onMenuOpened(featureId, menu)
+        }
+        return true
     }
 
     open fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

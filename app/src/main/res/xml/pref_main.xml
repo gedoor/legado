@@ -12,19 +12,27 @@
         android:title="@string/replace_purify"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="false"
-        android:key="isNightTheme"
-        android:title="@string/night_theme"
+    <io.legado.app.ui.widget.prefs.NameListPreference
+        android:defaultValue="0"
+        android:entries="@array/theme_mode"
+        android:entryValues="@array/theme_mode_v"
+        android:key="themeMode"
+        android:title="@string/theme_mode"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="isEInkMode"
+        android:title="@string/eink_theme"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="webService"
         android:title="@string/web_service"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/setting"
         app:iconSpaceReserved="false">
 
@@ -46,9 +54,9 @@
             android:title="@string/other_setting"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory app:iconSpaceReserved="false">
+    <io.legado.app.ui.widget.prefs.PreferenceCategory app:iconSpaceReserved="false">
 
         <androidx.preference.Preference
             android:key="donate"
@@ -62,6 +70,6 @@
             android:title="@string/about"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

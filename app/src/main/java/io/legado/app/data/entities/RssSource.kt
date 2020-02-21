@@ -39,6 +39,17 @@ data class RssSource(
     var customOrder: Int = 0
 ) : Parcelable, JsExtensions {
 
+    override fun equals(other: Any?): Boolean {
+        if (other is RssSource) {
+            return other.sourceUrl == sourceUrl
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return sourceUrl.hashCode()
+    }
+
     @Throws(Exception::class)
     fun getHeaderMap(): Map<String, String> {
         val headerMap = HashMap<String, String>()

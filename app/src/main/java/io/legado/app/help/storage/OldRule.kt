@@ -3,6 +3,7 @@ package io.legado.app.help.storage
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
@@ -205,4 +206,27 @@ object OldRule {
         return GSON.toJson(map)
     }
 
+    fun jsonToReplaceRule(json: String): ReplaceRule? {
+        var replaceRule: ReplaceRule? = null
+        runCatching {
+            replaceRule = GSON.fromJsonObject<ReplaceRule>(json.trim())
+        }
+        runCatching {
+            if (replaceRule == null || replaceRule?.pattern.isNullOrBlank()) {
+                val jsonItem = jsonPath.parse(json.trim())
+                val rule = ReplaceRule()
+                rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis()
+                rule.pattern = jsonItem.readString("$.regex") ?: ""
+                if (rule.pattern.isEmpty()) return null
+                rule.name = jsonItem.readString("$.replaceSummary") ?: ""
+                rule.replacement = jsonItem.readString("$.replacement") ?: ""
+                rule.isRegex = jsonItem.readBool("$.isRegex") == true
+                rule.scope = jsonItem.readString("$.useTo")
+                rule.isEnabled = jsonItem.readBool("$.enable") == true
+                rule.order = jsonItem.readInt("$.serialNumber") ?: 0
+                return rule
+            }
+        }
+        return replaceRule
+    }
 }

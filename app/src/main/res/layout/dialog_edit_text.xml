@@ -7,7 +7,7 @@
         android:layout_marginBottom="48dp"
         android:overScrollMode="ifContentScrolls">
 
-    <io.legado.app.lib.theme.view.ATEAutoCompleteTextView
+    <io.legado.app.ui.widget.text.AutoCompleteTextView
             android:id="@+id/edit_view"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"

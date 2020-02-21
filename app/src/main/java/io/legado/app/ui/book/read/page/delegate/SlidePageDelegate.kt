@@ -8,9 +8,9 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     private val bitmapMatrix = Matrix()
 
-    override fun onScrollStart() {
+    override fun onAnimStart() {
         val distanceX: Float
-        when (direction) {
+        when (mDirection) {
             Direction.NEXT -> distanceX =
                 if (isCancel) {
                     var dis = viewWidth - startX + touchX
@@ -35,8 +35,8 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     override fun onDraw(canvas: Canvas) {
         val offsetX = touchX - startX
 
-        if ((direction == Direction.NEXT && offsetX > 0)
-            || (direction == Direction.PREV && offsetX < 0)
+        if ((mDirection == Direction.NEXT && offsetX > 0)
+            || (mDirection == Direction.PREV && offsetX < 0)
         ) return
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
@@ -49,18 +49,18 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     override fun onScroll() {
         val offsetX = touchX - startX
 
-        if ((direction == Direction.NEXT && offsetX > 0)
-            || (direction == Direction.PREV && offsetX < 0)
+        if ((mDirection == Direction.NEXT && offsetX > 0)
+            || (mDirection == Direction.PREV && offsetX < 0)
         ) return
 
-        curPage?.translationX = offsetX
+        curPage.translationX = offsetX
     }
 
-    override fun onScrollStop() {
-        curPage?.x = 0.toFloat()
+    override fun onAnimStop() {
+        curPage.x = 0.toFloat()
 
         if (!isCancel) {
-            pageView.fillPage(direction)
+            pageView.fillPage(mDirection)
         }
     }
 }

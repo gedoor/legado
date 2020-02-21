@@ -7,11 +7,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.BookType
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentDataHelp
@@ -29,31 +30,34 @@ import org.jetbrains.anko.startActivity
 
 
 class BooksFragment : BaseFragment(R.layout.fragment_books),
-    BooksAdapter.CallBack {
+    BaseBooksAdapter.CallBack {
 
     companion object {
-        fun newInstance(position: Int): BooksFragment {
+        fun newInstance(position: Int, groupId: Int): BooksFragment {
             return BooksFragment().apply {
                 val bundle = Bundle()
-                bundle.putInt("groupId", position)
+                bundle.putInt("position", position)
+                bundle.putInt("groupId", groupId)
                 arguments = bundle
             }
         }
     }
 
     private lateinit var activityViewModel: MainViewModel
-    private lateinit var booksAdapter: BooksAdapter
+    private lateinit var booksAdapter: BaseBooksAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
+    private var position = 0
     private var groupId = -1
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
         arguments?.let {
+            position = it.getInt("position", 0)
             groupId = it.getInt("groupId", -1)
         }
         initRecyclerView()
         upRecyclerData()
-        observeEvent<String>(Bus.UP_BOOK) {
+        observeEvent<String>(EventBus.UP_BOOK) {
             booksAdapter.notification(it)
         }
     }
@@ -71,9 +75,24 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterList(requireContext(), this)
         } else {
             rv_bookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
-            booksAdapter = BooksAdapterGrid(requireContext(), this)
+            booksAdapter = BooksAdapterGrid(requireContext(),this)
         }
         rv_bookshelf.adapter = booksAdapter
+        booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    rv_bookshelf.scrollToPosition(0)
+                }
+            }
+
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                if (toPosition == 0) {
+                    rv_bookshelf.scrollToPosition(0)
+                }
+            }
+        })
     }
 
     private fun upRecyclerData() {
@@ -85,15 +104,9 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, Observer {
-            val diffResult =
-                DiffUtil.calculateDiff(
-                    BooksDiffCallBack(
-                        booksAdapter.getItems(),
-                        it
-                    )
-                )
-            booksAdapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(booksAdapter)
+            val diffResult = DiffUtil
+                .calculateDiff(BooksDiffCallBack(ArrayList(booksAdapter.getItems()), it))
+            booksAdapter.setItems(it, diffResult)
         })
     }
 

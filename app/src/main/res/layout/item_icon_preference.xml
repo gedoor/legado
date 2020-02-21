@@ -11,13 +11,14 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:contentDescription="ICON"
-        android:padding="6dip"
+        android:padding="10dip"
         tools:ignore="HardcodedText" />
 
     <CheckedTextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingRight="10dp"
         android:layout_alignParentEnd="true"
         android:layout_toRightOf="@+id/icon"
         android:checkMark="?android:attr/listChoiceIndicatorSingle"
@@ -28,6 +29,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?android:attr/textColorAlertDialogListItem"
         android:textIsSelectable="false"
-        tools:ignore="RtlHardcoded" />
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
 
 </RelativeLayout>

@@ -12,13 +12,15 @@ import java.io.File
 object ImageLoader {
 
     fun load(context: Context, path: String?): RequestBuilder<Drawable> {
-        if (path?.startsWith("http", true) == true) {
-            return Glide.with(context).load(path)
+        return when {
+            path.isNullOrEmpty() -> Glide.with(context).load(path)
+            path.startsWith("http", true) -> Glide.with(context).load(path)
+            else -> try {
+                Glide.with(context).load(File(path))
+            } catch (e: Exception) {
+                Glide.with(context).load(path)
+            }
         }
-        kotlin.runCatching {
-            return Glide.with(context).load(File(path))
-        }
-        return Glide.with(context).load(path)
     }
 
     fun load(context: Context, @DrawableRes resId: Int?): RequestBuilder<Drawable> {

@@ -9,12 +9,15 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
+import io.legado.app.help.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -57,15 +60,15 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun initData() {
-        observeEvent<Int>(Bus.ALOUD_STATE) { upPlayState() }
-        observeEvent<Int>(Bus.TTS_DS) { seek_timer.progress = it }
+        observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
+        observeEvent<Int>(EventBus.TTS_DS) { seek_timer.progress = it }
         upPlayState()
         seek_timer.progress = BaseReadAloudService.timeMinute
         tv_timer.text =
             requireContext().getString(R.string.timer_m, BaseReadAloudService.timeMinute)
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
-        seek_tts_SpeechRate.progress = requireContext().getPrefInt("ttsSpeechRate", 5)
+        seek_tts_SpeechRate.progress = AppConfig.ttsSpeechRate
     }
 
     private fun initOnChange() {
@@ -83,7 +86,7 @@ class ReadAloudDialog : DialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                requireContext().putPrefInt("ttsSpeechRate", seek_tts_SpeechRate.progress)
+                AppConfig.ttsSpeechRate = seek_tts_SpeechRate.progress
                 upTtsSpeechRate()
             }
         })
@@ -101,7 +104,7 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     private fun initOnClick() {
-        iv_menu.onClick { callBack?.showMenu(); dismiss() }
+        iv_menu.onClick { callBack?.showMenuBar(); dismiss() }
         iv_other_config.onClick {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
@@ -135,7 +138,7 @@ class ReadAloudDialog : DialogFragment() {
     }
 
     interface CallBack {
-        fun showMenu()
+        fun showMenuBar()
         fun openChapterList()
         fun onClickReadAloud()
         fun finish()

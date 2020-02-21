@@ -6,14 +6,14 @@ import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.Pattern.EXP_PATTERN
 import io.legado.app.constant.Pattern.JS_PATTERN
-import io.legado.app.data.api.IHttpGetApi
-import io.legado.app.data.api.IHttpPostApi
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.AjaxWebView
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.RequestMethod
 import io.legado.app.help.http.Res
+import io.legado.app.help.http.api.HttpGetApi
+import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.utils.*
 import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -162,7 +162,7 @@ class AnalyzeUrl(
         }
         if (urlArray.size > 1) {
             val options = GSON.fromJsonObject<Map<String, String>>(urlArray[1])
-            options?.let {
+            options?.let { _ ->
                 options["method"]?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
                 options["headers"]?.let { headers ->
                     GSON.fromJsonObject<Map<String, String>>(headers)?.let { headerMap.putAll(it) }
@@ -248,19 +248,19 @@ class AnalyzeUrl(
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
-                        .getApiService<IHttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postMap(url, fieldMap, headerMap)
                 } else {
                     HttpHelper
-                        .getApiService<IHttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postBody(url, body!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
-                .getApiService<IHttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .get(url, headerMap)
             else -> HttpHelper
-                .getApiService<IHttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .getMap(url, fieldMap, headerMap)
         }
     }
@@ -284,24 +284,20 @@ class AnalyzeUrl(
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
-                        .getApiService<IHttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postMapAsync(url, fieldMap, headerMap)
-                        .await()
                 } else {
                     HttpHelper
-                        .getApiService<IHttpPostApi>(baseUrl)
+                        .getApiService<HttpPostApi>(baseUrl, charset)
                         .postBodyAsync(url, body!!, headerMap)
-                        .await()
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
-                .getApiService<IHttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .getAsync(url, headerMap)
-                .await()
             else -> HttpHelper
-                .getApiService<IHttpGetApi>(baseUrl)
+                .getApiService<HttpGetApi>(baseUrl, charset)
                 .getMapAsync(url, fieldMap, headerMap)
-                .await()
         }
         return Res(NetworkUtils.getUrl(res), res.body())
     }

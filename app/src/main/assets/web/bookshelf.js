@@ -45,15 +45,15 @@ var init = () => {
             books.forEach(book => {
                 let bookDiv = $c("div");
                 let img = $c("img");
-                img.src = book.bookInfoBean.coverUrl || randomImg;
+                img.src = book.coverUrl || randomImg;
                 img.setAttribute("data-series-num", book.serialNumber);
                 bookDiv.appendChild(img);
                 bookDiv.innerHTML += `<table><tbody>
-                                <tr><td>书名：</td><td>${book.bookInfoBean.name}</td></tr>
-                                <tr><td>作者：</td><td>${book.bookInfoBean.author}</td></tr>
-                                <tr><td>阅读：</td><td>${book.durChapterName}<br>${formatTime(book.finalDate)}</td></tr>
-                                <tr><td>更新：</td><td>${book.lastChapterName}<br>${formatTime(book.finalRefreshData)}</td></tr>
-                                <tr><td>来源：</td><td>${book.bookInfoBean.origin}</td></tr>
+                                <tr><td>书名：</td><td>${book.name}</td></tr>
+                                <tr><td>作者：</td><td>${book.author}</td></tr>
+                                <tr><td>阅读：</td><td>${book.durChapterTitle}<br>${formatTime(book.durChapterTime)}</td></tr>
+                                <tr><td>更新：</td><td>${book.latestChapterTitle}<br>${formatTime(book.latestChapterTime)}</td></tr>
+                                <tr><td>来源：</td><td>${book.origin}</td></tr>
                                 </tbody></table>`;
                 $('#books').appendChild(bookDiv);
             });
@@ -62,19 +62,19 @@ var init = () => {
                     $('#allcontent').classList.add("read");
                     var book = books[bookImg.getAttribute("data-series-num")];
                     $("#info").innerHTML = `<img src="${bookImg.src}">
-                                        <p>　　来源：${book.bookInfoBean.origin}</p>
-                                        <p>　　书名：${book.bookInfoBean.name}</p>
-                                        <p>　　作者：${book.bookInfoBean.author}</p>
+                                        <p>　　来源：${book.origin}</p>
+                                        <p>　　书名：${book.name}</p>
+                                        <p>　　作者：${book.author}</p>
                                         <p>阅读章节：${book.durChapterName}</p>
-                                        <p>阅读时间：${formatTime(book.finalDate)}</p>
-                                        <p>最新章节：${book.lastChapterName}</p>
-                                        <p>检查时间：${formatTime(book.finalRefreshData)}</p>
-                                        <p>　　简介：${book.bookInfoBean.introduce.trim().replace(/\n/g, "<br>")}</p>`;
+                                        <p>阅读时间：${formatTime(book.durChapterTime)}</p>
+                                        <p>最新章节：${book.latestChapterTitle}</p>
+                                        <p>检查时间：${formatTime(book.lastCheckTime)}</p>
+                                        <p>　　简介：${book.intro.trim().replace(/\n/g, "<br>")}</p>`;
                     window.location.hash = "";
                     window.location.hash = "#info";
                     $("#content").innerHTML = "章节列表加载中...";
                     $("#chapter").innerHTML = "";
-                    fetch(apiAddress("getChapterList", book.noteUrl), { mode: "cors" })
+                    fetch(apiAddress("getChapterList", book.bookUrl), { mode: "cors" })
                         .then(res => res.json())
                         .then(data => {
                             if (!data.isSuccess) {

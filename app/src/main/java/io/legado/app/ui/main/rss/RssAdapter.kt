@@ -20,7 +20,14 @@ class RssAdapter(context: Context, val callBack: CallBack) :
                 .placeholder(R.drawable.image_rss)
                 .error(R.drawable.image_rss)
                 .into(iv_icon)
-            onClick { callBack.openRss(item) }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callBack.openRss(it)
+            }
         }
     }
 

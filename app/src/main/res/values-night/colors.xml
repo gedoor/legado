@@ -4,18 +4,20 @@
     <color name="colorPrimaryDark">@color/md_blue_grey_700</color>
     <color name="colorAccent">@color/md_deep_orange_800</color>
 
-    <color name="background">@color/md_grey_800</color>
-    <color name="background_card">#353535</color>
-    <color name="background_menu">#282828</color>
+    <color name="background">@color/md_grey_900</color>
+    <color name="background_card">@color/md_grey_850</color>
+    <color name="background_menu">@color/md_grey_800</color>
 
     <color name="night_mask">#69000000</color>
 
     <color name="transparent30">#30ffffff</color>
 
     <color name="bg_divider_line">#363636</color>
-    <color name="btn_bg_press">#804D4D4D</color>
-    <color name="btn_bg_press_2">#80686868</color>
-    <color name="btn_bg_press_tp">#80C7C7C7</color>
+
+    <color name="btn_bg_press">#634D4D4D</color>
+    <color name="btn_bg_press_2">#63686868</color>
+    <color name="btn_bg_press_tp">#63C7C7C7</color>
+
     <color name="darker_gray">#66666666</color>
 
     <color name="tv_btn_normal_black">#737373</color>

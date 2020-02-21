@@ -1,6 +1,7 @@
 package io.legado.app.ui.changesource
 
 import android.content.Context
+import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -15,19 +16,31 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_change_source) {
 
     override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
+        val bundle = payloads.getOrNull(0) as? Bundle
         holder.itemView.apply {
-            if (payloads.isEmpty()) {
-                this.onClick { callBack.changeTo(item) }
+            if (bundle == null) {
                 tv_origin.text = item.originName
-                tv_last.text = item.latestChapterTitle
+                tv_last.text = item.getDisplayLastChapterTitle()
                 if (callBack.bookUrl == item.bookUrl) {
                     iv_checked.visible()
                 } else {
                     iv_checked.invisible()
                 }
             } else {
-                tv_origin.text = item.originName
-                tv_last.text = item.latestChapterTitle
+                bundle.keySet().map {
+                    when (it) {
+                        "name" -> tv_origin.text = item.originName
+                        "latest" -> tv_last.text = item.getDisplayLastChapterTitle()
+                    }
+                }
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callBack.changeTo(it)
             }
         }
     }

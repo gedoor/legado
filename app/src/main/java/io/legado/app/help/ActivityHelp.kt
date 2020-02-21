@@ -19,7 +19,7 @@ object ActivityHelp {
      * 判断指定Activity是否存在
      */
     fun isExist(activityClass: Class<*>): Boolean {
-        for (item in activities) {
+        activities.forEach { item ->
             if (item.get()?.javaClass == activityClass) {
                 return true
             }
@@ -63,7 +63,7 @@ object ActivityHelp {
      * 关闭指定 activity
      */
     fun finishActivity(vararg activities: Activity) {
-        for (activity in activities) {
+        activities.forEach { activity ->
             activity.finish()
         }
     }
@@ -81,8 +81,8 @@ object ActivityHelp {
                 }
             }
         }
-        for (activityWeakReference in waitFinish) {
-            activityWeakReference.get()?.finish()
+        waitFinish.forEach {
+            it.get()?.finish()
         }
     }
 

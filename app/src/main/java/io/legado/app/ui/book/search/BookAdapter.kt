@@ -14,7 +14,16 @@ class BookAdapter(context: Context, val callBack: CallBack) :
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
             text_view.text = item.name
-            onClick { callBack.showBookInfo(item) }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.apply {
+            onClick {
+                getItem(holder.layoutPosition)?.let {
+                    callBack.showBookInfo(it)
+                }
+            }
         }
     }
 

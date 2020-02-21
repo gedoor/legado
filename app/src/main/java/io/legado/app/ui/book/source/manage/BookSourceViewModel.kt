@@ -5,9 +5,7 @@ import android.text.TextUtils
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.data.api.IHttpGetApi
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.FileHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.OldRule
@@ -45,56 +43,58 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun enableSelection(ids: LinkedHashSet<String>) {
+    fun enableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().enableSection(it)
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = true))
             }
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun disableSelection(ids: LinkedHashSet<String>) {
+    fun disableSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().disableSection(it)
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = false))
             }
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun enableSelectExplore(ids: LinkedHashSet<String>) {
+    fun enableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().enableSectionExplore(it)
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabledExplore = true))
             }
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun disableSelectExplore(ids: LinkedHashSet<String>) {
+    fun disableSelectExplore(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().disableSectionExplore(it)
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabledExplore = false))
             }
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun delSelection(ids: LinkedHashSet<String>) {
+    fun delSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.forEach {
-                App.db.bookSourceDao().delSection(it)
-            }
+            App.db.bookSourceDao().delete(*sources.toTypedArray())
         }
     }
 
-    fun exportSelection(ids: LinkedHashSet<String>) {
+    fun exportSelection(sources: LinkedHashSet<BookSource>) {
         execute {
-            ids.map {
-                App.db.bookSourceDao().getBookSource(it)
-            }.let {
-                val json = GSON.toJson(it)
-                val file =
-                    FileHelp.getFile(Backup.exportPath + File.separator + "exportBookSource.json")
-                file.writeText(json)
-            }
+            val json = GSON.toJson(sources)
+            val file =
+                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportBookSource.json")
+            file.writeText(json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {
@@ -149,9 +149,11 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 importSource(file.readText(), finally)
             } else {
                 withContext(Dispatchers.Main) {
-                    finally("文件无法打开")
+                    finally("打开文件出错")
                 }
             }
+        }.onError {
+            finally(it.localizedMessage ?: "打开文件出错")
         }
     }
 
@@ -194,27 +196,24 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 else -> "格式不对"
             }
         }.onError {
-            finally(it.localizedMessage)
+            finally(it.localizedMessage ?: "")
         }.onSuccess {
             finally(it ?: "导入完成")
         }
     }
 
     private fun importSourceUrl(url: String): Int {
-        NetworkUtils.getBaseUrl(url)?.let {
-            val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
-            response.body()?.let { body ->
-                val bookSources = mutableListOf<BookSource>()
-                val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
-                for (item in items) {
-                    val jsonItem = jsonPath.parse(item)
-                    OldRule.jsonToBookSource(jsonItem.jsonString())?.let { source ->
-                        bookSources.add(source)
-                    }
+        HttpHelper.simpleGet(url)?.let { body ->
+            val bookSources = mutableListOf<BookSource>()
+            val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
+            for (item in items) {
+                val jsonItem = jsonPath.parse(item)
+                OldRule.jsonToBookSource(jsonItem.jsonString())?.let { source ->
+                    bookSources.add(source)
                 }
-                App.db.bookSourceDao().insert(*bookSources.toTypedArray())
-                return bookSources.size
             }
+            App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+            return bookSources.size
         }
         return 0
     }

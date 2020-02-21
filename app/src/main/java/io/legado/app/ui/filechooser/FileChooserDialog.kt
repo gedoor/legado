@@ -6,22 +6,16 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.constant.Theme
-import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.gone
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_file_chooser.*
 
 
@@ -47,21 +41,19 @@ class FileChooserDialog : DialogFragment(),
             allowExtensions: Array<String?>? = null,
             menus: Array<String>? = null
         ) {
-            val fragment = (manager.findFragmentByTag(tag) as? FileChooserDialog)
-                ?: FileChooserDialog().apply {
-                    val bundle = Bundle()
-                    bundle.putInt("mode", mode)
-                    bundle.putInt("requestCode", requestCode)
-                    bundle.putString("title", title)
-                    bundle.putBoolean("isShowHomeDir", isShowHomeDir)
-                    bundle.putBoolean("isShowUpDir", isShowUpDir)
-                    bundle.putBoolean("isShowHideDir", isShowHideDir)
-                    bundle.putString("initPath", initPath)
-                    bundle.putStringArray("allowExtensions", allowExtensions)
-                    bundle.putStringArray("menus", menus)
-                    arguments = bundle
-                }
-            fragment.show(manager, tag)
+            FileChooserDialog().apply {
+                val bundle = Bundle()
+                bundle.putInt("mode", mode)
+                bundle.putInt("requestCode", requestCode)
+                bundle.putString("title", title)
+                bundle.putBoolean("isShowHomeDir", isShowHomeDir)
+                bundle.putBoolean("isShowUpDir", isShowUpDir)
+                bundle.putBoolean("isShowHideDir", isShowHideDir)
+                bundle.putString("initPath", initPath)
+                bundle.putStringArray("allowExtensions", allowExtensions)
+                bundle.putStringArray("menus", menus)
+                arguments = bundle
+            }.show(manager, tag)
         }
     }
 
@@ -97,8 +89,7 @@ class FileChooserDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ATH.applyBackgroundTint(view)
-        ATH.applyBackgroundTint(rv_path)
+        view.setBackgroundResource(R.color.background_card)
         arguments?.let {
             requestCode = it.getInt("requestCode")
             mode = it.getInt("mode", FILE)
@@ -142,7 +133,7 @@ class FileChooserDialog : DialogFragment(),
         fileAdapter = FileAdapter(requireContext(), this)
         pathAdapter = PathAdapter(requireContext(), this)
 
-        rv_file.addItemDecoration(DividerItemDecoration(activity, LinearLayout.VERTICAL))
+        rv_file.addItemDecoration(rv_file.getVerticalDivider())
         rv_file.layoutManager = LinearLayoutManager(activity)
         rv_file.adapter = fileAdapter
 

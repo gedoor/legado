@@ -5,74 +5,88 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.os.Handler
+import android.view.*
+import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.core.view.size
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.service.help.Download
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
+import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
-import kotlinx.android.synthetic.main.dialog_download_choice.view.*
-import kotlinx.android.synthetic.main.view_book_page.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
+    View.OnTouchListener,
     PageView.CallBack,
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
     ColorPickerDialogListener {
+    private val requestCodeChapterList = 568
+    private val requestCodeEditSource = 111
+    private val requestCodeReplace = 312
+    private var menu: Menu? = null
+
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
     override val isInitFinish: Boolean
         get() = viewModel.isInitFinish
 
-    private val requestCodeChapterList = 568
-    private val requestCodeEditSource = 111
-    private val requestCodeReplace = 31242
+    private val mHandler = Handler()
+    private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
+
+    private var screenTimeOut: Long = 0
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Help.upLayoutInDisplayCutoutMode(window)
         initView()
+        upScreenTimeOut()
         ReadBook.callBack = this
-        ReadBook.titleDate.observe(this, Observer { title_bar.title = it })
+        ReadBook.titleDate.observe(this, Observer {
+            title_bar.title = it
+            upMenu()
+            upView()
+        })
         viewModel.initData(intent)
     }
 
@@ -101,7 +115,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 初始化View
      */
     private fun initView() {
-        ChapterProvider.textView = content_text_view
+        cursor_left.setColorFilter(accentColor)
+        cursor_right.setColorFilter(accentColor)
+        cursor_left.setOnTouchListener(this)
+        cursor_right.setOnTouchListener(this)
         tv_chapter_name.onClick {
             ReadBook.webBook?.let {
                 startActivityForResult<BookSourceEditActivity>(
@@ -133,10 +150,36 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        this.menu = menu
+        upMenu()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun upMenu() {
+        menu?.let { menu ->
+            ReadBook.book?.let { book ->
+                val onLine = !book.isLocalBook()
+                for (i in 0 until menu.size) {
+                    val item = menu[i]
+                    when (item.groupId) {
+                        R.id.menu_group_on_line -> item.isVisible = onLine
+                        R.id.menu_group_local -> item.isVisible = !onLine
+                        R.id.menu_group_text -> item.isVisible = book.isTxt()
+                        R.id.menu_group_login ->
+                            item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
+                        else -> if (item.itemId == R.id.menu_enable_replace) {
+                            item.isChecked = book.useReplaceRule
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 菜单
      */
-    @SuppressLint("InflateParams")
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> {
@@ -152,31 +195,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     viewModel.refreshContent(it)
                 }
             }
-            R.id.menu_download -> ReadBook.book?.let { book ->
-                alert(titleResource = R.string.download_offline) {
-                    var view: View? = null
-                    customView {
-                        layoutInflater.inflate(R.layout.dialog_download_choice, null).apply {
-                            view = this
-                            edit_start.setText(book.durChapterIndex.toString())
-                            edit_end.setText(book.totalChapterNum.toString())
-                        }
-                    }
-                    yesButton {
-                        view?.apply {
-                            val start = edit_start?.text?.toString()?.toInt() ?: 0
-                            val end = edit_end?.text?.toString()?.toInt() ?: book.totalChapterNum
-                            Download.start(this@ReadBookActivity, book.bookUrl, start, end)
-                        }
-                    }
-                    noButton()
-                }.show().applyTint()
+            R.id.menu_download -> Help.showDownloadDialog(this)
+            R.id.menu_add_bookmark -> Help.showBookMark(this)
+            R.id.menu_copy_text ->
+                TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
+            R.id.menu_update_toc -> ReadBook.book?.let {
+                viewModel.loadChapterList(it)
             }
-            R.id.menu_add_bookmark -> {
-
+            R.id.menu_enable_replace -> ReadBook.book?.let {
+                it.useReplaceRule = !it.useReplaceRule
+                menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.useReplaceRule
             }
-            R.id.menu_copy_text -> {
-
+            R.id.menu_book_info -> ReadBook.book?.let {
+                startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -203,6 +234,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.dispatchKeyEvent(event)
     }
 
+    /**
+     * 按键事件
+     */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
@@ -217,11 +251,27 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
             KeyEvent.KEYCODE_SPACE -> {
                 page_view.moveToNextPage()
+                return true
+            }
+            getPrefInt(PreferKey.prevKey) -> {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    page_view.moveToPrevPage()
+                    return true
+                }
+            }
+            getPrefInt(PreferKey.nextKey) -> {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    page_view.moveToNextPage()
+                    return true
+                }
             }
         }
         return super.onKeyDown(keyCode, event)
     }
 
+    /**
+     * 长按事件
+     */
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
@@ -232,6 +282,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.onKeyLongPress(keyCode, event)
     }
 
+    /**
+     * 松开按键事件
+     */
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
@@ -257,6 +310,25 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return super.onKeyUp(keyCode, event)
     }
 
+    /**
+     * view触摸
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
+                when (v.id) {
+                    R.id.cursor_left -> page_view.selectStartMove(event.x, event.y)
+                    R.id.cursor_right -> page_view.selectEndMove(event.x, event.y)
+                }
+            }
+        }
+        return true
+    }
+
+    /**
+     * 音量键翻页
+     */
     private fun volumeKeyPage(direction: PageDelegate.Direction): Boolean {
         if (!read_menu.isVisible) {
             if (getPrefBoolean("volumeKeyPage", true)) {
@@ -292,24 +364,29 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun upView() {
-        ReadBook.curTextChapter?.let {
-            tv_chapter_name.text = it.title
-            tv_chapter_name.visible()
-            if (!ReadBook.isLocalBook) {
-                tv_chapter_url.text = it.url
-                tv_chapter_url.visible()
+        launch {
+            ReadBook.curTextChapter?.let {
+                tv_chapter_name.text = it.title
+                tv_chapter_name.visible()
+                if (!ReadBook.isLocalBook) {
+                    tv_chapter_url.text = it.url
+                    tv_chapter_url.visible()
+                }
+                seek_read_page.max = it.pageSize().minus(1)
+                seek_read_page.progress = ReadBook.durPageIndex
+                tv_pre.isEnabled = ReadBook.durChapterIndex != 0
+                tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
             }
-            seek_read_page.max = it.pageSize().minus(1)
-            tv_pre.isEnabled = ReadBook.durChapterIndex != 0
-            tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
         }
     }
 
     override fun upPageProgress() {
-        seek_read_page.progress = ReadBook.durPageIndex
+        launch {
+            seek_read_page.progress = ReadBook.durPageIndex
+        }
     }
 
-    override fun showMenu() {
+    override fun showMenuBar() {
         read_menu.runMenuIn()
     }
 
@@ -332,6 +409,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         } else {
             read_menu.runMenuIn()
         }
+    }
+
+    override fun selectText(selectPoint: SelectPoint) {
+        cursor_left.x = selectPoint.startX - cursor_left.width
+        cursor_left.y = selectPoint.startY
+        cursor_right.x = selectPoint.endX
+        cursor_right.y = selectPoint.endY
+        cursor_left.visible()
+        cursor_right.visible()
     }
 
     override fun showReadAloudDialog() {
@@ -387,16 +473,19 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
-    override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.getConfig()) {
+    /**
+     * colorSelectDialog
+     */
+    override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.durConfig) {
         when (dialogId) {
             TEXT_COLOR -> {
                 setTextColor(color)
-                postEvent(Bus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, false)
             }
             BG_COLOR -> {
                 setBg(0, "#${color.hexString}")
                 ReadBookConfig.upBg()
-                postEvent(Bus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, false)
             }
         }
     }
@@ -412,8 +501,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             when (requestCode) {
                 requestCodeEditSource -> viewModel.upBookSource()
                 requestCodeChapterList ->
-                    data?.getIntExtra("index", ReadBook.durChapterIndex)?.let {
-                        viewModel.openChapter(it)
+                    data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
+                        if (index != ReadBook.durChapterIndex) {
+                            viewModel.openChapter(index)
+                        }
                     }
                 requestCodeReplace -> ReadBook.loadContent()
             }
@@ -434,59 +525,93 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         } ?: super.finish()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mHandler.removeCallbacks(keepScreenRunnable)
+    }
+
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<Int>(Bus.ALOUD_STATE) {
-            if (it == Status.STOP || it == Status.PAUSE) {
-                ReadBook.curTextChapter?.let { textChapter ->
-                    val page = textChapter.page(ReadBook.durPageIndex)
-                    if (page != null && page.text is SpannableStringBuilder) {
-                        page.text.removeSpan(ChapterProvider.readAloudSpan)
-                        page_view.upContent()
-                    }
-                }
-            }
-        }
-        observeEvent<String>(Bus.TIME_CHANGED) { page_view.upTime() }
-        observeEvent<Int>(Bus.BATTERY_CHANGED) { page_view.upBattery(it) }
-        observeEvent<BookChapter>(Bus.OPEN_CHAPTER) {
-            viewModel.openChapter(it.index)
+        observeEvent<String>(EventBus.TIME_CHANGED) { page_view.upTime() }
+        observeEvent<Int>(EventBus.BATTERY_CHANGED) { page_view.upBattery(it) }
+        observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
+            viewModel.openChapter(it.index, ReadBook.durPageIndex)
             page_view.upContent()
         }
-        observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
+        observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
                 onClickReadAloud()
             } else {
                 ReadBook.readAloud(!BaseReadAloudService.pause)
             }
         }
-        observeEvent<Boolean>(Bus.UP_CONFIG) {
+        observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
-            content_view.upStyle()
             page_view.upBg()
             page_view.upStyle()
+            ChapterProvider.upStyle(ReadBookConfig.durConfig)
             if (it) {
                 ReadBook.loadContent()
             } else {
                 page_view.upContent()
             }
         }
-        observeEventSticky<Int>(Bus.TTS_START) { chapterStart ->
-            launch(IO) {
-                if (BaseReadAloudService.isPlay()) {
-                    ReadBook.curTextChapter?.let {
-                        val pageStart = chapterStart - it.getReadLength(ReadBook.durPageIndex)
-                        it.page(ReadBook.durPageIndex)?.upPageAloudSpan(pageStart)
-                        withContext(Main) {
-                            page_view.upContent()
-                        }
+        observeEvent<Int>(EventBus.ALOUD_STATE) {
+            if (it == Status.STOP || it == Status.PAUSE) {
+                ReadBook.curTextChapter?.let { textChapter ->
+                    val page = textChapter.page(ReadBook.durPageIndex)
+                    if (page != null) {
+                        page.removePageAloudSpan()
+                        page_view.upContent()
                     }
                 }
             }
         }
-        observeEvent<String>(Bus.REPLACE) {
+        observeEventSticky<Int>(EventBus.TTS_PROGRESS) { chapterStart ->
+            launch(IO) {
+                if (BaseReadAloudService.isPlay()) {
+                    ReadBook.curTextChapter?.let { textChapter ->
+                        val pageStart =
+                            chapterStart - textChapter.getReadLength(ReadBook.durPageIndex)
+                        textChapter.page(ReadBook.durPageIndex)?.upPageAloudSpan(pageStart)
+                        upContent()
+                    }
+                }
+            }
+        }
+        observeEvent<String>(EventBus.REPLACE) {
             ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
+        }
+        observeEvent<Boolean>(PreferKey.keepLight) {
+            upScreenTimeOut()
+        }
+        observeEvent<Boolean>(PreferKey.textSelectAble) {
+            page_view.upSelectAble(it)
         }
     }
 
+    private fun upScreenTimeOut() {
+        getPrefString(PreferKey.keepLight)?.let {
+            screenTimeOut = it.toLong() * 1000
+        }
+        screenOffTimerStart()
+    }
+
+    /**
+     * 重置黑屏时间
+     */
+    override fun screenOffTimerStart() {
+        if (screenTimeOut < 0) {
+            Help.keepScreenOn(window, true)
+            return
+        }
+        val t = screenTimeOut - getScreenOffTime()
+        if (t > 0) {
+            mHandler.removeCallbacks(keepScreenRunnable)
+            Help.keepScreenOn(window, true)
+            mHandler.postDelayed(keepScreenRunnable, screenTimeOut)
+        } else {
+            Help.keepScreenOn(window, false)
+        }
+    }
 }

@@ -2,21 +2,28 @@ package io.legado.app.ui.rss.read
 
 import android.app.Application
 import android.content.Intent
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import kotlinx.coroutines.launch
+import java.util.*
 
-class ReadRssViewModel(application: Application) : BaseViewModel(application) {
+class ReadRssViewModel(application: Application) : BaseViewModel(application),
+    TextToSpeech.OnInitListener {
     var callBack: CallBack? = null
     var rssSource: RssSource? = null
     var rssArticle: RssArticle? = null
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<AnalyzeUrl>()
     var star = false
+    var textToSpeech: TextToSpeech = TextToSpeech(context, this)
 
     fun initData(intent: Intent) {
         execute {
@@ -63,7 +70,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
             }
     }
 
-    fun star() {
+    fun favorite() {
         execute {
             rssArticle?.let {
                 if (star) {
@@ -71,6 +78,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 } else {
                     App.db.rssStarDao().insert(it.toStar())
                 }
+                star = !star
             }
         }.onSuccess {
             callBack?.upStarMenu()
@@ -86,12 +94,57 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                     img{max-width:100% !important; width:auto; height:auto;}
                     video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
                     body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
-                </style>$content
-             """
+                </style>
+                $content
+            """.trimIndent()
         }
+    }
+
+    override fun onInit(status: Int) {
+        launch {
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech.language = Locale.CHINA
+                textToSpeech.setOnUtteranceProgressListener(TTSUtteranceListener())
+            } else {
+                toast(R.string.tts_init_failed)
+            }
+        }
+    }
+
+    fun readAloud(text: String) {
+        textToSpeech.stop()
+        text.split("\n", "  ", "　　").forEach {
+            textToSpeech.speak(it, TextToSpeech.QUEUE_ADD, null, "rss")
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        textToSpeech.stop()
+        textToSpeech.shutdown()
+    }
+
+    /**
+     * 朗读监听
+     */
+    private inner class TTSUtteranceListener : UtteranceProgressListener() {
+
+        override fun onStart(s: String) {
+            callBack?.upTtsMenu(true)
+        }
+
+        override fun onDone(s: String) {
+            callBack?.upTtsMenu(false)
+        }
+
+        override fun onError(s: String) {
+
+        }
+
     }
 
     interface CallBack {
         fun upStarMenu()
+        fun upTtsMenu(isPlaying: Boolean)
     }
 }
