@@ -77,15 +77,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
                 val html = viewModel.clHtml(content)
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    webView.loadDataWithBaseURL(
-                        url,
-                        html,
-                        "text/html",
-                        "utf-8",
-                        url
-                    )//不想用baseUrl进else
+                    webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)//不想用baseUrl进else
                 } else {
-                    webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
+                    //webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
+                    webView.loadDataWithBaseURL(null, html, "text/html;charset=utf-8", "utf-8", url)
                 }
             }
         })
