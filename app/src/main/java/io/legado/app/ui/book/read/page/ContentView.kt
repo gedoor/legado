@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
@@ -110,9 +111,9 @@ class ContentView : FrameLayout {
         content_text_view.selectAble = selectAble
     }
 
-    fun selectText(e: MotionEvent) {
+    fun selectText(e: MotionEvent): TextChar? {
         val y = e.y - headerHeight
-        content_text_view.selectText(e.x, y)
+        return content_text_view.selectText(e.x, y)
     }
 
     fun scrollTo(pos: Int?) {
