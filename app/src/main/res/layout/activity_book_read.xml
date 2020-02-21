@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <io.legado.app.ui.book.read.page.ContentView
-        android:id="@+id/content_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible" />
-
     <io.legado.app.ui.book.read.page.PageView
         android:id="@+id/page_view"
         android:layout_width="match_parent"

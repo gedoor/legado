@@ -516,7 +516,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
-            content_view.upStyle()
             page_view.upBg()
             page_view.upStyle()
             ChapterProvider.upStyle(ReadBookConfig.durConfig)
