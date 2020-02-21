@@ -16,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.read.Help
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 
 class MoreConfigDialog : DialogFragment() {
@@ -54,8 +55,7 @@ class MoreConfigDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var preferenceFragment = childFragmentManager.findFragmentByTag(readPreferTag)
-        if (preferenceFragment == null) preferenceFragment =
-            ReadPreferenceFragment()
+        if (preferenceFragment == null) preferenceFragment = ReadPreferenceFragment()
         childFragmentManager.beginTransaction()
             .replace(view.id, preferenceFragment, readPreferTag)
             .commit()
@@ -94,7 +94,8 @@ class MoreConfigDialog : DialogFragment() {
             when (key) {
                 PreferKey.hideStatusBar -> postEvent(EventBus.UP_CONFIG, true)
                 PreferKey.hideNavigationBar -> postEvent(EventBus.UP_CONFIG, true)
-                PreferKey.keepLight -> postEvent(PreferKey.keepLight, true)
+                PreferKey.keepLight -> postEvent(key, true)
+                PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
             }
         }
 

@@ -151,6 +151,10 @@ class PageView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    fun upSelectAble(selectAble: Boolean) {
+        pageDelegate?.upSelectAble(selectAble)
+    }
+
     fun upStyle() {
         curPage.upStyle()
         prevPage.upStyle()

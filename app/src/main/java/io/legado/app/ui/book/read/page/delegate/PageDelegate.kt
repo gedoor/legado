@@ -59,7 +59,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     private val detector: GestureDetector by lazy {
         GestureDetector(pageView.context, this).apply {
-            setIsLongpressEnabled(context.getPrefBoolean(PreferKey.selectText))
+            setIsLongpressEnabled(context.getPrefBoolean(PreferKey.textSelectAble))
         }
     }
 
@@ -90,6 +90,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
         }
 
         onScroll()
+    }
+
+    fun upSelectAble(selectAble: Boolean) {
+        detector.setIsLongpressEnabled(selectAble)
     }
 
     protected fun invalidate() {
@@ -185,10 +189,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
     abstract fun onAnimStop()//scroller finish
 
     open fun onScroll() {//移动contentView， slidePage
-    }
-
-    enum class Direction {
-        NONE, PREV, NEXT
     }
 
     @CallSuper
@@ -305,6 +305,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
             }
         }
         return hasNext
+    }
+
+    enum class Direction {
+        NONE, PREV, NEXT
     }
 
     fun MotionEvent.toAction(action: Int): MotionEvent {
