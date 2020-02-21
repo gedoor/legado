@@ -94,7 +94,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         tv_title_center.onClick {
             ReadBookConfig.durConfig.apply {
                 titleCenter = !titleCenter
-                tv_text_bold.isSelected = titleCenter
+                tv_title_center.isSelected = titleCenter
             }
             postEvent(EventBus.UP_CONFIG, true)
         }
