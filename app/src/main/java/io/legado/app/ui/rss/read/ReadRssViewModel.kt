@@ -86,7 +86,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     fun clHtml(content: String): String {
-        return if (content.contains("<style>|style=".toRegex())) {
+        return if (content.contains("<style>".toRegex())) {
             content
         } else {
             """

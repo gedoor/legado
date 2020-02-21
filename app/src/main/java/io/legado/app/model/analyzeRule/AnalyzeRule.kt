@@ -8,6 +8,7 @@ import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.JsExtensions
 import io.legado.app.utils.*
+import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
 import java.util.*
 import java.util.regex.Pattern
@@ -206,7 +207,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                                 else -> sourceRule.rule
                             }
                         }
-                        if (sourceRule.replaceRegex.isNotEmpty()) {
+                        if ((result != null) && sourceRule.replaceRegex.isNotEmpty()) {
                             result = replaceRegex(result.toString(), sourceRule)
                         }
                     }
@@ -214,10 +215,15 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             }
         }
         if (result == null) result = ""
-        if (isUrl) {
-            return NetworkUtils.getAbsoluteURL(baseUrl, result.toString()) ?: ""
+        val str = try {
+            Entities.unescape(result.toString())
+        } catch (e: Exception) {
+            result.toString()
         }
-        return result.toString()
+        if (isUrl) {
+            return NetworkUtils.getAbsoluteURL(baseUrl, str) ?: ""
+        }
+        return str
     }
 
     /**
