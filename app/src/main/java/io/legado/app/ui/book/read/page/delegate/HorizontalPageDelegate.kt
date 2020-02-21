@@ -1,9 +1,7 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.view.MotionEvent
-import io.legado.app.constant.PreferKey
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.getPrefBoolean
 import kotlin.math.abs
 
 abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
@@ -15,9 +13,6 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         distanceY: Float
     ): Boolean {
         if (!isMoved) {
-            val event = e1.toAction(MotionEvent.ACTION_UP)
-            curPage.dispatchTouchEvent(event)
-            event.recycle()
             if (abs(distanceX) > abs(distanceY)) {
                 if (distanceX < 0) {
                     //如果上一页不存在
@@ -48,13 +43,4 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         return isMoved
     }
 
-    override fun upSelectAble() {
-        pageView.curPage.contentTextView()?.apply {
-            if (context.getPrefBoolean(PreferKey.selectText)) {
-//                setTextIsSelectable(true)
-            } else {
-//                setTextIsSelectable(false)
-            }
-        }
-    }
 }

@@ -99,7 +99,6 @@ class PageView(context: Context, attrs: AttributeSet) :
             3 -> ScrollPageDelegate(this)
             else -> NoAnimPageDelegate(this)
         }
-        pageDelegate?.upSelectAble()
         upContent()
     }
 
@@ -173,10 +172,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         curPage.upBattery(battery)
         prevPage.upBattery(battery)
         nextPage.upBattery(battery)
-    }
-
-    fun upSelectAble() {
-        pageDelegate?.upSelectAble()
     }
 
     override val isScrollDelegate: Boolean

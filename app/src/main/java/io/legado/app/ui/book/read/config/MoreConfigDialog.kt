@@ -16,9 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.read.Help
-import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.postEvent
-import kotlinx.android.synthetic.main.activity_book_read.*
 
 class MoreConfigDialog : DialogFragment() {
     private val readPreferTag = "readPreferenceFragment"
@@ -97,12 +95,6 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.hideStatusBar -> postEvent(EventBus.UP_CONFIG, true)
                 PreferKey.hideNavigationBar -> postEvent(EventBus.UP_CONFIG, true)
                 PreferKey.keepLight -> postEvent(PreferKey.keepLight, true)
-                PreferKey.selectText -> {
-                    val activity = activity
-                    if (activity is ReadBookActivity) {
-                        activity.page_view.upSelectAble()
-                    }
-                }
             }
         }
 

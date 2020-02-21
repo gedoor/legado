@@ -185,20 +185,8 @@ abstract class PageDelegate(protected val pageView: PageView) {
     @CallSuper
     open fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
-        if (curPage.isTextSelected()) {
-            curPage.dispatchTouchEvent(event)
-            return true
-        }
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            curPage.let {
-                it.contentTextView()?.let { contentTextView ->
-                    //                    atTop = contentTextView.atTop()
-//                    atBottom = contentTextView.atBottom()
-                }
-                it.dispatchTouchEvent(event)
-            }
-        } else if (event.action == MotionEvent.ACTION_UP) {
-            curPage.dispatchTouchEvent(event)
+        curPage.dispatchTouchEvent(event)
+        if (event.action == MotionEvent.ACTION_UP) {
             if (isMoved) {
                 // 开启翻页效果
                 if (!noNext) onScrollStart()
@@ -207,8 +195,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
         }
         return detector.onTouchEvent(event)
     }
-
-    abstract fun upSelectAble()
 
     abstract fun onScrollStart()//scroller start
 
