@@ -24,6 +24,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.receiver.TimeElectricityReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -114,6 +115,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 初始化View
      */
     private fun initView() {
+        cursor_left.setColorFilter(accentColor)
+        cursor_right.setColorFilter(accentColor)
         tv_chapter_name.onClick {
             ReadBook.webBook?.let {
                 startActivityForResult<BookSourceEditActivity>(

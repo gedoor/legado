@@ -113,7 +113,12 @@ class ContentView : FrameLayout {
 
     fun selectText(e: MotionEvent): SelectPoint? {
         val y = e.y - headerHeight
-        return content_text_view.selectText(e.x, y)
+        val selectPoint = content_text_view.selectText(e.x, y)
+        selectPoint?.let {
+            it.startY = it.startY + headerHeight
+            it.endY = it.endY + headerHeight
+        }
+        return selectPoint
     }
 
     fun scrollTo(pos: Int?) {
