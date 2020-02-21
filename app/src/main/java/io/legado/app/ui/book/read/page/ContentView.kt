@@ -105,12 +105,8 @@ class ContentView : FrameLayout {
         }
     }
 
-    fun isTextSelected(): Boolean {
-        return false
-    }
-
-    fun contentTextView(): ContentTextView? {
-        return content_text_view
+    fun upSelectAble(selectAble: Boolean) {
+        content_text_view.selectAble = selectAble
     }
 
     fun scrollTo(pos: Int?) {

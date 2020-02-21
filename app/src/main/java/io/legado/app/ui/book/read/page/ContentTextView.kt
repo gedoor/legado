@@ -6,20 +6,17 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefBoolean
 
 
-class ContentTextView : View {
-    constructor(context: Context) : super(context)
+class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr)
-
+    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press)
