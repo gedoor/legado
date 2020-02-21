@@ -23,6 +23,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
+            style = Paint.Style.FILL
         }
     }
     var textPage: TextPage? = null
