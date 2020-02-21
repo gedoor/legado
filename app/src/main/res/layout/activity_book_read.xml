@@ -13,7 +13,7 @@
         android:id="@+id/cursor_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@null"
+        android:contentDescription="@string/select_start"
         android:src="@drawable/ic_cursor_left"
         android:visibility="invisible" />
 
@@ -21,7 +21,7 @@
         android:id="@+id/cursor_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@null"
+        android:contentDescription="@string/select_end"
         android:src="@drawable/ic_cursor_right"
         android:visibility="invisible" />
 

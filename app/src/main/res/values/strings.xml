@@ -615,4 +615,6 @@
     <string name="header">页眉</string>
     <string name="main_body">正文</string>
     <string name="footer">页角</string>
+    <string name="select_end">文本选择结束位置</string>
+    <string name="select_start">文本选择开始位置</string>
 </resources>
