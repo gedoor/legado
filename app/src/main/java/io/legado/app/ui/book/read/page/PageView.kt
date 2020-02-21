@@ -10,8 +10,8 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
+import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
 
@@ -256,6 +256,6 @@ class PageView(context: Context, attrs: AttributeSet) :
 
         fun screenOffTimerStart()
 
-        fun selectText(textChar: TextChar)
+        fun selectText(selectPoint: SelectPoint)
     }
 }

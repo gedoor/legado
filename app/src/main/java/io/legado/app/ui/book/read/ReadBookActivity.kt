@@ -35,7 +35,7 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
-import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
@@ -390,9 +390,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
-    override fun selectText(textChar: TextChar) {
-        cursor_left
-        cursor_right
+    override fun selectText(selectPoint: SelectPoint) {
+        cursor_left.x = selectPoint.startX - cursor_left.width
+        cursor_left.y = selectPoint.startY
+        cursor_right.x = selectPoint.endX
+        cursor_right.y = selectPoint.endY
+        cursor_left.visible()
+        cursor_right.visible()
     }
 
     override fun showReadAloudDialog() {

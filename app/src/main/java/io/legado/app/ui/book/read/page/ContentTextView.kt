@@ -11,7 +11,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
@@ -82,7 +82,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    fun selectText(x: Float, y: Float): TextChar? {
+    fun selectText(x: Float, y: Float): SelectPoint? {
         textPage?.let { textPage ->
             for (textLine in textPage.textLines) {
                 if (y > textLine.lineTop && y < textLine.lineBottom) {
@@ -90,7 +90,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
                             textChar.selected = true
                             invalidate()
-                            return textChar
+                            return SelectPoint(
+                                textChar.leftBottomPosition.x,
+                                textChar.leftBottomPosition.y.toFloat(),
+                                textChar.rightTopPosition.x,
+                                textChar.leftBottomPosition.y.toFloat()
+                            )
                         }
                     }
                     break
