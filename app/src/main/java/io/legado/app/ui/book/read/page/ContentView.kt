@@ -133,6 +133,10 @@ class ContentView : FrameLayout {
         content_text_view.selectEndMove(x, y)
     }
 
+    fun cancelSelect() {
+        content_text_view.cancelSelect()
+    }
+
     fun scrollTo(pos: Int?) {
         if (pos != null) {
             content_text_view.post {

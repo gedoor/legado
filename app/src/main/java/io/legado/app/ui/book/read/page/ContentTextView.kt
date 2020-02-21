@@ -166,4 +166,19 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
+    fun cancelSelect() {
+        textPage?.let { textPage ->
+            textPage.textLines.forEach { textLine ->
+                textLine.textChars.forEach {
+                    it.selected = false
+                }
+            }
+            invalidate()
+        }
+
+    }
+
+    interface CallBack {
+        fun onCancelSelect()
+    }
 }

@@ -71,6 +71,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var isCancel = false
     var isRunning = false
     var isStarted = false
+    var isTextSelected = false
 
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
@@ -218,6 +219,9 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 按下
      */
     override fun onDown(e: MotionEvent): Boolean {
+        if (isTextSelected) {
+            curPage.cancelSelect()
+        }
 //            abort()
         //是否移动
         isMoved = false
@@ -272,6 +276,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     override fun onLongPress(e: MotionEvent) {
         val textChar = curPage.selectText(e)
         textChar?.let {
+            isTextSelected = true
             pageView.callBack?.selectText(it)
         }
     }
