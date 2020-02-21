@@ -19,7 +19,7 @@ import java.util.*
 
 class ContentView : FrameLayout {
     var callBack: CallBack? = null
-    var headerHeight = 0
+    private var headerHeight = 0
     private var pageSize: Int = 0
 
     constructor(context: Context) : super(context) {
@@ -40,6 +40,10 @@ class ContentView : FrameLayout {
 
     fun upStyle() {
         ReadBookConfig.durConfig.apply {
+            tv_top_left.typeface = ChapterProvider.typeface
+            tv_top_right.typeface = ChapterProvider.typeface
+            tv_bottom_left.typeface = ChapterProvider.typeface
+            tv_bottom_right.typeface = ChapterProvider.typeface
             if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
                 //显示状态栏时隐藏header
                 ll_header.visible()

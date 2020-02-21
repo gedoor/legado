@@ -26,6 +26,7 @@ object ChapterProvider {
     private var paddingTop = 0
     private var lineSpacingExtra = 0f
     private var paragraphSpacing = 0
+    var typeface: Typeface = Typeface.SANS_SERIF
     var titlePaint = TextPaint()
     var contentPaint = TextPaint()
     private var bodyIndent = BookHelp.bodyIndent
@@ -35,7 +36,7 @@ object ChapterProvider {
     }
 
     fun upStyle(config: ReadBookConfig.Config) {
-        val typeface: Typeface = try {
+        typeface = try {
             val fontPath = App.INSTANCE.getPrefString(PreferKey.readBookFont)
             if (!TextUtils.isEmpty(fontPath)) {
                 Typeface.createFromFile(fontPath)
