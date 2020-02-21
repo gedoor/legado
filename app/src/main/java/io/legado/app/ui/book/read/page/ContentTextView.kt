@@ -105,4 +105,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
         return null
     }
+
+    fun selectStartMove(x: Float, y: Float) {
+
+    }
+
+    fun selectEndMove(x: Float, y: Float) {
+
+    }
+
 }
