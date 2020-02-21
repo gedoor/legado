@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.text.SpannableStringBuilder
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -506,7 +505,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             if (it == Status.STOP || it == Status.PAUSE) {
                 ReadBook.curTextChapter?.let { textChapter ->
                     val page = textChapter.page(ReadBook.durPageIndex)
-                    if (page != null && page.text is SpannableStringBuilder) {
+                    if (page != null) {
                         page.removePageAloudSpan()
                         page_view.upContent()
                     }

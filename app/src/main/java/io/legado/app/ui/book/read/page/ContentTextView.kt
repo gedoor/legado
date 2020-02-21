@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.page.entities.TextPage
 
 
@@ -36,22 +37,23 @@ class ContentTextView : View {
         super.onDraw(canvas)
         textPage?.let { textPage ->
             textPage.textLines.forEach { textLine ->
+                val textPaint = if (textLine.isTitle) {
+                    ChapterProvider.titlePaint
+                } else {
+                    ChapterProvider.contentPaint
+                }
+                textPaint.color = if (textLine.isReadAloud) {
+                    context.accentColor
+                } else {
+                    ReadBookConfig.durConfig.textColor()
+                }
                 textLine.textChars.forEach {
-                    if (textLine.isTitle) {
-                        canvas.drawText(
-                            it.charData,
-                            it.leftBottomPosition.x.toFloat(),
-                            it.leftBottomPosition.y.toFloat(),
-                            ChapterProvider.titlePaint
-                        )
-                    } else {
-                        canvas.drawText(
-                            it.charData,
-                            it.leftBottomPosition.x.toFloat(),
-                            it.leftBottomPosition.y.toFloat(),
-                            ChapterProvider.contentPaint
-                        )
-                    }
+                    canvas.drawText(
+                        it.charData,
+                        it.leftBottomPosition.x.toFloat(),
+                        it.leftBottomPosition.y.toFloat(),
+                        textPaint
+                    )
                 }
             }
         }

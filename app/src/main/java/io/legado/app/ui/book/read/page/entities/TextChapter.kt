@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.read.page.entities
 
-import android.text.SpannableStringBuilder
 import kotlin.math.min
 
 data class TextChapter(
@@ -28,12 +27,12 @@ data class TextChapter(
 
     fun scrollPage(): TextPage? {
         if (pages.isNotEmpty()) {
-            val spannableStringBuilder = SpannableStringBuilder()
+            val stringBuilder = StringBuilder()
             pages.forEach {
-                spannableStringBuilder.append(it.text)
+                stringBuilder.append(it.text)
             }
             return TextPage(
-                index = 0, text = spannableStringBuilder, title = title,
+                index = 0, text = stringBuilder.toString(), title = title,
                 pageSize = pages.size, chapterSize = chaptersSize, chapterIndex = position
             )
         }
