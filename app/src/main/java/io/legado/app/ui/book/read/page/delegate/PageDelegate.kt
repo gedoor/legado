@@ -20,7 +20,7 @@ import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) :
     GestureDetector.SimpleOnGestureListener() {
-    val centerRectF = RectF(
+    private val centerRectF = RectF(
         pageView.width * 0.33f, pageView.height * 0.33f,
         pageView.width * 0.66f, pageView.height * 0.66f
     )
