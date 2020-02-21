@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -312,9 +313,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * view触摸
      */
-    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-
-
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
+                when (v.id) {
+                    R.id.cursor_left -> page_view.selectStartMove(event.x, event.y)
+                    R.id.cursor_right -> page_view.selectEndMove(event.x, event.y)
+                }
+            }
+        }
         return true
     }
 

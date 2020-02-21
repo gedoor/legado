@@ -121,6 +121,14 @@ class ContentView : FrameLayout {
         return selectPoint
     }
 
+    fun selectStartMove(x: Float, y: Float) {
+
+    }
+
+    fun selectEndMove(x: Float, y: Float) {
+
+    }
+
     fun scrollTo(pos: Int?) {
         if (pos != null) {
             content_text_view.post {

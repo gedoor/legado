@@ -184,6 +184,14 @@ class PageView(context: Context, attrs: AttributeSet) :
         nextPage.upBattery(battery)
     }
 
+    fun selectStartMove(x: Float, y: Float) {
+        curPage.selectStartMove(x, y)
+    }
+
+    fun selectEndMove(x: Float, y: Float) {
+        curPage.selectEndMove(x, y)
+    }
+
     override val isScrollDelegate: Boolean
         get() = pageDelegate is ScrollPageDelegate
 
