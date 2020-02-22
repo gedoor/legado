@@ -214,6 +214,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             R.id.menu_book_info -> ReadBook.book?.let {
                 startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
             }
+            R.id.menu_toc_regex -> TocRegexDialog.show(
+                supportFragmentManager,
+                ReadBook.book?.tocUrl
+            )
         }
         return super.onCompatOptionsItemSelected(item)
     }

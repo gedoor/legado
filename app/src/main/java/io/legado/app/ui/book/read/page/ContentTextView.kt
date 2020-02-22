@@ -130,6 +130,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             pageOffset = 0f
         }
 
+        val cHeight = if (textPage.height > 0) textPage.height else height
 
     }
 
