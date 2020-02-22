@@ -26,11 +26,14 @@ abstract class PageDelegate(protected val pageView: PageView) :
     )
     protected val context: Context = pageView.context
     //起始点
-    protected var startX: Float = 0.toFloat()
-    protected var startY: Float = 0.toFloat()
+    protected var startX: Float = 0f
+    protected var startY: Float = 0f
+    //上一个触碰点
+    protected var lastX: Float = 0f
+    protected var lastY: Float = 0f
     //触碰点
-    protected var touchX: Float = 0.toFloat()
-    protected var touchY: Float = 0.toFloat()
+    protected var touchX: Float = 0f
+    protected var touchY: Float = 0f
 
     protected val nextPage: ContentView
         get() = pageView.nextPage
@@ -76,6 +79,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
+        lastX = x
+        lastY = y
+        touchX = x
+        touchY = y
 
         if (invalidate) {
             invalidate()
@@ -83,6 +90,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     open fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
+        lastX = touchX
+        lastY = touchY
         touchX = x
         touchY = y
 
@@ -99,6 +108,16 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     protected fun invalidate() {
         pageView.invalidate()
+    }
+
+    open fun fling(
+        startX: Int, startY: Int, velocityX: Int, velocityY: Int,
+        minX: Int, maxX: Int, minY: Int, maxY: Int
+    ) {
+        scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY)
+        isRunning = true
+        isStarted = true
+        invalidate()
     }
 
     protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int) {
@@ -331,20 +350,4 @@ abstract class PageDelegate(protected val pageView: PageView) :
         NONE, PREV, NEXT
     }
 
-    fun MotionEvent.toAction(action: Int): MotionEvent {
-        return MotionEvent.obtain(
-            downTime,
-            eventTime,
-            action,
-            x,
-            y,
-            pressure,
-            size,
-            metaState,
-            xPrecision,
-            yPrecision,
-            deviceId,
-            edgeFlags
-        )
-    }
 }

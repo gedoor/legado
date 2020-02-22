@@ -14,7 +14,11 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
 
     override fun onAnimStart() {
-
+        //惯性滚动
+        fling(
+            0, touchY.toInt(), 0, mVelocity.yVelocity.toInt(),
+            0, 0, -10 * viewHeight, 10 * viewHeight
+        )
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -29,6 +33,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     override fun onDown(e: MotionEvent): Boolean {
         mVelocity.clear()
+        mVelocity.addMovement(e)
         return super.onDown(e)
     }
 
@@ -38,12 +43,11 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         distanceX: Float,
         distanceY: Float
     ): Boolean {
+        mVelocity.addMovement(e2)
+        setTouchPoint(e2.x, e2.y)
         if (!isMoved && abs(distanceX) < abs(distanceY)) {
             if (distanceY < 0) {
                 if (atTop) {
-                    val event = e1.toAction(MotionEvent.ACTION_UP)
-                    curPage.dispatchTouchEvent(event)
-                    event.recycle()
                     //如果上一页不存在
                     if (!hasPrev()) {
                         noNext = true
@@ -54,9 +58,6 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                 }
             } else {
                 if (atBottom) {
-                    val event = e1.toAction(MotionEvent.ACTION_UP)
-                    curPage.dispatchTouchEvent(event)
-                    event.recycle()
                     //如果不存在表示没有下一页了
                     if (!hasNext()) {
                         noNext = true
@@ -81,6 +82,15 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         return isMoved
     }
 
+    override fun onFling(
+        e1: MotionEvent?,
+        e2: MotionEvent?,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        mVelocity.addMovement(e2)
+        return super.onFling(e1, e2, velocityX, velocityY)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
