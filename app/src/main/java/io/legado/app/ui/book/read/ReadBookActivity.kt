@@ -80,7 +80,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private var screenTimeOut: Long = 0
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
 
-    override val headerHeight: Int get() = page_view.headerHeight
+    override val headerHeight: Int get() = page_view.curPage.headerHeight
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Help.upLayoutInDisplayCutoutMode(window)
@@ -323,11 +323,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         when (event.action) {
             MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
                 when (v.id) {
-                    R.id.cursor_left -> page_view.selectStartMove(
+                    R.id.cursor_left -> page_view.curPage.selectStartMove(
                         event.rawX + cursor_left.width,
                         event.rawY - cursor_left.height
                     )
-                    R.id.cursor_right -> page_view.selectEndMove(
+                    R.id.cursor_right -> page_view.curPage.selectEndMove(
                         event.rawX - cursor_right.width,
                         event.rawY - cursor_right.height
                     )
@@ -385,7 +385,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
-    override val selectedText: String get() = page_view.selectedText
+    override val selectedText: String get() = page_view.curPage.selectedText
 
     override fun onMenuItemSelected(item: MenuItemImpl): Boolean {
         when (item.itemId) {
@@ -393,6 +393,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 .show(supportFragmentManager, pattern = selectedText)
         }
         return false
+    }
+
+    override fun onMenuActionFinally() {
+        textActionMenu?.dismiss()
+        page_view.pageDelegate?.isTextSelected = false
     }
 
     /**

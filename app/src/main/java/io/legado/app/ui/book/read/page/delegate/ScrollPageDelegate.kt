@@ -1,14 +1,11 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
-import android.graphics.Matrix
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.abs
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
-
-    private val bitmapMatrix = Matrix()
 
     override fun onAnimStart() {
         if (!atTop && !atBottom) {
@@ -39,26 +36,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (atTop || atBottom) {
-            val offsetY = touchY - startY
 
-            if ((mDirection == Direction.NEXT && offsetY > 0)
-                || (mDirection == Direction.PREV && offsetY < 0)
-            ) return
-
-            val distanceY = if (offsetY > 0) offsetY - viewHeight else offsetY + viewHeight
-            if (atTop && mDirection == Direction.PREV) {
-                bitmap?.let {
-                    bitmapMatrix.setTranslate(0.toFloat(), distanceY)
-                    canvas.drawBitmap(it, bitmapMatrix, null)
-                }
-            } else if (atBottom && mDirection == Direction.NEXT) {
-                bitmap?.let {
-                    bitmapMatrix.setTranslate(0.toFloat(), distanceY)
-                    canvas.drawBitmap(it, bitmapMatrix, null)
-                }
-            }
-        }
     }
 
     override fun onAnimStop() {

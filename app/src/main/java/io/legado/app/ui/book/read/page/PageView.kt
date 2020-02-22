@@ -21,7 +21,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     var callBack: CallBack? = null
     var pageFactory: TextPageFactory? = null
-    private var pageDelegate: PageDelegate? = null
+    var pageDelegate: PageDelegate? = null
 
     var prevPage: ContentView
     var curPage: ContentView
@@ -182,18 +182,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         prevPage.upBattery(battery)
         nextPage.upBattery(battery)
     }
-
-    fun selectStartMove(x: Float, y: Float) {
-        curPage.selectStartMove(x, y)
-    }
-
-    fun selectEndMove(x: Float, y: Float) {
-        curPage.selectEndMove(x, y)
-    }
-
-    val headerHeight: Int get() = curPage.headerHeight
-
-    val selectedText: String get() = curPage.selectedText
 
     override val isScrollDelegate: Boolean
         get() = pageDelegate is ScrollPageDelegate
