@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.utils.sendToClip
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.popup_action_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class TextActionMenu(context: Context, callBack: CallBack) :
+class TextActionMenu(private val context: Context, private val callBack: CallBack) :
     PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
     init {
@@ -55,17 +56,25 @@ class TextActionMenu(context: Context, callBack: CallBack) :
         }
 
         override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                onClick {
-                    getItem(holder.layoutPosition)?.let {
-
+            holder.itemView.onClick {
+                getItem(holder.layoutPosition)?.let {
+                    if (!callBack.onMenuItemSelected(it)) {
+                        onMenuItemSelected(it)
                     }
                 }
             }
         }
     }
 
-    interface CallBack {
+    private fun onMenuItemSelected(item: MenuItemImpl) {
+        when (item.itemId) {
+            R.id.menu_copy -> context.sendToClip(callBack.getSelectedText())
+        }
+    }
 
+
+    interface CallBack {
+        fun onMenuItemSelected(item: MenuItemImpl): Boolean
+        fun getSelectedText(): String
     }
 }

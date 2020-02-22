@@ -1,8 +1,5 @@
 package io.legado.app.ui.about
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.sendToClip
 import io.legado.app.utils.toast
 
 class AboutFragment : PreferenceFragmentCompat() {
@@ -52,7 +50,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "license" -> openIntent(Intent.ACTION_VIEW, licenseUrl)
             "disclaimer" -> openIntent(Intent.ACTION_VIEW, disclaimerUrl)
             "qq" -> showQqGroups()
-            "gzGzh" -> sendToClip("开源阅读软件")
+            "gzGzh" -> requireContext().sendToClip("开源阅读软件")
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -86,7 +84,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             items(names) { _, index ->
                 qqGroups[names[index]]?.let {
                     if (!joinQQGroup(it)) {
-                        sendToClip(it)
+                        requireContext().sendToClip(it)
                     }
                 }
             }
@@ -107,13 +105,4 @@ class AboutFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun sendToClip(text: String) {
-        val clipboard =
-            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-        val clipData = ClipData.newPlainText(null, text)
-        clipboard?.let {
-            clipboard.setPrimaryClip(clipData)
-            toast(R.string.copy_complete)
-        }
-    }
 }

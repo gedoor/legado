@@ -1,9 +1,7 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -129,6 +127,16 @@ fun Context.shareWithQr(title: String, text: String) {
         } catch (e: Exception) {
             toast(e.localizedMessage ?: "ERROR")
         }
+    }
+}
+
+fun Context.sendToClip(text: String) {
+    val clipboard =
+        getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+    val clipData = ClipData.newPlainText(null, text)
+    clipboard?.let {
+        clipboard.setPrimaryClip(clipData)
+        toast(R.string.copy_complete)
     }
 }
 

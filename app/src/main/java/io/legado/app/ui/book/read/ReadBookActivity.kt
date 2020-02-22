@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
@@ -382,6 +383,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 )
             }
         }
+    }
+
+    override fun getSelectedText(): String {
+        return page_view.selectedText
+    }
+
+    override fun onMenuItemSelected(item: MenuItemImpl): Boolean {
+
+        return false
     }
 
     /**
