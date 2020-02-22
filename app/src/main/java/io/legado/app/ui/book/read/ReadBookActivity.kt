@@ -385,8 +385,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    /**
+     * 当前选择的文本
+     */
     override val selectedText: String get() = page_view.curPage.selectedText
 
+    /**
+     * 文本选择菜单操作
+     */
     override fun onMenuItemSelected(item: MenuItemImpl): Boolean {
         when (item.itemId) {
             R.id.menu_replace -> ReplaceEditDialog
@@ -395,6 +401,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return false
     }
 
+    /**
+     * 文本选择菜单操作完成
+     */
     override fun onMenuActionFinally() {
         textActionMenu?.dismiss()
         page_view.pageDelegate?.isTextSelected = false
@@ -431,12 +440,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    /**
+     * 更新内容
+     */
     override fun upContent(position: Int) {
         launch {
             page_view.upContent(position)
         }
     }
 
+    /**
+     * 更新视图
+     */
     override fun upView() {
         launch {
             ReadBook.curTextChapter?.let {
@@ -454,12 +469,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    /**
+     * 更新进度条
+     */
     override fun upPageProgress() {
         launch {
             seek_read_page.progress = ReadBook.durPageIndex
         }
     }
 
+    /**
+     * 显示菜单
+     */
     override fun showMenuBar() {
         read_menu.runMenuIn()
     }
