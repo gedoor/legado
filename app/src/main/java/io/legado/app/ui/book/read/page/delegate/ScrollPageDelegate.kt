@@ -4,12 +4,11 @@ import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import io.legado.app.ui.book.read.page.PageView
-import kotlin.math.abs
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     // 滑动追踪的时间
-    private val VELOCITY_DURATION = 1000
+    private val velocityDuration = 1000
     //速度追踪器
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
 
@@ -44,42 +43,12 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         distanceY: Float
     ): Boolean {
         mVelocity.addMovement(e2)
+        mVelocity.computeCurrentVelocity(velocityDuration)
         setTouchPoint(e2.x, e2.y)
-        if (!isMoved && abs(distanceX) < abs(distanceY)) {
-            if (distanceY < 0) {
-                if (atTop) {
-                    //如果上一页不存在
-                    if (!hasPrev()) {
-                        noNext = true
-                        return true
-                    }
-                    setDirection(Direction.PREV)
-                    setBitmap()
-                }
-            } else {
-                if (atBottom) {
-                    //如果不存在表示没有下一页了
-                    if (!hasNext()) {
-                        noNext = true
-                        return true
-                    }
-                    setDirection(Direction.NEXT)
-                    setBitmap()
-                }
-            }
-            isMoved = true
-        }
-        if ((atTop && mDirection != Direction.PREV) || (atBottom && mDirection != Direction.NEXT) || mDirection == Direction.NONE) {
-            //传递触摸事件到textView
-            curPage.dispatchTouchEvent(e2)
-        }
-        if (isMoved) {
-            isCancel = if (mDirection == Direction.NEXT) distanceY < 0 else distanceY > 0
-            isRunning = true
-            //设置触摸点
-            setTouchPoint(e2.x, e2.y)
-        }
-        return isMoved
+
+        curPage.onScroll(lastY - touchY)
+
+        return true
     }
 
     override fun onFling(

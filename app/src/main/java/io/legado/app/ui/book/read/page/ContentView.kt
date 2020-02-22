@@ -108,6 +108,10 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
     }
 
+    fun onScroll(offset: Float) {
+        content_text_view.onScroll(offset)
+    }
+
     fun upSelectAble(selectAble: Boolean) {
         content_text_view.selectAble = selectAble
     }

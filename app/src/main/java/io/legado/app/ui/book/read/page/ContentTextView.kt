@@ -83,6 +83,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
+    fun onScroll(offset: Float) {
+
+    }
+
     fun selectText(x: Float, y: Float): Boolean {
         textPage?.let { textPage ->
             for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
