@@ -3,6 +3,8 @@ package io.legado.app.ui.book.read.page
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.text.Layout
+import android.text.StaticLayout
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
@@ -37,10 +39,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     init {
         activityCallBack = activity as CallBack
+        contentDescription = textPage.text
     }
 
     fun setContent(textPage: TextPage) {
         this.textPage = textPage
+        contentDescription = textPage.text
         invalidate()
     }
 
@@ -55,6 +59,29 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (textPage.textLines.isEmpty()) {
+            drawMsg(canvas, textPage.text)
+        } else {
+            drawHorizontalPage(canvas)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun drawMsg(canvas: Canvas, msg: String) {
+        val layout = StaticLayout(
+            msg, ChapterProvider.contentPaint, width,
+            Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false
+        )
+        val y = (height - layout.height) / 2f
+        for (lineIndex in 0 until layout.lineCount) {
+            val x = (width - layout.getLineMax(lineIndex)) / 2
+            val words =
+                msg.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
+            canvas.drawText(words, x, y, ChapterProvider.contentPaint)
+        }
+    }
+
+    private fun drawHorizontalPage(canvas: Canvas) {
         textPage.textLines.forEach { textLine ->
             val textPaint = if (textLine.isTitle) {
                 ChapterProvider.titlePaint

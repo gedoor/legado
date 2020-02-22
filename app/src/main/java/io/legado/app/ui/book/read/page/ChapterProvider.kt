@@ -35,47 +35,9 @@ object ChapterProvider {
         upStyle(ReadBookConfig.durConfig)
     }
 
-    fun upStyle(config: ReadBookConfig.Config) {
-        typeface = try {
-            val fontPath = App.INSTANCE.getPrefString(PreferKey.readBookFont)
-            if (!TextUtils.isEmpty(fontPath)) {
-                Typeface.createFromFile(fontPath)
-            } else {
-                Typeface.SANS_SERIF
-            }
-        } catch (e: Exception) {
-            App.INSTANCE.removePref(PreferKey.readBookFont)
-            Typeface.SANS_SERIF
-        }
-        //标题
-        titlePaint.isAntiAlias = true
-        titlePaint.color = config.textColor()
-        titlePaint.letterSpacing = config.letterSpacing
-        titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
-        //正文
-        contentPaint.isAntiAlias = true
-        contentPaint.color = config.textColor()
-        contentPaint.letterSpacing = config.letterSpacing
-        val bold = if (config.textBold) Typeface.BOLD else Typeface.NORMAL
-        contentPaint.typeface = Typeface.create(typeface, bold)
-        //间距
-        lineSpacingExtra = config.lineSpacingExtra.dp.toFloat()
-        paragraphSpacing = config.paragraphSpacing.dp
-        titlePaint.textSize = (config.textSize + 2).dp.toFloat()
-        contentPaint.textSize = config.textSize.dp.toFloat()
-
-        bodyIndent = BookHelp.bodyIndent
-
-        upSize(config)
-    }
-
-    fun upSize(config: ReadBookConfig.Config) {
-        paddingLeft = config.paddingLeft.dp
-        paddingTop = config.paddingTop.dp
-        visibleWidth = viewWidth - paddingLeft - config.paddingRight.dp
-        visibleHeight = viewHeight - paddingTop - config.paddingBottom.dp
-    }
-
+    /**
+     * 获取拆分完的章节数据
+     */
     fun getTextChapter(
         bookChapter: BookChapter,
         content: String,
@@ -328,4 +290,53 @@ object ChapterProvider {
         durY += paragraphSpacing
         return durY
     }
+
+
+    /**
+     * 更新样式
+     */
+    fun upStyle(config: ReadBookConfig.Config) {
+        typeface = try {
+            val fontPath = App.INSTANCE.getPrefString(PreferKey.readBookFont)
+            if (!TextUtils.isEmpty(fontPath)) {
+                Typeface.createFromFile(fontPath)
+            } else {
+                Typeface.SANS_SERIF
+            }
+        } catch (e: Exception) {
+            App.INSTANCE.removePref(PreferKey.readBookFont)
+            Typeface.SANS_SERIF
+        }
+        //标题
+        titlePaint.isAntiAlias = true
+        titlePaint.color = config.textColor()
+        titlePaint.letterSpacing = config.letterSpacing
+        titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
+        //正文
+        contentPaint.isAntiAlias = true
+        contentPaint.color = config.textColor()
+        contentPaint.letterSpacing = config.letterSpacing
+        val bold = if (config.textBold) Typeface.BOLD else Typeface.NORMAL
+        contentPaint.typeface = Typeface.create(typeface, bold)
+        //间距
+        lineSpacingExtra = config.lineSpacingExtra.dp.toFloat()
+        paragraphSpacing = config.paragraphSpacing.dp
+        titlePaint.textSize = (config.textSize + 2).dp.toFloat()
+        contentPaint.textSize = config.textSize.dp.toFloat()
+
+        bodyIndent = BookHelp.bodyIndent
+
+        upSize(config)
+    }
+
+    /**
+     * 更新View尺寸
+     */
+    fun upSize(config: ReadBookConfig.Config) {
+        paddingLeft = config.paddingLeft.dp
+        paddingTop = config.paddingTop.dp
+        visibleWidth = viewWidth - paddingLeft - config.paddingRight.dp
+        visibleHeight = viewHeight - paddingTop - config.paddingBottom.dp
+    }
+
 }
