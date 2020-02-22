@@ -333,21 +333,34 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return true
     }
 
+    /**
+     * 更新文字选择开始位置
+     */
     override fun upSelectedStart(x: Float, y: Float) {
         cursor_left.x = x - cursor_left.width
         cursor_left.y = y
         cursor_left.visible(true)
     }
 
+    /**
+     * 更新文字选择结束位置
+     */
     override fun upSelectedEnd(x: Float, y: Float) {
         cursor_right.x = x
         cursor_right.y = y
         cursor_right.visible(true)
     }
 
+    /**
+     * 取消文字选择
+     */
     override fun onCancelSelect() {
         cursor_left.invisible()
         cursor_right.invisible()
+    }
+
+    private fun showTextContextMenu(x: Float, y: Float) {
+
     }
 
     /**
