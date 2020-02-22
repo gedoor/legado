@@ -361,6 +361,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onCancelSelect() {
         cursor_left.invisible()
         cursor_right.invisible()
+        textActionMenu?.dismiss()
     }
 
     /**
@@ -368,9 +369,17 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     private fun showTextActionMenu() {
         textActionMenu ?: let {
-            textActionMenu = TextActionMenu(this)
+            textActionMenu = TextActionMenu(this, this)
         }
-        page_view.selectedText
+        textActionMenu?.let { popup ->
+            if (!popup.isShowing) {
+                popup.showAsDropDown(
+                    cursor_left,
+                    cursor_left.width,
+                    -cursor_left.height - ReadBookConfig.durConfig.textSize.dp
+                )
+            }
+        }
     }
 
     /**

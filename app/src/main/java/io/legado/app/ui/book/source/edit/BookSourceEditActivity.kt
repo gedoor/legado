@@ -353,18 +353,16 @@ class BookSourceEditActivity :
     }
 
     private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.isShowing?.let { if (it) return }
-        if (!isFinishing) {
-            mSoftKeyboardTool?.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+        mSoftKeyboardTool?.let {
+            if (it.isShowing) return
+            if (!isFinishing) {
+                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+            }
         }
     }
 
     private fun closePopupWindow() {
-        mSoftKeyboardTool?.let {
-            if (it.isShowing) {
-                it.dismiss()
-            }
-        }
+        mSoftKeyboardTool?.dismiss()
     }
 
     private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {
