@@ -323,6 +323,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
         return hasNext
     }
 
+    open fun onDestroy() {
+        bitmap?.recycle()
+    }
+
     enum class Direction {
         NONE, PREV, NEXT
     }

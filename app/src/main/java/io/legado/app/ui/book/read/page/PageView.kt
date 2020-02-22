@@ -91,6 +91,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun upPageAnim(pageAnim: Int) {
+        pageDelegate?.onDestroy()
         pageDelegate = null
         pageDelegate = when (pageAnim) {
             0 -> CoverPageDelegate(this)

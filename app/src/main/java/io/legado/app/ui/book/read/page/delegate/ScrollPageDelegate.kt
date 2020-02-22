@@ -2,37 +2,19 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.abs
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
-    override fun onAnimStart() {
-        if (!atTop && !atBottom) {
-            stopScroll()
-            return
-        }
-        val distanceY: Float
-        when (mDirection) {
-            Direction.NEXT -> distanceY =
-                if (isCancel) {
-                    var dis = viewHeight - startY + touchY
-                    if (dis > viewHeight) {
-                        dis = viewHeight.toFloat()
-                    }
-                    viewHeight - dis
-                } else {
-                    -(touchY + (viewHeight - startY))
-                }
-            else -> distanceY =
-                if (isCancel) {
-                    -(touchY - startY)
-                } else {
-                    viewHeight - (touchY - startY)
-                }
-        }
+    // 滑动追踪的时间
+    private val VELOCITY_DURATION = 1000
+    //速度追踪器
+    private val mVelocity: VelocityTracker = VelocityTracker.obtain()
 
-        startScroll(0, touchY.toInt(), 0, distanceY.toInt())
+    override fun onAnimStart() {
+
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -43,6 +25,11 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
+    }
+
+    override fun onDown(e: MotionEvent): Boolean {
+        mVelocity.clear()
+        return super.onDown(e)
     }
 
     override fun onScroll(
@@ -94,4 +81,9 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         return isMoved
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mVelocity.recycle()
+    }
 }
