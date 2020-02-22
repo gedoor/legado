@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import io.legado.app.ui.book.read.page.PageView
+import kotlin.math.abs
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
@@ -31,6 +32,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun onDown(e: MotionEvent): Boolean {
+        abort()
         mVelocity.clear()
         mVelocity.addMovement(e)
         return super.onDown(e)
@@ -44,11 +46,36 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     ): Boolean {
         mVelocity.addMovement(e2)
         mVelocity.computeCurrentVelocity(velocityDuration)
-        setTouchPoint(e2.x, e2.y)
 
-        curPage.onScroll(lastY - touchY)
-
-        return true
+        if (!isMoved && abs(distanceX) < abs(distanceY)) {
+            if (distanceY < 0) {
+                if (atTop) {
+                    //如果上一页不存在
+                    if (!hasPrev()) {
+                        noNext = true
+                        return true
+                    }
+                    setDirection(Direction.PREV)
+                }
+            } else {
+                if (atBottom) {
+                    //如果不存在表示没有下一页了
+                    if (!hasNext()) {
+                        noNext = true
+                        return true
+                    }
+                    setDirection(Direction.NEXT)
+                }
+            }
+            isMoved = true
+        }
+        if (isMoved) {
+            isRunning = true
+            //设置触摸点
+            setTouchPoint(e2.x, e2.y)
+            curPage.onScroll(lastY - touchY)
+        }
+        return isMoved
     }
 
     override fun onFling(
