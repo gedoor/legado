@@ -165,15 +165,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private fun upSelectChars(textPage: TextPage) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                textChar.selected = when (lineIndex) {
-                    selectStartLine -> {
+                textChar.selected =
+                    if (lineIndex == selectStartLine && lineIndex == selectEndLine) {
+                        charIndex in selectStartChar..selectEndChar
+                    } else if (lineIndex == selectStartLine) {
                         charIndex >= selectStartChar
-                    }
-                    selectEndLine -> {
+                    } else if (lineIndex == selectEndLine) {
                         charIndex <= selectEndChar
+                    } else {
+                        lineIndex in (selectStartLine + 1) until selectEndLine
                     }
-                    else -> lineIndex in (selectStartLine + 1) until selectEndLine
-                }
             }
         }
         invalidate()
