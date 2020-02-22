@@ -191,6 +191,8 @@ class PageView(context: Context, attrs: AttributeSet) :
         curPage.selectEndMove(x, y)
     }
 
+    val headerHeight: Int get() = curPage.headerHeight
+
     val selectedText: String get() = curPage.selectedText
 
     override val isScrollDelegate: Boolean

@@ -22,8 +22,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             style = Paint.Style.FILL
         }
     }
-    private var activityCallBack: CallBack? = null
-    var headerHeight = 0
+    private var activityCallBack: CallBack
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     var selectStartLine = 0
     var selectStartChar = 0
@@ -32,7 +31,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var textPage: TextPage? = null
 
     init {
-        activityCallBack = activity as? CallBack
+        activityCallBack = activity as CallBack
     }
 
     fun setContent(textPage: TextPage?) {
@@ -181,11 +180,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     private fun upSelectedStart(x: Float, y: Float) {
-        activityCallBack?.upSelectedStart(x, y + headerHeight)
+        activityCallBack.upSelectedStart(x, y + activityCallBack.headerHeight)
     }
 
     private fun upSelectedEnd(x: Float, y: Float) {
-        activityCallBack?.upSelectedEnd(x, y + headerHeight)
+        activityCallBack.upSelectedEnd(x, y + activityCallBack.headerHeight)
     }
 
     fun cancelSelect() {
@@ -197,7 +196,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
             invalidate()
         }
-        activityCallBack?.onCancelSelect()
+        activityCallBack.onCancelSelect()
     }
 
     val selectedText: String
@@ -209,5 +208,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun upSelectedStart(x: Float, y: Float)
         fun upSelectedEnd(x: Float, y: Float)
         fun onCancelSelect()
+        val headerHeight: Int
     }
 }

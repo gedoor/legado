@@ -23,6 +23,7 @@ class ContentView(context: Context) : FrameLayout(context) {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
         inflate(context, R.layout.view_book_page, this)
+
         upStyle()
         upTime()
     }
@@ -33,9 +34,8 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_top_right.typeface = ChapterProvider.typeface
             tv_bottom_left.typeface = ChapterProvider.typeface
             tv_bottom_right.typeface = ChapterProvider.typeface
+            //显示状态栏时隐藏header
             if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
-                //显示状态栏时隐藏header
-                ll_header.visible()
                 ll_header.layoutParams =
                     ll_header.layoutParams.apply { height = context.getStatusBarHeight() }
                 ll_header.setPadding(
@@ -44,12 +44,11 @@ class ContentView(context: Context) : FrameLayout(context) {
                     headerPaddingRight.dp,
                     headerPaddingBottom.dp
                 )
-                content_text_view.headerHeight = ll_header.height
+                ll_header.visible()
                 page_panel.setPadding(0, 0, 0, 0)
             } else {
                 ll_header.gone()
-                content_text_view.headerHeight = context.getStatusBarHeight()
-                page_panel.setPadding(0, content_text_view.headerHeight, 0, 0)
+                page_panel.setPadding(0, context.getStatusBarHeight(), 0, 0)
             }
             content_text_view.setPadding(
                 paddingLeft.dp,
@@ -71,6 +70,15 @@ class ContentView(context: Context) : FrameLayout(context) {
             }
         }
     }
+
+    val headerHeight: Int
+        get() {
+            return if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+                ll_header.height
+            } else {
+                context.getStatusBarHeight()
+            }
+        }
 
     fun setBg(bg: Drawable?) {
         page_panel.background = bg
@@ -105,16 +113,16 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun selectText(e: MotionEvent): Boolean {
-        val y = e.y - content_text_view.headerHeight
+        val y = e.y - headerHeight
         return content_text_view.selectText(e.x, y)
     }
 
     fun selectStartMove(x: Float, y: Float) {
-        content_text_view.selectStartMove(x, y - content_text_view.headerHeight)
+        content_text_view.selectStartMove(x, y - headerHeight)
     }
 
     fun selectEndMove(x: Float, y: Float) {
-        content_text_view.selectEndMove(x, y - content_text_view.headerHeight)
+        content_text_view.selectEndMove(x, y - headerHeight)
     }
 
     fun cancelSelect() {

@@ -71,14 +71,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
 
-    override val isInitFinish: Boolean
-        get() = viewModel.isInitFinish
+    override val isInitFinish: Boolean get() = viewModel.isInitFinish
 
     private val mHandler = Handler()
     private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
 
     private var screenTimeOut: Long = 0
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
+
+    override val headerHeight: Int get() = page_view.headerHeight
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Help.upLayoutInDisplayCutoutMode(window)
@@ -373,10 +374,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
         textActionMenu?.let { popup ->
             if (!popup.isShowing) {
-                popup.showAsDropDown(
+                popup.showAtLocation(
                     cursor_left,
-                    cursor_left.width,
-                    -cursor_left.height - ReadBookConfig.durConfig.textSize.dp
+                    Gravity.BOTTOM or Gravity.START,
+                    cursor_left.x.toInt() + cursor_left.width,
+                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.durConfig.textSize.dp + popup.height
                 )
             }
         }
