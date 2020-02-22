@@ -55,6 +55,7 @@ import org.jetbrains.anko.toast
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
     View.OnTouchListener,
     PageView.CallBack,
+    TextActionMenu.CallBack,
     ContentTextView.CallBack,
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
@@ -65,6 +66,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val requestCodeEditSource = 111
     private val requestCodeReplace = 312
     private var menu: Menu? = null
+    private var textActionMenu: TextActionMenu? = null
 
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
@@ -340,6 +342,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         cursor_left.x = x - cursor_left.width
         cursor_left.y = y
         cursor_left.visible(true)
+        showTextActionMenu()
     }
 
     /**
@@ -349,6 +352,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         cursor_right.x = x
         cursor_right.y = y
         cursor_right.visible(true)
+        showTextActionMenu()
     }
 
     /**
@@ -359,8 +363,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         cursor_right.invisible()
     }
 
-    private fun showTextContextMenu(x: Float, y: Float) {
-
+    /**
+     * 显示文本操作菜单
+     */
+    private fun showTextActionMenu() {
+        textActionMenu ?: let {
+            textActionMenu = TextActionMenu(this)
+        }
+        page_view.selectedText
     }
 
     /**
@@ -556,6 +566,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onDestroy() {
         super.onDestroy()
         mHandler.removeCallbacks(keepScreenRunnable)
+        textActionMenu?.dismiss()
     }
 
     override fun observeLiveBus() {

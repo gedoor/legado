@@ -200,6 +200,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         activityCallBack?.onCancelSelect()
     }
 
+    val selectedText: String
+        get() {
+            return ""
+        }
+
     interface CallBack {
         fun upSelectedStart(x: Float, y: Float)
         fun upSelectedEnd(x: Float, y: Float)

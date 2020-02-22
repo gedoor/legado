@@ -23,7 +23,7 @@ class KeyboardToolPop(
 
     init {
         @SuppressLint("InflateParams")
-        this.contentView = LayoutInflater.from(context).inflate(R.layout.popup_keyboard_tool, null)
+        contentView = LayoutInflater.from(context).inflate(R.layout.popup_keyboard_tool, null)
 
         isTouchable = true
         isOutsideTouchable = false

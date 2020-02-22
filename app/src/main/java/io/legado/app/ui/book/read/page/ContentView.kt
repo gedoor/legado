@@ -121,6 +121,8 @@ class ContentView(context: Context) : FrameLayout(context) {
         content_text_view.cancelSelect()
     }
 
+    val selectedText: String get() = content_text_view.selectedText
+
     fun scrollTo(pos: Int?) {
         if (pos != null) {
             content_text_view.post {
