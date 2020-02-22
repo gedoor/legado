@@ -611,7 +611,7 @@
     <string name="chage_icon_error">图标为矢量图标,Android8.0以前不支持</string>
     <string name="aloud_config">朗读设置</string>
     <string name="main_activity">主界面</string>
-    <string name="selectText">选择文本</string>
+    <string name="selectText">长按选择文本</string>
     <string name="header">页眉</string>
     <string name="main_body">正文</string>
     <string name="footer">页角</string>
