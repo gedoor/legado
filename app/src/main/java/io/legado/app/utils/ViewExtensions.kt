@@ -50,10 +50,10 @@ fun View.visible() {
 }
 
 fun View.visible(visible: Boolean) {
-    visibility = if (visible) {
-        VISIBLE
-    } else {
-        INVISIBLE
+    if (visible && visibility != VISIBLE) {
+        visibility = VISIBLE
+    } else if (!visible && visibility == VISIBLE) {
+        visibility = INVISIBLE
     }
 }
 

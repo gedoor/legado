@@ -344,13 +344,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun upSelectedStart(x: Float, y: Float) {
         cursor_left.x = x - cursor_left.width
         cursor_left.y = y
-        cursor_left.visible()
+        cursor_left.visible(true)
     }
 
     override fun upSelectedEnd(x: Float, y: Float) {
         cursor_right.x = x
         cursor_right.y = y
-        cursor_right.visible()
+        cursor_right.visible(true)
     }
 
     override fun onCancelSelect() {
