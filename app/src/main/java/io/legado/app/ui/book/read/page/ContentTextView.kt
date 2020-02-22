@@ -207,12 +207,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (lineIndex == selectLineStart && lineIndex == selectLineEnd) {
                         stringBuilder.append(
                             it.textLines[lineIndex].text.substring(
-                                selectCharStart + 1,
-                                selectCharEnd + 2
+                                selectCharStart,
+                                selectCharEnd + 1
                             )
                         )
                     } else if (lineIndex == selectLineStart) {
-                        stringBuilder.append(it.textLines[lineIndex].text.substring(selectCharStart + 1))
+                        stringBuilder.append(it.textLines[lineIndex].text.substring(selectCharStart))
                     } else if (lineIndex == selectLineEnd) {
                         stringBuilder.append(
                             it.textLines[lineIndex].text.substring(0, selectCharEnd + 1)

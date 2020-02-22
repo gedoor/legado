@@ -257,22 +257,24 @@ object ChapterProvider {
             if (lineIndex == 0 && layout.lineCount > 1) {
                 //第一行
                 var x = 0f
-                val icw = StaticLayout.getDesiredWidth(bodyIndent, contentPaint)
-                var x1 = x + icw
-                val textChar = TextChar(
-                    charData = bodyIndent,
-                    leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
-                    rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
-                )
-                textLine.textChars.add(textChar)
-                x = x1
+                val icw = StaticLayout.getDesiredWidth(bodyIndent, contentPaint) / bodyIndent.length
+                for (i in 0..bodyIndent.lastIndex) {
+                    val x1 = x + icw
+                    val textChar = TextChar(
+                        charData = bodyIndent[i].toString(),
+                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
+                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
+                    )
+                    textLine.textChars.add(textChar)
+                    x = x1
+                }
                 words = words.replaceFirst(bodyIndent, "")
                 val gapCount: Int = words.length - 1
                 val d = (visibleWidth - desiredWidth) / gapCount
                 for (i in words.indices) {
                     val char = words[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                    x1 = if (i != words.lastIndex) x + cw + d else x + cw
+                    val x1 = if (i != words.lastIndex) x + cw + d else x + cw
                     val textChar1 = TextChar(
                         charData = char,
                         leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
