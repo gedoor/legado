@@ -183,10 +183,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         nextPage.upBattery(battery)
     }
 
-    fun setSelectMoveStart(x: Float, y: Float) {
-        curPage.setSelectMoveStart(x, y)
-    }
-
     fun selectStartMove(x: Float, y: Float) {
         curPage.selectStartMove(x, y)
     }

@@ -317,24 +317,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                when (v.id) {
-                    R.id.cursor_left -> {
-                        val startX = v.x + 10.dp
-                        val startY = v.y - 10.dp
-                        page_view.setSelectMoveStart(startX, startY)
-                    }
-                    R.id.cursor_right -> {
-                        val startX = v.x - 10.dp
-                        val startY = v.y - 10.dp
-                        page_view.setSelectMoveStart(startX, startY)
-                    }
-                }
-            }
             MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
                 when (v.id) {
-                    R.id.cursor_left -> page_view.selectStartMove(event.x, event.y)
-                    R.id.cursor_right -> page_view.selectEndMove(event.x, event.y)
+                    R.id.cursor_left -> page_view.selectStartMove(
+                        event.rawX + cursor_left.width,
+                        event.rawY - cursor_left.height
+                    )
+                    R.id.cursor_right -> page_view.selectEndMove(
+                        event.rawX - cursor_right.width,
+                        event.rawY - cursor_right.height
+                    )
                 }
             }
         }

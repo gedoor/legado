@@ -18,8 +18,6 @@ import java.util.*
 class ContentView(context: Context) : FrameLayout(context) {
     var callBack: CallBack? = null
     private var pageSize: Int = 0
-    private var textSelectMoveStartX = 0f
-    private var textSelectMoveStartY = 0f
 
     init {
         //设置背景防止切换背景时文字重叠
@@ -111,17 +109,12 @@ class ContentView(context: Context) : FrameLayout(context) {
         return content_text_view.selectText(e.x, y)
     }
 
-    fun setSelectMoveStart(x: Float, y: Float) {
-        textSelectMoveStartX = x
-        textSelectMoveStartY = y - content_text_view.headerHeight
-    }
-
     fun selectStartMove(x: Float, y: Float) {
-        content_text_view.selectStartMove(textSelectMoveStartX + x, textSelectMoveStartY + y)
+        content_text_view.selectStartMove(x, y - content_text_view.headerHeight)
     }
 
     fun selectEndMove(x: Float, y: Float) {
-        content_text_view.selectEndMove(textSelectMoveStartX + x, textSelectMoveStartY + y)
+        content_text_view.selectEndMove(x, y - content_text_view.headerHeight)
     }
 
     fun cancelSelect() {
