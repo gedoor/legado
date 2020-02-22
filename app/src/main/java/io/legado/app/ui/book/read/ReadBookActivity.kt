@@ -506,10 +506,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    /**
+     * 显示朗读菜单
+     */
     override fun showReadAloudDialog() {
         ReadAloudDialog().show(supportFragmentManager, "readAloud")
     }
 
+    /**
+     * 自动翻页
+     */
     override fun autoPage() {
 
     }
