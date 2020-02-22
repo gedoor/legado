@@ -9,6 +9,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
@@ -31,8 +32,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var textPage: TextPage? = null
     //滚动参数
     private val maxScrollOffset = 100f
-    private val pageOffset = 0f
-    private val isLastPage = false
+    private var pageOffset = 0f
+    private var isLastPage = false
 
     init {
         activityCallBack = activity as CallBack
@@ -70,15 +71,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     canvas.drawText(
                         it.charData,
                         it.leftBottomPosition.x,
-                        it.leftBottomPosition.y.toFloat(),
+                        it.leftBottomPosition.y,
                         textPaint
                     )
                     if (it.selected) {
                         canvas.drawRect(
                             it.leftBottomPosition.x,
-                            it.rightTopPosition.y.toFloat(),
+                            it.rightTopPosition.y,
                             it.rightTopPosition.x,
-                            it.leftBottomPosition.y.toFloat(),
+                            it.leftBottomPosition.y,
                             selectedPaint
                         )
                     }
@@ -87,14 +88,22 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    fun onScroll(offset: Float) {
-        var mOffset = offset
+    fun onScroll(mOffset: Float) {
+        var offset = mOffset
         if (offset > maxScrollOffset) {
-            mOffset = maxScrollOffset
+            offset = maxScrollOffset
         } else if (offset < -maxScrollOffset) {
-            mOffset = -maxScrollOffset
+            offset = -maxScrollOffset
         }
 
+        if (!isLastPage || offset < 0) {
+            pageOffset += offset
+            isLastPage = false
+        }
+        // 首页
+        if (pageOffset < 0 && ReadBook.durChapterIndex == 0 && ReadBook.durPageIndex == 0) {
+            pageOffset = 0f
+        }
 
     }
 
@@ -112,11 +121,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectCharEnd = charIndex
                             upSelectedStart(
                                 textChar.leftBottomPosition.x,
-                                textChar.leftBottomPosition.y.toFloat()
+                                textChar.leftBottomPosition.y
                             )
                             upSelectedEnd(
                                 textChar.rightTopPosition.x,
-                                textChar.leftBottomPosition.y.toFloat()
+                                textChar.leftBottomPosition.y
                             )
                             return true
                         }
@@ -139,7 +148,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                                 selectCharStart = charIndex
                                 upSelectedStart(
                                     textChar.leftBottomPosition.x,
-                                    textChar.leftBottomPosition.y.toFloat()
+                                    textChar.leftBottomPosition.y
                                 )
                                 upSelectChars(textPage)
                             }
@@ -163,7 +172,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                                 selectCharEnd = charIndex
                                 upSelectedEnd(
                                     textChar.rightTopPosition.x,
-                                    textChar.leftBottomPosition.y.toFloat()
+                                    textChar.leftBottomPosition.y
                                 )
                                 upSelectChars(textPage)
                             }

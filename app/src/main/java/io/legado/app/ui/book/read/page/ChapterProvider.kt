@@ -166,10 +166,10 @@ object ChapterProvider {
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineBottom = paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))
-            textLine.lineTop = paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))
+            textLine.lineBottom = (paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
+            textLine.lineTop = (paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
             val words =
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -246,10 +246,10 @@ object ChapterProvider {
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineBottom = paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))
-            textLine.lineTop = paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))
+            textLine.lineBottom = (paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
+            textLine.lineTop = (paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
             var words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)

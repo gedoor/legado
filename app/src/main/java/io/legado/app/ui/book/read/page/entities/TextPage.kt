@@ -10,7 +10,8 @@ data class TextPage(
     val textLines: ArrayList<TextLine> = arrayListOf(),
     var pageSize: Int = 0,
     var chapterSize: Int = 0,
-    var chapterIndex: Int = 0
+    var chapterIndex: Int = 0,
+    var height: Int = 0
 ) {
 
     fun removePageAloudSpan(): TextPage {
