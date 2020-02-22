@@ -16,6 +16,7 @@ import io.legado.app.utils.getPrefBoolean
 
 
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+    private val maxScrollOffset = 100f
     private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
@@ -84,6 +85,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun onScroll(offset: Float) {
+        var mOffset = offset
+        if (offset > maxScrollOffset) {
+            mOffset = maxScrollOffset
+        } else if (offset < -maxScrollOffset) {
+            mOffset = -maxScrollOffset
+        }
+
 
     }
 

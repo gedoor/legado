@@ -75,16 +75,10 @@ class PageView(context: Context, attrs: AttributeSet) :
             PageDelegate.Direction.PREV -> {
                 pageFactory?.moveToPrevious()
                 upContent()
-                if (isScrollDelegate) {
-                    curPage.scrollToBottom()
-                }
             }
             PageDelegate.Direction.NEXT -> {
                 pageFactory?.moveToNext()
                 upContent()
-                if (isScrollDelegate) {
-                    curPage.scrollTo(0)
-                }
             }
             else -> Unit
         }
@@ -112,13 +106,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                     curPage.setContent(it.currentPage())
                     nextPage.setContent(it.nextPage())
                     prevPage.setContent(it.previousPage())
-                    if (isScrollDelegate) {
-                        curPage.scrollTo(ReadBook.textChapter()?.getStartLine(ReadBook.durChapterPos()))
-                    }
                 }
-            }
-            if (isScrollDelegate) {
-                prevPage.scrollToBottom()
             }
         }
         callBack?.screenOffTimerStart()
@@ -126,13 +114,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     fun moveToPrevPage(noAnim: Boolean = true) {
         if (noAnim) {
-            if (isScrollDelegate) {
-                ReadBook.textChapter()?.let {
-                    curPage.scrollTo(it.getStartLine(pageIndex - 1))
-                }
-            } else {
-                fillPage(PageDelegate.Direction.PREV)
-            }
+            fillPage(PageDelegate.Direction.PREV)
         } else {
             pageDelegate?.start(PageDelegate.Direction.PREV)
         }
@@ -140,13 +122,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     fun moveToNextPage(noAnim: Boolean = true) {
         if (noAnim) {
-            if (isScrollDelegate) {
-                ReadBook.textChapter()?.let {
-                    curPage.scrollTo(it.getStartLine(pageIndex + 1))
-                }
-            } else {
-                fillPage(PageDelegate.Direction.NEXT)
-            }
+            fillPage(PageDelegate.Direction.NEXT)
         } else {
             pageDelegate?.start(PageDelegate.Direction.NEXT)
         }

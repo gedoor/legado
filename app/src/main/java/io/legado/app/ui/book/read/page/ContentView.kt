@@ -135,20 +135,6 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     val selectedText: String get() = content_text_view.selectedText
 
-    fun scrollTo(pos: Int?) {
-        if (pos != null) {
-            content_text_view.post {
-
-            }
-        }
-    }
-
-    fun scrollToBottom() {
-        content_text_view.post {
-
-        }
-    }
-
     interface CallBack {
         fun scrollToLine(line: Int)
         fun scrollToLast()
