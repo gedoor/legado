@@ -334,7 +334,7 @@
     <string name="pt_show_all_find">显示所有发现</string>
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
     <string name="update_toc">更新目录</string>
-    <string name="txt_chapter_regex">txt目录正则</string>
+    <string name="txt_toc_regex">Txt目录正则</string>
     <string name="set_charset">设置编码</string>
     <string name="swap_sort">倒序-顺序</string>
     <string name="sort">排序</string>
