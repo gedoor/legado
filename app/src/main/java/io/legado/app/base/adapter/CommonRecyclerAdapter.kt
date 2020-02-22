@@ -293,6 +293,11 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
     fun getItem(position: Int): ITEM? =
         if (position in 0 until items.size) items[position] else null
 
+    fun getItemByLayoutPosition(position: Int): ITEM? {
+        val pos = position - getHeaderCount()
+        return if (pos in 0 until items.size) items[pos] else null
+    }
+
     fun getItems(): List<ITEM> = items
 
     protected open fun getItemViewType(item: ITEM, position: Int): Int {
