@@ -385,12 +385,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
-    override fun getSelectedText(): String {
-        return page_view.selectedText
-    }
+    override val selectedText: String get() = page_view.selectedText
 
     override fun onMenuItemSelected(item: MenuItemImpl): Boolean {
-
+        when (item.itemId) {
+            R.id.menu_replace -> ReplaceEditDialog.show(
+                supportFragmentManager,
+                pattern = selectedText
+            )
+        }
         return false
     }
 

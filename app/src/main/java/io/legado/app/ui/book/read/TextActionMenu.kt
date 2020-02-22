@@ -68,13 +68,13 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
 
     private fun onMenuItemSelected(item: MenuItemImpl) {
         when (item.itemId) {
-            R.id.menu_copy -> context.sendToClip(callBack.getSelectedText())
+            R.id.menu_copy -> context.sendToClip(callBack.selectedText)
         }
     }
 
 
     interface CallBack {
         fun onMenuItemSelected(item: MenuItemImpl): Boolean
-        fun getSelectedText(): String
+        val selectedText: String
     }
 }
