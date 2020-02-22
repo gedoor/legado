@@ -155,7 +155,7 @@ class BgTextConfigDialog : DialogFragment() {
         override fun registerListener(holder: ItemViewHolder) {
             holder.itemView.apply {
                 this.onClick {
-                    getItem(holder.layoutPosition)?.let {
+                    getItem(holder.layoutPosition - getHeaderCount())?.let {
                         ReadBookConfig.durConfig.setBg(1, it)
                         ReadBookConfig.upBg()
                         postEvent(EventBus.UP_CONFIG, false)
