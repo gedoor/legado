@@ -211,7 +211,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
     @CallSuper
     open fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
-        curPage.dispatchTouchEvent(event)
         return detector.onTouchEvent(event)
     }
 
@@ -222,7 +221,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (isTextSelected) {
             curPage.cancelSelect()
         }
-//            abort()
         //是否移动
         isMoved = false
         //是否存在下一章
@@ -242,6 +240,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 单击
      */
     override fun onSingleTapUp(e: MotionEvent): Boolean {
+        if (isTextSelected) {
+            isTextSelected = false
+            return true
+        }
         val x = e.x
         val y = e.y
         if (centerRectF.contains(x, y)) {
@@ -290,6 +292,9 @@ abstract class PageDelegate(protected val pageView: PageView) :
         velocityX: Float,
         velocityY: Float
     ): Boolean {
+        if (isTextSelected) {
+            isTextSelected = false
+        }
         if (!noNext) onAnimStart()
         return true
     }
