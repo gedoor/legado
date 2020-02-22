@@ -111,6 +111,7 @@ object ChapterProvider {
                 durY = joinBody(text, durY, textPages, pageLines, pageLengths, stringBuilder)
             }
         }
+        textPages.last().height = durY
         textPages.last().text = stringBuilder.toString()
         if (pageLines.size < textPages.size) {
             pageLines.add(textPages.last().textLines.size)
@@ -158,11 +159,13 @@ object ChapterProvider {
             if (durY < visibleHeight) {
                 textPages.last().textLines.add(textLine)
             } else {
-                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                textPages.last().height = durY
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
+                //新页面
+                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
@@ -238,11 +241,13 @@ object ChapterProvider {
             if (durY < visibleHeight) {
                 textPages.last().textLines.add(textLine)
             } else {
-                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                textPages.last().height = durY
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
+                //新页面
+                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
