@@ -93,8 +93,8 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun setContent(textPage: TextPage?) {
-        content_text_view.setContent(textPage)
         if (textPage != null) {
+            content_text_view.setContent(textPage)
             tv_bottom_left.text = textPage.title
             pageSize = textPage.pageSize
             setPageIndex(textPage.index)
