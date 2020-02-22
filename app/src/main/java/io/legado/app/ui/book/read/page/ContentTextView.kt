@@ -16,7 +16,6 @@ import io.legado.app.utils.getPrefBoolean
 
 
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-    private val maxScrollOffset = 100f
     private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
@@ -30,6 +29,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var selectLineEnd = 0
     private var selectCharEnd = 0
     private var textPage: TextPage? = null
+    //滚动参数
+    private val maxScrollOffset = 100f
+    private val pageOffset = 0f
+    private val isLastPage = false
 
     init {
         activityCallBack = activity as CallBack

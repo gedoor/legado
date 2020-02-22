@@ -247,7 +247,6 @@ object BookHelp {
         content: String,
         enableReplace: Boolean
     ): String {
-        var c = content
         synchronized(this) {
             if (enableReplace && (bookName != name || bookOrigin != origin)) {
                 replaceRules = if (origin.isNullOrEmpty()) {
@@ -257,6 +256,7 @@ object BookHelp {
                 }
             }
         }
+        var c = content
         for (item in replaceRules) {
             item.pattern.let {
                 if (it.isNotEmpty()) {
@@ -268,9 +268,7 @@ object BookHelp {
                 }
             }
         }
-        if (!content.substringBefore("\n").contains(title)) {
-            c = title + "\n" + c
-        }
+        c = "$title\n$c"
         when (AppConfig.chineseConverterType) {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)

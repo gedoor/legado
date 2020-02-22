@@ -37,7 +37,7 @@ object BookContent {
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
         var contentData = analyzeContent(body, contentRule, book, bookChapter, bookSource, baseUrl)
-        content.append(contentData.content)
+        content.append(contentData.content.replace(bookChapter.title, ""))
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
             val nextChapterUrl = if (!nextChapterUrlF.isNullOrEmpty())
