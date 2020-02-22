@@ -22,7 +22,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun onDraw(canvas: Canvas) {
-
+        curPage.onScroll(lastY - touchY)
     }
 
     override fun onAnimStop() {
@@ -73,7 +73,6 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
             isRunning = true
             //设置触摸点
             setTouchPoint(e2.x, e2.y)
-            curPage.onScroll(lastY - touchY)
         }
         return isMoved
     }
