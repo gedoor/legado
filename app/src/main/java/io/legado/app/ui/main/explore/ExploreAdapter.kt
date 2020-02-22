@@ -14,8 +14,8 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.ACache
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
+import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.item_find_book.view.*
-import kotlinx.android.synthetic.main.item_text.view.*
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -46,7 +46,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                         gl_child.removeAllViews()
                         kindList.map { kind ->
                             val tv = LayoutInflater.from(context)
-                                .inflate(R.layout.item_text, gl_child, false)
+                                .inflate(R.layout.item_fillet_text, gl_child, false)
                             gl_child.addView(tv)
                             tv.text_view.text = kind.title
                             tv.text_view.onClick {

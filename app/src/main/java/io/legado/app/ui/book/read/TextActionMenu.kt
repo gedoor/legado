@@ -8,12 +8,13 @@ import android.widget.PopupWindow
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import kotlinx.android.synthetic.main.item_text.view.*
+import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.popup_action_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -35,6 +36,9 @@ class TextActionMenu(context: Context, callBack: CallBack) :
     private fun initRecyclerView() = with(contentView) {
         val adapter = Adapter(context)
         recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        recycler_view.addItemDecoration(
+            DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL)
+        )
         recycler_view.adapter = adapter
         val menu = MenuBuilder(context)
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)

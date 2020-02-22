@@ -11,7 +11,7 @@ import io.legado.app.R
 class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
 
     init {
-        widgetLayoutResource = R.layout.item_text
+        widgetLayoutResource = R.layout.item_fillet_text
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
