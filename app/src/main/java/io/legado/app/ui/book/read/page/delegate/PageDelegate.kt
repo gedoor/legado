@@ -276,11 +276,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 长按选择
      */
     override fun onLongPress(e: MotionEvent) {
-        val textChar = curPage.selectText(e)
-        textChar?.let {
-            isTextSelected = true
-            pageView.callBack?.selectText(it)
-        }
+        isTextSelected = curPage.selectText(e)
     }
 
     /**

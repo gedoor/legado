@@ -9,7 +9,6 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
@@ -24,6 +23,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
     private var activityCallBack: CallBack? = null
+    var headerHeight = 0
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     var selectStartLine = 0
     var selectStartChar = 0
@@ -84,7 +84,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    fun selectText(x: Float, y: Float): SelectPoint? {
+    fun selectText(x: Float, y: Float): Boolean {
         textPage?.let { textPage ->
             for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
                 if (y > textLine.lineTop && y < textLine.lineBottom) {
@@ -96,19 +96,22 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectStartChar = charIndex
                             selectEndLine = lineIndex
                             selectEndChar = charIndex
-                            return SelectPoint(
+                            upSelectedStart(
                                 textChar.leftBottomPosition.x,
-                                textChar.leftBottomPosition.y.toFloat(),
+                                textChar.leftBottomPosition.y.toFloat()
+                            )
+                            upSelectedEnd(
                                 textChar.rightTopPosition.x,
                                 textChar.leftBottomPosition.y.toFloat()
                             )
+                            return true
                         }
                     }
                     break
                 }
             }
         }
-        return null
+        return false
     }
 
     fun selectStartMove(x: Float, y: Float) {
@@ -117,18 +120,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (y > textLine.lineTop && y < textLine.lineBottom) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
-                            textChar.selected = true
-                            invalidate()
-                            selectStartLine = lineIndex
-                            selectStartChar = charIndex
-                            selectEndLine = lineIndex
-                            selectEndChar = charIndex
-                            SelectPoint(
-                                textChar.leftBottomPosition.x,
-                                textChar.leftBottomPosition.y.toFloat(),
-                                textChar.rightTopPosition.x,
-                                textChar.leftBottomPosition.y.toFloat()
-                            )
+                            if (selectStartLine != lineIndex || selectStartChar != charIndex) {
+                                selectStartLine = lineIndex
+                                selectStartChar = charIndex
+                                upSelectedStart(
+                                    textChar.leftBottomPosition.x,
+                                    textChar.leftBottomPosition.y.toFloat()
+                                )
+                                upSelectChars(textPage)
+                            }
                             break
                         }
                     }
@@ -144,24 +144,47 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (y > textLine.lineTop && y < textLine.lineBottom) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
-                            textChar.selected = true
-                            invalidate()
-                            selectStartLine = lineIndex
-                            selectStartChar = charIndex
-                            selectEndLine = lineIndex
-                            selectEndChar = charIndex
-                            SelectPoint(
-                                textChar.leftBottomPosition.x,
-                                textChar.leftBottomPosition.y.toFloat(),
-                                textChar.rightTopPosition.x,
-                                textChar.leftBottomPosition.y.toFloat()
-                            )
+                            if (selectEndLine != lineIndex || selectEndChar != charIndex) {
+                                selectEndLine = lineIndex
+                                selectEndChar = charIndex
+                                upSelectedEnd(
+                                    textChar.rightTopPosition.x,
+                                    textChar.leftBottomPosition.y.toFloat()
+                                )
+                                upSelectChars(textPage)
+                            }
+                            break
                         }
                     }
                     break
                 }
             }
         }
+    }
+
+    private fun upSelectChars(textPage: TextPage) {
+        for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
+            for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                textChar.selected = when (lineIndex) {
+                    selectStartLine -> {
+                        charIndex >= selectStartChar
+                    }
+                    selectEndLine -> {
+                        charIndex <= selectEndChar
+                    }
+                    else -> lineIndex in (selectStartLine + 1) until selectEndLine
+                }
+            }
+        }
+        invalidate()
+    }
+
+    private fun upSelectedStart(x: Float, y: Float) {
+        activityCallBack?.upSelectedStart(x, y + headerHeight)
+    }
+
+    private fun upSelectedEnd(x: Float, y: Float) {
+        activityCallBack?.upSelectedEnd(x, y + headerHeight)
     }
 
     fun cancelSelect() {
@@ -177,6 +200,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     interface CallBack {
+        fun upSelectedStart(x: Float, y: Float)
+        fun upSelectedEnd(x: Float, y: Float)
         fun onCancelSelect()
     }
 }

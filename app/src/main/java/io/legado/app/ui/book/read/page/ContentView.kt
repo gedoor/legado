@@ -3,34 +3,25 @@ package io.legado.app.ui.book.read.page
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import java.util.*
 
 
-class ContentView : FrameLayout {
+class ContentView(context: Context) : FrameLayout(context) {
     var callBack: CallBack? = null
-    private var headerHeight = 0
     private var pageSize: Int = 0
+    private var textSelectMoveStartX = 0f
+    private var textSelectMoveStartY = 0f
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init()
-    }
-
-    fun init() {
+    init {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
         inflate(context, R.layout.view_book_page, this)
@@ -55,12 +46,12 @@ class ContentView : FrameLayout {
                     headerPaddingRight.dp,
                     headerPaddingBottom.dp
                 )
-                headerHeight = ll_header.height
+                content_text_view.headerHeight = ll_header.height
                 page_panel.setPadding(0, 0, 0, 0)
             } else {
                 ll_header.gone()
-                headerHeight = context.getStatusBarHeight()
-                page_panel.setPadding(0, headerHeight, 0, 0)
+                content_text_view.headerHeight = context.getStatusBarHeight()
+                page_panel.setPadding(0, content_text_view.headerHeight, 0, 0)
             }
             content_text_view.setPadding(
                 paddingLeft.dp,
@@ -115,22 +106,22 @@ class ContentView : FrameLayout {
         content_text_view.selectAble = selectAble
     }
 
-    fun selectText(e: MotionEvent): SelectPoint? {
-        val y = e.y - headerHeight
-        val selectPoint = content_text_view.selectText(e.x, y)
-        selectPoint?.let {
-            it.startY = it.startY + headerHeight
-            it.endY = it.endY + headerHeight
-        }
-        return selectPoint
+    fun selectText(e: MotionEvent): Boolean {
+        val y = e.y - content_text_view.headerHeight
+        return content_text_view.selectText(e.x, y)
+    }
+
+    fun setSelectMoveStart(x: Float, y: Float) {
+        textSelectMoveStartX = x
+        textSelectMoveStartY = y - content_text_view.headerHeight
     }
 
     fun selectStartMove(x: Float, y: Float) {
-        content_text_view.selectStartMove(x, y)
+        content_text_view.selectStartMove(textSelectMoveStartX + x, textSelectMoveStartY + y)
     }
 
     fun selectEndMove(x: Float, y: Float) {
-        content_text_view.selectEndMove(x, y)
+        content_text_view.selectEndMove(textSelectMoveStartX + x, textSelectMoveStartY + y)
     }
 
     fun cancelSelect() {

@@ -36,7 +36,6 @@ import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
-import io.legado.app.ui.book.read.page.entities.SelectPoint
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
@@ -318,6 +317,20 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                when (v.id) {
+                    R.id.cursor_left -> {
+                        val startX = v.x + 10.dp
+                        val startY = v.y - 10.dp
+                        page_view.setSelectMoveStart(startX, startY)
+                    }
+                    R.id.cursor_right -> {
+                        val startX = v.x - 10.dp
+                        val startY = v.y - 10.dp
+                        page_view.setSelectMoveStart(startX, startY)
+                    }
+                }
+            }
             MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
                 when (v.id) {
                     R.id.cursor_left -> page_view.selectStartMove(event.x, event.y)
@@ -326,6 +339,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
         }
         return true
+    }
+
+    override fun upSelectedStart(x: Float, y: Float) {
+        cursor_left.x = x - cursor_left.width
+        cursor_left.y = y
+        cursor_left.visible()
+    }
+
+    override fun upSelectedEnd(x: Float, y: Float) {
+        cursor_right.x = x
+        cursor_right.y = y
+        cursor_right.visible()
     }
 
     override fun onCancelSelect() {
@@ -416,15 +441,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         } else {
             read_menu.runMenuIn()
         }
-    }
-
-    override fun selectText(selectPoint: SelectPoint) {
-        cursor_left.x = selectPoint.startX - cursor_left.width
-        cursor_left.y = selectPoint.startY
-        cursor_right.x = selectPoint.endX
-        cursor_right.y = selectPoint.endY
-        cursor_left.visible()
-        cursor_right.visible()
     }
 
     override fun showReadAloudDialog() {
