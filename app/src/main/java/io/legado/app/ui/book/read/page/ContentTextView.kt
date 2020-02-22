@@ -24,10 +24,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
     private var activityCallBack: CallBack
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
-    var selectStartLine = 0
-    var selectStartChar = 0
-    var selectEndLine = 0
-    var selectEndChar = 0
+    private var selectLineStart = 0
+    private var selectCharStart = 0
+    private var selectLineEnd = 0
+    private var selectCharEnd = 0
     private var textPage: TextPage? = null
 
     init {
@@ -91,10 +91,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
                             textChar.selected = true
                             invalidate()
-                            selectStartLine = lineIndex
-                            selectStartChar = charIndex
-                            selectEndLine = lineIndex
-                            selectEndChar = charIndex
+                            selectLineStart = lineIndex
+                            selectCharStart = charIndex
+                            selectLineEnd = lineIndex
+                            selectCharEnd = charIndex
                             upSelectedStart(
                                 textChar.leftBottomPosition.x,
                                 textChar.leftBottomPosition.y.toFloat()
@@ -119,9 +119,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (y > textLine.lineTop && y < textLine.lineBottom) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
-                            if (selectStartLine != lineIndex || selectStartChar != charIndex) {
-                                selectStartLine = lineIndex
-                                selectStartChar = charIndex
+                            if (selectLineStart != lineIndex || selectCharStart != charIndex) {
+                                selectLineStart = lineIndex
+                                selectCharStart = charIndex
                                 upSelectedStart(
                                     textChar.leftBottomPosition.x,
                                     textChar.leftBottomPosition.y.toFloat()
@@ -143,9 +143,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (y > textLine.lineTop && y < textLine.lineBottom) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
-                            if (selectEndLine != lineIndex || selectEndChar != charIndex) {
-                                selectEndLine = lineIndex
-                                selectEndChar = charIndex
+                            if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
+                                selectLineEnd = lineIndex
+                                selectCharEnd = charIndex
                                 upSelectedEnd(
                                     textChar.rightTopPosition.x,
                                     textChar.leftBottomPosition.y.toFloat()
@@ -165,14 +165,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                 textChar.selected =
-                    if (lineIndex == selectStartLine && lineIndex == selectEndLine) {
-                        charIndex in selectStartChar..selectEndChar
-                    } else if (lineIndex == selectStartLine) {
-                        charIndex >= selectStartChar
-                    } else if (lineIndex == selectEndLine) {
-                        charIndex <= selectEndChar
+                    if (lineIndex == selectLineStart && lineIndex == selectLineEnd) {
+                        charIndex in selectCharStart..selectCharEnd
+                    } else if (lineIndex == selectLineStart) {
+                        charIndex >= selectCharStart
+                    } else if (lineIndex == selectLineEnd) {
+                        charIndex <= selectCharEnd
                     } else {
-                        lineIndex in (selectStartLine + 1) until selectEndLine
+                        lineIndex in (selectLineStart + 1) until selectLineEnd
                     }
             }
         }
@@ -201,7 +201,28 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     val selectedText: String
         get() {
-            return ""
+            val stringBuilder = StringBuilder()
+            textPage?.let {
+                for (lineIndex in selectLineStart..selectLineEnd) {
+                    if (lineIndex == selectLineStart && lineIndex == selectLineEnd) {
+                        stringBuilder.append(
+                            it.textLines[lineIndex].text.substring(
+                                selectCharStart + 1,
+                                selectCharEnd + 2
+                            )
+                        )
+                    } else if (lineIndex == selectLineStart) {
+                        stringBuilder.append(it.textLines[lineIndex].text.substring(selectCharStart + 1))
+                    } else if (lineIndex == selectLineEnd) {
+                        stringBuilder.append(
+                            it.textLines[lineIndex].text.substring(0, selectCharEnd + 1)
+                        )
+                    } else {
+                        stringBuilder.append(it.textLines[lineIndex].text)
+                    }
+                }
+            }
+            return stringBuilder.toString()
         }
 
     interface CallBack {

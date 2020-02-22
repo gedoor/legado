@@ -23,14 +23,12 @@ class ReplaceEditDialog : DialogFragment(),
 
     companion object {
 
-        fun show(fragmentManager: FragmentManager, id: Long? = null, pattern: String? = null) {
+        fun show(fragmentManager: FragmentManager, id: Long = -1, pattern: String? = null) {
             val dialog = ReplaceEditDialog()
-            id?.let {
-                val bundle = Bundle()
-                bundle.putLong("id", id)
-                bundle.putString("pattern", pattern)
-                dialog.arguments = bundle
-            }
+            val bundle = Bundle()
+            bundle.putLong("id", id)
+            bundle.putString("pattern", pattern)
+            dialog.arguments = bundle
             dialog.show(fragmentManager, "editReplace")
         }
     }
