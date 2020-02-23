@@ -1,11 +1,14 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.BatteryManager
+import android.provider.Settings
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -63,6 +66,19 @@ fun Context.getCompatDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.g
 fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
     ContextCompat.getColorStateList(this, id)
 
+/**
+ * 系统息屏时间
+ */
+fun Context.getScreenOffTime(): Int {
+    var screenOffTime = 0
+    try {
+        screenOffTime = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return screenOffTime
+}
+
 fun Context.getStatusBarHeight(): Int {
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
     return resources.getDimensionPixelSize(resourceId)
@@ -115,11 +131,44 @@ fun Context.shareWithQr(title: String, text: String) {
     }
 }
 
-val Context.isNightTheme: Boolean
-    get() = getPrefBoolean("isNightTheme")
+fun Context.sendToClip(text: String) {
+    val clipboard =
+        getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+    val clipData = ClipData.newPlainText(null, text)
+    clipboard?.let {
+        clipboard.setPrimaryClip(clipData)
+        toast(R.string.copy_complete)
+    }
+}
 
-val Context.isTransparentStatusBar: Boolean
-    get() = getPrefBoolean("transparentStatusBar", true)
+fun Context.sysIsDarkMode(): Boolean {
+    val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    return mode == Configuration.UI_MODE_NIGHT_YES
+}
 
-val Context.isShowRSS: Boolean
-    get() = getPrefBoolean("showRss", true)
+/**
+ * 获取电量
+ */
+fun Context.getBettery(): Int {
+    val iFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+    val batteryStatus = registerReceiver(null, iFilter)
+    return batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+}
+
+fun Context.openUrl(url: String) {
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = Uri.parse(url)
+    if (intent.resolveActivity(packageManager) != null) {
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            toast(e.localizedMessage ?: "open url error")
+        }
+    } else {
+        try {
+            startActivity(Intent.createChooser(intent, "请选择浏览器"))
+        } catch (e: Exception) {
+            toast(e.localizedMessage ?: "open url error")
+        }
+    }
+}

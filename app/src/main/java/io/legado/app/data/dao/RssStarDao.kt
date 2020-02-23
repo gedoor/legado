@@ -7,6 +7,9 @@ import io.legado.app.data.entities.RssStar
 @Dao
 interface RssStarDao {
 
+    @get:Query("select * from rssStars order by starTime desc")
+    val all: List<RssStar>
+
     @Query("select * from rssStars where origin = :origin and link = :link")
     fun get(origin: String, link: String): RssStar?
 

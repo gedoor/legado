@@ -7,13 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeCoverDialog : DialogFragment() {
+class ChangeCoverDialog : DialogFragment(),
+    ChangeCoverViewModel.CallBack,
+    CoverAdapter.CallBack {
 
     companion object {
         const val tag = "changeCoverDialog"
@@ -32,7 +35,7 @@ class ChangeCoverDialog : DialogFragment() {
 
     private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeCoverViewModel
-    private lateinit var adapter: CoverAdapter
+    override lateinit var adapter: CoverAdapter
 
     override fun onStart() {
         super.onStart()
@@ -46,13 +49,17 @@ class ChangeCoverDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        callBack = activity as? CallBack
         viewModel = getViewModel(ChangeCoverViewModel::class.java)
+        viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        callBack = activity as? CallBack
+        viewModel.searchStateData.observe(this, Observer {
+            refresh_progress_bar.isAutoLoading = it
+        })
         tool_bar.setTitle(R.string.change_cover_source)
         arguments?.let { bundle ->
             bundle.getString("name")?.let {
@@ -63,8 +70,14 @@ class ChangeCoverDialog : DialogFragment() {
             }
         }
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
-        adapter = CoverAdapter(requireContext())
+        adapter = CoverAdapter(requireContext(), this)
         recycler_view.adapter = adapter
+        viewModel.initData()
+    }
+
+    override fun changeTo(coverUrl: String) {
+        callBack?.coverChangeTo(coverUrl)
+        dismiss()
     }
 
     interface CallBack {

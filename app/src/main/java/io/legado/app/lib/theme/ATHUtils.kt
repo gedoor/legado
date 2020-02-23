@@ -8,10 +8,6 @@ import androidx.annotation.AttrRes
  */
 object ATHUtils {
 
-    fun isWindowBackgroundDark(context: Context): Boolean {
-        return !ColorUtils.isColorLight(resolveColor(context, android.R.attr.windowBackground))
-    }
-
     @JvmOverloads
     fun resolveColor(context: Context, @AttrRes attr: Int, fallback: Int = 0): Int {
         val a = context.theme.obtainStyledAttributes(intArrayOf(attr))

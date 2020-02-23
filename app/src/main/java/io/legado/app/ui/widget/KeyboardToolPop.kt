@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import kotlinx.android.synthetic.main.item_text.view.*
+import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.popup_keyboard_tool.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -23,7 +23,7 @@ class KeyboardToolPop(
 
     init {
         @SuppressLint("InflateParams")
-        this.contentView = LayoutInflater.from(context).inflate(R.layout.popup_keyboard_tool, null)
+        contentView = LayoutInflater.from(context).inflate(R.layout.popup_keyboard_tool, null)
 
         isTouchable = true
         isOutsideTouchable = false
@@ -40,12 +40,21 @@ class KeyboardToolPop(
     }
 
     inner class Adapter(context: Context) :
-        SimpleRecyclerAdapter<String>(context, R.layout.item_text) {
+        SimpleRecyclerAdapter<String>(context, R.layout.item_fillet_text) {
 
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 text_view.text = item
-                onClick { callBack?.sendText(item) }
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder) {
+            holder.itemView.apply {
+                onClick {
+                    getItem(holder.layoutPosition)?.let {
+                        callBack?.sendText(it)
+                    }
+                }
             }
         }
     }

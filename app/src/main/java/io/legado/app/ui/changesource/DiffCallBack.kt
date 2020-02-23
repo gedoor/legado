@@ -1,15 +1,11 @@
 package io.legado.app.ui.changesource
 
+import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.SearchBook
 
 class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems: List<SearchBook>) :
     DiffUtil.Callback() {
-
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldItems[oldItemPosition].bookUrl == newItems[newItemPosition].bookUrl
-    }
 
     override fun getOldListSize(): Int {
         return oldItems.size
@@ -19,18 +15,38 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         return newItems.size
     }
 
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
+        return oldItem.bookUrl == newItem.bookUrl
+    }
+
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldItems[oldItemPosition].originName == newItems[newItemPosition].originName
-                && oldItems[oldItemPosition].latestChapterTitle == newItems[newItemPosition].latestChapterTitle
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
+        if (oldItem.originName != newItem.originName) {
+            return false
+        }
+        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
+            return false
+        }
+        return true
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
-        if (oldItem.originName != newItem.originName || oldItem.latestChapterTitle != newItem.latestChapterTitle) {
-            return true
+        val payload = Bundle()
+        if (oldItem.originName != newItem.originName) {
+            payload.putString("name", newItem.originName)
         }
-        return null
+        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
+            payload.putString("latest", newItem.latestChapterTitle)
+        }
+        if (payload.isEmpty) {
+            return null
+        }
+        return payload
     }
 
 }

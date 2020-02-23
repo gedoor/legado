@@ -6,10 +6,10 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.webbook.BookChapterList
-import io.legado.app.model.webbook.BookContent
-import io.legado.app.model.webbook.BookInfo
-import io.legado.app.model.webbook.BookList
+import io.legado.app.model.webBook.BookChapterList
+import io.legado.app.model.webBook.BookContent
+import io.legado.app.model.webBook.BookInfo
+import io.legado.app.model.webBook.BookList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext

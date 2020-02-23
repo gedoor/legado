@@ -10,24 +10,24 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
+import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.activity
 import io.legado.app.utils.getPrefInt
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
-    ContentView.CallBack,
     DataSource {
 
-    var callBack: CallBack? = null
-    var pageFactory: TextPageFactory? = null
-    private var pageDelegate: PageDelegate? = null
+    var callBack: CallBack
+    var pageFactory: TextPageFactory
+    var pageDelegate: PageDelegate? = null
 
-    var prevPage: ContentView? = null
-    var curPage: ContentView? = null
-    var nextPage: ContentView? = null
+    var prevPage: ContentView
+    var curPage: ContentView
+    var nextPage: ContentView
 
     init {
-        callBack = activity as? CallBack
+        callBack = activity as CallBack
         prevPage = ContentView(context)
         addView(prevPage)
         nextPage = ContentView(context)
@@ -38,7 +38,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         setWillNotDraw(false)
         pageFactory = TextPageFactory(this)
         upPageAnim(context.getPrefInt(PreferKey.pageAnim))
-        curPage?.callBack = this
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -65,30 +64,31 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        callBack.screenOffTimerStart()
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
+    }
+
+    fun onDestroy() {
+        pageDelegate?.onDestroy()
+        curPage.cancelSelect()
     }
 
     fun fillPage(direction: PageDelegate.Direction) {
         when (direction) {
             PageDelegate.Direction.PREV -> {
-                pageFactory?.moveToPrevious()
+                pageFactory.moveToPrevious()
                 upContent()
-                if (isScrollDelegate) {
-                    curPage?.scrollToBottom()
-                }
             }
             PageDelegate.Direction.NEXT -> {
-                pageFactory?.moveToNext()
+                pageFactory.moveToNext()
                 upContent()
-                if (isScrollDelegate) {
-                    curPage?.scrollTo(0)
-                }
             }
             else -> Unit
         }
     }
 
     fun upPageAnim(pageAnim: Int) {
+        pageDelegate?.onDestroy()
         pageDelegate = null
         pageDelegate = when (pageAnim) {
             0 -> CoverPageDelegate(this)
@@ -101,75 +101,66 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun upContent(position: Int = 0) {
-        pageFactory?.let {
+        pageFactory.let {
             when (position) {
-                -1 -> prevPage?.setContent(it.previousPage())
-                1 -> nextPage?.setContent(it.nextPage())
+                -1 -> prevPage.setContent(it.previousPage())
+                1 -> nextPage.setContent(it.nextPage())
                 else -> {
-                    curPage?.setContent(it.currentPage())
-                    nextPage?.setContent(it.nextPage())
-                    prevPage?.setContent(it.previousPage())
-                    if (isScrollDelegate) {
-                        curPage?.scrollTo(ReadBook.textChapter()?.getStartLine(ReadBook.durChapterPos()))
-                    }
+                    curPage.setContent(it.currentPage())
+                    nextPage.setContent(it.nextPage())
+                    prevPage.setContent(it.previousPage())
                 }
             }
-            if (isScrollDelegate) {
-                prevPage?.scrollToBottom()
-            }
         }
-        pageDelegate?.onPageUp()
+        callBack.screenOffTimerStart()
     }
 
     fun moveToPrevPage(noAnim: Boolean = true) {
         if (noAnim) {
-            if (isScrollDelegate) {
-                ReadBook.textChapter()?.let {
-                    curPage?.scrollTo(it.getStartLine(pageIndex - 1))
-                }
-            } else {
-                fillPage(PageDelegate.Direction.PREV)
-            }
+            fillPage(PageDelegate.Direction.PREV)
+        } else {
+            pageDelegate?.start(PageDelegate.Direction.PREV)
         }
     }
 
     fun moveToNextPage(noAnim: Boolean = true) {
         if (noAnim) {
-            if (isScrollDelegate) {
-                ReadBook.textChapter()?.let {
-                    curPage?.scrollTo(it.getStartLine(pageIndex + 1))
-                }
-            } else {
-                fillPage(PageDelegate.Direction.NEXT)
-            }
+            fillPage(PageDelegate.Direction.NEXT)
+        } else {
+            pageDelegate?.start(PageDelegate.Direction.NEXT)
         }
     }
 
+    fun upSelectAble(selectAble: Boolean) {
+        pageDelegate?.upSelectAble(selectAble)
+        curPage.upSelectAble(selectAble)
+    }
+
     fun upStyle() {
-        curPage?.upStyle()
-        prevPage?.upStyle()
-        nextPage?.upStyle()
+        curPage.upStyle()
+        prevPage.upStyle()
+        nextPage.upStyle()
     }
 
     fun upBg() {
         ReadBookConfig.bg ?: let {
             ReadBookConfig.upBg()
         }
-        curPage?.setBg(ReadBookConfig.bg)
-        prevPage?.setBg(ReadBookConfig.bg)
-        nextPage?.setBg(ReadBookConfig.bg)
+        curPage.setBg(ReadBookConfig.bg)
+        prevPage.setBg(ReadBookConfig.bg)
+        nextPage.setBg(ReadBookConfig.bg)
     }
 
     fun upTime() {
-        curPage?.upTime()
-        prevPage?.upTime()
-        nextPage?.upTime()
+        curPage.upTime()
+        prevPage.upTime()
+        nextPage.upTime()
     }
 
     fun upBattery(battery: Int) {
-        curPage?.upBattery(battery)
-        prevPage?.upBattery(battery)
-        nextPage?.upBattery(battery)
+        curPage.upBattery(battery)
+        prevPage.upBattery(battery)
+        nextPage.upBattery(battery)
     }
 
     override val isScrollDelegate: Boolean
@@ -179,7 +170,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         get() = ReadBook.durChapterPos()
 
     override fun setPageIndex(pageIndex: Int) {
-        callBack?.setPageIndex(pageIndex)
+        callBack.setPageIndex(pageIndex)
     }
 
     override fun getChapterPosition(): Int {
@@ -187,15 +178,15 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun getCurrentChapter(): TextChapter? {
-        return if (callBack?.isInitFinish == true) ReadBook.textChapter(0) else null
+        return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
     }
 
     override fun getNextChapter(): TextChapter? {
-        return if (callBack?.isInitFinish == true) ReadBook.textChapter(1) else null
+        return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
     }
 
     override fun getPreviousChapter(): TextChapter? {
-        return if (callBack?.isInitFinish == true) ReadBook.textChapter(-1) else null
+        return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
     }
 
     override fun hasNextChapter(): Boolean {
@@ -203,32 +194,12 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun hasPrevChapter(): Boolean {
-        callBack?.let {
-            return ReadBook.durChapterIndex > 0
-        }
-        return false
-    }
-
-    override fun scrollToLine(line: Int) {
-        if (isScrollDelegate) {
-            ReadBook.textChapter()?.let {
-                val pageIndex = it.getPageIndex(line)
-                curPage?.setPageIndex(pageIndex)
-                callBack?.setPageIndex(pageIndex)
-            }
-        }
-    }
-
-    override fun scrollToLast() {
-        if (isScrollDelegate) {
-            ReadBook.textChapter()?.let {
-                callBack?.setPageIndex(it.lastIndex())
-                curPage?.setPageIndex(it.lastIndex())
-            }
-        }
+        return ReadBook.durChapterIndex > 0
     }
 
     interface CallBack {
+
+        val isInitFinish: Boolean
 
         /**
          * 保存页数
@@ -240,6 +211,6 @@ class PageView(context: Context, attrs: AttributeSet) :
          */
         fun clickCenter()
 
-        val isInitFinish: Boolean
+        fun screenOffTimerStart()
     }
 }

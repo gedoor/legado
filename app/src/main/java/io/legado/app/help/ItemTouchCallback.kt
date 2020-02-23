@@ -88,16 +88,13 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
         srcViewHolder: RecyclerView.ViewHolder,
         targetViewHolder: RecyclerView.ViewHolder
     ): Boolean {
-        onItemTouchCallbackListener?.let {
-            return it.onMove(srcViewHolder.adapterPosition, targetViewHolder.adapterPosition)
-        }
-        return false
+        return onItemTouchCallbackListener
+            ?.onMove(srcViewHolder.adapterPosition, targetViewHolder.adapterPosition)
+            ?: false
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        onItemTouchCallbackListener?.let {
-            return it.onSwiped(viewHolder.adapterPosition)
-        }
+        onItemTouchCallbackListener?.onSwiped(viewHolder.adapterPosition)
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
@@ -107,13 +104,21 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
         viewPager?.requestDisallowInterceptTouchEvent(swiping)
     }
 
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
+        onItemTouchCallbackListener?.clearView(recyclerView, viewHolder)
+    }
+
     interface OnItemTouchCallbackListener {
+
         /**
          * 当某个Item被滑动删除的时候
          *
          * @param adapterPosition item的position
          */
-        fun onSwiped(adapterPosition: Int)
+        fun onSwiped(adapterPosition: Int) {
+
+        }
 
         /**
          * 当两个Item位置互换的时候被回调
@@ -122,6 +127,13 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
          * @param targetPosition 目的地的Item的position
          * @return 开发者处理了操作应该返回true，开发者没有处理就返回false
          */
-        fun onMove(srcPosition: Int, targetPosition: Int): Boolean
+        fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            return true
+        }
+
+        fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+
+        }
+
     }
 }

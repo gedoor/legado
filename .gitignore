@@ -8,3 +8,5 @@
 .externalNativeBuild
 /release
 /tmp
+node_modules/
+package-lock.json

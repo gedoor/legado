@@ -24,4 +24,17 @@ data class ReplaceRule(
     var isRegex: Boolean = true,
     @ColumnInfo(name = "sortOrder")
     var order: Int = 0
-) : Parcelable
+) : Parcelable {
+
+
+    override fun equals(other: Any?): Boolean {
+        if (other is ReplaceRule) {
+            return other.id == id
+        }
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}

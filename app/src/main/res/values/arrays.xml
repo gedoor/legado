@@ -63,6 +63,18 @@
         <item>@string/jf_convert_f</item>
     </string-array>
 
+    <string-array name="theme_mode">
+        <item>跟随系统</item>
+        <item>亮色主题</item>
+        <item>暗色主题</item>
+    </string-array>
+
+    <string-array name="theme_mode_v">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="NavBarColors">
         <item>自动</item>
         <item>黑色</item>
@@ -78,13 +90,19 @@
         <item>常亮</item>
     </string-array>
 
-    <integer-array name="screen_time_out_value">
+    <string-array name="screen_time_out_value">
         <item>0</item>
         <item>60</item>
         <item>120</item>
         <item>180</item>
         <item>-1</item>
-    </integer-array>
+    </string-array>
+
+    <string-array name="select_folder">
+        <item>@string/default_path</item>
+        <item>@string/sys_folder_picker</item>
+        <item>@string/app_folder_picker</item>
+    </string-array>
 
     <string-array name="screen_direction_list_title">
         <item>@string/screen_unspecified</item>
@@ -115,13 +133,23 @@
     </declare-styleable>
 
     <string-array name="icon_names">
+        <item>iconMain</item>
         <item>icon1</item>
         <item>icon2</item>
+        <item>icon3</item>
     </string-array>
 
     <string-array name="icons">
-        <item>@string/icon_main</item>
-        <item>@string/icon_book</item>
+        <item>ic_launcher</item>
+        <item>launcher1</item>
+        <item>launcher2</item>
+        <item>launcher3</item>
+    </string-array>
+
+    <string-array name="chinese_mode">
+        <item>关闭</item>
+        <item>繁体转简体</item>
+        <item>简体转繁体</item>
     </string-array>
 
 </resources>

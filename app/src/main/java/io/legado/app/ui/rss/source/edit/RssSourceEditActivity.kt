@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
-import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
@@ -193,18 +192,16 @@ class RssSourceEditActivity :
     }
 
     private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.isShowing?.let { if (it) return }
-        if (!isFinishing) {
-            mSoftKeyboardTool?.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+        mSoftKeyboardTool?.let {
+            if (it.isShowing) return
+            if (!isFinishing) {
+                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+            }
         }
     }
 
     private fun closePopupWindow() {
-        mSoftKeyboardTool?.let {
-            if (it.isShowing) {
-                it.dismiss()
-            }
-        }
+        mSoftKeyboardTool?.dismiss()
     }
 
     private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {

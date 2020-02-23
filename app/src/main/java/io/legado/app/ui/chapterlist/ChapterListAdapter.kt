@@ -1,10 +1,10 @@
 package io.legado.app.ui.chapterlist
 
 import android.content.Context
+import android.widget.TextView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.accentColor
@@ -17,29 +17,47 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ChapterListAdapter(context: Context, val callback: Callback) :
     SimpleRecyclerAdapter<BookChapter>(context, R.layout.item_chapter_list) {
 
+    val cacheFileNames = hashSetOf<String>()
+
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            if (callback.durChapterIndex() == item.index) {
-                tv_chapter_name.setTextColor(context.accentColor)
+            if (payloads.isEmpty()) {
+                if (callback.durChapterIndex() == item.index) {
+                    tv_chapter_name.setTextColor(context.accentColor)
+                } else {
+                    tv_chapter_name.setTextColor(context.getCompatColor(R.color.tv_text_default))
+                }
+                tv_chapter_name.text = item.title
+                if (!item.tag.isNullOrEmpty()) {
+                    tv_tag.text = item.tag
+                    tv_tag.visible()
+                }
+                upHasCache(
+                    tv_chapter_name,
+                    cacheFileNames.contains(BookHelp.formatChapterName(item))
+                )
             } else {
-                tv_chapter_name.setTextColor(context.getCompatColor(R.color.tv_text_default))
-            }
-            tv_chapter_name.text = item.title
-            if (!item.tag.isNullOrEmpty()) {
-                tv_tag.text = item.tag
-                tv_tag.visible()
-            }
-            this.onClick {
-                callback.openChapter(item)
-            }
-            callback.book()?.let {
-                tv_chapter_name.paint.isFakeBoldText = BookHelp.hasContent(it, item)
+                upHasCache(
+                    tv_chapter_name,
+                    cacheFileNames.contains(BookHelp.formatChapterName(item))
+                )
             }
         }
     }
 
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callback.openChapter(it)
+            }
+        }
+    }
+
+    private fun upHasCache(textView: TextView, contains: Boolean) {
+        textView.paint.isFakeBoldText = contains
+    }
+
     interface Callback {
-        fun book(): Book?
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
     }

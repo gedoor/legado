@@ -13,6 +13,7 @@ import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.internals.AnkoInternals
 
+@Suppress("DEPRECATION")
 fun Fragment.isOnline() = requireContext().connectivityManager.activeNetworkInfo?.isConnected == true
 
 fun Fragment.getPrefBoolean(key: String, defValue: Boolean = false) =
@@ -54,16 +55,8 @@ fun Fragment.getCompatDrawable(@DrawableRes id: Int): Drawable? = requireContext
 
 fun Fragment.getCompatColorStateList(@ColorRes id: Int): ColorStateList? = requireContext().getCompatColorStateList(id)
 
-val Fragment.isNightTheme: Boolean
-    get() = getPrefBoolean("isNightTheme")
-
-val Fragment.isTransparentStatusBar: Boolean
-    get() = getPrefBoolean("transparentStatusBar")
-
-
 inline fun <reified T : Activity> Fragment.startActivity(vararg params: Pair<String, Any?>) =
     AnkoInternals.internalStartActivity(requireActivity(), T::class.java, params)
-
 
 inline fun <reified T : Activity> Fragment.startActivityForResult(requestCode: Int, vararg params: Pair<String, Any?>) =
     startActivityForResult(AnkoInternals.createIntent(requireActivity(), T::class.java, params), requestCode)

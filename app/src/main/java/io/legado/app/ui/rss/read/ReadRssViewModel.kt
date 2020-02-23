@@ -70,7 +70,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             }
     }
 
-    fun star() {
+    fun favorite() {
         execute {
             rssArticle?.let {
                 if (star) {
@@ -78,6 +78,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                 } else {
                     App.db.rssStarDao().insert(it.toStar())
                 }
+                star = !star
             }
         }.onSuccess {
             callBack?.upStarMenu()
@@ -85,7 +86,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     fun clHtml(content: String): String {
-        return if (content.contains("<style>|style=".toRegex())) {
+        return if (content.contains("<style>".toRegex())) {
             content
         } else {
             """
@@ -93,8 +94,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                     img{max-width:100% !important; width:auto; height:auto;}
                     video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
                     body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
-                </style>$content
-             """
+                </style>
+                $content
+            """.trimIndent()
         }
     }
 

@@ -25,9 +25,6 @@ class RssArticlesAdapter(context: Context, val callBack: CallBack) :
         with(holder.itemView) {
             tv_title.text = item.title
             tv_pub_date.text = item.pubDate
-            onClick {
-                callBack.readRss(item)
-            }
             if (item.image.isNullOrBlank()) {
                 image_view.gone()
             } else {
@@ -61,6 +58,14 @@ class RssArticlesAdapter(context: Context, val callBack: CallBack) :
                 tv_title.textColorResource = R.color.tv_text_summary
             } else {
                 tv_title.textColorResource = R.color.tv_text_default
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callBack.readRss(it)
             }
         }
     }

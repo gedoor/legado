@@ -20,17 +20,13 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Bus
-import io.legado.app.help.FileHelp
+import io.legado.app.constant.EventBus
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -55,8 +51,8 @@ class BgTextConfigDialog : DialogFragment() {
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
-            it.decorView.setPadding(0, 0, 0, 0)
+            it.setBackgroundDrawableResource(R.color.background)
+            it.decorView.setPadding(0, 5, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
@@ -85,7 +81,7 @@ class BgTextConfigDialog : DialogFragment() {
     }
 
     @SuppressLint("InflateParams")
-    private fun initData() = with(ReadBookConfig.getConfig()) {
+    private fun initData() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.isChecked = statusIconDark()
         adapter = BgAdapter(requireContext())
         recycler_view.layoutManager =
@@ -103,7 +99,7 @@ class BgTextConfigDialog : DialogFragment() {
         }
     }
 
-    private fun initView() = with(ReadBookConfig.getConfig()) {
+    private fun initView() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
                 setStatusIconDark(isChecked)
@@ -132,7 +128,8 @@ class BgTextConfigDialog : DialogFragment() {
                 .show(requireActivity())
         }
         tv_default.onClick {
-
+            ReadBookConfig.resetDur()
+            postEvent(EventBus.UP_CONFIG, false)
         }
     }
 
@@ -152,14 +149,20 @@ class BgTextConfigDialog : DialogFragment() {
                     .centerCrop()
                     .into(iv_bg)
                 tv_name.text = item.substringBeforeLast(".")
-                this.onClick {
-                    ReadBookConfig.getConfig().setBg(1, item)
-                    ReadBookConfig.upBg()
-                    postEvent(Bus.UP_CONFIG, false)
-                }
             }
         }
 
+        override fun registerListener(holder: ItemViewHolder) {
+            holder.itemView.apply {
+                this.onClick {
+                    getItemByLayoutPosition(holder.layoutPosition)?.let {
+                        ReadBookConfig.durConfig.setBg(1, it)
+                        ReadBookConfig.upBg()
+                        postEvent(EventBus.UP_CONFIG, false)
+                    }
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -168,18 +171,18 @@ class BgTextConfigDialog : DialogFragment() {
             resultSelectBg -> {
                 if (resultCode == RESULT_OK) {
                     data?.data?.let { uri ->
-                        if (DocumentFile.isDocumentUri(requireContext(), uri)) {
+                        if (uri.toString().isContentPath()) {
                             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
                             doc?.let {
                                 var file = requireContext().getExternalFilesDir(null)
                                     ?: requireContext().filesDir
                                 file =
-                                    FileHelp.getFile(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
+                                    FileUtils.createFileIfNotExist(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
                                 DocumentUtils.readBytes(requireContext(), uri)?.let {
                                     file.writeBytes(it)
-                                    ReadBookConfig.getConfig().setBg(2, file.absolutePath)
+                                    ReadBookConfig.durConfig.setBg(2, file.absolutePath)
                                     ReadBookConfig.upBg()
-                                    postEvent(Bus.UP_CONFIG, false)
+                                    postEvent(EventBus.UP_CONFIG, false)
                                 }
                             }
                         } else {
@@ -190,10 +193,10 @@ class BgTextConfigDialog : DialogFragment() {
                                 )
                                 .rationale(R.string.bg_image_per)
                                 .onGranted {
-                                    FileUtils.getPath(requireContext(), uri)?.let { path ->
-                                        ReadBookConfig.getConfig().setBg(2, path)
+                                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                                        ReadBookConfig.durConfig.setBg(2, path)
                                         ReadBookConfig.upBg()
-                                        postEvent(Bus.UP_CONFIG, false)
+                                        postEvent(EventBus.UP_CONFIG, false)
                                     }
                                 }
                                 .request()

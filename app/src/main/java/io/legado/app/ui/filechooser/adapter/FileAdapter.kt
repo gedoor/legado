@@ -64,7 +64,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             fileParent.icon = upIcon
             fileParent.name = DIR_PARENT
             fileParent.size = 0
-            fileParent.path = File(path).parent
+            fileParent.path = File(path).parent ?: ""
             data.add(fileParent)
         }
         currentPath?.let { currentPath ->
@@ -110,9 +110,12 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.apply {
             image_view.setImageDrawable(item.icon)
             text_view.text = item.name
-            onClick {
-                callBack.onFileClick(holder.layoutPosition)
-            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            callBack.onFileClick(holder.layoutPosition)
         }
     }
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.constant.Theme
@@ -22,14 +23,13 @@ class ReplaceEditDialog : DialogFragment(),
 
     companion object {
 
-        fun newInstance(id: Long? = null): ReplaceEditDialog {
+        fun show(fragmentManager: FragmentManager, id: Long = -1, pattern: String? = null) {
             val dialog = ReplaceEditDialog()
-            id?.let {
-                val bundle = Bundle()
-                bundle.putLong("id", id)
-                dialog.arguments = bundle
-            }
-            return dialog
+            val bundle = Bundle()
+            bundle.putLong("id", id)
+            bundle.putString("pattern", pattern)
+            dialog.arguments = bundle
+            dialog.show(fragmentManager, "editReplace")
         }
     }
 
@@ -56,7 +56,7 @@ class ReplaceEditDialog : DialogFragment(),
         tool_bar.inflateMenu(R.menu.replace_edit)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
-        viewModel.replaceRuleData.observe(this, Observer {
+        viewModel.replaceRuleData.observe(viewLifecycleOwner, Observer {
             upReplaceView(it)
         })
         arguments?.let {

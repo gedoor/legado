@@ -8,7 +8,21 @@
     android:background="@color/background"
     android:padding="10dp">
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
+        android:id="@+id/tv_title_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:text="@string/title_center"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_text_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,11 +33,11 @@
         android:text="@string/text_bold"
         android:gravity="center"
         android:textSize="14sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/tv_title_center"
         app:layout_constraintRight_toLeftOf="@+id/tv_text_font"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_text_font"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +52,7 @@
         app:layout_constraintRight_toLeftOf="@+id/tv_text_indent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_text_indent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,7 +67,7 @@
         app:layout_constraintRight_toLeftOf="@+id/tv_padding"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.lib.theme.view.ATEStrokeTextView
+    <io.legado.app.ui.widget.text.StrokeTextView
         android:id="@+id/tv_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,165 +79,76 @@
         android:gravity="center"
         android:textSize="14sp"
         app:layout_constraintLeft_toRightOf="@+id/tv_text_indent"
+        app:layout_constraintRight_toLeftOf="@id/chinese_converter"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.legado.app.ui.book.read.config.ChineseConverter
+        android:id="@+id/chinese_converter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:gravity="center"
+        android:textSize="14sp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/ll_text_size"
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/tv_text_bold">
+        app:max="45"
+        app:title="@string/text_size"
+        app:layout_constraintTop_toBottomOf="@+id/tv_text_bold" />
 
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="@string/text_size" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_size_remove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_text_size"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:max="45" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_size_add"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_add"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <TextView
-            android:id="@+id/tv_text_size"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            tools:ignore="RtlHardcoded" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_text_letter_spacing"
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_letter_spacing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/ll_text_size">
+        app:max="100"
+        app:title="@string/text_letter_spacing"
+        app:layout_constraintTop_toBottomOf="@+id/dsb_text_size" />
 
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="@string/text_letter_spacing" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_letter_spacing_remove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_text_letter_spacing"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:max="10" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_text_letter_spacing_add"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_add"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <TextView
-            android:id="@+id/tv_text_letter_spacing"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            tools:ignore="RtlHardcoded" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_line_size"
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_line_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/ll_text_letter_spacing">
+        app:max="50"
+        app:title="@string/line_size"
+        app:layout_constraintTop_toBottomOf="@+id/dsb_text_letter_spacing" />
 
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="@string/line_size" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_line_size_remove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_remove"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_line_size"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:max="50" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_line_size_add"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_add"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="@color/tv_text_default" />
-
-        <TextView
-            android:id="@+id/tv_line_size"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            tools:ignore="RtlHardcoded" />
-    </LinearLayout>
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_paragraph_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:max="50"
+        app:title="@string/paragraph_size"
+        app:layout_constraintTop_toBottomOf="@+id/dsb_line_size" />
 
     <View
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
         android:background="@color/btn_bg_press"
-        app:layout_constraintTop_toBottomOf="@+id/ll_line_size" />
+        app:layout_constraintTop_toBottomOf="@+id/dsb_paragraph_spacing" />
 
     <TextView
         android:id="@+id/tv_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:text="@string/page_anim"
         app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg" />
 
@@ -231,8 +156,8 @@
         android:id="@+id/rg_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:orientation="horizontal"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/tv_page_anim">
@@ -308,12 +233,37 @@
 
     <TextView
         android:id="@+id/tv_bg_ts"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:text="@string/text_bg_style"
-        app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg1" />
+        app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/tv_share_layout" />
+
+    <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+        android:id="@+id/cb_share_layout"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="6dp"
+        app:layout_constraintTop_toTopOf="@id/tv_bg_ts"
+        app:layout_constraintBottom_toBottomOf="@id/tv_bg_ts"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/tv_share_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="@string/share_layout"
+        app:layout_constraintTop_toTopOf="@+id/tv_bg_ts"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_bg_ts"
+        app:layout_constraintRight_toLeftOf="@+id/cb_share_layout" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg0"
@@ -321,19 +271,11 @@
         android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
+        app:text="@string/text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/bg1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_bg_ts" />
-
-    <TextView
-        android:id="@+id/tv_bg0"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:text="@string/text"
-        app:layout_constraintTop_toTopOf="@+id/bg0"
-        app:layout_constraintLeft_toLeftOf="@+id/bg0" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg1"
@@ -341,19 +283,11 @@
         android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
+        app:text="@string/text"
         app:layout_constraintLeft_toRightOf="@+id/bg0"
         app:layout_constraintRight_toLeftOf="@+id/bg2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/bg0" />
-
-    <TextView
-        android:id="@+id/tv_bg1"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:text="@string/text"
-        app:layout_constraintTop_toTopOf="@+id/bg1"
-        app:layout_constraintLeft_toLeftOf="@+id/bg1" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg2"
@@ -361,19 +295,11 @@
         android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
+        app:text="@string/text"
         app:layout_constraintLeft_toRightOf="@+id/bg1"
         app:layout_constraintRight_toLeftOf="@+id/bg3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/bg0" />
-
-    <TextView
-        android:id="@+id/tv_bg2"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:text="@string/text"
-        app:layout_constraintTop_toTopOf="@+id/bg2"
-        app:layout_constraintLeft_toLeftOf="@+id/bg2" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg3"
@@ -381,19 +307,11 @@
         android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
+        app:text="@string/text"
         app:layout_constraintLeft_toRightOf="@+id/bg2"
         app:layout_constraintRight_toLeftOf="@+id/bg4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/bg0" />
-
-    <TextView
-        android:id="@+id/tv_bg3"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:text="@string/text"
-        app:layout_constraintTop_toTopOf="@+id/bg3"
-        app:layout_constraintLeft_toLeftOf="@+id/bg3" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/bg4"
@@ -401,18 +319,10 @@
         android:layout_height="48dp"
         app:civ_border_color="@color/tv_text_default"
         app:civ_border_width="1dp"
+        app:text="@string/text"
         app:layout_constraintLeft_toRightOf="@+id/bg3"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/bg0" />
-
-    <TextView
-        android:id="@+id/tv_bg4"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:text="@string/text"
-        app:layout_constraintTop_toTopOf="@+id/bg4"
-        app:layout_constraintLeft_toLeftOf="@+id/bg4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

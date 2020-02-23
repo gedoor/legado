@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.delegate
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
@@ -10,32 +11,36 @@ import androidx.annotation.CallSuper
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.screenshot
-import io.legado.app.utils.snackbar
 import kotlin.math.abs
 
-abstract class PageDelegate(protected val pageView: PageView) {
-    val centerRectF = RectF(
+abstract class PageDelegate(protected val pageView: PageView) :
+    GestureDetector.SimpleOnGestureListener() {
+    private val centerRectF = RectF(
         pageView.width * 0.33f, pageView.height * 0.33f,
         pageView.width * 0.66f, pageView.height * 0.66f
     )
+    protected val context: Context = pageView.context
     //起始点
-    protected var startX: Float = 0.toFloat()
-    protected var startY: Float = 0.toFloat()
+    protected var startX: Float = 0f
+    protected var startY: Float = 0f
+    //上一个触碰点
+    protected var lastY: Float = 0f
     //触碰点
-    protected var touchX: Float = 0.toFloat()
-    protected var touchY: Float = 0.toFloat()
+    protected var touchX: Float = 0f
+    protected var touchY: Float = 0f
 
-    protected val nextPage: ContentView?
+    protected val nextPage: ContentView
         get() = pageView.nextPage
 
-    protected val curPage: ContentView?
+    protected val curPage: ContentView
         get() = pageView.curPage
 
-    protected val prevPage: ContentView?
+    protected val prevPage: ContentView
         get() = pageView.prevPage
 
     protected var bitmap: Bitmap? = null
@@ -46,34 +51,36 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected var atTop: Boolean = false
     protected var atBottom: Boolean = false
 
-    private var snackbar: Snackbar? = null
+    private val snackBar: Snackbar by lazy {
+        Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
+    }
 
     private val scroller: Scroller by lazy {
-        Scroller(
-            pageView.context,
-            FastOutLinearInInterpolator()
-        )
+        Scroller(pageView.context, FastOutLinearInInterpolator())
     }
 
     private val detector: GestureDetector by lazy {
-        GestureDetector(
-            pageView.context,
-            GestureListener()
-        )
+        GestureDetector(pageView.context, this).apply {
+            setIsLongpressEnabled(context.getPrefBoolean(PreferKey.textSelectAble))
+        }
     }
 
     var isMoved = false
     var noNext = true
 
     //移动方向
-    var direction = Direction.NONE
+    var mDirection = Direction.NONE
     var isCancel = false
     var isRunning = false
     var isStarted = false
+    var isTextSelected = false
 
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
+        lastY = y
+        touchX = x
+        touchY = y
 
         if (invalidate) {
             invalidate()
@@ -81,6 +88,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     }
 
     open fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
+        lastY = touchY
         touchX = x
         touchY = y
 
@@ -91,8 +99,22 @@ abstract class PageDelegate(protected val pageView: PageView) {
         onScroll()
     }
 
+    fun upSelectAble(selectAble: Boolean) {
+        detector.setIsLongpressEnabled(selectAble)
+    }
+
     protected fun invalidate() {
         pageView.invalidate()
+    }
+
+    open fun fling(
+        startX: Int, startY: Int, velocityX: Int, velocityY: Int,
+        minX: Int, maxX: Int, minY: Int, maxY: Int
+    ) {
+        scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY)
+        isRunning = true
+        isStarted = true
+        invalidate()
     }
 
     protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int) {
@@ -108,19 +130,12 @@ abstract class PageDelegate(protected val pageView: PageView) {
         invalidate()
     }
 
-    protected fun stopScroll() {
+    private fun stopScroll() {
         isRunning = false
         isStarted = false
         invalidate()
-        if (pageView.isScrollDelegate) {
-            pageView.postDelayed({
-                bitmap?.recycle()
-                bitmap = null
-            }, 100)
-        } else {
-            bitmap?.recycle()
-            bitmap = null
-        }
+        bitmap?.recycle()
+        bitmap = null
     }
 
     fun setViewSize(width: Int, height: Int) {
@@ -138,7 +153,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
             setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
             setTouchPoint(scroller.finalX.toFloat(), scroller.finalY.toFloat(), false)
-            onScrollStop()
+            onAnimStop()
             stopScroll()
         }
     }
@@ -174,7 +189,29 @@ abstract class PageDelegate(protected val pageView: PageView) {
                 return
             }
         }
-        onScrollStart()
+        onAnimStart()
+    }
+
+    abstract fun onAnimStart()//scroller start
+
+    abstract fun onDraw(canvas: Canvas)//绘制
+
+    abstract fun onAnimStop()//scroller finish
+
+    open fun onScroll() {//移动contentView， slidePage
+    }
+
+    @CallSuper
+    open fun setDirection(direction: Direction) {
+        mDirection = direction
+    }
+
+    open fun setBitmap() {
+        bitmap = when (mDirection) {
+            Direction.NEXT -> nextPage.screenshot()
+            Direction.PREV -> prevPage.screenshot()
+            else -> null
+        }
     }
 
     /**
@@ -183,145 +220,117 @@ abstract class PageDelegate(protected val pageView: PageView) {
     @CallSuper
     open fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
-        if (curPage?.isTextSelected() == true) {
-            curPage?.dispatchTouchEvent(event)
-            return true
-        }
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            curPage?.let {
-                it.contentTextView()?.let { contentTextView ->
-                    atTop = contentTextView.atTop()
-                    atBottom = contentTextView.atBottom()
+        if (!detector.onTouchEvent(event)) {
+            //GestureDetector.onFling小幅移动不会触发,所以要自己判断
+            if (event.action == MotionEvent.ACTION_UP && isMoved) {
+                if (isTextSelected) {
+                    isTextSelected = false
                 }
-                it.dispatchTouchEvent(event)
-            }
-        } else if (event.action == MotionEvent.ACTION_UP) {
-            curPage?.dispatchTouchEvent(event)
-            if (isMoved) {
-                // 开启翻页效果
-                if (!noNext) onScrollStart()
-                return true
+                if (!noNext) onAnimStart()
             }
         }
-        return detector.onTouchEvent(event)
-    }
-
-    abstract fun onScrollStart()//scroller start
-
-    abstract fun onDraw(canvas: Canvas)//绘制
-
-    abstract fun onScrollStop()//scroller finish
-
-    open fun onScroll() {//移动contentView， slidePage
-    }
-
-    open fun onPageUp() {
-    }
-
-    abstract fun onScroll(
-        e1: MotionEvent,
-        e2: MotionEvent,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean
-
-    enum class Direction {
-        NONE, PREV, NEXT
+        return true
     }
 
     /**
-     * 触摸事件处理
+     * 按下
      */
-    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-
-        override fun onDown(e: MotionEvent): Boolean {
-//            abort()
-            //是否移动
-            isMoved = false
-            //是否存在下一章
-            noNext = false
-            //是否正在执行动画
-            isRunning = false
-            //取消
-            isCancel = false
-            //是下一章还是前一章
-            direction = Direction.NONE
-            //设置起始位置的触摸点
-            setStartPoint(e.x, e.y)
-            return true
+    override fun onDown(e: MotionEvent): Boolean {
+        if (isTextSelected) {
+            curPage.cancelSelect()
         }
-
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
-            val x = e.x
-            val y = e.y
-            if (centerRectF.contains(x, y)) {
-                pageView.callBack?.clickCenter()
-                setTouchPoint(x, y)
-            } else {
-                bitmap = if (x > viewWidth / 2 ||
-                    pageView.context.getPrefBoolean(PreferKey.clickAllNext, false)) {
-                    //设置动画方向
-                    if (!hasNext()) {
-                        return true
-                    }
-                    //下一页截图
-                    nextPage?.screenshot()
-                } else {
-                    if (!hasPrev()) {
-                        return true
-                    }
-                    //上一页截图
-                    prevPage?.screenshot()
-                }
-                setTouchPoint(x, y)
-                onScrollStart()
-            }
-            return true
-        }
-
-        override fun onScroll(
-            e1: MotionEvent,
-            e2: MotionEvent,
-            distanceX: Float,
-            distanceY: Float
-        ): Boolean {
-            return this@PageDelegate.onScroll(e1, e2, distanceX, distanceY)
-        }
+        //是否移动
+        isMoved = false
+        //是否存在下一章
+        noNext = false
+        //是否正在执行动画
+        isRunning = false
+        //取消
+        isCancel = false
+        //是下一章还是前一章
+        setDirection(Direction.NONE)
+        //设置起始位置的触摸点
+        setStartPoint(e.x, e.y)
+        return true
     }
 
-    fun hasPrev(): Boolean {
-        //上一页的参数配置
-        direction = Direction.PREV
-        val hasPrev = pageView.pageFactory?.hasPrev() == true
-        if (!hasPrev) {
-            snackbar ?: let {
-                snackbar = pageView.snackbar("没有上一页")
-            }
-            snackbar?.let {
-                if (!it.isShown) {
-                    it.setText("没有上一页")
-                    it.show()
+    /**
+     * 单击
+     */
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        if (isTextSelected) {
+            isTextSelected = false
+            return true
+        }
+        val x = e.x
+        val y = e.y
+        if (centerRectF.contains(x, y)) {
+            pageView.callBack.clickCenter()
+            setTouchPoint(x, y)
+        } else {
+            if (x > viewWidth / 2 ||
+                AppConfig.clickAllNext
+            ) {
+                //设置动画方向
+                if (!hasNext()) {
+                    return true
                 }
+                setDirection(Direction.NEXT)
+                setBitmap()
+            } else {
+                if (!hasPrev()) {
+                    return true
+                }
+                setDirection(Direction.PREV)
+                setBitmap()
+            }
+            setTouchPoint(x, y)
+            onAnimStart()
+        }
+        return true
+    }
+
+    /**
+     * 长按选择
+     */
+    override fun onLongPress(e: MotionEvent) {
+        isTextSelected = curPage.selectText(e)
+    }
+
+    /**
+     * 判断是否有上一页
+     */
+    fun hasPrev(): Boolean {
+        val hasPrev = pageView.pageFactory.hasPrev()
+        if (!hasPrev) {
+            if (!snackBar.isShown) {
+                snackBar.setText("没有上一页")
+                snackBar.show()
             }
         }
         return hasPrev
     }
 
+    /**
+     * 判断是否有下一页
+     */
     fun hasNext(): Boolean {
-        //进行下一页的配置
-        direction = Direction.NEXT
-        val hasNext = pageView.pageFactory?.hasNext() == true
+        val hasNext = pageView.pageFactory.hasNext()
         if (!hasNext) {
-            snackbar ?: let {
-                snackbar = pageView.snackbar("没有下一页")
-            }
-            snackbar?.let {
-                if (!it.isShown) {
-                    it.setText("没有下一页")
-                    it.show()
-                }
+            if (!snackBar.isShown) {
+                snackBar.setText("没有下一页")
+                snackBar.show()
             }
         }
         return hasNext
     }
+
+    open fun onDestroy() {
+        bitmap?.recycle()
+    }
+
+    enum class Direction {
+        NONE, PREV, NEXT
+    }
+
 }

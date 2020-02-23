@@ -6,10 +6,12 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.help.FileHelp
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.Restore
+import io.legado.app.help.storage.ImportOldData
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.splitNotBlank
 import org.jetbrains.anko.toast
 import java.io.File
@@ -18,7 +20,13 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
 
     fun importSource(text: String, showMsg: (msg: String) -> Unit) {
         execute {
-            Restore.importOldReplaceRule(text)
+            if (text.isAbsUrl()) {
+                HttpHelper.simpleGet(text)?.let {
+                    ImportOldData.importOldReplaceRule(it)
+                }
+            } else {
+                ImportOldData.importOldReplaceRule(text)
+            }
         }.onError {
             showMsg(it.localizedMessage ?: "ERROR")
         }.onSuccess {
@@ -48,41 +56,45 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
     fun upOrder() {
         execute {
             val rules = App.db.replaceRuleDao().all
-            for ((index: Int, rule: ReplaceRule) in rules.withIndex()) {
+            for ((index, rule) in rules.withIndex()) {
                 rule.order = index + 1
             }
             App.db.replaceRuleDao().update(*rules.toTypedArray())
         }
     }
 
-    fun enableSelection(ids: LinkedHashSet<Long>) {
+    fun enableSelection(rules: LinkedHashSet<ReplaceRule>) {
         execute {
-            App.db.replaceRuleDao().enableSection(*ids.toLongArray())
-        }
-    }
-
-    fun disableSelection(ids: LinkedHashSet<Long>) {
-        execute {
-            App.db.replaceRuleDao().disableSection(*ids.toLongArray())
-        }
-    }
-
-    fun delSelection(ids: LinkedHashSet<Long>) {
-        execute {
-            App.db.replaceRuleDao().delSection(*ids.toLongArray())
-        }
-    }
-
-    fun exportSelection(ids: LinkedHashSet<Long>) {
-        execute {
-            ids.map {
-                App.db.replaceRuleDao().findById(it)
-            }.let {
-                val json = GSON.toJson(it)
-                val file =
-                    FileHelp.getFile(Backup.exportPath + File.separator + "exportReplaceRule.json")
-                file.writeText(json)
+            val list = arrayListOf<ReplaceRule>()
+            rules.forEach {
+                list.add(it.copy(isEnabled = true))
             }
+            App.db.replaceRuleDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun disableSelection(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            val list = arrayListOf<ReplaceRule>()
+            rules.forEach {
+                list.add(it.copy(isEnabled = false))
+            }
+            App.db.replaceRuleDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun delSelection(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            App.db.replaceRuleDao().delete(*rules.toTypedArray())
+        }
+    }
+
+    fun exportSelection(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            val json = GSON.toJson(rules)
+            val file =
+                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportReplaceRule.json")
+            file.writeText(json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {

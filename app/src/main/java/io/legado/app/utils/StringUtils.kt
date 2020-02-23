@@ -2,13 +2,17 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
+import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.pow
 
+@Suppress("unused")
 object StringUtils {
     private const val HOUR_OF_DAY = 24
     private const val DAY_OF_YESTERDAY = 2
@@ -41,16 +45,18 @@ object StringUtils {
     //将时间转换成日期
     fun dateConvert(time: Long, pattern: String): String {
         val date = Date(time)
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern)
+        @SuppressLint("SimpleDateFormat")
+        val format = SimpleDateFormat(pattern)
         return format.format(date)
     }
 
     //将日期转换成昨天、今天、明天
     fun dateConvert(source: String, pattern: String): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern)
+        @SuppressLint("SimpleDateFormat")
+        val format = SimpleDateFormat(pattern)
         val calendar = Calendar.getInstance()
         try {
-            val date = format.parse(source)
+            val date = format.parse(source) ?: return ""
             val curTime = calendar.timeInMillis
             calendar.time = date
             //将MISC 转换成 sec
@@ -62,13 +68,18 @@ object StringUtils {
             //如果没有时间
             if (oldHour == 0) {
                 //比日期:昨天今天和明天
-                if (difDate == 0L) {
-                    return "今天"
-                } else if (difDate < DAY_OF_YESTERDAY) {
-                    return "昨天"
-                } else {
-                    @SuppressLint("SimpleDateFormat") val convertFormat = SimpleDateFormat("yyyy-MM-dd")
-                    return convertFormat.format(date)
+                return when {
+                    difDate == 0L -> {
+                        "今天"
+                    }
+                    difDate < DAY_OF_YESTERDAY -> {
+                        "昨天"
+                    }
+                    else -> {
+                        @SuppressLint("SimpleDateFormat")
+                        val convertFormat = SimpleDateFormat("yyyy-MM-dd")
+                        convertFormat.format(date)
+                    }
                 }
             }
 
@@ -78,7 +89,8 @@ object StringUtils {
                 difHour < HOUR_OF_DAY -> difHour.toString() + "小时前"
                 difDate < DAY_OF_YESTERDAY -> "昨天"
                 else -> {
-                    @SuppressLint("SimpleDateFormat") val convertFormat = SimpleDateFormat("yyyy-MM-dd")
+                    @SuppressLint("SimpleDateFormat")
+                    val convertFormat = SimpleDateFormat("yyyy-MM-dd")
                     convertFormat.format(date)
                 }
             }
@@ -87,6 +99,19 @@ object StringUtils {
         }
 
         return ""
+    }
+
+    fun toSize(length: Long): String {
+        if (length <= 0) return "0"
+        val units = arrayOf("b", "kb", "M", "G", "T")
+        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
+        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
+        val digitGroups =
+            (log10(length.toDouble()) / log10(1024.0)).toInt()
+        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
+        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
+        return DecimalFormat("#,##0.##")
+            .format(length / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
 
     @SuppressLint("DefaultLocale")
@@ -242,7 +267,7 @@ object StringUtils {
         val m = p.matcher(data)
         val buf = StringBuffer(data.length)
         while (m.find()) {
-            val ch = Integer.parseInt(m.group(1), 16).toChar().toString()
+            val ch = Integer.parseInt(m.group(1)!!, 16).toChar().toString()
             m.appendReplacement(buf, Matcher.quoteReplacement(ch))
         }
         m.appendTail(buf)
@@ -254,9 +279,9 @@ object StringUtils {
             "(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>".toRegex(),
             "\n"
         )// 替换特定标签为换行符
-                .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
-                .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
-                .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
-                .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
+            .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
+            .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
+            .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
+            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
     }
 }

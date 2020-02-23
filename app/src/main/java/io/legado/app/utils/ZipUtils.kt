@@ -7,14 +7,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
-/**
- * <pre>
- * author: Blankj
- * blog  : http://blankj.com
- * time  : 2016/08/27
- * desc  : utils about zip
-</pre> *
- */
+@Suppress("unused")
 object ZipUtils {
 
     /**
@@ -57,7 +50,7 @@ object ZipUtils {
             }
             return true
         } finally {
-            if (zos != null) {
+            zos?.let {
                 zos.finish()
                 zos.close()
             }
@@ -89,7 +82,7 @@ object ZipUtils {
             }
             return true
         } finally {
-            if (zos != null) {
+            zos?.let {
                 zos.finish()
                 zos.close()
             }
@@ -261,7 +254,7 @@ object ZipUtils {
         val files = ArrayList<File>()
         val zip = ZipFile(zipFile)
         val entries = zip.entries()
-        try {
+        zip.use {
             if (isSpace(keyword)) {
                 while (entries.hasMoreElements()) {
                     val entry = entries.nextElement() as ZipEntry
@@ -285,8 +278,6 @@ object ZipUtils {
                     }
                 }
             }
-        } finally {
-            zip.close()
         }
         return files
     }

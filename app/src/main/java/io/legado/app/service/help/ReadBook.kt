@@ -12,9 +12,12 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.ChapterProvider
-import io.legado.app.ui.book.read.page.TextChapter
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Main
+import io.legado.app.ui.book.read.page.entities.TextChapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.jetbrains.anko.toast
 
 
 object ReadBook {
@@ -39,13 +42,16 @@ object ReadBook {
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
-        App.db.bookSourceDao().getBookSource(book.origin)?.let {
-            webBook = WebBook(it)
-        }
         chapterSize = 0
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
+        upWebBook(book.origin)
+    }
+
+    fun upWebBook(origin: String) {
+        val bookSource = App.db.bookSourceDao().getBookSource(origin)
+        webBook = if (bookSource != null) WebBook(bookSource) else null
     }
 
     fun moveToNextPage() {
@@ -197,6 +203,7 @@ object ReadBook {
 
     private fun download(index: Int) {
         book?.let { book ->
+            if (book.isLocalBook()) return
             if (addLoading(index)) {
                 Coroutine.async {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
@@ -260,23 +267,26 @@ object ReadBook {
                     book!!.useReplaceRule
                 )
                 when (chapter.index) {
-                    durChapterIndex -> withContext(Main) {
+                    durChapterIndex -> {
                         curTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent()
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
-                    durChapterIndex - 1 -> withContext(Main) {
+                    durChapterIndex - 1 -> {
                         prevTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent(-1)
                     }
-                    durChapterIndex + 1 -> withContext(Main) {
+                    durChapterIndex + 1 -> {
                         nextTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
                         callBack?.upContent(1)
                     }
                 }
             }
+        }.onError {
+            it.printStackTrace()
+            App.INSTANCE.toast(it.localizedMessage ?: "ChapterProvider ERROR")
         }
     }
 

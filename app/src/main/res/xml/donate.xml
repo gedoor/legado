@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="微信"
+        app:iconSpaceReserved="false">
+
+        <androidx.preference.Preference
+            android:key="gzGzh"
+            android:title="关注公众号"
+            android:summary="关注[开源阅读软件]点击广告支持我"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="wxZsm"
+            android:title="微信赞赏码"
+            android:summary="点击打开"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="支付宝"
+        app:iconSpaceReserved="false">
+
+        <androidx.preference.Preference
+            android:key="zfbHbSsm"
+            android:title="支付宝红包搜索码"
+            android:summary="537954522 点击复制"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="zfbSk"
+            android:title="支付宝收款,支持红包"
+            android:summary="点击直接跳转支付宝"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="zfbHbRwm"
+            android:title="支付宝红包二维码"
+            android:summary="点击打开"
+            app:iconSpaceReserved="false" />
+
+        <androidx.preference.Preference
+            android:key="zfbSkRwm"
+            android:title="支付宝收款二维码"
+            android:summary="点击打开"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="QQ"
+        app:iconSpaceReserved="false">
+
+        <androidx.preference.Preference
+            android:key="qqSkRwm"
+            android:title="QQ收款二维码"
+            android:summary="点击打开"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

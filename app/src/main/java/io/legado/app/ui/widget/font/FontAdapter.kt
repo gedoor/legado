@@ -14,7 +14,7 @@ import java.io.File
 class FontAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<File>(context, R.layout.item_font) {
 
-    override fun convert(holder: ItemViewHolder, item: File, payloads: MutableList<Any>) =
+    override fun convert(holder: ItemViewHolder, item: File, payloads: MutableList<Any>) {
         with(holder.itemView) {
             val typeface = Typeface.createFromFile(item)
             tv_font.typeface = typeface
@@ -26,6 +26,15 @@ class FontAdapter(context: Context, val callBack: CallBack) :
                 iv_checked.invisible()
             }
         }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callBack.onClick(it)
+            }
+        }
+    }
 
     interface CallBack {
         fun onClick(file: File)

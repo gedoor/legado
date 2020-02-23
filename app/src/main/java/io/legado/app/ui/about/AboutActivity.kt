@@ -1,13 +1,12 @@
 package io.legado.app.ui.about
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import org.jetbrains.anko.toast
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.shareText
 
 class AboutActivity : BaseActivity(R.layout.activity_about) {
 
@@ -27,18 +26,13 @@ class AboutActivity : BaseActivity(R.layout.activity_about) {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_scoring -> openIntent("market://details?id=$packageName")
+            R.id.menu_scoring -> openUrl("market://details?id=$packageName")
+            R.id.menu_share_it -> shareText(
+                "App Share",
+                getString(R.string.app_share_description)
+            )
         }
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun openIntent(address: String) {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(address)
-            startActivity(intent)
-        } catch (e: Exception) {
-            toast(R.string.can_not_open)
-        }
-    }
 }

@@ -20,13 +20,15 @@ def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], projec
 android {
     compileSdkVersion 29
     signingConfigs {
-        myConfig {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-            v1SigningEnabled true
-            v2SigningEnabled true
+        if (project.hasProperty("RELEASE_STORE_FILE")) {
+            myConfig {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+                v1SigningEnabled true
+                v2SigningEnabled true
+            }
         }
     }
     defaultConfig {
@@ -49,12 +51,16 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.myConfig
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.myConfig
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            signingConfig signingConfigs.myConfig
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.myConfig
+            }
             applicationIdSuffix '.debug'
             versionNameSuffix 'debug'
             minifyEnabled false
@@ -96,22 +102,23 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //fireBase
-    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     //androidX
-    implementation 'androidx.core:core-ktx:1.2.0-rc01'
+    implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.media:media:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.google.android:flexbox:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     //lifecycle
-    def lifecycle_version = '2.1.0'
+    def lifecycle_version = '2.2.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
@@ -137,13 +144,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     //规则相关
-    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
-    //JS
-    implementation 'com.github.gedoor:rhino-android:1.3'
+    //JS rhino
+    implementation 'com.github.gedoor:rhino-android:1.4'
 
     //Retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
@@ -168,6 +174,9 @@ dependencies {
 
     //MarkDown
     implementation 'ru.noties.markwon:core:3.0.2'
+
+    // 转换繁体
+    implementation 'com.github.houbb:opencc4j:1.4.0'
 
 }
 
