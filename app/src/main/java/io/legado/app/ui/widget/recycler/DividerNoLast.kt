@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.roundToInt
+
 
 /**
  * 不画最后一条分隔线
@@ -106,7 +108,7 @@ class DividerNoLast(context: Context, orientation: Int) :
         for (i in 0 until childCount - 1) {
             val child = parent.getChildAt(i)
             parent.getDecoratedBoundsWithMargins(child, mBounds)
-            val bottom = mBounds.bottom + Math.round(child.translationY)
+            val bottom = mBounds.bottom + child.translationY.roundToInt()
             val top = bottom - mDivider!!.intrinsicHeight
             mDivider!!.setBounds(left, top, right, bottom)
             mDivider!!.draw(canvas)
@@ -133,7 +135,7 @@ class DividerNoLast(context: Context, orientation: Int) :
         for (i in 0 until childCount - 1) {
             val child = parent.getChildAt(i)
             parent.layoutManager!!.getDecoratedBoundsWithMargins(child, mBounds)
-            val right = mBounds.right + Math.round(child.translationX)
+            val right = mBounds.right + child.translationX.roundToInt()
             val left = right - mDivider!!.intrinsicWidth
             mDivider!!.setBounds(left, top, right, bottom)
             mDivider!!.draw(canvas)
@@ -149,10 +151,18 @@ class DividerNoLast(context: Context, orientation: Int) :
             outRect[0, 0, 0] = 0
             return
         }
+
         if (mOrientation == VERTICAL) {
             outRect[0, 0, 0] = mDivider!!.intrinsicHeight
         } else {
-            outRect[0, 0, mDivider!!.intrinsicWidth] = 0
+            val childAdapterPosition = parent.getChildAdapterPosition(view)
+            val lastCount = parent.adapter!!.itemCount - 1
+            //如果不是最后一条 正常赋值 如果是最后一条 赋值为0
+            if (childAdapterPosition != lastCount) {
+                outRect[0, 0, mDivider!!.intrinsicWidth] = 0
+            } else {
+                outRect[0, 0, 0] = 0
+            }
         }
     }
 
