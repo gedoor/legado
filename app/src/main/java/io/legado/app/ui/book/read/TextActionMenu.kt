@@ -2,9 +2,14 @@ package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ResolveInfo
+import android.os.Build
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.annotation.RequiresApi
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
@@ -39,6 +44,9 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         recycler_view.adapter = adapter
         val menu = MenuBuilder(context)
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            onInitializeMenu(menu)
+        }
         adapter.setItems(menu.visibleItems)
     }
 
@@ -69,10 +77,49 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     private fun onMenuItemSelected(item: MenuItemImpl) {
         when (item.itemId) {
             R.id.menu_copy -> context.sendToClip(callBack.selectedText)
+
         }
         callBack.onMenuActionFinally()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun createProcessTextIntent(): Intent {
+        return Intent()
+            .setAction(Intent.ACTION_PROCESS_TEXT)
+            .setType("text/plain")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun getSupportedActivities(): List<ResolveInfo?>? {
+        return context.packageManager
+            .queryIntentActivities(createProcessTextIntent(), 0)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun createProcessTextIntentForResolveInfo(info: ResolveInfo): Intent? {
+        return createProcessTextIntent()
+            .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            .setClassName(info.activityInfo.packageName, info.activityInfo.name)
+    }
+
+    /**
+     * Start with a menu Item order value that is high enough
+     * so that your "PROCESS_TEXT" menu items appear after the
+     * standard selection menu items like Cut, Copy, Paste.
+     */
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun onInitializeMenu(menu: Menu) {
+        // Start with a menu Item order value that is high enough
+        // so that your "PROCESS_TEXT" menu items appear after the
+        // standard selection menu items like Cut, Copy, Paste.
+        var menuItemOrder = 100
+        for (resolveInfo in getSupportedActivities()!!) {
+            menu.add(
+                Menu.NONE, Menu.NONE,
+                menuItemOrder++, resolveInfo!!.loadLabel(context.packageManager)
+            ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
+        }
+    }
 
     interface CallBack {
         val selectedText: String
