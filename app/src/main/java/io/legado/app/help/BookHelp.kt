@@ -268,7 +268,9 @@ object BookHelp {
                 }
             }
         }
-        c = "$title\n$c"
+        if (!c.startsWith(title)) {
+            c = "$title\n$c"
+        }
         when (AppConfig.chineseConverterType) {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
