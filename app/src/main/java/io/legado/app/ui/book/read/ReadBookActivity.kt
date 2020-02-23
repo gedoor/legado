@@ -405,8 +405,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun onMenuItemSelected(item: MenuItemImpl): Boolean {
         when (item.itemId) {
-            R.id.menu_replace -> ReplaceEditDialog
-                .show(supportFragmentManager, pattern = selectedText)
+            R.id.menu_replace -> {
+                ReplaceEditDialog.show(supportFragmentManager, pattern = selectedText)
+                return true
+            }
         }
         return false
     }
