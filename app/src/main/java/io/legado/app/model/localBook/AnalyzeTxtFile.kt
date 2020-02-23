@@ -205,6 +205,9 @@ object AnalyzeTxtFile {
     }
 
     private fun getTocRule(book: Book, bookStream: RandomAccessFile, charset: Charset): Pattern? {
+        if (book.tocUrl.isNotEmpty()) {
+            return Pattern.compile(book.tocUrl, Pattern.MULTILINE)
+        }
         val tocRules = getTocRules()
         var rulePattern: Pattern? = null
         //首先获取128k的数据

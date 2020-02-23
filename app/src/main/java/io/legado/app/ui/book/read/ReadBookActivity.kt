@@ -62,6 +62,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
+    TocRegexDialog.CallBack,
     ColorPickerDialogListener {
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
@@ -599,6 +600,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * colorSelectDialog
      */
     override fun onDialogDismissed(dialogId: Int) = Unit
+
+    override fun onTocRegexDialogResult(tocRegex: String) {
+        ReadBook.book?.let {
+            it.tocUrl = tocRegex
+            viewModel.loadChapterList(it)
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
