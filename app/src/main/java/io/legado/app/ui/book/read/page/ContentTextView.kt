@@ -11,7 +11,6 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
@@ -25,7 +24,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             style = Paint.Style.FILL
         }
     }
-    private var activityCallBack: CallBack
+    private var callBack: CallBack
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     private var selectLineStart = 0
     private var selectCharStart = 0
@@ -33,13 +32,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var selectCharEnd = 0
     private var textPage: TextPage = TextPage()
     //滚动参数
+    private val pageFactory: TextPageFactory get() = callBack.pageFactory
     private val maxScrollOffset = 100f
     private var pageOffset = 0f
     private var linePos = 0
     private var isLastPage = false
 
     init {
-        activityCallBack = activity as CallBack
+        callBack = activity as CallBack
         contentDescription = textPage.text
     }
 
@@ -127,7 +127,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             isLastPage = false
         }
         // 首页
-        if (pageOffset < 0 && ReadBook.durChapterIndex == 0 && ReadBook.durPageIndex == 0) {
+        if (pageOffset < 0 && !pageFactory.hasPrev()) {
             pageOffset = 0f
         }
 
@@ -245,11 +245,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     private fun upSelectedStart(x: Float, y: Float) {
-        activityCallBack.upSelectedStart(x, y + activityCallBack.headerHeight)
+        callBack.upSelectedStart(x, y + callBack.headerHeight)
     }
 
     private fun upSelectedEnd(x: Float, y: Float) {
-        activityCallBack.upSelectedEnd(x, y + activityCallBack.headerHeight)
+        callBack.upSelectedEnd(x, y + callBack.headerHeight)
     }
 
     fun cancelSelect() {
@@ -259,7 +259,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
         }
         invalidate()
-        activityCallBack.onCancelSelect()
+        callBack.onCancelSelect()
     }
 
     val selectedText: String
@@ -295,5 +295,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun upSelectedEnd(x: Float, y: Float)
         fun onCancelSelect()
         val headerHeight: Int
+        val pageFactory: TextPageFactory
     }
 }

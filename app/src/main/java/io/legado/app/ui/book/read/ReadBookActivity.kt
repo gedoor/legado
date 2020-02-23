@@ -36,6 +36,7 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
@@ -80,7 +81,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     private var screenTimeOut: Long = 0
     private var timeElectricityReceiver: TimeElectricityReceiver? = null
-
+    override val pageFactory: TextPageFactory get() = page_view.pageFactory
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

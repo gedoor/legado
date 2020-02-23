@@ -134,15 +134,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
         isRunning = false
         isStarted = false
         invalidate()
-        if (pageView.isScrollDelegate) {
-            pageView.postDelayed({
-                bitmap?.recycle()
-                bitmap = null
-            }, 100)
-        } else {
-            bitmap?.recycle()
-            bitmap = null
-        }
+        bitmap?.recycle()
+        bitmap = null
     }
 
     fun setViewSize(width: Int, height: Int) {
