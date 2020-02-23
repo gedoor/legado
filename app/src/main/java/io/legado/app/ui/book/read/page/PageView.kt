@@ -16,7 +16,6 @@ import io.legado.app.utils.getPrefInt
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
-    ContentView.CallBack,
     DataSource {
 
     var callBack: CallBack
@@ -39,7 +38,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         setWillNotDraw(false)
         pageFactory = TextPageFactory(this)
         upPageAnim(context.getPrefInt(PreferKey.pageAnim))
-        curPage.callBack = this
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -197,25 +195,6 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun hasPrevChapter(): Boolean {
         return ReadBook.durChapterIndex > 0
-    }
-
-    override fun scrollToLine(line: Int) {
-        if (isScrollDelegate) {
-            ReadBook.textChapter()?.let {
-                val pageIndex = it.getPageIndex(line)
-                curPage.setPageIndex(pageIndex)
-                callBack.setPageIndex(pageIndex)
-            }
-        }
-    }
-
-    override fun scrollToLast() {
-        if (isScrollDelegate) {
-            ReadBook.textChapter()?.let {
-                callBack.setPageIndex(it.lastIndex())
-                curPage.setPageIndex(it.lastIndex())
-            }
-        }
     }
 
     interface CallBack {

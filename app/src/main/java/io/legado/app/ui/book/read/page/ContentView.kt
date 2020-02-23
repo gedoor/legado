@@ -16,7 +16,6 @@ import java.util.*
 
 
 class ContentView(context: Context) : FrameLayout(context) {
-    var callBack: CallBack? = null
     private var pageSize: Int = 0
 
     init {
@@ -135,8 +134,4 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     val selectedText: String get() = content_text_view.selectedText
 
-    interface CallBack {
-        fun scrollToLine(line: Int)
-        fun scrollToLast()
-    }
 }
