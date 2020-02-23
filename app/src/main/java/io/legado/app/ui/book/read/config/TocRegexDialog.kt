@@ -28,8 +28,8 @@ import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getVerticalDivider
 import kotlinx.android.synthetic.main.dialog_toc_regex.*
 import kotlinx.android.synthetic.main.dialog_toc_regex_edit.*
 import kotlinx.android.synthetic.main.dialog_toc_regex_edit.view.*
@@ -76,7 +76,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private fun initView() {
         adapter = TocRegexAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter

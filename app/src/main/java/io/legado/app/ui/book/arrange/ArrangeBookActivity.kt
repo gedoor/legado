@@ -19,8 +19,8 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
 
@@ -60,7 +60,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
         select_action_bar.setMainActionText(R.string.move_to_group)

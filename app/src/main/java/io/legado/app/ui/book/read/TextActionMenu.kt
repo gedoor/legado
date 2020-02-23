@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.ui.widget.recycler.DividerNoLast
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.sendToClip
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
@@ -45,6 +46,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     private fun initRecyclerView() = with(contentView) {
         val adapter = Adapter(context)
         recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        recycler_view.addItemDecoration(DividerNoLast(context, DividerNoLast.HORIZONTAL))
         recycler_view.adapter = adapter
         val menu = MenuBuilder(context)
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)

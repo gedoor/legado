@@ -14,7 +14,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.lib.theme.ATH
-import io.legado.app.utils.getVerticalDivider
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
 import kotlinx.android.synthetic.main.fragment_bookmark.*
 
@@ -38,7 +38,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
         ATH.applyEdgeEffectColor(recycler_view)
         adapter = BookmarkAdapter(this)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
     }
 

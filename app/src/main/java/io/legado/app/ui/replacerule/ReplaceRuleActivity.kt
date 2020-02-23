@@ -28,6 +28,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
@@ -77,7 +78,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ReplaceRuleAdapter(this, this)
         recycler_view.adapter = adapter
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(this))
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
