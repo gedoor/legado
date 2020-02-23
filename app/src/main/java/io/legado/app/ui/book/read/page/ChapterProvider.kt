@@ -176,6 +176,7 @@ object ChapterProvider {
                     x = x1
                 }
             }
+            textLine.lineBottom = textLine.lineBottom + titlePaint.fontMetrics.descent
         }
         durY += paragraphSpacing
         return durY
@@ -286,6 +287,7 @@ object ChapterProvider {
                     x = x1
                 }
             }
+            textLine.lineBottom = textLine.lineBottom + contentPaint.fontMetrics.descent
         }
         durY += paragraphSpacing
         return durY

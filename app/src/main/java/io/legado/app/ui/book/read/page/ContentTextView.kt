@@ -104,9 +104,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (it.selected) {
                     canvas.drawRect(
                         it.leftBottomPosition.x,
-                        it.rightTopPosition.y,
+                        textLine.lineTop,
                         it.rightTopPosition.x,
-                        it.leftBottomPosition.y,
+                        textLine.lineBottom,
                         selectedPaint
                     )
                 }
