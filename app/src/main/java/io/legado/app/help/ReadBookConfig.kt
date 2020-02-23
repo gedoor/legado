@@ -205,14 +205,14 @@ object ReadBookConfig {
             else durConfig.footerPaddingTop = value
 
     class Config(
-        var bgStr: String = "#EEEEEE",//白天背景
-        var bgStrNight: String = "#000000",//夜间背景
-        var bgType: Int = 0,//白天背景类型
-        var bgTypeNight: Int = 0,//夜间背景类型
-        var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
-        var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
-        var textColor: String = "#3E3D3B",//白天文字颜色
-        var textColorNight: String = "#adadad",//夜间文字颜色
+        private var bgStr: String = "#EEEEEE",//白天背景
+        private var bgStrNight: String = "#000000",//夜间背景
+        private var bgType: Int = 0,//白天背景类型
+        private var bgTypeNight: Int = 0,//夜间背景类型
+        private var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
+        private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
+        private var textColor: String = "#3E3D3B",//白天文字颜色
+        private var textColorNight: String = "#ADADAD",//夜间文字颜色
         var textBold: Boolean = false,//是否粗体字
         var textSize: Int = 20,//文字大小
         var letterSpacing: Float = 1f,//字间距
