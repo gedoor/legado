@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.config
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -21,10 +22,16 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.cancelButton
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getVerticalDivider
 import kotlinx.android.synthetic.main.dialog_toc_regex.*
+import kotlinx.android.synthetic.main.dialog_toc_regex_edit.*
+import kotlinx.android.synthetic.main.dialog_toc_regex_edit.view.*
 import kotlinx.android.synthetic.main.item_toc_regex.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -114,8 +121,40 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun editRule(rule: TxtTocRule? = null) {
+        val tocRule = rule?.copy() ?: TxtTocRule()
+        requireContext().alert(titleResource = R.string.txt_toc_regex) {
+            var rootView: View? = null
+            customView {
+                LayoutInflater.from(requireContext())
+                    .inflate(R.layout.dialog_toc_regex_edit, null).apply {
+                        rootView = this
+                        tv_rule_name.setText(tocRule.name)
+                        tv_rule_regex.setText(tocRule.rule)
+                    }
+            }
+            okButton {
+                rootView?.let {
+                    tocRule.name = tv_rule_name.text.toString()
+                    tocRule.rule = tv_rule_regex.text.toString()
+                    saveRule(rule, tocRule)
+                }
+            }
+            cancelButton()
+        }.show().applyTint()
+    }
 
+    private fun saveRule(oldRule: TxtTocRule?, rule: TxtTocRule) {
+        launch(IO) {
+            if (rule.serialNumber < 0) {
+                rule.serialNumber = adapter.getItems().lastOrNull()?.serialNumber ?: 0 + 1
+            }
+            oldRule?.let {
+                App.db.txtTocRule().delete(oldRule)
+            }
+            App.db.txtTocRule().insert(rule)
+        }
     }
 
     inner class TocRegexAdapter(context: Context) :
@@ -127,6 +166,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 if (payloads.isEmpty()) {
                     rb_regex_name.text = item.name
                     rb_regex_name.isChecked = item.name == selectedName
+                    swt_enabled.isChecked = item.enable
                 } else {
                     rb_regex_name.isChecked = item.name == selectedName
                 }
@@ -141,10 +181,10 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                         updateItems(0, itemCount - 1, true)
                     }
                 }
-                tv_edit.onClick {
+                iv_edit.onClick {
                     editRule(getItem(holder.layoutPosition))
                 }
-                tv_del.onClick {
+                iv_delete.onClick {
                     getItem(holder.layoutPosition)?.let { item ->
                         launch(IO) {
                             App.db.txtTocRule().delete(item)

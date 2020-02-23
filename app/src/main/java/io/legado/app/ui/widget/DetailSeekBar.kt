@@ -34,11 +34,11 @@ class DetailSeekBar(context: Context, attrs: AttributeSet?) : FrameLayout(contex
         seek_bar.max = typedArray.getInteger(R.styleable.DetailSeekBar_max, 0)
         typedArray.recycle()
 
-        iv_seek_add.onClick {
+        iv_seek_plus.onClick {
             seek_bar.progressAdd(1)
             onChanged?.invoke(seek_bar.progress)
         }
-        iv_seek_remove.onClick {
+        iv_seek_reduce.onClick {
             seek_bar.progressAdd(-1)
             onChanged?.invoke(seek_bar.progress)
         }
