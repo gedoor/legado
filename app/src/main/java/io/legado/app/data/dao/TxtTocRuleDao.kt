@@ -24,4 +24,5 @@ interface TxtTocRuleDao {
 
     @Delete
     fun delete(vararg rule: TxtTocRule)
+
 }

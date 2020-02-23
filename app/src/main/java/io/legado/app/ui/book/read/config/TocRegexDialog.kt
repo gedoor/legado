@@ -21,12 +21,14 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getVerticalDivider
 import kotlinx.android.synthetic.main.dialog_toc_regex.*
 import kotlinx.android.synthetic.main.item_toc_regex.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
 
@@ -98,14 +100,23 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> {
-            }
-            R.id.menu_default -> {
-            }
+            R.id.menu_add -> editRule()
+            R.id.menu_default -> importDefault()
         }
         return false
     }
 
+    private fun importDefault() {
+        launch(IO) {
+            AnalyzeTxtFile.getDefaultRules().let {
+                App.db.txtTocRule().insert(*it.toTypedArray())
+            }
+        }
+    }
+
+    private fun editRule(rule: TxtTocRule? = null) {
+
+    }
 
     inner class TocRegexAdapter(context: Context) :
         SimpleRecyclerAdapter<TxtTocRule>(context, R.layout.item_toc_regex),
@@ -123,10 +134,22 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         }
 
         override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.rb_regex_name.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (buttonView.isPressed && isChecked) {
-                    selectedName = getItem(holder.layoutPosition)?.name
-                    updateItems(0, itemCount - 1, true)
+            holder.itemView.apply {
+                rb_regex_name.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (buttonView.isPressed && isChecked) {
+                        selectedName = getItem(holder.layoutPosition)?.name
+                        updateItems(0, itemCount - 1, true)
+                    }
+                }
+                tv_edit.onClick {
+                    editRule(getItem(holder.layoutPosition))
+                }
+                tv_del.onClick {
+                    getItem(holder.layoutPosition)?.let { item ->
+                        launch(IO) {
+                            App.db.txtTocRule().delete(item)
+                        }
+                    }
                 }
             }
         }
