@@ -19,6 +19,9 @@ interface TxtTocRuleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rule: TxtTocRule)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(vararg rule: TxtTocRule)
+
     @Delete
     fun delete(vararg rule: TxtTocRule)
 }

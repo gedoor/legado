@@ -620,4 +620,5 @@
     <string name="share_layout">共用布局</string>
     <string name="title_center">标题居中</string>
     <string name="browser">浏览器</string>
+    <string name="import_default_rule">导入默认规则</string>
 </resources>
