@@ -23,7 +23,7 @@
             android:contentDescription="@string/chapter_list"
             android:src="@drawable/ic_toc"
             android:tint="@color/tv_text_default"
-            android:tooltipText="@string/auto_next_page"
+            android:tooltipText="@string/chapter_list"
             app:backgroundTint="@color/background_menu"
             app:elevation="2dp"
             app:fabSize="mini"
@@ -43,7 +43,7 @@
             android:contentDescription="@string/to_backstage"
             android:src="@drawable/ic_visibility_off"
             android:tint="@color/tv_text_default"
-            android:tooltipText="@string/replace_rule_title"
+            android:tooltipText="@string/to_backstage"
             app:backgroundTint="@color/background_menu"
             app:elevation="2dp"
             app:fabSize="mini"
@@ -79,9 +79,11 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:tooltipText="@string/menu"
                 android:contentDescription="@string/menu"
                 android:src="@drawable/ic_menu"
-                android:tint="@color/tv_text_default" />
+                android:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
 
             <View
                 android:layout_width="0dp"
@@ -95,9 +97,11 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:tooltipText="@string/prev_sentence"
                 android:contentDescription="@string/prev_sentence"
                 android:src="@drawable/ic_skip_previous"
-                android:tint="@color/tv_text_default" />
+                android:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
 
             <ImageView
                 android:id="@+id/iv_play_pause"
@@ -106,9 +110,11 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:tooltipText="@string/audio_play"
                 android:contentDescription="@string/audio_play"
                 android:src="@drawable/ic_play_24dp"
-                android:tint="@color/tv_text_default" />
+                android:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
 
             <ImageView
                 android:id="@+id/iv_stop"
@@ -118,8 +124,10 @@
                 android:layout_marginRight="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/stop"
+                android:tooltipText="@string/stop"
                 android:src="@drawable/ic_stop_black_24dp"
-                android:tint="@color/tv_text_default" />
+                android:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
 
             <ImageView
                 android:id="@+id/iv_play_next"
@@ -129,8 +137,10 @@
                 android:layout_marginRight="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/next_sentence"
+                android:tooltipText="@string/next_sentence"
                 android:src="@drawable/ic_skip_next"
-                android:tint="@color/tv_text_default" />
+                android:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
 
             <View
                 android:layout_width="0dp"
@@ -144,9 +154,11 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:tooltipText="@string/other_setting"
                 android:contentDescription="@string/other_setting"
                 android:src="@drawable/ic_settings"
-                android:tint="@color/tv_text_default" />
+                android:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
 
         </LinearLayout>
 
@@ -160,8 +172,11 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:tooltipText="@string/set_timer"
+                android:contentDescription="@string/set_timer"
                 android:src="@drawable/ic_time_add_24dp"
-                android:tint="@color/tv_text_default" />
+                android:tint="@color/tv_text_default"
+                tools:ignore="UnusedAttribute" />
 
             <io.legado.app.lib.theme.view.ATESeekBar
                 android:id="@+id/seek_timer"
@@ -213,6 +228,7 @@
                     android:contentDescription="@string/flow_sys"
                     android:text="@string/flow_sys"
                     tools:ignore="RtlHardcoded" />
+
             </LinearLayout>
 
             <io.legado.app.lib.theme.view.ATESeekBar
