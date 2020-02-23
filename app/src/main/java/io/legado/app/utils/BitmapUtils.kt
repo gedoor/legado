@@ -147,7 +147,7 @@ object BitmapUtils {
 
     //图片不被压缩
     fun convertViewToBitmap(view: View, bitmapWidth: Int, bitmapHeight: Int): Bitmap {
-        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Config.ARGB_8888)
         view.draw(Canvas(bitmap))
         return bitmap
     }

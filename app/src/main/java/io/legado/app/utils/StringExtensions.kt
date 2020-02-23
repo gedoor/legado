@@ -1,7 +1,5 @@
 package io.legado.app.utils
 
-// import org.apache.commons.text.StringEscapeUtils
-
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
 fun String?.isContentPath(): Boolean = this?.startsWith("content://") == true
