@@ -116,13 +116,13 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun getSupportedActivities(): List<ResolveInfo?>? {
+    private fun getSupportedActivities(): List<ResolveInfo> {
         return context.packageManager
             .queryIntentActivities(createProcessTextIntent(), 0)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun createProcessTextIntentForResolveInfo(info: ResolveInfo): Intent? {
+    private fun createProcessTextIntentForResolveInfo(info: ResolveInfo): Intent {
         return createProcessTextIntent()
             .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             .setClassName(info.activityInfo.packageName, info.activityInfo.name)
@@ -139,10 +139,10 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         // so that your "PROCESS_TEXT" menu items appear after the
         // standard selection menu items like Cut, Copy, Paste.
         var menuItemOrder = 100
-        for (resolveInfo in getSupportedActivities()!!) {
+        for (resolveInfo in getSupportedActivities()) {
             menu.add(
                 Menu.NONE, Menu.NONE,
-                menuItemOrder++, resolveInfo!!.loadLabel(context.packageManager)
+                menuItemOrder++, resolveInfo.loadLabel(context.packageManager)
             ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
         }
     }
