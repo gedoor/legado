@@ -85,7 +85,8 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     intent.data = Uri.parse(callBack.selectedText)
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    context.toast(R.string.can_not_open)
+                    e.printStackTrace()
+                    context.toast(e.localizedMessage ?: "ERROR")
                 }
             }
             else -> item.intent?.let {

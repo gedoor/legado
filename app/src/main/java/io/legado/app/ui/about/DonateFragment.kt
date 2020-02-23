@@ -9,8 +9,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.utils.ACache
+import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
-import io.legado.app.utils.toast
 import org.jetbrains.anko.longToast
 import java.net.URLEncoder
 
@@ -32,26 +32,15 @@ class DonateFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "wxZsm" -> openIntent(Intent.ACTION_VIEW, wxZsRwmUrl)
-            "zfbHbRwm" -> openIntent(Intent.ACTION_VIEW, zfbHbRwmUrl)
-            "zfbSkRwm" -> openIntent(Intent.ACTION_VIEW, zfbSkRwmUrl)
-            "qqSkRwm" -> openIntent(Intent.ACTION_VIEW, qqSkRwmUrl)
+            "wxZsm" -> requireContext().openUrl(wxZsRwmUrl)
+            "zfbHbRwm" -> requireContext().openUrl(zfbHbRwmUrl)
+            "zfbSkRwm" -> requireContext().openUrl(zfbSkRwmUrl)
+            "qqSkRwm" -> requireContext().openUrl(qqSkRwmUrl)
             "zfbSk" -> aliDonate(requireContext())
             "zfbHbSsm" -> getZfbHb(requireContext())
             "gzGzh" -> requireContext().sendToClip("开源阅读软件")
         }
         return super.onPreferenceTreeClick(preference)
-    }
-
-    @Suppress("SameParameterValue")
-    private fun openIntent(intentName: String, address: String) {
-        try {
-            val intent = Intent(intentName)
-            intent.data = Uri.parse(address)
-            startActivity(intent)
-        } catch (e: Exception) {
-            toast(R.string.can_not_open)
-        }
     }
 
     private fun getZfbHb(context: Context) {

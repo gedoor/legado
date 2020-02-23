@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.BatteryManager
 import android.provider.Settings
 import androidx.annotation.ColorRes
@@ -152,4 +153,22 @@ fun Context.getBettery(): Int {
     val iFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
     val batteryStatus = registerReceiver(null, iFilter)
     return batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+}
+
+fun Context.openUrl(url: String) {
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = Uri.parse(url)
+    if (intent.resolveActivity(packageManager) != null) {
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            toast(e.localizedMessage ?: "open url error")
+        }
+    } else {
+        try {
+            startActivity(Intent.createChooser(intent, "请选择浏览器"))
+        } catch (e: Exception) {
+            toast(e.localizedMessage ?: "open url error")
+        }
+    }
 }
