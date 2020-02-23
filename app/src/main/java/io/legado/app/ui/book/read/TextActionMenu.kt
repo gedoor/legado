@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.sendToClip
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.popup_action_menu.view.*
@@ -81,8 +83,15 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             R.id.menu_copy -> context.sendToClip(callBack.selectedText)
             R.id.menu_browser -> {
                 try {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(callBack.selectedText)
+                    val intent = if (callBack.selectedText.isAbsUrl()) {
+                        Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse(callBack.selectedText)
+                        }
+                    } else {
+                        Intent(Intent.ACTION_WEB_SEARCH).apply {
+                            putExtra(SearchManager.QUERY, callBack.selectedText)
+                        }
+                    }
                     context.startActivity(intent)
                 } catch (e: Exception) {
                     e.printStackTrace()
