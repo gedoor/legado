@@ -35,6 +35,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     //滚动参数
     private val maxScrollOffset = 100f
     private var pageOffset = 0f
+    private var linePos = 0
     private var isLastPage = false
 
     init {
@@ -134,6 +135,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (offset > 0 && pageOffset > cHeight) {
 
         }
+    }
+
+    fun resetPageOffset() {
+        pageOffset = 0f
+        linePos = 0
+        isLastPage = false
     }
 
     private fun switchToPageOffset(offset: Int) {

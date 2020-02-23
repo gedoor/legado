@@ -385,6 +385,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     cursor_left.x.toInt() + cursor_left.width,
                     page_view.height - cursor_left.y.toInt() + ReadBookConfig.durConfig.textSize.dp + popup.height
                 )
+            } else {
+                popup.update(
+                    cursor_left.x.toInt() + cursor_left.width,
+                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.durConfig.textSize.dp + popup.height,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                )
             }
         }
     }
