@@ -29,7 +29,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
     protected var startX: Float = 0f
     protected var startY: Float = 0f
     //上一个触碰点
-    protected var lastX: Float = 0f
     protected var lastY: Float = 0f
     //触碰点
     protected var touchX: Float = 0f
@@ -79,7 +78,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
-        lastX = x
         lastY = y
         touchX = x
         touchY = y
@@ -90,7 +88,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     open fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
-        lastX = touchX
         lastY = touchY
         touchX = x
         touchY = y
@@ -230,7 +227,16 @@ abstract class PageDelegate(protected val pageView: PageView) :
     @CallSuper
     open fun onTouch(event: MotionEvent): Boolean {
         if (isStarted) return false
-        return detector.onTouchEvent(event)
+        if (!detector.onTouchEvent(event)) {
+            //GestureDetector.onFling小幅移动不会触发,所以要自己判断
+            if (event.action == MotionEvent.ACTION_UP && isMoved) {
+                if (isTextSelected) {
+                    isTextSelected = false
+                }
+                if (!noNext) onAnimStart()
+            }
+        }
+        return true
     }
 
     /**
@@ -296,22 +302,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
      */
     override fun onLongPress(e: MotionEvent) {
         isTextSelected = curPage.selectText(e)
-    }
-
-    /**
-     * 移动结束
-     */
-    override fun onFling(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
-        velocityX: Float,
-        velocityY: Float
-    ): Boolean {
-        if (isTextSelected) {
-            isTextSelected = false
-        }
-        if (!noNext) onAnimStart()
-        return true
     }
 
     /**
