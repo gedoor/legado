@@ -19,8 +19,8 @@ class PageView(context: Context, attrs: AttributeSet) :
     ContentView.CallBack,
     DataSource {
 
-    var callBack: CallBack? = null
-    var pageFactory: TextPageFactory? = null
+    var callBack: CallBack
+    var pageFactory: TextPageFactory
     var pageDelegate: PageDelegate? = null
 
     var prevPage: ContentView
@@ -28,7 +28,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     var nextPage: ContentView
 
     init {
-        callBack = activity as? CallBack
+        callBack = activity as CallBack
         prevPage = ContentView(context)
         addView(prevPage)
         nextPage = ContentView(context)
@@ -66,7 +66,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        callBack?.screenOffTimerStart()
+        callBack.screenOffTimerStart()
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
     }
 
@@ -78,11 +78,11 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun fillPage(direction: PageDelegate.Direction) {
         when (direction) {
             PageDelegate.Direction.PREV -> {
-                pageFactory?.moveToPrevious()
+                pageFactory.moveToPrevious()
                 upContent()
             }
             PageDelegate.Direction.NEXT -> {
-                pageFactory?.moveToNext()
+                pageFactory.moveToNext()
                 upContent()
             }
             else -> Unit
@@ -103,7 +103,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun upContent(position: Int = 0) {
-        pageFactory?.let {
+        pageFactory.let {
             when (position) {
                 -1 -> prevPage.setContent(it.previousPage())
                 1 -> nextPage.setContent(it.nextPage())
@@ -114,7 +114,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                 }
             }
         }
-        callBack?.screenOffTimerStart()
+        callBack.screenOffTimerStart()
     }
 
     fun moveToPrevPage(noAnim: Boolean = true) {
@@ -172,7 +172,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         get() = ReadBook.durChapterPos()
 
     override fun setPageIndex(pageIndex: Int) {
-        callBack?.setPageIndex(pageIndex)
+        callBack.setPageIndex(pageIndex)
     }
 
     override fun getChapterPosition(): Int {
@@ -180,15 +180,15 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun getCurrentChapter(): TextChapter? {
-        return if (callBack?.isInitFinish == true) ReadBook.textChapter(0) else null
+        return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
     }
 
     override fun getNextChapter(): TextChapter? {
-        return if (callBack?.isInitFinish == true) ReadBook.textChapter(1) else null
+        return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
     }
 
     override fun getPreviousChapter(): TextChapter? {
-        return if (callBack?.isInitFinish == true) ReadBook.textChapter(-1) else null
+        return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
     }
 
     override fun hasNextChapter(): Boolean {
@@ -196,10 +196,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun hasPrevChapter(): Boolean {
-        callBack?.let {
-            return ReadBook.durChapterIndex > 0
-        }
-        return false
+        return ReadBook.durChapterIndex > 0
     }
 
     override fun scrollToLine(line: Int) {
@@ -207,7 +204,7 @@ class PageView(context: Context, attrs: AttributeSet) :
             ReadBook.textChapter()?.let {
                 val pageIndex = it.getPageIndex(line)
                 curPage.setPageIndex(pageIndex)
-                callBack?.setPageIndex(pageIndex)
+                callBack.setPageIndex(pageIndex)
             }
         }
     }
@@ -215,7 +212,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     override fun scrollToLast() {
         if (isScrollDelegate) {
             ReadBook.textChapter()?.let {
-                callBack?.setPageIndex(it.lastIndex())
+                callBack.setPageIndex(it.lastIndex())
                 curPage.setPageIndex(it.lastIndex())
             }
         }

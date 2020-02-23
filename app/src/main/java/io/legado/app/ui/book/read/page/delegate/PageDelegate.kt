@@ -130,7 +130,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         invalidate()
     }
 
-    protected fun stopScroll() {
+    private fun stopScroll() {
         isRunning = false
         isStarted = false
         invalidate()
@@ -272,7 +272,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         val x = e.x
         val y = e.y
         if (centerRectF.contains(x, y)) {
-            pageView.callBack?.clickCenter()
+            pageView.callBack.clickCenter()
             setTouchPoint(x, y)
         } else {
             if (x > viewWidth / 2 ||
@@ -308,7 +308,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 判断是否有上一页
      */
     fun hasPrev(): Boolean {
-        val hasPrev = pageView.pageFactory?.hasPrev() == true
+        val hasPrev = pageView.pageFactory.hasPrev()
         if (!hasPrev) {
             if (!snackBar.isShown) {
                 snackBar.setText("没有上一页")
@@ -322,7 +322,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 判断是否有下一页
      */
     fun hasNext(): Boolean {
-        val hasNext = pageView.pageFactory?.hasNext() == true
+        val hasNext = pageView.pageFactory.hasNext()
         if (!hasNext) {
             if (!snackBar.isShown) {
                 snackBar.setText("没有下一页")
