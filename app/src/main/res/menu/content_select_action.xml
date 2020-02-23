@@ -9,4 +9,8 @@
         android:id="@+id/menu_copy"
         android:title="@android:string/copy" />
 
+    <item
+        android:id="@+id/menu_browser"
+        android:title="@string/browser" />
+
 </menu>

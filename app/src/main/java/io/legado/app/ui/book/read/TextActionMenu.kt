@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.Menu
@@ -22,6 +23,7 @@ import io.legado.app.utils.sendToClip
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.popup_action_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.toast
 
 
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
@@ -77,7 +79,16 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     private fun onMenuItemSelected(item: MenuItemImpl) {
         when (item.itemId) {
             R.id.menu_copy -> context.sendToClip(callBack.selectedText)
-            else -> item.intent.let {
+            R.id.menu_browser -> {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(callBack.selectedText)
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    context.toast(R.string.can_not_open)
+                }
+            }
+            else -> item.intent?.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
                     context.startActivity(it)
