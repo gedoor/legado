@@ -70,6 +70,11 @@ class PageView(context: Context, attrs: AttributeSet) :
         return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
     }
 
+    fun onDestroy() {
+        pageDelegate?.onDestroy()
+        curPage.cancelSelect()
+    }
+
     fun fillPage(direction: PageDelegate.Direction) {
         when (direction) {
             PageDelegate.Direction.PREV -> {

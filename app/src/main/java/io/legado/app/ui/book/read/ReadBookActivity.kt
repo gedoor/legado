@@ -632,7 +632,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         super.onDestroy()
         mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu?.dismiss()
-        page_view.pageDelegate?.onDestroy()
+        page_view.onDestroy()
     }
 
     override fun observeLiveBus() {
