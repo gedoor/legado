@@ -51,10 +51,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        ReadBookConfig.durConfig.let {
+        ReadBookConfig.let {
             ChapterProvider.viewWidth = w
             ChapterProvider.viewHeight = h
-            ChapterProvider.upSize(ReadBookConfig.durConfig)
+            ChapterProvider.upSize()
         }
     }
 

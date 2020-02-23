@@ -28,7 +28,7 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun upStyle() {
-        ReadBookConfig.durConfig.apply {
+        ReadBookConfig.apply {
             tv_top_left.typeface = ChapterProvider.typeface
             tv_top_right.typeface = ChapterProvider.typeface
             tv_bottom_left.typeface = ChapterProvider.typeface
@@ -61,7 +61,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 footerPaddingRight.dp,
                 footerPaddingBottom.dp
             )
-            textColor().let {
+            durConfig.textColor().let {
                 tv_top_left.setTextColor(it)
                 tv_top_right.setTextColor(it)
                 tv_bottom_left.setTextColor(it)

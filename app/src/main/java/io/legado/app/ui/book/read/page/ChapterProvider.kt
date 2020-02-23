@@ -32,7 +32,7 @@ object ChapterProvider {
     private var bodyIndent = BookHelp.bodyIndent
 
     init {
-        upStyle(ReadBookConfig.durConfig)
+        upStyle()
     }
 
     /**
@@ -160,7 +160,7 @@ object ChapterProvider {
                 //最后一行
                 textLine.text = "$words\n"
                 stringBuilder.append("\n")
-                var x = if (ReadBookConfig.durConfig.titleCenter)
+                var x = if (ReadBookConfig.titleCenter)
                     (visibleWidth - layout.getLineMax(lineIndex)) / 2
                 else 0f
                 for (i in words.indices) {
@@ -297,7 +297,7 @@ object ChapterProvider {
     /**
      * 更新样式
      */
-    fun upStyle(config: ReadBookConfig.Config) {
+    fun upStyle() {
         typeface = try {
             val fontPath = App.INSTANCE.getPrefString(PreferKey.readBookFont)
             if (!TextUtils.isEmpty(fontPath)) {
@@ -311,34 +311,34 @@ object ChapterProvider {
         }
         //标题
         titlePaint.isAntiAlias = true
-        titlePaint.color = config.textColor()
-        titlePaint.letterSpacing = config.letterSpacing
+        titlePaint.color = ReadBookConfig.durConfig.textColor()
+        titlePaint.letterSpacing = ReadBookConfig.letterSpacing
         titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
         //正文
         contentPaint.isAntiAlias = true
-        contentPaint.color = config.textColor()
-        contentPaint.letterSpacing = config.letterSpacing
-        val bold = if (config.textBold) Typeface.BOLD else Typeface.NORMAL
+        contentPaint.color = ReadBookConfig.durConfig.textColor()
+        contentPaint.letterSpacing = ReadBookConfig.letterSpacing
+        val bold = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
         contentPaint.typeface = Typeface.create(typeface, bold)
         //间距
-        lineSpacingExtra = config.lineSpacingExtra.dp.toFloat()
-        paragraphSpacing = config.paragraphSpacing.dp
-        titlePaint.textSize = (config.textSize + 2).dp.toFloat()
-        contentPaint.textSize = config.textSize.dp.toFloat()
+        lineSpacingExtra = ReadBookConfig.lineSpacingExtra.dp.toFloat()
+        paragraphSpacing = ReadBookConfig.paragraphSpacing.dp
+        titlePaint.textSize = (ReadBookConfig.textSize + 2).dp.toFloat()
+        contentPaint.textSize = ReadBookConfig.textSize.dp.toFloat()
 
         bodyIndent = BookHelp.bodyIndent
 
-        upSize(config)
+        upSize()
     }
 
     /**
      * 更新View尺寸
      */
-    fun upSize(config: ReadBookConfig.Config) {
-        paddingLeft = config.paddingLeft.dp
-        paddingTop = config.paddingTop.dp
-        visibleWidth = viewWidth - paddingLeft - config.paddingRight.dp
-        visibleHeight = viewHeight - paddingTop - config.paddingBottom.dp
+    fun upSize() {
+        paddingLeft = ReadBookConfig.paddingLeft.dp
+        paddingTop = ReadBookConfig.paddingTop.dp
+        visibleWidth = viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp
+        visibleHeight = viewHeight - paddingTop - ReadBookConfig.paddingBottom.dp
     }
 
 }

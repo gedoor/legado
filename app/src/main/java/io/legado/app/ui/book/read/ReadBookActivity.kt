@@ -385,12 +385,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     cursor_left,
                     Gravity.BOTTOM or Gravity.START,
                     cursor_left.x.toInt() + cursor_left.width,
-                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.durConfig.textSize.dp + popup.height
+                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.textSize.dp + popup.height
                 )
             } else {
                 popup.update(
                     cursor_left.x.toInt() + cursor_left.width,
-                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.durConfig.textSize.dp + popup.height,
+                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.textSize.dp + popup.height,
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
                 )
             }
@@ -665,7 +665,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             upSystemUiVisibility()
             page_view.upBg()
             page_view.upStyle()
-            ChapterProvider.upStyle(ReadBookConfig.durConfig)
+            ChapterProvider.upStyle()
             if (it) {
                 ReadBook.loadContent()
             } else {

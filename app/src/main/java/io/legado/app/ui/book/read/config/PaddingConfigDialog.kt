@@ -49,7 +49,7 @@ class PaddingConfigDialog : DialogFragment() {
         ReadBookConfig.save()
     }
 
-    private fun initData() = with(ReadBookConfig.durConfig) {
+    private fun initData() = with(ReadBookConfig) {
         //正文
         dsb_padding_top.progress = paddingTop
         dsb_padding_bottom.progress = paddingBottom
@@ -67,7 +67,7 @@ class PaddingConfigDialog : DialogFragment() {
         dsb_footer_padding_right.progress = footerPaddingRight
     }
 
-    private fun initView() = with(ReadBookConfig.durConfig) {
+    private fun initView() = with(ReadBookConfig) {
         //正文
         dsb_padding_top.onChanged = {
             paddingTop = it

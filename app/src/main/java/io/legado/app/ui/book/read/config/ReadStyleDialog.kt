@@ -76,7 +76,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun initData() {
-        cb_share_layout.isChecked = getPrefBoolean(PreferKey.shareLayout)
+        cb_share_layout.isChecked = ReadBookConfig.shareLayout
         requireContext().getPrefInt(PreferKey.pageAnim).let {
             if (it >= 0 && it < rg_page_anim.childCount) {
                 rg_page_anim.check(rg_page_anim[it].id)
@@ -92,14 +92,14 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_title_center.onClick {
-            ReadBookConfig.durConfig.apply {
+            ReadBookConfig.apply {
                 titleCenter = !titleCenter
                 tv_title_center.isSelected = titleCenter
             }
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_bold.onClick {
-            ReadBookConfig.durConfig.apply {
+            ReadBookConfig.apply {
                 textBold = !textBold
                 tv_text_bold.isSelected = textBold
             }
@@ -125,19 +125,19 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             }
         }
         dsb_text_size.onChanged = {
-            ReadBookConfig.durConfig.textSize = it + 5
+            ReadBookConfig.textSize = it + 5
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_text_letter_spacing.onChanged = {
-            ReadBookConfig.durConfig.letterSpacing = (it - 50) / 100f
+            ReadBookConfig.letterSpacing = (it - 50) / 100f
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_line_size.onChanged = {
-            ReadBookConfig.durConfig.lineSpacingExtra = it
+            ReadBookConfig.lineSpacingExtra = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_paragraph_spacing.onChanged = {
-            ReadBookConfig.durConfig.paragraphSpacing = it
+            ReadBookConfig.paragraphSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
@@ -154,7 +154,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         }
         cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
             if (checkBox.isPressed) {
-                putPrefBoolean(PreferKey.shareLayout, isChecked)
+                ReadBookConfig.shareLayout = isChecked
+                upStyle()
             }
         }
         bg0.onClick { changeBg(0) }
@@ -190,7 +191,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun upStyle() {
-        ReadBookConfig.durConfig.let {
+        ReadBookConfig.let {
             tv_title_center.isSelected = it.titleCenter
             tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
