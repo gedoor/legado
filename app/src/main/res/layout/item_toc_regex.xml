@@ -4,13 +4,15 @@
     android:layout_height="wrap_content"
     android:background="@color/background"
     android:padding="8dp"
+    android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <io.legado.app.lib.theme.view.ATERadioButton
         android:id="@+id/rb_regex_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/tv_edit"
