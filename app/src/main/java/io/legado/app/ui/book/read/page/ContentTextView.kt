@@ -131,7 +131,20 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
 
         val cHeight = if (textPage.height > 0) textPage.height else height
+        if (offset > 0 && pageOffset > cHeight) {
 
+        }
+    }
+
+    private fun switchToPageOffset(offset: Int) {
+        when (offset) {
+            1 -> {
+
+            }
+            -1 -> {
+
+            }
+        }
     }
 
     fun selectText(x: Float, y: Float): Boolean {
