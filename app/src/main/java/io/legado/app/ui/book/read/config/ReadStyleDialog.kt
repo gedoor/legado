@@ -156,6 +156,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             if (checkBox.isPressed) {
                 ReadBookConfig.shareLayout = isChecked
                 upStyle()
+                postEvent(EventBus.UP_CONFIG, true)
             }
         }
         bg0.onClick { changeBg(0) }
