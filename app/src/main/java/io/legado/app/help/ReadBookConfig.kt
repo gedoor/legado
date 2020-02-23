@@ -214,7 +214,7 @@ object ReadBookConfig {
         var textColor: String = "#3E3D3B",//白天文字颜色
         var textColorNight: String = "#adadad",//夜间文字颜色
         var textBold: Boolean = false,//是否粗体字
-        var textSize: Int = 15,//文字大小
+        var textSize: Int = 20,//文字大小
         var letterSpacing: Float = 1f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
         var paragraphSpacing: Int = 12,//段距
