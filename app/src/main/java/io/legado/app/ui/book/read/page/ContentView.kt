@@ -91,12 +91,15 @@ class ContentView(context: Context) : FrameLayout(context) {
         tv_top_right.text = context.getString(R.string.battery_show, battery)
     }
 
-    fun setContent(textPage: TextPage?) {
+    fun setContent(textPage: TextPage?, resetScrollOffset: Boolean = true) {
         if (textPage != null) {
-            content_text_view.setContent(textPage)
             tv_bottom_left.text = textPage.title
             pageSize = textPage.pageSize
             setPageIndex(textPage.index)
+            if (resetScrollOffset) {
+                content_text_view.resetPageOffset()
+                content_text_view.setContent(textPage)
+            }
         }
     }
 
@@ -109,10 +112,6 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun onScroll(offset: Float) {
         content_text_view.onScroll(offset)
-    }
-
-    fun resetPageOffset() {
-        content_text_view.resetPageOffset()
     }
 
     fun upSelectAble(selectAble: Boolean) {

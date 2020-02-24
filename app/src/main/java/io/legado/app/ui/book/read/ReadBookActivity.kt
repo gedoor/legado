@@ -456,9 +456,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 更新内容
      */
-    override fun upContent(position: Int) {
+    override fun upContent(relativePosition: Int, resetScrollOffset: Boolean) {
         launch {
-            page_view.upContent(position)
+            page_view.upContent(relativePosition)
         }
     }
 

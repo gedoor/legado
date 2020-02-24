@@ -626,4 +626,5 @@
     <string name="more_menu">更多菜单</string>
     <string name="reduce">减</string>
     <string name="plus">加</string>
+    <string name="other_aloud_setting">其它朗读设置</string>
 </resources>

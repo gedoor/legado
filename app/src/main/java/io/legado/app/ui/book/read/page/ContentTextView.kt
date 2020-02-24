@@ -160,10 +160,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             pageFactory.moveToPrev()
             textPage = pageFactory.currentPage ?: TextPage().format()
             pageOffset -= textPage.height
+            callBack.upContent(0, false)
         } else if (pageOffset < -textPage.height) {
             pageOffset += textPage.height
             pageFactory.moveToNext()
             textPage = pageFactory.currentPage ?: TextPage().format()
+            callBack.upContent(0, false)
         }
         invalidate()
     }
@@ -301,6 +303,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
 
     interface CallBack {
+        fun upContent(relativePosition: Int, resetScrollOffset: Boolean)
         fun upSelectedStart(x: Float, y: Float)
         fun upSelectedEnd(x: Float, y: Float)
         fun onCancelSelect()
