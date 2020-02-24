@@ -26,10 +26,10 @@ object ReadBook {
     var book: Book? = null
     var inBookshelf = false
     var chapterSize = 0
-    var callBack: CallBack? = null
     var durChapterIndex = 0
     var durPageIndex = 0
     var isLocalBook = true
+    var callBack: CallBack? = null
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
