@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.read.page.delegate
 
-import android.util.Log
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.abs
@@ -11,7 +10,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         when (event.action) {
             MotionEvent.ACTION_MOVE -> {
                 if (isTextSelected) {
-                    Log.e("selected", "--------------------------")
+                    selectText(event)
                 } else {
                     scroll(event)
                 }
@@ -49,6 +48,20 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             isRunning = true
             //设置触摸点
             setTouchPoint(event.x, event.y)
+        }
+    }
+
+    private fun selectText(event: MotionEvent) {
+        curPage.selectText(event) { lineIndex, charIndex ->
+            if (lineIndex > firstLineIndex
+                || (lineIndex == firstLineIndex && charIndex > firstCharIndex)
+            ) {
+                curPage.selectStartMoveIndex(firstLineIndex, firstCharIndex)
+                curPage.selectEndMoveIndex(lineIndex, charIndex)
+            } else {
+                curPage.selectEndMoveIndex(firstLineIndex, firstCharIndex)
+                curPage.selectStartMoveIndex(lineIndex, charIndex)
+            }
         }
     }
 }

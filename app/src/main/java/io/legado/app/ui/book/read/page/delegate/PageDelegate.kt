@@ -67,6 +67,9 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var isTextSelected = false
     var selectedOnDown = false
 
+    var firstLineIndex: Int = 0
+    var firstCharIndex: Int = 0
+
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
@@ -283,7 +286,11 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 长按选择
      */
     override fun onLongPress(e: MotionEvent) {
-        isTextSelected = curPage.selectText(e)
+        curPage.selectText(e) { lineIndex, charIndex ->
+            isTextSelected = true
+            firstLineIndex = lineIndex
+            firstCharIndex = charIndex
+        }
     }
 
     /**

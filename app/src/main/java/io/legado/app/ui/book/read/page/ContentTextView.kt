@@ -176,7 +176,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         linePos = 0
     }
 
-    fun selectText(x: Float, y: Float): Boolean {
+    fun selectText(x: Float, y: Float, select: (lineIndex: Int, charIndex: Int) -> Unit) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
@@ -189,13 +189,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         selectCharEnd = charIndex
                         upSelectedStart(textChar.start, textLine.lineBottom)
                         upSelectedEnd(textChar.end, textLine.lineBottom)
-                        return true
+                        select(lineIndex, charIndex)
                     }
                 }
                 break
             }
         }
-        return false
     }
 
     fun selectStartMove(x: Float, y: Float) {
@@ -217,6 +216,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
+    fun selectStartMoveIndex(lineIndex: Int, charIndex: Int) {
+        selectLineStart = lineIndex
+        selectCharStart = charIndex
+        val textLine = textPage.textLines[lineIndex]
+        val textChar = textLine.textChars[charIndex]
+        upSelectedStart(textChar.start, textLine.lineBottom)
+        upSelectChars(textPage)
+    }
+
     fun selectEndMove(x: Float, y: Float) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
@@ -225,10 +233,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
                             selectLineEnd = lineIndex
                             selectCharEnd = charIndex
-                            upSelectedEnd(
-                                textChar.end,
-                                textLine.lineBottom
-                            )
+                            upSelectedEnd(textChar.end, textLine.lineBottom)
                             upSelectChars(textPage)
                         }
                         break
@@ -237,6 +242,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 break
             }
         }
+    }
+
+    fun selectEndMoveIndex(lineIndex: Int, charIndex: Int) {
+        selectLineEnd = lineIndex
+        selectCharEnd = charIndex
+        val textLine = textPage.textLines[lineIndex]
+        val textChar = textLine.textChars[charIndex]
+        upSelectedEnd(textChar.end, textLine.lineBottom)
+        upSelectChars(textPage)
     }
 
     private fun upSelectChars(textPage: TextPage) {
