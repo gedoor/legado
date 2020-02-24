@@ -80,10 +80,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawScrollPage(canvas: Canvas) {
+        val mPageOffset = pageOffset
         textPage.textLines.forEach { textLine ->
-            val lineTop = textLine.lineTop + pageOffset
-            val lineBase = textLine.lineBase + pageOffset
-            val lineBottom = textLine.lineBottom + pageOffset
+            val lineTop = textLine.lineTop + mPageOffset
+            val lineBase = textLine.lineBase + mPageOffset
+            val lineBottom = textLine.lineBottom + mPageOffset
             drawChars(
                 canvas,
                 textLine.textChars,
@@ -95,7 +96,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             )
         }
         pageFactory.nextPage?.textLines?.forEach { textLine ->
-            val yPy = pageOffset + textPage.height - ChapterProvider.paddingTop
+            val yPy = mPageOffset + textPage.height - ChapterProvider.paddingTop
             val lineTop = textLine.lineTop + yPy
             val lineBase = textLine.lineBase + yPy
             val lineBottom = textLine.lineBottom + yPy
@@ -110,7 +111,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             )
         }
         pageFactory.prevPage?.textLines?.forEach { textLine ->
-            val yPy = pageOffset + ChapterProvider.paddingTop
+            val yPy = mPageOffset + ChapterProvider.paddingTop
             val lineTop = -textLine.lineTop + yPy
             val lineBase = -textLine.lineBase + yPy
             val lineBottom = -textLine.lineBottom + yPy
