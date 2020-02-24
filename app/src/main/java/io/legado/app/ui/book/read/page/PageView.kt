@@ -62,8 +62,9 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        pageDelegate?.onTouch(event)
         callBack.screenOffTimerStart()
-        return pageDelegate?.onTouch(event) ?: super.onTouchEvent(event)
+        return true
     }
 
     fun onDestroy() {

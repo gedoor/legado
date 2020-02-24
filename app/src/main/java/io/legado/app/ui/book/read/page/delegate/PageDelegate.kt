@@ -204,8 +204,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 触摸事件处理
      */
     @CallSuper
-    open fun onTouch(event: MotionEvent): Boolean {
-        if (isStarted) return false
+    open fun onTouch(event: MotionEvent) {
+        if (isStarted) return
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
             if (event.action == MotionEvent.ACTION_UP && isMoved) {
@@ -215,7 +215,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
                 if (!noNext) onAnimStart()
             }
         }
-        return true
     }
 
     /**

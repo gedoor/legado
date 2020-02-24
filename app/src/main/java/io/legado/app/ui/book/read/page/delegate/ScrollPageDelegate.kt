@@ -26,9 +26,11 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         curPage.onScroll(touchY - lastY)
     }
 
-    override fun onTouch(event: MotionEvent): Boolean {
+    override fun onTouch(event: MotionEvent) {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                lastY = event.y
+                setTouchPoint(event.x, event.y)
                 abort()
                 mVelocity.clear()
             }
@@ -44,7 +46,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                 }
             }
         }
-        return super.onTouch(event)
+        super.onTouch(event)
     }
 
     override fun onDestroy() {
