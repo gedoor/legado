@@ -65,6 +65,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var isRunning = false
     var isStarted = false
     var isTextSelected = false
+    var selectedOnDown = false
 
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
@@ -210,8 +211,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
             if (event.action == MotionEvent.ACTION_UP && isMoved) {
-                if (isTextSelected) {
-                    isTextSelected = false
+                if (selectedOnDown) {
+                    selectedOnDown = false
                 }
                 if (!noNext) onAnimStart()
             }
@@ -224,6 +225,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
     override fun onDown(e: MotionEvent): Boolean {
         if (isTextSelected) {
             curPage.cancelSelect()
+            isTextSelected = false
+            selectedOnDown = true
         }
         //是否移动
         isMoved = false
@@ -244,8 +247,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 单击
      */
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-        if (isTextSelected) {
-            isTextSelected = false
+        if (selectedOnDown) {
+            selectedOnDown = false
             return true
         }
         val x = e.x
