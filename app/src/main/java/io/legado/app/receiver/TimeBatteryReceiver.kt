@@ -9,12 +9,12 @@ import io.legado.app.constant.EventBus
 import io.legado.app.utils.postEvent
 
 
-class TimeElectricityReceiver : BroadcastReceiver() {
+class TimeBatteryReceiver : BroadcastReceiver() {
 
     companion object {
 
-        fun register(context: Context): TimeElectricityReceiver {
-            val receiver = TimeElectricityReceiver()
+        fun register(context: Context): TimeBatteryReceiver {
+            val receiver = TimeBatteryReceiver()
             val filter = IntentFilter()
             filter.addAction(Intent.ACTION_TIME_TICK)
             filter.addAction(Intent.ACTION_BATTERY_CHANGED)

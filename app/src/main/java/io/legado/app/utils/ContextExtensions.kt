@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
@@ -68,26 +69,27 @@ fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
 /**
  * 系统息屏时间
  */
-fun Context.getScreenOffTime(): Int {
-    var screenOffTime = 0
-    try {
-        screenOffTime = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-    return screenOffTime
+val Context.sysScreenOffTime: Int
+    get() {
+        var screenOffTime = 0
+        try {
+            screenOffTime = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return screenOffTime
 }
 
 val Context.statusBarHeight: Int
     get() {
-    val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-    return resources.getDimensionPixelSize(resourceId)
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
 }
 
 val Context.navigationBarHeight: Int
     get() {
-    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
-    return resources.getDimensionPixelSize(resourceId)
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
 }
 
 fun Context.shareText(title: String, text: String) {
@@ -150,10 +152,11 @@ fun Context.sysIsDarkMode(): Boolean {
 /**
  * 获取电量
  */
-fun Context.getBettery(): Int {
-    val iFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-    val batteryStatus = registerReceiver(null, iFilter)
-    return batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+val Context.sysBattery: Int
+    get() {
+        val iFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        val batteryStatus = registerReceiver(null, iFilter)
+        return batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
 }
 
 fun Context.openUrl(url: String) {

@@ -26,7 +26,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.receiver.TimeElectricityReceiver
+import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -81,7 +81,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
 
     private var screenTimeOut: Long = 0
-    private var timeElectricityReceiver: TimeElectricityReceiver? = null
+    private var timeBatteryReceiver: TimeBatteryReceiver? = null
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
@@ -106,15 +106,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onResume() {
         super.onResume()
         upSystemUiVisibility()
-        timeElectricityReceiver = TimeElectricityReceiver.register(this)
+        timeBatteryReceiver = TimeBatteryReceiver.register(this)
         page_view.upTime()
     }
 
     override fun onPause() {
         super.onPause()
-        timeElectricityReceiver?.let {
+        timeBatteryReceiver?.let {
             unregisterReceiver(it)
-            timeElectricityReceiver = null
+            timeBatteryReceiver = null
         }
         upSystemUiVisibility()
     }
@@ -719,7 +719,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             Help.keepScreenOn(window, true)
             return
         }
-        val t = screenTimeOut - getScreenOffTime()
+        val t = screenTimeOut - sysScreenOffTime
         if (t > 0) {
             mHandler.removeCallbacks(keepScreenRunnable)
             Help.keepScreenOn(window, true)
