@@ -100,6 +100,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 content_text_view.resetPageOffset()
                 content_text_view.setContent(textPage)
             }
+            content_text_view.invalidate()
         }
     }
 

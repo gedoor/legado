@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -80,10 +81,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     private fun drawScrollPage(canvas: Canvas) {
         textPage.textLines.forEach { textLine ->
-            val yPy = pageOffset
-            val lineTop = textLine.lineTop + yPy
-            val lineBase = textLine.lineBase + yPy
-            val lineBottom = textLine.lineBottom + yPy
+            val lineTop = textLine.lineTop + pageOffset
+            val lineBase = textLine.lineBase + pageOffset
+            val lineBottom = textLine.lineBottom + pageOffset
             drawChars(
                 canvas,
                 textLine.textChars,
@@ -148,7 +148,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     fun onScroll(mOffset: Float) {
         if (mOffset == 0f) return
-        var offset = -mOffset
+        var offset = mOffset
         if (offset > maxScrollOffset) {
             offset = maxScrollOffset
         } else if (offset < -maxScrollOffset) {
@@ -159,6 +159,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (pageOffset > 0) {
             pageFactory.moveToPrev()
             textPage = pageFactory.currentPage ?: TextPage().format()
+            Log.e("pageOffSet", pageOffset.toString() + "   " + textPage.height)
             pageOffset -= textPage.height
             callBack.upContent(0, false)
         } else if (pageOffset < -textPage.height) {

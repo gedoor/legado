@@ -22,7 +22,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        curPage.onScroll(lastY - touchY)
+        curPage.onScroll(touchY - lastY)
     }
 
     override fun onAnimStop() {
@@ -52,23 +52,19 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
         if (!isMoved && abs(distanceX) < abs(distanceY)) {
             if (distanceY < 0) {
-                if (atTop) {
-                    //如果上一页不存在
-                    if (!hasPrev()) {
-                        noNext = true
-                        return true
-                    }
-                    setDirection(Direction.PREV)
+                //如果上一页不存在
+                if (!hasPrev()) {
+                    noNext = true
+                    return true
                 }
+                setDirection(Direction.PREV)
             } else {
-                if (atBottom) {
-                    //如果不存在表示没有下一页了
-                    if (!hasNext()) {
-                        noNext = true
-                        return true
-                    }
-                    setDirection(Direction.NEXT)
+                //如果上一页不存在
+                if (!hasNext()) {
+                    noNext = true
+                    return true
                 }
+                setDirection(Direction.PREV)
             }
             isMoved = true
         }

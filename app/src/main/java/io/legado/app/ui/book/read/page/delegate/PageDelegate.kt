@@ -6,9 +6,9 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.CallSuper
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
@@ -47,16 +47,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
-    //textView在顶端或低端
-    protected var atTop: Boolean = false
-    protected var atBottom: Boolean = false
 
     private val snackBar: Snackbar by lazy {
         Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
     }
 
     private val scroller: Scroller by lazy {
-        Scroller(pageView.context, FastOutLinearInInterpolator())
+        Scroller(pageView.context, DecelerateInterpolator())
     }
 
     private val detector: GestureDetector by lazy {
@@ -83,7 +80,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         touchY = y
 
         if (invalidate) {
-            invalidate()
+            pageView.invalidate()
         }
     }
 
@@ -93,7 +90,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         touchY = y
 
         if (invalidate) {
-            invalidate()
+            pageView.postInvalidate()
         }
 
         onScroll()
@@ -103,10 +100,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         detector.setIsLongpressEnabled(selectAble)
     }
 
-    protected fun invalidate() {
-        pageView.invalidate()
-    }
-
     open fun fling(
         startX: Int, startY: Int, velocityX: Int, velocityY: Int,
         minX: Int, maxX: Int, minY: Int, maxY: Int
@@ -114,7 +107,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY)
         isRunning = true
         isStarted = true
-        invalidate()
+        pageView.invalidate()
     }
 
     protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int) {
@@ -127,13 +120,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
         )
         isRunning = true
         isStarted = true
-        invalidate()
+        pageView.invalidate()
     }
 
     private fun stopScroll() {
         isRunning = false
         isStarted = false
-        invalidate()
+        pageView.invalidate()
         bitmap?.recycle()
         bitmap = null
     }
@@ -141,7 +134,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     fun setViewSize(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
-        invalidate()
+        pageView.invalidate()
         centerRectF.set(
             width * 0.33f, height * 0.33f,
             width * 0.66f, height * 0.66f
