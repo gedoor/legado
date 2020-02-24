@@ -9,6 +9,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
@@ -66,125 +67,82 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     private fun drawHorizontalPage(canvas: Canvas) {
         textPage.textLines.forEach { textLine ->
-            val textPaint = if (textLine.isTitle) {
-                ChapterProvider.titlePaint
-            } else {
-                ChapterProvider.contentPaint
-            }
-            textPaint.color = if (textLine.isReadAloud) {
-                context.accentColor
-            } else {
-                ReadBookConfig.durConfig.textColor()
-            }
-            textLine.textChars.forEach {
-                canvas.drawText(
-                    it.charData,
-                    it.start,
-                    textLine.lineBase,
-                    textPaint
-                )
-                if (it.selected) {
-                    canvas.drawRect(
-                        it.start,
-                        textLine.lineTop,
-                        it.end,
-                        textLine.lineBottom,
-                        selectedPaint
-                    )
-                }
-            }
+            drawChars(
+                canvas,
+                textLine.textChars,
+                textLine.lineTop,
+                textLine.lineBase,
+                textLine.lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
         }
     }
 
     private fun drawScrollPage(canvas: Canvas) {
-        if (pageOffset <= 0) {
-            textPage.textLines.forEach { textLine ->
-                val textPaint = if (textLine.isTitle) {
-                    ChapterProvider.titlePaint
-                } else {
-                    ChapterProvider.contentPaint
-                }
-                textPaint.color = if (textLine.isReadAloud) {
-                    context.accentColor
-                } else {
-                    ReadBookConfig.durConfig.textColor()
-                }
-                textLine.textChars.forEach {
-                    canvas.drawText(
-                        it.charData,
-                        it.start,
-                        textLine.lineBase + pageOffset,
-                        textPaint
-                    )
-                    if (it.selected) {
-                        canvas.drawRect(
-                            it.start,
-                            textLine.lineTop + pageOffset,
-                            it.end,
-                            textLine.lineBottom + pageOffset,
-                            selectedPaint
-                        )
-                    }
-                }
-            }
-            pageFactory.nextPage?.textLines?.forEach { textLine ->
-                val textPaint = if (textLine.isTitle) {
-                    ChapterProvider.titlePaint
-                } else {
-                    ChapterProvider.contentPaint
-                }
-                textPaint.color = if (textLine.isReadAloud) {
-                    context.accentColor
-                } else {
-                    ReadBookConfig.durConfig.textColor()
-                }
-                textLine.textChars.forEach {
-                    canvas.drawText(
-                        it.charData,
-                        it.start,
-                        textLine.lineBase + pageOffset + textPage.height - ChapterProvider.paddingTop,
-                        textPaint
-                    )
-                    if (it.selected) {
-                        canvas.drawRect(
-                            it.start,
-                            textLine.lineTop + pageOffset + textPage.height - ChapterProvider.paddingTop,
-                            it.end,
-                            textLine.lineBottom + pageOffset + textPage.height - ChapterProvider.paddingTop,
-                            selectedPaint
-                        )
-                    }
-                }
-            }
-        } else {
-            textPage.textLines.forEach { textLine ->
-                val textPaint = if (textLine.isTitle) {
-                    ChapterProvider.titlePaint
-                } else {
-                    ChapterProvider.contentPaint
-                }
-                textPaint.color = if (textLine.isReadAloud) {
-                    context.accentColor
-                } else {
-                    ReadBookConfig.durConfig.textColor()
-                }
-                textLine.textChars.forEach {
-                    canvas.drawText(
-                        it.charData,
-                        it.start,
-                        textLine.lineBase + pageOffset,
-                        textPaint
-                    )
-                    if (it.selected) {
-                        canvas.drawRect(
-                            it.start,
-                            textLine.lineTop + pageOffset,
-                            it.end,
-                            textLine.lineBottom + pageOffset,
-                            selectedPaint
-                        )
-                    }
-                }
+        textPage.textLines.forEach { textLine ->
+            val yPy = pageOffset
+            val lineTop = textLine.lineTop + yPy
+            val lineBase = textLine.lineBase + yPy
+            val lineBottom = textLine.lineBottom + yPy
+            drawChars(
+                canvas,
+                textLine.textChars,
+                lineTop,
+                lineBase,
+                lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
+        }
+        pageFactory.nextPage?.textLines?.forEach { textLine ->
+            val yPy = pageOffset + textPage.height - ChapterProvider.paddingTop
+            val lineTop = textLine.lineTop + yPy
+            val lineBase = textLine.lineBase + yPy
+            val lineBottom = textLine.lineBottom + yPy
+            drawChars(
+                canvas,
+                textLine.textChars,
+                lineTop,
+                lineBase,
+                lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
+        }
+        pageFactory.prevPage?.textLines?.forEach { textLine ->
+            val yPy = pageOffset + ChapterProvider.paddingTop
+            val lineTop = -textLine.lineTop + yPy
+            val lineBase = -textLine.lineBase + yPy
+            val lineBottom = -textLine.lineBottom + yPy
+            drawChars(
+                canvas,
+                textLine.textChars,
+                lineTop,
+                lineBase,
+                lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
+        }
+    }
+
+    private fun drawChars(
+        canvas: Canvas,
+        textChars: List<TextChar>,
+        lineTop: Float,
+        lineBase: Float,
+        lineBottom: Float,
+        isTitle: Boolean,
+        isReadAloud: Boolean
+    ) {
+        val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
+        textPaint.color =
+            if (isReadAloud) context.accentColor else ReadBookConfig.durConfig.textColor()
+        textChars.forEach {
+            canvas.drawText(it.charData, it.start, lineBase, textPaint)
+            if (it.selected) {
+                canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
             }
         }
     }
@@ -206,17 +164,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         pageOffset = 0f
         linePos = 0
         isLastPage = false
-    }
-
-    private fun switchToPageOffset(offset: Int) {
-        when (offset) {
-            1 -> {
-
-            }
-            -1 -> {
-
-            }
-        }
     }
 
     fun selectText(x: Float, y: Float): Boolean {
