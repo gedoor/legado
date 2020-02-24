@@ -18,8 +18,8 @@ data class TextPage(
 ) {
 
     @Suppress("DEPRECATION")
-    fun textToLine(): TextPage {
-        if (textLines.isEmpty()) {
+    fun format(): TextPage {
+        if (textLines.isEmpty() && ChapterProvider.visibleWidth > 0) {
             val layout = StaticLayout(
                 text, ChapterProvider.contentPaint, ChapterProvider.visibleWidth,
                 Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false

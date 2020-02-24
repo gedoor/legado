@@ -28,7 +28,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var selectCharStart = 0
     private var selectLineEnd = 0
     private var selectCharEnd = 0
-    private var textPage: TextPage = TextPage().textToLine()
+    private var textPage: TextPage = TextPage()
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
     private val maxScrollOffset = 100f
@@ -49,11 +49,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        ReadBookConfig.let {
-            ChapterProvider.viewWidth = w
-            ChapterProvider.viewHeight = h
-            ChapterProvider.upSize()
-        }
+        ChapterProvider.viewWidth = w
+        ChapterProvider.viewHeight = h
+        ChapterProvider.upSize()
+        textPage.format()
     }
 
     override fun onDraw(canvas: Canvas) {
