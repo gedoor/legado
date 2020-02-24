@@ -74,7 +74,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun fillPage(direction: PageDelegate.Direction) {
         when (direction) {
             PageDelegate.Direction.PREV -> {
-                pageFactory.moveToPrevious()
+                pageFactory.moveToPrev()
                 upContent()
             }
             PageDelegate.Direction.NEXT -> {

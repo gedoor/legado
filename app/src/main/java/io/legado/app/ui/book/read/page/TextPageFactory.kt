@@ -29,8 +29,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override fun moveToNext(): Boolean = with(dataSource) {
         return if (hasNext()) {
-            if (getCurrentChapter()?.isLastIndex(pageIndex) == true
-            ) {
+            if (getCurrentChapter()?.isLastIndex(pageIndex) == true) {
                 ReadBook.moveToNextChapter(false)
             } else {
                 setPageIndex(pageIndex.plus(1))
@@ -40,7 +39,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             false
     }
 
-    override fun moveToPrevious(): Boolean = with(dataSource) {
+    override fun moveToPrev(): Boolean = with(dataSource) {
         return if (hasPrev()) {
             if (pageIndex <= 0) {
                 ReadBook.moveToPrevChapter(false)
@@ -54,26 +53,26 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override val currentPage: TextPage?
         get() = with(dataSource) {
-        return getCurrentChapter()?.page(pageIndex)
-    }
+            return getCurrentChapter()?.page(pageIndex)
+        }
 
     override val nextPage: TextPage?
         get() = with(dataSource) {
-        getCurrentChapter()?.let {
-            if (pageIndex < it.pageSize() - 1) {
-                return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
+            getCurrentChapter()?.let {
+                if (pageIndex < it.pageSize() - 1) {
+                    return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
+                }
             }
+            return getNextChapter()?.page(0)?.removePageAloudSpan()
         }
-        return getNextChapter()?.page(0)?.removePageAloudSpan()
-    }
 
     override val prevPage: TextPage?
         get() = with(dataSource) {
-        if (pageIndex > 0) {
-            return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
+            if (pageIndex > 0) {
+                return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
+            }
+            return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
         }
-        return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
-    }
 
 
 }
