@@ -100,15 +100,15 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     fun upContent(position: Int = 0) {
         if (ReadBookConfig.isScroll) {
-            curPage.setContent(pageFactory.currentPage())
+            curPage.setContent(pageFactory.currentPage)
         } else {
             when (position) {
-                -1 -> prevPage.setContent(pageFactory.previousPage())
-                1 -> nextPage.setContent(pageFactory.nextPage())
+                -1 -> prevPage.setContent(pageFactory.prevPage)
+                1 -> nextPage.setContent(pageFactory.nextPage)
                 else -> {
-                    curPage.setContent(pageFactory.currentPage())
-                    nextPage.setContent(pageFactory.nextPage())
-                    prevPage.setContent(pageFactory.previousPage())
+                    curPage.setContent(pageFactory.currentPage)
+                    nextPage.setContent(pageFactory.nextPage)
+                    prevPage.setContent(pageFactory.prevPage)
                 }
             }
         }

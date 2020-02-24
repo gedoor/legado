@@ -119,12 +119,12 @@ object ChapterProvider {
             Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
         )
         for (lineIndex in 0 until layout.lineCount) {
+            textPages.last().height = durY
             durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             val textLine = TextLine(isTitle = true)
             if (durY < visibleHeight) {
                 textPages.last().textLines.add(textLine)
             } else {
-                textPages.last().height = durY
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
@@ -202,12 +202,12 @@ object ChapterProvider {
             Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
         )
         for (lineIndex in 0 until layout.lineCount) {
-            val textLine = TextLine(isTitle = false)
+            textPages.last().height = durY
             durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+            val textLine = TextLine()
             if (durY < visibleHeight) {
                 textPages.last().textLines.add(textLine)
             } else {
-                textPages.last().height = durY
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)

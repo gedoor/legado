@@ -77,7 +77,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 ReadBookConfig.durConfig.textColor()
             }
             textLine.textChars.forEach {
-                canvas.drawText(it.charData, it.start, textLine.lineBase, textPaint)
+                canvas.drawText(
+                    it.charData,
+                    it.start,
+                    textLine.lineBase,
+                    textPaint
+                )
                 if (it.selected) {
                     canvas.drawRect(
                         it.start,
@@ -92,11 +97,101 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawScrollPage(canvas: Canvas) {
-
+        if (pageOffset <= 0) {
+            textPage.textLines.forEach { textLine ->
+                val textPaint = if (textLine.isTitle) {
+                    ChapterProvider.titlePaint
+                } else {
+                    ChapterProvider.contentPaint
+                }
+                textPaint.color = if (textLine.isReadAloud) {
+                    context.accentColor
+                } else {
+                    ReadBookConfig.durConfig.textColor()
+                }
+                textLine.textChars.forEach {
+                    canvas.drawText(
+                        it.charData,
+                        it.start,
+                        textLine.lineBase + pageOffset,
+                        textPaint
+                    )
+                    if (it.selected) {
+                        canvas.drawRect(
+                            it.start,
+                            textLine.lineTop + pageOffset,
+                            it.end,
+                            textLine.lineBottom + pageOffset,
+                            selectedPaint
+                        )
+                    }
+                }
+            }
+            pageFactory.nextPage?.textLines?.forEach { textLine ->
+                val textPaint = if (textLine.isTitle) {
+                    ChapterProvider.titlePaint
+                } else {
+                    ChapterProvider.contentPaint
+                }
+                textPaint.color = if (textLine.isReadAloud) {
+                    context.accentColor
+                } else {
+                    ReadBookConfig.durConfig.textColor()
+                }
+                textLine.textChars.forEach {
+                    canvas.drawText(
+                        it.charData,
+                        it.start,
+                        textLine.lineBase + pageOffset + textPage.height - ChapterProvider.paddingTop,
+                        textPaint
+                    )
+                    if (it.selected) {
+                        canvas.drawRect(
+                            it.start,
+                            textLine.lineTop + pageOffset + textPage.height - ChapterProvider.paddingTop,
+                            it.end,
+                            textLine.lineBottom + pageOffset + textPage.height - ChapterProvider.paddingTop,
+                            selectedPaint
+                        )
+                    }
+                }
+            }
+        } else {
+            textPage.textLines.forEach { textLine ->
+                val textPaint = if (textLine.isTitle) {
+                    ChapterProvider.titlePaint
+                } else {
+                    ChapterProvider.contentPaint
+                }
+                textPaint.color = if (textLine.isReadAloud) {
+                    context.accentColor
+                } else {
+                    ReadBookConfig.durConfig.textColor()
+                }
+                textLine.textChars.forEach {
+                    canvas.drawText(
+                        it.charData,
+                        it.start,
+                        textLine.lineBase + pageOffset,
+                        textPaint
+                    )
+                    if (it.selected) {
+                        canvas.drawRect(
+                            it.start,
+                            textLine.lineTop + pageOffset,
+                            it.end,
+                            textLine.lineBottom + pageOffset,
+                            selectedPaint
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun onScroll(mOffset: Float) {
-        var offset = mOffset
+        if (mOffset == 0f) return
+        var offset = -mOffset
         if (offset > maxScrollOffset) {
             offset = maxScrollOffset
         } else if (offset < -maxScrollOffset) {
@@ -104,6 +199,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
 
         pageOffset += offset
+        invalidate()
     }
 
     fun resetPageOffset() {

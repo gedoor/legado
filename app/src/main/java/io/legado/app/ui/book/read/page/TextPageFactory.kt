@@ -52,11 +52,13 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             false
     }
 
-    override fun currentPage(): TextPage? = with(dataSource) {
+    override val currentPage: TextPage?
+        get() = with(dataSource) {
         return getCurrentChapter()?.page(pageIndex)
     }
 
-    override fun nextPage(): TextPage? = with(dataSource) {
+    override val nextPage: TextPage?
+        get() = with(dataSource) {
         getCurrentChapter()?.let {
             if (pageIndex < it.pageSize() - 1) {
                 return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
@@ -65,7 +67,8 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
         return getNextChapter()?.page(0)?.removePageAloudSpan()
     }
 
-    override fun previousPage(): TextPage? = with(dataSource) {
+    override val prevPage: TextPage?
+        get() = with(dataSource) {
         if (pageIndex > 0) {
             return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
         }
