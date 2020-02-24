@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.read.page.delegate
 
-import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import io.legado.app.ui.book.read.page.PageView
@@ -21,7 +20,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         )
     }
 
-    override fun onDraw(canvas: Canvas) {
+    override fun onScroll() {
         curPage.onScroll(touchY - lastY)
     }
 

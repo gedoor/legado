@@ -34,14 +34,9 @@ abstract class PageDelegate(protected val pageView: PageView) :
     protected var touchX: Float = 0f
     protected var touchY: Float = 0f
 
-    protected val nextPage: ContentView
-        get() = pageView.nextPage
-
-    protected val curPage: ContentView
-        get() = pageView.curPage
-
-    protected val prevPage: ContentView
-        get() = pageView.prevPage
+    protected val nextPage: ContentView get() = pageView.nextPage
+    protected val curPage: ContentView get() = pageView.curPage
+    protected val prevPage: ContentView get() = pageView.prevPage
 
     protected var bitmap: Bitmap? = null
 
@@ -90,7 +85,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         touchY = y
 
         if (invalidate) {
-            pageView.postInvalidate()
+            pageView.invalidate()
         }
 
         onScroll()
@@ -187,12 +182,11 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     abstract fun onAnimStart()//scroller start
 
-    abstract fun onDraw(canvas: Canvas)//绘制
+    open fun onDraw(canvas: Canvas) {}//绘制
 
     abstract fun onAnimStop()//scroller finish
 
-    open fun onScroll() {//移动contentView， slidePage
-    }
+    open fun onScroll() {}//移动contentView， slidePage
 
     @CallSuper
     open fun setDirection(direction: Direction) {
