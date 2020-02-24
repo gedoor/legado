@@ -140,7 +140,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (scroller.computeScrollOffset()) {
             setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
-            setTouchPoint(scroller.currY.toFloat(), scroller.finalY.toFloat(), false)
             onAnimStop()
             stopScroll()
         }
