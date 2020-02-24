@@ -10,7 +10,10 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.book.read.page.entities.*
+import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.TextLine
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.removePref
@@ -131,10 +134,11 @@ object ChapterProvider {
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineBottom = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
             textLine.lineTop = (paddingTop + durY -
                     (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
+            textLine.lineBase = (paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
+            textLine.lineBottom = textLine.lineBase + titlePaint.fontMetrics.descent
             val words =
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -150,8 +154,8 @@ object ChapterProvider {
                     val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1
                     )
                     textLine.textChars.add(textChar)
                     x = x1
@@ -169,14 +173,13 @@ object ChapterProvider {
                     val x1 = x + cw
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1
                     )
                     textLine.textChars.add(textChar)
                     x = x1
                 }
             }
-            textLine.lineBottom = textLine.lineBottom + titlePaint.fontMetrics.descent
         }
         durY += paragraphSpacing
         return durY
@@ -214,10 +217,11 @@ object ChapterProvider {
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineBottom = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
             textLine.lineTop = (paddingTop + durY -
                     (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
+            textLine.lineBase = (paddingTop + durY -
+                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
+            textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
             var words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -231,8 +235,8 @@ object ChapterProvider {
                     val x1 = x + icw
                     val textChar = TextChar(
                         charData = bodyIndent[i].toString(),
-                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1
                     )
                     textLine.textChars.add(textChar)
                     x = x1
@@ -246,8 +250,8 @@ object ChapterProvider {
                     val x1 = if (i != words.lastIndex) x + cw + d else x + cw
                     val textChar1 = TextChar(
                         charData = char,
-                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1
                     )
                     textLine.textChars.add(textChar1)
                     x = x1
@@ -263,8 +267,8 @@ object ChapterProvider {
                     val x1 = x + cw
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1
                     )
                     textLine.textChars.add(textChar)
                     x = x1
@@ -280,14 +284,13 @@ object ChapterProvider {
                     val x1 = if (i != words.lastIndex) x + cw + d else x + cw
                     val textChar = TextChar(
                         charData = char,
-                        leftBottomPosition = TextPoint(paddingLeft + x, textLine.lineBottom),
-                        rightTopPosition = TextPoint(paddingLeft + x1, textLine.lineTop)
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1
                     )
                     textLine.textChars.add(textChar)
                     x = x1
                 }
             }
-            textLine.lineBottom = textLine.lineBottom + contentPaint.fontMetrics.descent
         }
         durY += paragraphSpacing
         return durY

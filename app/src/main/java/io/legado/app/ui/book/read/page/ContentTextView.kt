@@ -95,17 +95,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 ReadBookConfig.durConfig.textColor()
             }
             textLine.textChars.forEach {
-                canvas.drawText(
-                    it.charData,
-                    it.leftBottomPosition.x,
-                    it.leftBottomPosition.y,
-                    textPaint
-                )
+                canvas.drawText(it.charData, it.start, textLine.lineBase, textPaint)
                 if (it.selected) {
                     canvas.drawRect(
-                        it.leftBottomPosition.x,
+                        it.start,
                         textLine.lineTop,
-                        it.rightTopPosition.x,
+                        it.end,
                         textLine.lineBottom,
                         selectedPaint
                     )
@@ -158,21 +153,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                    if (x > textChar.start && x < textChar.end) {
                         textChar.selected = true
                         invalidate()
                         selectLineStart = lineIndex
                         selectCharStart = charIndex
                         selectLineEnd = lineIndex
                         selectCharEnd = charIndex
-                        upSelectedStart(
-                            textChar.leftBottomPosition.x,
-                            textChar.leftBottomPosition.y
-                        )
-                        upSelectedEnd(
-                            textChar.rightTopPosition.x,
-                            textChar.leftBottomPosition.y
-                        )
+                        upSelectedStart(textChar.start, textLine.lineBottom)
+                        upSelectedEnd(textChar.end, textLine.lineBottom)
                         return true
                     }
                 }
@@ -186,14 +175,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                    if (x > textChar.start && x < textChar.end) {
                         if (selectLineStart != lineIndex || selectCharStart != charIndex) {
                             selectLineStart = lineIndex
                             selectCharStart = charIndex
-                            upSelectedStart(
-                                textChar.leftBottomPosition.x,
-                                textChar.leftBottomPosition.y
-                            )
+                            upSelectedStart(textChar.start, textLine.lineBottom)
                             upSelectChars(textPage)
                         }
                         break
@@ -208,13 +194,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                    if (x > textChar.start && x < textChar.end) {
                         if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
                             selectLineEnd = lineIndex
                             selectCharEnd = charIndex
                             upSelectedEnd(
-                                textChar.rightTopPosition.x,
-                                textChar.leftBottomPosition.y
+                                textChar.end,
+                                textLine.lineBottom
                             )
                             upSelectChars(textPage)
                         }
