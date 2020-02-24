@@ -11,6 +11,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_read_padding.*
 
 class PaddingConfigDialog : DialogFragment() {
@@ -56,6 +57,7 @@ class PaddingConfigDialog : DialogFragment() {
         dsb_padding_left.progress = paddingLeft
         dsb_padding_right.progress = paddingRight
         //页眉
+        tv_header_padding.visible(hideStatusBar)
         dsb_header_padding_top.progress = headerPaddingTop
         dsb_header_padding_bottom.progress = headerPaddingBottom
         dsb_header_padding_left.progress = headerPaddingLeft

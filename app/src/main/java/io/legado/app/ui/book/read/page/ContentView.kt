@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
@@ -39,7 +38,7 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_bottom_left.typeface = ChapterProvider.typeface
             tv_bottom_right.typeface = ChapterProvider.typeface
             //显示状态栏时隐藏header
-            if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+            if (hideStatusBar) {
                 ll_header.layoutParams =
                     ll_header.layoutParams.apply { height = context.statusBarHeight }
                 ll_header.setPadding(
@@ -77,7 +76,7 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     val headerHeight: Int
         get() {
-            return if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+            return if (ReadBookConfig.hideStatusBar) {
                 ll_header.height
             } else {
                 context.statusBarHeight

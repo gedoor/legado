@@ -112,6 +112,8 @@ object ReadBookConfig {
     }
 
     //配置写入读取
+    var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
+    var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
     var textBold: Boolean
         get() = if (shareLayout) shareConfig.textBold else durConfig.textBold
         set(value) = if (shareLayout) shareConfig.textBold = value else durConfig.textBold = value

@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/tv_header_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"

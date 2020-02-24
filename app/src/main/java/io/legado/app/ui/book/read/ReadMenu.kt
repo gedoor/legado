@@ -10,8 +10,8 @@ import android.widget.SeekBar
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.service.help.ReadBook
@@ -199,9 +199,8 @@ class ReadMenu : FrameLayout {
                 vw_menu_bg.onClick { runMenuOut() }
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
                     height =
-                        if (context.getPrefBoolean(PreferKey.hideNavigationBar)
-                            && Help.isNavigationBarExist(activity)
-                        ) context.navigationBarHeight
+                        if (ReadBookConfig.hideNavigationBar && Help.isNavigationBarExist(activity))
+                            context.navigationBarHeight
                         else 0
                 }
             }

@@ -104,7 +104,14 @@ object Restore {
                     else -> Unit
                 }
                 edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
-                edit.commit()
+                edit.apply()
+            }
+            ReadBookConfig.apply {
+                styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
+                shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
+                pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+                hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
+                hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
             }
         }
         LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
