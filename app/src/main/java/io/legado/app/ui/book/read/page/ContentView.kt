@@ -111,6 +111,10 @@ class ContentView(context: Context) : FrameLayout(context) {
         content_text_view.onScroll(offset)
     }
 
+    fun resetPageOffset() {
+        content_text_view.resetPageOffset()
+    }
+
     fun upSelectAble(selectAble: Boolean) {
         content_text_view.selectAble = selectAble
     }

@@ -31,11 +31,14 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         }
     }
 
-    override fun onDown(e: MotionEvent): Boolean {
-        abort()
-        mVelocity.clear()
-        mVelocity.addMovement(e)
-        return super.onDown(e)
+    override fun onTouch(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            setStartPoint(event.x, event.y)
+            abort()
+            mVelocity.clear()
+            mVelocity.addMovement(event)
+        }
+        return super.onTouch(event)
     }
 
     override fun onScroll(

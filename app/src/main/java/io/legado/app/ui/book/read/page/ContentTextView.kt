@@ -35,7 +35,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val maxScrollOffset = 100f
     private var pageOffset = 0f
     private var linePos = 0
-    private var isLastPage = false
 
     init {
         callBack = activity as CallBack
@@ -163,7 +162,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun resetPageOffset() {
         pageOffset = 0f
         linePos = 0
-        isLastPage = false
     }
 
     fun selectText(x: Float, y: Float): Boolean {
