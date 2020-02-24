@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -379,20 +380,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         textActionMenu ?: let {
             textActionMenu = TextActionMenu(this, this)
         }
+        val x = cursor_left.x.toInt() + cursor_left.width
+        val y = (page_view.height - cursor_left.y + ReadBookConfig.textSize.dp * 1.5).toInt()
         textActionMenu?.let { popup ->
             if (!popup.isShowing) {
-                popup.showAtLocation(
-                    cursor_left,
-                    Gravity.BOTTOM or Gravity.START,
-                    cursor_left.x.toInt() + cursor_left.width,
-                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.textSize.dp + popup.height
-                )
+                popup.showAtLocation(cursor_left, Gravity.BOTTOM or Gravity.START, x, y)
             } else {
-                popup.update(
-                    cursor_left.x.toInt() + cursor_left.width,
-                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.textSize.dp + popup.height,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                )
+                popup.update(x, y, WRAP_CONTENT, WRAP_CONTENT)
             }
         }
     }
