@@ -23,10 +23,10 @@ import io.legado.app.utils.removePref
 object ChapterProvider {
     var viewWidth = 0
     var viewHeight = 0
-    private var visibleWidth = 0
-    private var visibleHeight = 0
-    private var paddingLeft = 0
-    private var paddingTop = 0
+    var visibleWidth = 0
+    var visibleHeight = 0
+    var paddingLeft = 0
+    var paddingTop = 0
     private var lineSpacingExtra = 0f
     private var paragraphSpacing = 0
     var typeface: Typeface = Typeface.SANS_SERIF
