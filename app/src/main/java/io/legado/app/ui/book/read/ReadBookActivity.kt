@@ -505,12 +505,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         viewModel.changeTo(book)
     }
 
-    override fun setPageIndex(pageIndex: Int) {
-        ReadBook.durPageIndex = pageIndex
-        ReadBook.saveRead()
-        ReadBook.curPageChanged()
-    }
-
     override fun clickCenter() {
         if (BaseReadAloudService.isRun) {
             showReadAloudDialog()

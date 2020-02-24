@@ -168,7 +168,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         get() = ReadBook.durChapterPos()
 
     override fun setPageIndex(pageIndex: Int) {
-        callBack.setPageIndex(pageIndex)
+        ReadBook.setPageIndex(pageIndex)
     }
 
     override fun getChapterPosition(): Int {
@@ -196,19 +196,8 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     interface CallBack {
-
         val isInitFinish: Boolean
-
-        /**
-         * 保存页数
-         */
-        fun setPageIndex(pageIndex: Int)
-
-        /**
-         * 点击屏幕中间
-         */
         fun clickCenter()
-
         fun screenOffTimerStart()
     }
 }

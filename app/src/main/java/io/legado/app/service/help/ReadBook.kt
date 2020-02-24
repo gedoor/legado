@@ -127,6 +127,12 @@ object ReadBook {
         saveRead()
     }
 
+    fun setPageIndex(pageIndex: Int) {
+        durPageIndex = pageIndex
+        saveRead()
+        curPageChanged()
+    }
+
     fun curPageChanged() {
         callBack?.upPageProgress()
         if (BaseReadAloudService.isRun) {
