@@ -312,7 +312,7 @@ object ReadBook {
     }
 
     interface CallBack {
-        fun upContent(relativePosition: Int = 0, resetScrollOffset: Boolean = true)
+        fun upContent(relativePosition: Int = 0)
         fun upView()
         fun upPageProgress()
         fun contentLoadFinish()

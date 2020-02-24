@@ -17,6 +17,8 @@ import io.legado.app.utils.getPrefBoolean
 
 
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
+    var upView: ((TextPage) -> Unit)? = null
     private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
@@ -24,7 +26,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
     private var callBack: CallBack
-    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     private var selectLineStart = 0
     private var selectCharStart = 0
     private var selectLineEnd = 0
@@ -159,12 +160,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             pageFactory.moveToPrev()
             textPage = pageFactory.currentPage ?: TextPage().format()
             pageOffset -= textPage.height
-            callBack.upContent(0, false)
+            upView?.invoke(textPage)
         } else if (pageOffset < -textPage.height) {
             pageOffset += textPage.height
             pageFactory.moveToNext()
             textPage = pageFactory.currentPage ?: TextPage().format()
-            callBack.upContent(0, false)
+            upView?.invoke(textPage)
         }
         invalidate()
     }
@@ -302,7 +303,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
 
     interface CallBack {
-        fun upContent(relativePosition: Int, resetScrollOffset: Boolean)
         fun upSelectedStart(x: Float, y: Float)
         fun upSelectedEnd(x: Float, y: Float)
         fun onCancelSelect()

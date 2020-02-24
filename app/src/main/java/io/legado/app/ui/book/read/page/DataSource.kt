@@ -16,5 +16,4 @@ interface DataSource {
     fun hasNextChapter(): Boolean
 
     fun hasPrevChapter(): Boolean
-
 }

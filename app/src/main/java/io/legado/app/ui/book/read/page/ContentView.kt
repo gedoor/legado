@@ -25,6 +25,11 @@ class ContentView(context: Context) : FrameLayout(context) {
 
         upStyle()
         upTime()
+        content_text_view.upView = {
+            tv_bottom_left.text = it.title
+            pageSize = it.pageSize
+            setPageIndex(it.index)
+        }
     }
 
     fun upStyle() {
@@ -91,17 +96,13 @@ class ContentView(context: Context) : FrameLayout(context) {
         tv_top_right.text = context.getString(R.string.battery_show, battery)
     }
 
-    fun setContent(textPage: TextPage?, resetScrollOffset: Boolean = true) {
+    fun setContent(textPage: TextPage?) {
         if (textPage != null) {
             tv_bottom_left.text = textPage.title
             pageSize = textPage.pageSize
             setPageIndex(textPage.index)
-            if (resetScrollOffset) {
-                content_text_view.resetPageOffset()
-                content_text_view.setContent(textPage)
-            } else {
-                content_text_view.invalidate()
-            }
+            content_text_view.resetPageOffset()
+            content_text_view.setContent(textPage)
         }
     }
 

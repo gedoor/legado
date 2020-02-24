@@ -98,9 +98,9 @@ class PageView(context: Context, attrs: AttributeSet) :
         upContent()
     }
 
-    fun upContent(relativePosition: Int = 0, resetScrollOffset: Boolean = true) {
+    fun upContent(relativePosition: Int = 0) {
         if (ReadBookConfig.isScroll) {
-            curPage.setContent(pageFactory.currentPage, resetScrollOffset)
+            curPage.setContent(pageFactory.currentPage)
         } else {
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
