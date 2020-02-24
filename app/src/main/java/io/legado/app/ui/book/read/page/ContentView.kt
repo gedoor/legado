@@ -99,8 +99,9 @@ class ContentView(context: Context) : FrameLayout(context) {
             if (resetScrollOffset) {
                 content_text_view.resetPageOffset()
                 content_text_view.setContent(textPage)
+            } else {
+                content_text_view.invalidate()
             }
-            content_text_view.invalidate()
         }
     }
 
