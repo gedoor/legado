@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -25,7 +26,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.receiver.TimeElectricityReceiver
+import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -80,7 +81,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
 
     private var screenTimeOut: Long = 0
-    private var timeElectricityReceiver: TimeElectricityReceiver? = null
+    private var timeBatteryReceiver: TimeBatteryReceiver? = null
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
@@ -105,15 +106,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onResume() {
         super.onResume()
         upSystemUiVisibility()
-        timeElectricityReceiver = TimeElectricityReceiver.register(this)
+        timeBatteryReceiver = TimeBatteryReceiver.register(this)
         page_view.upTime()
     }
 
     override fun onPause() {
         super.onPause()
-        timeElectricityReceiver?.let {
+        timeBatteryReceiver?.let {
             unregisterReceiver(it)
-            timeElectricityReceiver = null
+            timeBatteryReceiver = null
         }
         upSystemUiVisibility()
     }
@@ -379,20 +380,17 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         textActionMenu ?: let {
             textActionMenu = TextActionMenu(this, this)
         }
+        val x = cursor_left.x.toInt() + cursor_left.width
+        val y = if (cursor_left.y - statusBarHeight > ReadBookConfig.textSize.dp * 1.5 + 20.dp) {
+            (page_view.height - cursor_left.y + ReadBookConfig.textSize.dp * 1.5).toInt()
+        } else {
+            (page_view.height - cursor_left.y - cursor_left.height - 40.dp).toInt()
+        }
         textActionMenu?.let { popup ->
             if (!popup.isShowing) {
-                popup.showAtLocation(
-                    cursor_left,
-                    Gravity.BOTTOM or Gravity.START,
-                    cursor_left.x.toInt() + cursor_left.width,
-                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.durConfig.textSize.dp + popup.height
-                )
+                popup.showAtLocation(cursor_left, Gravity.BOTTOM or Gravity.START, x, y)
             } else {
-                popup.update(
-                    cursor_left.x.toInt() + cursor_left.width,
-                    page_view.height - cursor_left.y.toInt() + ReadBookConfig.durConfig.textSize.dp + popup.height,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                )
+                popup.update(x, y, WRAP_CONTENT, WRAP_CONTENT)
             }
         }
     }
@@ -458,9 +456,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 更新内容
      */
-    override fun upContent(position: Int) {
+    override fun upContent(relativePosition: Int) {
         launch {
-            page_view.upContent(position)
+            page_view.upContent(relativePosition)
         }
     }
 
@@ -505,12 +503,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun changeTo(book: Book) {
         viewModel.changeTo(book)
-    }
-
-    override fun setPageIndex(pageIndex: Int) {
-        ReadBook.durPageIndex = pageIndex
-        ReadBook.saveRead()
-        ReadBook.curPageChanged()
     }
 
     override fun clickCenter() {
@@ -665,7 +657,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             upSystemUiVisibility()
             page_view.upBg()
             page_view.upStyle()
-            ChapterProvider.upStyle(ReadBookConfig.durConfig)
+            ChapterProvider.upStyle()
             if (it) {
                 ReadBook.loadContent()
             } else {
@@ -721,7 +713,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             Help.keepScreenOn(window, true)
             return
         }
-        val t = screenTimeOut - getScreenOffTime()
+        val t = screenTimeOut - sysScreenOffTime
         if (t > 0) {
             mHandler.removeCallbacks(keepScreenRunnable)
             Help.keepScreenOn(window, true)

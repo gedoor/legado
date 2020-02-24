@@ -10,7 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
-import io.legado.app.utils.getVerticalDivider
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_explore_show.*
 import org.jetbrains.anko.startActivity
@@ -34,7 +34,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
     private fun initRecyclerView() {
         adapter = ExploreShowAdapter(this, this)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(this))
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(this)
         adapter.addFooterView(loadMoreView)

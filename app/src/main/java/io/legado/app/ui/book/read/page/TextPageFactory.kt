@@ -14,63 +14,65 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun moveToFirst() {
-        dataSource.setPageIndex(0)
+        ReadBook.setPageIndex(0)
     }
 
     override fun moveToLast() = with(dataSource) {
         getCurrentChapter()?.let {
             if (it.pageSize() == 0) {
-                setPageIndex(0)
+                ReadBook.setPageIndex(0)
             } else {
-                setPageIndex(it.pageSize().minus(1))
+                ReadBook.setPageIndex(it.pageSize().minus(1))
             }
-        } ?: setPageIndex(0)
+        } ?: ReadBook.setPageIndex(0)
     }
 
     override fun moveToNext(): Boolean = with(dataSource) {
         return if (hasNext()) {
-            if (getCurrentChapter()?.isLastIndex(pageIndex) == true
-            ) {
+            if (getCurrentChapter()?.isLastIndex(pageIndex) == true) {
                 ReadBook.moveToNextChapter(false)
             } else {
-                setPageIndex(pageIndex.plus(1))
+                ReadBook.setPageIndex(pageIndex.plus(1))
             }
             true
         } else
             false
     }
 
-    override fun moveToPrevious(): Boolean = with(dataSource) {
+    override fun moveToPrev(): Boolean = with(dataSource) {
         return if (hasPrev()) {
             if (pageIndex <= 0) {
                 ReadBook.moveToPrevChapter(false)
             } else {
-                setPageIndex(pageIndex.minus(1))
+                ReadBook.setPageIndex(pageIndex.minus(1))
             }
             true
         } else
             false
     }
 
-    override fun currentPage(): TextPage? = with(dataSource) {
-        return getCurrentChapter()?.page(pageIndex)
-    }
+    override val currentPage: TextPage?
+        get() = with(dataSource) {
+            return getCurrentChapter()?.page(pageIndex)
+        }
 
-    override fun nextPage(): TextPage? = with(dataSource) {
-        getCurrentChapter()?.let {
-            if (pageIndex < it.pageSize() - 1) {
-                return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
+    override val nextPage: TextPage?
+        get() = with(dataSource) {
+            getCurrentChapter()?.let {
+                if (pageIndex < it.pageSize() - 1) {
+                    return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
+                }
             }
+            return getNextChapter()?.page(0)?.removePageAloudSpan()
         }
-        return getNextChapter()?.page(0)?.removePageAloudSpan()
-    }
 
-    override fun previousPage(): TextPage? = with(dataSource) {
-        if (pageIndex > 0) {
-            return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
+    override val prevPage: TextPage?
+        get() = with(dataSource) {
+            if (pageIndex > 0) {
+                return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
+            }
+            return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
         }
-        return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
-    }
 
 
 }

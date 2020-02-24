@@ -3,14 +3,13 @@ package io.legado.app.ui.book.read.page
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.text.Layout
-import android.text.StaticLayout
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
@@ -18,6 +17,8 @@ import io.legado.app.utils.getPrefBoolean
 
 
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
+    var upView: ((TextPage) -> Unit)? = null
     private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
@@ -25,7 +26,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
     private var callBack: CallBack
-    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     private var selectLineStart = 0
     private var selectCharStart = 0
     private var selectLineEnd = 0
@@ -36,7 +36,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val maxScrollOffset = 100f
     private var pageOffset = 0f
     private var linePos = 0
-    private var isLastPage = false
 
     init {
         callBack = activity as CallBack
@@ -51,70 +50,105 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        ReadBookConfig.durConfig.let {
-            ChapterProvider.viewWidth = w
-            ChapterProvider.viewHeight = h
-            ChapterProvider.upSize(ReadBookConfig.durConfig)
-        }
+        ChapterProvider.viewWidth = w
+        ChapterProvider.viewHeight = h
+        ChapterProvider.upSize()
+        textPage.format()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (textPage.textLines.isEmpty()) {
-            drawMsg(canvas, textPage.text)
+        if (ReadBookConfig.isScroll) {
+            drawScrollPage(canvas)
         } else {
             drawHorizontalPage(canvas)
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun drawMsg(canvas: Canvas, msg: String) {
-        val layout = StaticLayout(
-            msg, ChapterProvider.contentPaint, width,
-            Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false
-        )
-        val y = (height - layout.height) / 2f
-        for (lineIndex in 0 until layout.lineCount) {
-            val x = (width - layout.getLineMax(lineIndex)) / 2
-            val words =
-                msg.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
-            canvas.drawText(words, x, y, ChapterProvider.contentPaint)
+    private fun drawHorizontalPage(canvas: Canvas) {
+        textPage.textLines.forEach { textLine ->
+            drawChars(
+                canvas,
+                textLine.textChars,
+                textLine.lineTop,
+                textLine.lineBase,
+                textLine.lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
         }
     }
 
-    private fun drawHorizontalPage(canvas: Canvas) {
+    private fun drawScrollPage(canvas: Canvas) {
+        val mPageOffset = pageOffset
         textPage.textLines.forEach { textLine ->
-            val textPaint = if (textLine.isTitle) {
-                ChapterProvider.titlePaint
-            } else {
-                ChapterProvider.contentPaint
-            }
-            textPaint.color = if (textLine.isReadAloud) {
-                context.accentColor
-            } else {
-                ReadBookConfig.durConfig.textColor()
-            }
-            textLine.textChars.forEach {
-                canvas.drawText(
-                    it.charData,
-                    it.leftBottomPosition.x,
-                    it.leftBottomPosition.y,
-                    textPaint
-                )
-                if (it.selected) {
-                    canvas.drawRect(
-                        it.leftBottomPosition.x,
-                        textLine.lineTop,
-                        it.rightTopPosition.x,
-                        textLine.lineBottom,
-                        selectedPaint
-                    )
-                }
+            val lineTop = textLine.lineTop + mPageOffset
+            val lineBase = textLine.lineBase + mPageOffset
+            val lineBottom = textLine.lineBottom + mPageOffset
+            drawChars(
+                canvas,
+                textLine.textChars,
+                lineTop,
+                lineBase,
+                lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
+        }
+        pageFactory.nextPage?.textLines?.forEach { textLine ->
+            val yPy = mPageOffset + textPage.height - ChapterProvider.paddingTop
+            val lineTop = textLine.lineTop + yPy
+            val lineBase = textLine.lineBase + yPy
+            val lineBottom = textLine.lineBottom + yPy
+            drawChars(
+                canvas,
+                textLine.textChars,
+                lineTop,
+                lineBase,
+                lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
+        }
+        pageFactory.prevPage?.textLines?.forEach { textLine ->
+            val yPy = mPageOffset + ChapterProvider.paddingTop
+            val lineTop = -textLine.lineTop + yPy
+            val lineBase = -textLine.lineBase + yPy
+            val lineBottom = -textLine.lineBottom + yPy
+            drawChars(
+                canvas,
+                textLine.textChars,
+                lineTop,
+                lineBase,
+                lineBottom,
+                textLine.isTitle,
+                textLine.isReadAloud
+            )
+        }
+    }
+
+    private fun drawChars(
+        canvas: Canvas,
+        textChars: List<TextChar>,
+        lineTop: Float,
+        lineBase: Float,
+        lineBottom: Float,
+        isTitle: Boolean,
+        isReadAloud: Boolean
+    ) {
+        val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
+        textPaint.color =
+            if (isReadAloud) context.accentColor else ReadBookConfig.durConfig.textColor()
+        textChars.forEach {
+            canvas.drawText(it.charData, it.start, lineBase, textPaint)
+            if (it.selected) {
+                canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
             }
         }
     }
 
     fun onScroll(mOffset: Float) {
+        if (mOffset == 0f) return
         var offset = mOffset
         if (offset > maxScrollOffset) {
             offset = maxScrollOffset
@@ -122,78 +156,56 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             offset = -maxScrollOffset
         }
 
-        if (!isLastPage || offset < 0) {
-            pageOffset += offset
-            isLastPage = false
+        pageOffset += offset
+        if (pageOffset > 0) {
+            pageFactory.moveToPrev()
+            textPage = pageFactory.currentPage ?: TextPage().format()
+            pageOffset -= textPage.height
+            upView?.invoke(textPage)
+        } else if (pageOffset < -textPage.height) {
+            pageOffset += textPage.height
+            pageFactory.moveToNext()
+            textPage = pageFactory.currentPage ?: TextPage().format()
+            upView?.invoke(textPage)
         }
-        // 首页
-        if (pageOffset < 0 && !pageFactory.hasPrev()) {
-            pageOffset = 0f
-        }
-
-        val cHeight = if (textPage.height > 0) textPage.height else height
-        if (offset > 0 && pageOffset > cHeight) {
-
-        }
+        invalidate()
     }
 
     fun resetPageOffset() {
         pageOffset = 0f
         linePos = 0
-        isLastPage = false
     }
 
-    private fun switchToPageOffset(offset: Int) {
-        when (offset) {
-            1 -> {
-
-            }
-            -1 -> {
-
-            }
-        }
-    }
-
-    fun selectText(x: Float, y: Float): Boolean {
+    fun selectText(x: Float, y: Float, select: (lineIndex: Int, charIndex: Int) -> Unit) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                    if (x > textChar.start && x < textChar.end) {
                         textChar.selected = true
                         invalidate()
                         selectLineStart = lineIndex
                         selectCharStart = charIndex
                         selectLineEnd = lineIndex
                         selectCharEnd = charIndex
-                        upSelectedStart(
-                            textChar.leftBottomPosition.x,
-                            textChar.leftBottomPosition.y
-                        )
-                        upSelectedEnd(
-                            textChar.rightTopPosition.x,
-                            textChar.leftBottomPosition.y
-                        )
-                        return true
+                        upSelectedStart(textChar.start, textLine.lineBottom)
+                        upSelectedEnd(textChar.end, textLine.lineBottom)
+                        select(lineIndex, charIndex)
                     }
                 }
                 break
             }
         }
-        return false
     }
 
     fun selectStartMove(x: Float, y: Float) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                    if (x > textChar.start && x < textChar.end) {
                         if (selectLineStart != lineIndex || selectCharStart != charIndex) {
                             selectLineStart = lineIndex
                             selectCharStart = charIndex
-                            upSelectedStart(
-                                textChar.leftBottomPosition.x,
-                                textChar.leftBottomPosition.y
-                            )
+                            upSelectedStart(textChar.start, textLine.lineBottom)
                             upSelectChars(textPage)
                         }
                         break
@@ -204,18 +216,24 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
+    fun selectStartMoveIndex(lineIndex: Int, charIndex: Int) {
+        selectLineStart = lineIndex
+        selectCharStart = charIndex
+        val textLine = textPage.textLines[lineIndex]
+        val textChar = textLine.textChars[charIndex]
+        upSelectedStart(textChar.start, textLine.lineBottom)
+        upSelectChars(textPage)
+    }
+
     fun selectEndMove(x: Float, y: Float) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop && y < textLine.lineBottom) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.leftBottomPosition.x && x < textChar.rightTopPosition.x) {
+                    if (x > textChar.start && x < textChar.end) {
                         if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
                             selectLineEnd = lineIndex
                             selectCharEnd = charIndex
-                            upSelectedEnd(
-                                textChar.rightTopPosition.x,
-                                textChar.leftBottomPosition.y
-                            )
+                            upSelectedEnd(textChar.end, textLine.lineBottom)
                             upSelectChars(textPage)
                         }
                         break
@@ -224,6 +242,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 break
             }
         }
+    }
+
+    fun selectEndMoveIndex(lineIndex: Int, charIndex: Int) {
+        selectLineEnd = lineIndex
+        selectCharEnd = charIndex
+        val textLine = textPage.textLines[lineIndex]
+        val textChar = textLine.textChars[charIndex]
+        upSelectedEnd(textChar.end, textLine.lineBottom)
+        upSelectChars(textPage)
     }
 
     private fun upSelectChars(textPage: TextPage) {

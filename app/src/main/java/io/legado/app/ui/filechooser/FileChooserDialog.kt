@@ -15,7 +15,11 @@ import io.legado.app.R
 import io.legado.app.constant.Theme
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
-import io.legado.app.utils.*
+import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_file_chooser.*
 
 
@@ -133,7 +137,7 @@ class FileChooserDialog : DialogFragment(),
         fileAdapter = FileAdapter(requireContext(), this)
         pathAdapter = PathAdapter(requireContext(), this)
 
-        rv_file.addItemDecoration(rv_file.getVerticalDivider())
+        rv_file.addItemDecoration(VerticalDivider(requireContext()))
         rv_file.layoutManager = LinearLayoutManager(activity)
         rv_file.adapter = fileAdapter
 

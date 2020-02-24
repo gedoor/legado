@@ -28,10 +28,9 @@ import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getVerticalDivider
 import kotlinx.android.synthetic.main.dialog_toc_regex.*
-import kotlinx.android.synthetic.main.dialog_toc_regex_edit.*
 import kotlinx.android.synthetic.main.dialog_toc_regex_edit.view.*
 import kotlinx.android.synthetic.main.item_toc_regex.view.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -76,7 +75,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private fun initView() {
         adapter = TocRegexAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
@@ -150,7 +149,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     }
             }
             okButton {
-                rootView?.let {
+                rootView?.apply {
                     tocRule.name = tv_rule_name.text.toString()
                     tocRule.rule = tv_rule_regex.text.toString()
                     saveRule(tocRule, rule)

@@ -154,8 +154,8 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:tooltipText="@string/other_setting"
-                android:contentDescription="@string/other_setting"
+                android:tooltipText="@string/other_aloud_setting"
+                android:contentDescription="@string/other_aloud_setting"
                 android:src="@drawable/ic_settings"
                 android:tint="@color/tv_text_default"
                 tools:ignore="UnusedAttribute" />

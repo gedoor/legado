@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
@@ -25,18 +24,23 @@ class ContentView(context: Context) : FrameLayout(context) {
 
         upStyle()
         upTime()
+        content_text_view.upView = {
+            tv_bottom_left.text = it.title
+            pageSize = it.pageSize
+            setPageIndex(it.index)
+        }
     }
 
     fun upStyle() {
-        ReadBookConfig.durConfig.apply {
+        ReadBookConfig.apply {
             tv_top_left.typeface = ChapterProvider.typeface
             tv_top_right.typeface = ChapterProvider.typeface
             tv_bottom_left.typeface = ChapterProvider.typeface
             tv_bottom_right.typeface = ChapterProvider.typeface
             //显示状态栏时隐藏header
-            if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+            if (hideStatusBar) {
                 ll_header.layoutParams =
-                    ll_header.layoutParams.apply { height = context.getStatusBarHeight() }
+                    ll_header.layoutParams.apply { height = context.statusBarHeight }
                 ll_header.setPadding(
                     headerPaddingLeft.dp,
                     headerPaddingTop.dp,
@@ -47,7 +51,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 page_panel.setPadding(0, 0, 0, 0)
             } else {
                 ll_header.gone()
-                page_panel.setPadding(0, context.getStatusBarHeight(), 0, 0)
+                page_panel.setPadding(0, context.statusBarHeight, 0, 0)
             }
             content_text_view.setPadding(
                 paddingLeft.dp,
@@ -61,7 +65,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 footerPaddingRight.dp,
                 footerPaddingBottom.dp
             )
-            textColor().let {
+            durConfig.textColor().let {
                 tv_top_left.setTextColor(it)
                 tv_top_right.setTextColor(it)
                 tv_bottom_left.setTextColor(it)
@@ -72,10 +76,10 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     val headerHeight: Int
         get() {
-            return if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
+            return if (ReadBookConfig.hideStatusBar) {
                 ll_header.height
             } else {
-                context.getStatusBarHeight()
+                context.statusBarHeight
             }
         }
 
@@ -93,10 +97,11 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun setContent(textPage: TextPage?) {
         if (textPage != null) {
-            content_text_view.setContent(textPage)
             tv_bottom_left.text = textPage.title
             pageSize = textPage.pageSize
             setPageIndex(textPage.index)
+            content_text_view.resetPageOffset()
+            content_text_view.setContent(textPage)
         }
     }
 
@@ -115,17 +120,25 @@ class ContentView(context: Context) : FrameLayout(context) {
         content_text_view.selectAble = selectAble
     }
 
-    fun selectText(e: MotionEvent): Boolean {
+    fun selectText(e: MotionEvent, select: (lineIndex: Int, charIndex: Int) -> Unit) {
         val y = e.y - headerHeight
-        return content_text_view.selectText(e.x, y)
+        return content_text_view.selectText(e.x, y, select)
     }
 
     fun selectStartMove(x: Float, y: Float) {
         content_text_view.selectStartMove(x, y - headerHeight)
     }
 
+    fun selectStartMoveIndex(lineIndex: Int, charIndex: Int) {
+        content_text_view.selectStartMoveIndex(lineIndex, charIndex)
+    }
+
     fun selectEndMove(x: Float, y: Float) {
         content_text_view.selectEndMove(x, y - headerHeight)
+    }
+
+    fun selectEndMoveIndex(lineIndex: Int, charIndex: Int) {
+        content_text_view.selectEndMoveIndex(lineIndex, charIndex)
     }
 
     fun cancelSelect() {

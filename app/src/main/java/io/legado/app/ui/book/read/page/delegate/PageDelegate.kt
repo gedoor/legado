@@ -6,15 +6,14 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.ViewConfiguration
+import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.CallSuper
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
@@ -25,44 +24,36 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.width * 0.66f, pageView.height * 0.66f
     )
     protected val context: Context = pageView.context
+    protected val slop = ViewConfiguration.get(context).scaledTouchSlop
     //起始点
     protected var startX: Float = 0f
     protected var startY: Float = 0f
     //上一个触碰点
+    protected var lastX: Float = 0f
     protected var lastY: Float = 0f
     //触碰点
     protected var touchX: Float = 0f
     protected var touchY: Float = 0f
 
-    protected val nextPage: ContentView
-        get() = pageView.nextPage
-
-    protected val curPage: ContentView
-        get() = pageView.curPage
-
-    protected val prevPage: ContentView
-        get() = pageView.prevPage
+    protected val nextPage: ContentView get() = pageView.nextPage
+    protected val curPage: ContentView get() = pageView.curPage
+    protected val prevPage: ContentView get() = pageView.prevPage
 
     protected var bitmap: Bitmap? = null
 
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
-    //textView在顶端或低端
-    protected var atTop: Boolean = false
-    protected var atBottom: Boolean = false
 
     private val snackBar: Snackbar by lazy {
         Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
     }
 
     private val scroller: Scroller by lazy {
-        Scroller(pageView.context, FastOutLinearInInterpolator())
+        Scroller(pageView.context, DecelerateInterpolator())
     }
 
     private val detector: GestureDetector by lazy {
-        GestureDetector(pageView.context, this).apply {
-            setIsLongpressEnabled(context.getPrefBoolean(PreferKey.textSelectAble))
-        }
+        GestureDetector(pageView.context, this)
     }
 
     var isMoved = false
@@ -74,26 +65,32 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var isRunning = false
     var isStarted = false
     var isTextSelected = false
+    var selectedOnDown = false
+
+    var firstLineIndex: Int = 0
+    var firstCharIndex: Int = 0
 
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
+        lastX = x
         lastY = y
         touchX = x
         touchY = y
 
         if (invalidate) {
-            invalidate()
+            pageView.invalidate()
         }
     }
 
     open fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
+        lastX = touchX
         lastY = touchY
         touchX = x
         touchY = y
 
         if (invalidate) {
-            invalidate()
+            pageView.invalidate()
         }
 
         onScroll()
@@ -103,10 +100,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         detector.setIsLongpressEnabled(selectAble)
     }
 
-    protected fun invalidate() {
-        pageView.invalidate()
-    }
-
     open fun fling(
         startX: Int, startY: Int, velocityX: Int, velocityY: Int,
         minX: Int, maxX: Int, minY: Int, maxY: Int
@@ -114,7 +107,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY)
         isRunning = true
         isStarted = true
-        invalidate()
+        pageView.invalidate()
     }
 
     protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int) {
@@ -127,13 +120,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
         )
         isRunning = true
         isStarted = true
-        invalidate()
+        pageView.invalidate()
     }
 
     private fun stopScroll() {
         isRunning = false
         isStarted = false
-        invalidate()
+        pageView.invalidate()
         bitmap?.recycle()
         bitmap = null
     }
@@ -141,7 +134,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     fun setViewSize(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
-        invalidate()
+        pageView.invalidate()
         centerRectF.set(
             width * 0.33f, height * 0.33f,
             width * 0.66f, height * 0.66f
@@ -152,7 +145,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (scroller.computeScrollOffset()) {
             setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
-            setTouchPoint(scroller.finalX.toFloat(), scroller.finalY.toFloat(), false)
             onAnimStop()
             stopScroll()
         }
@@ -192,14 +184,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
         onAnimStart()
     }
 
-    abstract fun onAnimStart()//scroller start
+    open fun onAnimStart() {}//scroller start
 
-    abstract fun onDraw(canvas: Canvas)//绘制
+    open fun onDraw(canvas: Canvas) {}//绘制
 
-    abstract fun onAnimStop()//scroller finish
+    open fun onAnimStop() {}//scroller finish
 
-    open fun onScroll() {//移动contentView， slidePage
-    }
+    open fun onScroll() {}//移动contentView， slidePage
 
     @CallSuper
     open fun setDirection(direction: Direction) {
@@ -218,18 +209,17 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 触摸事件处理
      */
     @CallSuper
-    open fun onTouch(event: MotionEvent): Boolean {
-        if (isStarted) return false
+    open fun onTouch(event: MotionEvent) {
+        if (isStarted) return
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
             if (event.action == MotionEvent.ACTION_UP && isMoved) {
-                if (isTextSelected) {
-                    isTextSelected = false
+                if (selectedOnDown) {
+                    selectedOnDown = false
                 }
                 if (!noNext) onAnimStart()
             }
         }
-        return true
     }
 
     /**
@@ -238,6 +228,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
     override fun onDown(e: MotionEvent): Boolean {
         if (isTextSelected) {
             curPage.cancelSelect()
+            isTextSelected = false
+            selectedOnDown = true
         }
         //是否移动
         isMoved = false
@@ -258,8 +250,8 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 单击
      */
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-        if (isTextSelected) {
-            isTextSelected = false
+        if (selectedOnDown) {
+            selectedOnDown = false
             return true
         }
         val x = e.x
@@ -272,15 +264,11 @@ abstract class PageDelegate(protected val pageView: PageView) :
                 AppConfig.clickAllNext
             ) {
                 //设置动画方向
-                if (!hasNext()) {
-                    return true
-                }
+                if (!hasNext()) return true
                 setDirection(Direction.NEXT)
                 setBitmap()
             } else {
-                if (!hasPrev()) {
-                    return true
-                }
+                if (!hasPrev()) return true
                 setDirection(Direction.PREV)
                 setBitmap()
             }
@@ -294,7 +282,25 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 长按选择
      */
     override fun onLongPress(e: MotionEvent) {
-        isTextSelected = curPage.selectText(e)
+        curPage.selectText(e) { lineIndex, charIndex ->
+            isTextSelected = true
+            firstLineIndex = lineIndex
+            firstCharIndex = charIndex
+        }
+    }
+
+    protected fun selectText(event: MotionEvent) {
+        curPage.selectText(event) { lineIndex, charIndex ->
+            if (lineIndex > firstLineIndex
+                || (lineIndex == firstLineIndex && charIndex > firstCharIndex)
+            ) {
+                curPage.selectStartMoveIndex(firstLineIndex, firstCharIndex)
+                curPage.selectEndMoveIndex(lineIndex, charIndex)
+            } else {
+                curPage.selectEndMoveIndex(firstLineIndex, firstCharIndex)
+                curPage.selectStartMoveIndex(lineIndex, charIndex)
+            }
+        }
     }
 
     /**

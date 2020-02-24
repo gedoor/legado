@@ -22,7 +22,11 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
-import io.legado.app.utils.*
+import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.requestInputMethod
+import io.legado.app.utils.splitNotBlank
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
@@ -60,7 +64,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
         App.db.bookSourceDao().liveGroup().observe(viewLifecycleOwner, Observer {
             val groups = linkedSetOf<String>()
