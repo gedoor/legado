@@ -6,15 +6,14 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.CallSuper
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
@@ -25,10 +24,12 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.width * 0.66f, pageView.height * 0.66f
     )
     protected val context: Context = pageView.context
+    protected val slop = ViewConfiguration.get(context).scaledTouchSlop
     //起始点
     protected var startX: Float = 0f
     protected var startY: Float = 0f
     //上一个触碰点
+    protected var lastX: Float = 0f
     protected var lastY: Float = 0f
     //触碰点
     protected var touchX: Float = 0f
@@ -52,9 +53,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     private val detector: GestureDetector by lazy {
-        GestureDetector(pageView.context, this).apply {
-            setIsLongpressEnabled(context.getPrefBoolean(PreferKey.textSelectAble))
-        }
+        GestureDetector(pageView.context, this)
     }
 
     var isMoved = false
@@ -70,6 +69,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
+        lastX = x
         lastY = y
         touchX = x
         touchY = y
@@ -80,6 +80,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     open fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
+        lastX = touchX
         lastY = touchY
         touchX = x
         touchY = y

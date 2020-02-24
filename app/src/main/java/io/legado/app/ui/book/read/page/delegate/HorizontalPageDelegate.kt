@@ -6,41 +6,41 @@ import kotlin.math.abs
 
 abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
-    override fun onScroll(
-        e1: MotionEvent,
-        e2: MotionEvent,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean {
-        if (!isMoved) {
-            if (abs(distanceX) > abs(distanceY)) {
-                if (distanceX < 0) {
-                    //如果上一页不存在
-                    if (!hasPrev()) {
-                        noNext = true
-                        return true
+    override fun onTouch(event: MotionEvent) {
+        when (event.action) {
+            MotionEvent.ACTION_MOVE -> {
+                //判断是否移动了
+                if (!isMoved) {
+                    isMoved = abs(startX - event.x) > slop || abs(startY - event.y) > slop
+                    if (isMoved) {
+                        if (event.x - startX > 0) {
+                            //如果上一页不存在
+                            if (!hasPrev()) {
+                                noNext = true
+                                return
+                            }
+                            setDirection(Direction.PREV)
+                            setBitmap()
+                        } else {
+                            //如果不存在表示没有下一页了
+                            if (!hasNext()) {
+                                noNext = true
+                                return
+                            }
+                            setDirection(Direction.NEXT)
+                            setBitmap()
+                        }
                     }
-                    setDirection(Direction.PREV)
-                    setBitmap()
-                } else {
-                    //如果不存在表示没有下一页了
-                    if (!hasNext()) {
-                        noNext = true
-                        return true
-                    }
-                    setDirection(Direction.NEXT)
-                    setBitmap()
                 }
-                isMoved = true
+                if (isMoved) {
+                    isCancel = if (mDirection == Direction.NEXT) touchX > lastX else touchX < lastX
+                    isRunning = true
+                    //设置触摸点
+                    setTouchPoint(event.x, event.y)
+                }
             }
         }
-        if (isMoved) {
-            isCancel = if (mDirection == Direction.NEXT) distanceX < 0 else distanceX > 0
-            isRunning = true
-            //设置触摸点
-            setTouchPoint(e2.x, e2.y)
-        }
-        return isMoved
+        super.onTouch(event)
     }
 
 }
