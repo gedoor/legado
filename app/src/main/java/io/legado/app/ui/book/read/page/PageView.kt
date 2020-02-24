@@ -163,17 +163,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         nextPage.upBattery(battery)
     }
 
-    override val pageIndex: Int
-        get() = ReadBook.durChapterPos()
-
-    override fun setPageIndex(pageIndex: Int) {
-        ReadBook.setPageIndex(pageIndex)
-    }
-
-    override fun getChapterPosition(): Int {
-        return ReadBook.durChapterIndex
-    }
-
     override fun getCurrentChapter(): TextChapter? {
         return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
     }

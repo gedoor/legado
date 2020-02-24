@@ -14,17 +14,17 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun moveToFirst() {
-        dataSource.setPageIndex(0)
+        ReadBook.setPageIndex(0)
     }
 
     override fun moveToLast() = with(dataSource) {
         getCurrentChapter()?.let {
             if (it.pageSize() == 0) {
-                setPageIndex(0)
+                ReadBook.setPageIndex(0)
             } else {
-                setPageIndex(it.pageSize().minus(1))
+                ReadBook.setPageIndex(it.pageSize().minus(1))
             }
-        } ?: setPageIndex(0)
+        } ?: ReadBook.setPageIndex(0)
     }
 
     override fun moveToNext(): Boolean = with(dataSource) {
@@ -32,7 +32,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             if (getCurrentChapter()?.isLastIndex(pageIndex) == true) {
                 ReadBook.moveToNextChapter(false)
             } else {
-                setPageIndex(pageIndex.plus(1))
+                ReadBook.setPageIndex(pageIndex.plus(1))
             }
             true
         } else
@@ -44,7 +44,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             if (pageIndex <= 0) {
                 ReadBook.moveToPrevChapter(false)
             } else {
-                setPageIndex(pageIndex.minus(1))
+                ReadBook.setPageIndex(pageIndex.minus(1))
             }
             true
         } else
