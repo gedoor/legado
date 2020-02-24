@@ -19,7 +19,10 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.putPrefString
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -77,7 +80,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     private fun initData() {
         cb_share_layout.isChecked = ReadBookConfig.shareLayout
-        requireContext().getPrefInt(PreferKey.pageAnim).let {
+        ReadBookConfig.pageAnim.let {
             if (it >= 0 && it < rg_page_anim.childCount) {
                 rg_page_anim.check(rg_page_anim[it].id)
             }
@@ -143,10 +146,10 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         rg_page_anim.onCheckedChange { _, checkedId ->
             for (i in 0 until rg_page_anim.childCount) {
                 if (checkedId == rg_page_anim[i].id) {
-                    requireContext().putPrefInt(PreferKey.pageAnim, i)
+                    ReadBookConfig.pageAnim = i
                     val activity = activity
                     if (activity is ReadBookActivity) {
-                        activity.page_view.upPageAnim(i)
+                        activity.page_view.upPageAnim()
                     }
                     break
                 }

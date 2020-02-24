@@ -60,6 +60,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
         if (textPage.textLines.isEmpty()) {
             drawMsg(canvas, textPage.text)
         } else {
@@ -117,19 +118,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             offset = -maxScrollOffset
         }
 
-        if (!isLastPage || offset < 0) {
-            pageOffset += offset
-            isLastPage = false
-        }
-        // 首页
-        if (pageOffset < 0 && !pageFactory.hasPrev()) {
-            pageOffset = 0f
-        }
-
-        val cHeight = if (textPage.height > 0) textPage.height else height
-        if (offset > 0 && pageOffset > cHeight) {
-
-        }
+        pageOffset += offset
     }
 
     fun resetPageOffset() {

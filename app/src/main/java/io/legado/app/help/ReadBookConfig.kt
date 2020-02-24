@@ -26,7 +26,6 @@ object ReadBookConfig {
     }
     val durConfig get() = getConfig(styleSelect)
     private val shareConfig get() = getConfig(5)
-
     var styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
         set(value) {
             field = value
@@ -37,6 +36,13 @@ object ReadBookConfig {
             field = value
             App.INSTANCE.putPrefBoolean(PreferKey.shareLayout)
         }
+    var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+        set(value) {
+            field = value
+            isScroll = value == 3
+            App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
+        }
+    var isScroll = pageAnim == 3
     var bg: Drawable? = null
 
     init {

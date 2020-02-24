@@ -6,13 +6,11 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.activity
-import io.legado.app.utils.getPrefInt
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -37,7 +35,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         upBg()
         setWillNotDraw(false)
         pageFactory = TextPageFactory(this)
-        upPageAnim(context.getPrefInt(PreferKey.pageAnim))
+        upPageAnim()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -87,10 +85,10 @@ class PageView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    fun upPageAnim(pageAnim: Int) {
+    fun upPageAnim() {
         pageDelegate?.onDestroy()
         pageDelegate = null
-        pageDelegate = when (pageAnim) {
+        pageDelegate = when (ReadBookConfig.pageAnim) {
             0 -> CoverPageDelegate(this)
             1 -> SlidePageDelegate(this)
             2 -> SimulationPageDelegate(this)
@@ -101,7 +99,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun upContent(position: Int = 0) {
-        if (isScrollDelegate) {
+        if (ReadBookConfig.isScroll) {
             curPage.setContent(pageFactory.currentPage())
         } else {
             when (position) {
@@ -164,9 +162,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         prevPage.upBattery(battery)
         nextPage.upBattery(battery)
     }
-
-    override val isScrollDelegate: Boolean
-        get() = pageDelegate is ScrollPageDelegate
 
     override val pageIndex: Int
         get() = ReadBook.durChapterPos()
