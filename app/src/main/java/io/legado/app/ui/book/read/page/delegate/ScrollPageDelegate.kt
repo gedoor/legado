@@ -27,8 +27,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     override fun onTouch(event: MotionEvent) {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                lastY = event.y
-                setTouchPoint(event.x, event.y)
+                setStartPoint(event.x, event.y)
                 abort()
                 mVelocity.clear()
             }
