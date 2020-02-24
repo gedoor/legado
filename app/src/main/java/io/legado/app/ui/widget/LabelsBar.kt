@@ -12,6 +12,7 @@ class LabelsBar(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
 
     private val unUsedViews = arrayListOf<TextView>()
     private val usedViews = arrayListOf<TextView>()
+    var textSize = 12f
 
     fun setLabels(labels: Array<String>) {
         clear()
@@ -51,6 +52,7 @@ class LabelsBar(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
                 unUsedViews.removeAt(unUsedViews.lastIndex)
             }
         }
+        tv.textSize = textSize
         tv.text = label
         addView(tv)
     }
