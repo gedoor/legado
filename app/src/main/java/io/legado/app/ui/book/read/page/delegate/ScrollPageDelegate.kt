@@ -24,12 +24,6 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         curPage.onScroll(touchY - lastY)
     }
 
-    override fun onAnimStop() {
-        if (!isCancel) {
-            pageView.fillPage(mDirection)
-        }
-    }
-
     override fun onTouch(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             setStartPoint(event.x, event.y)

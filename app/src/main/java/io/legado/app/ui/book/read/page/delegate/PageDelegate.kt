@@ -180,11 +180,11 @@ abstract class PageDelegate(protected val pageView: PageView) :
         onAnimStart()
     }
 
-    abstract fun onAnimStart()//scroller start
+    open fun onAnimStart() {}//scroller start
 
     open fun onDraw(canvas: Canvas) {}//绘制
 
-    abstract fun onAnimStop()//scroller finish
+    open fun onAnimStop() {}//scroller finish
 
     open fun onScroll() {}//移动contentView， slidePage
 
