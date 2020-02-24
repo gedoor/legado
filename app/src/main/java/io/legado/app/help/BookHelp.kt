@@ -268,7 +268,7 @@ object BookHelp {
                 }
             }
         }
-        if (!c.startsWith(title)) {
+        if (!c.substringBefore("\n").contains(title)) {
             c = "$title\n$c"
         }
         when (AppConfig.chineseConverterType) {
