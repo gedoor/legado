@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.BookHelp
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
@@ -21,7 +22,6 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.putPrefString
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
@@ -116,7 +116,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
-                putPrefInt(PreferKey.bodyIndent, index)
+                BookHelp.bodyIndentCount = index
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
