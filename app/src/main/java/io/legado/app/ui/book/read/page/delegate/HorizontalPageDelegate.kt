@@ -12,14 +12,14 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                 if (isTextSelected) {
                     selectText(event)
                 } else {
-                    scroll(event)
+                    onScroll(event)
                 }
             }
         }
         super.onTouch(event)
     }
 
-    private fun scroll(event: MotionEvent) {
+    private fun onScroll(event: MotionEvent) {
         //判断是否移动了
         if (!isMoved) {
             isMoved = abs(startX - event.x) > slop || abs(startY - event.y) > slop
@@ -51,17 +51,4 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         }
     }
 
-    private fun selectText(event: MotionEvent) {
-        curPage.selectText(event) { lineIndex, charIndex ->
-            if (lineIndex > firstLineIndex
-                || (lineIndex == firstLineIndex && charIndex > firstCharIndex)
-            ) {
-                curPage.selectStartMoveIndex(firstLineIndex, firstCharIndex)
-                curPage.selectEndMoveIndex(lineIndex, charIndex)
-            } else {
-                curPage.selectEndMoveIndex(firstLineIndex, firstCharIndex)
-                curPage.selectStartMoveIndex(lineIndex, charIndex)
-            }
-        }
-    }
 }

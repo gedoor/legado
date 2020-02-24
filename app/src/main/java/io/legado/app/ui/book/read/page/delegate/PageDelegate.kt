@@ -264,15 +264,11 @@ abstract class PageDelegate(protected val pageView: PageView) :
                 AppConfig.clickAllNext
             ) {
                 //设置动画方向
-                if (!hasNext()) {
-                    return true
-                }
+                if (!hasNext()) return true
                 setDirection(Direction.NEXT)
                 setBitmap()
             } else {
-                if (!hasPrev()) {
-                    return true
-                }
+                if (!hasPrev()) return true
                 setDirection(Direction.PREV)
                 setBitmap()
             }
@@ -290,6 +286,20 @@ abstract class PageDelegate(protected val pageView: PageView) :
             isTextSelected = true
             firstLineIndex = lineIndex
             firstCharIndex = charIndex
+        }
+    }
+
+    protected fun selectText(event: MotionEvent) {
+        curPage.selectText(event) { lineIndex, charIndex ->
+            if (lineIndex > firstLineIndex
+                || (lineIndex == firstLineIndex && charIndex > firstCharIndex)
+            ) {
+                curPage.selectStartMoveIndex(firstLineIndex, firstCharIndex)
+                curPage.selectEndMoveIndex(lineIndex, charIndex)
+            } else {
+                curPage.selectEndMoveIndex(firstLineIndex, firstCharIndex)
+                curPage.selectStartMoveIndex(lineIndex, charIndex)
+            }
         }
     }
 

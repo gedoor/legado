@@ -33,18 +33,26 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                 mVelocity.clear()
             }
             MotionEvent.ACTION_MOVE -> {
-                mVelocity.addMovement(event)
-                mVelocity.computeCurrentVelocity(velocityDuration)
-                setTouchPoint(event.x, event.y)
-                if (!isMoved) {
-                    isMoved = abs(startX - event.x) > slop || abs(startY - event.y) > slop
-                }
-                if (isMoved) {
-                    isRunning = true
+                if (isTextSelected) {
+                    selectText(event)
+                } else {
+                    onScroll(event)
                 }
             }
         }
         super.onTouch(event)
+    }
+
+    private fun onScroll(event: MotionEvent) {
+        mVelocity.addMovement(event)
+        mVelocity.computeCurrentVelocity(velocityDuration)
+        setTouchPoint(event.x, event.y)
+        if (!isMoved) {
+            isMoved = abs(startX - event.x) > slop || abs(startY - event.y) > slop
+        }
+        if (isMoved) {
+            isRunning = true
+        }
     }
 
     override fun onDestroy() {
