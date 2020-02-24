@@ -36,7 +36,7 @@ class ContentView(context: Context) : FrameLayout(context) {
             //显示状态栏时隐藏header
             if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
                 ll_header.layoutParams =
-                    ll_header.layoutParams.apply { height = context.getStatusBarHeight() }
+                    ll_header.layoutParams.apply { height = context.statusBarHeight }
                 ll_header.setPadding(
                     headerPaddingLeft.dp,
                     headerPaddingTop.dp,
@@ -47,7 +47,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 page_panel.setPadding(0, 0, 0, 0)
             } else {
                 ll_header.gone()
-                page_panel.setPadding(0, context.getStatusBarHeight(), 0, 0)
+                page_panel.setPadding(0, context.statusBarHeight, 0, 0)
             }
             content_text_view.setPadding(
                 paddingLeft.dp,
@@ -75,7 +75,7 @@ class ContentView(context: Context) : FrameLayout(context) {
             return if (context.getPrefBoolean(PreferKey.hideStatusBar, false)) {
                 ll_header.height
             } else {
-                context.getStatusBarHeight()
+                context.statusBarHeight
             }
         }
 

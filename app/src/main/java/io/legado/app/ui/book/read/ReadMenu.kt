@@ -201,7 +201,7 @@ class ReadMenu : FrameLayout {
                     height =
                         if (context.getPrefBoolean(PreferKey.hideNavigationBar)
                             && Help.isNavigationBarExist(activity)
-                        ) context.getNavigationBarHeight()
+                        ) context.navigationBarHeight
                         else 0
                 }
             }

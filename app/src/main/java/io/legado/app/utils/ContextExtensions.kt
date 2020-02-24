@@ -30,7 +30,6 @@ fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
 fun Context.putPrefBoolean(key: String, value: Boolean = false) =
     defaultSharedPreferences.edit { putBoolean(key, value) }
 
-
 fun Context.getPrefInt(key: String, defValue: Int = 0) =
     defaultSharedPreferences.getInt(key, defValue)
 
@@ -79,12 +78,14 @@ fun Context.getScreenOffTime(): Int {
     return screenOffTime
 }
 
-fun Context.getStatusBarHeight(): Int {
+val Context.statusBarHeight: Int
+    get() {
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
     return resources.getDimensionPixelSize(resourceId)
 }
 
-fun Context.getNavigationBarHeight(): Int {
+val Context.navigationBarHeight: Int
+    get() {
     val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
     return resources.getDimensionPixelSize(resourceId)
 }

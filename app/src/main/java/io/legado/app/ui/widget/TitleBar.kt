@@ -12,8 +12,8 @@ import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
-import io.legado.app.utils.getNavigationBarHeight
-import io.legado.app.utils.getStatusBarHeight
+import io.legado.app.utils.navigationBarHeight
+import io.legado.app.utils.statusBarHeight
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
@@ -132,11 +132,11 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
-            topPadding = context.getStatusBarHeight()
+            topPadding = context.statusBarHeight
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
-            bottomPadding = context.getNavigationBarHeight()
+            bottomPadding = context.navigationBarHeight
         }
 
         backgroundColor = context.primaryColor
