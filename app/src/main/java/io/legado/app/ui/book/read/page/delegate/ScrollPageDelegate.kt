@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.view.MotionEvent
 import android.view.VelocityTracker
+import android.view.ViewConfiguration
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.abs
 
@@ -11,6 +12,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     private val velocityDuration = 1000
     //速度追踪器
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
+    private val slop = ViewConfiguration.get(pageView.context).scaledTouchSlop
 
     override fun onAnimStart() {
         //惯性滚动
@@ -27,58 +29,22 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     override fun onTouch(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                lastY = event.y
-                setStartPoint(event.x, event.y)
                 abort()
                 mVelocity.clear()
             }
+            MotionEvent.ACTION_MOVE -> {
+                mVelocity.addMovement(event)
+                mVelocity.computeCurrentVelocity(velocityDuration)
+                setTouchPoint(event.x, event.y)
+                if (!isMoved) {
+                    isMoved = abs(startY - event.y) > slop
+                }
+                if (isMoved) {
+                    isRunning = true
+                }
+            }
         }
         return super.onTouch(event)
-    }
-
-    override fun onScroll(
-        e1: MotionEvent,
-        e2: MotionEvent,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean {
-        mVelocity.addMovement(e2)
-        mVelocity.computeCurrentVelocity(velocityDuration)
-
-        if (!isMoved && abs(distanceX) < abs(distanceY)) {
-            if (distanceY < 0) {
-                //如果上一页不存在
-                if (!hasPrev()) {
-                    noNext = true
-                    return true
-                }
-                setDirection(Direction.PREV)
-            } else {
-                //如果上一页不存在
-                if (!hasNext()) {
-                    noNext = true
-                    return true
-                }
-                setDirection(Direction.PREV)
-            }
-            isMoved = true
-        }
-        if (isMoved) {
-            isRunning = true
-            //设置触摸点
-            setTouchPoint(e2.x, e2.y)
-        }
-        return isMoved
-    }
-
-    override fun onFling(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
-        velocityX: Float,
-        velocityY: Float
-    ): Boolean {
-        mVelocity.addMovement(e2)
-        return super.onFling(e1, e2, velocityX, velocityY)
     }
 
     override fun onDestroy() {
