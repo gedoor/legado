@@ -105,6 +105,10 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
     }
 
+    fun resetPageOffset() {
+        content_text_view.resetPageOffset()
+    }
+
     @SuppressLint("SetTextI18n")
     fun setPageIndex(pageIndex: Int?) {
         pageIndex?.let {

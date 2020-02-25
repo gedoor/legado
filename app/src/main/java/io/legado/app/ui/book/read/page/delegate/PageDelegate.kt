@@ -70,6 +70,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var firstLineIndex: Int = 0
     var firstCharIndex: Int = 0
 
+    init {
+        curPage.resetPageOffset()
+    }
+
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
         startY = y
