@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.page.content
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
-import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.entities.TextPage
 
 
@@ -47,7 +46,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
             )
         }
         pageFactory.nextPage?.textLines?.forEach { textLine ->
-            val yPy = mPageOffset + textPage.height - ChapterProvider.paddingTop
+            val yPy = mPageOffset + textPage.height
             val lineTop = textLine.lineTop + yPy
             val lineBase = textLine.lineBase + yPy
             val lineBottom = textLine.lineBottom + yPy
