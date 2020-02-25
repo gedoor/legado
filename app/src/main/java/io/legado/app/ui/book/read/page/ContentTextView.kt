@@ -471,26 +471,57 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     val selectedText: String
         get() {
             val stringBuilder = StringBuilder()
-            for (lineIndex in selectLineStart..selectLineEnd) {
-                if (lineIndex == selectLineStart && lineIndex == selectLineEnd) {
-                    stringBuilder.append(
-                        textPage.textLines[lineIndex].text.substring(
-                            selectCharStart,
-                            selectCharEnd + 1
-                        )
-                    )
-                } else if (lineIndex == selectLineStart) {
-                    stringBuilder.append(
-                        textPage.textLines[lineIndex].text.substring(
-                            selectCharStart
-                        )
-                    )
-                } else if (lineIndex == selectLineEnd) {
-                    stringBuilder.append(
-                        textPage.textLines[lineIndex].text.substring(0, selectCharEnd + 1)
-                    )
-                } else {
-                    stringBuilder.append(textPage.textLines[lineIndex].text)
+            for (relativePos in selectPageStart..selectPageEnd) {
+                val textPage = relativePage(relativePos)
+                if (relativePos == selectPageStart && relativePos == selectPageEnd) {
+                    for (lineIndex in selectLineStart..selectLineEnd) {
+                        if (lineIndex == selectLineStart && lineIndex == selectLineEnd) {
+                            stringBuilder.append(
+                                textPage.textLines[lineIndex].text.substring(
+                                    selectCharStart,
+                                    selectCharEnd + 1
+                                )
+                            )
+                        } else if (lineIndex == selectLineStart) {
+                            stringBuilder.append(
+                                textPage.textLines[lineIndex].text.substring(
+                                    selectCharStart
+                                )
+                            )
+                        } else if (lineIndex == selectLineEnd) {
+                            stringBuilder.append(
+                                textPage.textLines[lineIndex].text.substring(0, selectCharEnd + 1)
+                            )
+                        } else {
+                            stringBuilder.append(textPage.textLines[lineIndex].text)
+                        }
+                    }
+                } else if (relativePos == selectPageStart) {
+                    for (lineIndex in selectLineStart until relativePage(relativePos).textLines.size) {
+                        if (lineIndex == selectLineStart) {
+                            stringBuilder.append(
+                                textPage.textLines[lineIndex].text.substring(
+                                    selectCharStart
+                                )
+                            )
+                        } else {
+                            stringBuilder.append(textPage.textLines[lineIndex].text)
+                        }
+                    }
+                } else if (relativePos == selectPageEnd) {
+                    for (lineIndex in 0..selectLineEnd) {
+                        if (lineIndex == selectLineEnd) {
+                            stringBuilder.append(
+                                textPage.textLines[lineIndex].text.substring(0, selectCharEnd + 1)
+                            )
+                        } else {
+                            stringBuilder.append(textPage.textLines[lineIndex].text)
+                        }
+                    }
+                } else if (relativePos in selectPageStart + 1 until selectPageEnd) {
+                    for (lineIndex in selectLineStart..selectLineEnd) {
+                        stringBuilder.append(textPage.textLines[lineIndex].text)
+                    }
                 }
             }
             return stringBuilder.toString()
