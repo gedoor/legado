@@ -1,14 +1,45 @@
-package io.legado.app.ui.book.read.page.content
+package io.legado.app.ui.book.read.page
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.util.AttributeSet
-import io.legado.app.ui.book.read.page.ChapterProvider
+import android.view.View
+import io.legado.app.R
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.utils.activity
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefBoolean
 
 
-class ContentTextView(context: Context, attrs: AttributeSet?) :
-    BaseContentTextView(context, attrs) {
+class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
+    var upView: ((TextPage) -> Unit)? = null
+    private val selectedPaint by lazy {
+        Paint().apply {
+            color = context.getCompatColor(R.color.btn_bg_press_2)
+            style = Paint.Style.FILL
+        }
+    }
+    private var callBack: CallBack
+    private var selectLineStart = 0
+    private var selectCharStart = 0
+    private var selectLineEnd = 0
+    private var selectCharEnd = 0
+    private var textPage: TextPage = TextPage()
+    //滚动参数
+    private val pageFactory: TextPageFactory get() = callBack.pageFactory
+    private val maxScrollOffset = 100f
+    private var pageOffset = 0f
+
+    init {
+        callBack = activity as CallBack
+        contentDescription = textPage.text
+    }
 
     fun setContent(textPage: TextPage) {
         this.textPage = textPage
@@ -16,21 +47,26 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
         invalidate()
     }
 
-    override fun drawHorizontalPage(canvas: Canvas) {
-        textPage.textLines.forEach { textLine ->
-            drawChars(
-                canvas,
-                textLine.textChars,
-                textLine.lineTop,
-                textLine.lineBase,
-                textLine.lineBottom,
-                textLine.isTitle,
-                textLine.isReadAloud
-            )
-        }
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        ChapterProvider.viewWidth = w
+        ChapterProvider.viewHeight = h
+        ChapterProvider.upSize()
+        textPage.format()
     }
 
-    override fun drawScrollPage(canvas: Canvas) {
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        canvas.clipRect(
+            ChapterProvider.paddingLeft,
+            ChapterProvider.paddingTop,
+            ChapterProvider.visibleRight,
+            ChapterProvider.visibleBottom
+        )
+        drawPage(canvas)
+    }
+
+    private fun drawPage(canvas: Canvas) {
         val mPageOffset = pageOffset
         textPage.textLines.forEach { textLine ->
             val lineTop = textLine.lineTop + mPageOffset
@@ -45,6 +81,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
                 textLine.isTitle,
                 textLine.isReadAloud
             )
+        }
+        if (!ReadBookConfig.isScroll) {
+            return
         }
         val nextPage = pageFactory.nextPage
         nextPage.textLines.forEach { textLine ->
@@ -81,6 +120,26 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
         }
     }
 
+    private fun drawChars(
+        canvas: Canvas,
+        textChars: List<TextChar>,
+        lineTop: Float,
+        lineBase: Float,
+        lineBottom: Float,
+        isTitle: Boolean,
+        isReadAloud: Boolean
+    ) {
+        val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
+        textPaint.color =
+            if (isReadAloud) context.accentColor else ReadBookConfig.durConfig.textColor()
+        textChars.forEach {
+            canvas.drawText(it.charData, it.start, lineBase, textPaint)
+            if (it.selected) {
+                canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
+            }
+        }
+    }
+
     fun onScroll(mOffset: Float) {
         if (mOffset == 0f) return
         var offset = mOffset
@@ -111,7 +170,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
 
     fun selectText(x: Float, y: Float, select: (lineIndex: Int, charIndex: Int) -> Unit) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-            if (y > textLine.lineTop && y < textLine.lineBottom) {
+            if (y > textLine.lineTop + pageOffset && y < textLine.lineBottom + pageOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
                         textChar.selected = true
@@ -120,8 +179,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
                         selectCharStart = charIndex
                         selectLineEnd = lineIndex
                         selectCharEnd = charIndex
-                        upSelectedStart(textChar.start, textLine.lineBottom)
-                        upSelectedEnd(textChar.end, textLine.lineBottom)
+                        upSelectedStart(textChar.start, textLine.lineBottom + pageOffset)
+                        upSelectedEnd(textChar.end, textLine.lineBottom + pageOffset)
                         select(lineIndex, charIndex)
                     }
                 }
@@ -132,7 +191,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
 
     fun selectStartMove(x: Float, y: Float) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-            if (y > textLine.lineTop && y < textLine.lineBottom) {
+            if (y > textLine.lineTop + pageOffset && y < textLine.lineBottom + pageOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
                         if (selectLineStart != lineIndex || selectCharStart != charIndex) {
@@ -154,19 +213,19 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
         selectCharStart = charIndex
         val textLine = textPage.textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
-        upSelectedStart(textChar.start, textLine.lineBottom)
+        upSelectedStart(textChar.start, textLine.lineBottom + pageOffset)
         upSelectChars(textPage)
     }
 
     fun selectEndMove(x: Float, y: Float) {
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-            if (y > textLine.lineTop && y < textLine.lineBottom) {
+            if (y > textLine.lineTop + pageOffset && y < textLine.lineBottom + pageOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
                         if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
                             selectLineEnd = lineIndex
                             selectCharEnd = charIndex
-                            upSelectedEnd(textChar.end, textLine.lineBottom)
+                            upSelectedEnd(textChar.end, textLine.lineBottom + pageOffset)
                             upSelectChars(textPage)
                         }
                         break
@@ -182,7 +241,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
         selectCharEnd = charIndex
         val textLine = textPage.textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
-        upSelectedEnd(textChar.end, textLine.lineBottom)
+        upSelectedEnd(textChar.end, textLine.lineBottom + pageOffset)
         upSelectChars(textPage)
     }
 
@@ -202,6 +261,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
             }
         }
         invalidate()
+    }
+
+    private fun upSelectedStart(x: Float, y: Float) {
+        callBack.upSelectedStart(x, y + callBack.headerHeight)
+    }
+
+    private fun upSelectedEnd(x: Float, y: Float) {
+        callBack.upSelectedEnd(x, y + callBack.headerHeight)
     }
 
     fun cancelSelect() {
@@ -242,4 +309,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
             return stringBuilder.toString()
         }
 
+    interface CallBack {
+        fun upSelectedStart(x: Float, y: Float)
+        fun upSelectedEnd(x: Float, y: Float)
+        fun onCancelSelect()
+        val headerHeight: Int
+        val pageFactory: TextPageFactory
+    }
 }
