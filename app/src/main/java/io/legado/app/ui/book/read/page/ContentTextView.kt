@@ -197,7 +197,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         if (selectLineStart != lineIndex || selectCharStart != charIndex) {
                             selectLineStart = lineIndex
                             selectCharStart = charIndex
-                            upSelectedStart(textChar.start, textLine.lineBottom)
+                            upSelectedStart(textChar.start, textLine.lineBottom + pageOffset)
                             upSelectChars(textPage)
                         }
                         break
