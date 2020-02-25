@@ -164,15 +164,18 @@ class PageView(context: Context, attrs: AttributeSet) :
         nextPage.upBattery(battery)
     }
 
-    override fun getCurrentChapter(): TextChapter? {
+    override val currentChapter: TextChapter?
+        get() {
         return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
     }
 
-    override fun getNextChapter(): TextChapter? {
+    override val nextChapter: TextChapter?
+        get() {
         return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
     }
 
-    override fun getPreviousChapter(): TextChapter? {
+    override val prevChapter: TextChapter?
+        get() {
         return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
     }
 

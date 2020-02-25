@@ -45,7 +45,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
                 textLine.isReadAloud
             )
         }
-        pageFactory.nextPage?.textLines?.forEach { textLine ->
+        pageFactory.nextPage.textLines.forEach { textLine ->
             val yPy = mPageOffset + textPage.height
             val lineTop = textLine.lineTop + yPy
             val lineBase = textLine.lineBase + yPy
@@ -60,6 +60,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
                 textLine.isReadAloud
             )
         }
+
     }
 
     fun onScroll(mOffset: Float) {
@@ -74,13 +75,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
         pageOffset += offset
         if (pageOffset > 0) {
             pageFactory.moveToPrev()
-            textPage = pageFactory.currentPage ?: TextPage().format()
+            textPage = pageFactory.currentPage
             pageOffset -= textPage.height
             upView?.invoke(textPage)
         } else if (pageOffset < -textPage.height) {
             pageOffset += textPage.height
             pageFactory.moveToNext()
-            textPage = pageFactory.currentPage ?: TextPage().format()
+            textPage = pageFactory.currentPage
             upView?.invoke(textPage)
         }
         invalidate()

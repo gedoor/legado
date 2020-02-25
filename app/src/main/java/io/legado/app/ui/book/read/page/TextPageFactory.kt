@@ -10,7 +10,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun hasNext(): Boolean = with(dataSource) {
-        return hasNextChapter() || getCurrentChapter()?.isLastIndex(pageIndex) != true
+        return hasNextChapter() || currentChapter?.isLastIndex(pageIndex) != true
     }
 
     override fun moveToFirst() {
@@ -18,7 +18,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun moveToLast() = with(dataSource) {
-        getCurrentChapter()?.let {
+        currentChapter?.let {
             if (it.pageSize() == 0) {
                 ReadBook.setPageIndex(0)
             } else {
@@ -29,7 +29,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override fun moveToNext(): Boolean = with(dataSource) {
         return if (hasNext()) {
-            if (getCurrentChapter()?.isLastIndex(pageIndex) == true) {
+            if (currentChapter?.isLastIndex(pageIndex) == true) {
                 ReadBook.moveToNextChapter(false)
             } else {
                 ReadBook.setPageIndex(pageIndex.plus(1))
@@ -51,27 +51,43 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             false
     }
 
-    override val currentPage: TextPage?
+    override val currentPage: TextPage
         get() = with(dataSource) {
-            return getCurrentChapter()?.page(pageIndex)
+            currentChapter?.let {
+                return@with it.page(pageIndex)
+                    ?: TextPage(title = it.title).format()
+            }
+            return TextPage().format()
         }
 
-    override val nextPage: TextPage?
+    override val nextPage: TextPage
         get() = with(dataSource) {
-            getCurrentChapter()?.let {
+            currentChapter?.let {
                 if (pageIndex < it.pageSize() - 1) {
-                    return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
+                    return@with it.page(pageIndex + 1)?.removePageAloudSpan()
+                        ?: TextPage(title = it.title).format()
                 }
             }
-            return getNextChapter()?.page(0)?.removePageAloudSpan()
+            nextChapter?.let {
+                return@with it.page(0)?.removePageAloudSpan()
+                    ?: TextPage(title = it.title).format()
+            }
+            return TextPage().format()
         }
 
-    override val prevPage: TextPage?
+    override val prevPage: TextPage
         get() = with(dataSource) {
             if (pageIndex > 0) {
-                return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
+                currentChapter?.let {
+                    return@with it.page(pageIndex - 1)?.removePageAloudSpan()
+                        ?: TextPage(title = it.title).format()
+                }
             }
-            return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
+            prevChapter?.let {
+                return@with it.lastPage()?.removePageAloudSpan()
+                    ?: TextPage(title = it.title).format()
+            }
+            return TextPage().format()
         }
 
 

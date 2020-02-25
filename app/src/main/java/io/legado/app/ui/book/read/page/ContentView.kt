@@ -95,14 +95,12 @@ class ContentView(context: Context) : FrameLayout(context) {
         tv_top_right.text = context.getString(R.string.battery_show, battery)
     }
 
-    fun setContent(textPage: TextPage?) {
-        if (textPage != null) {
-            tv_bottom_left.text = textPage.title
-            pageSize = textPage.pageSize
-            setPageIndex(textPage.index)
-            content_text_view.resetPageOffset()
-            content_text_view.setContent(textPage)
-        }
+    fun setContent(textPage: TextPage) {
+        tv_bottom_left.text = textPage.title
+        pageSize = textPage.pageSize
+        setPageIndex(textPage.index)
+        content_text_view.resetPageOffset()
+        content_text_view.setContent(textPage)
     }
 
     fun resetPageOffset() {
