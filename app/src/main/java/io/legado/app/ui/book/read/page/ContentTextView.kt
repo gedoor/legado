@@ -456,9 +456,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun cancelSelect() {
-        textPage.textLines.forEach { textLine ->
-            textLine.textChars.forEach {
-                it.selected = false
+        val last = if (ReadBookConfig.isScroll) 2 else 0
+        for (relativePos in 0..last) {
+            relativePage(relativePos).textLines.forEach { textLine ->
+                textLine.textChars.forEach {
+                    it.selected = false
+                }
             }
         }
         invalidate()
