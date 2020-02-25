@@ -55,7 +55,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     // 是否属于右上左下
     private var mIsRtOrLb = false
-    private var mMaxLength = 0f
+    private var mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
     // 背面颜色组
     private var mBackShadowColors: IntArray
     // 前面颜色组
@@ -71,15 +71,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var mFrontShadowDrawableVLR: GradientDrawable
     private var mFrontShadowDrawableVRL: GradientDrawable
 
-    private val mPaint: Paint = Paint()
+    private val mPaint: Paint = Paint().apply { style = Paint.Style.FILL }
 
     private var curBitmap: Bitmap? = null
     private var prevBitmap: Bitmap? = null
     private var nextBitmap: Bitmap? = null
 
     init {
-        mMaxLength = hypot(viewWidth.toDouble(), viewWidth.toDouble()).toFloat()
-        mPaint.style = Paint.Style.FILL
         //设置颜色数组
         val color = intArrayOf(0x333333, -0x4fcccccd)
         mFolderShadowDrawableRL = GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, color)
@@ -117,7 +115,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     override fun setViewSize(width: Int, height: Int) {
         super.setViewSize(width, height)
-        mMaxLength = hypot(viewWidth.toDouble(), viewWidth.toDouble()).toFloat()
+        mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
     }
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
