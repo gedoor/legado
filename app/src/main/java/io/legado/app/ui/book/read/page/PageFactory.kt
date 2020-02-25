@@ -10,11 +10,13 @@ abstract class PageFactory<DATA>(protected val dataSource: DataSource) {
 
     abstract fun moveToPrev(): Boolean
 
-    abstract val nextPage: DATA?
+    abstract val nextPage: DATA
 
-    abstract val prevPage: DATA?
+    abstract val prevPage: DATA
 
-    abstract val currentPage: DATA?
+    abstract val currentPage: DATA
+
+    abstract val nextPagePlus: DATA
 
     abstract fun hasNext(): Boolean
 

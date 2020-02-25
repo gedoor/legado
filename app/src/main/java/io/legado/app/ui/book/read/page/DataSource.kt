@@ -7,11 +7,11 @@ interface DataSource {
 
     val pageIndex: Int get() = ReadBook.durChapterPos()
 
-    fun getCurrentChapter(): TextChapter?
+    val currentChapter: TextChapter?
 
-    fun getNextChapter(): TextChapter?
+    val nextChapter: TextChapter?
 
-    fun getPreviousChapter(): TextChapter?
+    val prevChapter: TextChapter?
 
     fun hasNextChapter(): Boolean
 

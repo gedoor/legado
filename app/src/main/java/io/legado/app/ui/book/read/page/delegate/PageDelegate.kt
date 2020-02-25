@@ -67,8 +67,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var isTextSelected = false
     var selectedOnDown = false
 
+    var firstRelativePage = 0
     var firstLineIndex: Int = 0
     var firstCharIndex: Int = 0
+
+    init {
+        curPage.resetPageOffset()
+    }
 
     open fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
         startX = x
@@ -131,7 +136,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         bitmap = null
     }
 
-    fun setViewSize(width: Int, height: Int) {
+    open fun setViewSize(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
         pageView.invalidate()
@@ -282,23 +287,41 @@ abstract class PageDelegate(protected val pageView: PageView) :
      * 长按选择
      */
     override fun onLongPress(e: MotionEvent) {
-        curPage.selectText(e) { lineIndex, charIndex ->
+        curPage.selectText(e) { relativePage, lineIndex, charIndex ->
             isTextSelected = true
+            firstRelativePage = relativePage
             firstLineIndex = lineIndex
             firstCharIndex = charIndex
         }
     }
 
     protected fun selectText(event: MotionEvent) {
-        curPage.selectText(event) { lineIndex, charIndex ->
-            if (lineIndex > firstLineIndex
-                || (lineIndex == firstLineIndex && charIndex > firstCharIndex)
-            ) {
-                curPage.selectStartMoveIndex(firstLineIndex, firstCharIndex)
-                curPage.selectEndMoveIndex(lineIndex, charIndex)
-            } else {
-                curPage.selectEndMoveIndex(firstLineIndex, firstCharIndex)
-                curPage.selectStartMoveIndex(lineIndex, charIndex)
+        curPage.selectText(event) { relativePage, lineIndex, charIndex ->
+            when {
+                relativePage > firstRelativePage -> {
+                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                relativePage < firstRelativePage -> {
+                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                lineIndex > firstLineIndex -> {
+                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                lineIndex < firstLineIndex -> {
+                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                charIndex > firstCharIndex -> {
+                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                else -> {
+                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+                }
             }
         }
     }

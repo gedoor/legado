@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.popup_action_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
 
-
+@SuppressLint("RestrictedApi")
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
     PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
@@ -70,7 +70,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         override fun registerListener(holder: ItemViewHolder) {
             holder.itemView.onClick {
                 getItem(holder.layoutPosition)?.let {
-                    if (!callBack.onMenuItemSelected(it)) {
+                    if (!callBack.onMenuItemSelected(it.itemId)) {
                         onMenuItemSelected(it)
                     }
                 }
@@ -150,7 +150,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     interface CallBack {
         val selectedText: String
 
-        fun onMenuItemSelected(item: MenuItemImpl): Boolean
+        fun onMenuItemSelected(itemId: Int): Boolean
 
         fun onMenuActionFinally()
     }

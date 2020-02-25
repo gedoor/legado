@@ -28,7 +28,7 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
     fun liveEnabled(): LiveData<List<RssSource>>
 
-    @Query("select sourceGroup from rssSources where sourceGroup is not null and sourceGroup <> ''")
+    @Query("select sourceGroup from rssSources where trim(sourceGroup) <> ''")
     fun liveGroup(): LiveData<List<String>>
 
     @get:Query("select min(customOrder) from rssSources")

@@ -115,6 +115,11 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mFrontShadowDrawableHBT.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
+    override fun setViewSize(width: Int, height: Int) {
+        super.setViewSize(width, height)
+        mMaxLength = hypot(viewWidth.toDouble(), viewWidth.toDouble()).toFloat()
+    }
+
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setStartPoint(x, y, invalidate)
         calcCornerXY(x, y)
@@ -171,7 +176,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun onAnimStart() {
         var dx: Float
         val dy: Float
-        // dx 水平方向滑动的距离，负值会使滚动向左滚动
         // dy 垂直方向滑动的距离，负值会使滚动向上滚动
         if (isCancel) {
             dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {
@@ -480,8 +484,10 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private fun calcPoints() {
         mTouchX = touchX
         mTouchY = touchY
+
         mMiddleX = (mTouchX + mCornerX) / 2
         mMiddleY = (mTouchY + mCornerY) / 2
+
         mBezierControl1.x =
             mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
         mBezierControl1.y = mCornerY.toFloat()
@@ -492,6 +498,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         } else {
             mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
         }
+
         mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2
         mBezierStart1.y = mCornerY.toFloat()
         //固定左边上下两个点
@@ -500,24 +507,27 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 if (mBezierStart1.x < 0)
                     mBezierStart1.x = viewWidth - mBezierStart1.x
 
-                val f1: Float = abs(mCornerX - mTouchX)
-                val f2: Float = viewWidth * f1 / mBezierStart1.x
+                val f1 = abs(mCornerX - mTouchX)
+                val f2 = viewWidth * f1 / mBezierStart1.x
                 mTouchX = abs(mCornerX - f2)
-                val f3: Float = abs(mCornerX - mTouchX) * abs(mCornerY - mTouchY) / f1
+                val f3 = abs(mCornerX - mTouchX) * abs(mCornerY - mTouchY) / f1
                 mTouchY = abs(mCornerY - f3)
 
                 mMiddleX = (mTouchX + mCornerX) / 2
                 mMiddleY = (mTouchY + mCornerY) / 2
+
                 mBezierControl1.x =
                     mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
                 mBezierControl1.y = mCornerY.toFloat()
+
                 mBezierControl2.x = mCornerX.toFloat()
                 mBezierControl2.y = if ((mCornerY - mMiddleY).toInt() == 0) {
                     mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
                 } else {
                     mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
                 }
-                mBezierStart1.x = (mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2)
+
+                mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2
             }
         }
         mBezierStart2.x = mCornerX.toFloat()

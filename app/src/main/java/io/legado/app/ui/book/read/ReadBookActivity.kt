@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
@@ -403,8 +402,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 文本选择菜单操作
      */
-    override fun onMenuItemSelected(item: MenuItemImpl): Boolean {
-        when (item.itemId) {
+    override fun onMenuItemSelected(itemId: Int): Boolean {
+        when (itemId) {
             R.id.menu_replace -> {
                 ReplaceEditDialog.show(supportFragmentManager, pattern = selectedText)
                 return true
