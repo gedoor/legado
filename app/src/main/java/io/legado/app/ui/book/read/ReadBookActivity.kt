@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
@@ -35,9 +34,9 @@ import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.page.ChapterProvider
-import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
+import io.legado.app.ui.book.read.page.content.BaseContentTextView
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
@@ -59,7 +58,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     View.OnTouchListener,
     PageView.CallBack,
     TextActionMenu.CallBack,
-    ContentTextView.CallBack,
+    BaseContentTextView.CallBack,
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
@@ -403,8 +402,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 文本选择菜单操作
      */
-    override fun onMenuItemSelected(item: MenuItemImpl): Boolean {
-        when (item.itemId) {
+    override fun onMenuItemSelected(itemId: Int): Boolean {
+        when (itemId) {
             R.id.menu_replace -> {
                 ReplaceEditDialog.show(supportFragmentManager, pattern = selectedText)
                 return true

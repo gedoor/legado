@@ -23,10 +23,12 @@ import io.legado.app.utils.removePref
 object ChapterProvider {
     var viewWidth = 0
     var viewHeight = 0
-    var visibleWidth = 0
-    var visibleHeight = 0
     var paddingLeft = 0
     var paddingTop = 0
+    var visibleWidth = 0
+    var visibleHeight = 0
+    var visibleRight = 0
+    var visibleBottom = 0
     private var lineSpacingExtra = 0f
     private var paragraphSpacing = 0
     var typeface: Typeface = Typeface.SANS_SERIF
@@ -342,6 +344,8 @@ object ChapterProvider {
         paddingTop = ReadBookConfig.paddingTop.dp
         visibleWidth = viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp
         visibleHeight = viewHeight - paddingTop - ReadBookConfig.paddingBottom.dp
+        visibleRight = paddingLeft + visibleWidth
+        visibleBottom = paddingTop + visibleHeight
     }
 
 }

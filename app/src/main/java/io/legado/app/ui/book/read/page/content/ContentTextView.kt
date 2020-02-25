@@ -1,46 +1,14 @@
-package io.legado.app.ui.book.read.page
+package io.legado.app.ui.book.read.page.content
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.View
-import io.legado.app.R
-import io.legado.app.constant.PreferKey
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.entities.TextPage
-import io.legado.app.utils.activity
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
 
 
-class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
-    var upView: ((TextPage) -> Unit)? = null
-    private val selectedPaint by lazy {
-        Paint().apply {
-            color = context.getCompatColor(R.color.btn_bg_press_2)
-            style = Paint.Style.FILL
-        }
-    }
-    private var callBack: CallBack
-    private var selectLineStart = 0
-    private var selectCharStart = 0
-    private var selectLineEnd = 0
-    private var selectCharEnd = 0
-    private var textPage: TextPage = TextPage()
-    //滚动参数
-    private val pageFactory: TextPageFactory get() = callBack.pageFactory
-    private val maxScrollOffset = 100f
-    private var pageOffset = 0f
-    private var linePos = 0
-
-    init {
-        callBack = activity as CallBack
-        contentDescription = textPage.text
-    }
+class ContentTextView(context: Context, attrs: AttributeSet?) :
+    BaseContentTextView(context, attrs) {
 
     fun setContent(textPage: TextPage) {
         this.textPage = textPage
@@ -48,24 +16,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         invalidate()
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        ChapterProvider.viewWidth = w
-        ChapterProvider.viewHeight = h
-        ChapterProvider.upSize()
-        textPage.format()
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        if (ReadBookConfig.isScroll) {
-            drawScrollPage(canvas)
-        } else {
-            drawHorizontalPage(canvas)
-        }
-    }
-
-    private fun drawHorizontalPage(canvas: Canvas) {
+    override fun drawHorizontalPage(canvas: Canvas) {
         textPage.textLines.forEach { textLine ->
             drawChars(
                 canvas,
@@ -79,7 +30,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    private fun drawScrollPage(canvas: Canvas) {
+    override fun drawScrollPage(canvas: Canvas) {
         val mPageOffset = pageOffset
         textPage.textLines.forEach { textLine ->
             val lineTop = textLine.lineTop + mPageOffset
@@ -109,41 +60,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 textLine.isTitle,
                 textLine.isReadAloud
             )
-        }
-        pageFactory.prevPage?.textLines?.forEach { textLine ->
-            val yPy = mPageOffset + ChapterProvider.paddingTop
-            val lineTop = -textLine.lineTop + yPy
-            val lineBase = -textLine.lineBase + yPy
-            val lineBottom = -textLine.lineBottom + yPy
-            drawChars(
-                canvas,
-                textLine.textChars,
-                lineTop,
-                lineBase,
-                lineBottom,
-                textLine.isTitle,
-                textLine.isReadAloud
-            )
-        }
-    }
-
-    private fun drawChars(
-        canvas: Canvas,
-        textChars: List<TextChar>,
-        lineTop: Float,
-        lineBase: Float,
-        lineBottom: Float,
-        isTitle: Boolean,
-        isReadAloud: Boolean
-    ) {
-        val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
-        textPaint.color =
-            if (isReadAloud) context.accentColor else ReadBookConfig.durConfig.textColor()
-        textChars.forEach {
-            canvas.drawText(it.charData, it.start, lineBase, textPaint)
-            if (it.selected) {
-                canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
-            }
         }
     }
 
@@ -271,14 +187,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         invalidate()
     }
 
-    private fun upSelectedStart(x: Float, y: Float) {
-        callBack.upSelectedStart(x, y + callBack.headerHeight)
-    }
-
-    private fun upSelectedEnd(x: Float, y: Float) {
-        callBack.upSelectedEnd(x, y + callBack.headerHeight)
-    }
-
     fun cancelSelect() {
         textPage.textLines.forEach { textLine ->
             textLine.textChars.forEach {
@@ -317,11 +225,4 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             return stringBuilder.toString()
         }
 
-    interface CallBack {
-        fun upSelectedStart(x: Float, y: Float)
-        fun upSelectedEnd(x: Float, y: Float)
-        fun onCancelSelect()
-        val headerHeight: Int
-        val pageFactory: TextPageFactory
-    }
 }
