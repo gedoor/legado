@@ -40,7 +40,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     private var mMiddleY = 0f
     private var mDegrees = 0f
     private var mTouchToCornerDis = 0f
-    private var mColorMatrixFilter: ColorMatrixColorFilter = ColorMatrixColorFilter(
+    private var mColorMatrixFilter = ColorMatrixColorFilter(
         ColorMatrix(
             floatArrayOf(
                 1f, 0f, 0f, 0f, 0f,
