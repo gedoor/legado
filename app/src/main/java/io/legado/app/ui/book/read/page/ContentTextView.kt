@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
@@ -26,6 +27,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
     private var callBack: CallBack
+    private val visibleRect = RectF()
     private var selectLineStart = 0
     private var selectCharStart = 0
     private var selectLineEnd = 0
@@ -52,17 +54,18 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         ChapterProvider.viewWidth = w
         ChapterProvider.viewHeight = h
         ChapterProvider.upSize()
+        visibleRect.set(
+            ChapterProvider.paddingLeft.toFloat(),
+            ChapterProvider.paddingTop.toFloat(),
+            ChapterProvider.visibleRight.toFloat(),
+            ChapterProvider.visibleBottom.toFloat()
+        )
         textPage.format()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.clipRect(
-            ChapterProvider.paddingLeft,
-            ChapterProvider.paddingTop,
-            ChapterProvider.visibleRight,
-            ChapterProvider.visibleBottom
-        )
+        canvas.clipRect(visibleRect)
         drawPage(canvas)
     }
 
@@ -169,6 +172,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun selectText(x: Float, y: Float, select: (lineIndex: Int, charIndex: Int) -> Unit) {
+        if (!visibleRect.contains(x, y)) return
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop + pageOffset && y < textLine.lineBottom + pageOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
@@ -190,6 +194,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun selectStartMove(x: Float, y: Float) {
+        if (!visibleRect.contains(x, y)) return
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop + pageOffset && y < textLine.lineBottom + pageOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
@@ -218,6 +223,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun selectEndMove(x: Float, y: Float) {
+        if (!visibleRect.contains(x, y)) return
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
             if (y > textLine.lineTop + pageOffset && y < textLine.lineBottom + pageOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
