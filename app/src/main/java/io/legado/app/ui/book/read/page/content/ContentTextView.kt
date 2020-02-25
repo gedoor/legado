@@ -89,7 +89,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
 
     fun resetPageOffset() {
         pageOffset = 0f
-        linePos = 0
     }
 
     fun selectText(x: Float, y: Float, select: (lineIndex: Int, charIndex: Int) -> Unit) {

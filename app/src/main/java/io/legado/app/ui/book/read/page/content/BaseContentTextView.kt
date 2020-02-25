@@ -37,7 +37,6 @@ abstract class BaseContentTextView(context: Context, attrs: AttributeSet?) : Vie
     protected val pageFactory: TextPageFactory get() = callBack.pageFactory
     protected val maxScrollOffset = 100f
     protected var pageOffset = 0f
-    protected var linePos = 0
 
     init {
         callBack = activity as CallBack
