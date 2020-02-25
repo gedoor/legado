@@ -277,6 +277,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
                             upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                            upSelectChars()
                         }
                         return
                     }
@@ -300,6 +301,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
                             upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                            upSelectChars()
                         }
                         return
                     }
@@ -321,6 +323,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
                             upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                            upSelectChars()
                         }
                         return
                     }
@@ -348,6 +351,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectEnd[1] = lineIndex
                             selectEnd[2] = charIndex
                             upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
+                            upSelectChars()
                         }
                         return
                     }
@@ -371,6 +375,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectEnd[1] = lineIndex
                             selectEnd[2] = charIndex
                             upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
+                            upSelectChars()
                         }
                         return
                     }
@@ -392,6 +397,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectEnd[1] = lineIndex
                             selectEnd[2] = charIndex
                             upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
+                            upSelectChars()
                         }
                         return
                     }
