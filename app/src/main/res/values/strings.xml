@@ -627,4 +627,5 @@
     <string name="reduce">减</string>
     <string name="plus">加</string>
     <string name="other_aloud_setting">其它朗读设置</string>
+    <string name="system_typeface">系统内置字体样式</string>
 </resources>
