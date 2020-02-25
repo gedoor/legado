@@ -420,7 +420,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         var textLine = relativePage(selectStart[0]).textLines[selectStart[1]]
         var textChar = textLine.textChars[selectStart[2]]
         upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset(selectStart[0]))
-        textLine = relativePage(selectEnd[0]).textLines[selectEnd[0]]
+        textLine = relativePage(selectEnd[0]).textLines[selectEnd[1]]
         textChar = textLine.textChars[selectEnd[2]]
         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset(selectEnd[0]))
         upSelectChars()
