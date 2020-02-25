@@ -278,7 +278,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectLineStart = lineIndex
                             selectCharStart = charIndex
                             upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
-                            upSelectChars(textPage)
+                            upSelectChars()
                         }
                         return
                     }
@@ -299,7 +299,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectLineStart = lineIndex
                             selectCharStart = charIndex
                             upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
-                            upSelectChars(textPage)
+                            upSelectChars()
                         }
                         return
                     }
@@ -318,7 +318,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectLineStart = lineIndex
                             selectCharStart = charIndex
                             upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
-                            upSelectChars(textPage)
+                            upSelectChars()
                         }
                         return
                     }
@@ -342,7 +342,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectLineEnd = lineIndex
                             selectCharEnd = charIndex
                             upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars(textPage)
+                            upSelectChars()
                         }
                         return
                     }
@@ -362,7 +362,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectLineEnd = lineIndex
                             selectCharEnd = charIndex
                             upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars(textPage)
+                            upSelectChars()
                         }
                         return
                     }
@@ -380,7 +380,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectLineEnd = lineIndex
                             selectCharEnd = charIndex
                             upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars(textPage)
+                            upSelectChars()
                         }
                         return
                     }
@@ -390,6 +390,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
+    /**
+     * 选择开始文字
+     */
     fun selectStartMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
         selectPageStart = relativePage
         selectLineStart = lineIndex
@@ -397,9 +400,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textLine = relativePage(relativePage).textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
         upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset(relativePage))
-        upSelectChars(textPage)
+        upSelectChars()
     }
 
+    /**
+     * 选择结束文字
+     */
     fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
         selectPageEnd = relativePage
         selectLineEnd = lineIndex
@@ -407,22 +413,35 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textLine = relativePage(relativePage).textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset(relativePage))
-        upSelectChars(textPage)
+        upSelectChars()
     }
 
-    private fun upSelectChars(textPage: TextPage) {
-        for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-            for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                textChar.selected =
-                    if (lineIndex == selectLineStart && lineIndex == selectLineEnd) {
-                        charIndex in selectCharStart..selectCharEnd
-                    } else if (lineIndex == selectLineStart) {
-                        charIndex >= selectCharStart
-                    } else if (lineIndex == selectLineEnd) {
-                        charIndex <= selectCharEnd
-                    } else {
-                        lineIndex in (selectLineStart + 1) until selectLineEnd
-                    }
+    private fun upSelectChars() {
+        val last = if (ReadBookConfig.isScroll) 2 else 0
+        for (relativePos in 0..last) {
+            for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
+                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                    textChar.selected =
+                        if (relativePos == selectPageStart
+                            && relativePos == selectPageEnd
+                            && lineIndex == selectLineStart
+                            && lineIndex == selectLineEnd
+                        ) {
+                            charIndex in selectCharStart..selectCharEnd
+                        } else if (relativePos == selectPageStart && lineIndex == selectLineStart) {
+                            charIndex >= selectCharStart
+                        } else if (relativePos == selectPageEnd && lineIndex == selectLineEnd) {
+                            charIndex <= selectCharEnd
+                        } else if (relativePos == selectPageStart && relativePos == selectPageEnd) {
+                            lineIndex in (selectLineStart + 1) until selectLineEnd
+                        } else if (relativePos == selectPageStart) {
+                            lineIndex > selectLineStart
+                        } else if (relativePos == selectPageEnd) {
+                            lineIndex < selectLineEnd
+                        } else {
+                            relativePos in selectPageStart + 1 until selectPageEnd
+                        }
+                }
             }
         }
         invalidate()
