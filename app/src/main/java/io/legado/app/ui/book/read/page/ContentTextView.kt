@@ -28,8 +28,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
     private var callBack: CallBack
     private val visibleRect = RectF()
-    private var selectStart = arrayOf(0, 0, 0)
-    private var selectEnd = arrayOf(0, 0, 0)
+    private val selectStart = arrayOf(0, 0, 0)
+    private val selectEnd = arrayOf(0, 0, 0)
     private var textPage: TextPage = TextPage()
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
@@ -269,11 +269,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                        if (selectStart[0] != 0 || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                            if (selectToInt(0, lineIndex, charIndex) > selectToInt(selectEnd)) {
+                                return
+                            }
                             selectStart[0] = 0
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
-                            upSelect()
+                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
                         }
                         return
                     }
@@ -289,11 +292,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                        if (selectStart[0] != 1 || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                            if (selectToInt(1, lineIndex, charIndex) > selectToInt(selectEnd)) {
+                                return
+                            }
                             selectStart[0] = 1
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
-                            upSelect()
+                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
                         }
                         return
                     }
@@ -307,11 +313,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                        if (selectStart[0] != 2 || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                            if (selectToInt(2, lineIndex, charIndex) > selectToInt(selectEnd)) {
+                                return
+                            }
                             selectStart[0] = 2
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
-                            upSelect()
+                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
                         }
                         return
                     }
@@ -331,11 +340,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                        if (selectEnd[0] != 0 || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                            if (selectToInt(0, lineIndex, charIndex) < selectToInt(selectStart)) {
+                                return
+                            }
                             selectEnd[0] = 0
                             selectEnd[1] = lineIndex
                             selectEnd[2] = charIndex
-                            upSelect()
+                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         }
                         return
                     }
@@ -351,11 +363,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                        if (selectEnd[0] != 1 || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                            if (selectToInt(1, lineIndex, charIndex) < selectToInt(selectStart)) {
+                                return
+                            }
                             selectEnd[0] = 1
                             selectEnd[1] = lineIndex
                             selectEnd[2] = charIndex
-                            upSelect()
+                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         }
                         return
                     }
@@ -369,11 +384,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                        if (selectEnd[0] != 2 || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                            if (selectToInt(2, lineIndex, charIndex) < selectToInt(selectStart)) {
+                                return
+                            }
                             selectEnd[0] = 2
                             selectEnd[1] = lineIndex
                             selectEnd[2] = charIndex
-                            upSelect()
+                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         }
                         return
                     }
@@ -406,23 +424,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textLine = relativePage(relativePage).textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset(relativePage))
-        upSelectChars()
-    }
-
-    private fun upSelect() {
-        val start = selectStart[0] * 1000000 + selectStart[1] * 100000 + selectStart[2]
-        val end = selectEnd[0] * 1000000 + selectEnd[1] * 100000 + selectEnd[2]
-        if (start > end) {
-            val value = selectStart
-            selectStart = selectEnd
-            selectEnd = value
-        }
-        var textLine = relativePage(selectStart[0]).textLines[selectStart[1]]
-        var textChar = textLine.textChars[selectStart[2]]
-        upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset(selectStart[0]))
-        textLine = relativePage(selectEnd[0]).textLines[selectEnd[1]]
-        textChar = textLine.textChars[selectEnd[2]]
-        upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset(selectEnd[0]))
         upSelectChars()
     }
 
@@ -536,6 +537,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
             return stringBuilder.toString()
         }
+
+    private fun selectToInt(page: Int, line: Int, char: Int): Int {
+        return page * 1000000 + line * 100000 + char
+    }
+
+    private fun selectToInt(select: Array<Int>): Int {
+        return select[0] * 1000000 + select[1] * 100000 + select[2]
+    }
 
     private fun relativeOffset(relativePos: Int): Float {
         return when (relativePos) {
