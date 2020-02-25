@@ -22,7 +22,8 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     private fun onScroll(event: MotionEvent) {
         //判断是否移动了
         if (!isMoved) {
-            isMoved = abs(startX - event.x) > slop || abs(startY - event.y) > slop
+            isMoved = abs(startX - event.x) > slop
+                    || abs(startX - event.x) > abs(startY - event.y)
             if (isMoved) {
                 if (event.x - startX > 0) {
                     //如果上一页不存在
