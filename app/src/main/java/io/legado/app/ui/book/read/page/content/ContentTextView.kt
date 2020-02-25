@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page.content
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.entities.TextPage
 
 
@@ -45,7 +46,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
                 textLine.isReadAloud
             )
         }
-        pageFactory.nextPage.textLines.forEach { textLine ->
+        val nextPage = pageFactory.nextPage
+        nextPage.textLines.forEach { textLine ->
             val yPy = mPageOffset + textPage.height
             val lineTop = textLine.lineTop + yPy
             val lineBase = textLine.lineBase + yPy
@@ -60,7 +62,23 @@ class ContentTextView(context: Context, attrs: AttributeSet?) :
                 textLine.isReadAloud
             )
         }
-
+        if (mPageOffset + textPage.height + nextPage.height < ChapterProvider.visibleHeight) {
+            pageFactory.nextPagePlus.textLines.forEach { textLine ->
+                val yPy = mPageOffset + textPage.height + nextPage.height
+                val lineTop = textLine.lineTop + yPy
+                val lineBase = textLine.lineBase + yPy
+                val lineBottom = textLine.lineBottom + yPy
+                drawChars(
+                    canvas,
+                    textLine.textChars,
+                    lineTop,
+                    lineBase,
+                    lineBottom,
+                    textLine.isTitle,
+                    textLine.isReadAloud
+                )
+            }
+        }
     }
 
     fun onScroll(mOffset: Float) {

@@ -90,5 +90,23 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             return TextPage().format()
         }
 
+    override val nextPagePlus: TextPage
+        get() = with(dataSource) {
+            currentChapter?.let {
+                if (pageIndex < it.pageSize() - 2) {
+                    return@with it.page(pageIndex + 2)?.removePageAloudSpan()
+                        ?: TextPage(title = it.title).format()
+                }
+                nextChapter?.let { nc ->
+                    if (pageIndex < it.pageSize() - 1) {
+                        return@with nc.page(0)?.removePageAloudSpan()
+                            ?: TextPage(title = nc.title).format()
+                    }
+                    return@with nc.page(1)?.removePageAloudSpan()
+                        ?: TextPage(title = nc.title).format()
+                }
 
+            }
+            return TextPage().format()
+        }
 }
