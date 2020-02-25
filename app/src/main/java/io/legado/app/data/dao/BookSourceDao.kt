@@ -17,13 +17,7 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
     fun liveExplore(): LiveData<List<BookSource>>
 
-    @Query(
-        """
-        select * from book_sources 
-        where enabledExplore = 1 and trim(exploreUrl) <> '' and (bookSourceGroup like :key or bookSourceName like :key) 
-        order by customOrder asc
-    """
-    )
+    @Query(" select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and (bookSourceGroup like :key or bookSourceName like :key) order by customOrder asc ")
     fun liveExplore(key: String): LiveData<List<BookSource>>
 
     @Query("select bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
@@ -47,7 +41,7 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabled = 1 and bookSourceGroup like '%' || :group || '%'")
     fun getEnabledByGroup(group: String): List<BookSource>
 
-    @get:Query("select * from book_sources where bookUrlPattern is not null || bookUrlPattern <> ''")
+    @get:Query("select * from book_sources where trim(bookUrlPattern) <> ''")
     val hasBookUrlPattern: List<BookSource>
 
     @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = ''")
