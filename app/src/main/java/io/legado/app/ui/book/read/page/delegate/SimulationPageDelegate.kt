@@ -126,7 +126,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
-        super.setTouchPoint(x, y, invalidate)
+        super.setTouchPoint(x, y, false)
         //触摸y中间位置吧y变成屏幕高度
         if ((startY > viewHeight * 0.33 && startY < viewHeight * 0.66)
             || mDirection == Direction.PREV
@@ -139,6 +139,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         ) {
             touchY = 1f
         }
+        pageView.invalidate()
     }
 
     override fun setDirection(direction: Direction) {
@@ -234,7 +235,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, prevBitmap)
             }
-            else -> Unit
+            else -> return
         }
     }
 
