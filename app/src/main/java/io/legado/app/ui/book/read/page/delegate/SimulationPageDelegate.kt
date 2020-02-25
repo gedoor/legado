@@ -115,6 +115,11 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mFrontShadowDrawableHBT.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
+    override fun setViewSize(width: Int, height: Int) {
+        super.setViewSize(width, height)
+        mMaxLength = hypot(viewWidth.toDouble(), viewWidth.toDouble()).toFloat()
+    }
+
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setStartPoint(x, y, invalidate)
         calcCornerXY(x, y)
@@ -171,7 +176,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun onAnimStart() {
         var dx: Float
         val dy: Float
-        // dx 水平方向滑动的距离，负值会使滚动向左滚动
         // dy 垂直方向滑动的距离，负值会使滚动向上滚动
         if (isCancel) {
             dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {

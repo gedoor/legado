@@ -136,7 +136,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         bitmap = null
     }
 
-    fun setViewSize(width: Int, height: Int) {
+    open fun setViewSize(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
         pageView.invalidate()
