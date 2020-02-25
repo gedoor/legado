@@ -15,7 +15,6 @@ import java.util.*
 
 
 class ContentView(context: Context) : FrameLayout(context) {
-    private var pageSize: Int = 0
 
     init {
         //设置背景防止切换背景时文字重叠
@@ -26,8 +25,7 @@ class ContentView(context: Context) : FrameLayout(context) {
         upTime()
         content_text_view.upView = {
             tv_bottom_left.text = it.title
-            pageSize = it.pageSize
-            setPageIndex(it.index)
+            setPageIndex(it.index, it.pageSize)
         }
     }
 
@@ -97,8 +95,7 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun setContent(textPage: TextPage) {
         tv_bottom_left.text = textPage.title
-        pageSize = textPage.pageSize
-        setPageIndex(textPage.index)
+        setPageIndex(textPage.index, textPage.pageSize)
         content_text_view.resetPageOffset()
         content_text_view.setContent(textPage)
     }
@@ -108,7 +105,7 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     @SuppressLint("SetTextI18n")
-    fun setPageIndex(pageIndex: Int?) {
+    fun setPageIndex(pageIndex: Int?, pageSize: Int) {
         pageIndex?.let {
             tv_bottom_right.text = "${pageIndex.plus(1)}/${pageSize}"
         }
