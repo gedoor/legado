@@ -219,18 +219,22 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (mDirection === Direction.NEXT) {
-            calcPoints()
-            drawCurrentPageArea(canvas, curBitmap)
-            drawNextPageAreaAndShadow(canvas, nextBitmap)
-            drawCurrentPageShadow(canvas)
-            drawCurrentBackArea(canvas, curBitmap)
-        } else {
-            calcPoints()
-            drawCurrentPageArea(canvas, prevBitmap)
-            drawNextPageAreaAndShadow(canvas, curBitmap)
-            drawCurrentPageShadow(canvas)
-            drawCurrentBackArea(canvas, prevBitmap)
+        when (mDirection) {
+            Direction.NEXT -> {
+                calcPoints()
+                drawCurrentPageArea(canvas, curBitmap)
+                drawNextPageAreaAndShadow(canvas, nextBitmap)
+                drawCurrentPageShadow(canvas)
+                drawCurrentBackArea(canvas, curBitmap)
+            }
+            Direction.PREV -> {
+                calcPoints()
+                drawCurrentPageArea(canvas, prevBitmap)
+                drawNextPageAreaAndShadow(canvas, curBitmap)
+                drawCurrentPageShadow(canvas)
+                drawCurrentBackArea(canvas, prevBitmap)
+            }
+            else -> Unit
         }
     }
 
