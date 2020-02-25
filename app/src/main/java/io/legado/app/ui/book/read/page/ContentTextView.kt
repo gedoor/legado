@@ -28,12 +28,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
     private var callBack: CallBack
     private val visibleRect = RectF()
-    private var selectPageStart = 0
-    private var selectLineStart = 0
-    private var selectCharStart = 0
-    private var selectPageEnd = 0
-    private var selectLineEnd = 0
-    private var selectCharEnd = 0
+    private var selectStart = arrayOf(0, 0, 0)
+    private var selectEnd = arrayOf(0, 0, 0)
     private var textPage: TextPage = TextPage()
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
@@ -197,12 +193,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (x > textChar.start && x < textChar.end) {
                         textChar.selected = true
                         invalidate()
-                        selectPageStart = 0
-                        selectLineStart = lineIndex
-                        selectCharStart = charIndex
-                        selectPageEnd = 0
-                        selectLineEnd = lineIndex
-                        selectCharEnd = charIndex
+                        selectStart[0] = 0
+                        selectStart[1] = lineIndex
+                        selectStart[2] = charIndex
+                        selectEnd[0] = 0
+                        selectEnd[1] = lineIndex
+                        selectEnd[2] = charIndex
                         upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
                         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         select(0, lineIndex, charIndex)
@@ -223,12 +219,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (x > textChar.start && x < textChar.end) {
                         textChar.selected = true
                         invalidate()
-                        selectPageStart = 1
-                        selectLineStart = lineIndex
-                        selectCharStart = charIndex
-                        selectPageEnd = 1
-                        selectLineEnd = lineIndex
-                        selectCharEnd = charIndex
+                        selectStart[0] = 1
+                        selectStart[1] = lineIndex
+                        selectStart[2] = charIndex
+                        selectEnd[0] = 1
+                        selectEnd[1] = lineIndex
+                        selectEnd[2] = charIndex
                         upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
                         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         select(1, lineIndex, charIndex)
@@ -246,12 +242,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (x > textChar.start && x < textChar.end) {
                         textChar.selected = true
                         invalidate()
-                        selectPageStart = 2
-                        selectLineStart = lineIndex
-                        selectCharStart = charIndex
-                        selectPageEnd = 2
-                        selectLineEnd = lineIndex
-                        selectCharEnd = charIndex
+                        selectStart[0] = 2
+                        selectStart[1] = lineIndex
+                        selectStart[2] = charIndex
+                        selectEnd[0] = 2
+                        selectEnd[1] = lineIndex
+                        selectEnd[2] = charIndex
                         upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
                         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         select(2, lineIndex, charIndex)
@@ -273,12 +269,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectLineStart != lineIndex || selectCharStart != charIndex) {
-                            selectPageStart = 0
-                            selectLineStart = lineIndex
-                            selectCharStart = charIndex
-                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
+                        if (selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                            selectStart[0] = 0
+                            selectStart[1] = lineIndex
+                            selectStart[2] = charIndex
+                            upSelect()
                         }
                         return
                     }
@@ -294,12 +289,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectLineStart != lineIndex || selectCharStart != charIndex) {
-                            selectPageStart = 1
-                            selectLineStart = lineIndex
-                            selectCharStart = charIndex
-                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
+                        if (selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                            selectStart[0] = 1
+                            selectStart[1] = lineIndex
+                            selectStart[2] = charIndex
+                            upSelect()
                         }
                         return
                     }
@@ -313,12 +307,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectLineStart != lineIndex || selectCharStart != charIndex) {
-                            selectPageStart = 1
-                            selectLineStart = lineIndex
-                            selectCharStart = charIndex
-                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
+                        if (selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                            selectStart[0] = 2
+                            selectStart[1] = lineIndex
+                            selectStart[2] = charIndex
+                            upSelect()
                         }
                         return
                     }
@@ -338,11 +331,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
-                            selectLineEnd = lineIndex
-                            selectCharEnd = charIndex
-                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
+                        if (selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                            selectEnd[0] = 0
+                            selectEnd[1] = lineIndex
+                            selectEnd[2] = charIndex
+                            upSelect()
                         }
                         return
                     }
@@ -358,11 +351,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
-                            selectLineEnd = lineIndex
-                            selectCharEnd = charIndex
-                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
+                        if (selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                            selectEnd[0] = 1
+                            selectEnd[1] = lineIndex
+                            selectEnd[2] = charIndex
+                            upSelect()
                         }
                         return
                     }
@@ -376,11 +369,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     if (x > textChar.start && x < textChar.end) {
-                        if (selectLineEnd != lineIndex || selectCharEnd != charIndex) {
-                            selectLineEnd = lineIndex
-                            selectCharEnd = charIndex
-                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
+                        if (selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                            selectEnd[0] = 2
+                            selectEnd[1] = lineIndex
+                            selectEnd[2] = charIndex
+                            upSelect()
                         }
                         return
                     }
@@ -394,9 +387,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 选择开始文字
      */
     fun selectStartMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        selectPageStart = relativePage
-        selectLineStart = lineIndex
-        selectCharStart = charIndex
+        selectStart[0] = relativePage
+        selectStart[1] = lineIndex
+        selectStart[2] = charIndex
         val textLine = relativePage(relativePage).textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
         upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset(relativePage))
@@ -407,12 +400,29 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 选择结束文字
      */
     fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        selectPageEnd = relativePage
-        selectLineEnd = lineIndex
-        selectCharEnd = charIndex
+        selectEnd[0] = relativePage
+        selectEnd[1] = lineIndex
+        selectEnd[2] = charIndex
         val textLine = relativePage(relativePage).textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset(relativePage))
+        upSelectChars()
+    }
+
+    private fun upSelect() {
+        val start = selectStart[0] * 1000000 + selectStart[1] * 100000 + selectStart[2]
+        val end = selectEnd[0] * 1000000 + selectEnd[1] * 100000 + selectEnd[2]
+        if (start > end) {
+            val value = selectStart
+            selectStart = selectEnd
+            selectEnd = value
+        }
+        var textLine = relativePage(selectStart[0]).textLines[selectStart[1]]
+        var textChar = textLine.textChars[selectStart[2]]
+        upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset(selectStart[0]))
+        textLine = relativePage(selectEnd[0]).textLines[selectEnd[0]]
+        textChar = textLine.textChars[selectEnd[2]]
+        upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset(selectEnd[0]))
         upSelectChars()
     }
 
@@ -422,24 +432,24 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     textChar.selected =
-                        if (relativePos == selectPageStart
-                            && relativePos == selectPageEnd
-                            && lineIndex == selectLineStart
-                            && lineIndex == selectLineEnd
+                        if (relativePos == selectStart[0]
+                            && relativePos == selectEnd[0]
+                            && lineIndex == selectStart[1]
+                            && lineIndex == selectEnd[1]
                         ) {
-                            charIndex in selectCharStart..selectCharEnd
-                        } else if (relativePos == selectPageStart && lineIndex == selectLineStart) {
-                            charIndex >= selectCharStart
-                        } else if (relativePos == selectPageEnd && lineIndex == selectLineEnd) {
-                            charIndex <= selectCharEnd
-                        } else if (relativePos == selectPageStart && relativePos == selectPageEnd) {
-                            lineIndex in (selectLineStart + 1) until selectLineEnd
-                        } else if (relativePos == selectPageStart) {
-                            lineIndex > selectLineStart
-                        } else if (relativePos == selectPageEnd) {
-                            lineIndex < selectLineEnd
+                            charIndex in selectStart[2]..selectEnd[2]
+                        } else if (relativePos == selectStart[0] && lineIndex == selectStart[1]) {
+                            charIndex >= selectStart[2]
+                        } else if (relativePos == selectEnd[0] && lineIndex == selectEnd[1]) {
+                            charIndex <= selectEnd[2]
+                        } else if (relativePos == selectStart[0] && relativePos == selectEnd[0]) {
+                            lineIndex in (selectStart[1] + 1) until selectEnd[1]
+                        } else if (relativePos == selectStart[0]) {
+                            lineIndex > selectStart[1]
+                        } else if (relativePos == selectEnd[0]) {
+                            lineIndex < selectEnd[1]
                         } else {
-                            relativePos in selectPageStart + 1 until selectPageEnd
+                            relativePos in selectStart[0] + 1 until selectEnd[0]
                         }
                 }
             }
@@ -471,55 +481,55 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     val selectedText: String
         get() {
             val stringBuilder = StringBuilder()
-            for (relativePos in selectPageStart..selectPageEnd) {
+            for (relativePos in selectStart[0]..selectEnd[0]) {
                 val textPage = relativePage(relativePos)
-                if (relativePos == selectPageStart && relativePos == selectPageEnd) {
-                    for (lineIndex in selectLineStart..selectLineEnd) {
-                        if (lineIndex == selectLineStart && lineIndex == selectLineEnd) {
+                if (relativePos == selectStart[0] && relativePos == selectEnd[0]) {
+                    for (lineIndex in selectStart[1]..selectEnd[1]) {
+                        if (lineIndex == selectStart[1] && lineIndex == selectEnd[1]) {
                             stringBuilder.append(
                                 textPage.textLines[lineIndex].text.substring(
-                                    selectCharStart,
-                                    selectCharEnd + 1
+                                    selectStart[2],
+                                    selectEnd[2] + 1
                                 )
                             )
-                        } else if (lineIndex == selectLineStart) {
+                        } else if (lineIndex == selectStart[1]) {
                             stringBuilder.append(
                                 textPage.textLines[lineIndex].text.substring(
-                                    selectCharStart
+                                    selectStart[2]
                                 )
                             )
-                        } else if (lineIndex == selectLineEnd) {
+                        } else if (lineIndex == selectEnd[1]) {
                             stringBuilder.append(
-                                textPage.textLines[lineIndex].text.substring(0, selectCharEnd + 1)
+                                textPage.textLines[lineIndex].text.substring(0, selectEnd[2] + 1)
                             )
                         } else {
                             stringBuilder.append(textPage.textLines[lineIndex].text)
                         }
                     }
-                } else if (relativePos == selectPageStart) {
-                    for (lineIndex in selectLineStart until relativePage(relativePos).textLines.size) {
-                        if (lineIndex == selectLineStart) {
+                } else if (relativePos == selectStart[0]) {
+                    for (lineIndex in selectStart[1] until relativePage(relativePos).textLines.size) {
+                        if (lineIndex == selectStart[1]) {
                             stringBuilder.append(
                                 textPage.textLines[lineIndex].text.substring(
-                                    selectCharStart
+                                    selectStart[2]
                                 )
                             )
                         } else {
                             stringBuilder.append(textPage.textLines[lineIndex].text)
                         }
                     }
-                } else if (relativePos == selectPageEnd) {
-                    for (lineIndex in 0..selectLineEnd) {
-                        if (lineIndex == selectLineEnd) {
+                } else if (relativePos == selectEnd[0]) {
+                    for (lineIndex in 0..selectEnd[1]) {
+                        if (lineIndex == selectEnd[1]) {
                             stringBuilder.append(
-                                textPage.textLines[lineIndex].text.substring(0, selectCharEnd + 1)
+                                textPage.textLines[lineIndex].text.substring(0, selectEnd[2] + 1)
                             )
                         } else {
                             stringBuilder.append(textPage.textLines[lineIndex].text)
                         }
                     }
-                } else if (relativePos in selectPageStart + 1 until selectPageEnd) {
-                    for (lineIndex in selectLineStart..selectLineEnd) {
+                } else if (relativePos in selectStart[0] + 1 until selectEnd[0]) {
+                    for (lineIndex in selectStart[1]..selectEnd[1]) {
                         stringBuilder.append(textPage.textLines[lineIndex].text)
                     }
                 }
