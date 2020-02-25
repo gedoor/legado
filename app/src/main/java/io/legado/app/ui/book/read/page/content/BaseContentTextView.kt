@@ -21,7 +21,7 @@ abstract class BaseContentTextView(context: Context, attrs: AttributeSet?) : Vie
 
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
     var upView: ((TextPage) -> Unit)? = null
-    protected val selectedPaint by lazy {
+    private val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
             style = Paint.Style.FILL
@@ -69,9 +69,9 @@ abstract class BaseContentTextView(context: Context, attrs: AttributeSet?) : Vie
         }
     }
 
-    abstract fun drawScrollPage(canvas: Canvas)
+    protected abstract fun drawScrollPage(canvas: Canvas)
 
-    abstract fun drawHorizontalPage(canvas: Canvas)
+    protected abstract fun drawHorizontalPage(canvas: Canvas)
 
     protected fun drawChars(
         canvas: Canvas,
