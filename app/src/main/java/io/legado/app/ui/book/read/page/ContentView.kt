@@ -119,7 +119,10 @@ class ContentView(context: Context) : FrameLayout(context) {
         content_text_view.selectAble = selectAble
     }
 
-    fun selectText(e: MotionEvent, select: (lineIndex: Int, charIndex: Int) -> Unit) {
+    fun selectText(
+        e: MotionEvent,
+        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit
+    ) {
         val y = e.y - headerHeight
         return content_text_view.selectText(e.x, y, select)
     }
@@ -128,16 +131,16 @@ class ContentView(context: Context) : FrameLayout(context) {
         content_text_view.selectStartMove(x, y - headerHeight)
     }
 
-    fun selectStartMoveIndex(lineIndex: Int, charIndex: Int) {
-        content_text_view.selectStartMoveIndex(lineIndex, charIndex)
+    fun selectStartMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
+        content_text_view.selectStartMoveIndex(relativePage, lineIndex, charIndex)
     }
 
     fun selectEndMove(x: Float, y: Float) {
         content_text_view.selectEndMove(x, y - headerHeight)
     }
 
-    fun selectEndMoveIndex(lineIndex: Int, charIndex: Int) {
-        content_text_view.selectEndMoveIndex(lineIndex, charIndex)
+    fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
+        content_text_view.selectEndMoveIndex(relativePage, lineIndex, charIndex)
     }
 
     fun cancelSelect() {
