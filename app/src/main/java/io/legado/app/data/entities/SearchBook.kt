@@ -21,7 +21,7 @@ import kotlinx.android.parcel.Parcelize
 )
 data class SearchBook(
     @PrimaryKey
-    var bookUrl: String = "",
+    override var bookUrl: String = "",
     var origin: String = "",                     // 书源规则
     var originName: String = "",
     var type: Int = 0,                          // @BookType
