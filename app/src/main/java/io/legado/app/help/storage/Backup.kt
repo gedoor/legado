@@ -102,7 +102,7 @@ object Backup {
                 if (file.exists()) {
                     treeDoc.findFile(fileName)?.delete()
                     treeDoc.createFile("", fileName)?.let {
-                        DocumentUtils.writeText(context, file.readText(), it.uri)
+                        DocumentUtils.writeBytes(context, file.readBytes(), it.uri)
                     }
                 }
             }

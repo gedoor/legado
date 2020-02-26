@@ -109,41 +109,43 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     private fun openFolder() {
-        alert {
-            titleResource = R.string.select_folder
-            items(resources.getStringArray(R.array.select_folder).toList()) { _, index ->
-                when (index) {
-                    0 -> {
-                        val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
-                        putPrefString(PreferKey.fontFolder, path)
-                        getFontFilesByPermission(path)
-                    }
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            startActivityForResult(intent, fontFolderRequestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                            requireContext().toast(e.localizedMessage ?: "ERROR")
+        launch(Main) {
+            alert {
+                titleResource = R.string.select_folder
+                items(resources.getStringArray(R.array.select_folder).toList()) { _, index ->
+                    when (index) {
+                        0 -> {
+                            val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
+                            putPrefString(PreferKey.fontFolder, path)
+                            getFontFilesByPermission(path)
+                        }
+                        1 -> {
+                            try {
+                                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                startActivityForResult(intent, fontFolderRequestCode)
+                            } catch (e: java.lang.Exception) {
+                                e.printStackTrace()
+                                requireContext().toast(e.localizedMessage ?: "ERROR")
+                            }
+                        }
+                        2 -> {
+                            PermissionsCompat.Builder(this@FontSelectDialog)
+                                .addPermissions(*Permissions.Group.STORAGE)
+                                .rationale(R.string.tip_perm_request_storage)
+                                .onGranted {
+                                    FileChooserDialog.show(
+                                        childFragmentManager,
+                                        fontFolderRequestCode,
+                                        mode = FileChooserDialog.DIRECTORY
+                                    )
+                                }
+                                .request()
                         }
                     }
-                    2 -> {
-                        PermissionsCompat.Builder(this@FontSelectDialog)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted {
-                                FileChooserDialog.show(
-                                    childFragmentManager,
-                                    fontFolderRequestCode,
-                                    mode = FileChooserDialog.DIRECTORY
-                                )
-                            }
-                            .request()
-                    }
                 }
-            }
-        }.show()
+            }.show()
+        }
     }
 
     @SuppressLint("DefaultLocale")
@@ -261,7 +263,7 @@ class FontSelectDialog : BaseDialogFragment(),
         }
     }
 
-    private fun onDefaultFontChange(callBack: CallBack){
+    private fun onDefaultFontChange(callBack: CallBack) {
         if (curFilePath() == "") {
             postEvent(EventBus.UP_CONFIG, true)
         } else {
