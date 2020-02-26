@@ -50,7 +50,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         get() = getViewModel(RssSourceViewModel::class.java)
     private val importRecordKey = "rssSourceRecordKey"
     private val qrRequestCode = 101
-    private val importSource = 13141
+    private val importSource = 124
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
