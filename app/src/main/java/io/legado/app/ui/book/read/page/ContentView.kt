@@ -52,13 +52,13 @@ class ContentView(context: Context) : FrameLayout(context) {
                 ll_header.gone()
                 page_panel.setPadding(0, context.statusBarHeight, 0, 0)
             }
-            content_text_view.upVisibleRect()
             ll_footer.setPadding(
                 footerPaddingLeft.dp,
                 footerPaddingTop.dp,
                 footerPaddingRight.dp,
                 footerPaddingBottom.dp
             )
+            content_text_view.upVisibleRect()
             durConfig.textColor().let {
                 tv_top_left.setTextColor(it)
                 tv_top_right.setTextColor(it)
