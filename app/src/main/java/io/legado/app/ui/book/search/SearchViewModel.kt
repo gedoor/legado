@@ -141,6 +141,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
             }
+
             searchBooks = copyDataS
             searchBookLiveData.postValue(copyDataS)
         }

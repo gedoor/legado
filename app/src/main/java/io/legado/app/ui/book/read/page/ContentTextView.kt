@@ -47,17 +47,21 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         invalidate()
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        ChapterProvider.viewWidth = w
-        ChapterProvider.viewHeight = h
-        ChapterProvider.upSize()
+    fun upVisibleRect() {
         visibleRect.set(
             ChapterProvider.paddingLeft.toFloat(),
             ChapterProvider.paddingTop.toFloat(),
             ChapterProvider.visibleRight.toFloat(),
             ChapterProvider.visibleBottom.toFloat()
         )
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        ChapterProvider.viewWidth = w
+        ChapterProvider.viewHeight = h
+        ChapterProvider.upSize()
+        upVisibleRect()
         textPage.format()
     }
 

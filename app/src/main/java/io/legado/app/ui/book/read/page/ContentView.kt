@@ -52,12 +52,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 ll_header.gone()
                 page_panel.setPadding(0, context.statusBarHeight, 0, 0)
             }
-            content_text_view.setPadding(
-                paddingLeft.dp,
-                paddingTop.dp,
-                paddingRight.dp,
-                paddingBottom.dp
-            )
+            content_text_view.upVisibleRect()
             ll_footer.setPadding(
                 footerPaddingLeft.dp,
                 footerPaddingTop.dp,
