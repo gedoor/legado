@@ -92,17 +92,6 @@ val Context.navigationBarHeight: Int
         return resources.getDimensionPixelSize(resourceId)
 }
 
-fun Context.shareText(title: String, text: String) {
-    try {
-        val textIntent = Intent(Intent.ACTION_SEND)
-        textIntent.type = "text/plain"
-        textIntent.putExtra(Intent.EXTRA_TEXT, text)
-        startActivity(Intent.createChooser(textIntent, title))
-    } catch (e: Exception) {
-        toast(R.string.can_not_share)
-    }
-}
-
 @SuppressLint("SetWorldReadable")
 fun Context.shareWithQr(title: String, text: String) {
     QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L

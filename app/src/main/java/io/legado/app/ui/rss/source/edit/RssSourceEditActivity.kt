@@ -21,9 +21,13 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.shareWithQr
 import kotlinx.android.synthetic.main.activity_rss_source_edit.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
@@ -101,7 +105,7 @@ class RssSourceEditActivity :
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_share_str -> GSON.toJson(getRssSource())?.let { sourceStr ->
-                shareText(getString(R.string.share_rss_source), sourceStr)
+                share(sourceStr)
             }
             R.id.menu_share_qr -> GSON.toJson(getRssSource())?.let { sourceStr ->
                 shareWithQr(getString(R.string.share_rss_source), sourceStr)

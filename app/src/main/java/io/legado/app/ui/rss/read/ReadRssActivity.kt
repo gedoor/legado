@@ -14,10 +14,10 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.shareText
 import kotlinx.android.synthetic.main.activity_rss_read.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
+import org.jetbrains.anko.share
 import org.jsoup.Jsoup
 import org.jsoup.safety.Whitelist
 
@@ -54,7 +54,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         when (item.itemId) {
             R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> viewModel.rssArticle?.let {
-                shareText("链接分享", it.link)
+                share(it.link)
             }
             R.id.menu_aloud -> readAloud()
         }
