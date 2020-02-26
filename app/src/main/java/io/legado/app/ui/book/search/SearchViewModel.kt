@@ -130,9 +130,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                             }
                         }
                     } else if (searchKey == item.author) {
-                        for ((i, searchBook) in copyDataS.withIndex()) {
+                        for ((index, searchBook) in copyDataS.withIndex()) {
                             if (searchKey != searchBook.name && searchKey == searchBook.author) {
-                                copyDataS.add(i, item)
+                                copyDataS.add(index, item)
                                 break
                             }
                         }

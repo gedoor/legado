@@ -16,10 +16,6 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return true
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
         if (oldItem.name != newItem.name) {
@@ -28,6 +24,12 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         if (oldItem.author != newItem.author) {
             return false
         }
+        return true
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
         if (oldItem.origins?.size != newItem.origins?.size) {
             return false
         }
