@@ -138,6 +138,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun upStyle() {
+        ChapterProvider.upStyle()
         curPage.upStyle()
         prevPage.upStyle()
         nextPage.upStyle()
