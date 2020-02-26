@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import org.jetbrains.anko.toast
 
 object BackupRestoreUi {
-
+    private const val selectFolderRequestCode = 21
     private const val backupSelectRequestCode = 22
     private const val restoreSelectRequestCode = 33
     private const val oldDataRequestCode = 11
@@ -34,7 +34,7 @@ object BackupRestoreUi {
     fun backup(fragment: Fragment) {
         val backupPath = AppConfig.backupPath
         if (backupPath.isNullOrEmpty()) {
-            selectBackupFolder(fragment)
+            selectBackupFolder(fragment, backupSelectRequestCode)
         } else {
             if (backupPath.isContentPath()) {
                 val uri = Uri.parse(backupPath)
@@ -46,7 +46,7 @@ object BackupRestoreUi {
                         fragment.toast(R.string.backup_success)
                     }
                 } else {
-                    selectBackupFolder(fragment)
+                    selectBackupFolder(fragment, backupSelectRequestCode)
                 }
             } else {
                 backupUsePermission(fragment)
@@ -69,7 +69,7 @@ object BackupRestoreUi {
             .request()
     }
 
-    fun selectBackupFolder(fragment: Fragment) {
+    fun selectBackupFolder(fragment: Fragment, requestCode: Int = selectFolderRequestCode) {
         fragment.alert {
             titleResource = R.string.select_folder
             items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
@@ -79,7 +79,7 @@ object BackupRestoreUi {
                         try {
                             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            fragment.startActivityForResult(intent, backupSelectRequestCode)
+                            fragment.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
                             fragment.toast(e.localizedMessage ?: "ERROR")
@@ -88,7 +88,7 @@ object BackupRestoreUi {
                     2 -> {
                         FileChooserDialog.show(
                             fragment.childFragmentManager,
-                            backupSelectRequestCode,
+                            requestCode,
                             mode = FileChooserDialog.DIRECTORY
                         )
                     }
@@ -262,6 +262,15 @@ object BackupRestoreUi {
                     }.onSuccess {
                         App.INSTANCE.toast(R.string.restore_success)
                     }
+                }
+            }
+            selectFolderRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    App.INSTANCE.contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    AppConfig.backupPath = uri.toString()
                 }
             }
             oldDataRequestCode ->
