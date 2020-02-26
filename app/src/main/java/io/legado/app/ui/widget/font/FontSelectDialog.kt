@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
@@ -89,9 +91,13 @@ class FontSelectDialog : BaseDialogFragment(),
             R.id.menu_default -> {
                 val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
                 cb?.let {
-                    if (it.curFontPath != "") {
-                        it.selectFile("")
-                    }
+                    val requireContext = requireContext()
+                    requireContext.alert(titleResource = R.string.system_typeface) {
+                        items(requireContext.resources.getStringArray(R.array.system_typefaces).toList()) { _, i ->
+                            AppConfig.systemTypefaces = i
+                            onDefaultFontChange(it)
+                        }
+                    }.show()
                 }
                 dismiss()
             }
@@ -252,6 +258,14 @@ class FontSelectDialog : BaseDialogFragment(),
                     }
                 }
             }
+        }
+    }
+
+    private fun onDefaultFontChange(callBack: CallBack){
+        if (curFilePath() == "") {
+            postEvent(EventBus.UP_CONFIG, true)
+        } else {
+            callBack.selectFile("")
         }
     }
 

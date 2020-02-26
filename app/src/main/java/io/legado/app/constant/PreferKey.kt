@@ -38,4 +38,5 @@ object PreferKey {
     const val bodyIndent = "textIndent"
     const val shareLayout = "shareLayout"
     const val readStyleSelect = "readStyleSelect"
+    const val systemTypefaces = "system_typefaces"
 }

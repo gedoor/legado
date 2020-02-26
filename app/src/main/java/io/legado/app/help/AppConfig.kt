@@ -86,4 +86,10 @@ object AppConfig {
         set(value) {
             App.INSTANCE.putPrefInt(PreferKey.chineseConverterType, value)
         }
+
+    var systemTypefaces: Int
+        get() = App.INSTANCE.getPrefInt(PreferKey.systemTypefaces)
+        set(value) {
+            App.INSTANCE.putPrefInt(PreferKey.systemTypefaces, value)
+        }
 }

@@ -8,6 +8,7 @@ import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextChapter
@@ -308,7 +309,11 @@ object ChapterProvider {
             if (!TextUtils.isEmpty(fontPath)) {
                 Typeface.createFromFile(fontPath)
             } else {
-                Typeface.SANS_SERIF
+                when (AppConfig.systemTypefaces) {
+                    1 -> Typeface.SERIF
+                    2 -> Typeface.MONOSPACE
+                    else -> Typeface.SANS_SERIF
+                }
             }
         } catch (e: Exception) {
             App.INSTANCE.removePref(PreferKey.readBookFont)
