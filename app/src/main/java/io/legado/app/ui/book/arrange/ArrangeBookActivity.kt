@@ -95,10 +95,11 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
     private fun initBookData() {
         booksLiveData?.removeObservers(this)
         booksLiveData =
-            if (groupId == -1) {
-                App.db.bookDao().observeAll()
-            } else {
-                App.db.bookDao().observeByGroup(groupId)
+            when (groupId) {
+                -1 -> App.db.bookDao().observeAll()
+                -2 -> App.db.bookDao().observeLocal()
+                -3 -> App.db.bookDao().observeAudio()
+                else -> App.db.bookDao().observeByGroup(groupId)
             }
         booksLiveData?.observe(this, Observer {
             adapter.selectedBooks.clear()
