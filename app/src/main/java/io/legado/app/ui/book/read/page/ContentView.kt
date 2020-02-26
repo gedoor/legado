@@ -37,8 +37,9 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_bottom_right.typeface = ChapterProvider.typeface
             //显示状态栏时隐藏header
             if (hideStatusBar) {
-                ll_header.layoutParams =
-                    ll_header.layoutParams.apply { height = context.statusBarHeight }
+                ll_header.layoutParams = ll_header.layoutParams.apply {
+                    height = context.statusBarHeight + headerPaddingTop.dp + headerPaddingBottom.dp
+                }
                 ll_header.setPadding(
                     headerPaddingLeft.dp,
                     headerPaddingTop.dp,
