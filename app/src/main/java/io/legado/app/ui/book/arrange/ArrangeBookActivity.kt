@@ -101,6 +101,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 App.db.bookDao().observeByGroup(groupId)
             }
         booksLiveData?.observe(this, Observer {
+            adapter.selectedBooks.clear()
             adapter.setItems(it)
             upSelectCount()
         })
