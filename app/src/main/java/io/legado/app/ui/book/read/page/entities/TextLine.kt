@@ -8,4 +8,10 @@ data class TextLine(
     var lineBottom: Float = 0f,
     val isTitle: Boolean = false,
     var isReadAloud: Boolean = false
-)
+) {
+
+    fun addTextChar(charData: String, start: Float, end: Float) {
+        textChars.add(TextChar(charData, start = start, end = end))
+    }
+
+}
