@@ -62,16 +62,16 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
             payload.putInt("origins", newItem.origins.size)
         }
         if (oldItem.coverUrl != newItem.coverUrl) {
-            payload.putString("group", newItem.coverUrl)
+            payload.putString("cover", newItem.coverUrl)
         }
         if (oldItem.kind != newItem.kind) {
-            payload.putString("enabled", newItem.kind)
+            payload.putString("kind", newItem.kind)
         }
         if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
-            payload.putString("enabled", newItem.latestChapterTitle)
+            payload.putString("last", newItem.latestChapterTitle)
         }
         if (oldItem.intro != newItem.intro) {
-            payload.putString("enabled", newItem.intro)
+            payload.putString("intro", newItem.intro)
         }
         return payload
     }

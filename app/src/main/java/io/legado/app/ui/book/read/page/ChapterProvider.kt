@@ -79,7 +79,7 @@ object ChapterProvider {
                 durY = joinBody(text, durY, textPages, pageLines, pageLengths, stringBuilder)
             }
         }
-        textPages.last().height = durY
+        textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
         if (pageLines.size < textPages.size) {
             pageLines.add(textPages.last().textLines.size)

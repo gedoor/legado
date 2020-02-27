@@ -141,7 +141,31 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
             }
-
+            searchBooks.sortWith(Comparator { o1, o2 ->
+                if (o1.name == searchKey && o2.name != searchKey) {
+                    1
+                } else if (o1.name != searchKey && o2.name == searchKey) {
+                    -1
+                } else if (o1.author == searchKey && o2.author != searchKey) {
+                    1
+                } else if (o1.author != searchKey && o2.author == searchKey) {
+                    -1
+                } else if (o1.name == o2.name) {
+                    when {
+                        o1.origins.size > o2.origins.size -> {
+                            1
+                        }
+                        o1.origins.size < o2.origins.size -> {
+                            -1
+                        }
+                        else -> {
+                            0
+                        }
+                    }
+                } else {
+                    0
+                }
+            })
             searchBooks = copyDataS
             searchBookLiveData.postValue(copyDataS)
         }
