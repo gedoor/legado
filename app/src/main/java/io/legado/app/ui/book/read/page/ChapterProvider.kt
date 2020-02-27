@@ -146,7 +146,7 @@ object ChapterProvider {
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
             textLine.text = words
-            val desiredWidth = layout.getLineMax(lineIndex)
+            val desiredWidth = layout.getLineWidth(lineIndex)
             if (lineIndex != layout.lineCount - 1) {
                 val gapCount: Int = words.length - 1
                 val d = (visibleWidth - desiredWidth) / gapCount
@@ -168,7 +168,7 @@ object ChapterProvider {
                 textLine.text = "$words\n"
                 stringBuilder.append("\n")
                 var x = if (ReadBookConfig.titleCenter)
-                    (visibleWidth - layout.getLineMax(lineIndex)) / 2
+                    (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
                 for (i in words.indices) {
                     val char = words[i].toString()
@@ -229,7 +229,7 @@ object ChapterProvider {
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
             textLine.text = words
-            val desiredWidth = layout.getLineMax(lineIndex)
+            val desiredWidth = layout.getLineWidth(lineIndex)
             if (lineIndex == 0 && layout.lineCount > 1) {
                 //第一行
                 var x = 0f
