@@ -85,8 +85,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     private fun precisionSearch(searchBooks: List<SearchBook>) {
         val books = arrayListOf<SearchBook>()
         searchBooks.forEach { searchBook ->
-            if (searchBook.name.equals(searchKey, true)
-                || searchBook.author.equals(searchKey, true)
+            if (searchBook.name.contains(searchKey, true)
+                || searchBook.author.contains(searchKey, true)
             ) books.add(searchBook)
         }
         App.db.searchBookDao().insert(*books.toTypedArray())
