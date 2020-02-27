@@ -13,6 +13,7 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.isActive
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -44,7 +45,6 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun newReadAloud(dataKey: String?, play: Boolean) {
         mediaPlayer.reset()
-        task?.cancel()
         playingIndex = -1
         super.newReadAloud(dataKey, play)
     }
@@ -62,6 +62,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun downloadAudio() {
+        task?.cancel()
         task = execute {
             FileUtils.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
@@ -83,6 +84,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                     break
                 }
             }
+        }.onError {
+            toast("下载朗读文件出错:${it.localizedMessage}")
         }
     }
 
