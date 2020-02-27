@@ -14,6 +14,7 @@ import io.legado.app.model.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
+import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
 
 class CheckSourceService : BaseService() {
@@ -68,6 +69,8 @@ class CheckSourceService : BaseService() {
                         }
                 }
             }
+        }.onError {
+            toast("校验书源出错:${it.localizedMessage}")
         }
 
         task?.invokeOnCompletion {
