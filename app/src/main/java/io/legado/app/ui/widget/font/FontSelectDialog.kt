@@ -89,17 +89,14 @@ class FontSelectDialog : BaseDialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_default -> {
-                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
-                cb?.let {
-                    val requireContext = requireContext()
-                    requireContext.alert(titleResource = R.string.system_typeface) {
-                        items(requireContext.resources.getStringArray(R.array.system_typefaces).toList()) { _, i ->
-                            AppConfig.systemTypefaces = i
-                            onDefaultFontChange(it)
-                        }
-                    }.show()
-                }
-                dismiss()
+                val requireContext = requireContext()
+                requireContext.alert(titleResource = R.string.system_typeface) {
+                    items(requireContext.resources.getStringArray(R.array.system_typefaces).toList()) { _, i ->
+                        AppConfig.systemTypefaces = i
+                        onDefaultFontChange()
+                        dismiss()
+                    }
+                }.show()
             }
             R.id.menu_other -> {
                 openFolder()
@@ -212,12 +209,9 @@ class FontSelectDialog : BaseDialogFragment(),
         launch(IO) {
             file.copyTo(FileUtils.createFileIfNotExist(fontFolder, file.name), true)
                 .absolutePath.let { path ->
-                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
-                cb?.let {
-                    if (it.curFontPath != path) {
-                        withContext(Main) {
-                            it.selectFile(path)
-                        }
+                if (callBack?.curFontPath != path) {
+                    withContext(Main) {
+                        callBack?.selectFile(path)
                     }
                 }
             }
@@ -226,9 +220,7 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     override fun curFilePath(): String {
-        return (parentFragment as? CallBack)?.curFontPath
-            ?: (activity as? CallBack)?.curFontPath
-            ?: ""
+        return callBack?.curFontPath ?: ""
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
@@ -263,13 +255,16 @@ class FontSelectDialog : BaseDialogFragment(),
         }
     }
 
-    private fun onDefaultFontChange(callBack: CallBack) {
+    private fun onDefaultFontChange() {
         if (curFilePath() == "") {
             postEvent(EventBus.UP_CONFIG, true)
         } else {
-            callBack.selectFile("")
+            callBack?.selectFile("")
         }
     }
+
+    private val callBack: CallBack?
+        get() = (parentFragment as? CallBack) ?: (activity as? CallBack)
 
     interface CallBack {
         fun selectFile(path: String)
