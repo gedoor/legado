@@ -58,7 +58,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         App.db.searchBookDao().insert(searchBook)
         if (screenKey.isEmpty()) {
             searchBooks.add(searchBook)
-        } else if (searchBook.originName.contains(screenKey)) {
+        } else if (searchBook.name.contains(screenKey)) {
             searchBooks.add(searchBook)
         }
         upAdapter()
