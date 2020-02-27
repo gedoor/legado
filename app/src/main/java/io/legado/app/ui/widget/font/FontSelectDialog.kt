@@ -209,7 +209,7 @@ class FontSelectDialog : BaseDialogFragment(),
         launch(IO) {
             file.copyTo(FileUtils.createFileIfNotExist(fontFolder, file.name), true)
                 .absolutePath.let { path ->
-                if (callBack?.curFontPath != path) {
+                if (curFilePath != path) {
                     withContext(Main) {
                         callBack?.selectFile(path)
                     }
@@ -217,10 +217,6 @@ class FontSelectDialog : BaseDialogFragment(),
             }
             dialog?.dismiss()
         }
-    }
-
-    override fun curFilePath(): String {
-        return callBack?.curFontPath ?: ""
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
@@ -256,12 +252,14 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     private fun onDefaultFontChange() {
-        if (curFilePath() == "") {
+        if (curFilePath == "") {
             postEvent(EventBus.UP_CONFIG, true)
         } else {
             callBack?.selectFile("")
         }
     }
+
+    override val curFilePath: String get() = callBack?.curFontPath ?: ""
 
     private val callBack: CallBack?
         get() = (parentFragment as? CallBack) ?: (activity as? CallBack)
