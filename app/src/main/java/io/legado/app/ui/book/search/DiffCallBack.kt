@@ -30,7 +30,7 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
-        if (oldItem.origins?.size != newItem.origins?.size) {
+        if (oldItem.origins.size != newItem.origins.size) {
             return false
         }
         if (oldItem.coverUrl != newItem.coverUrl) {
@@ -58,8 +58,8 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         if (oldItem.author != newItem.author) {
             payload.putString("author", newItem.author)
         }
-        if (oldItem.origins?.size != newItem.origins?.size) {
-            payload.putInt("origins", newItem.origins?.size ?: 1)
+        if (oldItem.origins.size != newItem.origins.size) {
+            payload.putInt("origins", newItem.origins.size)
         }
         if (oldItem.coverUrl != newItem.coverUrl) {
             payload.putString("group", newItem.coverUrl)

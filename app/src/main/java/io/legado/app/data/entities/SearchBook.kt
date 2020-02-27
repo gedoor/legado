@@ -78,16 +78,12 @@ data class SearchBook(
         variable = GSON.toJson(variableMap)
     }
 
-    @Ignore
+    @delegate:Ignore
     @IgnoredOnParcel
-    var origins: LinkedHashSet<String>? = null
-        private set
+    val origins: LinkedHashSet<String> by lazy { linkedSetOf(origin) }
 
     fun addOrigin(origin: String) {
-        if (origins == null) {
-            origins = linkedSetOf(this.origin)
-        }
-        origins?.add(origin)
+        origins.add(origin)
     }
 
     fun getDisplayLastChapterTitle(): String {
