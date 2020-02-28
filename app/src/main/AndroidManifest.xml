@@ -142,7 +142,6 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="booksource"
                     android:scheme="yuedu" />
@@ -152,7 +151,18 @@
         <activity android:name=".ui.rss.read.ReadRssActivity" />
         <activity android:name=".ui.importbook.ImportBookActivity" />
         <activity android:name=".ui.explore.ExploreShowActivity" />
-        <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
+        <activity android:name=".ui.rss.source.manage.RssSourceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="rsssource"
+                    android:scheme="yuedu" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
         <activity android:name=".ui.rss.article.RssArticlesActivity" />
         <activity android:name=".ui.rss.favorites.RssFavoritesActivity" />
