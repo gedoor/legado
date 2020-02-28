@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
@@ -87,13 +89,14 @@ class FontSelectDialog : BaseDialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_default -> {
-                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
-                cb?.let {
-                    if (it.curFontPath != "") {
-                        it.selectFile("")
+                val requireContext = requireContext()
+                requireContext.alert(titleResource = R.string.system_typeface) {
+                    items(requireContext.resources.getStringArray(R.array.system_typefaces).toList()) { _, i ->
+                        AppConfig.systemTypefaces = i
+                        onDefaultFontChange()
+                        dismiss()
                     }
-                }
-                dismiss()
+                }.show()
             }
             R.id.menu_other -> {
                 openFolder()
@@ -103,46 +106,48 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     private fun openFolder() {
-        alert {
-            titleResource = R.string.select_folder
-            items(resources.getStringArray(R.array.select_folder).toList()) { _, index ->
-                when (index) {
-                    0 -> {
-                        val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
-                        putPrefString(PreferKey.fontFolder, path)
-                        getFontFilesByPermission(path)
-                    }
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            startActivityForResult(intent, fontFolderRequestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                            requireContext().toast(e.localizedMessage ?: "ERROR")
+        launch(Main) {
+            alert {
+                titleResource = R.string.select_folder
+                items(resources.getStringArray(R.array.select_folder).toList()) { _, index ->
+                    when (index) {
+                        0 -> {
+                            val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
+                            putPrefString(PreferKey.fontFolder, path)
+                            getFontFilesByPermission(path)
+                        }
+                        1 -> {
+                            try {
+                                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                startActivityForResult(intent, fontFolderRequestCode)
+                            } catch (e: java.lang.Exception) {
+                                e.printStackTrace()
+                                requireContext().toast(e.localizedMessage ?: "ERROR")
+                            }
+                        }
+                        2 -> {
+                            PermissionsCompat.Builder(this@FontSelectDialog)
+                                .addPermissions(*Permissions.Group.STORAGE)
+                                .rationale(R.string.tip_perm_request_storage)
+                                .onGranted {
+                                    FileChooserDialog.show(
+                                        childFragmentManager,
+                                        fontFolderRequestCode,
+                                        mode = FileChooserDialog.DIRECTORY
+                                    )
+                                }
+                                .request()
                         }
                     }
-                    2 -> {
-                        PermissionsCompat.Builder(this@FontSelectDialog)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted {
-                                FileChooserDialog.show(
-                                    childFragmentManager,
-                                    fontFolderRequestCode,
-                                    mode = FileChooserDialog.DIRECTORY
-                                )
-                            }
-                            .request()
-                    }
                 }
-            }
-        }.show()
+            }.show()
+        }
     }
 
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(doc: DocumentFile) {
-        launch(IO) {
+        execute {
             val docItems = DocumentUtils.listFiles(App.INSTANCE, doc.uri)
             fontCacheFolder.listFiles()?.forEach { fontFile ->
                 var contain = false
@@ -177,6 +182,8 @@ class FontSelectDialog : BaseDialogFragment(),
             } catch (e: Exception) {
                 toast(e.localizedMessage ?: "")
             }
+        }.onError {
+            toast("getFontFiles:${it.localizedMessage}")
         }
     }
 
@@ -204,23 +211,14 @@ class FontSelectDialog : BaseDialogFragment(),
         launch(IO) {
             file.copyTo(FileUtils.createFileIfNotExist(fontFolder, file.name), true)
                 .absolutePath.let { path ->
-                val cb = (parentFragment as? CallBack) ?: (activity as? CallBack)
-                cb?.let {
-                    if (it.curFontPath != path) {
-                        withContext(Main) {
-                            it.selectFile(path)
-                        }
+                if (curFilePath != path) {
+                    withContext(Main) {
+                        callBack?.selectFile(path)
                     }
                 }
             }
             dialog?.dismiss()
         }
-    }
-
-    override fun curFilePath(): String {
-        return (parentFragment as? CallBack)?.curFontPath
-            ?: (activity as? CallBack)?.curFontPath
-            ?: ""
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
@@ -254,6 +252,19 @@ class FontSelectDialog : BaseDialogFragment(),
             }
         }
     }
+
+    private fun onDefaultFontChange() {
+        if (curFilePath == "") {
+            postEvent(EventBus.UP_CONFIG, true)
+        } else {
+            callBack?.selectFile("")
+        }
+    }
+
+    override val curFilePath: String get() = callBack?.curFontPath ?: ""
+
+    private val callBack: CallBack?
+        get() = (parentFragment as? CallBack) ?: (activity as? CallBack)
 
     interface CallBack {
         fun selectFile(path: String)

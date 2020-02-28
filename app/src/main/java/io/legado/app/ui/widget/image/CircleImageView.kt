@@ -24,7 +24,11 @@ import io.legado.app.utils.sp
 import kotlin.math.min
 import kotlin.math.pow
 
-class CircleImageView : AppCompatImageView {
+class CircleImageView(context: Context, attrs: AttributeSet) :
+    AppCompatImageView(
+        context,
+        attrs
+    ) {
 
     private val mDrawableRect = RectF()
     private val mBorderRect = RectF()
@@ -59,10 +63,9 @@ class CircleImageView : AppCompatImageView {
     private var mBorderOverlay: Boolean = false
     var isDisableCircularTransformation: Boolean = false
         set(disableCircularTransformation) {
-            if (isDisableCircularTransformation == disableCircularTransformation) {
+            if (field == disableCircularTransformation) {
                 return
             }
-
             field = disableCircularTransformation
             initializeBitmap()
         }
@@ -85,7 +88,6 @@ class CircleImageView : AppCompatImageView {
             if (circleBackgroundColor == mCircleBackgroundColor) {
                 return
             }
-
             mCircleBackgroundColor = circleBackgroundColor
             mCircleBackgroundPaint.color = circleBackgroundColor
             invalidate()
@@ -117,23 +119,14 @@ class CircleImageView : AppCompatImageView {
 
     private var textColor = context.getCompatColor(R.color.tv_text_default)
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    @JvmOverloads
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int = 0) : super(
-        context,
-        attrs,
-        defStyle
-    ) {
-
-        val a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0)
-
-        mBorderWidth = a.getDimensionPixelSize(
-            R.styleable.CircleImageView_civ_border_width,
-            DEFAULT_BORDER_WIDTH
-        )
+    init {
+        super.setScaleType(SCALE_TYPE)
+        val a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView)
+        mBorderWidth =
+            a.getDimensionPixelSize(
+                R.styleable.CircleImageView_civ_border_width,
+                DEFAULT_BORDER_WIDTH
+            )
         mBorderColor =
             a.getColor(R.styleable.CircleImageView_civ_border_color, DEFAULT_BORDER_COLOR)
         mBorderOverlay =
@@ -152,11 +145,6 @@ class CircleImageView : AppCompatImageView {
         }
         a.recycle()
 
-        init()
-    }
-
-    private fun init() {
-        super.setScaleType(SCALE_TYPE)
         mReady = true
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

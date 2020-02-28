@@ -14,6 +14,7 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.getPrefBoolean
@@ -92,8 +93,14 @@ class MoreConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                PreferKey.hideStatusBar -> postEvent(EventBus.UP_CONFIG, true)
-                PreferKey.hideNavigationBar -> postEvent(EventBus.UP_CONFIG, true)
+                PreferKey.hideStatusBar -> {
+                    ReadBookConfig.hideStatusBar = getPrefBoolean(PreferKey.hideStatusBar)
+                    postEvent(EventBus.UP_CONFIG, true)
+                }
+                PreferKey.hideNavigationBar -> {
+                    ReadBookConfig.hideNavigationBar = getPrefBoolean(PreferKey.hideNavigationBar)
+                    postEvent(EventBus.UP_CONFIG, true)
+                }
                 PreferKey.keepLight -> postEvent(key, true)
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
             }

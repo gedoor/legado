@@ -128,7 +128,7 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
          * @return 开发者处理了操作应该返回true，开发者没有处理就返回false
          */
         fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-            return false
+            return true
         }
 
         fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {

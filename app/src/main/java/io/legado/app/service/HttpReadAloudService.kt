@@ -5,16 +5,15 @@ import android.media.MediaPlayer
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -27,7 +26,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private val mediaPlayer = MediaPlayer()
     private lateinit var ttsFolder: String
-    private var job: Job? = null
+    private var task: Coroutine<*>? = null
     private var playingIndex = -1
 
     override fun onCreate() {
@@ -40,13 +39,12 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onDestroy() {
         super.onDestroy()
-        job?.cancel()
+        task?.cancel()
         mediaPlayer.release()
     }
 
     override fun newReadAloud(dataKey: String?, play: Boolean) {
         mediaPlayer.reset()
-        job?.cancel()
         playingIndex = -1
         super.newReadAloud(dataKey, play)
     }
@@ -64,7 +62,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun downloadAudio() {
-        job = launch(IO) {
+        task?.cancel()
+        task = execute {
             FileUtils.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
                 if (isActive) {
@@ -85,6 +84,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                     break
                 }
             }
+        }.onError {
+            toast("下载朗读文件出错:${it.localizedMessage}")
         }
     }
 
@@ -150,7 +151,7 @@ class HttpReadAloudService : BaseReadAloudService(),
      * 更新朗读速度
      */
     override fun upSpeechRate(reset: Boolean) {
-        job?.cancel()
+        task?.cancel()
         mediaPlayer.stop()
         playingIndex = -1
         downloadAudio()

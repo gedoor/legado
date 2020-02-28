@@ -1,24 +1,19 @@
 package io.legado.app.ui.book.read.page
 
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
 
 interface DataSource {
-    val isScrollDelegate: Boolean
 
-    val pageIndex: Int
+    val pageIndex: Int get() = ReadBook.durChapterPos()
 
-    fun setPageIndex(pageIndex: Int)
+    val currentChapter: TextChapter?
 
-    fun getChapterPosition(): Int
+    val nextChapter: TextChapter?
 
-    fun getCurrentChapter(): TextChapter?
-
-    fun getNextChapter(): TextChapter?
-
-    fun getPreviousChapter(): TextChapter?
+    val prevChapter: TextChapter?
 
     fun hasNextChapter(): Boolean
 
     fun hasPrevChapter(): Boolean
-
 }

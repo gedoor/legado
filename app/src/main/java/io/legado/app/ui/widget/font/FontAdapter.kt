@@ -20,7 +20,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
             tv_font.typeface = typeface
             tv_font.text = item.name
             this.onClick { callBack.onClick(item) }
-            if (item.name == callBack.curFilePath().substringAfterLast(File.separator)) {
+            if (item.name == callBack.curFilePath.substringAfterLast(File.separator)) {
                 iv_checked.visible()
             } else {
                 iv_checked.invisible()
@@ -38,6 +38,6 @@ class FontAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun onClick(file: File)
-        fun curFilePath(): String
+        val curFilePath: String
     }
 }

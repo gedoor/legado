@@ -16,10 +16,6 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return true
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
         if (oldItem.name != newItem.name) {
@@ -28,7 +24,13 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         if (oldItem.author != newItem.author) {
             return false
         }
-        if (oldItem.origins?.size != newItem.origins?.size) {
+        return true
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
+        if (oldItem.origins.size != newItem.origins.size) {
             return false
         }
         if (oldItem.coverUrl != newItem.coverUrl) {
@@ -56,20 +58,20 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         if (oldItem.author != newItem.author) {
             payload.putString("author", newItem.author)
         }
-        if (oldItem.origins?.size != newItem.origins?.size) {
-            payload.putInt("origins", newItem.origins?.size ?: 1)
+        if (oldItem.origins.size != newItem.origins.size) {
+            payload.putInt("origins", newItem.origins.size)
         }
         if (oldItem.coverUrl != newItem.coverUrl) {
-            payload.putString("group", newItem.coverUrl)
+            payload.putString("cover", newItem.coverUrl)
         }
         if (oldItem.kind != newItem.kind) {
-            payload.putString("enabled", newItem.kind)
+            payload.putString("kind", newItem.kind)
         }
         if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
-            payload.putString("enabled", newItem.latestChapterTitle)
+            payload.putString("last", newItem.latestChapterTitle)
         }
         if (oldItem.intro != newItem.intro) {
-            payload.putString("enabled", newItem.intro)
+            payload.putString("intro", newItem.intro)
         }
         return payload
     }

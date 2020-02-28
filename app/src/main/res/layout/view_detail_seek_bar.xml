@@ -15,9 +15,10 @@
         tools:ignore="HardcodedText" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_seek_remove"
+        android:id="@+id/iv_seek_reduce"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:contentDescription="@string/reduce"
         android:src="@drawable/ic_remove"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="@color/tv_text_default" />
@@ -31,9 +32,10 @@
         android:max="10" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_seek_add"
+        android:id="@+id/iv_seek_plus"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:contentDescription="@string/plus"
         android:src="@drawable/ic_add"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="@color/tv_text_default" />

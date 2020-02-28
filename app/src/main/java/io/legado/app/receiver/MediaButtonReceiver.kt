@@ -45,7 +45,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     }
                 }
             }
-            return false
+            return true
         }
 
         private fun readAloud(context: Context) {

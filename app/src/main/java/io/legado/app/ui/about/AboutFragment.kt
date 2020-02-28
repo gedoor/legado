@@ -11,6 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.toast
 
@@ -41,14 +42,14 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "contributors" -> openIntent(Intent.ACTION_VIEW, R.string.contributors_url)
+            "contributors" -> openUrl(R.string.contributors_url)
             "update_log" -> showUpdateLog()
-            "check_update" -> openIntent(Intent.ACTION_VIEW, R.string.latest_release_url)
-            "mail" -> openIntent(Intent.ACTION_SENDTO, "mailto:kunfei.ge@gmail.com")
-            "git" -> openIntent(Intent.ACTION_VIEW, R.string.this_github_url)
-            "home_page" -> openIntent(Intent.ACTION_VIEW, R.string.home_page_url)
-            "license" -> openIntent(Intent.ACTION_VIEW, licenseUrl)
-            "disclaimer" -> openIntent(Intent.ACTION_VIEW, disclaimerUrl)
+            "check_update" -> openUrl(R.string.latest_release_url)
+            "mail" -> sendMail()
+            "git" -> openUrl(R.string.this_github_url)
+            "home_page" -> openUrl(R.string.home_page_url)
+            "license" -> requireContext().openUrl(licenseUrl)
+            "disclaimer" -> requireContext().openUrl(disclaimerUrl)
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip("开源阅读软件")
         }
@@ -56,17 +57,17 @@ class AboutFragment : PreferenceFragmentCompat() {
     }
 
     @Suppress("SameParameterValue")
-    private fun openIntent(intentName: String, @StringRes addressID: Int) {
-        openIntent(intentName, getString(addressID))
+    private fun openUrl(@StringRes addressID: Int) {
+        requireContext().openUrl(getString(addressID))
     }
 
-    private fun openIntent(intentName: String, address: String) {
+    private fun sendMail() {
         try {
-            val intent = Intent(intentName)
-            intent.data = Uri.parse(address)
+            val intent = Intent(Intent.ACTION_SENDTO)
+            intent.data = Uri.parse("mailto:kunfei.ge@gmail.com")
             startActivity(intent)
         } catch (e: Exception) {
-            toast(R.string.can_not_open)
+            toast(e.localizedMessage ?: "Error")
         }
     }
 

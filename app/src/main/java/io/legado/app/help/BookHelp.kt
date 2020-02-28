@@ -237,8 +237,14 @@ object BookHelp {
     private var bookName: String? = null
     private var bookOrigin: String? = null
     private var replaceRules: List<ReplaceRule> = arrayListOf()
-    val bodyIndent
-        get() = "　".repeat(App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2))
+    var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
+        set(value) {
+            field = value
+            App.INSTANCE.putPrefInt(PreferKey.bodyIndent, value)
+            bodyIndent = "　".repeat(value)
+        }
+    var bodyIndent = "　".repeat(bodyIndentCount)
+
 
     fun disposeContent(
         title: String,
@@ -268,7 +274,9 @@ object BookHelp {
                 }
             }
         }
-        c = "$title\n$c"
+        if (!c.substringBefore("\n").contains(title)) {
+            c = "$title\n$c"
+        }
         when (AppConfig.chineseConverterType) {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
