@@ -237,8 +237,14 @@ object BookHelp {
     private var bookName: String? = null
     private var bookOrigin: String? = null
     private var replaceRules: List<ReplaceRule> = arrayListOf()
-    val bodyIndent
-        get() = "　".repeat(App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2))
+    var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
+        set(value) {
+            field = value
+            App.INSTANCE.putPrefInt(PreferKey.bodyIndent, value)
+            bodyIndent = "　".repeat(value)
+        }
+    var bodyIndent = "　".repeat(bodyIndentCount)
+
 
     fun disposeContent(
         title: String,
@@ -247,7 +253,6 @@ object BookHelp {
         content: String,
         enableReplace: Boolean
     ): String {
-        var c = content
         synchronized(this) {
             if (enableReplace && (bookName != name || bookOrigin != origin)) {
                 replaceRules = if (origin.isNullOrEmpty()) {
@@ -257,6 +262,7 @@ object BookHelp {
                 }
             }
         }
+        var c = content
         for (item in replaceRules) {
             item.pattern.let {
                 if (it.isNotEmpty()) {
@@ -268,8 +274,8 @@ object BookHelp {
                 }
             }
         }
-        if (!content.substringBefore("\n").contains(title)) {
-            c = title + "\n" + c
+        if (!c.substringBefore("\n").contains(title)) {
+            c = "$title\n$c"
         }
         when (AppConfig.chineseConverterType) {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)

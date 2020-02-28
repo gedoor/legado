@@ -16,6 +16,7 @@ object PreferKey {
     const val nextKey = "nextKeyCode"
     const val showRss = "showRss"
     const val bookshelfLayout = "bookshelfLayout"
+    const val bookshelfSort = "bookshelfSort"
     const val recordLog = "recordLog"
     const val processText = "process_text"
     const val cleanCache = "cleanCache"
@@ -36,4 +37,7 @@ object PreferKey {
     const val textSelectAble = "selectText"
     const val lastBackup = "lastBackup"
     const val bodyIndent = "textIndent"
+    const val shareLayout = "shareLayout"
+    const val readStyleSelect = "readStyleSelect"
+    const val systemTypefaces = "system_typefaces"
 }

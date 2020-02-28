@@ -6,19 +6,30 @@ import kotlin.math.abs
 
 abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
-    override fun onScroll(
-        e1: MotionEvent,
-        e2: MotionEvent,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean {
+    override fun onTouch(event: MotionEvent) {
+        when (event.action) {
+            MotionEvent.ACTION_MOVE -> {
+                if (isTextSelected) {
+                    selectText(event)
+                } else {
+                    onScroll(event)
+                }
+            }
+        }
+        super.onTouch(event)
+    }
+
+    private fun onScroll(event: MotionEvent) {
+        //判断是否移动了
         if (!isMoved) {
-            if (abs(distanceX) > abs(distanceY)) {
-                if (distanceX < 0) {
+            isMoved = abs(startX - event.x) > slop
+                    || abs(startX - event.x) > abs(startY - event.y)
+            if (isMoved) {
+                if (event.x - startX > 0) {
                     //如果上一页不存在
                     if (!hasPrev()) {
                         noNext = true
-                        return true
+                        return
                     }
                     setDirection(Direction.PREV)
                     setBitmap()
@@ -26,21 +37,19 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                     //如果不存在表示没有下一页了
                     if (!hasNext()) {
                         noNext = true
-                        return true
+                        return
                     }
                     setDirection(Direction.NEXT)
                     setBitmap()
                 }
-                isMoved = true
             }
         }
         if (isMoved) {
-            isCancel = if (mDirection == Direction.NEXT) distanceX < 0 else distanceX > 0
+            isCancel = if (mDirection == Direction.NEXT) touchX > lastX else touchX < lastX
             isRunning = true
             //设置触摸点
-            setTouchPoint(e2.x, e2.y)
+            setTouchPoint(event.x, event.y)
         }
-        return isMoved
     }
 
 }

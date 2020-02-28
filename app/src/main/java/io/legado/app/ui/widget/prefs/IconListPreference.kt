@@ -167,8 +167,14 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                     dialogIconNames?.let {
                         val resId = context.resources
                             .getIdentifier(it[index].toString(), "mipmap", context.packageName)
-                        val d = context.getCompatDrawable(resId)
-                        icon.setImageDrawable(d)
+                        val d = try {
+                            context.getCompatDrawable(resId)
+                        } catch (e: Exception) {
+                            null
+                        }
+                        d?.let {
+                            icon.setImageDrawable(d)
+                        }
                     }
                     label.isChecked = item.toString() == dialogValue
                     onClick {

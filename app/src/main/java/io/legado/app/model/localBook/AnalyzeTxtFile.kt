@@ -205,6 +205,9 @@ object AnalyzeTxtFile {
     }
 
     private fun getTocRule(book: Book, bookStream: RandomAccessFile, charset: Charset): Pattern? {
+        if (book.tocUrl.isNotEmpty()) {
+            return Pattern.compile(book.tocUrl, Pattern.MULTILINE)
+        }
         val tocRules = getTocRules()
         var rulePattern: Pattern? = null
         //首先获取128k的数据
@@ -227,13 +230,18 @@ object AnalyzeTxtFile {
     private fun getTocRules(): List<TxtTocRule> {
         val rules = App.db.txtTocRule().all
         if (rules.isEmpty()) {
-            App.INSTANCE.assets.open("txtTocRule.json").readBytes().let { byteArray ->
-                GSON.fromJsonArray<TxtTocRule>(String(byteArray))?.let {
-                    App.db.txtTocRule().insert(*it.toTypedArray())
-                    return it
-                }
-            }
+            return getDefaultRules()
         }
         return rules
+    }
+
+    fun getDefaultRules(): List<TxtTocRule> {
+        App.INSTANCE.assets.open("txtTocRule.json").readBytes().let { byteArray ->
+            GSON.fromJsonArray<TxtTocRule>(String(byteArray))?.let {
+                App.db.txtTocRule().insert(*it.toTypedArray())
+                return it
+            }
+        }
+        return emptyList()
     }
 }

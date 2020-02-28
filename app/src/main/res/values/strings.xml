@@ -47,12 +47,13 @@
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
-    <string name="layout_list">列表视图</string>
-    <string name="layout_grid3">网格视图三列</string>
-    <string name="layout_grid4">网格视图四列</string>
-    <string name="layout_grid5">网格视图五列</string>
-    <string name="layout_grid6">网格视图六列</string>
+    <string name="layout_list">列表</string>
+    <string name="layout_grid3">网格三列</string>
+    <string name="layout_grid4">网格四列</string>
+    <string name="layout_grid5">网格五列</string>
+    <string name="layout_grid6">网格六列</string>
     <string name="bookshelf_layout">书架布局</string>
+    <string name="view">视图</string>
     <string name="book_library">书城</string>
     <string name="book_local">添加本地</string>
     <string name="book_source">书源</string>
@@ -86,7 +87,7 @@
     <string name="download_offline_s">下载选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
-        \u3000\u3000这是一款开源的阅读软件，你可以fork我们的代码自己编译APK。欢迎提交代码帮助改善应用。\n\u3000\u3000公众号[开源阅读软件]！
+        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读软件]！
     </string>
     <string name="app_share_description">
         阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
@@ -226,11 +227,11 @@
     <string name="origin_show">来源:%s</string>
     <string name="import_replace_rule">本地导入</string>
     <string name="import_replace_rule_on_line">网络导入</string>
-    <string name="bookshelf_px">书架排序</string>
     <string name="check_update_interval">检查更新间隔</string>
-    <string name="bookshelf_px_0">按阅读时间排序</string>
-    <string name="bookshelf_px_1">按更新时间排序</string>
-    <string name="bookshelf_px_2">手动排序</string>
+    <string name="bookshelf_px_0">按阅读时间</string>
+    <string name="bookshelf_px_1">按更新时间</string>
+    <string name="bookshelf_px_2">按书名</string>
+    <string name="bookshelf_px_3">手动排序</string>
     <string name="read_type">阅读方式</string>
     <string name="del_select">删除所选</string>
     <string name="del_msg">是否确认删除?</string>
@@ -334,7 +335,7 @@
     <string name="pt_show_all_find">显示所有发现</string>
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
     <string name="update_toc">更新目录</string>
-    <string name="txt_chapter_regex">txt目录正则</string>
+    <string name="txt_toc_regex">Txt目录正则</string>
     <string name="set_charset">设置编码</string>
     <string name="swap_sort">倒序-顺序</string>
     <string name="sort">排序</string>
@@ -611,10 +612,21 @@
     <string name="chage_icon_error">图标为矢量图标,Android8.0以前不支持</string>
     <string name="aloud_config">朗读设置</string>
     <string name="main_activity">主界面</string>
-    <string name="selectText">选择文本</string>
+    <string name="selectText">长按选择文本</string>
     <string name="header">页眉</string>
     <string name="main_body">正文</string>
     <string name="footer">页角</string>
     <string name="select_end">文本选择结束位置</string>
     <string name="select_start">文本选择开始位置</string>
+    <string name="share_layout">共用布局</string>
+    <string name="title_center">标题居中</string>
+    <string name="browser">浏览器</string>
+    <string name="import_default_rule">导入默认规则</string>
+    <string name="name">名称</string>
+    <string name="regex">正则</string>
+    <string name="more_menu">更多菜单</string>
+    <string name="reduce">减</string>
+    <string name="plus">加</string>
+    <string name="other_aloud_setting">其它朗读设置</string>
+    <string name="system_typeface">系统内置字体样式</string>
 </resources>

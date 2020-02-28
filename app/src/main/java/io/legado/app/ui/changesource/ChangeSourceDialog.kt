@@ -18,8 +18,8 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getVerticalDivider
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.dialog_change_source.*
@@ -92,7 +92,7 @@ class ChangeSourceDialog : DialogFragment(),
     private fun initRecyclerView() {
         adapter = ChangeSourceAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {

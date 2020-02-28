@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity
@@ -19,22 +20,25 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.RssSource
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.shareWithQr
 import kotlinx.android.synthetic.main.activity_rss_source_edit.*
-import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import kotlin.math.abs
 
 class RssSourceEditActivity :
     VMBaseActivity<RssSourceEditViewModel>(R.layout.activity_rss_source_edit, false),
+    ViewTreeObserver.OnGlobalLayoutListener,
     KeyboardToolPop.CallBack {
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
-
+    private val qrRequestCode = 101
     private val adapter = RssSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
 
@@ -99,9 +103,10 @@ class RssSourceEditActivity :
                     clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
                 }
             }
+            R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_share_str -> GSON.toJson(getRssSource())?.let { sourceStr ->
-                shareText(getString(R.string.share_rss_source), sourceStr)
+                share(sourceStr)
             }
             R.id.menu_share_qr -> GSON.toJson(getRssSource())?.let { sourceStr ->
                 shareWithQr(getString(R.string.share_rss_source), sourceStr)
@@ -113,7 +118,7 @@ class RssSourceEditActivity :
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
-        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
+        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
     }
@@ -192,37 +197,46 @@ class RssSourceEditActivity :
     }
 
     private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.isShowing?.let { if (it) return }
-        if (!isFinishing) {
-            mSoftKeyboardTool?.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
-        }
-    }
-
-    private fun closePopupWindow() {
         mSoftKeyboardTool?.let {
-            if (it.isShowing) {
-                it.dismiss()
+            if (it.isShowing) return
+            if (!isFinishing) {
+                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
             }
         }
     }
 
-    private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {
-        override fun onGlobalLayout() {
-            val rect = Rect()
-            // 获取当前页面窗口的显示范围
-            window.decorView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = this@RssSourceEditActivity.displayMetrics.heightPixels
-            val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
-            val preShowing = mIsSoftKeyBoardShowing
-            if (abs(keyboardHeight) > screenHeight / 5) {
-                mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-                recycler_view.setPadding(0, 0, 0, 100)
-                showKeyboardTopPopupWindow()
-            } else {
-                mIsSoftKeyBoardShowing = false
-                recycler_view.setPadding(0, 0, 0, 0)
-                if (preShowing) {
-                    closePopupWindow()
+    private fun closePopupWindow() {
+        mSoftKeyboardTool?.dismiss()
+    }
+
+    override fun onGlobalLayout() {
+        val rect = Rect()
+        // 获取当前页面窗口的显示范围
+        window.decorView.getWindowVisibleDisplayFrame(rect)
+        val screenHeight = this@RssSourceEditActivity.displayMetrics.heightPixels
+        val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
+        val preShowing = mIsSoftKeyBoardShowing
+        if (abs(keyboardHeight) > screenHeight / 5) {
+            mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
+            recycler_view.setPadding(0, 0, 0, 100)
+            showKeyboardTopPopupWindow()
+        } else {
+            mIsSoftKeyBoardShowing = false
+            recycler_view.setPadding(0, 0, 0, 0)
+            if (preShowing) {
+                closePopupWindow()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            qrRequestCode -> if (resultCode == RESULT_OK) {
+                data?.getStringExtra("result")?.let {
+                    viewModel.importSource(it) { source: RssSource ->
+                        upRecyclerView(source)
+                    }
                 }
             }
         }

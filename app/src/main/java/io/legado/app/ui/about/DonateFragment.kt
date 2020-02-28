@@ -1,7 +1,5 @@
 package io.legado.app.ui.about
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -11,7 +9,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.utils.ACache
-import io.legado.app.utils.toast
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.sendToClip
 import org.jetbrains.anko.longToast
 import java.net.URLEncoder
 
@@ -33,40 +32,19 @@ class DonateFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "wxZsm" -> openIntent(Intent.ACTION_VIEW, wxZsRwmUrl)
-            "zfbHbRwm" -> openIntent(Intent.ACTION_VIEW, zfbHbRwmUrl)
-            "zfbSkRwm" -> openIntent(Intent.ACTION_VIEW, zfbSkRwmUrl)
-            "qqSkRwm" -> openIntent(Intent.ACTION_VIEW, qqSkRwmUrl)
+            "wxZsm" -> requireContext().openUrl(wxZsRwmUrl)
+            "zfbHbRwm" -> requireContext().openUrl(zfbHbRwmUrl)
+            "zfbSkRwm" -> requireContext().openUrl(zfbSkRwmUrl)
+            "qqSkRwm" -> requireContext().openUrl(qqSkRwmUrl)
             "zfbSk" -> aliDonate(requireContext())
             "zfbHbSsm" -> getZfbHb(requireContext())
-            "gzGzh" -> sendToClip("开源阅读软件")
+            "gzGzh" -> requireContext().sendToClip("开源阅读软件")
         }
         return super.onPreferenceTreeClick(preference)
     }
 
-    @Suppress("SameParameterValue")
-    private fun openIntent(intentName: String, address: String) {
-        try {
-            val intent = Intent(intentName)
-            intent.data = Uri.parse(address)
-            startActivity(intent)
-        } catch (e: Exception) {
-            toast(R.string.can_not_open)
-        }
-    }
-
-    private fun sendToClip(text: String) {
-        val clipboard =
-            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-        val clipData = ClipData.newPlainText(null, text)
-        clipboard?.let {
-            clipboard.setPrimaryClip(clipData)
-            toast(R.string.copy_complete)
-        }
-    }
-
     private fun getZfbHb(context: Context) {
-        sendToClip("537954522")
+        requireContext().sendToClip("537954522")
         context.longToast("高级功能已开启\n红包码已复制\n支付宝首页搜索“537954522” 立即领红包")
         try {
             val packageManager = context.applicationContext.packageManager

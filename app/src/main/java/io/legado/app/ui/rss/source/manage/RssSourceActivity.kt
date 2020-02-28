@@ -29,6 +29,7 @@ import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source.*
@@ -49,13 +50,14 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         get() = getViewModel(RssSourceViewModel::class.java)
     private val importRecordKey = "rssSourceRecordKey"
     private val qrRequestCode = 101
-    private val importSource = 13141
+    private val importSource = 124
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initUriScheme()
         initRecyclerView()
         initSearchView()
         initLiveDataGroup()
@@ -101,10 +103,26 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         return true
     }
 
+    private fun initUriScheme() {
+        intent.data?.let {
+            when (it.path) {
+                "/importonline" -> it.getQueryParameter("src")?.let { url ->
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    viewModel.importSource(url) { msg ->
+                        title_bar.snackbar(msg)
+                    }
+                }
+                else -> {
+                    toast("格式不对")
+                }
+            }
+        }
+    }
+
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = RssSourceAdapter(this, this)
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()

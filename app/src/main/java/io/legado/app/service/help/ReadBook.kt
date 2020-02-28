@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.toast
 
 
 object ReadBook {
@@ -25,10 +26,10 @@ object ReadBook {
     var book: Book? = null
     var inBookshelf = false
     var chapterSize = 0
-    var callBack: CallBack? = null
     var durChapterIndex = 0
     var durPageIndex = 0
     var isLocalBook = true
+    var callBack: CallBack? = null
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
@@ -126,7 +127,13 @@ object ReadBook {
         saveRead()
     }
 
-    fun curPageChanged() {
+    fun setPageIndex(pageIndex: Int) {
+        durPageIndex = pageIndex
+        saveRead()
+        curPageChanged()
+    }
+
+    private fun curPageChanged() {
         callBack?.upPageProgress()
         if (BaseReadAloudService.isRun) {
             readAloud(!BaseReadAloudService.pause)
@@ -283,6 +290,9 @@ object ReadBook {
                     }
                 }
             }
+        }.onError {
+            it.printStackTrace()
+            App.INSTANCE.toast(it.localizedMessage ?: "ChapterProvider ERROR")
         }
     }
 
@@ -302,7 +312,7 @@ object ReadBook {
     }
 
     interface CallBack {
-        fun upContent(position: Int = 0)
+        fun upContent(relativePosition: Int = 0)
         fun upView()
         fun upPageProgress()
         fun contentLoadFinish()

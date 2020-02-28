@@ -31,6 +31,7 @@ object BookChapterList {
                 App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
             )
             Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+            val analyzeRule = AnalyzeRule(book)
             val tocRule = bookSource.getTocRule()
             val nextUrlList = arrayListOf(baseUrl)
             var reverse = false
@@ -43,7 +44,10 @@ object BookChapterList {
                 listRule = listRule.substring(1)
             }
             var chapterData =
-                analyzeChapterList(body, baseUrl, tocRule, listRule, book, bookSource, log = true)
+                analyzeChapterList(
+                    analyzeRule.setContent(body, baseUrl),
+                    book.bookUrl, baseUrl, tocRule, listRule, bookSource, log = true
+                )
             chapterData.chapterList?.let {
                 chapterList.addAll(it)
             }
@@ -63,8 +67,8 @@ object BookChapterList {
                             ).getResponseAwait()
                                 .body?.let { nextBody ->
                                 chapterData = analyzeChapterList(
-                                    nextBody, nextUrl, tocRule, listRule,
-                                    book, bookSource, log = false
+                                    analyzeRule.setContent(nextBody, nextUrl),
+                                    book.bookUrl, nextUrl, tocRule, listRule, bookSource
                                 )
                                 nextUrl = if (chapterData.nextUrl.isNotEmpty()) {
                                     chapterData.nextUrl[0]
@@ -98,7 +102,9 @@ object BookChapterList {
                                 headerMapF = bookSource.getHeaderMap()
                             ).getResponseAwait().body
                             val nextChapterData = analyzeChapterList(
-                                nextBody, item.nextUrl, tocRule, listRule, book, bookSource
+                                analyzeRule.setContent(nextBody, item.nextUrl),
+                                book.bookUrl, item.nextUrl, tocRule, listRule, bookSource,
+                                false
                             )
                             synchronized(chapterDataList) {
                                 val isFinished = addChapterListIsFinish(
@@ -167,19 +173,17 @@ object BookChapterList {
     }
 
     private fun analyzeChapterList(
-        body: String?,
+        analyzeRule: AnalyzeRule,
+        bookUrl: String,
         baseUrl: String,
         tocRule: TocRule,
         listRule: String,
-        book: Book,
         bookSource: BookSource,
         getNextUrl: Boolean = true,
         log: Boolean = false
     ): ChapterData<List<String>> {
         val chapterList = arrayListOf<BookChapter>()
         val nextUrlList = arrayListOf<String>()
-        val analyzeRule = AnalyzeRule(book)
-        analyzeRule.setContent(body, baseUrl)
         val nextTocRule = tocRule.nextTocUrl
         if (getNextUrl && !nextTocRule.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "┌获取目录下一页列表", log)
@@ -208,7 +212,7 @@ object BookChapterList {
             var isVip: String?
             for (item in elements) {
                 analyzeRule.setContent(item)
-                val bookChapter = BookChapter(bookUrl = book.bookUrl)
+                val bookChapter = BookChapter(bookUrl = bookUrl)
                 analyzeRule.chapter = bookChapter
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule, true)

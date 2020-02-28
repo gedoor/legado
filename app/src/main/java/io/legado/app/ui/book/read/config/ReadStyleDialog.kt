@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.ImageLoader
+import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
@@ -19,7 +19,10 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.getIndexById
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.putPrefString
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -27,6 +30,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
+
+    val callBack = activity as? ReadBookActivity
 
     override fun onStart() {
         super.onStart()
@@ -76,7 +81,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun initData() {
-        requireContext().getPrefInt(PreferKey.pageAnim).let {
+        cb_share_layout.isChecked = ReadBookConfig.shareLayout
+        ReadBookConfig.pageAnim.let {
             if (it >= 0 && it < rg_page_anim.childCount) {
                 rg_page_anim.check(rg_page_anim[it].id)
             }
@@ -90,8 +96,15 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         chinese_converter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
+        tv_title_center.onClick {
+            ReadBookConfig.apply {
+                titleCenter = !titleCenter
+                tv_title_center.isSelected = titleCenter
+            }
+            postEvent(EventBus.UP_CONFIG, true)
+        }
         tv_text_bold.onClick {
-            ReadBookConfig.durConfig.apply {
+            ReadBookConfig.apply {
                 textBold = !textBold
                 tv_text_bold.isSelected = textBold
             }
@@ -105,43 +118,41 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
-                putPrefInt(PreferKey.bodyIndent, index)
+                BookHelp.bodyIndentCount = index
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         tv_padding.onClick {
-            val activity = activity
             dismiss()
-            if (activity is ReadBookActivity) {
-                activity.showPaddingConfig()
-            }
+            callBack?.showPaddingConfig()
         }
         dsb_text_size.onChanged = {
-            ReadBookConfig.durConfig.textSize = it + 5
+            ReadBookConfig.textSize = it + 5
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_text_letter_spacing.onChanged = {
-            ReadBookConfig.durConfig.letterSpacing = (it - 50) / 100f
+            ReadBookConfig.letterSpacing = (it - 50) / 100f
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_line_size.onChanged = {
-            ReadBookConfig.durConfig.lineSpacingExtra = it
+            ReadBookConfig.lineSpacingExtra = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_paragraph_spacing.onChanged = {
-            ReadBookConfig.durConfig.paragraphSpacing = it
+            ReadBookConfig.paragraphSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
-            for (i in 0 until rg_page_anim.childCount) {
-                if (checkedId == rg_page_anim[i].id) {
-                    requireContext().putPrefInt(PreferKey.pageAnim, i)
-                    val activity = activity
-                    if (activity is ReadBookActivity) {
-                        activity.page_view.upPageAnim(i)
-                    }
-                    break
-                }
+            rg_page_anim.getIndexById(checkedId).let {
+                ReadBookConfig.pageAnim = it
+                callBack?.page_view?.upPageAnim()
+            }
+        }
+        cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
+            if (checkBox.isPressed) {
+                ReadBookConfig.shareLayout = isChecked
+                upStyle()
+                postEvent(EventBus.UP_CONFIG, true)
             }
         }
         bg0.onClick { changeBg(0) }
@@ -169,15 +180,13 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     private fun showBgTextConfig(index: Int): Boolean {
         dismiss()
         changeBg(index)
-        val activity = activity
-        if (activity is ReadBookActivity) {
-            activity.showBgTextConfig()
-        }
+        callBack?.showBgTextConfig()
         return true
     }
 
     private fun upStyle() {
-        ReadBookConfig.durConfig.let {
+        ReadBookConfig.let {
+            tv_title_center.isSelected = it.titleCenter
             tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
@@ -200,12 +209,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 4 -> bg4
                 else -> bg0
             }
-            ReadBookConfig.getConfig(i).apply {
-                when (bgType()) {
-                    2 -> ImageLoader.load(requireContext(), bgStr()).centerCrop().into(iv)
-                    else -> iv.setImageDrawable(bgDrawable(100, 150))
-                }
-            }
+            iv.setImageDrawable(ReadBookConfig.getConfig(i).bgDrawable(100, 150))
         }
     }
 

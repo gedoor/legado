@@ -28,6 +28,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
@@ -54,6 +55,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private var dataInit = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initUriScheme()
         initRecyclerView()
         initSearchView()
         initSelectActionView()
@@ -72,12 +74,28 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         return super.onPrepareOptionsMenu(menu)
     }
 
+    private fun initUriScheme() {
+        intent.data?.let {
+            when (it.path) {
+                "/importonline" -> it.getQueryParameter("src")?.let { url ->
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    viewModel.importSource(url) { msg ->
+                        title_bar.snackbar(msg)
+                    }
+                }
+                else -> {
+                    toast("格式不对")
+                }
+            }
+        }
+    }
+
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ReplaceRuleAdapter(this, this)
         recycler_view.adapter = adapter
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(this))
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
@@ -306,9 +324,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     override fun edit(rule: ReplaceRule) {
-        ReplaceEditDialog
-            .newInstance(rule.id)
-            .show(supportFragmentManager, "editReplace")
+        ReplaceEditDialog.show(supportFragmentManager, rule.id)
     }
 
     override fun toTop(rule: ReplaceRule) {

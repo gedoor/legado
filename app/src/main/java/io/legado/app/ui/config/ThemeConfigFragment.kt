@@ -141,6 +141,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                             AppConfig.isNightTheme = true
                         }
                     }
+                    putPrefInt("defaultTheme", which)
                     App.INSTANCE.applyDayNight()
                     recreateActivities()
                 }

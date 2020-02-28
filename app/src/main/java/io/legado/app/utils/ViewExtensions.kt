@@ -7,8 +7,10 @@ import android.os.Build
 import android.view.View
 import android.view.View.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.RadioGroup
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
 import io.legado.app.App
 
 
@@ -50,10 +52,10 @@ fun View.visible() {
 }
 
 fun View.visible(visible: Boolean) {
-    visibility = if (visible) {
-        VISIBLE
-    } else {
-        INVISIBLE
+    if (visible && visibility != VISIBLE) {
+        visibility = VISIBLE
+    } else if (!visible && visibility == VISIBLE) {
+        visibility = INVISIBLE
     }
 }
 
@@ -69,4 +71,26 @@ fun View.screenshot(): Bitmap? {
 
 fun SeekBar.progressAdd(int: Int) {
     progress += int
+}
+
+fun RadioGroup.getIndexById(id: Int): Int {
+    for (i in 0 until this.childCount) {
+        if (id == get(i).id) {
+            return i
+        }
+    }
+    return 0
+}
+
+fun RadioGroup.getCheckedIndex(): Int {
+    for (i in 0 until this.childCount) {
+        if (checkedRadioButtonId == get(i).id) {
+            return i
+        }
+    }
+    return 0
+}
+
+fun RadioGroup.checkByIndex(index: Int) {
+    check(get(index).id)
 }
