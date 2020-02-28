@@ -34,7 +34,7 @@ object ReadBookConfig {
     var shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
         set(value) {
             field = value
-            App.INSTANCE.putPrefBoolean(PreferKey.shareLayout)
+            App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
         }
     var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
         set(value) {
