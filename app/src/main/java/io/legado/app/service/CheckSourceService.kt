@@ -21,8 +21,8 @@ class CheckSourceService : BaseService() {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
-    private var idsCount = 0
-    private val unCheckIds = LinkedHashSet<String>()
+    private val allIds = LinkedHashSet<String>()
+    private val checkedIds = LinkedHashSet<String>()
 
     override fun onCreate() {
         super.onCreate()
@@ -47,12 +47,12 @@ class CheckSourceService : BaseService() {
 
     private fun check(ids: List<String>) {
         task?.cancel()
-        unCheckIds.clear()
-        idsCount = ids.size
-        unCheckIds.addAll(ids)
-        updateNotification(0, getString(R.string.progress_show, 0, idsCount))
-        task = execute {
-            unCheckIds.forEach { sourceUrl ->
+        allIds.clear()
+        checkedIds.clear()
+        allIds.addAll(ids)
+        updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
+        task = execute(context = searchPool) {
+            allIds.forEach { sourceUrl ->
                 App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
                     val webBook = WebBook(source)
                     webBook.searchBook("我的", scope = this, context = searchPool)
@@ -60,11 +60,10 @@ class CheckSourceService : BaseService() {
                             source.addGroup("失效")
                             App.db.bookSourceDao().update(source)
                         }.onFinally {
-                            unCheckIds.remove(sourceUrl)
-                            val checkedCount = idsCount - unCheckIds.size
+                            checkedIds.add(sourceUrl)
                             updateNotification(
-                                checkedCount,
-                                getString(R.string.progress_show, checkedCount, idsCount)
+                                checkedIds.size,
+                                getString(R.string.progress_show, checkedIds.size, allIds.size)
                             )
                         }
                 }
@@ -95,7 +94,7 @@ class CheckSourceService : BaseService() {
                 getString(R.string.cancel),
                 IntentHelp.servicePendingIntent<CheckSourceService>(this, IntentAction.stop)
             )
-        builder.setProgress(idsCount, state, false)
+        builder.setProgress(allIds.size, state, false)
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(112202, notification)
