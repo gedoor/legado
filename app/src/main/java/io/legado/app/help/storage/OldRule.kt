@@ -100,15 +100,22 @@ object OldRule {
         if (oldRule.isNullOrBlank()) return null
         var newRule = oldRule
         var reverse = false
+        var allinone = false
         if (oldRule.startsWith("-")) {
             reverse = true
             newRule = oldRule.substring(1)
+        }
+        if (newRule.startsWith("+")) {
+            allinone = true
+            newRule = newRule.substring(1)
         }
         if (!newRule.startsWith("@CSS:", true) &&
             !newRule.startsWith("@XPath:", true) &&
             !newRule.startsWith("//") &&
             !newRule.startsWith("##") &&
-            !newRule.startsWith(":")
+            !newRule.startsWith(":") &&
+            !newRule.contains("@js:",true) &&
+            !newRule.contains("<js>",true)
         ) {
             if (newRule.contains("#") && !newRule.contains("##")) {
                 newRule = oldRule.replace("#", "##")
@@ -134,8 +141,11 @@ object OldRule {
                 newRule = newRule.replace("&", "&&")
             }
         }
+        if (allinone) {
+            newRule = "+" + newRule
+        }
         if (reverse) {
-            newRule += "-"
+            newRule = "-" + newRule
         }
         return newRule
     }
@@ -145,7 +155,7 @@ object OldRule {
         if (!oldUrls.contains("\n") && !oldUrls.contains("&&"))
             return toNewUrl(oldUrls)
 
-        val urls = oldUrls.split("(&&|\n)+".toRegex())
+        val urls = oldUrls.split("(&&|\r?\n)+".toRegex())
         return urls.map {
             toNewUrl(it)?.replace("\n\\s*".toRegex(), "")
         }.joinToString("\n")

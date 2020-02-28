@@ -22,7 +22,7 @@ object AppConst {
     const val UA_NAME = "User-Agent"
 
     val userAgent: String by lazy {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
     }
 
     val SCRIPT_ENGINE: ScriptEngine by lazy {
