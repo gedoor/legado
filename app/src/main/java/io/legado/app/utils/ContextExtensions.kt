@@ -133,6 +133,9 @@ fun Context.sendToClip(text: String) {
     }
 }
 
+/**
+ * 系统是否暗色主题
+ */
 fun Context.sysIsDarkMode(): Boolean {
     val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
     return mode == Configuration.UI_MODE_NIGHT_YES
