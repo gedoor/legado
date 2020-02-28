@@ -169,7 +169,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                         changed = true
                     }
                     if (bookshelfSort != rg_sort.getCheckedIndex()) {
-                        putPrefInt(PreferKey.bookshelfLayout, rg_sort.getCheckedIndex())
+                        putPrefInt(PreferKey.bookshelfSort, rg_sort.getCheckedIndex())
                         changed = true
                     }
                     if (changed) {
