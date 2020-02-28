@@ -132,7 +132,6 @@
         <activity
             android:name=".ui.about.DonateActivity"
             android:launchMode="singleTask" />
-
         <!--书源管理-->
         <activity android:name=".ui.book.source.manage.BookSourceActivity">
             <intent-filter>
