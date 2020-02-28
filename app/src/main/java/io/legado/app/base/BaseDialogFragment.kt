@@ -2,6 +2,7 @@ package io.legado.app.base
 
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,5 +21,13 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    fun <T> execute(
+        scope: CoroutineScope = this,
+        context: CoroutineContext = Dispatchers.IO,
+        block: suspend CoroutineScope.() -> T
+    ): Coroutine<T> {
+        return Coroutine.async(scope, context) { block() }
     }
 }

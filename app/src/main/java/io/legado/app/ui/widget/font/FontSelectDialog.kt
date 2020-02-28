@@ -147,7 +147,7 @@ class FontSelectDialog : BaseDialogFragment(),
 
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(doc: DocumentFile) {
-        launch(IO) {
+        execute {
             val docItems = DocumentUtils.listFiles(App.INSTANCE, doc.uri)
             fontCacheFolder.listFiles()?.forEach { fontFile ->
                 var contain = false
@@ -182,6 +182,8 @@ class FontSelectDialog : BaseDialogFragment(),
             } catch (e: Exception) {
                 toast(e.localizedMessage ?: "")
             }
+        }.onError {
+            toast("getFontFiles:${it.localizedMessage}")
         }
     }
 
