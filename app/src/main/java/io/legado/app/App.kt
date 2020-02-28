@@ -65,7 +65,9 @@ class App : Application() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        initNightMode()
+        when (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES, Configuration.UI_MODE_NIGHT_NO -> initNightMode()
+        }
     }
 
     /**
