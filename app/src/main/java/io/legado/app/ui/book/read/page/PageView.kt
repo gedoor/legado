@@ -132,11 +132,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    fun upSelectAble(selectAble: Boolean) {
-        pageDelegate?.upSelectAble(selectAble)
-        curPage.upSelectAble(selectAble)
-    }
-
     fun upStyle() {
         ChapterProvider.upStyle()
         curPage.upStyle()

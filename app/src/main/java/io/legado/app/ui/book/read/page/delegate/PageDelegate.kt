@@ -101,10 +101,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         onScroll()
     }
 
-    fun upSelectAble(selectAble: Boolean) {
-        detector.setIsLongpressEnabled(selectAble)
-    }
-
     open fun fling(
         startX: Int, startY: Int, velocityX: Int, velocityY: Int,
         minX: Int, maxX: Int, minY: Int, maxY: Int

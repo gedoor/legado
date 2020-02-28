@@ -197,6 +197,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         y: Float,
         select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit
     ) {
+        if (!selectAble) return
         if (!visibleRect.contains(x, y)) return
         var relativeOffset = relativeOffset(0)
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {

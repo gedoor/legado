@@ -691,7 +691,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             upScreenTimeOut()
         }
         observeEvent<Boolean>(PreferKey.textSelectAble) {
-            page_view.upSelectAble(it)
+            page_view.curPage.upSelectAble(it)
         }
     }
 
