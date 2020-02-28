@@ -14,4 +14,15 @@ data class TextLine(
         textChars.add(TextChar(charData, start = start, end = end))
     }
 
+    fun getTextCharAt(index: Int): TextChar {
+        return textChars[index]
+    }
+
+    fun getTextCharReverseAt(index: Int): TextChar {
+        return textChars[textChars.lastIndex - index]
+    }
+
+    fun getTextCharsCount(): Int {
+        return textChars.size
+    }
 }

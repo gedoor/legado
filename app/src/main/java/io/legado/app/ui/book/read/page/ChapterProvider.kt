@@ -265,6 +265,7 @@ object ChapterProvider {
             )
             x = x1
         }
+        exceed(textLine, words)
     }
 
     /**
@@ -291,8 +292,25 @@ object ChapterProvider {
             )
             x = x1
         }
+        exceed(textLine, words)
     }
 
+    /**
+     * 超出边界处理
+     */
+    private fun exceed(textLine: TextLine, words: String) {
+        val endX = textLine.textChars.last().end
+        if (endX > visibleRight) {
+            val cc = (endX - visibleRight) / words.length
+            for (i in 0..words.lastIndex) {
+                textLine.getTextCharReverseAt(i).let {
+                    val py = cc * (words.length - i)
+                    it.start = it.start - py
+                    it.end = it.end - py
+                }
+            }
+        }
+    }
 
     /**
      * 更新样式
