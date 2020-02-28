@@ -149,8 +149,12 @@ val Context.sysBattery: Int
 }
 
 fun Context.openUrl(url: String) {
+    openUrl(Uri.parse(url))
+}
+
+fun Context.openUrl(uri: Uri) {
     val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse(url)
+    intent.data = uri
     if (intent.resolveActivity(packageManager) != null) {
         try {
             startActivity(intent)

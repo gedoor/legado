@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
+import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
 import io.legado.app.R
@@ -14,6 +16,7 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.openUrl
 import kotlinx.android.synthetic.main.activity_rss_read.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
@@ -62,7 +65,20 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun initWebView() {
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
+                if (request?.url?.scheme == "http" || request?.url?.scheme == "https") {
+                    return false
+                }
+                request?.url?.let {
+                    openUrl(it)
+                }
+                return true
+            }
+        }
         webView.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
