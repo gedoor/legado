@@ -2,6 +2,7 @@ package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,7 +18,10 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
@@ -27,6 +31,7 @@ import io.legado.app.ui.download.DownloadActivity
 import io.legado.app.ui.importbook.ImportBookActivity
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
+import kotlinx.android.synthetic.main.dialog_bookshelf_config.view.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
@@ -61,7 +66,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
-            R.id.menu_bookshelf_layout -> selectBookshelfLayout()
+            R.id.menu_bookshelf_layout -> configBookshelf()
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(childFragmentManager, "groupManageDialog")
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
@@ -145,14 +150,35 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }
     }
 
-    private fun selectBookshelfLayout() {
-        selector(
-            title = "选择书架布局",
-            items = resources.getStringArray(R.array.bookshelf_layout).toList()
-        ) { _, index ->
-            putPrefInt(PreferKey.bookshelfLayout, index)
-            activity?.recreate()
-        }
+    @SuppressLint("InflateParams")
+    private fun configBookshelf() {
+        requireContext().alert(titleResource = R.string.bookshelf_layout) {
+            val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
+            val bookshelfSort = getPrefInt(PreferKey.bookshelfSort)
+            val root = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_bookshelf_config, null).apply {
+                    rg_layout.checkByIndex(bookshelfLayout)
+                    rg_sort.checkByIndex(bookshelfSort)
+                }
+            customView = root
+            okButton {
+                root.apply {
+                    var changed = false
+                    if (bookshelfLayout != rg_layout.getCheckedIndex()) {
+                        putPrefInt(PreferKey.bookshelfLayout, rg_layout.getCheckedIndex())
+                        changed = true
+                    }
+                    if (bookshelfSort != rg_sort.getCheckedIndex()) {
+                        putPrefInt(PreferKey.bookshelfLayout, rg_sort.getCheckedIndex())
+                        changed = true
+                    }
+                    if (changed) {
+                        activity?.recreate()
+                    }
+                }
+            }
+            noButton()
+        }.show().applyTint()
     }
 
     @SuppressLint("InflateParams")
