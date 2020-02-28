@@ -9,6 +9,6 @@ data class TxtTocRule(
     @PrimaryKey
     var name: String = "",
     var rule: String = "",
-    var serialNumber: Int,
+    var serialNumber: Int = -1,
     var enable: Boolean = true
 )

@@ -86,7 +86,7 @@
     <string name="download_offline_s">下载选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
-        \u3000\u3000这是一款开源的阅读软件，你可以fork我们的代码自己编译APK。欢迎提交代码帮助改善应用。\n\u3000\u3000公众号[开源阅读软件]！
+        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读软件]！
     </string>
     <string name="app_share_description">
         阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
@@ -334,7 +334,7 @@
     <string name="pt_show_all_find">显示所有发现</string>
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
     <string name="update_toc">更新目录</string>
-    <string name="txt_chapter_regex">txt目录正则</string>
+    <string name="txt_toc_regex">Txt目录正则</string>
     <string name="set_charset">设置编码</string>
     <string name="swap_sort">倒序-顺序</string>
     <string name="sort">排序</string>
@@ -619,4 +619,13 @@
     <string name="select_start">文本选择开始位置</string>
     <string name="share_layout">共用布局</string>
     <string name="title_center">标题居中</string>
+    <string name="browser">浏览器</string>
+    <string name="import_default_rule">导入默认规则</string>
+    <string name="name">名称</string>
+    <string name="regex">正则</string>
+    <string name="more_menu">更多菜单</string>
+    <string name="reduce">减</string>
+    <string name="plus">加</string>
+    <string name="other_aloud_setting">其它朗读设置</string>
+    <string name="system_typeface">系统内置字体样式</string>
 </resources>

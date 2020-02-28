@@ -15,7 +15,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
-import io.legado.app.utils.getVerticalDivider
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
@@ -48,7 +48,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         adapter = ChapterListAdapter(requireContext(), this)
         mLayoutManager = UpLinearLayoutManager(requireContext())
         recycler_view.layoutManager = mLayoutManager
-        recycler_view.addItemDecoration(recycler_view.getVerticalDivider())
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
     }
 

@@ -33,10 +33,14 @@ object BookContent {
             )
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+        val analyzeRule = AnalyzeRule(book)
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
-        var contentData = analyzeContent(body, contentRule, book, bookChapter, bookSource, baseUrl)
+        var contentData = analyzeContent(
+            analyzeRule.setContent(body, baseUrl),
+            contentRule, bookChapter, bookSource
+        )
         content.append(contentData.content.replace(bookChapter.title, ""))
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
@@ -56,15 +60,15 @@ object BookContent {
                     headerMapF = bookSource.getHeaderMap()
                 ).getResponseAwait()
                     .body?.let { nextBody ->
-                        contentData =
-                            analyzeContent(
-                                nextBody, contentRule, book,
-                                bookChapter, bookSource, baseUrl, false
-                            )
-                        nextUrl =
-                            if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
-                        content.append(contentData.content)
-                    }
+                    contentData =
+                        analyzeContent(
+                            analyzeRule.setContent(nextBody, nextUrl),
+                            contentRule, bookChapter, bookSource, false
+                        )
+                    nextUrl =
+                        if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
+                    content.append(contentData.content)
+                }
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
@@ -81,19 +85,20 @@ object BookContent {
                         headerMapF = bookSource.getHeaderMap()
                     ).getResponseAwait()
                         .body?.let {
-                            contentData =
-                                analyzeContent(
-                                    it, contentRule, book, bookChapter,
-                                    bookSource, item.nextUrl, false
-                                )
-                            item.content = contentData.content
-                        }
+                        contentData =
+                            analyzeContent(
+                                analyzeRule.setContent(it, item.nextUrl),
+                                contentRule, bookChapter, bookSource, false
+                            )
+                        item.content = contentData.content
+                    }
                 }
             }
             for (item in contentDataList) {
                 content.append(item.content)
             }
         }
+
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
@@ -103,17 +108,13 @@ object BookContent {
 
     @Throws(Exception::class)
     private fun analyzeContent(
-        body: String,
+        analyzeRule: AnalyzeRule,
         contentRule: ContentRule,
-        book: Book,
         chapter: BookChapter,
         bookSource: BookSource,
-        baseUrl: String,
         printLog: Boolean = true
     ): ContentData<List<String>> {
         val nextUrlList = arrayListOf<String>()
-        val analyzeRule = AnalyzeRule(book)
-        analyzeRule.setContent(body, baseUrl)
         analyzeRule.chapter = chapter
         val nextUrlRule = contentRule.nextContentUrl
         if (!nextUrlRule.isNullOrEmpty()) {

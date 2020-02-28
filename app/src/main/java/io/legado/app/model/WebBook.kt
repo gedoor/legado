@@ -86,17 +86,18 @@ class WebBook(val bookSource: BookSource) {
     ): Coroutine<Book> {
         book.type = bookSource.bookSourceType
         return Coroutine.async(scope, context) {
-            val body = if (!book.infoHtml.isNullOrEmpty()) {
-                book.infoHtml
-            } else {
-                val analyzeUrl = AnalyzeUrl(
-                    book = book,
-                    ruleUrl = book.bookUrl,
-                    baseUrl = sourceUrl,
-                    headerMapF = bookSource.getHeaderMap()
-                )
-                analyzeUrl.getResponseAwait().body
-            }
+            val body =
+                if (!book.infoHtml.isNullOrEmpty()) {
+                    book.infoHtml
+                } else {
+                    val analyzeUrl = AnalyzeUrl(
+                        book = book,
+                        ruleUrl = book.bookUrl,
+                        baseUrl = sourceUrl,
+                        headerMapF = bookSource.getHeaderMap()
+                    )
+                    analyzeUrl.getResponseAwait().body
+                }
             BookInfo.analyzeBookInfo(book, body, bookSource, book.bookUrl)
             book
         }
@@ -112,16 +113,17 @@ class WebBook(val bookSource: BookSource) {
     ): Coroutine<List<BookChapter>> {
         book.type = bookSource.bookSourceType
         return Coroutine.async(scope, context) {
-            val body = if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
-                book.tocHtml
-            } else {
-                AnalyzeUrl(
-                    book = book,
-                    ruleUrl = book.tocUrl,
-                    baseUrl = book.bookUrl,
-                    headerMapF = bookSource.getHeaderMap()
-                ).getResponseAwait().body
-            }
+            val body =
+                if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
+                    book.tocHtml
+                } else {
+                    AnalyzeUrl(
+                        book = book,
+                        ruleUrl = book.tocUrl,
+                        baseUrl = book.bookUrl,
+                        headerMapF = bookSource.getHeaderMap()
+                    ).getResponseAwait().body
+                }
             BookChapterList.analyzeChapterList(this, book, body, bookSource, book.tocUrl)
         }
     }
@@ -141,22 +143,23 @@ class WebBook(val bookSource: BookSource) {
                 Debug.log(sourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
                 return@async bookChapter.url
             }
-            val body = if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
-                book.tocHtml
-            } else {
-                val analyzeUrl =
-                    AnalyzeUrl(
-                        book = book,
-                        ruleUrl = bookChapter.url,
-                        baseUrl = book.tocUrl,
-                        headerMapF = bookSource.getHeaderMap()
-                    )
-                analyzeUrl.getResponseAwait(
-                    bookSource.bookSourceUrl,
-                    jsStr = bookSource.getContentRule().webJs,
-                    sourceRegex = bookSource.getContentRule().sourceRegex
-                ).body
-            }
+            val body =
+                if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
+                    book.tocHtml
+                } else {
+                    val analyzeUrl =
+                        AnalyzeUrl(
+                            book = book,
+                            ruleUrl = bookChapter.url,
+                            baseUrl = book.tocUrl,
+                            headerMapF = bookSource.getHeaderMap()
+                        )
+                    analyzeUrl.getResponseAwait(
+                        bookSource.bookSourceUrl,
+                        jsStr = bookSource.getContentRule().webJs,
+                        sourceRegex = bookSource.getContentRule().sourceRegex
+                    ).body
+                }
             BookContent.analyzeContent(
                 this,
                 body,

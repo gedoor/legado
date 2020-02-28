@@ -25,9 +25,13 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.shareWithQr
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
@@ -84,9 +88,7 @@ class BookSourceEditActivity :
                 }
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
-            R.id.menu_share_str -> GSON.toJson(getSource())?.let { sourceStr ->
-                shareText(getString(R.string.share_book_source), sourceStr)
-            }
+            R.id.menu_share_str -> GSON.toJson(getSource())?.let { share(it) }
             R.id.menu_share_qr -> GSON.toJson(getSource())?.let { sourceStr ->
                 shareWithQr(getString(R.string.share_book_source), sourceStr)
             }
