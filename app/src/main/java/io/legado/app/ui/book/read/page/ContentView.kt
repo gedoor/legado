@@ -5,8 +5,10 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
@@ -90,7 +92,11 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun setContent(textPage: TextPage) {
-        tv_bottom_left.text = textPage.title
+        tv_bottom_left.text = when (AppConfig.chineseConverterType) {
+            1 -> ZhConvertBootstrap.newInstance().toSimple(textPage.title)
+            2 -> ZhConvertBootstrap.newInstance().toTraditional(textPage.title)
+            else -> textPage.title
+        }
         setPageIndex(textPage.index, textPage.pageSize)
         content_text_view.resetPageOffset()
         content_text_view.setContent(textPage)
