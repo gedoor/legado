@@ -12,7 +12,6 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
-import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
@@ -219,12 +218,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 4 -> bg4
                 else -> bg0
             }
-            ReadBookConfig.getConfig(i).apply {
-                when (bgType()) {
-                    2 -> ImageLoader.load(requireContext(), bgStr()).centerCrop().into(iv)
-                    else -> iv.setImageDrawable(bgDrawable(100, 150))
-                }
-            }
+            iv.setImageDrawable(ReadBookConfig.getConfig(i).bgDrawable(100, 150))
         }
     }
 

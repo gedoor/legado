@@ -215,7 +215,7 @@ object ReadBookConfig {
     class Config(
         private var bgStr: String = "#EEEEEE",//白天背景
         private var bgStrNight: String = "#000000",//夜间背景
-        private var bgType: Int = 0,//白天背景类型
+        private var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
         private var bgTypeNight: Int = 0,//夜间背景类型
         private var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
         private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
@@ -299,7 +299,7 @@ object ReadBookConfig {
                     1 -> {
                         BitmapDrawable(
                             resources,
-                            BitmapUtils.decodeBitmap(
+                            BitmapUtils.decodeAssetsBitmap(
                                 App.INSTANCE,
                                 "bg" + File.separator + bgStr(),
                                 width,
