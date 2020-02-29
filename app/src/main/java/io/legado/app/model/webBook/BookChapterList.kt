@@ -95,40 +95,70 @@ object BookChapterList {
                     }
                     Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
                     for (item in chapterDataList) {
-                        Coroutine.async(scope = coroutineScope) {
-                            val nextBody = AnalyzeUrl(
-                                ruleUrl = item.nextUrl,
-                                book = book,
-                                headerMapF = bookSource.getHeaderMap()
-                            ).getResponseAwait().body
-                            val nextChapterData = analyzeChapterList(
-                                analyzeRule.setContent(nextBody, item.nextUrl),
-                                book.bookUrl, item.nextUrl, tocRule, listRule, bookSource,
-                                false
-                            )
-                            synchronized(chapterDataList) {
-                                val isFinished = addChapterListIsFinish(
-                                    chapterDataList,
-                                    item,
-                                    nextChapterData.chapterList
-                                )
-                                if (isFinished) {
-                                    chapterDataList.forEach { item ->
-                                        item.chapterList?.let {
-                                            chapterList.addAll(it)
-                                        }
-                                    }
-                                    block.resume(finish(book, chapterList, reverse))
-                                }
-                            }
-                        }.onError {
-                            block.resumeWithException(it)
-                        }
+                        downloadToc(
+                            coroutineScope,
+                            item,
+                            book,
+                            bookSource,
+                            analyzeRule,
+                            tocRule,
+                            listRule,
+                            chapterList,
+                            chapterDataList,
+                            {
+                                block.resume(finish(book, chapterList, reverse))
+                            }, {
+                                block.cancel(it)
+                            })
                     }
                 }
             }
         } catch (e: Exception) {
             block.resumeWithException(e)
+        }
+    }
+
+    private fun downloadToc(
+        coroutineScope: CoroutineScope,
+        chapterData: ChapterData<String>,
+        book: Book,
+        bookSource: BookSource,
+        analyzeRule: AnalyzeRule,
+        tocRule: TocRule,
+        listRule: String,
+        chapterList: ArrayList<BookChapter>,
+        chapterDataList: ArrayList<ChapterData<String>>,
+        onFinish: () -> Unit,
+        onError: (e: Throwable) -> Unit
+    ) {
+        Coroutine.async(scope = coroutineScope) {
+            val nextBody = AnalyzeUrl(
+                ruleUrl = chapterData.nextUrl,
+                book = book,
+                headerMapF = bookSource.getHeaderMap()
+            ).getResponseAwait().body
+            val nextChapterData = analyzeChapterList(
+                analyzeRule.setContent(nextBody, chapterData.nextUrl),
+                book.bookUrl, chapterData.nextUrl, tocRule, listRule, bookSource,
+                false
+            )
+            synchronized(chapterDataList) {
+                val isFinished = addChapterListIsFinish(
+                    chapterDataList,
+                    chapterData,
+                    nextChapterData.chapterList
+                )
+                if (isFinished) {
+                    chapterDataList.forEach { item ->
+                        item.chapterList?.let {
+                            chapterList.addAll(it)
+                        }
+                    }
+                    onFinish()
+                }
+            }
+        }.onError {
+            onError(it)
         }
     }
 
