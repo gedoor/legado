@@ -43,6 +43,7 @@ object ReadBookConfig {
             App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
         }
     var isScroll = pageAnim == 3
+    val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     var bg: Drawable? = null
 
     init {

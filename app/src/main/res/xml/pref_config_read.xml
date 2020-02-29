@@ -29,7 +29,7 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:title="@string/click_turn_page"
         android:key="clickTurnPage"
         app:iconSpaceReserved="false" />

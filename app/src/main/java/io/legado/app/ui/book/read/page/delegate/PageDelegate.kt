@@ -12,6 +12,7 @@ import android.widget.Scroller
 import androidx.annotation.CallSuper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.screenshot
@@ -193,6 +194,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     open fun onScroll() {}//移动contentView， slidePage
 
+    abstract fun nextPageByAnim()
+
+    abstract fun prevPageByAnim()
+
     @CallSuper
     open fun setDirection(direction: Direction) {
         mDirection = direction
@@ -260,21 +265,14 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (centerRectF.contains(x, y)) {
             pageView.callBack.clickCenter()
             setTouchPoint(x, y)
-        } else {
+        } else if (ReadBookConfig.clickTurnPage) {
             if (x > viewWidth / 2 ||
                 AppConfig.clickAllNext
             ) {
-                //设置动画方向
-                if (!hasNext()) return true
-                setDirection(Direction.NEXT)
-                setBitmap()
+                nextPageByAnim()
             } else {
-                if (!hasPrev()) return true
-                setDirection(Direction.PREV)
-                setBitmap()
+                prevPageByAnim()
             }
-            setTouchPoint(x, y)
-            onAnimStart()
         }
         return true
     }

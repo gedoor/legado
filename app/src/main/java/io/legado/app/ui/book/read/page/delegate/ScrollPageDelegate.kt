@@ -58,4 +58,12 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         super.onDestroy()
         mVelocity.recycle()
     }
+
+    override fun nextPageByAnim() {
+
+    }
+
+    override fun prevPageByAnim() {
+
+    }
 }
