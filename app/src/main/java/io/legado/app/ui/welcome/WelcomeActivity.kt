@@ -1,6 +1,5 @@
 package io.legado.app.ui.welcome
 
-import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
@@ -18,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_welcome.*
 import org.jetbrains.anko.startActivity
 import java.util.concurrent.TimeUnit
 
-open class WelcomeActivity : BaseActivity(R.layout.activity_welcome), Animator.AnimatorListener {
+open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         iv_book.setColorFilter(accentColor)
@@ -42,11 +41,15 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome), Animator.A
                 else -> null
             }
         }
-        val welAnimator = ValueAnimator.ofFloat(1f, 0.3f).setDuration(300)
+        val welAnimator = ValueAnimator.ofFloat(1f, 0f).setDuration(800)
+        welAnimator.startDelay = 100
         welAnimator.addUpdateListener { animation ->
-            root_view.alpha = animation.animatedValue as Float
+            val alpha = animation.animatedValue as Float
+            root_view.alpha = alpha
+            if (alpha < 0.6) {
+                startMainActivity()
+            }
         }
-        welAnimator.addListener(this)
         welAnimator.start()
     }
 
@@ -58,17 +61,6 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome), Animator.A
         finish()
     }
 
-    override fun onAnimationStart(animation: Animator) {
-
-    }
-
-    override fun onAnimationEnd(animation: Animator) {
-        startMainActivity()
-    }
-
-    override fun onAnimationCancel(animation: Animator) = Unit
-
-    override fun onAnimationRepeat(animation: Animator) = Unit
 }
 
 class Launcher1 : WelcomeActivity()
