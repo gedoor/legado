@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
@@ -45,7 +46,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
     private val importRecordKey = "replaceRuleRecordKey"
-    private val importSource = 132
+    private val importRequestCode = 132
+    private val exportRequestCode = 65
     private lateinit var adapter: ReplaceRuleAdapter
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
@@ -176,7 +178,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importSource, "text/*", arrayOf("txt", "json"))
+                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -185,7 +187,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         when (item?.itemId) {
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
         }
         return false
     }
@@ -232,15 +234,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         }.show().applyTint()
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == importSource) {
-            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-            viewModel.importSource(File(currentPath).readText()) { msg ->
-                title_bar.snackbar(msg)
-            }
-        }
-    }
-
     override fun onQueryTextChange(newText: String?): Boolean {
         observeReplaceRuleData("%$newText%")
         return false
@@ -250,10 +243,25 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         return false
     }
 
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            importRequestCode -> {
+                Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                viewModel.importSource(File(currentPath).readText()) { msg ->
+                    title_bar.snackbar(msg)
+                }
+            }
+            exportRequestCode -> viewModel.exportSelection(
+                adapter.getSelection(),
+                File(currentPath)
+            )
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            importSource -> if (resultCode == Activity.RESULT_OK) {
+            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     try {
                         uri.readText(this)?.let {
@@ -265,6 +273,19 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                         }
                     } catch (e: Exception) {
                         toast(e.localizedMessage ?: "ERROR")
+                    }
+                }
+            }
+            exportRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    if (uri.toString().isContentPath()) {
+                        DocumentFile.fromTreeUri(this, uri)?.let {
+                            viewModel.exportSelection(adapter.getSelection(), it)
+                        }
+                    } else {
+                        uri.path?.let {
+                            viewModel.exportSelection(adapter.getSelection(), File(it))
+                        }
                     }
                 }
             }

@@ -83,8 +83,8 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
     fun exportSelection(sources: LinkedHashSet<RssSource>, doc: DocumentFile) {
         execute {
             val json = GSON.toJson(sources)
-            doc.findFile("exportBookSource.json")?.delete()
-            doc.createFile("", "exportBookSource.json")
+            doc.findFile("exportRssSource.json")?.delete()
+            doc.createFile("", "exportRssSource.json")
                 ?.writeText(context, json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
