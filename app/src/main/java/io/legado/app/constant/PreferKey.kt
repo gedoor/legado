@@ -5,6 +5,7 @@ object PreferKey {
     const val themeMode = "themeMode"
     const val downloadPath = "downloadPath"
     const val hideStatusBar = "hideStatusBar"
+    const val clickTurnPage = "clickTurnPage"
     const val clickAllNext = "clickAllNext"
     const val hideNavigationBar = "hideNavigationBar"
     const val precisionSearch = "precisionSearch"

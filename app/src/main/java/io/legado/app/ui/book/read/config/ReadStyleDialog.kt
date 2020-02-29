@@ -31,7 +31,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
-    val callBack = activity as? ReadBookActivity
+    val callBack get() = activity as? ReadBookActivity
 
     override fun onStart() {
         super.onStart()
