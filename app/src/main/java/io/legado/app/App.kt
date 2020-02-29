@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
@@ -62,6 +63,13 @@ class App : Application() {
         registerActivityLife()
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        when (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES, Configuration.UI_MODE_NIGHT_NO -> applyDayNight()
+        }
+    }
+
     /**
      * 更新主题
      */
@@ -91,7 +99,6 @@ class App : Application() {
                 )
                 .apply()
         }
-//        ChapterProvider.upReadAloudSpan()
     }
 
     fun applyDayNight() {

@@ -120,7 +120,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         if (noAnim) {
             fillPage(PageDelegate.Direction.PREV)
         } else {
-            pageDelegate?.start(PageDelegate.Direction.PREV)
+            pageDelegate?.prevPageByAnim()
         }
     }
 
@@ -128,16 +128,12 @@ class PageView(context: Context, attrs: AttributeSet) :
         if (noAnim) {
             fillPage(PageDelegate.Direction.NEXT)
         } else {
-            pageDelegate?.start(PageDelegate.Direction.NEXT)
+            pageDelegate?.nextPageByAnim()
         }
     }
 
-    fun upSelectAble(selectAble: Boolean) {
-        pageDelegate?.upSelectAble(selectAble)
-        curPage.upSelectAble(selectAble)
-    }
-
     fun upStyle() {
+        ChapterProvider.upStyle()
         curPage.upStyle()
         prevPage.upStyle()
         nextPage.upStyle()

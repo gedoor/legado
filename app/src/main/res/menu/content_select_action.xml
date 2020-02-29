@@ -13,4 +13,7 @@
         android:id="@+id/menu_browser"
         android:title="@string/browser" />
 
+    <item
+        android:id="@+id/menu_share_str"
+        android:title="@string/share" />
 </menu>

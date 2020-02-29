@@ -5,8 +5,10 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
 import io.legado.app.R
 import io.legado.app.constant.AppConst.TIME_FORMAT
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
@@ -37,8 +39,9 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_bottom_right.typeface = ChapterProvider.typeface
             //显示状态栏时隐藏header
             if (hideStatusBar) {
-                ll_header.layoutParams =
-                    ll_header.layoutParams.apply { height = context.statusBarHeight }
+                ll_header.layoutParams = ll_header.layoutParams.apply {
+                    height = context.statusBarHeight + headerPaddingTop.dp + headerPaddingBottom.dp
+                }
                 ll_header.setPadding(
                     headerPaddingLeft.dp,
                     headerPaddingTop.dp,
@@ -51,18 +54,13 @@ class ContentView(context: Context) : FrameLayout(context) {
                 ll_header.gone()
                 page_panel.setPadding(0, context.statusBarHeight, 0, 0)
             }
-            content_text_view.setPadding(
-                paddingLeft.dp,
-                paddingTop.dp,
-                paddingRight.dp,
-                paddingBottom.dp
-            )
             ll_footer.setPadding(
                 footerPaddingLeft.dp,
                 footerPaddingTop.dp,
                 footerPaddingRight.dp,
                 footerPaddingBottom.dp
             )
+            content_text_view.upVisibleRect()
             durConfig.textColor().let {
                 tv_top_left.setTextColor(it)
                 tv_top_right.setTextColor(it)
@@ -94,7 +92,11 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun setContent(textPage: TextPage) {
-        tv_bottom_left.text = textPage.title
+        tv_bottom_left.text = when (AppConfig.chineseConverterType) {
+            1 -> ZhConvertBootstrap.newInstance().toSimple(textPage.title)
+            2 -> ZhConvertBootstrap.newInstance().toTraditional(textPage.title)
+            else -> textPage.title
+        }
         setPageIndex(textPage.index, textPage.pageSize)
         content_text_view.resetPageOffset()
         content_text_view.setContent(textPage)

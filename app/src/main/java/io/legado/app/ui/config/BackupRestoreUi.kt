@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import org.jetbrains.anko.toast
 
 object BackupRestoreUi {
-
+    private const val selectFolderRequestCode = 21
     private const val backupSelectRequestCode = 22
     private const val restoreSelectRequestCode = 33
     private const val oldDataRequestCode = 11
@@ -34,7 +34,7 @@ object BackupRestoreUi {
     fun backup(fragment: Fragment) {
         val backupPath = AppConfig.backupPath
         if (backupPath.isNullOrEmpty()) {
-            selectBackupFolder(fragment)
+            selectBackupFolder(fragment, backupSelectRequestCode)
         } else {
             if (backupPath.isContentPath()) {
                 val uri = Uri.parse(backupPath)
@@ -46,40 +46,49 @@ object BackupRestoreUi {
                         fragment.toast(R.string.backup_success)
                     }
                 } else {
-                    selectBackupFolder(fragment)
+                    selectBackupFolder(fragment, backupSelectRequestCode)
                 }
             } else {
-                backupUsePermission(fragment)
+                backupUsePermission(fragment, requestCode = backupSelectRequestCode)
             }
         }
     }
 
-    private fun backupUsePermission(fragment: Fragment, path: String = Backup.legadoPath) {
+    private fun backupUsePermission(
+        fragment: Fragment,
+        path: String = Backup.legadoPath,
+        requestCode: Int = selectFolderRequestCode
+    ) {
         PermissionsCompat.Builder(fragment)
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
-                Coroutine.async {
-                    AppConfig.backupPath = Backup.legadoPath
-                    Backup.backup(fragment.requireContext(), path)
-                }.onSuccess {
-                    fragment.toast(R.string.backup_success)
+                when (requestCode) {
+                    selectFolderRequestCode -> AppConfig.backupPath = Backup.legadoPath
+                    else -> {
+                        Coroutine.async {
+                            AppConfig.backupPath = Backup.legadoPath
+                            Backup.backup(fragment.requireContext(), path)
+                        }.onSuccess {
+                            fragment.toast(R.string.backup_success)
+                        }
+                    }
                 }
             }
             .request()
     }
 
-    fun selectBackupFolder(fragment: Fragment) {
+    fun selectBackupFolder(fragment: Fragment, requestCode: Int = selectFolderRequestCode) {
         fragment.alert {
             titleResource = R.string.select_folder
             items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
                 when (index) {
-                    0 -> backupUsePermission(fragment)
+                    0 -> backupUsePermission(fragment, requestCode = requestCode)
                     1 -> {
                         try {
                             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            fragment.startActivityForResult(intent, backupSelectRequestCode)
+                            fragment.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
                             fragment.toast(e.localizedMessage ?: "ERROR")
@@ -88,7 +97,7 @@ object BackupRestoreUi {
                     2 -> {
                         FileChooserDialog.show(
                             fragment.childFragmentManager,
-                            backupSelectRequestCode,
+                            requestCode,
                             mode = FileChooserDialog.DIRECTORY
                         )
                     }
@@ -231,6 +240,9 @@ object BackupRestoreUi {
                     App.INSTANCE.toast(R.string.restore_success)
                 }
             }
+            selectFolderRequestCode -> {
+                AppConfig.backupPath = currentPath
+            }
         }
     }
 
@@ -240,7 +252,8 @@ object BackupRestoreUi {
                 data?.data?.let { uri ->
                     App.INSTANCE.contentResolver.takePersistableUriPermission(
                         uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     AppConfig.backupPath = uri.toString()
                     Coroutine.async {
@@ -254,7 +267,8 @@ object BackupRestoreUi {
                 data?.data?.let { uri ->
                     App.INSTANCE.contentResolver.takePersistableUriPermission(
                         uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     AppConfig.backupPath = uri.toString()
                     Coroutine.async {
@@ -262,6 +276,16 @@ object BackupRestoreUi {
                     }.onSuccess {
                         App.INSTANCE.toast(R.string.restore_success)
                     }
+                }
+            }
+            selectFolderRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    App.INSTANCE.contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    AppConfig.backupPath = uri.toString()
                 }
             }
             oldDataRequestCode ->

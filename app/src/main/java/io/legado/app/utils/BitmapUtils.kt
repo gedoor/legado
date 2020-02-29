@@ -121,7 +121,12 @@ object BitmapUtils {
      * @throws IOException
      */
     @Throws(IOException::class)
-    fun decodeBitmap(context: Context, fileNameInAssets: String, width: Int, height: Int): Bitmap? {
+    fun decodeAssetsBitmap(
+        context: Context,
+        fileNameInAssets: String,
+        width: Int,
+        height: Int
+    ): Bitmap? {
 
         var inputStream = context.assets.open(fileNameInAssets)
         val op = BitmapFactory.Options()

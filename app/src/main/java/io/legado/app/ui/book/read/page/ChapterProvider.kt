@@ -8,10 +8,10 @@ import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.dp
@@ -78,7 +78,7 @@ object ChapterProvider {
                 durY = joinBody(text, durY, textPages, pageLines, pageLengths, stringBuilder)
             }
         }
-        textPages.last().height = durY
+        textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
         if (pageLines.size < textPages.size) {
             pageLines.add(textPages.last().textLines.size)
@@ -145,42 +145,15 @@ object ChapterProvider {
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
             textLine.text = words
-            val desiredWidth = layout.getLineMax(lineIndex)
+            val desiredWidth = layout.getLineWidth(lineIndex)
             if (lineIndex != layout.lineCount - 1) {
-                val gapCount: Int = words.length - 1
-                val d = (visibleWidth - desiredWidth) / gapCount
-                var x = 0f
-                for (i in words.indices) {
-                    val char = words[i].toString()
-                    val cw = StaticLayout.getDesiredWidth(char, titlePaint)
-                    val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
-                    val textChar = TextChar(
-                        charData = char,
-                        start = paddingLeft + x,
-                        end = paddingLeft + x1
-                    )
-                    textLine.textChars.add(textChar)
-                    x = x1
-                }
+                addCharsToLineMiddle(textLine, words, titlePaint, desiredWidth, 0f)
             } else {
                 //最后一行
-                textLine.text = "$words\n"
-                stringBuilder.append("\n")
-                var x = if (ReadBookConfig.titleCenter)
-                    (visibleWidth - layout.getLineMax(lineIndex)) / 2
+                val x = if (ReadBookConfig.titleCenter)
+                    (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
-                for (i in words.indices) {
-                    val char = words[i].toString()
-                    val cw = StaticLayout.getDesiredWidth(char, titlePaint)
-                    val x1 = x + cw
-                    val textChar = TextChar(
-                        charData = char,
-                        start = paddingLeft + x,
-                        end = paddingLeft + x1
-                    )
-                    textLine.textChars.add(textChar)
-                    x = x1
-                }
+                addCharsToLineLast(textLine, words, stringBuilder, titlePaint, x)
             }
         }
         durY += paragraphSpacing
@@ -224,80 +197,120 @@ object ChapterProvider {
             textLine.lineBase = (paddingTop + durY -
                     (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
             textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
-            var words =
+            val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
             textLine.text = words
-            val desiredWidth = layout.getLineMax(lineIndex)
+            val desiredWidth = layout.getLineWidth(lineIndex)
             if (lineIndex == 0 && layout.lineCount > 1) {
                 //第一行
-                var x = 0f
-                val icw = StaticLayout.getDesiredWidth(bodyIndent, contentPaint) / bodyIndent.length
-                for (i in 0..bodyIndent.lastIndex) {
-                    val x1 = x + icw
-                    val textChar = TextChar(
-                        charData = bodyIndent[i].toString(),
-                        start = paddingLeft + x,
-                        end = paddingLeft + x1
-                    )
-                    textLine.textChars.add(textChar)
-                    x = x1
-                }
-                words = words.replaceFirst(bodyIndent, "")
-                val gapCount: Int = words.length - 1
-                val d = (visibleWidth - desiredWidth) / gapCount
-                for (i in words.indices) {
-                    val char = words[i].toString()
-                    val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                    val x1 = if (i != words.lastIndex) x + cw + d else x + cw
-                    val textChar1 = TextChar(
-                        charData = char,
-                        start = paddingLeft + x,
-                        end = paddingLeft + x1
-                    )
-                    textLine.textChars.add(textChar1)
-                    x = x1
-                }
+                addCharsToLineFirst(textLine, words, contentPaint, desiredWidth)
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
-                stringBuilder.append("\n")
-                textLine.text = "$words\n"
-                var x = 0f
-                for (i in words.indices) {
-                    val char = words[i].toString()
-                    val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                    val x1 = x + cw
-                    val textChar = TextChar(
-                        charData = char,
-                        start = paddingLeft + x,
-                        end = paddingLeft + x1
-                    )
-                    textLine.textChars.add(textChar)
-                    x = x1
-                }
+                addCharsToLineLast(textLine, words, stringBuilder, contentPaint, 0f)
             } else {
                 //中间行
-                val gapCount: Int = words.length - 1
-                val d = (visibleWidth - desiredWidth) / gapCount
-                var x = 0f
-                for (i in words.indices) {
-                    val char = words[i].toString()
-                    val cw = StaticLayout.getDesiredWidth(char, contentPaint)
-                    val x1 = if (i != words.lastIndex) x + cw + d else x + cw
-                    val textChar = TextChar(
-                        charData = char,
-                        start = paddingLeft + x,
-                        end = paddingLeft + x1
-                    )
-                    textLine.textChars.add(textChar)
-                    x = x1
-                }
+                addCharsToLineMiddle(textLine, words, contentPaint, desiredWidth, 0f)
             }
         }
         durY += paragraphSpacing
         return durY
     }
 
+    /**
+     * 有缩进,两端对齐
+     */
+    private fun addCharsToLineFirst(
+        textLine: TextLine,
+        words: String,
+        textPaint: TextPaint,
+        desiredWidth: Float
+    ) {
+        var x = 0f
+        val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
+        for (i in 0..bodyIndent.lastIndex) {
+            val x1 = x + icw
+            textLine.addTextChar(
+                charData = bodyIndent[i].toString(),
+                start = paddingLeft + x,
+                end = paddingLeft + x1
+            )
+            x = x1
+        }
+        val words1 = words.replaceFirst(bodyIndent, "")
+        addCharsToLineMiddle(textLine, words1, textPaint, desiredWidth, x)
+    }
+
+    /**
+     * 无缩进,两端对齐
+     */
+    private fun addCharsToLineMiddle(
+        textLine: TextLine,
+        words: String,
+        textPaint: TextPaint,
+        desiredWidth: Float,
+        startX: Float
+    ) {
+        val gapCount: Int = words.length - 1
+        val d = (visibleWidth - desiredWidth) / gapCount
+        var x = startX
+        for (i in words.indices) {
+            val char = words[i]
+            val cw = StaticLayout.getDesiredWidth(char.toString(), textPaint)
+            val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
+            textLine.addTextChar(
+                charData = char.toString(),
+                start = paddingLeft + x,
+                end = paddingLeft + x1
+            )
+            x = x1
+        }
+        exceed(textLine, words)
+    }
+
+    /**
+     * 最后一行,自然排列
+     */
+    private fun addCharsToLineLast(
+        textLine: TextLine,
+        words: String,
+        stringBuilder: StringBuilder,
+        textPaint: TextPaint,
+        startX: Float
+    ) {
+        stringBuilder.append("\n")
+        textLine.text = "$words\n"
+        var x = startX
+        for (i in words.indices) {
+            val char = words[i].toString()
+            val cw = StaticLayout.getDesiredWidth(char, textPaint)
+            val x1 = x + cw
+            textLine.addTextChar(
+                charData = char,
+                start = paddingLeft + x,
+                end = paddingLeft + x1
+            )
+            x = x1
+        }
+        exceed(textLine, words)
+    }
+
+    /**
+     * 超出边界处理
+     */
+    private fun exceed(textLine: TextLine, words: String) {
+        val endX = textLine.textChars.last().end
+        if (endX > visibleRight) {
+            val cc = (endX - visibleRight) / words.length
+            for (i in 0..words.lastIndex) {
+                textLine.getTextCharReverseAt(i).let {
+                    val py = cc * (words.length - i)
+                    it.start = it.start - py
+                    it.end = it.end - py
+                }
+            }
+        }
+    }
 
     /**
      * 更新样式
@@ -308,7 +321,11 @@ object ChapterProvider {
             if (!TextUtils.isEmpty(fontPath)) {
                 Typeface.createFromFile(fontPath)
             } else {
-                Typeface.SANS_SERIF
+                when (AppConfig.systemTypefaces) {
+                    1 -> Typeface.SERIF
+                    2 -> Typeface.MONOSPACE
+                    else -> Typeface.SANS_SERIF
+                }
             }
         } catch (e: Exception) {
             App.INSTANCE.removePref(PreferKey.readBookFont)

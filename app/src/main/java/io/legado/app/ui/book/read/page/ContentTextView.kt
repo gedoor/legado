@@ -47,17 +47,21 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         invalidate()
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        ChapterProvider.viewWidth = w
-        ChapterProvider.viewHeight = h
-        ChapterProvider.upSize()
+    fun upVisibleRect() {
         visibleRect.set(
             ChapterProvider.paddingLeft.toFloat(),
             ChapterProvider.paddingTop.toFloat(),
             ChapterProvider.visibleRight.toFloat(),
             ChapterProvider.visibleBottom.toFloat()
         )
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        ChapterProvider.viewWidth = w
+        ChapterProvider.viewHeight = h
+        ChapterProvider.upSize()
+        upVisibleRect()
         textPage.format()
     }
 
@@ -160,15 +164,23 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
         pageOffset += offset
         if (pageOffset > 0) {
-            pageFactory.moveToPrev()
-            textPage = pageFactory.currentPage
-            pageOffset -= textPage.height
-            upView?.invoke(textPage)
+            if (!pageFactory.hasPrev()) {
+                pageOffset = 0f
+            } else {
+                pageFactory.moveToPrev()
+                textPage = pageFactory.currentPage
+                pageOffset -= textPage.height
+                upView?.invoke(textPage)
+            }
         } else if (pageOffset < -textPage.height) {
-            pageOffset += textPage.height
-            pageFactory.moveToNext()
-            textPage = pageFactory.currentPage
-            upView?.invoke(textPage)
+            if (!pageFactory.hasNext()) {
+                pageOffset = -textPage.height.toFloat()
+            } else {
+                pageOffset += textPage.height
+                pageFactory.moveToNext()
+                textPage = pageFactory.currentPage
+                upView?.invoke(textPage)
+            }
         }
         invalidate()
     }
@@ -185,6 +197,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         y: Float,
         select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit
     ) {
+        if (!selectAble) return
         if (!visibleRect.contains(x, y)) return
         var relativeOffset = relativeOffset(0)
         for ((lineIndex, textLine) in textPage.textLines.withIndex()) {

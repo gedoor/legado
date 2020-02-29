@@ -34,7 +34,7 @@ object ReadBookConfig {
     var shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
         set(value) {
             field = value
-            App.INSTANCE.putPrefBoolean(PreferKey.shareLayout)
+            App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
         }
     var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
         set(value) {
@@ -43,6 +43,7 @@ object ReadBookConfig {
             App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
         }
     var isScroll = pageAnim == 3
+    val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     var bg: Drawable? = null
 
     init {
@@ -215,7 +216,7 @@ object ReadBookConfig {
     class Config(
         private var bgStr: String = "#EEEEEE",//白天背景
         private var bgStrNight: String = "#000000",//夜间背景
-        private var bgType: Int = 0,//白天背景类型
+        private var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
         private var bgTypeNight: Int = 0,//夜间背景类型
         private var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
         private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
@@ -299,7 +300,7 @@ object ReadBookConfig {
                     1 -> {
                         BitmapDrawable(
                             resources,
-                            BitmapUtils.decodeBitmap(
+                            BitmapUtils.decodeAssetsBitmap(
                                 App.INSTANCE,
                                 "bg" + File.separator + bgStr(),
                                 width,

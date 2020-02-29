@@ -12,6 +12,8 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -113,6 +115,8 @@ object Restore {
                 hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
                 hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
             }
+            ChapterProvider.upStyle()
+            ReadBook.loadContent()
         }
         LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
     }

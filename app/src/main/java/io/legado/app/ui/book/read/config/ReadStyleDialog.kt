@@ -12,7 +12,6 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.BookHelp
-import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
@@ -20,6 +19,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
+import io.legado.app.utils.getIndexById
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.putPrefString
@@ -30,6 +30,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
+
+    val callBack get() = activity as? ReadBookActivity
 
     override fun onStart() {
         super.onStart()
@@ -121,11 +123,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             }
         }
         tv_padding.onClick {
-            val activity = activity
             dismiss()
-            if (activity is ReadBookActivity) {
-                activity.showPaddingConfig()
-            }
+            callBack?.showPaddingConfig()
         }
         dsb_text_size.onChanged = {
             ReadBookConfig.textSize = it + 5
@@ -144,15 +143,9 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, true)
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
-            for (i in 0 until rg_page_anim.childCount) {
-                if (checkedId == rg_page_anim[i].id) {
-                    ReadBookConfig.pageAnim = i
-                    val activity = activity
-                    if (activity is ReadBookActivity) {
-                        activity.page_view.upPageAnim()
-                    }
-                    break
-                }
+            rg_page_anim.getIndexById(checkedId).let {
+                ReadBookConfig.pageAnim = it
+                callBack?.page_view?.upPageAnim()
             }
         }
         cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
@@ -187,10 +180,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     private fun showBgTextConfig(index: Int): Boolean {
         dismiss()
         changeBg(index)
-        val activity = activity
-        if (activity is ReadBookActivity) {
-            activity.showBgTextConfig()
-        }
+        callBack?.showBgTextConfig()
         return true
     }
 
@@ -219,12 +209,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 4 -> bg4
                 else -> bg0
             }
-            ReadBookConfig.getConfig(i).apply {
-                when (bgType()) {
-                    2 -> ImageLoader.load(requireContext(), bgStr()).centerCrop().into(iv)
-                    else -> iv.setImageDrawable(bgDrawable(100, 150))
-                }
-            }
+            iv.setImageDrawable(ReadBookConfig.getConfig(i).bgDrawable(100, 150))
         }
     }
 

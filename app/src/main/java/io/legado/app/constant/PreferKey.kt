@@ -5,6 +5,7 @@ object PreferKey {
     const val themeMode = "themeMode"
     const val downloadPath = "downloadPath"
     const val hideStatusBar = "hideStatusBar"
+    const val clickTurnPage = "clickTurnPage"
     const val clickAllNext = "clickAllNext"
     const val hideNavigationBar = "hideNavigationBar"
     const val precisionSearch = "precisionSearch"
@@ -16,6 +17,7 @@ object PreferKey {
     const val nextKey = "nextKeyCode"
     const val showRss = "showRss"
     const val bookshelfLayout = "bookshelfLayout"
+    const val bookshelfSort = "bookshelfSort"
     const val recordLog = "recordLog"
     const val processText = "process_text"
     const val cleanCache = "cleanCache"
@@ -38,4 +40,5 @@ object PreferKey {
     const val bodyIndent = "textIndent"
     const val shareLayout = "shareLayout"
     const val readStyleSelect = "readStyleSelect"
+    const val systemTypefaces = "system_typefaces"
 }

@@ -100,17 +100,9 @@ object Backup {
             for (fileName in backupFileNames) {
                 val file = File(backupPath + File.separator + fileName)
                 if (file.exists()) {
-                    var doc = treeDoc.findFile(fileName)
-                    if (null != doc && doc.exists()) {
-                        doc.delete()
-                    }
-                    doc = treeDoc.createFile("", fileName)
-                    doc?.let {
-                        DocumentUtils.writeText(
-                            context,
-                            file.readText(),
-                            it.uri
-                        )
+                    treeDoc.findFile(fileName)?.delete()
+                    treeDoc.createFile("", fileName)?.let {
+                        DocumentUtils.writeBytes(context, file.readBytes(), it.uri)
                     }
                 }
             }

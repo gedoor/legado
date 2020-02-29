@@ -48,4 +48,14 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
     this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
-
+fun Char?.isHAN(): Boolean {
+    this ?: return false
+    val ub: Character.UnicodeBlock = Character.UnicodeBlock.of(this) ?: return false
+    return ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D
+            || ub === Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+            || ub === Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT
+}

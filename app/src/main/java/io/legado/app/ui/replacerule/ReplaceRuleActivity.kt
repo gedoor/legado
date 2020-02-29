@@ -55,6 +55,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private var dataInit = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initUriScheme()
         initRecyclerView()
         initSearchView()
         initSelectActionView()
@@ -71,6 +72,22 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
         upGroupMenu()
         return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun initUriScheme() {
+        intent.data?.let {
+            when (it.path) {
+                "/importonline" -> it.getQueryParameter("src")?.let { url ->
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    viewModel.importSource(url) { msg ->
+                        title_bar.snackbar(msg)
+                    }
+                }
+                else -> {
+                    toast("格式不对")
+                }
+            }
+        }
     }
 
     private fun initRecyclerView() {

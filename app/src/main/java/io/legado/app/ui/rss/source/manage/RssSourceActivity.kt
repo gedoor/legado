@@ -50,13 +50,14 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         get() = getViewModel(RssSourceViewModel::class.java)
     private val importRecordKey = "rssSourceRecordKey"
     private val qrRequestCode = 101
-    private val importSource = 13141
+    private val importSource = 124
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initUriScheme()
         initRecyclerView()
         initSearchView()
         initLiveDataGroup()
@@ -100,6 +101,22 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             }
         }
         return true
+    }
+
+    private fun initUriScheme() {
+        intent.data?.let {
+            when (it.path) {
+                "/importonline" -> it.getQueryParameter("src")?.let { url ->
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    viewModel.importSource(url) { msg ->
+                        title_bar.snackbar(msg)
+                    }
+                }
+                else -> {
+                    toast("格式不对")
+                }
+            }
+        }
     }
 
     private fun initRecyclerView() {

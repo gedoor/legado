@@ -103,10 +103,16 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             -3 -> App.db.bookDao().observeAudio()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
-        bookshelfLiveData?.observe(this, Observer {
+        bookshelfLiveData?.observe(this, Observer { list ->
+            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                1 -> list.sortedByDescending { it.latestChapterTime }
+                2 -> list.sortedBy { it.name }
+                3 -> list.sortedBy { it.order }
+                else -> list.sortedByDescending { it.durChapterTime }
+            }
             val diffResult = DiffUtil
-                .calculateDiff(BooksDiffCallBack(ArrayList(booksAdapter.getItems()), it))
-            booksAdapter.setItems(it, diffResult)
+                .calculateDiff(BooksDiffCallBack(ArrayList(booksAdapter.getItems()), books))
+            booksAdapter.setItems(books, diffResult)
         })
     }
 

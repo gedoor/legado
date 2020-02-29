@@ -92,17 +92,6 @@ val Context.navigationBarHeight: Int
         return resources.getDimensionPixelSize(resourceId)
 }
 
-fun Context.shareText(title: String, text: String) {
-    try {
-        val textIntent = Intent(Intent.ACTION_SEND)
-        textIntent.type = "text/plain"
-        textIntent.putExtra(Intent.EXTRA_TEXT, text)
-        startActivity(Intent.createChooser(textIntent, title))
-    } catch (e: Exception) {
-        toast(R.string.can_not_share)
-    }
-}
-
 @SuppressLint("SetWorldReadable")
 fun Context.shareWithQr(title: String, text: String) {
     QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
@@ -144,6 +133,9 @@ fun Context.sendToClip(text: String) {
     }
 }
 
+/**
+ * 系统是否暗色主题
+ */
 fun Context.sysIsDarkMode(): Boolean {
     val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
     return mode == Configuration.UI_MODE_NIGHT_YES
@@ -160,8 +152,12 @@ val Context.sysBattery: Int
 }
 
 fun Context.openUrl(url: String) {
+    openUrl(Uri.parse(url))
+}
+
+fun Context.openUrl(uri: Uri) {
     val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse(url)
+    intent.data = uri
     if (intent.resolveActivity(packageManager) != null) {
         try {
             startActivity(intent)
