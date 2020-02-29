@@ -21,7 +21,7 @@ object FilePicker {
                 selectList.removeAt(0)
             }
             items(selectList) { _, index ->
-                when (if (default == null) index - 1 else index) {
+                when (if (default == null) index + 1 else index) {
                     0 -> default?.invoke()
                     1 -> {
                         try {
@@ -60,7 +60,7 @@ object FilePicker {
                     selectList.removeAt(0)
                 }
                 items(selectList) { _, index ->
-                    when (if (default == null) index - 1 else index) {
+                    when (if (default == null) index + 1 else index) {
                         0 -> default?.invoke()
                         1 -> {
                             try {
@@ -104,7 +104,7 @@ object FilePicker {
                 selectList.removeAt(0)
             }
             items(selectList) { _, index ->
-                when (if (default == null) index - 1 else index) {
+                when (if (default == null) index + 1 else index) {
                     0 -> default?.invoke()
                     1 -> {
                         try {
@@ -152,7 +152,7 @@ object FilePicker {
                     selectList.removeAt(0)
                 }
                 items(selectList) { _, index ->
-                    when (if (default == null) index - 1 else index) {
+                    when (if (default == null) index + 1 else index) {
                         0 -> default?.invoke()
                         1 -> {
                             try {
