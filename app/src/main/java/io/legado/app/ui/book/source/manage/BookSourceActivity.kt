@@ -50,7 +50,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         get() = getViewModel(BookSourceViewModel::class.java)
     private val importRecordKey = "bookSourceRecordKey"
     private val qrRequestCode = 101
-    private val importSource = 132
+    private val importRequestCode = 132
     private val exportRequestCode = 65
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
@@ -84,7 +84,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importSource, "text/*", arrayOf("txt", "json"))
+                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
@@ -278,7 +278,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 adapter.getSelection(),
                 File(currentPath)
             )
-            importSource -> {
+            importRequestCode -> {
                 Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                 viewModel.importSourceFromFilePath(currentPath) { msg ->
                     title_bar.snackbar(msg)
@@ -298,7 +298,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            importSource -> if (resultCode == Activity.RESULT_OK) {
+            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     try {
                         uri.readText(this)?.let {
