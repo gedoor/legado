@@ -60,6 +60,14 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.ColorPreference
+            android:defaultValue="@color/md_grey_200"
+            android:key="colorBottomBackground"
+            android:summary="白天，底栏色"
+            android:title="底部操作栏颜色"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
@@ -87,6 +95,14 @@
             android:key="colorBackgroundNight"
             android:summary="夜间，背景色"
             android:title="背景色"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.ColorPreference
+            android:defaultValue="@color/md_grey_800"
+            android:key="colorBottomBackgroundNight"
+            android:summary="夜间，底栏色"
+            android:title="底部操作栏颜色"
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 

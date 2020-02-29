@@ -9,6 +9,7 @@ import androidx.annotation.MenuRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.utils.dp
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_select_action_bar.view.*
@@ -19,7 +20,7 @@ class SelectActionBar(context: Context, attrs: AttributeSet?) : FrameLayout(cont
     private var selMenu: PopupMenu? = null
 
     init {
-        setBackgroundResource(R.color.background_menu)
+        setBackgroundColor(context.bottomBackground)
         elevation = 10.dp.toFloat()
         View.inflate(context, R.layout.view_select_action_bar, this)
         cb_selected_all.setOnCheckedChangeListener { buttonView, isChecked ->
