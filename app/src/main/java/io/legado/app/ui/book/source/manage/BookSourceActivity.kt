@@ -21,8 +21,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -42,7 +40,6 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.File
-import java.io.FileNotFoundException
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     PopupMenu.OnMenuItemClickListener,
@@ -86,7 +83,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
-            R.id.menu_import_source_local -> selectFileSys()
+            R.id.menu_import_source_local -> FilePicker
+                .selectFile(this, importSource, "text/*", arrayOf("txt", "json"))
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
@@ -239,34 +237,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }.show().applyTint()
     }
 
-    private fun selectFileSys() {
-        try {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.type = "text/*"//设置类型
-            startActivityForResult(intent, importSource)
-        } catch (e: Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    selectFile()
-                }
-                .request()
-        }
-    }
-
-    private fun selectFile() {
-        FileChooserDialog.show(
-            supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json")
-        )
-    }
-
     override fun upCountView() {
         select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
     }
@@ -338,17 +308,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                                 title_bar.snackbar(msg)
                             }
                         }
-                    } catch (e: FileNotFoundException) {
-                        PermissionsCompat.Builder(this)
-                            .addPermissions(
-                                Permissions.READ_EXTERNAL_STORAGE,
-                                Permissions.WRITE_EXTERNAL_STORAGE
-                            )
-                            .rationale(R.string.bg_image_per)
-                            .onGranted {
-                                selectFileSys()
-                            }
-                            .request()
                     } catch (e: Exception) {
                         toast(e.localizedMessage ?: "ERROR")
                     }

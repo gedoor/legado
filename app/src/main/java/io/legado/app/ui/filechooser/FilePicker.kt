@@ -94,6 +94,7 @@ object FilePicker {
         activity: BaseActivity,
         requestCode: Int,
         type: String,
+        allowExtensions: Array<String>?,
         default: (() -> Unit)? = null
     ) {
         activity.alert(titleResource = R.string.select_file) {
@@ -125,7 +126,8 @@ object FilePicker {
                                 FileChooserDialog.show(
                                     activity.supportFragmentManager,
                                     requestCode,
-                                    mode = FileChooserDialog.FILE
+                                    mode = FileChooserDialog.FILE,
+                                    allowExtensions = allowExtensions
                                 )
                             }
                             .request()
@@ -139,6 +141,7 @@ object FilePicker {
         fragment: Fragment,
         requestCode: Int,
         type: String,
+        allowExtensions: Array<String>,
         default: (() -> Unit)? = null
     ) {
         fragment.requireContext()
@@ -171,7 +174,8 @@ object FilePicker {
                                     FileChooserDialog.show(
                                         fragment.childFragmentManager,
                                         requestCode,
-                                        mode = FileChooserDialog.FILE
+                                        mode = FileChooserDialog.FILE,
+                                        allowExtensions = allowExtensions
                                     )
                                 }
                                 .request()

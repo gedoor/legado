@@ -122,7 +122,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
     interface CallBack {
         fun onFileClick(position: Int)
         //允许的扩展名
-        var allowExtensions: Array<String?>?
+        var allowExtensions: Array<String>?
         /**
          * 是否仅仅读取目录
          */
