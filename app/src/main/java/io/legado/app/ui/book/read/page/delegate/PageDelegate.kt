@@ -158,34 +158,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         }
     }
 
-    fun start(direction: Direction) {
-        if (isStarted) return
-        if (direction === Direction.NEXT) {
-            val x = viewWidth.toFloat()
-            val y = viewHeight.toFloat()
-            //初始化动画
-            setStartPoint(x, y, false)
-            //设置点击点
-            setTouchPoint(x, y, false)
-            //设置方向
-            if (!hasNext()) {
-                return
-            }
-        } else {
-            val x = 0.toFloat()
-            val y = viewHeight.toFloat()
-            //初始化动画
-            setStartPoint(x, y, false)
-            //设置点击点
-            setTouchPoint(x, y, false)
-            //设置方向方向
-            if (!hasPrev()) {
-                return
-            }
-        }
-        onAnimStart()
-    }
-
     open fun onAnimStart() {}//scroller start
 
     open fun onDraw(canvas: Canvas) {}//绘制
