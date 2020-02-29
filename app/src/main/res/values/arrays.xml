@@ -135,6 +135,6 @@
     <string-array name="system_typefaces">
         <item>系统默认字体</item>
         <item>系统衬线字体</item>
-        <item>系统等宽等宽</item>
+        <item>系统等宽字体</item>
     </string-array>
 </resources>
