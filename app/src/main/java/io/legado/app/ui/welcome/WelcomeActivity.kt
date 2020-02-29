@@ -23,8 +23,12 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         // 避免从桌面启动程序后，会重新实例化入口类的activity
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
             finish()
-            return
+        } else {
+            init()
         }
+    }
+
+    private fun init() {
         Coroutine.async {
             //清楚过期数据
             App.db.searchBookDao()
