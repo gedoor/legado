@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
@@ -28,6 +29,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -39,6 +41,7 @@ import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
+import java.io.File
 import java.io.FileNotFoundException
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
@@ -51,6 +54,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private val importRecordKey = "bookSourceRecordKey"
     private val qrRequestCode = 101
     private val importSource = 132
+    private val exportRequestCode = 65
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = linkedSetOf<String>()
@@ -187,7 +191,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
             R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
             R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
         }
         return true
@@ -267,15 +271,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == importSource) {
-            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-            viewModel.importSourceFromFilePath(currentPath) { msg ->
-                title_bar.snackbar(msg)
-            }
-        }
-    }
-
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let {
             initLiveDataBookSource(it)
@@ -305,6 +300,21 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun toTop(bookSource: BookSource) {
         viewModel.topSource(bookSource)
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            exportRequestCode -> viewModel.exportSelection(
+                adapter.getSelection(),
+                File(currentPath)
+            )
+            importSource -> {
+                Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                viewModel.importSourceFromFilePath(currentPath) { msg ->
+                    title_bar.snackbar(msg)
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -341,6 +351,19 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                             .request()
                     } catch (e: Exception) {
                         toast(e.localizedMessage ?: "ERROR")
+                    }
+                }
+            }
+            exportRequestCode -> {
+                data?.data?.let { uri ->
+                    if (uri.toString().isContentPath()) {
+                        DocumentFile.fromTreeUri(this, uri)?.let {
+                            viewModel.exportSelection(adapter.getSelection(), it)
+                        }
+                    } else {
+                        uri.path?.let {
+                            viewModel.exportSelection(adapter.getSelection(), File(it))
+                        }
                     }
                 }
             }

@@ -115,13 +115,13 @@ object ImportOldData {
         }
     }
 
-    fun importOldBookshelf(json: String): Int {
+    private fun importOldBookshelf(json: String): Int {
         val books = OldBook.toNewBook(json)
         App.db.bookDao().insert(*books.toTypedArray())
         return books.size
     }
 
-    fun importOldSource(json: String): Int {
+    private fun importOldSource(json: String): Int {
         val bookSources = mutableListOf<BookSource>()
         val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
         for (item in items) {
