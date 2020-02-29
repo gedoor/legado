@@ -1,6 +1,5 @@
 package io.legado.app.ui.welcome
 
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import com.github.houbb.opencc4j.util.ZhConverterUtil
@@ -41,16 +40,7 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 else -> null
             }
         }
-        val welAnimator = ValueAnimator.ofFloat(1f, 0f).setDuration(800)
-        welAnimator.startDelay = 100
-        welAnimator.addUpdateListener { animation ->
-            val alpha = animation.animatedValue as Float
-            root_view.alpha = alpha
-            if (alpha < 0.6) {
-                startMainActivity()
-            }
-        }
-        welAnimator.start()
+        root_view.postDelayed({ startMainActivity() }, 200)
     }
 
     private fun startMainActivity() {
