@@ -1,6 +1,7 @@
 package io.legado.app.ui.filechooser
 
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -12,7 +13,7 @@ import org.jetbrains.anko.toast
 
 object FilePicker {
 
-    fun selectFolder(activity: BaseActivity, requestCode: Int, default: (() -> Unit)? = null) {
+    fun selectFolder(activity: AppCompatActivity, requestCode: Int, default: (() -> Unit)? = null) {
         activity.alert(titleResource = R.string.select_folder) {
             val selectList =
                 activity.resources.getStringArray(R.array.select_folder).toMutableList()
