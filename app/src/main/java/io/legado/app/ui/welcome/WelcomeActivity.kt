@@ -1,7 +1,5 @@
 package io.legado.app.ui.welcome
 
-import android.animation.Animator
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import io.legado.app.R
@@ -16,34 +14,19 @@ import org.jetbrains.anko.startActivity
 open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        iv_bg.setColorFilter(accentColor)
+        iv_book.setColorFilter(accentColor)
         // 避免从桌面启动程序后，会重新实例化入口类的activity
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
             finish()
             return
         }
-        val welAnimator = ValueAnimator.ofFloat(1f, 0f).setDuration(800)
-        welAnimator.startDelay = 100
-        welAnimator.addUpdateListener { animation ->
-            val alpha = animation.animatedValue as Float
-            iv_bg.alpha = alpha
-        }
-        welAnimator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-                startActivity<MainActivity>()
-                if (getPrefBoolean(getString(R.string.pk_default_read))) {
-                    startActivity<ReadBookActivity>()
-                }
-                finish()
+        root_view.postDelayed({
+            startActivity<MainActivity>()
+            if (getPrefBoolean(getString(R.string.pk_default_read))) {
+                startActivity<ReadBookActivity>()
             }
-
-            override fun onAnimationEnd(animation: Animator) = Unit
-
-            override fun onAnimationCancel(animation: Animator) = Unit
-
-            override fun onAnimationRepeat(animation: Animator) = Unit
-        })
-        welAnimator.start()
+            finish()
+        }, 200)
     }
 
 }
