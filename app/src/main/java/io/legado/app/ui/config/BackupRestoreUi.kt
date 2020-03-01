@@ -3,7 +3,6 @@ package io.legado.app.ui.config
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import io.legado.app.App
@@ -17,13 +16,13 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentPath
 import io.legado.app.utils.toast
 import kotlinx.coroutines.Dispatchers.Main
 import org.jetbrains.anko.toast
+import java.io.File
 
 object BackupRestoreUi {
     private const val selectFolderRequestCode = 21
@@ -79,31 +78,7 @@ object BackupRestoreUi {
     }
 
     fun selectBackupFolder(fragment: Fragment, requestCode: Int = selectFolderRequestCode) {
-        fragment.alert {
-            titleResource = R.string.select_folder
-            items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
-                when (index) {
-                    0 -> backupUsePermission(fragment, requestCode = requestCode)
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            fragment.startActivityForResult(intent, requestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                            fragment.toast(e.localizedMessage ?: "ERROR")
-                        }
-                    }
-                    2 -> {
-                        FileChooserDialog.show(
-                            fragment.childFragmentManager,
-                            requestCode,
-                            mode = FileChooserDialog.DIRECTORY
-                        )
-                    }
-                }
-            }
-        }.show()
+        FilePicker.selectFolder(fragment, requestCode)
     }
 
     fun restore(fragment: Fragment) {
@@ -120,13 +95,13 @@ object BackupRestoreUi {
                             Restore.restore(fragment.requireContext(), backupPath)
                             fragment.toast(R.string.restore_success)
                         } else {
-                            selectRestoreFolder(fragment)
+                            selectBackupFolder(fragment, restoreSelectRequestCode)
                         }
                     } else {
                         restoreUsePermission(fragment, backupPath)
                     }
                 } else {
-                    selectRestoreFolder(fragment)
+                    selectBackupFolder(fragment, restoreSelectRequestCode)
                 }
             }
         }
@@ -147,79 +122,8 @@ object BackupRestoreUi {
             .request()
     }
 
-    private fun selectRestoreFolder(fragment: Fragment) {
-        fragment.alert {
-            titleResource = R.string.select_folder
-            items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
-                when (index) {
-                    0 -> restoreUsePermission(fragment)
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            fragment.startActivityForResult(intent, restoreSelectRequestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                            fragment.toast(e.localizedMessage ?: "ERROR")
-                        }
-                    }
-                    2 -> {
-                        FileChooserDialog.show(
-                            fragment.childFragmentManager,
-                            restoreSelectRequestCode,
-                            mode = FileChooserDialog.DIRECTORY
-                        )
-                    }
-                }
-            }
-        }.show()
-    }
-
     fun importOldData(fragment: Fragment) {
-        fragment.alert {
-            titleResource = R.string.select_folder
-            items(fragment.resources.getStringArray(R.array.select_folder).toList()) { _, index ->
-                when (index) {
-                    0 -> importOldUsePermission(fragment)
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            fragment.startActivityForResult(intent, oldDataRequestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                            fragment.toast(e.localizedMessage ?: "ERROR")
-                        }
-                    }
-                    2 -> {
-                        PermissionsCompat.Builder(fragment)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted {
-                                FileChooserDialog.show(
-                                    fragment.childFragmentManager,
-                                    oldDataRequestCode,
-                                    mode = FileChooserDialog.DIRECTORY
-                                )
-                            }
-                            .request()
-                    }
-                }
-            }
-        }.show()
-    }
-
-    private fun importOldUsePermission(fragment: Fragment) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            fragment.toast(R.string.a10_permission_toast)
-        }
-        PermissionsCompat.Builder(fragment)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                ImportOldData.import(fragment.requireContext())
-            }
-            .request()
+        FilePicker.selectFolder(fragment, oldDataRequestCode)
     }
 
     fun onFilePicked(requestCode: Int, currentPath: String) {
@@ -242,6 +146,9 @@ object BackupRestoreUi {
             }
             selectFolderRequestCode -> {
                 AppConfig.backupPath = currentPath
+            }
+            oldDataRequestCode -> {
+                ImportOldData.import(App.INSTANCE, File(currentPath))
             }
         }
     }

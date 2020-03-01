@@ -33,13 +33,11 @@ object BookContent {
             )
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
-        val analyzeRule = AnalyzeRule(book)
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
         var contentData = analyzeContent(
-            analyzeRule.setContent(body, baseUrl),
-            contentRule, bookChapter, bookSource
+            book, baseUrl, body, contentRule, bookChapter, bookSource
         )
         content.append(contentData.content.replace(bookChapter.title, ""))
         if (contentData.nextUrl.size == 1) {
@@ -58,12 +56,11 @@ object BookContent {
                     ruleUrl = nextUrl,
                     book = book,
                     headerMapF = bookSource.getHeaderMap()
-                ).getResponseAwait()
+                ).getResponseAwait(bookSource.bookSourceUrl)
                     .body?.let { nextBody ->
                     contentData =
                         analyzeContent(
-                            analyzeRule.setContent(nextBody, nextUrl),
-                            contentRule, bookChapter, bookSource, false
+                            book, nextUrl, nextBody, contentRule, bookChapter, bookSource, false
                         )
                     nextUrl =
                         if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
@@ -83,12 +80,11 @@ object BookContent {
                         ruleUrl = item.nextUrl,
                         book = book,
                         headerMapF = bookSource.getHeaderMap()
-                    ).getResponseAwait()
+                    ).getResponseAwait(bookSource.bookSourceUrl)
                         .body?.let {
                         contentData =
                             analyzeContent(
-                                analyzeRule.setContent(it, item.nextUrl),
-                                contentRule, bookChapter, bookSource, false
+                                book, item.nextUrl, it, contentRule, bookChapter, bookSource, false
                             )
                         item.content = contentData.content
                     }
@@ -108,12 +104,16 @@ object BookContent {
 
     @Throws(Exception::class)
     private fun analyzeContent(
-        analyzeRule: AnalyzeRule,
+        book: Book,
+        baseUrl: String,
+        body: String,
         contentRule: ContentRule,
         chapter: BookChapter,
         bookSource: BookSource,
         printLog: Boolean = true
     ): ContentData<List<String>> {
+        val analyzeRule = AnalyzeRule(book)
+        analyzeRule.setContent(body, baseUrl)
         val nextUrlList = arrayListOf<String>()
         analyzeRule.chapter = chapter
         val nextUrlRule = contentRule.nextContentUrl

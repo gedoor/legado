@@ -147,6 +147,7 @@
 
         <!--底部设置栏-->
         <FrameLayout
+            android:id="@+id/fl_bottom_bg"
             android:layout_width="match_parent"
             android:layout_height="100dp">
 

@@ -52,7 +52,10 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             "transparentStatusBar" -> {
                 recreateActivities()
             }
-            "colorPrimary", "colorAccent", "colorBackground" -> {
+            "colorPrimary",
+            "colorAccent",
+            "colorBackground",
+            "colorBottomBackground" -> {
                 if (backgroundIsDark(sharedPreferences)) {
                     alert {
                         title = "白天背景太暗"
@@ -73,7 +76,10 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                     upTheme(false)
                 }
             }
-            "colorPrimaryNight", "colorAccentNight", "colorBackgroundNight" -> {
+            "colorPrimaryNight",
+            "colorAccentNight",
+            "colorBackgroundNight",
+            "colorBottomBackgroundNight" -> {
                 if (backgroundIsLight(sharedPreferences)) {
                     alert {
                         title = "夜间背景太亮"

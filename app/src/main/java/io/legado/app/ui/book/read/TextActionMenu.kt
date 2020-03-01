@@ -95,6 +95,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         onMenuItemSelected(it)
                     }
                 }
+                callBack.onMenuActionFinally()
             }
         }
     }
@@ -121,7 +122,6 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                 }
             }
         }
-        callBack.onMenuActionFinally()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

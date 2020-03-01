@@ -2,6 +2,7 @@ package io.legado.app.ui.replacerule
 
 import android.app.Application
 import android.text.TextUtils
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
@@ -9,10 +10,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.ImportOldData
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -89,12 +87,24 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun exportSelection(rules: LinkedHashSet<ReplaceRule>) {
+    fun exportSelection(sources: LinkedHashSet<ReplaceRule>, file: File) {
         execute {
-            val json = GSON.toJson(rules)
-            val file =
-                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportReplaceRule.json")
-            file.writeText(json)
+            val json = GSON.toJson(sources)
+            FileUtils.createFileIfNotExist(file, "exportReplaceRule.json")
+                .writeText(json)
+        }.onSuccess {
+            context.toast("成功导出至\n${Backup.exportPath}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
+        }
+    }
+
+    fun exportSelection(sources: LinkedHashSet<ReplaceRule>, doc: DocumentFile) {
+        execute {
+            val json = GSON.toJson(sources)
+            doc.findFile("exportReplaceRule.json")?.delete()
+            doc.createFile("", "exportReplaceRule.json")
+                ?.writeText(context, json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {
