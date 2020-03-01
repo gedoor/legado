@@ -17,15 +17,12 @@ import org.jetbrains.anko.toast
 import java.io.File
 
 object ImportOldData {
-    val yueDuPath by lazy {
-        FileUtils.getSdCardPath() + File.separator + "YueDu"
-    }
 
-    fun import(context: Context) {
+    fun import(context: Context, file: File) {
         GlobalScope.launch(Dispatchers.IO) {
             try {// 导入书架
                 val shelfFile =
-                    FileUtils.createFileIfNotExist(yueDuPath + File.separator + "myBookShelf.json")
+                    FileUtils.createFileIfNotExist(file, "myBookShelf.json")
                 val json = shelfFile.readText()
                 val importCount = importOldBookshelf(json)
                 withContext(Dispatchers.Main) {
@@ -39,7 +36,7 @@ object ImportOldData {
 
             try {// Book source
                 val sourceFile =
-                    FileUtils.createFileIfNotExist(yueDuPath + File.separator + "myBookSource.json")
+                    FileUtils.createFileIfNotExist(file, "myBookSource.json")
                 val json = sourceFile.readText()
                 val importCount = importOldSource(json)
                 withContext(Dispatchers.Main) {
@@ -53,7 +50,7 @@ object ImportOldData {
 
             try {// Replace rules
                 val ruleFile =
-                    FileUtils.createFileIfNotExist(yueDuPath + File.separator + "myBookReplaceRule.json")
+                    FileUtils.createFileIfNotExist(file, "myBookReplaceRule.json")
                 val json = ruleFile.readText()
                 val importCount = importOldReplaceRule(json)
                 withContext(Dispatchers.Main) {
