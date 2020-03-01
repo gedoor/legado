@@ -13,6 +13,10 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
         return hasNextChapter() || currentChapter?.isLastIndex(pageIndex) != true
     }
 
+    override fun hasNextPlus(): Boolean = with(dataSource) {
+        return hasNextChapter() || pageIndex < (currentChapter?.pageSize() ?: 1) - 2
+    }
+
     override fun moveToFirst() {
         ReadBook.setPageIndex(0)
     }
@@ -67,6 +71,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                     return@with it.page(pageIndex + 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
                 }
+            }
+            if (!hasNextChapter()) {
+                return@with TextPage(text = "")
             }
             nextChapter?.let {
                 return@with it.page(0)?.removePageAloudSpan()

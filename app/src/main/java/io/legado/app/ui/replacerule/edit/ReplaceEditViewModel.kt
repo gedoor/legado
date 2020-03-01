@@ -21,8 +21,9 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
                     }
                 } else {
                     bundle.getString("pattern")?.let { pattern ->
+                        val isRegex = bundle.getBoolean("isRegex")
                         replaceRuleData.postValue(
-                            ReplaceRule(pattern = pattern)
+                            ReplaceRule(pattern = pattern, isRegex = isRegex)
                         )
                     }
                 }

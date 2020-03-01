@@ -193,7 +193,7 @@
     <string name="img_cover">封面</string>
     <string name="book">书</string>
     <string name="volume_key_page">音量键翻页</string>
-    <string name="click_open_page">点击翻页</string>
+    <string name="click_turn_page">点击翻页</string>
     <string name="click_all_next_page">点击总是翻下一页</string>
     <string name="page_anim">翻页动画</string>
     <string name="keep_light">屏幕超时</string>
@@ -488,6 +488,7 @@
     <string name="indent_3">三字符缩进</string>
     <string name="indent_4">四字符缩进</string>
     <string name="select_folder">选择文件夹</string>
+    <string name="select_file">选择文件</string>
     <string name="no_find">没有发现，可以在书源里添加。</string>
     <string name="restore_default">恢复默认</string>
     <string name="set_download_per">自定义缓存路径需要存储权限</string>

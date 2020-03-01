@@ -17,7 +17,7 @@ interface JsExtensions {
     fun ajax(urlStr: String): String? {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
-            val call = analyzeUrl.getResponse()
+            val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response.body()
         } catch (e: Exception) {

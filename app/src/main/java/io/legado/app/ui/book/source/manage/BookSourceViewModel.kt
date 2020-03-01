@@ -2,6 +2,7 @@ package io.legado.app.ui.book.source.manage
 
 import android.app.Application
 import android.text.TextUtils
+import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
@@ -89,12 +90,24 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun exportSelection(sources: LinkedHashSet<BookSource>) {
+    fun exportSelection(sources: LinkedHashSet<BookSource>, file: File) {
         execute {
             val json = GSON.toJson(sources)
-            val file =
-                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportBookSource.json")
-            file.writeText(json)
+            FileUtils.createFileIfNotExist(file, "exportBookSource.json")
+                .writeText(json)
+        }.onSuccess {
+            context.toast("成功导出至\n${Backup.exportPath}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
+        }
+    }
+
+    fun exportSelection(sources: LinkedHashSet<BookSource>, doc: DocumentFile) {
+        execute {
+            val json = GSON.toJson(sources)
+            doc.findFile("exportBookSource.json")?.delete()
+            doc.createFile("", "exportBookSource.json")
+                ?.writeText(context, json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {

@@ -9,7 +9,6 @@ import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
-import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextLine
@@ -34,7 +33,6 @@ object ChapterProvider {
     var typeface: Typeface = Typeface.SANS_SERIF
     var titlePaint = TextPaint()
     var contentPaint = TextPaint()
-    private var bodyIndent = BookHelp.bodyIndent
 
     init {
         upStyle()
@@ -122,10 +120,12 @@ object ChapterProvider {
         )
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
-            durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             val textLine = TextLine(isTitle = true)
-            if (durY < visibleHeight) {
+            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
+                + contentPaint.fontMetrics.descent < visibleHeight
+            ) {
                 textPages.last().textLines.add(textLine)
+                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
@@ -140,7 +140,7 @@ object ChapterProvider {
                     (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
             textLine.lineBase = (paddingTop + durY -
                     (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
-            textLine.lineBottom = textLine.lineBase + titlePaint.fontMetrics.descent
+            textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
             val words =
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -178,10 +178,12 @@ object ChapterProvider {
         )
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
-            durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             val textLine = TextLine()
-            if (durY < visibleHeight) {
+            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
+                + contentPaint.fontMetrics.descent < visibleHeight
+            ) {
                 textPages.last().textLines.add(textLine)
+                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
@@ -227,6 +229,7 @@ object ChapterProvider {
         desiredWidth: Float
     ) {
         var x = 0f
+        val bodyIndent = ReadBookConfig.bodyIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         for (i in 0..bodyIndent.lastIndex) {
             val x1 = x + icw
@@ -347,8 +350,6 @@ object ChapterProvider {
         paragraphSpacing = ReadBookConfig.paragraphSpacing.dp
         titlePaint.textSize = (ReadBookConfig.textSize + 2).dp.toFloat()
         contentPaint.textSize = ReadBookConfig.textSize.dp.toFloat()
-
-        bodyIndent = BookHelp.bodyIndent
 
         upSize()
     }

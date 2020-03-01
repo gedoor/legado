@@ -12,6 +12,7 @@ import android.widget.Scroller
 import androidx.annotation.CallSuper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.screenshot
@@ -157,34 +158,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
         }
     }
 
-    fun start(direction: Direction) {
-        if (isStarted) return
-        if (direction === Direction.NEXT) {
-            val x = viewWidth.toFloat()
-            val y = viewHeight.toFloat()
-            //初始化动画
-            setStartPoint(x, y, false)
-            //设置点击点
-            setTouchPoint(x, y, false)
-            //设置方向
-            if (!hasNext()) {
-                return
-            }
-        } else {
-            val x = 0.toFloat()
-            val y = viewHeight.toFloat()
-            //初始化动画
-            setStartPoint(x, y, false)
-            //设置点击点
-            setTouchPoint(x, y, false)
-            //设置方向方向
-            if (!hasPrev()) {
-                return
-            }
-        }
-        onAnimStart()
-    }
-
     open fun onAnimStart() {}//scroller start
 
     open fun onDraw(canvas: Canvas) {}//绘制
@@ -192,6 +165,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
     open fun onAnimStop() {}//scroller finish
 
     open fun onScroll() {}//移动contentView， slidePage
+
+    abstract fun nextPageByAnim()
+
+    abstract fun prevPageByAnim()
 
     @CallSuper
     open fun setDirection(direction: Direction) {
@@ -260,21 +237,14 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (centerRectF.contains(x, y)) {
             pageView.callBack.clickCenter()
             setTouchPoint(x, y)
-        } else {
+        } else if (ReadBookConfig.clickTurnPage) {
             if (x > viewWidth / 2 ||
                 AppConfig.clickAllNext
             ) {
-                //设置动画方向
-                if (!hasNext()) return true
-                setDirection(Direction.NEXT)
-                setBitmap()
+                nextPageByAnim()
             } else {
-                if (!hasPrev()) return true
-                setDirection(Direction.PREV)
-                setBitmap()
+                prevPageByAnim()
             }
-            setTouchPoint(x, y)
-            onAnimStart()
         }
         return true
     }

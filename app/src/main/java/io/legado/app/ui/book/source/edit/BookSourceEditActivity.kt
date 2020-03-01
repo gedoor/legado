@@ -24,6 +24,7 @@ import io.legado.app.data.entities.rule.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
+import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
@@ -67,22 +68,20 @@ class BookSourceEditActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_save -> {
-                val source = getSource()
+            R.id.menu_save -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) { setResult(Activity.RESULT_OK); finish() }
                 }
             }
-            R.id.menu_debug_source -> {
-                val source = getSource()
+            R.id.menu_debug_source -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) {
                         startActivity<BookSourceDebugActivity>(Pair("key", source.bookSourceUrl))
                     }
                 }
             }
-            R.id.menu_copy_source -> {
-                GSON.toJson(getSource())?.let { sourceStr ->
+            R.id.menu_copy_source -> getSource().let { source ->
+                GSON.toJson(source)?.let { sourceStr ->
                     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                     clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
                 }
@@ -99,6 +98,18 @@ class BookSourceEditActivity :
                     startActivity(intent)
                 } catch (e: Exception) {
                     toast(R.string.can_not_open)
+                }
+            }
+            R.id.menu_login -> getSource().let {
+                if (checkSource(it)) {
+                    if (it.loginUrl.isNullOrEmpty()) {
+                        toast(R.string.source_no_login)
+                    } else {
+                        startActivity<SourceLogin>(
+                            Pair("sourceUrl", it.bookSourceUrl),
+                            Pair("loginUrl", it.loginUrl)
+                        )
+                    }
                 }
             }
         }

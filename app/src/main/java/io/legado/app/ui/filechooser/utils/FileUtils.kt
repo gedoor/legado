@@ -60,7 +60,7 @@ object FileUtils {
     @JvmOverloads
     fun listDirs(
         startDirPath: String,
-        excludeDirs: Array<String?>? = null, @SortType sortType: Int = BY_NAME_ASC
+        excludeDirs: Array<String>? = null, @SortType sortType: Int = BY_NAME_ASC
     ): Array<File?> {
         var excludeDirs1 = excludeDirs
         val dirList = ArrayList<File>()
@@ -76,7 +76,7 @@ object FileUtils {
         })
             ?: return arrayOfNulls(0)
         if (excludeDirs1 == null) {
-            excludeDirs1 = arrayOfNulls(0)
+            excludeDirs1 = arrayOf()
         }
         for (dir in dirs) {
             val file = dir.absoluteFile
@@ -115,7 +115,7 @@ object FileUtils {
     @JvmOverloads
     fun listDirsAndFiles(
         startDirPath: String,
-        allowExtensions: Array<String?>? = null
+        allowExtensions: Array<String>? = null
     ): Array<File?>? {
         val dirs: Array<File?>?
         val files: Array<File?>? = if (allowExtensions == null) {
@@ -189,12 +189,13 @@ object FileUtils {
     /**
      * 列出指定目录下的所有文件
      */
-    fun listFiles(startDirPath: String, allowExtensions: Array<String?>): Array<File?>? {
+    fun listFiles(startDirPath: String, allowExtensions: Array<String>?): Array<File?>? {
         val file = File(startDirPath)
         return file.listFiles { _, name ->
             //返回当前目录所有以某些扩展名结尾的文件
             val extension = getExtension(name)
-            allowExtensions.contentDeepToString().contains(extension)
+            allowExtensions?.contentDeepToString()?.contains(extension) == true
+                    || allowExtensions == null
         }
     }
 
@@ -202,7 +203,10 @@ object FileUtils {
      * 列出指定目录下的所有文件
      */
     fun listFiles(startDirPath: String, allowExtension: String?): Array<File?>? {
-        return listFiles(startDirPath, arrayOf(allowExtension))
+        return if (allowExtension == null)
+            listFiles(startDirPath, allowExtension = null)
+        else
+            listFiles(startDirPath, arrayOf(allowExtension))
     }
 
     /**

@@ -237,14 +237,30 @@ object BookHelp {
     private var bookName: String? = null
     private var bookOrigin: String? = null
     private var replaceRules: List<ReplaceRule> = arrayListOf()
-    var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
-        set(value) {
-            field = value
-            App.INSTANCE.putPrefInt(PreferKey.bodyIndent, value)
-            bodyIndent = "　".repeat(value)
-        }
-    var bodyIndent = "　".repeat(bodyIndentCount)
 
+    @Synchronized
+    fun upReplaceRules(name: String? = null, origin: String? = null) {
+        if (name != null) {
+            if (bookName != name || bookOrigin != origin) {
+                replaceRules = if (origin.isNullOrEmpty()) {
+                    App.db.replaceRuleDao().findEnabledByScope(name)
+                } else {
+                    App.db.replaceRuleDao().findEnabledByScope(name, origin)
+                }
+                bookName = name
+                bookOrigin = origin
+            }
+        } else {
+            val o = bookOrigin
+            bookName?.let {
+                replaceRules = if (o.isNullOrEmpty()) {
+                    App.db.replaceRuleDao().findEnabledByScope(it)
+                } else {
+                    App.db.replaceRuleDao().findEnabledByScope(it, o)
+                }
+            }
+        }
+    }
 
     fun disposeContent(
         title: String,
@@ -253,23 +269,17 @@ object BookHelp {
         content: String,
         enableReplace: Boolean
     ): String {
-        synchronized(this) {
-            if (enableReplace && (bookName != name || bookOrigin != origin)) {
-                replaceRules = if (origin.isNullOrEmpty()) {
-                    App.db.replaceRuleDao().findEnabledByScope(name)
-                } else {
-                    App.db.replaceRuleDao().findEnabledByScope(name, origin)
-                }
-            }
-        }
         var c = content
-        for (item in replaceRules) {
-            item.pattern.let {
-                if (it.isNotEmpty()) {
-                    c = if (item.isRegex) {
-                        c.replace(it.toRegex(), item.replacement)
-                    } else {
-                        c.replace(it, item.replacement)
+        if (enableReplace) {
+            upReplaceRules(name, origin)
+            for (item in replaceRules) {
+                item.pattern.let {
+                    if (it.isNotEmpty()) {
+                        c = if (item.isRegex) {
+                            c.replace(it.toRegex(), item.replacement)
+                        } else {
+                            c.replace(it, item.replacement)
+                        }
                     }
                 }
             }
@@ -281,6 +291,6 @@ object BookHelp {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
         }
-        return c.replace("\\s*\\n+\\s*".toRegex(), "\n$bodyIndent")
+        return c.replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
     }
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -54,6 +55,7 @@ class ReadAloudDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ll_bottom_bg.setBackgroundColor(requireContext().bottomBackground)
         initData()
         initOnChange()
         initOnClick()

@@ -23,11 +23,17 @@ class ReplaceEditDialog : DialogFragment(),
 
     companion object {
 
-        fun show(fragmentManager: FragmentManager, id: Long = -1, pattern: String? = null) {
+        fun show(
+            fragmentManager: FragmentManager,
+            id: Long = -1,
+            pattern: String? = null,
+            isRegex: Boolean = false
+        ) {
             val dialog = ReplaceEditDialog()
             val bundle = Bundle()
             bundle.putLong("id", id)
             bundle.putString("pattern", pattern)
+            bundle.putBoolean("isRegex", isRegex)
             dialog.arguments = bundle
             dialog.show(fragmentManager, "editReplace")
         }
@@ -68,6 +74,7 @@ class ReplaceEditDialog : DialogFragment(),
         when (item?.itemId) {
             R.id.menu_save -> {
                 viewModel.save(getReplaceRule()) {
+                    callBack?.onReplaceRuleSave()
                     dismiss()
                 }
             }
@@ -93,5 +100,11 @@ class ReplaceEditDialog : DialogFragment(),
         replaceRule.replacement = et_replace_to.text.toString()
         replaceRule.scope = et_scope.text.toString()
         return replaceRule
+    }
+
+    val callBack get() = activity as? CallBack
+
+    interface CallBack {
+        fun onReplaceRuleSave()
     }
 }

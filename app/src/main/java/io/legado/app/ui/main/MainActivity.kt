@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.github.houbb.opencc4j.util.ZhConverterUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.App
 import io.legado.app.BuildConfig
@@ -16,7 +15,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
@@ -53,21 +51,12 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         upVersion()
-        //初始化简繁转换引擎
-        when (AppConfig.chineseConverterType) {
-            1 -> Coroutine.async { ZhConverterUtil.toSimple("初始化") }
-            2 -> Coroutine.async { ZhConverterUtil.toTraditional("初始化") }
-        }
         //自动更新书籍
         if (AppConfig.autoRefreshBook) {
             view_pager_main.postDelayed({
                 viewModel.upChapterList()
             }, 1000)
         }
-        //清楚过期数据
-        view_pager_main.postDelayed({
-            viewModel.clearExpiredData()
-        }, 3000)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

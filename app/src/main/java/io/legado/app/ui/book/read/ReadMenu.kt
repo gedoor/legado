@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
@@ -48,6 +49,7 @@ class ReadMenu : FrameLayout {
             fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
         initAnimation()
+        ll_bottom_bg.setBackgroundColor(context.bottomBackground)
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
         seek_brightness.progress = context.getPrefInt("brightness", 100)
