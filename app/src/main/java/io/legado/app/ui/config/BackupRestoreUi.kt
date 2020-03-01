@@ -78,9 +78,7 @@ object BackupRestoreUi {
     }
 
     fun selectBackupFolder(fragment: Fragment, requestCode: Int = selectFolderRequestCode) {
-        FilePicker.selectFolder(fragment, requestCode) {
-            backupUsePermission(fragment, requestCode = requestCode)
-        }
+        FilePicker.selectFolder(fragment, requestCode)
     }
 
     fun restore(fragment: Fragment) {
@@ -97,13 +95,13 @@ object BackupRestoreUi {
                             Restore.restore(fragment.requireContext(), backupPath)
                             fragment.toast(R.string.restore_success)
                         } else {
-                            selectRestoreFolder(fragment)
+                            selectBackupFolder(fragment, restoreSelectRequestCode)
                         }
                     } else {
                         restoreUsePermission(fragment, backupPath)
                     }
                 } else {
-                    selectRestoreFolder(fragment)
+                    selectBackupFolder(fragment, restoreSelectRequestCode)
                 }
             }
         }
@@ -122,12 +120,6 @@ object BackupRestoreUi {
                 }
             }
             .request()
-    }
-
-    private fun selectRestoreFolder(fragment: Fragment) {
-        FilePicker.selectFolder(fragment, restoreSelectRequestCode) {
-            restoreUsePermission(fragment)
-        }
     }
 
     fun importOldData(fragment: Fragment) {
