@@ -11,6 +11,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.toast
 import org.jetbrains.anko.toast
 
+@Suppress("unused")
 object FilePicker {
 
     fun selectFolder(activity: AppCompatActivity, requestCode: Int, default: (() -> Unit)? = null) {
