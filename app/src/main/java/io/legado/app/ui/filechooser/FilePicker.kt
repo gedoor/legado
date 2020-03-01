@@ -25,26 +25,19 @@ object FilePicker {
                     0 -> default?.invoke()
                     1 -> {
                         try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            val intent = getSelectDirIntent()
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
                             activity.toast(e.localizedMessage ?: "ERROR")
                         }
                     }
-                    2 -> {
-                        PermissionsCompat.Builder(activity)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted {
-                                FileChooserDialog.show(
-                                    activity.supportFragmentManager,
-                                    requestCode,
-                                    mode = FileChooserDialog.DIRECTORY
-                                )
-                            }
-                            .request()
+                    2 -> checkPermissions(activity) {
+                        FileChooserDialog.show(
+                            activity.supportFragmentManager,
+                            requestCode,
+                            mode = FileChooserDialog.DIRECTORY
+                        )
                     }
                 }
             }
@@ -64,26 +57,19 @@ object FilePicker {
                         0 -> default?.invoke()
                         1 -> {
                             try {
-                                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                val intent = getSelectDirIntent()
                                 fragment.startActivityForResult(intent, requestCode)
                             } catch (e: java.lang.Exception) {
                                 e.printStackTrace()
                                 fragment.toast(e.localizedMessage ?: "ERROR")
                             }
                         }
-                        2 -> {
-                            PermissionsCompat.Builder(fragment)
-                                .addPermissions(*Permissions.Group.STORAGE)
-                                .rationale(R.string.tip_perm_request_storage)
-                                .onGranted {
-                                    FileChooserDialog.show(
-                                        fragment.childFragmentManager,
-                                        requestCode,
-                                        mode = FileChooserDialog.DIRECTORY
-                                    )
-                                }
-                                .request()
+                        2 -> checkPermissions(fragment) {
+                            FileChooserDialog.show(
+                                fragment.childFragmentManager,
+                                requestCode,
+                                mode = FileChooserDialog.DIRECTORY
+                            )
                         }
                     }
                 }
@@ -108,9 +94,7 @@ object FilePicker {
                     0 -> default?.invoke()
                     1 -> {
                         try {
-                            val intent = Intent(Intent.ACTION_GET_CONTENT)
-                            intent.addCategory(Intent.CATEGORY_OPENABLE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            val intent = getSelectFileIntent()
                             intent.type = type//设置类型
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
@@ -118,19 +102,13 @@ object FilePicker {
                             activity.toast(e.localizedMessage ?: "ERROR")
                         }
                     }
-                    2 -> {
-                        PermissionsCompat.Builder(activity)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted {
-                                FileChooserDialog.show(
-                                    activity.supportFragmentManager,
-                                    requestCode,
-                                    mode = FileChooserDialog.FILE,
-                                    allowExtensions = allowExtensions
-                                )
-                            }
-                            .request()
+                    2 -> checkPermissions(activity) {
+                        FileChooserDialog.show(
+                            activity.supportFragmentManager,
+                            requestCode,
+                            mode = FileChooserDialog.FILE,
+                            allowExtensions = allowExtensions
+                        )
                     }
                 }
             }
@@ -156,9 +134,7 @@ object FilePicker {
                         0 -> default?.invoke()
                         1 -> {
                             try {
-                                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                val intent = getSelectFileIntent()
                                 intent.type = type//设置类型
                                 fragment.startActivityForResult(intent, requestCode)
                             } catch (e: java.lang.Exception) {
@@ -166,23 +142,49 @@ object FilePicker {
                                 fragment.toast(e.localizedMessage ?: "ERROR")
                             }
                         }
-                        2 -> {
-                            PermissionsCompat.Builder(fragment)
-                                .addPermissions(*Permissions.Group.STORAGE)
-                                .rationale(R.string.tip_perm_request_storage)
-                                .onGranted {
-                                    FileChooserDialog.show(
-                                        fragment.childFragmentManager,
-                                        requestCode,
-                                        mode = FileChooserDialog.FILE,
-                                        allowExtensions = allowExtensions
-                                    )
-                                }
-                                .request()
+                        2 -> checkPermissions(fragment) {
+                            FileChooserDialog.show(
+                                fragment.childFragmentManager,
+                                requestCode,
+                                mode = FileChooserDialog.FILE,
+                                allowExtensions = allowExtensions
+                            )
                         }
                     }
                 }
             }.show()
     }
 
+    private fun getSelectFileIntent(): Intent {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        return intent
+    }
+
+    private fun getSelectDirIntent(): Intent {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        return intent
+    }
+
+    private fun checkPermissions(fragment: Fragment, success: (() -> Unit)? = null) {
+        PermissionsCompat.Builder(fragment)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                success?.invoke()
+            }
+            .request()
+    }
+
+    private fun checkPermissions(activity: AppCompatActivity, success: (() -> Unit)? = null) {
+        PermissionsCompat.Builder(activity)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                success?.invoke()
+            }
+            .request()
+    }
 }
