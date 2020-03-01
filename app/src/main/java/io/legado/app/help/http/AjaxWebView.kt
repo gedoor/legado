@@ -1,7 +1,6 @@
 package io.legado.app.help.http
 
 import android.annotation.SuppressLint
-import android.net.http.SslError
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -9,11 +8,7 @@ import android.os.Message
 import android.text.TextUtils
 import android.webkit.*
 import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.constant.AppConst
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.cancelButton
-import io.legado.app.lib.dialogs.okButton
 import org.apache.commons.text.StringEscapeUtils
 import java.lang.ref.WeakReference
 
@@ -171,14 +166,6 @@ class AjaxWebView {
                 ).sendToTarget()
             }
         }
-
-        override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-            App.INSTANCE.alert(titleResource = R.string.sure) {
-                message = "${view.url}证书不匹配,是否继续访问"
-                okButton { handler.proceed() }
-                cancelButton { handler.cancel() }
-            }.show()
-        }
     }
 
     private class EvalJsRunnable(
@@ -248,14 +235,6 @@ class AjaxWebView {
                     Exception(error.description.toString())
                 ).sendToTarget()
             }
-        }
-
-        override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-            App.INSTANCE.alert(titleResource = R.string.sure) {
-                message = "${view.url}证书不匹配,是否继续访问"
-                okButton { handler.proceed() }
-                cancelButton { handler.cancel() }
-            }.show()
         }
 
         override fun onPageFinished(view: WebView, url: String) {
