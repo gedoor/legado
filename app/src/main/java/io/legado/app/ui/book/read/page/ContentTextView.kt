@@ -92,6 +92,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
         if (!ReadBookConfig.isScroll) return
         //滚动翻页
+        if (!pageFactory.hasNext()) return
         val nextPage = relativePage(1)
         relativeOffset = relativeOffset(1)
         nextPage.textLines.forEach { textLine ->
@@ -108,6 +109,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 textLine.isReadAloud
             )
         }
+        if (!pageFactory.hasNextPlus()) return
         relativeOffset = relativeOffset(2)
         if (relativeOffset < ChapterProvider.visibleHeight) {
             relativePage(2).textLines.forEach { textLine ->
