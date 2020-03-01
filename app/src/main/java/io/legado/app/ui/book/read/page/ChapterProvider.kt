@@ -120,10 +120,12 @@ object ChapterProvider {
         )
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
-            durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             val textLine = TextLine(isTitle = true)
-            if (durY < visibleHeight) {
+            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
+                + contentPaint.fontMetrics.descent < visibleHeight
+            ) {
                 textPages.last().textLines.add(textLine)
+                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
@@ -138,7 +140,7 @@ object ChapterProvider {
                     (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
             textLine.lineBase = (paddingTop + durY -
                     (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
-            textLine.lineBottom = textLine.lineBase + titlePaint.fontMetrics.descent
+            textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
             val words =
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -176,10 +178,12 @@ object ChapterProvider {
         )
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
-            durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             val textLine = TextLine()
-            if (durY < visibleHeight) {
+            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
+                + contentPaint.fontMetrics.descent < visibleHeight
+            ) {
                 textPages.last().textLines.add(textLine)
+                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
