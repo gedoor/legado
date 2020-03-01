@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
@@ -20,12 +21,11 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.ItemTouchCallback
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
@@ -38,7 +38,7 @@ import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
-import java.io.FileNotFoundException
+import java.io.File
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
@@ -50,7 +50,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         get() = getViewModel(RssSourceViewModel::class.java)
     private val importRecordKey = "rssSourceRecordKey"
     private val qrRequestCode = 101
-    private val importSource = 124
+    private val importRequestCode = 124
+    private val exportRequestCode = 65
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
@@ -79,7 +80,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
-            R.id.menu_import_source_local -> selectFileSys()
+            R.id.menu_import_source_local -> FilePicker
+                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage -> GroupManageDialog()
@@ -96,7 +98,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
             R.id.menu_check_source -> {
             }
         }
@@ -248,46 +250,25 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         }.show().applyTint()
     }
 
-    private fun selectFileSys() {
-        try {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "text/*"//设置类型
-            startActivityForResult(intent, importSource)
-        } catch (e: Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    selectFile()
-                }
-                .request()
-        }
-    }
-
-    private fun selectFile() {
-        FileChooserDialog.show(
-            supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json")
-        )
-    }
-
     override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == importSource) {
-            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-            viewModel.importSourceFromFilePath(currentPath) { msg ->
-                title_bar.snackbar(msg)
+        when (requestCode) {
+            importRequestCode -> {
+                Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                viewModel.importSourceFromFilePath(currentPath) { msg ->
+                    title_bar.snackbar(msg)
+                }
             }
+            exportRequestCode -> viewModel.exportSelection(
+                adapter.getSelection(),
+                File(currentPath)
+            )
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            importSource -> if (resultCode == Activity.RESULT_OK) {
+            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     try {
                         uri.readText(this)?.let {
@@ -297,17 +278,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                                 title_bar.snackbar(msg)
                             }
                         }
-                    } catch (e: FileNotFoundException) {
-                        PermissionsCompat.Builder(this)
-                            .addPermissions(
-                                Permissions.READ_EXTERNAL_STORAGE,
-                                Permissions.WRITE_EXTERNAL_STORAGE
-                            )
-                            .rationale(R.string.bg_image_per)
-                            .onGranted {
-                                selectFileSys()
-                            }
-                            .request()
                     } catch (e: Exception) {
                         toast(e.localizedMessage ?: "ERROR")
                     }
@@ -318,6 +288,19 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                     viewModel.importSource(it) { msg ->
                         title_bar.snackbar(msg)
+                    }
+                }
+            }
+            exportRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    if (uri.toString().isContentPath()) {
+                        DocumentFile.fromTreeUri(this, uri)?.let {
+                            viewModel.exportSelection(adapter.getSelection(), it)
+                        }
+                    } else {
+                        uri.path?.let {
+                            viewModel.exportSelection(adapter.getSelection(), File(it))
+                        }
                     }
                 }
             }

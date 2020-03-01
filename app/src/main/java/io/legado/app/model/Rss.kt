@@ -35,7 +35,7 @@ object Rss {
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
             val body = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin)
-                .getResponseAwait()
+                .getResponseAwait(rssArticle.origin)
                 .body
             val analyzeRule = AnalyzeRule()
             analyzeRule.setContent(

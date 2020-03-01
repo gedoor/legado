@@ -2,6 +2,7 @@ package io.legado.app.ui.rss.source.manage
 
 import android.app.Application
 import android.text.TextUtils
+import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.R
@@ -67,12 +68,24 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun exportSelection(sources: LinkedHashSet<RssSource>) {
+    fun exportSelection(sources: LinkedHashSet<RssSource>, file: File) {
         execute {
             val json = GSON.toJson(sources)
-            val file =
-                FileUtils.createFileIfNotExist(Backup.exportPath + File.separator + "exportRssSource.json")
-            file.writeText(json)
+            FileUtils.createFileIfNotExist(file, "exportRssSource.json")
+                .writeText(json)
+        }.onSuccess {
+            context.toast("成功导出至\n${Backup.exportPath}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
+        }
+    }
+
+    fun exportSelection(sources: LinkedHashSet<RssSource>, doc: DocumentFile) {
+        execute {
+            val json = GSON.toJson(sources)
+            doc.findFile("exportRssSource.json")?.delete()
+            doc.createFile("", "exportRssSource.json")
+                ?.writeText(context, json)
         }.onSuccess {
             context.toast("成功导出至\n${Backup.exportPath}")
         }.onError {

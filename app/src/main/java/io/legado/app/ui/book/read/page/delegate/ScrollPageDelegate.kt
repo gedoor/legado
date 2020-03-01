@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.view.MotionEvent
 import android.view.VelocityTracker
+import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.abs
 
@@ -57,5 +58,13 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     override fun onDestroy() {
         super.onDestroy()
         mVelocity.recycle()
+    }
+
+    override fun nextPageByAnim() {
+        startScroll(0, 0, 0, -ChapterProvider.visibleHeight)
+    }
+
+    override fun prevPageByAnim() {
+        startScroll(0, 0, 0, ChapterProvider.visibleHeight)
     }
 }

@@ -78,26 +78,24 @@ class App : Application() {
             ThemeStore.editTheme(this)
                 .primaryColor(
                     getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
-                )
-                .accentColor(
+                ).accentColor(
                     getPrefInt("colorAccentNight", getCompatColor(R.color.md_brown_800))
-                )
-                .backgroundColor(
+                ).backgroundColor(
                     getPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
-                )
-                .apply()
+                ).bottomBackground(
+                    getPrefInt("colorBottomBackgroundNight", getCompatColor(R.color.md_grey_850))
+                ).apply()
         } else {
             ThemeStore.editTheme(this)
                 .primaryColor(
                     getPrefInt("colorPrimary", getCompatColor(R.color.md_indigo_800))
-                )
-                .accentColor(
+                ).accentColor(
                     getPrefInt("colorAccent", getCompatColor(R.color.md_red_600))
-                )
-                .backgroundColor(
+                ).backgroundColor(
                     getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                )
-                .apply()
+                ).bottomBackground(
+                    getPrefInt("colorBottomBackground", getCompatColor(R.color.md_grey_200))
+                ).apply()
         }
     }
 

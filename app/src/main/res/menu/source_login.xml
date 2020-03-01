@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_scan"
-        android:icon="@drawable/ic_scan"
-        android:title="@string/scan_qr_code"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/menu_success"
+        android:icon="@drawable/ic_check"
+        android:title="@string/success"
+        app:showAsAction="always" />
 
 </menu>

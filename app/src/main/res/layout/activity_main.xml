@@ -8,7 +8,7 @@
         android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="6dp"
+        android:elevation="10dp"
         android:background="@color/background"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/main_bnv"
