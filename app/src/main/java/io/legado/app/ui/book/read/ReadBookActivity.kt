@@ -20,7 +20,9 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -64,6 +66,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
     TocRegexDialog.CallBack,
+    ReplaceEditDialog.CallBack,
     ColorPickerDialogListener {
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
@@ -549,6 +552,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 Pair("bookUrl", it.bookUrl)
             )
         }
+    }
+
+    override fun onReplaceRuleSave() {
+        Coroutine.async { BookHelp.upReplaceRules() }
     }
 
     override fun showReadStyle() {

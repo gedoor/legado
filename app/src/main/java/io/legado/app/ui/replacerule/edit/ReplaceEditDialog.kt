@@ -68,6 +68,7 @@ class ReplaceEditDialog : DialogFragment(),
         when (item?.itemId) {
             R.id.menu_save -> {
                 viewModel.save(getReplaceRule()) {
+                    callBack?.onReplaceRuleSave()
                     dismiss()
                 }
             }
@@ -93,5 +94,11 @@ class ReplaceEditDialog : DialogFragment(),
         replaceRule.replacement = et_replace_to.text.toString()
         replaceRule.scope = et_scope.text.toString()
         return replaceRule
+    }
+
+    val callBack = activity as? CallBack
+
+    interface CallBack {
+        fun onReplaceRuleSave()
     }
 }

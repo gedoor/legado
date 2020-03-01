@@ -20,7 +20,9 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.BookHelp
 import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -290,6 +292,11 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Coroutine.async { BookHelp.upReplaceRules() }
     }
 
     override fun upCountView() {
