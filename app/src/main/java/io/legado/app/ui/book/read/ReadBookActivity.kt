@@ -554,18 +554,31 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    /**
+     * 替换规则变化
+     */
     override fun onReplaceRuleSave() {
         Coroutine.async { BookHelp.upReplaceRules() }
+        ReadBook.loadContent()
     }
 
+    /**
+     * 显示阅读样式配置
+     */
     override fun showReadStyle() {
         ReadStyleDialog().show(supportFragmentManager, "readStyle")
     }
 
+    /**
+     * 显示更多设置
+     */
     override fun showMoreSetting() {
         MoreConfigDialog().show(supportFragmentManager, "moreConfig")
     }
 
+    /**
+     * 更新状态栏,导航栏
+     */
     override fun upSystemUiVisibility() {
         Help.upSystemUiVisibility(this, !read_menu.isVisible)
     }
