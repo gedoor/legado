@@ -8,14 +8,11 @@ import android.view.MenuItem
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.data.entities.Cookie
+import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.snackbar
 import kotlinx.android.synthetic.main.activity_source_login.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 
 
 class SourceLogin : BaseActivity(R.layout.activity_source_login) {
@@ -41,13 +38,17 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
         web_view.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 val cookie = cookieManager.getCookie(url)
-                saveCookie(cookie)
+                sourceUrl?.let {
+                    CookieStore.setCookie(it, cookie)
+                }
                 super.onPageStarted(view, url, favicon)
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 val cookie = cookieManager.getCookie(url)
-                saveCookie(cookie)
+                sourceUrl?.let {
+                    CookieStore.setCookie(it, cookie)
+                }
                 if (checking) {
                     finish()
                 }
@@ -75,11 +76,4 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun saveCookie(cookie: String) {
-        launch(IO) {
-            sourceUrl?.let {
-                App.db.cookieDao().insert(Cookie(it, cookie))
-            }
-        }
-    }
 }
