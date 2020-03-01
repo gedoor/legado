@@ -40,6 +40,7 @@ import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.changesource.ChangeSourceDialog
 import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -219,6 +220,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 supportFragmentManager,
                 ReadBook.book?.tocUrl
             )
+            R.id.menu_login -> ReadBook.webBook?.bookSource?.let {
+                startActivity<SourceLogin>(
+                    Pair("sourceUrl", it.bookSourceUrl),
+                    Pair("loginUrl", it.loginUrl)
+                )
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
