@@ -9,7 +9,11 @@ import android.os.Message
 import android.text.TextUtils
 import android.webkit.*
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.cancelButton
+import io.legado.app.lib.dialogs.okButton
 import org.apache.commons.text.StringEscapeUtils
 import java.lang.ref.WeakReference
 
@@ -169,7 +173,11 @@ class AjaxWebView {
         }
 
         override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-            handler.proceed()
+            App.INSTANCE.alert(titleResource = R.string.sure) {
+                message = "${view.url}证书不匹配,是否继续访问"
+                okButton { handler.proceed() }
+                cancelButton { handler.cancel() }
+            }.show()
         }
     }
 
@@ -243,7 +251,11 @@ class AjaxWebView {
         }
 
         override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-            handler.proceed()
+            App.INSTANCE.alert(titleResource = R.string.sure) {
+                message = "${view.url}证书不匹配,是否继续访问"
+                okButton { handler.proceed() }
+                cancelButton { handler.cancel() }
+            }.show()
         }
 
         override fun onPageFinished(view: WebView, url: String) {
