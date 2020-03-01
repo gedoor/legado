@@ -78,6 +78,17 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 }
                 return true
             }
+
+            @Suppress("DEPRECATION")
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                if (url?.startsWith("http", true) == true) {
+                    return false
+                }
+                url?.let {
+                    openUrl(it)
+                }
+                return true
+            }
         }
         webView.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
