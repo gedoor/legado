@@ -40,7 +40,7 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 else -> null
             }
         }
-        root_view.postDelayed({ startMainActivity() }, 200)
+        root_view.postDelayed({ startMainActivity() }, 300)
     }
 
     private fun startMainActivity() {
