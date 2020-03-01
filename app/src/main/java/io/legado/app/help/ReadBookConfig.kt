@@ -26,24 +26,6 @@ object ReadBookConfig {
     }
     val durConfig get() = getConfig(styleSelect)
     private val shareConfig get() = getConfig(5)
-    var styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
-        set(value) {
-            field = value
-            App.INSTANCE.putPrefInt(PreferKey.readStyleSelect, value)
-        }
-    var shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
-        set(value) {
-            field = value
-            App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
-        }
-    var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
-        set(value) {
-            field = value
-            isScroll = value == 3
-            App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
-        }
-    var isScroll = pageAnim == 3
-    val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     var bg: Drawable? = null
 
     init {
@@ -113,6 +95,39 @@ object ReadBookConfig {
     }
 
     //配置写入读取
+    var styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
+        set(value) {
+            field = value
+            if (App.INSTANCE.getPrefInt(PreferKey.readStyleSelect) != value) {
+                App.INSTANCE.putPrefInt(PreferKey.readStyleSelect, value)
+            }
+        }
+    var shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
+        set(value) {
+            field = value
+            if (App.INSTANCE.getPrefBoolean(PreferKey.shareLayout) != value) {
+                App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
+            }
+        }
+    var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+        set(value) {
+            field = value
+            isScroll = value == 3
+            if (App.INSTANCE.getPrefInt(PreferKey.pageAnim) != value) {
+                App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
+            }
+        }
+    var isScroll = pageAnim == 3
+    val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
+    var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
+        set(value) {
+            field = value
+            bodyIndent = "　".repeat(value)
+            if (App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2) != value) {
+                App.INSTANCE.putPrefInt(PreferKey.bodyIndent, value)
+            }
+        }
+    var bodyIndent = "　".repeat(bodyIndentCount)
     var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
     var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
     var textBold: Boolean

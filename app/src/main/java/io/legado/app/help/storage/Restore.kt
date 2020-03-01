@@ -114,6 +114,7 @@ object Restore {
                 pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
                 hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
                 hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
+                bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
             }
             ChapterProvider.upStyle()
             ReadBook.loadContent()

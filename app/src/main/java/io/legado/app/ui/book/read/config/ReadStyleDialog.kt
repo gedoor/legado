@@ -11,7 +11,6 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
@@ -118,7 +117,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
-                BookHelp.bodyIndentCount = index
+                ReadBookConfig.bodyIndentCount = index
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }

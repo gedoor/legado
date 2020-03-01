@@ -56,7 +56,7 @@ object BookContent {
                     ruleUrl = nextUrl,
                     book = book,
                     headerMapF = bookSource.getHeaderMap()
-                ).getResponseAwait()
+                ).getResponseAwait(bookSource.bookSourceUrl)
                     .body?.let { nextBody ->
                     contentData =
                         analyzeContent(
@@ -80,7 +80,7 @@ object BookContent {
                         ruleUrl = item.nextUrl,
                         book = book,
                         headerMapF = bookSource.getHeaderMap()
-                    ).getResponseAwait()
+                    ).getResponseAwait(bookSource.bookSourceUrl)
                         .body?.let {
                         contentData =
                             analyzeContent(

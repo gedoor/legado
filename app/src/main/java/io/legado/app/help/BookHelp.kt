@@ -237,13 +237,7 @@ object BookHelp {
     private var bookName: String? = null
     private var bookOrigin: String? = null
     private var replaceRules: List<ReplaceRule> = arrayListOf()
-    var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
-        set(value) {
-            field = value
-            App.INSTANCE.putPrefInt(PreferKey.bodyIndent, value)
-            bodyIndent = "　".repeat(value)
-        }
-    var bodyIndent = "　".repeat(bodyIndentCount)
+
 
 
     fun disposeContent(
@@ -281,6 +275,6 @@ object BookHelp {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
         }
-        return c.replace("\\s*\\n+\\s*".toRegex(), "\n$bodyIndent")
+        return c.replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
     }
 }
