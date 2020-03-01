@@ -23,11 +23,17 @@ class ReplaceEditDialog : DialogFragment(),
 
     companion object {
 
-        fun show(fragmentManager: FragmentManager, id: Long = -1, pattern: String? = null) {
+        fun show(
+            fragmentManager: FragmentManager,
+            id: Long = -1,
+            pattern: String? = null,
+            isRegex: Boolean = false
+        ) {
             val dialog = ReplaceEditDialog()
             val bundle = Bundle()
             bundle.putLong("id", id)
             bundle.putString("pattern", pattern)
+            bundle.putBoolean("isRegex", isRegex)
             dialog.arguments = bundle
             dialog.show(fragmentManager, "editReplace")
         }
