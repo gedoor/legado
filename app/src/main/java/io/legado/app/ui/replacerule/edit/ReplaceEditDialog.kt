@@ -102,7 +102,7 @@ class ReplaceEditDialog : DialogFragment(),
         return replaceRule
     }
 
-    val callBack = activity as? CallBack
+    val callBack get() = activity as? CallBack
 
     interface CallBack {
         fun onReplaceRuleSave()

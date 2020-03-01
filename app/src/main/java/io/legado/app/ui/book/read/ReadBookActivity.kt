@@ -558,8 +558,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 替换规则变化
      */
     override fun onReplaceRuleSave() {
-        Coroutine.async { BookHelp.upReplaceRules() }
-        ReadBook.loadContent()
+        Coroutine.async {
+            BookHelp.upReplaceRules()
+            ReadBook.loadContent()
+        }
     }
 
     /**
@@ -637,7 +639,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                             viewModel.openChapter(index)
                         }
                     }
-                requestCodeReplace -> ReadBook.loadContent()
+                requestCodeReplace -> onReplaceRuleSave()
             }
         }
     }
