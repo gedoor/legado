@@ -68,6 +68,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                         ?: TextPage(title = it.title).format()
                 }
             }
+            if (!hasNextChapter()) {
+                return@with TextPage(text = "")
+            }
             nextChapter?.let {
                 return@with it.page(0)?.removePageAloudSpan()
                     ?: TextPage(title = it.title).format()
@@ -83,6 +86,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                         ?: TextPage(title = it.title).format()
                 }
             }
+            if (!hasPrevChapter()) {
+                return@with TextPage(text = "")
+            }
             prevChapter?.let {
                 return@with it.lastPage()?.removePageAloudSpan()
                     ?: TextPage(title = it.title).format()
@@ -96,6 +102,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 if (pageIndex < it.pageSize() - 2) {
                     return@with it.page(pageIndex + 2)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
+                }
+                if (!hasNextChapter()) {
+                    TextPage(text = "")
                 }
                 nextChapter?.let { nc ->
                     if (pageIndex < it.pageSize() - 1) {
