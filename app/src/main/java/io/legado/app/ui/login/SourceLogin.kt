@@ -14,6 +14,8 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.Cookie
 import io.legado.app.utils.snackbar
 import kotlinx.android.synthetic.main.activity_source_login.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 
 class SourceLogin : BaseActivity(R.layout.activity_source_login) {
@@ -74,8 +76,10 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
     }
 
     private fun saveCookie(cookie: String) {
-        sourceUrl?.let {
-            App.db.cookieDao().insert(Cookie(it, cookie))
+        launch(IO) {
+            sourceUrl?.let {
+                App.db.cookieDao().insert(Cookie(it, cookie))
+            }
         }
     }
 }
