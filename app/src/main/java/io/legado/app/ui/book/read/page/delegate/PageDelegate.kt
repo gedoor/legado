@@ -169,6 +169,15 @@ abstract class PageDelegate(protected val pageView: PageView) :
         abort()
     }
 
+    open fun keyTurnPage(direction: Direction) {
+        if (isRunning) return
+        when (direction) {
+            Direction.NEXT -> nextPageByAnim()
+            Direction.PREV -> prevPageByAnim()
+            else -> return
+        }
+    }
+
     @CallSuper
     open fun setDirection(direction: Direction) {
         mDirection = direction

@@ -117,22 +117,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         callBack.screenOffTimerStart()
     }
 
-    fun moveToPrevPage(noAnim: Boolean = false) {
-        if (noAnim) {
-            fillPage(PageDelegate.Direction.PREV)
-        } else {
-            pageDelegate?.prevPageByAnim()
-        }
-    }
-
-    fun moveToNextPage(noAnim: Boolean = false) {
-        if (noAnim) {
-            fillPage(PageDelegate.Direction.NEXT)
-        } else {
-            pageDelegate?.nextPageByAnim()
-        }
-    }
-
     fun upStyle() {
         ChapterProvider.upStyle()
         curPage.upStyle()

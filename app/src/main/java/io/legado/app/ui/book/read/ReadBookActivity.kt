@@ -271,18 +271,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
             KeyEvent.KEYCODE_SPACE -> {
-                page_view.moveToNextPage()
+                page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
                 return true
             }
             getPrefInt(PreferKey.prevKey) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.moveToPrevPage()
+                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.PREV)
                     return true
                 }
             }
             getPrefInt(PreferKey.nextKey) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.moveToNextPage()
+                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
                     return true
                 }
             }
@@ -440,11 +440,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 if (getPrefBoolean("volumeKeyPageOnPlay")
                     || BaseReadAloudService.pause
                 ) {
-                    when (direction) {
-                        PageDelegate.Direction.PREV -> page_view.moveToPrevPage()
-                        PageDelegate.Direction.NEXT -> page_view.moveToNextPage()
-                        else -> return true
-                    }
+                    page_view.pageDelegate?.keyTurnPage(direction)
                     return true
                 }
             }
