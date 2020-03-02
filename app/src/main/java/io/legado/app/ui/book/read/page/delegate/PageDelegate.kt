@@ -161,9 +161,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     open fun onScroll() {}//移动contentView， slidePage
 
-    abstract fun nextPageByAnim()
+    open fun nextPageByAnim() {
+        abort()
+    }
 
-    abstract fun prevPageByAnim()
+    open fun prevPageByAnim() {
+        abort()
+    }
 
     @CallSuper
     open fun setDirection(direction: Direction) {

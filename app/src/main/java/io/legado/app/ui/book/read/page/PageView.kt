@@ -117,7 +117,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         callBack.screenOffTimerStart()
     }
 
-    fun moveToPrevPage(noAnim: Boolean = true) {
+    fun moveToPrevPage(noAnim: Boolean = false) {
         if (noAnim) {
             fillPage(PageDelegate.Direction.PREV)
         } else {
@@ -125,7 +125,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    fun moveToNextPage(noAnim: Boolean = true) {
+    fun moveToNextPage(noAnim: Boolean = false) {
         if (noAnim) {
             fillPage(PageDelegate.Direction.NEXT)
         } else {
