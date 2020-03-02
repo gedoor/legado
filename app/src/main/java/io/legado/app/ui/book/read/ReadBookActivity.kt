@@ -215,6 +215,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             R.id.menu_enable_replace -> ReadBook.book?.let {
                 it.useReplaceRule = !it.useReplaceRule
                 menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.useReplaceRule
+                onReplaceRuleSave()
             }
             R.id.menu_book_info -> ReadBook.book?.let {
                 startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))

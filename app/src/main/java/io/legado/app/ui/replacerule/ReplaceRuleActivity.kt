@@ -141,8 +141,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun observeReplaceRuleData(key: String? = null) {
-        replaceRuleLiveData?.removeObservers(this)
         dataInit = false
+        replaceRuleLiveData?.removeObservers(this)
         replaceRuleLiveData = if (key.isNullOrEmpty()) {
             App.db.replaceRuleDao().liveDataAll()
         } else {
@@ -304,22 +304,27 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     override fun update(vararg rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.update(*rule)
     }
 
     override fun delete(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.delete(rule)
     }
 
     override fun edit(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         ReplaceEditDialog.show(supportFragmentManager, rule.id)
     }
 
     override fun toTop(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.toTop(rule)
     }
 
     override fun upOrder() {
+        setResult(Activity.RESULT_OK)
         viewModel.upOrder()
     }
 }
