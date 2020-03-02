@@ -69,7 +69,6 @@ class CheckSourceService : BaseService() {
         }
         if (processIndex < allIds.size) {
             val sourceUrl = allIds[processIndex]
-
             App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
                 val webBook = WebBook(source)
                 webBook.searchBook("我的", scope = this, context = searchPool)
