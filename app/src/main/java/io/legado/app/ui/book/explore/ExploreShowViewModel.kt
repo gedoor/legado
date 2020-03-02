@@ -1,4 +1,4 @@
-package io.legado.app.ui.explore
+package io.legado.app.ui.book.explore
 
 import android.app.Application
 import android.content.Intent

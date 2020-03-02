@@ -1,4 +1,4 @@
-package io.legado.app.ui.chapterlist
+package io.legado.app.ui.book.chapterlist
 
 import android.content.Context
 import android.widget.TextView

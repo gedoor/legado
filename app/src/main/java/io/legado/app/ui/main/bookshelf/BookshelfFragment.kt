@@ -27,8 +27,8 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.search.SearchActivity
-import io.legado.app.ui.download.DownloadActivity
-import io.legado.app.ui.importbook.ImportBookActivity
+import io.legado.app.ui.book.download.DownloadActivity
+import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_bookshelf_config.view.*

@@ -182,16 +182,16 @@
             android:name=".ui.book.source.debug.BookSourceDebugActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".ui.chapterlist.ChapterListActivity"
+            android:name="io.legado.app.ui.book.chapterlist.ChapterListActivity"
             android:launchMode="singleTop" />
         <activity
             android:name=".ui.rss.read.ReadRssActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".ui.importbook.ImportBookActivity"
+            android:name="io.legado.app.ui.book.local.ImportBookActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".ui.explore.ExploreShowActivity"
+            android:name="io.legado.app.ui.book.explore.ExploreShowActivity"
             android:launchMode="singleTop" />
         <activity
             android:name=".ui.rss.source.debug.RssSourceDebugActivity"
@@ -203,7 +203,7 @@
             android:name=".ui.rss.favorites.RssFavoritesActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".ui.download.DownloadActivity"
+            android:name="io.legado.app.ui.book.download.DownloadActivity"
             android:launchMode="singleTop" />
         <activity
             android:name=".receiver.SharedReceiverActivity"

@@ -1,4 +1,4 @@
-package io.legado.app.ui.changecover
+package io.legado.app.ui.book.changecover
 
 import android.os.Bundle
 import android.util.DisplayMetrics

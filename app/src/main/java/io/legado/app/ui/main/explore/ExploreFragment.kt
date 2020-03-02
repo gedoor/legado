@@ -18,7 +18,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.explore.ExploreShowActivity
+import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
