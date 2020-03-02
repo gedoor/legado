@@ -18,11 +18,12 @@ import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
 
 class CheckSourceService : BaseService() {
-    private var searchPool =
-        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
+    private val threadCount = AppConfig.threadCount
+    private var searchPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
     private var task: Coroutine<*>? = null
-    private val allIds = LinkedHashSet<String>()
-    private val checkedIds = LinkedHashSet<String>()
+    private val allIds = ArrayList<String>()
+    private val checkedIds = ArrayList<String>()
+    private var processIndex = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -50,30 +51,40 @@ class CheckSourceService : BaseService() {
         allIds.clear()
         checkedIds.clear()
         allIds.addAll(ids)
+        processIndex = 0
         updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
-        task = execute(context = searchPool) {
-            allIds.forEach { sourceUrl ->
-                App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
-                    val webBook = WebBook(source)
-                    webBook.searchBook("我的", scope = this, context = searchPool)
-                        .onError(IO) {
-                            source.addGroup("失效")
-                            App.db.bookSourceDao().update(source)
-                        }.onFinally {
-                            checkedIds.add(sourceUrl)
-                            updateNotification(
-                                checkedIds.size,
-                                getString(R.string.progress_show, checkedIds.size, allIds.size)
-                            )
-                        }
-                }
+        task = execute {
+            for (i in 0 until threadCount) {
+                check()
             }
         }.onError {
             toast("校验书源出错:${it.localizedMessage}")
         }
+    }
 
-        task?.invokeOnCompletion {
-            stopSelf()
+
+    private fun check() {
+        processIndex++
+        if (processIndex < allIds.size) {
+            val sourceUrl = allIds[processIndex]
+
+            App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
+                val webBook = WebBook(source)
+                webBook.searchBook("我的", scope = this, context = searchPool)
+                    .onError(IO) {
+                        source.addGroup("失效")
+                        App.db.bookSourceDao().update(source)
+                    }.onFinally {
+                        checkedIds.add(sourceUrl)
+                        updateNotification(
+                            checkedIds.size,
+                            getString(R.string.progress_show, checkedIds.size, allIds.size)
+                        )
+                        if (processIndex >= allIds.size + threadCount - 1) {
+                            stopSelf()
+                        }
+                    }
+            }
         }
     }
 
