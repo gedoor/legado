@@ -5,6 +5,13 @@ import io.legado.app.ui.book.read.page.PageView
 
 class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
+    override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
+        curPage.x = 0f
+        prevPage.x = -viewWidth.toFloat()
+        nextPage.x = viewWidth.toFloat()
+        super.setStartPoint(x, y, invalidate)
+    }
+
     override fun onAnimStart() {
         val distanceX: Float
         when (mDirection) {
@@ -37,17 +44,18 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
         if (!isMoved) return
         if (mDirection == Direction.PREV) {
-            prevPage.translationX = offsetX - viewWidth
             curPage.translationX = offsetX
+            prevPage.translationX = offsetX - viewWidth + 1f
         } else if (mDirection == Direction.NEXT) {
+            nextPage.translationX = offsetX + viewWidth - 1f
             curPage.translationX = offsetX
-            nextPage.translationX = curPage.x + viewWidth
         }
     }
 
     override fun onAnimStop() {
-        curPage.x = 0.toFloat()
+        curPage.x = 0f
         prevPage.x = -viewWidth.toFloat()
+        nextPage.x = viewWidth.toFloat()
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
