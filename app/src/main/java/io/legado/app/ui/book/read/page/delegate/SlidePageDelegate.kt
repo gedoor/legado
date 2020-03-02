@@ -42,7 +42,7 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
             || (mDirection == Direction.PREV && offsetX < 0)
         ) return
 
-        if (!isMoved) return
+        if (!isRunning) return
         if (mDirection == Direction.PREV) {
             curPage.translationX = offsetX
             prevPage.translationX = offsetX - viewWidth

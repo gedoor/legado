@@ -16,27 +16,11 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         shadowDrawableR.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
-    override fun onAnimStart() {
-        val distanceX: Float
-        when (mDirection) {
-            Direction.NEXT -> distanceX =
-                if (isCancel) {
-                    var dis = viewWidth - startX + touchX
-                    if (dis > viewWidth) {
-                        dis = viewWidth.toFloat()
-                    }
-                    viewWidth - dis
-                } else {
-                    -(touchX + (viewWidth - startX))
-                }
-            else -> distanceX =
-                if (isCancel) {
-                    -(touchX - startX)
-                } else {
-                    viewWidth - (touchX - startX)
-                }
-        }
-        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
+    override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
+        curPage.x = 0.toFloat()
+        prevPage.x = -viewWidth.toFloat()
+        nextPage.x = 0.toFloat()
+        super.setStartPoint(x, y, invalidate)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -47,7 +31,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         ) return
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
-        if (!isMoved) return
+        if (!isRunning) return
         if (mDirection == Direction.PREV) {
             prevPage.translationX = offsetX - viewWidth
         } else if (mDirection == Direction.NEXT) {
@@ -72,6 +56,29 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
+    }
+
+    override fun onAnimStart() {
+        val distanceX: Float
+        when (mDirection) {
+            Direction.NEXT -> distanceX =
+                if (isCancel) {
+                    var dis = viewWidth - startX + touchX
+                    if (dis > viewWidth) {
+                        dis = viewWidth.toFloat()
+                    }
+                    viewWidth - dis
+                } else {
+                    -(touchX + (viewWidth - startX))
+                }
+            else -> distanceX =
+                if (isCancel) {
+                    -(touchX - startX)
+                } else {
+                    viewWidth - (touchX - startX)
+                }
+        }
+        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
     }
 
 }
