@@ -20,7 +20,9 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -38,8 +40,9 @@ import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.changesource.ChangeSourceDialog
-import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.book.changesource.ChangeSourceDialog
+import io.legado.app.ui.book.chapterlist.ChapterListActivity
+import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -63,6 +66,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
     TocRegexDialog.CallBack,
+    ReplaceEditDialog.CallBack,
     ColorPickerDialogListener {
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
@@ -211,6 +215,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             R.id.menu_enable_replace -> ReadBook.book?.let {
                 it.useReplaceRule = !it.useReplaceRule
                 menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.useReplaceRule
+                onReplaceRuleSave()
             }
             R.id.menu_book_info -> ReadBook.book?.let {
                 startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
@@ -219,6 +224,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 supportFragmentManager,
                 ReadBook.book?.tocUrl
             )
+            R.id.menu_login -> ReadBook.webBook?.bookSource?.let {
+                startActivity<SourceLogin>(
+                    Pair("sourceUrl", it.bookSourceUrl),
+                    Pair("loginUrl", it.loginUrl)
+                )
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -260,18 +271,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
             KeyEvent.KEYCODE_SPACE -> {
-                page_view.moveToNextPage()
+                page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
                 return true
             }
             getPrefInt(PreferKey.prevKey) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.moveToPrevPage()
+                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.PREV)
                     return true
                 }
             }
             getPrefInt(PreferKey.nextKey) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.moveToNextPage()
+                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
                     return true
                 }
             }
@@ -429,11 +440,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 if (getPrefBoolean("volumeKeyPageOnPlay")
                     || BaseReadAloudService.pause
                 ) {
-                    when (direction) {
-                        PageDelegate.Direction.PREV -> page_view.moveToPrevPage()
-                        PageDelegate.Direction.NEXT -> page_view.moveToNextPage()
-                        else -> return true
-                    }
+                    page_view.pageDelegate?.keyTurnPage(direction)
                     return true
                 }
             }
@@ -544,14 +551,33 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    /**
+     * 替换规则变化
+     */
+    override fun onReplaceRuleSave() {
+        Coroutine.async {
+            BookHelp.upReplaceRules()
+            ReadBook.loadContent()
+        }
+    }
+
+    /**
+     * 显示阅读样式配置
+     */
     override fun showReadStyle() {
         ReadStyleDialog().show(supportFragmentManager, "readStyle")
     }
 
+    /**
+     * 显示更多设置
+     */
     override fun showMoreSetting() {
         MoreConfigDialog().show(supportFragmentManager, "moreConfig")
     }
 
+    /**
+     * 更新状态栏,导航栏
+     */
     override fun upSystemUiVisibility() {
         Help.upSystemUiVisibility(this, !read_menu.isVisible)
     }
@@ -610,7 +636,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                             viewModel.openChapter(index)
                         }
                     }
-                requestCodeReplace -> ReadBook.loadContent()
+                requestCodeReplace -> onReplaceRuleSave()
             }
         }
     }

@@ -8,10 +8,7 @@ import io.legado.app.constant.Pattern.EXP_PATTERN
 import io.legado.app.constant.Pattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.help.JsExtensions
-import io.legado.app.help.http.AjaxWebView
-import io.legado.app.help.http.HttpHelper
-import io.legado.app.help.http.RequestMethod
-import io.legado.app.help.http.Res
+import io.legado.app.help.http.*
 import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.utils.*
@@ -243,7 +240,11 @@ class AnalyzeUrl(
     }
 
     @Throws(Exception::class)
-    fun getResponse(): Call<String> {
+    fun getResponse(tag: String): Call<String> {
+        val cookie = CookieStore.getCookie(tag)
+        if (cookie.isNotEmpty()) {
+            headerMap["Cookie"] = cookie
+        }
         return when {
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
@@ -267,7 +268,7 @@ class AnalyzeUrl(
 
     @Throws(Exception::class)
     suspend fun getResponseAwait(
-        tag: String? = null,
+        tag: String,
         jsStr: String? = null,
         sourceRegex: String? = null
     ): Res {
@@ -278,7 +279,12 @@ class AnalyzeUrl(
             params.javaScript = jsStr
             params.sourceRegex = sourceRegex
             params.postData = bodyTxt?.toByteArray()
+            params.tag = tag
             return HttpHelper.ajax(params)
+        }
+        val cookie = CookieStore.getCookie(tag)
+        if (cookie.isNotEmpty()) {
+            headerMap["Cookie"] = cookie
         }
         val res = when {
             method == RequestMethod.POST -> {

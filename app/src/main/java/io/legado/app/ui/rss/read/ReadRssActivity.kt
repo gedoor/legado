@@ -65,7 +65,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun initWebView() {
-        webView.webViewClient = object : WebViewClient() {
+        web_view.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?
@@ -78,8 +78,19 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 }
                 return true
             }
+
+            @Suppress("DEPRECATION")
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                if (url?.startsWith("http", true) == true) {
+                    return false
+                }
+                url?.let {
+                    openUrl(it)
+                }
+                return true
+            }
         }
-        webView.settings.apply {
+        web_view.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
             allowContentAccess = true
@@ -94,23 +105,35 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
                 val html = viewModel.clHtml(content)
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)//不想用baseUrl进else
+                    web_view.loadDataWithBaseURL(
+                        url,
+                        html,
+                        "text/html",
+                        "utf-8",
+                        url
+                    )//不想用baseUrl进else
                 } else {
                     //webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
-                    webView.loadDataWithBaseURL(null, html, "text/html;charset=utf-8", "utf-8", url)
+                    web_view.loadDataWithBaseURL(
+                        null,
+                        html,
+                        "text/html;charset=utf-8",
+                        "utf-8",
+                        url
+                    )
                 }
             }
         })
         viewModel.urlLiveData.observe(this, Observer {
             upJavaScriptEnable()
-            webView.loadUrl(it.url, it.headerMap)
+            web_view.loadUrl(it.url, it.headerMap)
         })
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun upJavaScriptEnable() {
         if (viewModel.rssSource?.enableJs == true) {
-            webView.settings.javaScriptEnabled = true
+            web_view.settings.javaScriptEnabled = true
         }
     }
 
@@ -151,9 +174,9 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         event?.let {
             when (keyCode) {
-                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled && webView.canGoBack()) {
-                    if (webView.copyBackForwardList().size > 1) {
-                        webView.goBack()
+                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled && web_view.canGoBack()) {
+                    if (web_view.copyBackForwardList().size > 1) {
+                        web_view.goBack()
                         return true
                     }
                 }
@@ -168,8 +191,8 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             viewModel.textToSpeech.stop()
             upTtsMenu(false)
         } else {
-            webView.settings.javaScriptEnabled = true
-            webView.evaluateJavascript("document.documentElement.outerHTML") {
+            web_view.settings.javaScriptEnabled = true
+            web_view.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
                 val text = Jsoup.clean(html, Whitelist.none())
                     .replace(Regex("""&\w+;"""), "")

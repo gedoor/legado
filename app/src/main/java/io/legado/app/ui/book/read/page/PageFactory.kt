@@ -22,4 +22,5 @@ abstract class PageFactory<DATA>(protected val dataSource: DataSource) {
 
     abstract fun hasPrev(): Boolean
 
+    abstract fun hasNextPlus(): Boolean
 }

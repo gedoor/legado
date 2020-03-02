@@ -1,4 +1,4 @@
-package io.legado.app.ui.changecover
+package io.legado.app.ui.book.changecover
 
 import android.content.Context
 import io.legado.app.R

@@ -19,19 +19,17 @@ fun Uri.readBytes(context: Context): ByteArray? {
 
 @Throws(Exception::class)
 fun Uri.readText(context: Context): String? {
-    if (this.toString().isContentPath()) {
-        return DocumentUtils.readText(context, this)
-    } else {
-        val path = RealPathUtil.getPath(context, this)
-        if (path?.isNotEmpty() == true) {
-            return File(path).readText()
-        }
+    readBytes(context)?.let {
+        return String(it)
     }
     return null
 }
 
 @Throws(Exception::class)
-fun Uri.writeBytes(context: Context, byteArray: ByteArray): Boolean {
+fun Uri.writeBytes(
+    context: Context,
+    byteArray: ByteArray
+): Boolean {
     if (this.toString().isContentPath()) {
         return DocumentUtils.writeBytes(context, byteArray, this)
     } else {
@@ -46,14 +44,5 @@ fun Uri.writeBytes(context: Context, byteArray: ByteArray): Boolean {
 
 @Throws(Exception::class)
 fun Uri.writeText(context: Context, text: String): Boolean {
-    if (this.toString().isContentPath()) {
-        return DocumentUtils.writeText(context, text, this)
-    } else {
-        val path = RealPathUtil.getPath(context, this)
-        if (path?.isNotEmpty() == true) {
-            File(path).writeText(text)
-            return true
-        }
-    }
-    return false
+    return writeBytes(context, text.toByteArray())
 }

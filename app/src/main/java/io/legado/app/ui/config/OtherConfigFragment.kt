@@ -16,12 +16,10 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 
@@ -124,38 +122,9 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
     }
 
     private fun selectDownloadPath() {
-        alert {
-            titleResource = R.string.select_folder
-            items(resources.getStringArray(R.array.select_folder).toList()) { _, i ->
-                when (i) {
-                    0 -> {
-                        removePref(PreferKey.downloadPath)
-                    }
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            startActivityForResult(intent, requestCodeDownloadPath)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            toast(e.localizedMessage ?: "ERROR")
-                        }
-                    }
-                    2 -> PermissionsCompat.Builder(this@OtherConfigFragment)
-                        .addPermissions(*Permissions.Group.STORAGE)
-                        .rationale(R.string.tip_perm_request_storage)
-                        .onGranted {
-                            FileChooserDialog.show(
-                                childFragmentManager,
-                                requestCodeDownloadPath,
-                                mode = FileChooserDialog.DIRECTORY,
-                                initPath = BookHelp.downloadPath
-                            )
-                        }
-                        .request()
-                }
-            }
-        }.show()
+        FilePicker.selectFolder(this, requestCodeDownloadPath) {
+            removePref(PreferKey.downloadPath)
+        }
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {

@@ -205,7 +205,7 @@ object ATH {
                 .setSelectedColor(ThemeStore.accentColor(bottom_navigation_view.context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
-            itemBackgroundResource = R.color.background_menu
+            setBackgroundColor(ThemeStore.bottomBackground(context))
         }
     }
 

@@ -1,4 +1,4 @@
-package io.legado.app.ui.changecover
+package io.legado.app.ui.book.changecover
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData

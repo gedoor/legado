@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
@@ -19,13 +20,14 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.BookHelp
 import io.legado.app.help.ItemTouchCallback
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -36,7 +38,6 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.toast
 import java.io.File
-import java.io.FileNotFoundException
 
 
 class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
@@ -47,7 +48,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     override val viewModel: ReplaceRuleViewModel
         get() = getViewModel(ReplaceRuleViewModel::class.java)
     private val importRecordKey = "replaceRuleRecordKey"
-    private val importSource = 132
+    private val importRequestCode = 132
+    private val exportRequestCode = 65
     private lateinit var adapter: ReplaceRuleAdapter
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
@@ -139,8 +141,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun observeReplaceRuleData(key: String? = null) {
-        replaceRuleLiveData?.removeObservers(this)
         dataInit = false
+        replaceRuleLiveData?.removeObservers(this)
         replaceRuleLiveData = if (key.isNullOrEmpty()) {
             App.db.replaceRuleDao().liveDataAll()
         } else {
@@ -177,7 +179,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
-            R.id.menu_import_source_local -> selectFileSys()
+            R.id.menu_import_source_local -> FilePicker
+                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -186,7 +189,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         when (item?.itemId) {
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
         }
         return false
     }
@@ -233,43 +236,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         }.show().applyTint()
     }
 
-    private fun selectFileSys() {
-        try {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.type = "text/*"//设置类型
-            startActivityForResult(intent, importSource)
-        } catch (e: Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    selectFile()
-                }
-                .request()
-        }
-    }
-
-    private fun selectFile() {
-        FileChooserDialog.show(
-            supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json")
-        )
-    }
-
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == importSource) {
-            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-            viewModel.importSource(File(currentPath).readText()) { msg ->
-                title_bar.snackbar(msg)
-            }
-        }
-    }
-
     override fun onQueryTextChange(newText: String?): Boolean {
         observeReplaceRuleData("%$newText%")
         return false
@@ -279,10 +245,25 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         return false
     }
 
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            importRequestCode -> {
+                Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                viewModel.importSource(File(currentPath).readText()) { msg ->
+                    title_bar.snackbar(msg)
+                }
+            }
+            exportRequestCode -> viewModel.exportSelection(
+                adapter.getSelection(),
+                File(currentPath)
+            )
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            importSource -> if (resultCode == Activity.RESULT_OK) {
+            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     try {
                         uri.readText(this)?.let {
@@ -292,23 +273,30 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                                 title_bar.snackbar(msg)
                             }
                         }
-                    } catch (e: FileNotFoundException) {
-                        PermissionsCompat.Builder(this)
-                            .addPermissions(
-                                Permissions.READ_EXTERNAL_STORAGE,
-                                Permissions.WRITE_EXTERNAL_STORAGE
-                            )
-                            .rationale(R.string.bg_image_per)
-                            .onGranted {
-                                selectFileSys()
-                            }
-                            .request()
                     } catch (e: Exception) {
                         toast(e.localizedMessage ?: "ERROR")
                     }
                 }
             }
+            exportRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    if (uri.toString().isContentPath()) {
+                        DocumentFile.fromTreeUri(this, uri)?.let {
+                            viewModel.exportSelection(adapter.getSelection(), it)
+                        }
+                    } else {
+                        uri.path?.let {
+                            viewModel.exportSelection(adapter.getSelection(), File(it))
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Coroutine.async { BookHelp.upReplaceRules() }
     }
 
     override fun upCountView() {
@@ -316,22 +304,27 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     override fun update(vararg rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.update(*rule)
     }
 
     override fun delete(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.delete(rule)
     }
 
     override fun edit(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         ReplaceEditDialog.show(supportFragmentManager, rule.id)
     }
 
     override fun toTop(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.toTop(rule)
     }
 
     override fun upOrder() {
+        setResult(Activity.RESULT_OK)
         viewModel.upOrder()
     }
 }

@@ -20,7 +20,7 @@ object AnalyzeTxtFile {
     private const val BUFFER_SIZE = 512 * 1024
     //没有标题的时候，每个章节的最大长度
     private const val MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024
-    private val cacheFolder: File by lazy {
+    val cacheFolder: File by lazy {
         val rootFile = App.INSTANCE.getExternalFilesDir(null)
             ?: App.INSTANCE.externalCacheDir
             ?: App.INSTANCE.cacheDir

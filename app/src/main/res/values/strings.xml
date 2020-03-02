@@ -488,6 +488,7 @@
     <string name="indent_3">三字符缩进</string>
     <string name="indent_4">四字符缩进</string>
     <string name="select_folder">选择文件夹</string>
+    <string name="select_file">选择文件</string>
     <string name="no_find">没有发现，可以在书源里添加。</string>
     <string name="restore_default">恢复默认</string>
     <string name="set_download_per">自定义缓存路径需要存储权限</string>
@@ -495,8 +496,6 @@
     <string name="content_empty">文章内容为空</string>
     <string name="on_change_source">正在换源请等待…</string>
     <string name="chapter_list_empty">目录列表为空</string>
-    <string name="content_padding">正文边距</string>
-    <string name="tip_padding">Tip边距</string>
     <string name="text_letter_spacing">字距</string>
 
     <string name="source_tab_base">基本</string>
@@ -629,4 +628,5 @@
     <string name="plus">加</string>
     <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
+    <string name="sure_delete_book_file">是否删除源文件</string>
 </resources>

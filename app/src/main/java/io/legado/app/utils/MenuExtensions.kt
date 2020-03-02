@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +14,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import java.lang.reflect.Method
 import java.util.*
 
+@SuppressLint("RestrictedApi")
 fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let { menu ->
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)

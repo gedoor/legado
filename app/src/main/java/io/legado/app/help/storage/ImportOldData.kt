@@ -17,15 +17,12 @@ import org.jetbrains.anko.toast
 import java.io.File
 
 object ImportOldData {
-    val yueDuPath by lazy {
-        FileUtils.getSdCardPath() + File.separator + "YueDu"
-    }
 
-    fun import(context: Context) {
+    fun import(context: Context, file: File) {
         GlobalScope.launch(Dispatchers.IO) {
             try {// 导入书架
                 val shelfFile =
-                    FileUtils.createFileIfNotExist(yueDuPath + File.separator + "myBookShelf.json")
+                    FileUtils.createFileIfNotExist(file, "myBookShelf.json")
                 val json = shelfFile.readText()
                 val importCount = importOldBookshelf(json)
                 withContext(Dispatchers.Main) {
@@ -39,7 +36,7 @@ object ImportOldData {
 
             try {// Book source
                 val sourceFile =
-                    FileUtils.createFileIfNotExist(yueDuPath + File.separator + "myBookSource.json")
+                    FileUtils.getFile(file, "myBookSource.json")
                 val json = sourceFile.readText()
                 val importCount = importOldSource(json)
                 withContext(Dispatchers.Main) {
@@ -52,12 +49,17 @@ object ImportOldData {
             }
 
             try {// Replace rules
-                val ruleFile =
-                    FileUtils.createFileIfNotExist(yueDuPath + File.separator + "myBookReplaceRule.json")
-                val json = ruleFile.readText()
-                val importCount = importOldReplaceRule(json)
-                withContext(Dispatchers.Main) {
-                    context.toast("成功导入替换规则${importCount}")
+                val ruleFile = FileUtils.getFile(file, "myBookReplaceRule.json")
+                if (ruleFile.exists()) {
+                    val json = ruleFile.readText()
+                    val importCount = importOldReplaceRule(json)
+                    withContext(Dispatchers.Main) {
+                        context.toast("成功导入替换规则${importCount}")
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        context.toast("未找到替换规则")
+                    }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -115,13 +117,13 @@ object ImportOldData {
         }
     }
 
-    fun importOldBookshelf(json: String): Int {
+    private fun importOldBookshelf(json: String): Int {
         val books = OldBook.toNewBook(json)
         App.db.bookDao().insert(*books.toTypedArray())
         return books.size
     }
 
-    fun importOldSource(json: String): Int {
+    private fun importOldSource(json: String): Int {
         val bookSources = mutableListOf<BookSource>()
         val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
         for (item in items) {

@@ -42,7 +42,7 @@ class FileChooserDialog : DialogFragment(),
             isShowHomeDir: Boolean = false,
             isShowUpDir: Boolean = true,
             isShowHideDir: Boolean = false,
-            allowExtensions: Array<String?>? = null,
+            allowExtensions: Array<String>? = null,
             menus: Array<String>? = null
         ) {
             FileChooserDialog().apply {
@@ -61,7 +61,7 @@ class FileChooserDialog : DialogFragment(),
         }
     }
 
-    override var allowExtensions: Array<String?>? = null
+    override var allowExtensions: Array<String>? = null
     override val isOnlyListDir: Boolean
         get() = mode == DIRECTORY
     override var isShowHomeDir: Boolean = false

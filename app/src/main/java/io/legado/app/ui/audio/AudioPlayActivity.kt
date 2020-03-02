@@ -25,8 +25,8 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
-import io.legado.app.ui.changesource.ChangeSourceDialog
-import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.book.changesource.ChangeSourceDialog
+import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import org.apache.commons.lang3.time.DateFormatUtils
@@ -46,8 +46,9 @@ class AudioPlayActivity :
     private var adjustProgress = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        title_bar.background.alpha = 0
-        AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        AudioPlay.titleData.observe(this, Observer { toolbar.title = it })
         AudioPlay.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)
         initView()

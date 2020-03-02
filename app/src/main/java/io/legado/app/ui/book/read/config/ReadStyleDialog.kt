@@ -11,10 +11,10 @@ import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
@@ -42,7 +42,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         }
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.background)
-            it.decorView.setPadding(0, 5, 0, 0)
+            it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
@@ -72,6 +72,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun initView() {
+        root_view.setBackgroundColor(requireContext().bottomBackground)
         dsb_text_size.valueFormat = {
             (it + 5).toString()
         }
@@ -118,7 +119,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
-                BookHelp.bodyIndentCount = index
+                ReadBookConfig.bodyIndentCount = index
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }

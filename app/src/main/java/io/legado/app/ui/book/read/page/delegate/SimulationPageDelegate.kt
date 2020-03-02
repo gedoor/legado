@@ -118,6 +118,16 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        prevBitmap?.recycle()
+        prevBitmap = null
+        curBitmap?.recycle()
+        curBitmap = null
+        nextBitmap?.recycle()
+        nextBitmap = null
+    }
+
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setStartPoint(x, y, invalidate)
         calcCornerXY(x, y)
@@ -126,13 +136,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setTouchPoint(x, y, false)
         //触摸y中间位置吧y变成屏幕高度
-        if ((startY > viewHeight * 0.33 && startY < viewHeight * 0.66)
+        if ((startY > viewHeight / 3.0 && startY < viewHeight * 2 / 3.0)
             || mDirection == Direction.PREV
         ) {
             touchY = viewHeight.toFloat()
         }
 
-        if (startY > viewHeight * 0.33 && startY < viewHeight / 2.0
+        if (startY > viewHeight / 3.0 && startY < viewHeight / 2.0
             && mDirection == Direction.NEXT
         ) {
             touchY = 1f
@@ -142,6 +152,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     override fun setDirection(direction: Direction) {
         super.setDirection(direction)
+        setBitmap()
         when (direction) {
             Direction.PREV ->
                 //上一页滑动不出现对角
@@ -158,7 +169,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         }
     }
 
-    override fun setBitmap() {
+    private fun setBitmap() {
         when (mDirection) {
             Direction.PREV -> {
                 prevBitmap = prevPage.screenshot()
@@ -209,12 +220,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
-        prevBitmap?.recycle()
-        prevBitmap = null
-        nextBitmap?.recycle()
-        nextBitmap = null
-        curBitmap?.recycle()
-        curBitmap = null
     }
 
     override fun onDraw(canvas: Canvas) {

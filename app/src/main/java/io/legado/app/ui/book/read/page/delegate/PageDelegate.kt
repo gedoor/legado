@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.GestureDetector
@@ -15,7 +14,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) :
@@ -39,8 +37,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
     protected val nextPage: ContentView get() = pageView.nextPage
     protected val curPage: ContentView get() = pageView.curPage
     protected val prevPage: ContentView get() = pageView.prevPage
-
-    protected var bitmap: Bitmap? = null
 
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
@@ -126,11 +122,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     private fun stopScroll() {
+        isMoved = false
         isRunning = false
         isStarted = false
         pageView.invalidate()
-        bitmap?.recycle()
-        bitmap = null
     }
 
     open fun setViewSize(width: Int, height: Int) {
@@ -166,21 +161,26 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     open fun onScroll() {}//移动contentView， slidePage
 
-    abstract fun nextPageByAnim()
+    open fun nextPageByAnim() {
+        abort()
+    }
 
-    abstract fun prevPageByAnim()
+    open fun prevPageByAnim() {
+        abort()
+    }
+
+    open fun keyTurnPage(direction: Direction) {
+        if (isRunning) return
+        when (direction) {
+            Direction.NEXT -> nextPageByAnim()
+            Direction.PREV -> prevPageByAnim()
+            else -> return
+        }
+    }
 
     @CallSuper
     open fun setDirection(direction: Direction) {
         mDirection = direction
-    }
-
-    open fun setBitmap() {
-        bitmap = when (mDirection) {
-            Direction.NEXT -> nextPage.screenshot()
-            Direction.PREV -> prevPage.screenshot()
-            else -> null
-        }
     }
 
     /**
@@ -321,7 +321,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     open fun onDestroy() {
-        bitmap?.recycle()
+
     }
 
     enum class Direction {

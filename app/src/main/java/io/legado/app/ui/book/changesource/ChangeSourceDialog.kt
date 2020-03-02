@@ -1,4 +1,4 @@
-package io.legado.app.ui.changesource
+package io.legado.app.ui.book.changesource
 
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -16,9 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.putPrefBoolean
@@ -69,10 +71,8 @@ class ChangeSourceDialog : DialogFragment(),
         super.onViewCreated(view, savedInstanceState)
         viewModel.initData(arguments)
         showTitle()
-        tool_bar.inflateMenu(R.menu.change_source)
-        tool_bar.setOnMenuItemClickListener(this)
-        initRecyclerView()
         initMenu()
+        initRecyclerView()
         initSearchView()
         initLiveData()
         viewModel.loadDbSearchBook()
@@ -85,6 +85,9 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     private fun initMenu() {
+        tool_bar.inflateMenu(R.menu.change_source)
+        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.findItem(R.id.menu_load_toc)?.isChecked =
             getPrefBoolean(PreferKey.changeSourceLoadToc)
     }
@@ -110,16 +113,15 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     private fun initSearchView() {
-        val searchView = tool_bar.menu.findItem(R.id.menu_search).actionView as SearchView
-        searchView.setOnCloseListener {
+        search_view.setOnCloseListener {
             showTitle()
             false
         }
-        searchView.setOnSearchClickListener {
+        search_view.setOnSearchClickListener {
             tool_bar.title = ""
             tool_bar.subtitle = ""
         }
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }

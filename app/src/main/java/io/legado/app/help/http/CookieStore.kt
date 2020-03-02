@@ -3,15 +3,15 @@ package io.legado.app.help.http
 import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.data.entities.Cookie
+import io.legado.app.help.coroutine.Coroutine
 
 
 object CookieStore {
 
     fun setCookie(url: String, cookie: String?) {
-        try {
+        Coroutine.async {
             val cookieBean = Cookie(url, cookie ?: "")
             App.db.cookieDao().insert(cookieBean)
-        } catch (ignore: Exception) {
         }
     }
 

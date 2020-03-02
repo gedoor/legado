@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
@@ -20,14 +21,13 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -39,7 +39,7 @@ import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
-import java.io.FileNotFoundException
+import java.io.File
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     PopupMenu.OnMenuItemClickListener,
@@ -50,7 +50,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         get() = getViewModel(BookSourceViewModel::class.java)
     private val importRecordKey = "bookSourceRecordKey"
     private val qrRequestCode = 101
-    private val importSource = 132
+    private val importRequestCode = 132
+    private val exportRequestCode = 65
     private lateinit var adapter: BookSourceAdapter
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = linkedSetOf<String>()
@@ -82,7 +83,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
-            R.id.menu_import_source_local -> selectFileSys()
+            R.id.menu_import_source_local -> FilePicker
+                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
@@ -187,7 +189,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
             R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelection())
+            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
             R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
         }
         return true
@@ -235,45 +237,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }.show().applyTint()
     }
 
-    private fun selectFileSys() {
-        try {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.type = "text/*"//设置类型
-            startActivityForResult(intent, importSource)
-        } catch (e: Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    selectFile()
-                }
-                .request()
-        }
-    }
-
-    private fun selectFile() {
-        FileChooserDialog.show(
-            supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json")
-        )
-    }
-
     override fun upCountView() {
         select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
-    }
-
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == importSource) {
-            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-            viewModel.importSourceFromFilePath(currentPath) { msg ->
-                title_bar.snackbar(msg)
-            }
-        }
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
@@ -307,6 +272,21 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         viewModel.topSource(bookSource)
     }
 
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            exportRequestCode -> viewModel.exportSelection(
+                adapter.getSelection(),
+                File(currentPath)
+            )
+            importRequestCode -> {
+                Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                viewModel.importSourceFromFilePath(currentPath) { msg ->
+                    title_bar.snackbar(msg)
+                }
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
@@ -318,7 +298,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            importSource -> if (resultCode == Activity.RESULT_OK) {
+            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     try {
                         uri.readText(this)?.let {
@@ -328,19 +308,21 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                                 title_bar.snackbar(msg)
                             }
                         }
-                    } catch (e: FileNotFoundException) {
-                        PermissionsCompat.Builder(this)
-                            .addPermissions(
-                                Permissions.READ_EXTERNAL_STORAGE,
-                                Permissions.WRITE_EXTERNAL_STORAGE
-                            )
-                            .rationale(R.string.bg_image_per)
-                            .onGranted {
-                                selectFileSys()
-                            }
-                            .request()
                     } catch (e: Exception) {
                         toast(e.localizedMessage ?: "ERROR")
+                    }
+                }
+            }
+            exportRequestCode -> {
+                data?.data?.let { uri ->
+                    if (uri.toString().isContentPath()) {
+                        DocumentFile.fromTreeUri(this, uri)?.let {
+                            viewModel.exportSelection(adapter.getSelection(), it)
+                        }
+                    } else {
+                        uri.path?.let {
+                            viewModel.exportSelection(adapter.getSelection(), File(it))
+                        }
                     }
                 }
             }

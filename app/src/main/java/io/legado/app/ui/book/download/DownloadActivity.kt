@@ -1,4 +1,4 @@
-package io.legado.app.ui.download
+package io.legado.app.ui.book.download
 
 import android.app.Activity
 import android.content.Intent
@@ -16,17 +16,15 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.service.help.Download
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 
 
@@ -126,44 +124,14 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
 
     override fun export(position: Int) {
         exportPosition = position
-        alert {
-            titleResource = R.string.select_folder
-            items(resources.getStringArray(R.array.select_folder).toList()) { _, index ->
-                when (index) {
-                    0 -> {
-                        val path = ACache.get(this@DownloadActivity).getAsString(exportBookPathKey)
-                        if (path.isNullOrEmpty()) {
-                            toast("没有默认路径")
-                        } else {
-                            startExport(path)
-                        }
-                    }
-                    1 -> {
-                        try {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            startActivityForResult(intent, exportRequestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                            toast(e.localizedMessage ?: "ERROR")
-                        }
-                    }
-                    2 -> {
-                        PermissionsCompat.Builder(this@DownloadActivity)
-                            .addPermissions(*Permissions.Group.STORAGE)
-                            .rationale(R.string.tip_perm_request_storage)
-                            .onGranted {
-                                FileChooserDialog.show(
-                                    supportFragmentManager,
-                                    exportRequestCode,
-                                    mode = FileChooserDialog.DIRECTORY
-                                )
-                            }
-                            .request()
-                    }
-                }
+        FilePicker.selectFolder(this, exportRequestCode) {
+            val path = ACache.get(this@DownloadActivity).getAsString(exportBookPathKey)
+            if (path.isNullOrEmpty()) {
+                toast("没有默认路径")
+            } else {
+                startExport(path)
             }
-        }.show()
+        }
     }
 
     private fun startExport(path: String) {
