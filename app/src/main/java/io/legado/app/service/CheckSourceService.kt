@@ -74,7 +74,8 @@ class CheckSourceService : BaseService() {
                     .onError(IO) {
                         source.addGroup("失效")
                         App.db.bookSourceDao().update(source)
-                    }.onFinally {
+                    }.onFinally(IO) {
+                        check()
                         checkedIds.add(sourceUrl)
                         updateNotification(
                             checkedIds.size,
