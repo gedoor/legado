@@ -34,10 +34,11 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         if (!isRunning) return
         if (mDirection == Direction.PREV) {
             prevPage.translationX = offsetX - viewWidth
+            addShadow(distanceX.toInt(), canvas)
         } else if (mDirection == Direction.NEXT) {
             curPage.translationX = offsetX
+            addShadow(distanceX.toInt(), canvas)
         }
-        addShadow(distanceX.toInt(), canvas)
     }
 
     private fun addShadow(left: Int, canvas: Canvas) {
