@@ -111,7 +111,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
                 else -> list.sortedByDescending { it.durChapterTime }
             }
             val diffResult = DiffUtil
-                .calculateDiff(BooksDiffCallBack(ArrayList(booksAdapter.getItems()), books))
+                .calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), books))
             booksAdapter.setItems(books, diffResult)
         })
     }
