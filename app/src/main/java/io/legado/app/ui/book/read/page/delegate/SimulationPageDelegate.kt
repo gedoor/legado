@@ -118,6 +118,16 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        prevBitmap?.recycle()
+        prevBitmap = null
+        curBitmap?.recycle()
+        curBitmap = null
+        nextBitmap?.recycle()
+        nextBitmap = null
+    }
+
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setStartPoint(x, y, invalidate)
         calcCornerXY(x, y)
@@ -159,7 +169,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         }
     }
 
-    fun setBitmap() {
+    private fun setBitmap() {
         when (mDirection) {
             Direction.PREV -> {
                 prevBitmap = prevPage.screenshot()
@@ -210,12 +220,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
-        prevBitmap?.recycle()
-        prevBitmap = null
-        nextBitmap?.recycle()
-        nextBitmap = null
-        curBitmap?.recycle()
-        curBitmap = null
     }
 
     override fun onDraw(canvas: Canvas) {
