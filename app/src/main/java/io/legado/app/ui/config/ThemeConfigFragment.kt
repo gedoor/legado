@@ -18,7 +18,6 @@ import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.utils.*
-import org.jetbrains.anko.defaultSharedPreferences
 
 
 class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -27,7 +26,6 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
-        onSharedPreferenceChanged(requireContext().defaultSharedPreferences, "defaultTheme")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,9 +47,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         sharedPreferences ?: return
         when (key) {
             PreferKey.launcherIcon -> LauncherIconHelp.changeIcon(getPrefString(key))
-            "transparentStatusBar" -> {
-                recreateActivities()
-            }
+            "transparentStatusBar" -> recreateActivities()
             "colorPrimary",
             "colorAccent",
             "colorBackground",
@@ -100,7 +96,6 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                     upTheme(true)
                 }
             }
-            "defaultTheme" -> findPreference<Preference>(key)?.summary = items[getPrefInt(key)]
         }
 
     }
@@ -147,7 +142,6 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                             AppConfig.isNightTheme = true
                         }
                     }
-                    putPrefInt("defaultTheme", which)
                     App.INSTANCE.applyDayNight()
                     recreateActivities()
                 }
