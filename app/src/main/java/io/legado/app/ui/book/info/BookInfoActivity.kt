@@ -20,6 +20,9 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
@@ -186,9 +189,7 @@ class BookInfoActivity :
         }
         tv_shelf.onClick {
             if (viewModel.inBookshelf) {
-                viewModel.delBook {
-                    upTvBookshelf()
-                }
+                deleteBook()
             } else {
                 viewModel.addToBookshelf {
                     upTvBookshelf()
@@ -219,6 +220,32 @@ class BookInfoActivity :
         tv_group.onClick {
             viewModel.bookData.value?.let {
                 GroupSelectDialog.show(supportFragmentManager, it.group)
+            }
+        }
+    }
+
+    private fun deleteBook() {
+        viewModel.bookData.value?.let {
+            if (it.isLocalBook()) {
+                alert(
+                    titleResource = R.string.sure,
+                    messageResource = R.string.sure_delete_book_file
+                ) {
+                    okButton {
+                        viewModel.delBook(true) {
+                            finish()
+                        }
+                    }
+                    noButton {
+                        viewModel.delBook(false) {
+                            finish()
+                        }
+                    }
+                }
+            } else {
+                viewModel.delBook {
+                    upTvBookshelf()
+                }
             }
         }
     }
@@ -320,7 +347,7 @@ class BookInfoActivity :
                 }
             } else {
                 if (!viewModel.inBookshelf) {
-                    viewModel.delBook(null)
+                    viewModel.delBook()
                 }
             }
         }

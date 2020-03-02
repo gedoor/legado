@@ -1,8 +1,10 @@
 package io.legado.app.model.localBook
 
+import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.data.entities.Book
+import io.legado.app.utils.FileUtils
 
 
 object LocalBook {
@@ -27,4 +29,16 @@ object LocalBook {
         }
     }
 
+    fun deleteBook(book: Book, deleteOriginal: Boolean) {
+        if (book.isTxt()) {
+            val bookFile =
+                FileUtils.getFile(AnalyzeTxtFile.cacheFolder, book.originName, subDirs = *arrayOf())
+            bookFile.delete()
+        }
+
+        if (deleteOriginal) {
+            val uri = Uri.parse(book.bookUrl)
+            DocumentFile.fromSingleUri(App.INSTANCE, uri)?.delete()
+        }
+    }
 }

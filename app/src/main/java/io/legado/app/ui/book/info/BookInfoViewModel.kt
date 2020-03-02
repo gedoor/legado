@@ -11,6 +11,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.model.localBook.LocalBook
 import kotlinx.coroutines.Dispatchers.IO
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
@@ -198,9 +199,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun delBook(success: (() -> Unit)?) {
+    fun delBook(deleteOriginal: Boolean = false, success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let {
+                if (it.isLocalBook()) {
+                    LocalBook.deleteBook(it, deleteOriginal)
+                }
                 App.db.bookDao().delete(it)
             }
             inBookshelf = false

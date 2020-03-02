@@ -630,4 +630,5 @@
     <string name="plus">加</string>
     <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
+    <string name="sure_delete_book_file">是否删除源文件</string>
 </resources>
