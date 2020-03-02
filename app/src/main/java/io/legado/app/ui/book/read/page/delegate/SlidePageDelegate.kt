@@ -1,12 +1,9 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
-import android.graphics.Matrix
 import io.legado.app.ui.book.read.page.PageView
 
 class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
-
-    private val bitmapMatrix = Matrix()
 
     override fun onAnimStart() {
         val distanceX: Float
@@ -28,7 +25,6 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
                     viewWidth - (touchX - startX)
                 }
         }
-
         startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
     }
 
@@ -39,26 +35,19 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
             || (mDirection == Direction.PREV && offsetX < 0)
         ) return
 
-        val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
-        bitmap?.let {
-            bitmapMatrix.setTranslate(distanceX, 0.toFloat())
-            canvas.drawBitmap(it, bitmapMatrix, null)
+        if (!isMoved) return
+        if (mDirection == Direction.PREV) {
+            prevPage.translationX = offsetX - viewWidth
+            curPage.translationX = offsetX
+        } else if (mDirection == Direction.NEXT) {
+            curPage.translationX = offsetX
+            nextPage.translationX = curPage.x + viewWidth
         }
-    }
-
-    override fun onScroll() {
-        val offsetX = touchX - startX
-
-        if ((mDirection == Direction.NEXT && offsetX > 0)
-            || (mDirection == Direction.PREV && offsetX < 0)
-        ) return
-
-        curPage.translationX = offsetX
     }
 
     override fun onAnimStop() {
         curPage.x = 0.toFloat()
-
+        prevPage.x = -viewWidth.toFloat()
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }

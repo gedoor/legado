@@ -26,12 +26,12 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     init {
         callBack = activity as CallBack
-        prevPage = ContentView(context)
-        addView(prevPage)
         nextPage = ContentView(context)
         addView(nextPage)
         curPage = ContentView(context)
         addView(curPage)
+        prevPage = ContentView(context)
+        addView(prevPage)
         upBg()
         setWillNotDraw(false)
         pageFactory = TextPageFactory(this)
@@ -40,6 +40,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (oldw != 0 && oldh != 0) {
             ReadBook.loadContent()

@@ -142,6 +142,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     override fun setDirection(direction: Direction) {
         super.setDirection(direction)
+        setBitmap()
         when (direction) {
             Direction.PREV ->
                 //上一页滑动不出现对角
@@ -158,7 +159,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         }
     }
 
-    override fun setBitmap() {
+    fun setBitmap() {
         when (mDirection) {
             Direction.PREV -> {
                 prevBitmap = prevPage.screenshot()

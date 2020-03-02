@@ -8,6 +8,9 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
 
     override fun onTouch(event: MotionEvent) {
         when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                abort()
+            }
             MotionEvent.ACTION_MOVE -> {
                 if (isTextSelected) {
                     selectText(event)
@@ -32,7 +35,6 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         return
                     }
                     setDirection(Direction.PREV)
-                    setBitmap()
                 } else {
                     //如果不存在表示没有下一页了
                     if (!hasNext()) {
@@ -40,7 +42,6 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                         return
                     }
                     setDirection(Direction.NEXT)
-                    setBitmap()
                 }
             }
         }
@@ -55,7 +56,6 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     override fun nextPageByAnim() {
         if (!hasNext()) return
         setDirection(Direction.NEXT)
-        setBitmap()
         setTouchPoint(viewWidth.toFloat(), 0f)
         onAnimStart()
     }
@@ -63,8 +63,8 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     override fun prevPageByAnim() {
         if (!hasPrev()) return
         setDirection(Direction.PREV)
-        setBitmap()
         setTouchPoint(0f, 0f)
         onAnimStart()
     }
+
 }
