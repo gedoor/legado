@@ -52,12 +52,12 @@ class ChangeCoverDialog : DialogFragment(),
         callBack = activity as? CallBack
         viewModel = getViewModel(ChangeCoverViewModel::class.java)
         viewModel.callBack = this
-        return inflater.inflate(R.layout.dialog_change_source, container)
+        return inflater.inflate(R.layout.dialog_change_cover, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.searchStateData.observe(this, Observer {
+        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
         })
         tool_bar.setTitle(R.string.change_cover_source)
