@@ -136,13 +136,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setTouchPoint(x, y, false)
         //触摸y中间位置吧y变成屏幕高度
-        if ((startY > viewHeight * 0.33 && startY < viewHeight * 0.66)
+        if ((startY > viewHeight / 3.0 && startY < viewHeight * 2 / 3.0)
             || mDirection == Direction.PREV
         ) {
             touchY = viewHeight.toFloat()
         }
 
-        if (startY > viewHeight * 0.33 && startY < viewHeight / 2.0
+        if (startY > viewHeight / 3.0 && startY < viewHeight / 2.0
             && mDirection == Direction.NEXT
         ) {
             touchY = 1f
