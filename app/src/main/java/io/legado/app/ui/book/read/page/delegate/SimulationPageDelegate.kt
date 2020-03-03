@@ -1,6 +1,8 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import io.legado.app.help.ReadBookConfig
@@ -269,7 +271,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMatrix.setValues(mMatrixArray)
         mMatrix.preTranslate(-mBezierControl1.x, -mBezierControl1.y)
         mMatrix.postTranslate(mBezierControl1.x, mBezierControl1.y)
-        canvas.drawColor(ReadBookConfig.bgMeanColor)
+        ReadBookConfig.bg?.let {
+            if (it is BitmapDrawable) {
+                canvas.drawBitmap(it.bitmap, 0f, 0f, mPaint)
+            } else if (it is ColorDrawable) {
+                canvas.drawColor(it.color)
+            }
+        }
         canvas.drawBitmap(bitmap, mMatrix, mPaint)
         mPaint.colorFilter = null
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y)
