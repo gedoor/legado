@@ -121,21 +121,21 @@ object ChapterProvider {
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
             val textLine = TextLine(isTitle = true)
-            if (durY + titlePaint.textSize < visibleHeight
+            if (durY + titlePaint.textHeight < visibleHeight
             ) {
                 textPages.last().textLines.add(textLine)
-                durY += titlePaint.textSize + lineSpacingExtra
+                durY += titlePaint.textHeight + lineSpacingExtra
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
                 //新页面
-                durY = titlePaint.textSize + lineSpacingExtra
+                durY = titlePaint.textHeight + lineSpacingExtra
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineTop = paddingTop + durY - titlePaint.textSize
+            textLine.lineTop = paddingTop + durY - titlePaint.textHeight
             textLine.lineBase = paddingTop + durY - titlePaint.fontMetrics.descent
             textLine.lineBottom = paddingTop + durY
             val words =
@@ -176,21 +176,21 @@ object ChapterProvider {
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
             val textLine = TextLine()
-            if (durY + contentPaint.textSize < visibleHeight
+            if (durY + contentPaint.textHeight < visibleHeight
             ) {
                 textPages.last().textLines.add(textLine)
-                durY += contentPaint.textSize + lineSpacingExtra
+                durY += contentPaint.textHeight + lineSpacingExtra
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
                 //新页面
-                durY = contentPaint.textSize + lineSpacingExtra
+                durY = contentPaint.textHeight + lineSpacingExtra
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineTop = paddingTop + durY - titlePaint.textSize
+            textLine.lineTop = paddingTop + durY - titlePaint.textHeight
             textLine.lineBase = paddingTop + durY - titlePaint.fontMetrics.descent
             textLine.lineBottom = paddingTop + durY
             val words =
@@ -360,4 +360,8 @@ object ChapterProvider {
         visibleBottom = paddingTop + visibleHeight
     }
 
+    val TextPaint.textHeight: Float
+        get() {
+            return this.fontMetrics.descent - fontMetrics.ascent - fontMetrics.leading
+        }
 }
