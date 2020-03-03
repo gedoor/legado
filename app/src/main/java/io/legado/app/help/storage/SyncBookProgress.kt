@@ -30,16 +30,18 @@ object SyncBookProgress {
 
     fun downloadBookProgress() {
         Coroutine.async {
-            WebDav(webDavUrl).downloadTo(file.absolutePath, true)
-            if (file.exists()) {
-                val json = file.readText()
-                GSON.fromJsonArray<BookProgress>(json)?.forEach {
-                    App.db.bookDao().upBookProgress(
-                        it.bookUrl,
-                        it.durChapterIndex,
-                        it.durChapterPos,
-                        it.durChapterTime
-                    )
+            if (WebDavHelp.initWebDav()) {
+                WebDav(webDavUrl).downloadTo(file.absolutePath, true)
+                if (file.exists()) {
+                    val json = file.readText()
+                    GSON.fromJsonArray<BookProgress>(json)?.forEach {
+                        App.db.bookDao().upBookProgress(
+                            it.bookUrl,
+                            it.durChapterIndex,
+                            it.durChapterPos,
+                            it.durChapterTime
+                        )
+                    }
                 }
             }
         }
