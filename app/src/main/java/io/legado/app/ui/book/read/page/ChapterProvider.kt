@@ -28,7 +28,7 @@ object ChapterProvider {
     var visibleHeight = 0
     var visibleRight = 0
     var visibleBottom = 0
-    private var lineSpacingExtra = 0f
+    private var lineSpacingExtra = 0
     private var paragraphSpacing = 0
     var typeface: Typeface = Typeface.SANS_SERIF
     var titlePaint = TextPaint()
@@ -51,7 +51,7 @@ object ChapterProvider {
         val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
         var surplusText = content
-        var durY = 0
+        var durY = 0f
         textPages.add(TextPage())
         while (surplusText.isNotEmpty()) {
             if (textPages.first().textLines.isEmpty()) {
@@ -107,40 +107,37 @@ object ChapterProvider {
      */
     private fun joinTitle(
         title: String,
-        y: Int,
+        y: Float,
         textPages: ArrayList<TextPage>,
         pageLines: ArrayList<Int>,
         pageLengths: ArrayList<Int>,
         stringBuilder: StringBuilder
-    ): Int {
+    ): Float {
         var durY = y
         val layout = StaticLayout(
             title, titlePaint, visibleWidth,
-            Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
+            Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
             val textLine = TextLine(isTitle = true)
-            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
-                + contentPaint.fontMetrics.descent < visibleHeight
+            if (durY + titlePaint.textSize < visibleHeight
             ) {
                 textPages.last().textLines.add(textLine)
-                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                durY += titlePaint.textSize + lineSpacingExtra
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
                 //新页面
-                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                durY = titlePaint.textSize + lineSpacingExtra
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineTop = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
-            textLine.lineBase = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
-            textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
+            textLine.lineTop = paddingTop + durY - titlePaint.textSize
+            textLine.lineBase = paddingTop + durY - titlePaint.fontMetrics.descent
+            textLine.lineBottom = paddingTop + durY
             val words =
                 title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -165,40 +162,37 @@ object ChapterProvider {
      */
     private fun joinBody(
         text: String,
-        y: Int,
+        y: Float,
         textPages: ArrayList<TextPage>,
         pageLines: ArrayList<Int>,
         pageLengths: ArrayList<Int>,
         stringBuilder: StringBuilder
-    ): Int {
+    ): Float {
         var durY = y
         val layout = StaticLayout(
             text, contentPaint, visibleWidth,
-            Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
+            Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
             val textLine = TextLine()
-            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
-                + contentPaint.fontMetrics.descent < visibleHeight
+            if (durY + contentPaint.textSize < visibleHeight
             ) {
                 textPages.last().textLines.add(textLine)
-                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                durY += contentPaint.textSize + lineSpacingExtra
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
                 //新页面
-                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
+                durY = contentPaint.textSize + lineSpacingExtra
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineTop = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
-            textLine.lineBase = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
-            textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
+            textLine.lineTop = paddingTop + durY - titlePaint.textSize
+            textLine.lineBase = paddingTop + durY - titlePaint.fontMetrics.descent
+            textLine.lineBottom = paddingTop + durY
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -346,7 +340,7 @@ object ChapterProvider {
         val bold = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
         contentPaint.typeface = Typeface.create(typeface, bold)
         //间距
-        lineSpacingExtra = ReadBookConfig.lineSpacingExtra.dp.toFloat()
+        lineSpacingExtra = ReadBookConfig.lineSpacingExtra.dp
         paragraphSpacing = ReadBookConfig.paragraphSpacing.dp
         titlePaint.textSize = (ReadBookConfig.textSize + 2).dp.toFloat()
         contentPaint.textSize = ReadBookConfig.textSize.dp.toFloat()
