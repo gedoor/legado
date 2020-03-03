@@ -25,7 +25,7 @@ object WebDavHelp {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
     private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
 
-    private fun getWebDavUrl(): String {
+    fun getWebDavUrl(): String {
         var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
         if (url.isNullOrEmpty()) {
             url = defaultWebDavUrl
@@ -34,7 +34,7 @@ object WebDavHelp {
         return url
     }
 
-    private fun initWebDav(): Boolean {
+    fun initWebDav(): Boolean {
         val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
         val password = App.INSTANCE.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
@@ -82,8 +82,8 @@ object WebDavHelp {
     private fun restoreWebDav(name: String, success: () -> Unit) {
         Coroutine.async {
             getWebDavUrl().let {
-                val file = WebDav(it + "legado/" + name)
-                file.downloadTo(zipFilePath, true)
+                val webDav = WebDav(it + "legado/" + name)
+                webDav.downloadTo(zipFilePath, true)
                 @Suppress("BlockingMethodInNonBlockingContext")
                 ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
                 Restore.restore(Backup.backupPath)
