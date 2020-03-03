@@ -69,9 +69,19 @@ interface BookDao {
     @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
     fun upGroup(oldGroupId: Int, newGroupId: Int)
 
-    @get:Query("select bookUrl, durChapterIndex, durChapterPos from books")
+    @get:Query("select bookUrl, durChapterIndex, durChapterPos, durChapterTime from books")
     val allBookProgress: List<BookProgress>
 
-    @Query("update books set durChapterIndex = :durChapterIndex, durChapterPos = :durChapterPos where bookUrl = :bookUrl")
-    fun upBookProgress(bookUrl: String, durChapterIndex: Int, durChapterPos: Int)
+    @Query(
+        """
+        update books set durChapterIndex = :durChapterIndex, durChapterPos = :durChapterPos 
+        where bookUrl = :bookUrl and durChapterTime < :durChapterTime
+    """
+    )
+    fun upBookProgress(
+        bookUrl: String,
+        durChapterIndex: Int,
+        durChapterPos: Int,
+        durChapterTime: Int
+    )
 }

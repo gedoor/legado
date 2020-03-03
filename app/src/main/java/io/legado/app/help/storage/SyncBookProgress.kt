@@ -32,7 +32,8 @@ object SyncBookProgress {
                 App.db.bookDao().upBookProgress(
                     it.bookUrl,
                     it.durChapterIndex,
-                    it.durChapterPos
+                    it.durChapterPos,
+                    it.durChapterTime
                 )
             }
         }
