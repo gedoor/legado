@@ -114,20 +114,20 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
-        super.setStartPoint(x, y, invalidate)
+        super.setStartPoint(x, y, false)
         calcCornerXY(x, y)
     }
 
     override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setTouchPoint(x, y, false)
         //触摸y中间位置吧y变成屏幕高度
-        if ((startY > viewHeight / 3.0 && startY < viewHeight * 2 / 3.0)
+        if ((startY > viewHeight / 3 && startY < viewHeight * 2 / 3)
             || mDirection == Direction.PREV
         ) {
             touchY = viewHeight.toFloat()
         }
 
-        if (startY > viewHeight / 3.0 && startY < viewHeight / 2.0
+        if (startY > viewHeight / 3 && startY < viewHeight / 2
             && mDirection == Direction.NEXT
         ) {
             touchY = 1f
@@ -140,13 +140,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         when (direction) {
             Direction.PREV ->
                 //上一页滑动不出现对角
-                if (startX > viewWidth / 2.0) {
+                if (startX > viewWidth / 2) {
                     calcCornerXY(startX, viewHeight.toFloat())
                 } else {
                     calcCornerXY(viewWidth - startX, viewHeight.toFloat())
                 }
             Direction.NEXT ->
-                if (viewWidth / 2.0 > startX) {
+                if (viewWidth / 2 > startX) {
                     calcCornerXY(viewWidth - startX, startY)
                 }
             else -> Unit
@@ -193,6 +193,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun onDraw(canvas: Canvas) {
+        if (!isRunning) return
         when (mDirection) {
             Direction.NEXT -> {
                 calcPoints()
@@ -455,8 +456,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      * 计算拖拽点对应的拖拽脚
      */
     private fun calcCornerXY(x: Float, y: Float) {
-        mCornerX = if (x <= viewWidth / 2.0) 0 else viewWidth
-        mCornerY = if (y <= viewHeight / 2.0) 0 else viewHeight
+        mCornerX = if (x <= viewWidth / 2) 0 else viewWidth
+        mCornerY = if (y <= viewHeight / 2) 0 else viewHeight
         mIsRtOrLb = (mCornerX == 0 && mCornerY == viewHeight)
                 || (mCornerY == 0 && mCornerX == viewWidth)
     }
@@ -513,7 +514,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mBezierStart2.x = mCornerX.toFloat()
         mBezierStart2.y = mBezierControl2.y - (mCornerY - mBezierControl2.y) / 2
 
-        mTouchToCornerDis = hypot(mTouchX - mCornerX, touchY - mCornerY)
+        mTouchToCornerDis = hypot(mTouchX - mCornerX, mTouchY - mCornerY)
 
         mBezierEnd1 =
             getCross(PointF(mTouchX, mTouchY), mBezierControl1, mBezierStart1, mBezierStart2)
