@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.*
 
@@ -268,6 +269,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMatrix.setValues(mMatrixArray)
         mMatrix.preTranslate(-mBezierControl1.x, -mBezierControl1.y)
         mMatrix.postTranslate(mBezierControl1.x, mBezierControl1.y)
+        canvas.drawColor(ReadBookConfig.bgMeanColor)
         canvas.drawBitmap(bitmap, mMatrix, mPaint)
         mPaint.colorFilter = null
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y)
