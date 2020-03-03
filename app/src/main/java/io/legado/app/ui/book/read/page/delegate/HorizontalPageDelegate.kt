@@ -20,11 +20,15 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     private fun setBitmap() {
         when (mDirection) {
             Direction.PREV -> {
+                prevBitmap?.recycle()
                 prevBitmap = prevPage.screenshot()
+                curBitmap?.recycle()
                 curBitmap = curPage.screenshot()
             }
             Direction.NEXT -> {
+                nextBitmap?.recycle()
                 nextBitmap = nextPage.screenshot()
+                curBitmap?.recycle()
                 curBitmap = curPage.screenshot()
             }
             else -> Unit
