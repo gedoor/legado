@@ -61,13 +61,7 @@ object ChapterProvider {
                     val title = surplusText.substring(0, end)
                     surplusText = surplusText.substring(end + 1)
                     durY = setTypeText(
-                        title,
-                        durY,
-                        textPages,
-                        pageLines,
-                        pageLengths,
-                        stringBuilder,
-                        true
+                        title, durY, textPages, pageLines, pageLengths, stringBuilder, true
                     )
                 }
             } else {
@@ -145,9 +139,9 @@ object ChapterProvider {
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
-            textLine.lineTop = paddingTop + durY - textPaint.textHeight
-            textLine.lineBase = paddingTop + durY - textPaint.fontMetrics.descent
-            textLine.lineBottom = paddingTop + durY
+            textLine.lineBottom = paddingTop + durY - lineSpacingExtra
+            textLine.lineBase = textLine.lineBottom - textPaint.fontMetrics.descent
+            textLine.lineTop = textLine.lineBottom - textPaint.textHeight
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
