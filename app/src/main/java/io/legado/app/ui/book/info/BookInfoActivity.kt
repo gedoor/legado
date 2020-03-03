@@ -21,8 +21,6 @@ import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
@@ -232,17 +230,17 @@ class BookInfoActivity :
                     titleResource = R.string.sure,
                     messageResource = R.string.sure_delete_book_file
                 ) {
-                    okButton {
+                    positiveButton(R.string.yes) {
                         viewModel.delBook(true) {
                             finish()
                         }
                     }
-                    noButton {
+                    negativeButton(R.string.no) {
                         viewModel.delBook(false) {
                             finish()
                         }
                     }
-                }
+                }.show()
             } else {
                 viewModel.delBook {
                     upTvBookshelf()
