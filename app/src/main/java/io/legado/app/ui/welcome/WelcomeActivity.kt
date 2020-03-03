@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
@@ -41,6 +42,7 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 else -> null
             }
         }
+        SyncBookProgress.downloadBookProgress()
         root_view.postDelayed({ startMainActivity() }, 300)
     }
 
