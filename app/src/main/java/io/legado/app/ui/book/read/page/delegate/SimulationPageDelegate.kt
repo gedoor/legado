@@ -4,7 +4,6 @@ import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.screenshot
 import kotlin.math.*
 
 @Suppress("DEPRECATION")
@@ -73,10 +72,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     private val mPaint: Paint = Paint().apply { style = Paint.Style.FILL }
 
-    private var curBitmap: Bitmap? = null
-    private var prevBitmap: Bitmap? = null
-    private var nextBitmap: Bitmap? = null
-
     init {
         //设置颜色数组
         val color = intArrayOf(0x333333, -0x4fcccccd)
@@ -118,16 +113,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        prevBitmap?.recycle()
-        prevBitmap = null
-        curBitmap?.recycle()
-        curBitmap = null
-        nextBitmap?.recycle()
-        nextBitmap = null
-    }
-
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setStartPoint(x, y, invalidate)
         calcCornerXY(x, y)
@@ -152,7 +137,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     override fun setDirection(direction: Direction) {
         super.setDirection(direction)
-        setBitmap()
         when (direction) {
             Direction.PREV ->
                 //上一页滑动不出现对角
@@ -165,20 +149,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 if (viewWidth / 2.0 > startX) {
                     calcCornerXY(viewWidth - startX, startY)
                 }
-            else -> Unit
-        }
-    }
-
-    private fun setBitmap() {
-        when (mDirection) {
-            Direction.PREV -> {
-                prevBitmap = prevPage.screenshot()
-                curBitmap = curPage.screenshot()
-            }
-            Direction.NEXT -> {
-                nextBitmap = nextPage.screenshot()
-                curBitmap = curPage.screenshot()
-            }
             else -> Unit
         }
     }

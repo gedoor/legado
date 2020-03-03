@@ -1,10 +1,35 @@
 package io.legado.app.ui.book.read.page.delegate
 
+import android.graphics.Bitmap
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
+
+    protected var curBitmap: Bitmap? = null
+    protected var prevBitmap: Bitmap? = null
+    protected var nextBitmap: Bitmap? = null
+
+    override fun setDirection(direction: Direction) {
+        super.setDirection(direction)
+        setBitmap()
+    }
+
+    private fun setBitmap() {
+        when (mDirection) {
+            Direction.PREV -> {
+                prevBitmap = prevPage.screenshot()
+                curBitmap = curPage.screenshot()
+            }
+            Direction.NEXT -> {
+                nextBitmap = nextPage.screenshot()
+                curBitmap = curPage.screenshot()
+            }
+            else -> Unit
+        }
+    }
 
     override fun onTouch(event: MotionEvent) {
         when (event.action) {
@@ -67,6 +92,16 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         setDirection(Direction.PREV)
         setTouchPoint(0f, 0f)
         onAnimStart()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        prevBitmap?.recycle()
+        prevBitmap = null
+        curBitmap?.recycle()
+        curBitmap = null
+        nextBitmap?.recycle()
+        nextBitmap = null
     }
 
 }

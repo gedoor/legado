@@ -1,11 +1,12 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.drawable.GradientDrawable
 import io.legado.app.ui.book.read.page.PageView
 
 class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
-
+    private val bitmapMatrix = Matrix()
     private val shadowDrawableR: GradientDrawable
 
     init {
@@ -14,13 +15,6 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
             GradientDrawable.Orientation.LEFT_RIGHT, shadowColors
         )
         shadowDrawableR.gradientType = GradientDrawable.LINEAR_GRADIENT
-    }
-
-    override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
-        curPage.x = 0.toFloat()
-        prevPage.x = -viewWidth.toFloat()
-        nextPage.x = 0.toFloat()
-        super.setStartPoint(x, y, invalidate)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -33,10 +27,14 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         if (!isRunning) return
         if (mDirection == Direction.PREV) {
-            prevPage.translationX = offsetX - viewWidth
+            bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+            curBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
+            prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
             addShadow(distanceX.toInt(), canvas)
         } else if (mDirection == Direction.NEXT) {
-            curPage.translationX = offsetX
+            bitmapMatrix.setTranslate(distanceX - viewWidth, 0.toFloat())
+            nextBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
+            curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
             addShadow(distanceX.toInt(), canvas)
         }
     }
@@ -52,8 +50,6 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     }
 
     override fun onAnimStop() {
-        curPage.x = 0.toFloat()
-        prevPage.x = -viewWidth.toFloat()
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
