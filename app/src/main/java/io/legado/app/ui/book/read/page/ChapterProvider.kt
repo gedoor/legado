@@ -312,8 +312,8 @@ object ChapterProvider {
         visibleBottom = paddingTop + visibleHeight
     }
 
-    val TextPaint.textHeight: Float
+    private val TextPaint.textHeight: Float
         get() {
-            return this.fontMetrics.descent - fontMetrics.ascent - fontMetrics.leading
+            return this.fontMetrics.descent - fontMetrics.ascent + fontMetrics.leading
         }
 }
