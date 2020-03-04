@@ -168,6 +168,7 @@
 -dontnote org.python.core.**
 -dontwarn com.hwangjr.rxbus.**
 -dontwarn okhttp3.**
+-dontwarn org.conscrypt.**
 
 -keep class retrofit2.**{*;}
 -keep class okhttp3.**{*;}
