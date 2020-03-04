@@ -82,7 +82,7 @@ interface BookDao {
         bookUrl: String,
         durChapterIndex: Int,
         durChapterPos: Int,
-        durChapterTime: Int,
+        durChapterTime: Long,
         durChapterTitle: String?
     )
 }
