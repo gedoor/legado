@@ -249,7 +249,7 @@ object ReadBookConfig {
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
         var textBold: Boolean = false,//是否粗体字
         var textSize: Int = 20,//文字大小
-        var letterSpacing: Float = 1f,//字间距
+        var letterSpacing: Float = 0.5f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
         var paragraphSpacing: Int = 12,//段距
         var titleCenter: Boolean = true,//标题居中
