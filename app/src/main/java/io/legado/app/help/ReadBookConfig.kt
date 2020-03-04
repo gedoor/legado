@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -15,6 +16,7 @@ import java.io.File
 /**
  * 阅读界面配置
  */
+@Keep
 object ReadBookConfig {
     const val readConfigFileName = "readConfig.json"
     private val configFilePath =
