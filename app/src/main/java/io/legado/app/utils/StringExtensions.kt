@@ -48,6 +48,19 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
     this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
+fun String.toStringArray(): Array<String> {
+    val strArray = Array(this.codePointCount(0, this.length)) { "" }
+    var codePointIndex = 0
+    for (i in strArray.indices) {
+        strArray[i] = substring(
+            codePointIndex,
+            offsetByCodePoints(codePointIndex, 1)
+                .apply { codePointIndex = this }
+        )
+    }
+    return strArray
+}
+
 fun Char?.isHAN(): Boolean {
     this ?: return false
     val ub: Character.UnicodeBlock = Character.UnicodeBlock.of(this) ?: return false
