@@ -272,13 +272,15 @@ object BookHelp {
         var c = content
         if (enableReplace) {
             upReplaceRules(name, origin)
-            for (item in replaceRules) {
-                item.pattern.let {
-                    if (it.isNotEmpty()) {
-                        c = if (item.isRegex) {
-                            c.replace(it.toRegex(), item.replacement)
-                        } else {
-                            c.replace(it, item.replacement)
+            kotlin.runCatching {
+                for (item in replaceRules) {
+                    item.pattern.let {
+                        if (it.isNotEmpty()) {
+                            c = if (item.isRegex) {
+                                c.replace(it.toRegex(), item.replacement)
+                            } else {
+                                c.replace(it, item.replacement)
+                            }
                         }
                     }
                 }

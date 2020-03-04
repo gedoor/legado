@@ -62,10 +62,11 @@ object Restore {
                 }
             }
         }
-        restore(Backup.backupPath)
+        restoreDatabase()
+        restoreConfig()
     }
 
-    suspend fun restore(path: String) {
+    suspend fun restoreDatabase(path: String = Backup.backupPath) {
         withContext(IO) {
             fileToListT<Book>(path, "bookshelf.json")?.let {
                 App.db.bookDao().insert(*it.toTypedArray())
@@ -85,11 +86,16 @@ object Restore {
             fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
                 App.db.replaceRuleDao().insert(*it.toTypedArray())
             }
+        }
+    }
+
+    suspend fun restoreConfig(path: String = Backup.backupPath) {
+        withContext(IO) {
             try {
                 val file =
                     FileUtils.createFileIfNotExist(path + File.separator + ReadBookConfig.readConfigFileName)
                 val configFile =
-                    File(App.INSTANCE.filesDir.absolutePath + File.separator + ReadBookConfig.readConfigFileName)
+                    FileUtils.getFile(App.INSTANCE.filesDir, ReadBookConfig.readConfigFileName)
                 if (file.exists()) {
                     file.copyTo(configFile, true)
                     ReadBookConfig.upConfig()
@@ -109,24 +115,23 @@ object Restore {
                 }
                 edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
                 edit.apply()
-                ReadBookConfig.apply {
-                    styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
-                    shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
-                    pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
-                    hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
-                    hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
-                    bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
-                }
-                ChapterProvider.upStyle()
-                ReadBook.loadContent()
-                withContext(Main) {
-                    App.INSTANCE.applyDayNight()
-                }
-                if (!BuildConfig.DEBUG)
-                    LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
+            ReadBookConfig.apply {
+                styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
+                shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
+                pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+                hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
+                hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
+                bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
+            }
+            ChapterProvider.upStyle()
+            ReadBook.loadContent()
         }
-
+        withContext(Main) {
+            App.INSTANCE.applyDayNight()
+            if (!BuildConfig.DEBUG)
+                LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
+        }
     }
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
