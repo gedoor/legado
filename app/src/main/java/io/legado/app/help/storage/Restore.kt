@@ -8,6 +8,7 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
+import io.legado.app.BuildConfig
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
 import io.legado.app.help.LauncherIconHelp
@@ -108,22 +109,24 @@ object Restore {
                 }
                 edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
                 edit.apply()
-            }
-            ReadBookConfig.apply {
-                styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
-                shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
-                pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
-                hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
-                hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
-                bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
-            }
-            ChapterProvider.upStyle()
-            ReadBook.loadContent()
-            withContext(Main) {
-                App.INSTANCE.applyDayNight()
+                ReadBookConfig.apply {
+                    styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
+                    shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
+                    pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+                    hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
+                    hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
+                    bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
+                }
+                ChapterProvider.upStyle()
+                ReadBook.loadContent()
+                withContext(Main) {
+                    App.INSTANCE.applyDayNight()
+                }
+                if (!BuildConfig.DEBUG)
+                    LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
         }
-        LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
+
     }
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
