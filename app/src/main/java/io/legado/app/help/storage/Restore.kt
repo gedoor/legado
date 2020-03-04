@@ -108,6 +108,7 @@ object Restore {
                 edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
                 edit.apply()
             }
+            App.INSTANCE.applyDayNight()
             ReadBookConfig.apply {
                 styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
                 shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
