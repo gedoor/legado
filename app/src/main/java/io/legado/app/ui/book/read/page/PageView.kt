@@ -76,12 +76,10 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun fillPage(direction: PageDelegate.Direction) {
         when (direction) {
             PageDelegate.Direction.PREV -> {
-                pageFactory.moveToPrev()
-                upContent()
+                pageFactory.moveToPrev(true)
             }
             PageDelegate.Direction.NEXT -> {
-                pageFactory.moveToNext()
-                upContent()
+                pageFactory.moveToNext(true)
             }
             else -> Unit
         }
@@ -100,7 +98,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         upContent()
     }
 
-    fun upContent(relativePosition: Int = 0) {
+    override fun upContent(relativePosition: Int) {
         if (ReadBookConfig.isScroll) {
             curPage.setContent(pageFactory.currentPage)
         } else {

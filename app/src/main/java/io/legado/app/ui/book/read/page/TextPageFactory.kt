@@ -31,25 +31,27 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
         } ?: ReadBook.setPageIndex(0)
     }
 
-    override fun moveToNext(): Boolean = with(dataSource) {
+    override fun moveToNext(upContent: Boolean): Boolean = with(dataSource) {
         return if (hasNext()) {
             if (currentChapter?.isLastIndex(pageIndex) == true) {
-                ReadBook.moveToNextChapter(false)
+                ReadBook.moveToNextChapter(upContent)
             } else {
                 ReadBook.setPageIndex(pageIndex.plus(1))
             }
+            if (upContent) upContent()
             true
         } else
             false
     }
 
-    override fun moveToPrev(): Boolean = with(dataSource) {
+    override fun moveToPrev(upContent: Boolean): Boolean = with(dataSource) {
         return if (hasPrev()) {
             if (pageIndex <= 0) {
-                ReadBook.moveToPrevChapter(false)
+                ReadBook.moveToPrevChapter(upContent)
             } else {
                 ReadBook.setPageIndex(pageIndex.minus(1))
             }
+            if (upContent) upContent()
             true
         } else
             false
