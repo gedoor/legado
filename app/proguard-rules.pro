@@ -154,6 +154,8 @@
 -keep class **.analyzeRule.**{*;}
 # 保持web类
 -keep class **.web.**{*;}
+#数据类
+-keep class **.data.**{*;}
 
 -dontwarn rx.**
 
@@ -219,9 +221,6 @@
 
 -keepclassmembers class * {
     public <init> (org.json.JSONObject);
-}
--keep public class com.kunfei.bookshelf.R$*{
-    public static final int *;
 }
 -keepclassmembers enum * {
     public static **[] values();
