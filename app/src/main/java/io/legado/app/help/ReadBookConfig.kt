@@ -238,6 +238,7 @@ object ReadBookConfig {
             if (shareLayout) shareConfig.footerPaddingTop = value
             else durConfig.footerPaddingTop = value
 
+    @Keep
     class Config(
         private var bgStr: String = "#EEEEEE",//白天背景
         private var bgStrNight: String = "#000000",//夜间背景
