@@ -170,13 +170,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         } else if (!pageFactory.hasNext() && pageOffset < 0) {
             pageOffset = 0f
         } else if (pageOffset > 0) {
-            pageFactory.moveToPrev()
+            pageFactory.moveToPrev(false)
             textPage = pageFactory.currentPage
             pageOffset -= textPage.height
             upView?.invoke(textPage)
         } else if (pageOffset < -textPage.height) {
             pageOffset += textPage.height
-            pageFactory.moveToNext()
+            pageFactory.moveToNext(false)
             textPage = pageFactory.currentPage
             upView?.invoke(textPage)
         }

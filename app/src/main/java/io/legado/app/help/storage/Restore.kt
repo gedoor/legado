@@ -8,6 +8,7 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
+import io.legado.app.BuildConfig
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
 import io.legado.app.help.LauncherIconHelp
@@ -16,6 +17,7 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
 import java.io.File
@@ -60,10 +62,11 @@ object Restore {
                 }
             }
         }
-        restore(Backup.backupPath)
+        restoreDatabase()
+        restoreConfig()
     }
 
-    suspend fun restore(path: String) {
+    suspend fun restoreDatabase(path: String = Backup.backupPath) {
         withContext(IO) {
             fileToListT<Book>(path, "bookshelf.json")?.let {
                 App.db.bookDao().insert(*it.toTypedArray())
@@ -83,11 +86,16 @@ object Restore {
             fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
                 App.db.replaceRuleDao().insert(*it.toTypedArray())
             }
+        }
+    }
+
+    suspend fun restoreConfig(path: String = Backup.backupPath) {
+        withContext(IO) {
             try {
                 val file =
                     FileUtils.createFileIfNotExist(path + File.separator + ReadBookConfig.readConfigFileName)
                 val configFile =
-                    File(App.INSTANCE.filesDir.absolutePath + File.separator + ReadBookConfig.readConfigFileName)
+                    FileUtils.getFile(App.INSTANCE.filesDir, ReadBookConfig.readConfigFileName)
                 if (file.exists()) {
                     file.copyTo(configFile, true)
                     ReadBookConfig.upConfig()
@@ -119,7 +127,11 @@ object Restore {
             ChapterProvider.upStyle()
             ReadBook.loadContent()
         }
-        LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
+        withContext(Main) {
+            App.INSTANCE.applyDayNight()
+            if (!BuildConfig.DEBUG)
+                LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
+        }
     }
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {

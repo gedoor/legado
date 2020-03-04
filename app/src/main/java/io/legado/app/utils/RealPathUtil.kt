@@ -102,8 +102,6 @@ object RealPathUtil {
         val projection = arrayOf(
             column
         )
-        var input: FileInputStream? = null
-        var output: FileOutputStream? = null
         try {
             cursor =
                 context.contentResolver.query(uri!!, projection, selection, selectionArgs, null)
@@ -115,6 +113,8 @@ object RealPathUtil {
             e.printStackTrace()
             val file = File(context.cacheDir, "tmp")
             val filePath = file.absolutePath
+            var input: FileInputStream? = null
+            var output: FileOutputStream? = null
             try {
                 val pfd =
                     context.contentResolver.openFileDescriptor(filePathUri!!, "r")
@@ -127,11 +127,12 @@ object RealPathUtil {
                 while (input.read(bytes).also { read = it } != -1) {
                     output.write(bytes, 0, read)
                 }
-                input.close()
-                output.close()
                 return File(filePath).absolutePath
             } catch (ignored: IOException) {
                 ignored.printStackTrace()
+            } finally {
+                input?.close()
+                output?.close()
             }
         } finally {
             cursor?.close()

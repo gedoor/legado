@@ -23,6 +23,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -31,6 +32,8 @@ import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.changesource.ChangeSourceDialog
+import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
@@ -40,8 +43,6 @@ import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.book.changesource.ChangeSourceDialog
-import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
@@ -660,6 +661,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu?.dismiss()
         page_view.onDestroy()
+        SyncBookProgress.uploadBookProgress()
     }
 
     override fun observeLiveBus() {

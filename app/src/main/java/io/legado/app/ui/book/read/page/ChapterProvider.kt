@@ -16,6 +16,7 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.removePref
+import io.legado.app.utils.toStringArray
 
 
 @Suppress("DEPRECATION")
@@ -177,10 +178,10 @@ object ChapterProvider {
         var x = 0f
         val bodyIndent = ReadBookConfig.bodyIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
-        for (i in 0..bodyIndent.lastIndex) {
+        bodyIndent.toStringArray().forEach {
             val x1 = x + icw
             textLine.addTextChar(
-                charData = bodyIndent[i].toString(),
+                charData = it,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
@@ -203,12 +204,11 @@ object ChapterProvider {
         val gapCount: Int = words.length - 1
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
-        for (i in words.indices) {
-            val char = words[i]
-            val cw = StaticLayout.getDesiredWidth(char.toString(), textPaint)
+        for ((i, char) in words.toStringArray().withIndex()) {
+            val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
             textLine.addTextChar(
-                charData = char.toString(),
+                charData = char,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
@@ -230,12 +230,11 @@ object ChapterProvider {
         stringBuilder.append("\n")
         textLine.text = "$words\n"
         var x = startX
-        for (i in words.indices) {
-            val char = words[i].toString()
-            val cw = StaticLayout.getDesiredWidth(char, textPaint)
+        words.toStringArray().forEach {
+            val cw = StaticLayout.getDesiredWidth(it, textPaint)
             val x1 = x + cw
             textLine.addTextChar(
-                charData = char,
+                charData = it,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )

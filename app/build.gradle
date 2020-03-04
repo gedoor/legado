@@ -55,7 +55,7 @@ android {
                 signingConfig signingConfigs.myConfig
             }
             applicationIdSuffix '.release'
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -106,7 +106,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //fireBase
-    implementation 'com.google.firebase:firebase-core:17.2.2'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     //androidX

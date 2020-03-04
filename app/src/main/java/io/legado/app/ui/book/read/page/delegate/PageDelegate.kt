@@ -23,7 +23,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.width * 0.66f, pageView.height * 0.66f
     )
     protected val context: Context = pageView.context
-    protected val slop = ViewConfiguration.get(context).scaledTouchSlop
+
     //起始点
     protected var startX: Float = 0f
     protected var startY: Float = 0f
@@ -41,16 +41,21 @@ abstract class PageDelegate(protected val pageView: PageView) :
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
 
-    private val snackBar: Snackbar by lazy {
-        Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
-    }
-
     private val scroller: Scroller by lazy {
         Scroller(pageView.context, DecelerateInterpolator())
     }
 
+    protected val slopSquare by lazy {
+        val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+        scaledTouchSlop * scaledTouchSlop
+    }
+
     private val detector: GestureDetector by lazy {
         GestureDetector(pageView.context, this)
+    }
+
+    private val snackBar: Snackbar by lazy {
+        Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
     }
 
     var isMoved = false
@@ -189,13 +194,17 @@ abstract class PageDelegate(protected val pageView: PageView) :
     @CallSuper
     open fun onTouch(event: MotionEvent) {
         if (isStarted) return
+        detector.setIsLongpressEnabled(false)
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
-            if (event.action == MotionEvent.ACTION_UP && isMoved) {
-                if (selectedOnDown) {
-                    selectedOnDown = false
+            when (event.action) {
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> if (isMoved) {
+                    if (selectedOnDown) {
+                        selectedOnDown = false
+                    }
+                    if (!noNext) onAnimStart()
                 }
-                if (!noNext) onAnimStart()
             }
         }
     }
@@ -230,6 +239,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         if (selectedOnDown) {
             selectedOnDown = false
+            return true
+        }
+        if (isMoved) {
+            if (!noNext) onAnimStart()
             return true
         }
         val x = e.x

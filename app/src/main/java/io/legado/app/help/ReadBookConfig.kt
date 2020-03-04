@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -15,6 +16,7 @@ import java.io.File
 /**
  * 阅读界面配置
  */
+@Keep
 object ReadBookConfig {
     const val readConfigFileName = "readConfig.json"
     private val configFilePath =
@@ -236,6 +238,7 @@ object ReadBookConfig {
             if (shareLayout) shareConfig.footerPaddingTop = value
             else durConfig.footerPaddingTop = value
 
+    @Keep
     class Config(
         private var bgStr: String = "#EEEEEE",//白天背景
         private var bgStrNight: String = "#000000",//夜间背景
@@ -247,7 +250,7 @@ object ReadBookConfig {
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
         var textBold: Boolean = false,//是否粗体字
         var textSize: Int = 20,//文字大小
-        var letterSpacing: Float = 1f,//字间距
+        var letterSpacing: Float = 0.5f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
         var paragraphSpacing: Int = 12,//段距
         var titleCenter: Boolean = true,//标题居中

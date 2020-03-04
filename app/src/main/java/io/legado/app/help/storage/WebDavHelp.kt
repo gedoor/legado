@@ -95,7 +95,8 @@ object WebDavHelp {
                     webDav.downloadTo(zipFilePath, true)
                     @Suppress("BlockingMethodInNonBlockingContext")
                     ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
-                    Restore.restore(Backup.backupPath)
+                    Restore.restoreDatabase()
+                    Restore.restoreConfig()
                 }
             }
         }.onSuccess {
