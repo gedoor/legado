@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.utils.screenshot
-import kotlin.math.abs
 
 abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
@@ -52,12 +51,31 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     }
 
     private fun onScroll(event: MotionEvent) {
+
+        val action: Int = event.action
+        val pointerUp =
+            action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_POINTER_UP
+        val skipIndex = if (pointerUp) event.actionIndex else -1
+        // Determine focal point
+        var sumX = 0f
+        var sumY = 0f
+        val count: Int = event.pointerCount
+        for (i in 0 until count) {
+            if (skipIndex == i) continue
+            sumX += event.getX(i)
+            sumY += event.getY(i)
+        }
+        val div = if (pointerUp) count - 1 else count
+        val focusX = sumX / div
+        val focusY = sumY / div
         //判断是否移动了
         if (!isMoved) {
-            isMoved = abs(startX - event.x) > slop
-                    || abs(startX - event.x) > abs(startY - event.y)
+            val deltaX = (focusX - startX).toInt()
+            val deltaY = (focusY - startY).toInt()
+            val distance = deltaX * deltaX + deltaY * deltaY
+            isMoved = distance > slopSquare
             if (isMoved) {
-                if (event.x - startX > 0) {
+                if (sumX - startX > 0) {
                     //如果上一页不存在
                     if (!hasPrev()) {
                         noNext = true
@@ -78,7 +96,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             isCancel = if (mDirection == Direction.NEXT) touchX > lastX else touchX < lastX
             isRunning = true
             //设置触摸点
-            setTouchPoint(event.x, event.y)
+            setTouchPoint(sumX, sumY)
         }
     }
 
