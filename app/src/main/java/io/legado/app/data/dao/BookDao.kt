@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookProgress
 
 @Dao
 interface BookDao {
@@ -67,4 +68,23 @@ interface BookDao {
 
     @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
     fun upGroup(oldGroupId: Int, newGroupId: Int)
+
+    @get:Query("select bookUrl, durChapterIndex, durChapterPos, durChapterTime, durChapterTitle from books")
+    val allBookProgress: List<BookProgress>
+
+    @Query(
+        """
+        update books set 
+        durChapterIndex = :durChapterIndex, durChapterPos = :durChapterPos, 
+        durChapterTime = :durChapterTime, durChapterTitle = :durChapterTitle
+        where bookUrl = :bookUrl and durChapterTime < :durChapterTime
+    """
+    )
+    fun upBookProgress(
+        bookUrl: String,
+        durChapterIndex: Int,
+        durChapterPos: Int,
+        durChapterTime: Long,
+        durChapterTitle: String?
+    )
 }

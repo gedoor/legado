@@ -1,16 +1,12 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import io.legado.app.ui.book.read.page.PageView
 
 class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
-    override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
-        curPage.x = 0f
-        prevPage.x = -viewWidth.toFloat()
-        nextPage.x = viewWidth.toFloat()
-        super.setStartPoint(x, y, invalidate)
-    }
+    private val bitmapMatrix = Matrix()
 
     override fun onAnimStart() {
         val distanceX: Float
@@ -41,21 +37,22 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         if ((mDirection == Direction.NEXT && offsetX > 0)
             || (mDirection == Direction.PREV && offsetX < 0)
         ) return
-
+        val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         if (!isRunning) return
         if (mDirection == Direction.PREV) {
-            curPage.translationX = offsetX
-            prevPage.translationX = offsetX - viewWidth
+            bitmapMatrix.setTranslate(distanceX + viewWidth, 0.toFloat())
+            curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
+            bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+            prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
         } else if (mDirection == Direction.NEXT) {
-            curPage.translationX = offsetX
-            nextPage.translationX = offsetX + viewWidth
+            bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+            nextBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
+            bitmapMatrix.setTranslate(distanceX - viewWidth, 0.toFloat())
+            curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
         }
     }
 
     override fun onAnimStop() {
-        curPage.x = 0f
-        prevPage.x = -viewWidth.toFloat()
-        nextPage.x = viewWidth.toFloat()
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }

@@ -27,6 +27,7 @@ object ReadBookConfig {
     val durConfig get() = getConfig(styleSelect)
     private val shareConfig get() = getConfig(5)
     var bg: Drawable? = null
+    var bgMeanColor: Int = 0
 
     init {
         upConfig()
@@ -68,6 +69,13 @@ object ReadBookConfig {
         val width = dm.widthPixels
         val height = dm.heightPixels
         bg = durConfig.bgDrawable(width, height)
+        bg?.let {
+            if (it is BitmapDrawable) {
+                bgMeanColor = BitmapUtils.getMeanColor(it.bitmap)
+            } else if (it is ColorDrawable) {
+                bgMeanColor = it.color
+            }
+        }
     }
 
     fun save() {

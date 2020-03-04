@@ -30,15 +30,16 @@ object LocalBook {
     }
 
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
-        if (book.isTxt()) {
-            val bookFile =
-                FileUtils.getFile(AnalyzeTxtFile.cacheFolder, book.originName, subDirs = *arrayOf())
-            bookFile.delete()
-        }
+        kotlin.runCatching {
+            if (book.isTxt()) {
+                val bookFile = FileUtils.getFile(AnalyzeTxtFile.cacheFolder, book.originName)
+                bookFile.delete()
+            }
 
-        if (deleteOriginal) {
-            val uri = Uri.parse(book.bookUrl)
-            DocumentFile.fromSingleUri(App.INSTANCE, uri)?.delete()
+            if (deleteOriginal) {
+                val uri = Uri.parse(book.bookUrl)
+                DocumentFile.fromSingleUri(App.INSTANCE, uri)?.delete()
+            }
         }
     }
 }

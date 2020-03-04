@@ -10,6 +10,7 @@ import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.ZipUtils
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -25,31 +26,36 @@ object WebDavHelp {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
     private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
 
-    private fun getWebDavUrl(): String {
+    val rootWebDavUrl: String
+        get() {
         var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
         if (url.isNullOrEmpty()) {
             url = defaultWebDavUrl
         }
-        if (!url.endsWith("/")) url += "/"
+            if (!url.endsWith("/")) url = "${url}/"
+            if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
+                url = "${url}legado/"
+            }
         return url
     }
 
-    private fun initWebDav(): Boolean {
+    fun initWebDav(): Boolean {
         val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
         val password = App.INSTANCE.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
             HttpAuth.auth = HttpAuth.Auth(account, password)
+            WebDav(rootWebDavUrl).makeAsDir()
             return true
         }
         return false
     }
 
     private fun getWebDavFileNames(): ArrayList<String> {
-        val url = getWebDavUrl()
+        val url = rootWebDavUrl
         val names = arrayListOf<String>()
         if (initWebDav()) {
             try {
-                var files = WebDav(url + "legado/").listFiles()
+                var files = WebDav(url).listFiles()
                 files = files.reversed()
                 for (index: Int in 0 until min(10, files.size)) {
                     files[index].displayName?.let {
@@ -81,12 +87,16 @@ object WebDavHelp {
 
     private fun restoreWebDav(name: String, success: () -> Unit) {
         Coroutine.async {
-            getWebDavUrl().let {
-                val file = WebDav(it + "legado/" + name)
-                file.downloadTo(zipFilePath, true)
-                @Suppress("BlockingMethodInNonBlockingContext")
-                ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
-                Restore.restore(Backup.backupPath)
+            rootWebDavUrl.let {
+                if (name == SyncBookProgress.fileName) {
+                    SyncBookProgress.downloadBookProgress()
+                } else {
+                    val webDav = WebDav(it + name)
+                    webDav.downloadTo(zipFilePath, true)
+                    @Suppress("BlockingMethodInNonBlockingContext")
+                    ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
+                    Restore.restore(Backup.backupPath)
+                }
             }
         }.onSuccess {
             success.invoke()
@@ -102,10 +112,9 @@ object WebDavHelp {
                 }
                 FileUtils.deleteFile(zipFilePath)
                 if (ZipUtils.zipFiles(paths, zipFilePath)) {
-                    WebDav(getWebDavUrl() + "legado").makeAsDir()
-                    val putUrl = getWebDavUrl() + "legado/backup" +
-                            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                                .format(Date(System.currentTimeMillis())) + ".zip"
+                    val backupDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        .format(Date(System.currentTimeMillis()))
+                    val putUrl = "${rootWebDavUrl}backup${backupDate}.zip"
                     WebDav(putUrl).upload(zipFilePath)
                 }
             }
