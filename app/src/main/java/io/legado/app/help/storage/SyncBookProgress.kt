@@ -10,8 +10,9 @@ import io.legado.app.utils.fromJsonArray
 
 @Suppress("BlockingMethodInNonBlockingContext")
 object SyncBookProgress {
-    private val file = FileUtils.createFileIfNotExist(App.INSTANCE.cacheDir, "bookProgress.json")
-    private val webDavUrl = "${WebDavHelp.rootWebDavUrl}bookProgress.json"
+    const val fileName = "bookProgress.json"
+    private val file = FileUtils.createFileIfNotExist(App.INSTANCE.cacheDir, fileName)
+    private val webDavUrl = "${WebDavHelp.rootWebDavUrl}$fileName"
 
     fun uploadBookProgress() {
         Coroutine.async {

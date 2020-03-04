@@ -88,11 +88,15 @@ object WebDavHelp {
     private fun restoreWebDav(name: String, success: () -> Unit) {
         Coroutine.async {
             rootWebDavUrl.let {
-                val webDav = WebDav(it + name)
-                webDav.downloadTo(zipFilePath, true)
-                @Suppress("BlockingMethodInNonBlockingContext")
-                ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
-                Restore.restore(Backup.backupPath)
+                if (name == SyncBookProgress.fileName) {
+                    SyncBookProgress.downloadBookProgress()
+                } else {
+                    val webDav = WebDav(it + name)
+                    webDav.downloadTo(zipFilePath, true)
+                    @Suppress("BlockingMethodInNonBlockingContext")
+                    ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
+                    Restore.restore(Backup.backupPath)
+                }
             }
         }.onSuccess {
             success.invoke()
