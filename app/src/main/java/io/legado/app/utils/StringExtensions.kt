@@ -49,16 +49,14 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
 }
 
 fun String.toStringArray(): Array<String> {
-    val strArray = Array(this.codePointCount(0, this.length)) { "" }
     var codePointIndex = 0
-    for (i in strArray.indices) {
-        strArray[i] = substring(
+    return Array(codePointCount(0, length)) {
+        substring(
             codePointIndex,
             offsetByCodePoints(codePointIndex, 1)
                 .apply { codePointIndex = this }
         )
     }
-    return strArray
 }
 
 fun Char?.isHAN(): Boolean {
