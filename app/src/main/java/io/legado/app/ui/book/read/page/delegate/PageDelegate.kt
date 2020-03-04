@@ -191,11 +191,14 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (isStarted) return
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
-            if (event.action == MotionEvent.ACTION_UP && isMoved) {
-                if (selectedOnDown) {
-                    selectedOnDown = false
+            when (event.action) {
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> if (isMoved) {
+                    if (selectedOnDown) {
+                        selectedOnDown = false
+                    }
+                    if (!noNext) onAnimStart()
                 }
-                if (!noNext) onAnimStart()
             }
         }
     }
@@ -233,6 +236,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
             return true
         }
         if (isMoved) {
+            if (!noNext) onAnimStart()
             return true
         }
         val x = e.x
