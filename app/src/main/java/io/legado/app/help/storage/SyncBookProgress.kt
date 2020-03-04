@@ -11,7 +11,7 @@ import io.legado.app.utils.fromJsonArray
 @Suppress("BlockingMethodInNonBlockingContext")
 object SyncBookProgress {
     private val file = FileUtils.createFileIfNotExist(App.INSTANCE.cacheDir, "bookProgress.json")
-    private val webDavUrl = WebDavHelp.getWebDavUrl() + "legado/bookProgress.json"
+    private val webDavUrl = "${WebDavHelp.rootWebDavUrl}bookProgress.json"
 
     fun uploadBookProgress() {
         Coroutine.async {
@@ -20,7 +20,6 @@ object SyncBookProgress {
                 val json = GSON.toJson(value)
                 file.writeText(json)
                 if (WebDavHelp.initWebDav()) {
-                    WebDav(WebDavHelp.getWebDavUrl() + "legado").makeAsDir()
                     WebDav(webDavUrl).upload(file.absolutePath)
                 }
             }
