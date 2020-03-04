@@ -3,6 +3,7 @@ package io.legado.app.data.entities
 data class BookProgress(
     val bookUrl: String,
     val durChapterIndex: Int,
-    var durChapterPos: Int,
-    var durChapterTime: Int
+    val durChapterPos: Int,
+    val durChapterTime: Int,
+    val durChapterTitle: String?
 )
