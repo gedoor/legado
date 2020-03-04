@@ -48,12 +48,8 @@ class App : Application() {
             versionCode = it.versionCode
             versionName = it.versionName
         }
-
-        if (!ThemeStore.isConfigured(this, versionCode)) applyTheme()
-        initNightMode()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
-
+        applyDayNight()
         LiveEventBus.get()
             .config()
             .supportBroadcast(this)

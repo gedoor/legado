@@ -231,7 +231,7 @@ object ChapterProvider {
         textLine.text = "$words\n"
         var x = startX
         for (i in words.indices) {
-            val char = words[i].toString()
+            val char = words.substring(i, i + 1)
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = x + cw
             textLine.addTextChar(
