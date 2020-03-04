@@ -232,6 +232,9 @@ abstract class PageDelegate(protected val pageView: PageView) :
             selectedOnDown = false
             return true
         }
+        if (isMoved) {
+            return true
+        }
         val x = e.x
         val y = e.y
         if (centerRectF.contains(x, y)) {
