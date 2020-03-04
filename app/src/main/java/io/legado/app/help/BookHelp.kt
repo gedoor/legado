@@ -11,7 +11,10 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
+import org.jetbrains.anko.toast
 import java.io.File
 import kotlin.math.min
 
@@ -262,7 +265,7 @@ object BookHelp {
         }
     }
 
-    fun disposeContent(
+    suspend fun disposeContent(
         title: String,
         name: String,
         origin: String?,
@@ -272,14 +275,18 @@ object BookHelp {
         var c = content
         if (enableReplace) {
             upReplaceRules(name, origin)
-            kotlin.runCatching {
-                replaceRules.forEach { item ->
-                    item.pattern.let {
-                        if (it.isNotEmpty()) {
+            replaceRules.forEach { item ->
+                item.pattern.let {
+                    if (it.isNotEmpty()) {
+                        try {
                             c = if (item.isRegex) {
                                 c.replace(it.toRegex(), item.replacement)
                             } else {
                                 c.replace(it, item.replacement)
+                            }
+                        } catch (e: Exception) {
+                            withContext(Main) {
+                                App.INSTANCE.toast("${item.name}替换出错")
                             }
                         }
                     }
