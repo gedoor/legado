@@ -4,6 +4,6 @@ data class BookProgress(
     val bookUrl: String,
     val durChapterIndex: Int,
     val durChapterPos: Int,
-    val durChapterTime: Int,
+    val durChapterTime: Long,
     val durChapterTitle: String?
 )
