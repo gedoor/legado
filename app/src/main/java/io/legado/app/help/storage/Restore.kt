@@ -16,6 +16,7 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
 import java.io.File
@@ -108,7 +109,6 @@ object Restore {
                 edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
                 edit.apply()
             }
-            App.INSTANCE.applyDayNight()
             ReadBookConfig.apply {
                 styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
                 shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
@@ -119,6 +119,9 @@ object Restore {
             }
             ChapterProvider.upStyle()
             ReadBook.loadContent()
+            withContext(Main) {
+                App.INSTANCE.applyDayNight()
+            }
         }
         LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
     }
