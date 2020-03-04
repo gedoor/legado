@@ -13,7 +13,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.3'
         classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'io.fabric.tools:gradle:1.31.0'
+        classpath 'io.fabric.tools:gradle:1.31.2'
     }
 }
 
