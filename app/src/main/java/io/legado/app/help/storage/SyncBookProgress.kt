@@ -27,7 +27,6 @@ object SyncBookProgress {
         }
     }
 
-
     fun downloadBookProgress() {
         Coroutine.async {
             if (WebDavHelp.initWebDav()) {
@@ -39,7 +38,8 @@ object SyncBookProgress {
                             it.bookUrl,
                             it.durChapterIndex,
                             it.durChapterPos,
-                            it.durChapterTime
+                            it.durChapterTime,
+                            it.durChapterTitle
                         )
                     }
                 }
