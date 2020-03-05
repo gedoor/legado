@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
@@ -35,7 +36,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 name = it
             }
             bundle.getString("author")?.let {
-                author = it.replace("作者：", "")
+                author = it.replace(AppPattern.authorRegex, "")
             }
         }
     }

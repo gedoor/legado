@@ -105,7 +105,7 @@ class BookInfoActivity :
     private fun showBook(book: Book) {
         showCover(book)
         tv_name.text = book.name
-        tv_author.text = getString(R.string.author_show, book.author)
+        tv_author.text = getString(R.string.author_show, book.getRealAuthor())
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tv_toc.text = getString(R.string.toc_s, getString(R.string.loading))

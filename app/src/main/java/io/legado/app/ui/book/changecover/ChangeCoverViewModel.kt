@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppPattern
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
@@ -27,7 +28,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             name = it
         }
         bundle.getString("author")?.let {
-            author = it.replace("作者：", "")
+            author = it.replace(AppPattern.authorRegex, "")
         }
     }
 
