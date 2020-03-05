@@ -165,10 +165,10 @@ object ReadBookConfig {
             if (shareLayout) shareConfig.paragraphSpacing = value
             else durConfig.paragraphSpacing = value
 
-    var titleCenter: Boolean
-        get() = if (shareLayout) shareConfig.titleCenter else durConfig.titleCenter
+    var titleMode: Int
+        get() = if (shareLayout) shareConfig.titleMode else durConfig.titleMode
         set(value) =
-            if (shareLayout) shareConfig.titleCenter = value else durConfig.titleCenter = value
+            if (shareLayout) shareConfig.titleMode = value else durConfig.titleMode = value
 
     var paddingBottom: Int
         get() = if (shareLayout) shareConfig.paddingBottom else durConfig.paddingBottom
@@ -253,7 +253,7 @@ object ReadBookConfig {
         var letterSpacing: Float = 0.5f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
         var paragraphSpacing: Int = 12,//段距
-        var titleCenter: Boolean = true,//标题居中
+        var titleMode: Int = 0,//标题居中
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,

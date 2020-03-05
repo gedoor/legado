@@ -153,7 +153,7 @@ object ChapterProvider {
                 addCharsToLineFirst(textLine, words, textPaint, desiredWidth)
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
-                val x = if (isTitle && ReadBookConfig.titleCenter)
+                val x = if (isTitle && ReadBookConfig.titleMode == 1)
                     (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
                 addCharsToLineLast(textLine, words, stringBuilder, textPaint, x)

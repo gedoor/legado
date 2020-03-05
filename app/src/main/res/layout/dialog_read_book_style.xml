@@ -10,7 +10,7 @@
     android:padding="10dp">
 
     <io.legado.app.ui.widget.text.StrokeTextView
-        android:id="@+id/tv_title_center"
+        android:id="@+id/tv_title_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="6dp"
@@ -34,7 +34,7 @@
         android:text="@string/text_bold"
         android:gravity="center"
         android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/tv_title_center"
+        app:layout_constraintLeft_toRightOf="@+id/tv_title_mode"
         app:layout_constraintRight_toLeftOf="@+id/tv_text_font"
         app:layout_constraintTop_toTopOf="parent" />
 

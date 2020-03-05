@@ -32,6 +32,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     val callBack get() = activity as? ReadBookActivity
+    lateinit var titleModes: Array<String>
 
     override fun onStart() {
         super.onStart()
@@ -61,6 +62,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        titleModes = requireContext().resources.getStringArray(R.array.title_mode)
         initView()
         initData()
         initViewEvent()
@@ -97,12 +99,12 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         chinese_converter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
-        tv_title_center.onClick {
-            ReadBookConfig.apply {
-                titleCenter = !titleCenter
-                tv_title_center.isSelected = titleCenter
+        tv_title_mode.onClick {
+            requireContext().selector("标题模式", titleModes.toList()) { _, index ->
+                ReadBookConfig.titleMode = index
+                tv_title_mode.text = titleModes[index]
+                postEvent(EventBus.UP_CONFIG, true)
             }
-            postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_bold.onClick {
             ReadBookConfig.apply {
@@ -187,7 +189,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     private fun upStyle() {
         ReadBookConfig.let {
-            tv_title_center.isSelected = it.titleCenter
+            tv_title_mode.text = titleModes.getOrElse(it.titleMode) { titleModes[0] }
             tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
