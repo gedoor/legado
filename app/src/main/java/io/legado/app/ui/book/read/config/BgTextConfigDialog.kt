@@ -191,7 +191,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                     ReadBookConfig.durConfig.setBg(2, file.absolutePath)
                     ReadBookConfig.upBg()
                     postEvent(EventBus.UP_CONFIG, false)
-                }
+                } ?: toast("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)
