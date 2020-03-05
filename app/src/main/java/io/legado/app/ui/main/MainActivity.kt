@@ -34,14 +34,17 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         get() = getViewModel(MainViewModel::class.java)
 
     private var pagePosition = 0
-    private val fragmentList = arrayListOf<Fragment>()
-    private var rssFragment: RssFragment? = null
+    private val fragmentMap = mapOf<String, Fragment>(
+        Pair("bookshelf", BookshelfFragment()),
+        Pair("explore", ExploreFragment()),
+        Pair("rss", RssFragment()),
+        Pair("myConfig", MyFragment())
+    )
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(view_pager_main)
         ATH.applyBottomNavigationColor(bottom_navigation_view)
         view_pager_main.offscreenPageLimit = 3
-        upFragmentList()
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
@@ -67,22 +70,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
         return false
-    }
-
-    private fun upFragmentList() {
-        if (fragmentList.isEmpty()) {
-            fragmentList.add(BookshelfFragment())
-            fragmentList.add(ExploreFragment())
-            fragmentList.add(RssFragment())
-            fragmentList.add(MyFragment())
-        }
-        if (AppConfig.isShowRSS && fragmentList.size < 4) {
-            fragmentList.add(2,
-                rssFragment ?: RssFragment().apply { rssFragment = this })
-        }
-        if (!AppConfig.isShowRSS && fragmentList.size == 4) {
-            fragmentList.removeAt(2)
-        }
     }
 
     private fun upVersion() {
@@ -144,7 +131,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
         observeEvent<String>(EventBus.SHOW_RSS) {
             bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
-            upFragmentList()
             view_pager_main.adapter?.notifyDataSetChanged()
             if (AppConfig.isShowRSS) {
                 view_pager_main.setCurrentItem(3, false)
@@ -160,7 +146,16 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
 
         override fun getItem(position: Int): Fragment {
-            return fragmentList[position]
+            return when (position) {
+                0 -> fragmentMap.getValue("bookshelf")
+                1 -> fragmentMap.getValue("explore")
+                2 -> if (AppConfig.isShowRSS) {
+                    fragmentMap.getValue("rss")
+                } else {
+                    fragmentMap.getValue("myConfig")
+                }
+                else -> fragmentMap.getValue("myConfig")
+            }
         }
 
         override fun getCount(): Int {

@@ -4,13 +4,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.jeremyliao.liveeventbus.core.Observable
 
-inline fun <reified EVENT> eventObservable(tag: String): LiveEventBus.Observable<EVENT> {
-    return LiveEventBus.get().with(tag, EVENT::class.java)
+inline fun <reified EVENT> eventObservable(tag: String): Observable<EVENT> {
+    return LiveEventBus.get(tag, EVENT::class.java)
 }
 
 inline fun <reified EVENT> postEvent(tag: String, event: EVENT) {
-    LiveEventBus.get().with(tag, EVENT::class.java).post(event)
+    LiveEventBus.get(tag).post(event)
 }
 
 inline fun <reified EVENT> AppCompatActivity.observeEvent(
