@@ -1,12 +1,14 @@
 package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
+import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
 import io.legado.app.utils.splitNotBlank
 import java.util.*
 import java.util.regex.Pattern
 
+@Keep
 class AnalyzeByJSonPath {
     private var ctx: ReadContext? = null
 
