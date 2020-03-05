@@ -496,8 +496,6 @@
     <string name="content_empty">文章内容为空</string>
     <string name="on_change_source">正在换源请等待…</string>
     <string name="chapter_list_empty">目录列表为空</string>
-    <string name="content_padding">正文边距</string>
-    <string name="tip_padding">Tip边距</string>
     <string name="text_letter_spacing">字距</string>
 
     <string name="source_tab_base">基本</string>
@@ -616,7 +614,7 @@
     <string name="selectText">长按选择文本</string>
     <string name="header">页眉</string>
     <string name="main_body">正文</string>
-    <string name="footer">页角</string>
+    <string name="footer">页脚</string>
     <string name="select_end">文本选择结束位置</string>
     <string name="select_start">文本选择开始位置</string>
     <string name="share_layout">共用布局</string>
@@ -630,4 +628,5 @@
     <string name="plus">加</string>
     <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
+    <string name="sure_delete_book_file">是否删除源文件</string>
 </resources>

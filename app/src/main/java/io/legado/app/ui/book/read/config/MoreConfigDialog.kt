@@ -33,7 +33,7 @@ class MoreConfigDialog : DialogFragment() {
         }
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.background)
-            it.decorView.setPadding(0, 5, 0, 0)
+            it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM

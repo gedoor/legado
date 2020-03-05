@@ -61,8 +61,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         return inflater.inflate(R.layout.dialog_toc_regex, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         durRegex = arguments?.getString("tocRegex")
         tool_bar.setTitle(R.string.txt_toc_regex)
         tool_bar.inflateMenu(R.menu.txt_toc_regex)

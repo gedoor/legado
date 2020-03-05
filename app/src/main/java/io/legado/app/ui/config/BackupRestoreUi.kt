@@ -114,7 +114,8 @@ object BackupRestoreUi {
             .onGranted {
                 Coroutine.async {
                     AppConfig.backupPath = path
-                    Restore.restore(path)
+                    Restore.restoreDatabase(path)
+                    Restore.restoreConfig(path)
                 }.onSuccess {
                     fragment.toast(R.string.restore_success)
                 }

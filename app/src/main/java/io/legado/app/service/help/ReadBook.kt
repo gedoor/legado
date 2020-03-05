@@ -69,11 +69,11 @@ object ReadBook {
             nextTextChapter = null
             book?.let {
                 if (curTextChapter == null) {
-                    loadContent(durChapterIndex)
+                    loadContent(durChapterIndex, upContent)
                 } else if (upContent) {
                     callBack?.upContent()
                 }
-                loadContent(durChapterIndex.plus(1))
+                loadContent(durChapterIndex.plus(1), upContent)
                 GlobalScope.launch(Dispatchers.IO) {
                     for (i in 2..10) {
                         delay(100)
@@ -99,11 +99,11 @@ object ReadBook {
             prevTextChapter = null
             book?.let {
                 if (curTextChapter == null) {
-                    loadContent(durChapterIndex)
+                    loadContent(durChapterIndex, upContent)
                 } else if (upContent) {
                     callBack?.upContent()
                 }
-                loadContent(durChapterIndex.minus(1))
+                loadContent(durChapterIndex.minus(1), upContent)
                 GlobalScope.launch(Dispatchers.IO) {
                     for (i in -5..-2) {
                         delay(100)
@@ -190,13 +190,13 @@ object ReadBook {
         loadContent(durChapterIndex - 1)
     }
 
-    fun loadContent(index: Int) {
+    fun loadContent(index: Int, upContent: Boolean = true) {
         book?.let { book ->
             if (addLoading(index)) {
                 Coroutine.async {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                         BookHelp.getContent(book, chapter)?.let {
-                            contentLoadFinish(chapter, it)
+                            contentLoadFinish(chapter, it, upContent)
                             removeLoading(chapter.index)
                         } ?: download(chapter)
                     } ?: removeLoading(index)
@@ -262,7 +262,11 @@ object ReadBook {
     /**
      * 内容加载完成
      */
-    private fun contentLoadFinish(chapter: BookChapter, content: String) {
+    private fun contentLoadFinish(
+        chapter: BookChapter,
+        content: String,
+        upContent: Boolean = true
+    ) {
         Coroutine.async {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
                 val c = BookHelp.disposeContent(
@@ -275,18 +279,18 @@ object ReadBook {
                 when (chapter.index) {
                     durChapterIndex -> {
                         curTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
-                        callBack?.upContent()
+                        if (upContent) callBack?.upContent()
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
                     durChapterIndex - 1 -> {
                         prevTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
-                        callBack?.upContent(-1)
+                        if (upContent) callBack?.upContent(-1)
                     }
                     durChapterIndex + 1 -> {
                         nextTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
-                        callBack?.upContent(1)
+                        if (upContent) callBack?.upContent(1)
                     }
                 }
             }

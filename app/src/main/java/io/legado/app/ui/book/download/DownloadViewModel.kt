@@ -1,4 +1,4 @@
-package io.legado.app.ui.download
+package io.legado.app.ui.book.download
 
 import android.app.Application
 import android.net.Uri

@@ -3,8 +3,8 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.screenshot
 import kotlin.math.*
 
 @Suppress("DEPRECATION")
@@ -73,10 +73,6 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     private val mPaint: Paint = Paint().apply { style = Paint.Style.FILL }
 
-    private var curBitmap: Bitmap? = null
-    private var prevBitmap: Bitmap? = null
-    private var nextBitmap: Bitmap? = null
-
     init {
         //设置颜色数组
         val color = intArrayOf(0x333333, -0x4fcccccd)
@@ -119,20 +115,20 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     }
 
     override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
-        super.setStartPoint(x, y, invalidate)
+        super.setStartPoint(x, y, false)
         calcCornerXY(x, y)
     }
 
     override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
         super.setTouchPoint(x, y, false)
         //触摸y中间位置吧y变成屏幕高度
-        if ((startY > viewHeight * 0.33 && startY < viewHeight * 0.66)
+        if ((startY > viewHeight / 3 && startY < viewHeight * 2 / 3)
             || mDirection == Direction.PREV
         ) {
             touchY = viewHeight.toFloat()
         }
 
-        if (startY > viewHeight * 0.33 && startY < viewHeight / 2.0
+        if (startY > viewHeight / 3 && startY < viewHeight / 2
             && mDirection == Direction.NEXT
         ) {
             touchY = 1f
@@ -145,29 +141,15 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         when (direction) {
             Direction.PREV ->
                 //上一页滑动不出现对角
-                if (startX > viewWidth / 2.0) {
+                if (startX > viewWidth / 2) {
                     calcCornerXY(startX, viewHeight.toFloat())
                 } else {
                     calcCornerXY(viewWidth - startX, viewHeight.toFloat())
                 }
             Direction.NEXT ->
-                if (viewWidth / 2.0 > startX) {
+                if (viewWidth / 2 > startX) {
                     calcCornerXY(viewWidth - startX, startY)
                 }
-            else -> Unit
-        }
-    }
-
-    override fun setBitmap() {
-        when (mDirection) {
-            Direction.PREV -> {
-                prevBitmap = prevPage.screenshot()
-                curBitmap = curPage.screenshot()
-            }
-            Direction.NEXT -> {
-                nextBitmap = nextPage.screenshot()
-                curBitmap = curPage.screenshot()
-            }
             else -> Unit
         }
     }
@@ -209,15 +191,10 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }
-        prevBitmap?.recycle()
-        prevBitmap = null
-        nextBitmap?.recycle()
-        nextBitmap = null
-        curBitmap?.recycle()
-        curBitmap = null
     }
 
     override fun onDraw(canvas: Canvas) {
+        if (!isRunning) return
         when (mDirection) {
             Direction.NEXT -> {
                 calcPoints()
@@ -292,6 +269,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMatrix.setValues(mMatrixArray)
         mMatrix.preTranslate(-mBezierControl1.x, -mBezierControl1.y)
         mMatrix.postTranslate(mBezierControl1.x, mBezierControl1.y)
+        canvas.drawColor(ReadBookConfig.bgMeanColor)
         canvas.drawBitmap(bitmap, mMatrix, mPaint)
         mPaint.colorFilter = null
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y)
@@ -480,8 +458,8 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
      * 计算拖拽点对应的拖拽脚
      */
     private fun calcCornerXY(x: Float, y: Float) {
-        mCornerX = if (x <= viewWidth / 2.0) 0 else viewWidth
-        mCornerY = if (y <= viewHeight / 2.0) 0 else viewHeight
+        mCornerX = if (x <= viewWidth / 2) 0 else viewWidth
+        mCornerY = if (y <= viewHeight / 2) 0 else viewHeight
         mIsRtOrLb = (mCornerX == 0 && mCornerY == viewHeight)
                 || (mCornerY == 0 && mCornerX == viewWidth)
     }
@@ -492,21 +470,23 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
         mMiddleX = (mTouchX + mCornerX) / 2
         mMiddleY = (mTouchY + mCornerY) / 2
-
         mBezierControl1.x =
             mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
         mBezierControl1.y = mCornerY.toFloat()
-
         mBezierControl2.x = mCornerX.toFloat()
-        mBezierControl2.y = if ((mCornerY - mMiddleY).toInt() == 0) {
-            mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
-        } else {
-            mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
-        }
 
+        val f4 = mCornerY - mMiddleY
+        if (f4 == 0f) {
+            mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
+
+        } else {
+            mBezierControl2.y =
+                mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
+        }
         mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2
         mBezierStart1.y = mCornerY.toFloat()
-        //固定左边上下两个点
+
+        // 固定左边上下两个点
         if (mTouchX > 0 && mTouchX < viewWidth) {
             if (mBezierStart1.x < 0 || mBezierStart1.x > viewWidth) {
                 if (mBezierStart1.x < 0)
@@ -515,6 +495,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 val f1 = abs(mCornerX - mTouchX)
                 val f2 = viewWidth * f1 / mBezierStart1.x
                 mTouchX = abs(mCornerX - f2)
+
                 val f3 = abs(mCornerX - mTouchX) * abs(mCornerY - mTouchY) / f1
                 mTouchY = abs(mCornerY - f3)
 
@@ -526,10 +507,14 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 mBezierControl1.y = mCornerY.toFloat()
 
                 mBezierControl2.x = mCornerX.toFloat()
-                mBezierControl2.y = if ((mCornerY - mMiddleY).toInt() == 0) {
-                    mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
+
+                val f5 = mCornerY - mMiddleY
+                if (f5 == 0f) {
+                    mBezierControl2.y =
+                        mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
                 } else {
-                    mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
+                    mBezierControl2.y =
+                        mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
                 }
 
                 mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2
@@ -538,12 +523,19 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mBezierStart2.x = mCornerX.toFloat()
         mBezierStart2.y = mBezierControl2.y - (mCornerY - mBezierControl2.y) / 2
 
-        mTouchToCornerDis = hypot(mTouchX - mCornerX, touchY - mCornerY)
+        mTouchToCornerDis = hypot(
+            (mTouchX - mCornerX).toDouble(),
+            (mTouchY - mCornerY).toDouble()
+        ).toFloat()
 
-        mBezierEnd1 =
-            getCross(PointF(mTouchX, mTouchY), mBezierControl1, mBezierStart1, mBezierStart2)
-        mBezierEnd2 =
-            getCross(PointF(mTouchX, mTouchY), mBezierControl2, mBezierStart1, mBezierStart2)
+        mBezierEnd1 = getCross(
+            PointF(mTouchX, mTouchY), mBezierControl1, mBezierStart1,
+            mBezierStart2
+        )
+        mBezierEnd2 = getCross(
+            PointF(mTouchX, mTouchY), mBezierControl2, mBezierStart1,
+            mBezierStart2
+        )
 
         mBezierVertex1.x = (mBezierStart1.x + 2 * mBezierControl1.x + mBezierEnd1.x) / 4
         mBezierVertex1.y = (2 * mBezierControl1.y + mBezierStart1.y + mBezierEnd1.y) / 4

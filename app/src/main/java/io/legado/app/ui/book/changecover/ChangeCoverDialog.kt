@@ -1,4 +1,4 @@
-package io.legado.app.ui.changecover
+package io.legado.app.ui.book.changecover
 
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -52,27 +52,22 @@ class ChangeCoverDialog : DialogFragment(),
         callBack = activity as? CallBack
         viewModel = getViewModel(ChangeCoverViewModel::class.java)
         viewModel.callBack = this
-        return inflater.inflate(R.layout.dialog_change_source, container)
+        return inflater.inflate(R.layout.dialog_change_cover, container)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.searchStateData.observe(this, Observer {
+        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
         })
         tool_bar.setTitle(R.string.change_cover_source)
         arguments?.let { bundle ->
-            bundle.getString("name")?.let {
-                viewModel.name = it
-            }
-            bundle.getString("author")?.let {
-                viewModel.author = it
-            }
+            viewModel.initData(bundle)
         }
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = CoverAdapter(requireContext(), this)
         recycler_view.adapter = adapter
-        viewModel.initData()
+        viewModel.loadDbSearchBook()
     }
 
     override fun changeTo(coverUrl: String) {

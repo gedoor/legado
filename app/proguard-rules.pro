@@ -154,6 +154,8 @@
 -keep class **.analyzeRule.**{*;}
 # 保持web类
 -keep class **.web.**{*;}
+#数据类
+-keep class **.data.**{*;}
 
 -dontwarn rx.**
 
@@ -166,7 +168,10 @@
 -dontnote org.python.core.**
 -dontwarn com.hwangjr.rxbus.**
 -dontwarn okhttp3.**
+-dontwarn org.conscrypt.**
+-dontwarn com.jeremyliao.liveeventbus.**
 
+-keep class com.jeremyliao.liveeventbus.** { *; }
 -keep class retrofit2.**{*;}
 -keep class okhttp3.**{*;}
 -keep class okio.**{*;}
@@ -183,6 +188,7 @@
 -keep class com.gyf.barlibrary.* {*;}
 ##JSOUP
 -keep class org.jsoup.**{*;}
+-keep class **.xpath.**{*;}
 
 -keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.**
@@ -206,8 +212,6 @@
 -keep class javax.script.** { *; }
 -keep class com.sun.script.javascript.** { *; }
 -keep class org.mozilla.javascript.** { *; }
--dontwarn org.mozilla.javascript.**
--dontwarn sun.**
 
 ###EPUB
 -dontwarn nl.siegmann.epublib.**
@@ -221,9 +225,6 @@
 
 -keepclassmembers class * {
     public <init> (org.json.JSONObject);
-}
--keep public class com.kunfei.bookshelf.R$*{
-    public static final int *;
 }
 -keepclassmembers enum * {
     public static **[] values();

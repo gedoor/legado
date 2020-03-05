@@ -28,7 +28,6 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
                     viewWidth - (touchX - startX)
                 }
         }
-
         startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
     }
 
@@ -38,27 +37,22 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         if ((mDirection == Direction.NEXT && offsetX > 0)
             || (mDirection == Direction.PREV && offsetX < 0)
         ) return
-
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
-        bitmap?.let {
+        if (!isRunning) return
+        if (mDirection == Direction.PREV) {
+            bitmapMatrix.setTranslate(distanceX + viewWidth, 0.toFloat())
+            curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
             bitmapMatrix.setTranslate(distanceX, 0.toFloat())
-            canvas.drawBitmap(it, bitmapMatrix, null)
+            prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
+        } else if (mDirection == Direction.NEXT) {
+            bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+            nextBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
+            bitmapMatrix.setTranslate(distanceX - viewWidth, 0.toFloat())
+            curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
         }
     }
 
-    override fun onScroll() {
-        val offsetX = touchX - startX
-
-        if ((mDirection == Direction.NEXT && offsetX > 0)
-            || (mDirection == Direction.PREV && offsetX < 0)
-        ) return
-
-        curPage.translationX = offsetX
-    }
-
     override fun onAnimStop() {
-        curPage.x = 0.toFloat()
-
         if (!isCancel) {
             pageView.fillPage(mDirection)
         }

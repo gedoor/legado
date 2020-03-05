@@ -23,6 +23,7 @@ import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.widget.prefs.NameListPreference
 import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -74,6 +75,12 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
             observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
                 webServicePre?.isChecked = false
             }
+            findPreference<NameListPreference>(PreferKey.themeMode)?.let {
+                it.setOnPreferenceChangeListener { _, _ ->
+                    view?.post { App.INSTANCE.applyDayNight() }
+                    true
+                }
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,7 +103,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
             key: String?
         ) {
             when (key) {
-                PreferKey.themeMode -> App.INSTANCE.applyDayNight()
                 PreferKey.webService -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())

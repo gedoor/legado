@@ -23,10 +23,13 @@
         app:layout_constraintBottom_toTopOf="@+id/view_info"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.legado.app.ui.widget.TitleBar
-        android:id="@+id/title_bar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="?attr/actionBarStyle"
+        android:fitsSystemWindows="true"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/book_info" />
 
@@ -38,7 +41,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/image_cover_default"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <LinearLayout
         android:id="@+id/ll_book_info"

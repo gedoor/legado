@@ -1,4 +1,4 @@
-package io.legado.app.ui.chapterlist
+package io.legado.app.ui.book.chapterlist
 
 import android.os.Bundle
 import android.view.Menu

@@ -1,4 +1,4 @@
-package io.legado.app.ui.importbook
+package io.legado.app.ui.book.local
 
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile

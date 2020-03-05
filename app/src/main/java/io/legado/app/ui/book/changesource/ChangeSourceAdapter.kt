@@ -1,4 +1,4 @@
-package io.legado.app.ui.changesource
+package io.legado.app.ui.book.changesource
 
 import android.content.Context
 import android.os.Bundle
