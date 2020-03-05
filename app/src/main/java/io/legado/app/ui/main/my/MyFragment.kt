@@ -76,9 +76,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                 webServicePre?.isChecked = false
             }
             findPreference<NameListPreference>(PreferKey.themeMode)?.let {
-                it.setOnPreferenceChangeListener { _, newValue ->
-                    App.INSTANCE.putPrefString(PreferKey.themeMode, newValue.toString())
-                    App.INSTANCE.applyDayNight()
+                it.setOnPreferenceChangeListener { _, _ ->
+                    view?.post { App.INSTANCE.applyDayNight() }
                     true
                 }
             }
