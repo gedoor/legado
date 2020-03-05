@@ -31,7 +31,7 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_toc_regex.*
 import kotlinx.android.synthetic.main.dialog_toc_regex_edit.view.*
 import kotlinx.android.synthetic.main.item_toc_regex.view.*
@@ -140,14 +140,14 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
             ?.splitNotBlank(",")
             ?.toMutableList()
             ?: mutableListOf()
-        if (cacheUrls.contains(defaultUrl)) {
+        if (!cacheUrls.contains(defaultUrl)) {
             cacheUrls.add(0, defaultUrl)
         }
         requireContext().alert(titleResource = R.string.import_book_source_on_line) {
             var editText: AutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view
+                    editText = this.edit_view
                     edit_view.setFilterValues(cacheUrls)
                     edit_view.delCallBack = {
                         cacheUrls.remove(it)
