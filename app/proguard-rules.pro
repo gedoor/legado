@@ -188,6 +188,7 @@
 -keep class com.gyf.barlibrary.* {*;}
 ##JSOUP
 -keep class org.jsoup.**{*;}
+-keep class **.xpath.**{*;}
 
 -keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.**
