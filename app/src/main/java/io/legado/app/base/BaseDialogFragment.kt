@@ -19,7 +19,7 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
         job = Job()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onFragmentCreated(view, savedInstanceState)
         observeLiveBus()
