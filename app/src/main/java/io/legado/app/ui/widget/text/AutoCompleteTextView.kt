@@ -42,15 +42,13 @@ class AutoCompleteTextView : AppCompatAutoCompleteTextView {
         return super.onTouchEvent(event)
     }
 
-    fun setFilterValues(values: List<String>?, delCallBack: ((value: String) -> Unit)? = null) {
-        this.delCallBack = delCallBack
+    fun setFilterValues(values: List<String>?) {
         values?.let {
             setAdapter(MyAdapter(context, values))
         }
     }
 
-    fun setFilterValues(vararg value: String, delCallBack: ((value: String) -> Unit)? = null) {
-        this.delCallBack = delCallBack
+    fun setFilterValues(vararg value: String) {
         setAdapter(MyAdapter(context, value.toMutableList()))
     }
 
