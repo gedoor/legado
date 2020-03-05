@@ -53,13 +53,11 @@ class ReadAloudDialog : BaseDialogFragment() {
         return inflater.inflate(R.layout.dialog_read_aloud, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         ll_bottom_bg.setBackgroundColor(requireContext().bottomBackground)
         initOnChange()
         initData()
         initOnClick()
-        observeLiveBusEvent()
     }
 
     private fun initData() {
@@ -136,7 +134,7 @@ class ReadAloudDialog : BaseDialogFragment() {
         }
     }
 
-    private fun observeLiveBusEvent() {
+    override fun observeLiveBus() {
         observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
         observeEvent<Int>(EventBus.TTS_DS) { seek_timer.progress = it }
     }

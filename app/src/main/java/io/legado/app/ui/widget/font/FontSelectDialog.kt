@@ -60,7 +60,7 @@ class FontSelectDialog : BaseDialogFragment(),
         return inflater.inflate(R.layout.dialog_font_select, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tool_bar.setTitle(R.string.select_font)
         tool_bar.inflateMenu(R.menu.font_select)
