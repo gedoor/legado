@@ -113,15 +113,16 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     private fun initSearchView() {
-        search_view.setOnCloseListener {
+        val searchView = tool_bar.menu.findItem(R.id.menu_screen).actionView as SearchView
+        searchView.setOnCloseListener {
             showTitle()
             false
         }
-        search_view.setOnSearchClickListener {
+        searchView.setOnSearchClickListener {
             tool_bar.title = ""
             tool_bar.subtitle = ""
         }
-        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -151,6 +152,7 @@ class ChangeSourceDialog : DialogFragment(),
                 putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
                 item.isChecked = !item.isChecked
             }
+            R.id.menu_stop -> viewModel.stopSearch()
         }
         return false
     }

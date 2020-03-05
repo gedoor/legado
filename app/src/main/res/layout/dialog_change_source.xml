@@ -5,26 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_menu">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tool_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background_menu"
-            android:elevation="5dp"
-            app:displayHomeAsUp="false"
-            app:fitStatusBar="false" />
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:background="@color/background_menu"
+        android:elevation="5dp"
+        app:displayHomeAsUp="false"
+        app:fitStatusBar="false" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
         android:id="@+id/refresh_progress_bar"

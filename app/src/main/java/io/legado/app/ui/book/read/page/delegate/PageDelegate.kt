@@ -194,7 +194,6 @@ abstract class PageDelegate(protected val pageView: PageView) :
     @CallSuper
     open fun onTouch(event: MotionEvent) {
         if (isStarted) return
-        detector.setIsLongpressEnabled(false)
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
             when (event.action) {
