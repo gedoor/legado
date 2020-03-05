@@ -5,17 +5,17 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeCoverDialog : DialogFragment(),
-    ChangeCoverViewModel.CallBack,
+class ChangeCoverDialog : BaseDialogFragment(),
     CoverAdapter.CallBack {
 
     companion object {
@@ -35,7 +35,7 @@ class ChangeCoverDialog : DialogFragment(),
 
     private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeCoverViewModel
-    override lateinit var adapter: CoverAdapter
+    lateinit var adapter: CoverAdapter
 
     override fun onStart() {
         super.onStart()
@@ -51,11 +51,10 @@ class ChangeCoverDialog : DialogFragment(),
     ): View? {
         callBack = activity as? CallBack
         viewModel = getViewModel(ChangeCoverViewModel::class.java)
-        viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_cover, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
@@ -68,6 +67,15 @@ class ChangeCoverDialog : DialogFragment(),
         adapter = CoverAdapter(requireContext(), this)
         recycler_view.adapter = adapter
         viewModel.loadDbSearchBook()
+    }
+
+    override fun observeLiveBus() {
+        super.observeLiveBus()
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
+            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
+            adapter.setItems(it)
+            diffResult.dispatchUpdatesTo(adapter)
+        })
     }
 
     override fun changeTo(coverUrl: String) {

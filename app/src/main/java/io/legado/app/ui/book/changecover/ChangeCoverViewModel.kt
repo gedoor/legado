@@ -6,22 +6,23 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class ChangeCoverViewModel(application: Application) : BaseViewModel(application) {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    var callBack: CallBack? = null
     var name: String = ""
     var author: String = ""
     private var task: Coroutine<*>? = null
     val searchStateData = MutableLiveData<Boolean>()
+    val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
+    private val searchBooks = ArrayList<SearchBook>()
 
     fun initData(bundle: Bundle) {
         bundle.getString("name")?.let {
@@ -34,13 +35,15 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
     fun loadDbSearchBook() {
         execute {
-            App.db.searchBookDao().getEnableHasCover(name, author)
-        }.onSuccess {
-            it?.let {
-                callBack?.adapter?.setItems(it)
+            App.db.searchBookDao().getEnableHasCover(name, author).let {
+                searchBooks.addAll(it)
+                if (it.size <= 1) {
+                    searchBooksLiveData.postValue(searchBooks)
+                    search()
+                } else {
+                    searchBooksLiveData.postValue(searchBooks)
+                }
             }
-        }.onFinally {
-            search()
         }
     }
 
@@ -59,12 +62,9 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                                 && !searchBook.coverUrl.isNullOrEmpty()
                             ) {
                                 App.db.searchBookDao().insert(searchBook)
-                                callBack?.adapter?.let { adapter ->
-                                    if (!adapter.getItems().contains(searchBook)) {
-                                        withContext(Dispatchers.Main) {
-                                            adapter.addItem(searchBook)
-                                        }
-                                    }
+                                if (!searchBooks.contains(searchBook)) {
+                                    searchBooks.add(searchBook)
+                                    searchBooksLiveData.postValue(searchBooks)
                                 }
                             }
                         }
@@ -82,7 +82,4 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         searchPool.close()
     }
 
-    interface CallBack {
-        var adapter: CoverAdapter
-    }
 }

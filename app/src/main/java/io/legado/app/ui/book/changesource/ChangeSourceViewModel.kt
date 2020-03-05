@@ -45,7 +45,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
                 searchBooks.addAll(it)
-                if (it.isEmpty()) {
+                if (it.size <= 1) {
+                    upAdapter()
                     search()
                 } else {
                     upAdapter()
