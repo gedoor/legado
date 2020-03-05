@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.bottomBackground
@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadAloudDialog : DialogFragment() {
+class ReadAloudDialog : BaseDialogFragment() {
     var callBack: CallBack? = null
 
     override fun onStart() {
@@ -56,18 +56,15 @@ class ReadAloudDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ll_bottom_bg.setBackgroundColor(requireContext().bottomBackground)
-        initData()
         initOnChange()
+        initData()
         initOnClick()
+        observeLiveBusEvent()
     }
 
     private fun initData() {
-        observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
-        observeEvent<Int>(EventBus.TTS_DS) { seek_timer.progress = it }
         upPlayState()
         seek_timer.progress = BaseReadAloudService.timeMinute
-        tv_timer.text =
-            requireContext().getString(R.string.timer_m, BaseReadAloudService.timeMinute)
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
         seek_tts_SpeechRate.progress = AppConfig.ttsSpeechRate
@@ -137,6 +134,11 @@ class ReadAloudDialog : DialogFragment() {
             ReadAloud.pause(requireContext())
             ReadAloud.resume(requireContext())
         }
+    }
+
+    private fun observeLiveBusEvent() {
+        observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
+        observeEvent<Int>(EventBus.TTS_DS) { seek_timer.progress = it }
     }
 
     interface CallBack {
