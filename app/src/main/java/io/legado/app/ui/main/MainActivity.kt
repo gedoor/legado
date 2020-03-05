@@ -34,11 +34,12 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         get() = getViewModel(MainViewModel::class.java)
 
     private var pagePosition = 0
-    private val fragmentMap = mapOf<String, Fragment>(
-        Pair("bookshelf", BookshelfFragment()),
-        Pair("explore", ExploreFragment()),
-        Pair("rss", RssFragment()),
-        Pair("myConfig", MyFragment())
+    private val fragmentId = arrayOf(0, 1, 2, 3)
+    private val fragmentMap = mapOf<Int, Fragment>(
+        Pair(fragmentId[0], BookshelfFragment()),
+        Pair(fragmentId[1], ExploreFragment()),
+        Pair(fragmentId[2], RssFragment()),
+        Pair(fragmentId[3], MyFragment())
     )
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -147,14 +148,14 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> fragmentMap.getValue("bookshelf")
-                1 -> fragmentMap.getValue("explore")
+                0 -> fragmentMap.getValue(fragmentId[0])
+                1 -> fragmentMap.getValue(fragmentId[1])
                 2 -> if (AppConfig.isShowRSS) {
-                    fragmentMap.getValue("rss")
+                    fragmentMap.getValue(fragmentId[2])
                 } else {
-                    fragmentMap.getValue("myConfig")
+                    fragmentMap.getValue(fragmentId[3])
                 }
-                else -> fragmentMap.getValue("myConfig")
+                else -> fragmentMap.getValue(fragmentId[3])
             }
         }
 
@@ -163,4 +164,5 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
 
     }
+
 }
