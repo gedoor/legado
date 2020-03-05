@@ -15,7 +15,6 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
@@ -25,10 +24,10 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
-import io.legado.app.ui.book.group.GroupManageDialog
-import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.download.DownloadActivity
+import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
+import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_bookshelf_config.view.*
@@ -99,9 +98,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->
             tab.text = bookGroups[position].groupName
         }.attach()
-        observeEvent<Int>(EventBus.UP_TABS) {
-            tab_layout.getTabAt(it)?.select()
-        }
     }
 
     private fun initBookGroupData() {

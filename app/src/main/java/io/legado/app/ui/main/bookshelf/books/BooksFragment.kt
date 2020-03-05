@@ -57,9 +57,6 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
         initRecyclerView()
         upRecyclerData()
-        observeEvent<String>(EventBus.UP_BOOK) {
-            booksAdapter.notification(it)
-        }
     }
 
     private fun initRecyclerView() {
@@ -135,4 +132,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         return bookUrl in activityViewModel.updateList
     }
 
+    override fun observeLiveBus() {
+        super.observeLiveBus()
+        observeEvent<String>(EventBus.UP_BOOK) {
+            booksAdapter.notification(it)
+        }
+    }
 }
