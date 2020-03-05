@@ -227,7 +227,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
-                    edit_view.setFilterValues(cacheUrls) {
+                    edit_view.setFilterValues(cacheUrls)
+                    edit_view.delCallBack = {
                         cacheUrls.remove(it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
