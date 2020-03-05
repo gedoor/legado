@@ -35,7 +35,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 name = it
             }
             bundle.getString("author")?.let {
-                author = it
+                author = it.replace("作者：", "")
             }
         }
     }

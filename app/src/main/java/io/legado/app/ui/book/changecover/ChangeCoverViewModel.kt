@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.changecover
 
 import android.app.Application
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
@@ -21,7 +22,16 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private var task: Coroutine<*>? = null
     val searchStateData = MutableLiveData<Boolean>()
 
-    fun initData() {
+    fun initData(bundle: Bundle) {
+        bundle.getString("name")?.let {
+            name = it
+        }
+        bundle.getString("author")?.let {
+            author = it.replace("作者：", "")
+        }
+    }
+
+    fun loadDbSearchBook() {
         execute {
             App.db.searchBookDao().getEnableHasCover(name, author)
         }.onSuccess {

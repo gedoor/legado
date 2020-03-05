@@ -62,17 +62,12 @@ class ChangeCoverDialog : DialogFragment(),
         })
         tool_bar.setTitle(R.string.change_cover_source)
         arguments?.let { bundle ->
-            bundle.getString("name")?.let {
-                viewModel.name = it
-            }
-            bundle.getString("author")?.let {
-                viewModel.author = it
-            }
+            viewModel.initData(bundle)
         }
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = CoverAdapter(requireContext(), this)
         recycler_view.adapter = adapter
-        viewModel.initData()
+        viewModel.loadDbSearchBook()
     }
 
     override fun changeTo(coverUrl: String) {
