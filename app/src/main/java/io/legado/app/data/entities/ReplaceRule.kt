@@ -1,11 +1,14 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import android.text.TextUtils
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
+import java.util.regex.Pattern
+import java.util.regex.PatternSyntaxException
 
 @Parcelize
 @Entity(
@@ -36,5 +39,21 @@ data class ReplaceRule(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    fun isValid(): Boolean{
+        if (TextUtils.isEmpty(pattern)){
+            return false;
+        }
+        //判断正则表达式是否正确
+        if (isRegex){
+            try {
+                Pattern.compile(pattern);
+            }
+            catch (ex: PatternSyntaxException){
+                return false;
+            }
+        }
+        return true;
     }
 }
