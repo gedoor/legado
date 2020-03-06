@@ -14,19 +14,26 @@ class ArcView @JvmOverloads constructor(
     private var mWidth = 0
     private var mHeight = 0
 
-    /**
-     * 弧形高度
-     */
+    //弧形高度
     private val mArcHeight: Int
 
-    /**
-     * 背景颜色
-     */
+    //背景颜色
     private val mBgColor: Int
     private val mPaint: Paint = Paint()
     private val mDirectionTop: Boolean
     val rect = Rect()
     val path = Path()
+
+    init {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArcView)
+        mArcHeight = typedArray.getDimensionPixelSize(R.styleable.ArcView_arcHeight, 0)
+        mBgColor = typedArray.getColor(
+            R.styleable.ArcView_bgColor,
+            Color.parseColor("#303F9F")
+        )
+        mDirectionTop = typedArray.getBoolean(R.styleable.ArcView_arcDirectionTop, false)
+        typedArray.recycle()
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -69,14 +76,4 @@ class ArcView @JvmOverloads constructor(
         setMeasuredDimension(mWidth, mHeight)
     }
 
-    init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArcView)
-        mArcHeight = typedArray.getDimensionPixelSize(R.styleable.ArcView_arcHeight, 0)
-        mBgColor = typedArray.getColor(
-            R.styleable.ArcView_bgColor,
-            Color.parseColor("#303F9F")
-        )
-        mDirectionTop = typedArray.getBoolean(R.styleable.ArcView_arcDirectionTop, false)
-        typedArray.recycle()
-    }
 }
