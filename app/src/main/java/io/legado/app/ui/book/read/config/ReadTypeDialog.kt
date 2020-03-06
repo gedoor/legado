@@ -63,7 +63,7 @@ class ReadTypeDialog : BaseDialogFragment() {
 
     private fun initViewEvent() {
         dsb_text_size.onChanged = {
-            ReadBookConfig.textSize = it + 10
+            ReadBookConfig.textSize = it + 5
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_text_letter_spacing.onChanged = {
