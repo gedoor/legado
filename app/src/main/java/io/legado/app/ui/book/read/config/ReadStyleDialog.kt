@@ -142,11 +142,11 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             }
         }
         iv_default1.onClick {
-            ReadBookConfig.lineSpacingExtra = 15
+            ReadBookConfig.lineSpacingExtra = 16
             postEvent(EventBus.UP_CONFIG, true)
         }
         iv_default2.onClick {
-            ReadBookConfig.lineSpacingExtra = 11
+            ReadBookConfig.lineSpacingExtra = 13
             postEvent(EventBus.UP_CONFIG, true)
         }
         iv_default3.onClick {
