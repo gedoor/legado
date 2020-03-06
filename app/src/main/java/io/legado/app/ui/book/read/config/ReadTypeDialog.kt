@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.config
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -36,6 +37,11 @@ class ReadTypeDialog : BaseDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.dialog_read_type, container)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        ReadBookConfig.save()
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
