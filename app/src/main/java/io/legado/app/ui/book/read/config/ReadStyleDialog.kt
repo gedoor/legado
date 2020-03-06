@@ -81,6 +81,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         dsb_text_letter_spacing.valueFormat = {
             ((it - 50) / 100f).toString()
         }
+        dsb_line_size.valueFormat = { (it / 10f).toString() }
+        dsb_paragraph_spacing.valueFormat = { (it / 10f).toString() }
     }
 
     private fun initData() {

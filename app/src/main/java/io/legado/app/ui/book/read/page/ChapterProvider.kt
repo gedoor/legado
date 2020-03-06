@@ -13,10 +13,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
-import io.legado.app.utils.dp
-import io.legado.app.utils.getPrefString
-import io.legado.app.utils.removePref
-import io.legado.app.utils.toStringArray
+import io.legado.app.utils.*
 
 
 @Suppress("DEPRECATION")
@@ -111,14 +108,14 @@ object ChapterProvider {
             val textLine = TextLine(isTitle = isTitle)
             if (durY + textPaint.textHeight < visibleHeight) {
                 textPages.last().textLines.add(textLine)
-                durY += textPaint.textHeight + lineSpacingExtra
+                durY += textPaint.textHeight * lineSpacingExtra / 10f
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
                 //新建页面
-                durY = textPaint.textHeight + lineSpacingExtra
+                durY = textPaint.textHeight * lineSpacingExtra / 10f
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
             }
@@ -144,7 +141,7 @@ object ChapterProvider {
                 addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
             }
         }
-        durY += paragraphSpacing
+        durY += textPaint.textHeight * paragraphSpacing / 10f
         return durY
     }
 
@@ -273,10 +270,10 @@ object ChapterProvider {
         val bold = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
         contentPaint.typeface = Typeface.create(typeface, bold)
         //间距
-        lineSpacingExtra = ReadBookConfig.lineSpacingExtra.dp
-        paragraphSpacing = ReadBookConfig.paragraphSpacing.dp
-        titlePaint.textSize = (ReadBookConfig.textSize + 2).dp.toFloat()
-        contentPaint.textSize = ReadBookConfig.textSize.dp.toFloat()
+        lineSpacingExtra = ReadBookConfig.lineSpacingExtra
+        paragraphSpacing = ReadBookConfig.paragraphSpacing
+        titlePaint.textSize = (ReadBookConfig.textSize + 2).sp.toFloat()
+        contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
 
         upSize()
     }

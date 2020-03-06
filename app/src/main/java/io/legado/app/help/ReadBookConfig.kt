@@ -254,6 +254,7 @@ object ReadBookConfig {
         var lineSpacingExtra: Int = 12,//行间距
         var paragraphSpacing: Int = 12,//段距
         var titleMode: Int = 0,//标题居中
+        var titleLineSpacing: Int = 0,
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
