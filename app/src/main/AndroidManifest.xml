@@ -138,8 +138,10 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="booksource"
                     android:scheme="yuedu" />
@@ -186,6 +188,8 @@
             android:launchMode="singleTop" />
         <activity
             android:name=".ui.rss.read.ReadRssActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
             android:launchMode="singleTop" />
         <activity
             android:name="io.legado.app.ui.book.local.ImportBookActivity"
@@ -206,6 +210,10 @@
             android:name="io.legado.app.ui.book.download.DownloadActivity"
             android:launchMode="singleTop" />
         <activity
+            android:name=".ui.login.SourceLogin"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
+        <activity
             android:name=".receiver.SharedReceiverActivity"
             android:label="@string/receiving_shared_label">
             <intent-filter>
@@ -219,7 +227,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.login.SourceLogin" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />

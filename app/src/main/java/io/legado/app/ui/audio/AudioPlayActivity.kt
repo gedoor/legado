@@ -11,7 +11,7 @@ import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
@@ -120,19 +120,17 @@ class AudioPlayActivity :
         ImageLoader.load(this, path)
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
-            .centerCrop()
             .into(iv_cover)
         ImageLoader.load(this, path)
             .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
-            .centerCrop()
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
             .into(iv_bg)
     }
 
     private fun defaultCover(): RequestBuilder<Drawable> {
         return ImageLoader.load(this, R.drawable.image_cover_default)
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
     private fun playButton() {

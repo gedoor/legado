@@ -34,14 +34,15 @@ data class TextPage(
                         (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex)))
                 textLine.lineBottom =
                     textLine.lineBase + ChapterProvider.contentPaint.fontMetrics.descent
-                var x = (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
+                var x = ChapterProvider.paddingLeft +
+                        (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
                 textLine.text =
                     text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
                 for (i in textLine.text.indices) {
                     val char = textLine.text[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, ChapterProvider.contentPaint)
                     val x1 = x + cw
-                    textLine.textChars.add(TextChar(charData = char, start = x, end = x1))
+                    textLine.addTextChar(charData = char, start = x, end = x1)
                     x = x1
                 }
                 textLines.add(textLine)

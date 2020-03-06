@@ -60,6 +60,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 footerPaddingRight.dp,
                 footerPaddingBottom.dp
             )
+            vw_bottom_divider.visible(showFooterLine)
             content_text_view.upVisibleRect()
             durConfig.textColor().let {
                 tv_top_left.setTextColor(it)

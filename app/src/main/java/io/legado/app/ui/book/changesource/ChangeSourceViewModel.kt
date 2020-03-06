@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
@@ -35,7 +36,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 name = it
             }
             bundle.getString("author")?.let {
-                author = it
+                author = it.replace(AppPattern.authorRegex, "")
             }
         }
     }
@@ -44,7 +45,12 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
                 searchBooks.addAll(it)
-                upAdapter()
+                if (it.size <= 1) {
+                    upAdapter()
+                    search()
+                } else {
+                    upAdapter()
+                }
             }
         }
     }
@@ -142,6 +148,14 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 searchBooks.addAll(items)
                 upAdapter()
             }
+        }
+    }
+
+    fun stopSearch() {
+        if (task?.isActive == true) {
+            task?.cancel()
+        } else {
+            search()
         }
     }
 

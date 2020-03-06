@@ -136,13 +136,17 @@ object ImportOldData {
         return bookSources.size
     }
 
+
+
     fun importOldReplaceRule(json: String): Int {
         val replaceRules = mutableListOf<ReplaceRule>()
         val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
         for (item in items) {
             val jsonItem = Restore.jsonPath.parse(item)
             OldRule.jsonToReplaceRule(jsonItem.jsonString())?.let {
-                replaceRules.add(it)
+                if (it.isValid()){
+                    replaceRules.add(it)
+                }
             }
         }
         App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())

@@ -2,6 +2,7 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils.isEmpty
 import android.text.TextUtils.join
+import androidx.annotation.Keep
 import io.legado.app.utils.splitNotBlank
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -15,7 +16,7 @@ import java.util.*
  * Created by GKF on 2018/1/25.
  * 书源规则解析
  */
-
+@Keep
 class AnalyzeByJSoup {
     private var element: Element? = null
 

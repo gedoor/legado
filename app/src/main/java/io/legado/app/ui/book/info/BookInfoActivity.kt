@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
@@ -55,7 +54,6 @@ class BookInfoActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        tv_intro.movementMethod = ScrollingMovementMethod.getInstance()
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.initData(intent)
@@ -105,7 +103,7 @@ class BookInfoActivity :
     private fun showBook(book: Book) {
         showCover(book)
         tv_name.text = book.name
-        tv_author.text = getString(R.string.author_show, book.author)
+        tv_author.text = getString(R.string.author_show, book.getRealAuthor())
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tv_toc.text = getString(R.string.toc_s, getString(R.string.loading))
@@ -126,7 +124,6 @@ class BookInfoActivity :
         ImageLoader.load(this, book.getDisplayCover())
             .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
-            .centerCrop()
             .apply(bitmapTransform(BlurTransformation(this, 25)))
             .into(bg_book)  //模糊、渐变、缩小效果
     }

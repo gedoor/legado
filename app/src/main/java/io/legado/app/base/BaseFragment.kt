@@ -1,5 +1,6 @@
 package io.legado.app.base
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.view.SupportMenuInflater
@@ -18,6 +19,7 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
         private set
 
     val menuInflater: MenuInflater
+        @SuppressLint("RestrictedApi")
         get() = SupportMenuInflater(requireContext())
 
     override val coroutineContext: CoroutineContext

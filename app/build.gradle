@@ -140,7 +140,7 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sdk27-listeners:$anko_version"
 
     //liveEventBus
-    implementation 'com.jeremyliao:live-event-bus-x:1.4.5'
+    implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
 
     //协程
     def coroutines_version = '1.3.3'

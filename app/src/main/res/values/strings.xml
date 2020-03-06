@@ -204,6 +204,7 @@
     <string name="clear_all_content">清除缓存会删除所有已保存章节,是否确认删除?</string>
     <string name="book_source_share_url">书源共享</string>
     <string name="replace_rule_summary">替换规则名称</string>
+    <string name="replace_rule_invalid">替换规则为空或者不满足正则表达式要求</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
     <string name="select_all_count">全选(%d/%d)</string>
@@ -226,13 +227,14 @@
     <string name="open_from_other">打开外部书籍</string>
     <string name="origin_show">来源:%s</string>
     <string name="import_replace_rule">本地导入</string>
-    <string name="import_replace_rule_on_line">网络导入</string>
+    <string name="import_replace_rule_on_line">导入在线规则</string>
     <string name="check_update_interval">检查更新间隔</string>
     <string name="bookshelf_px_0">按阅读时间</string>
     <string name="bookshelf_px_1">按更新时间</string>
     <string name="bookshelf_px_2">按书名</string>
     <string name="bookshelf_px_3">手动排序</string>
     <string name="read_type">阅读方式</string>
+    <string name="compose_type">排版</string>
     <string name="del_select">删除所选</string>
     <string name="del_msg">是否确认删除?</string>
     <string name="clear_font">默认字体</string>
@@ -629,4 +631,7 @@
     <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
     <string name="sure_delete_book_file">是否删除源文件</string>
+    <string name="default1">预设一</string>
+    <string name="default2">预设二</string>
+    <string name="default3">预设三</string>
 </resources>

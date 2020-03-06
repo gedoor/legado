@@ -1,6 +1,7 @@
 package io.legado.app.base
 
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.DialogFragment
 import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +19,14 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
         job = Job()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onFragmentCreated(view, savedInstanceState)
+        observeLiveBus()
+    }
+
+    abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
@@ -29,5 +38,8 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
         return Coroutine.async(scope, context) { block() }
+    }
+
+    open fun observeLiveBus() {
     }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -9,140 +8,201 @@
     android:background="@color/background"
     android:padding="10dp">
 
-    <io.legado.app.ui.widget.text.StrokeTextView
-        android:id="@+id/tv_title_center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:text="@string/title_center"
-        android:gravity="center"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <io.legado.app.ui.widget.text.StrokeTextView
-        android:id="@+id/tv_text_bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:text="@string/text_bold"
-        android:gravity="center"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/tv_title_center"
-        app:layout_constraintRight_toLeftOf="@+id/tv_text_font"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <io.legado.app.ui.widget.text.StrokeTextView
-        android:id="@+id/tv_text_font"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:text="@string/text_font"
-        android:gravity="center"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/tv_text_bold"
-        app:layout_constraintRight_toLeftOf="@+id/tv_text_indent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <io.legado.app.ui.widget.text.StrokeTextView
-        android:id="@+id/tv_text_indent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:text="@string/text_indent"
-        android:gravity="center"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/tv_text_font"
-        app:layout_constraintRight_toLeftOf="@+id/tv_padding"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <io.legado.app.ui.widget.text.StrokeTextView
-        android:id="@+id/tv_padding"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:text="@string/padding"
-        android:gravity="center"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/tv_text_indent"
-        app:layout_constraintRight_toLeftOf="@id/chinese_converter"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <io.legado.app.ui.book.read.config.ChineseConverter
-        android:id="@+id/chinese_converter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:gravity="center"
-        android:textSize="14sp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <io.legado.app.ui.widget.DetailSeekBar
-        android:id="@+id/dsb_text_size"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        app:max="45"
-        app:title="@string/text_size"
-        app:layout_constraintTop_toBottomOf="@+id/tv_text_bold" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <io.legado.app.ui.widget.DetailSeekBar
-        android:id="@+id/dsb_text_letter_spacing"
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_title_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/title_center"
+            android:gravity="center"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_text_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/text_bold"
+            android:gravity="center"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_text_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/text_font"
+            android:gravity="center"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_text_indent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/text_indent"
+            android:gravity="center"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.book.read.config.ChineseConverter
+            android:id="@+id/chinese_converter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:gravity="center"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        app:max="100"
-        app:title="@string/text_letter_spacing"
-        app:layout_constraintTop_toBottomOf="@+id/dsb_text_size" />
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:gravity="center_vertical">
 
-    <io.legado.app.ui.widget.DetailSeekBar
-        android:id="@+id/dsb_line_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        app:max="50"
-        app:title="@string/line_size"
-        app:layout_constraintTop_toBottomOf="@+id/dsb_text_letter_spacing" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
 
-    <io.legado.app.ui.widget.DetailSeekBar
-        android:id="@+id/dsb_paragraph_spacing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        app:max="50"
-        app:title="@string/paragraph_size"
-        app:layout_constraintTop_toBottomOf="@+id/dsb_line_size" />
+        <ImageView
+            android:id="@+id/iv_default1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?attr/selectableItemBackground"
+            android:tint="@color/tv_text_default"
+            android:padding="6dp"
+            android:contentDescription="@string/default1"
+            android:src="@drawable/ic_type_default_1" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_default2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?attr/selectableItemBackground"
+            android:tint="@color/tv_text_default"
+            android:padding="6dp"
+            android:contentDescription="@string/default2"
+            android:src="@drawable/ic_type_default_2" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_default3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?attr/selectableItemBackground"
+            android:tint="@color/tv_text_default"
+            android:padding="6dp"
+            android:contentDescription="@string/default3"
+            android:src="@drawable/ic_type_default_3" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/compose_type"
+            android:gravity="center"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/padding"
+            android:gravity="center"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
-        android:background="@color/btn_bg_press"
-        app:layout_constraintTop_toBottomOf="@+id/dsb_paragraph_spacing" />
+        android:background="@color/btn_bg_press" />
 
     <TextView
         android:id="@+id/tv_page_anim"
@@ -150,8 +210,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
-        android:text="@string/page_anim"
-        app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg" />
+        android:text="@string/page_anim" />
 
     <RadioGroup
         android:id="@+id/rg_page_anim"
@@ -160,8 +219,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:orientation="horizontal"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/tv_page_anim">
+        android:gravity="center">
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
             android:id="@+id/rb_anim0"
@@ -229,106 +287,121 @@
         android:id="@+id/vw_bg_fg1"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
-        android:background="@color/btn_bg_press"
-        app:layout_constraintTop_toBottomOf="@+id/rg_page_anim" />
+        android:background="@color/btn_bg_press" />
 
-    <TextView
-        android:id="@+id/tv_bg_ts"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="6dp"
-        android:paddingEnd="6dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:text="@string/text_bg_style"
-        app:layout_constraintTop_toBottomOf="@+id/vw_bg_fg1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/tv_share_layout" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <io.legado.app.ui.widget.checkbox.SmoothCheckBox
-        android:id="@+id/cb_share_layout"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginRight="6dp"
-        app:layout_constraintTop_toTopOf="@id/tv_bg_ts"
-        app:layout_constraintBottom_toBottomOf="@id/tv_bg_ts"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:ignore="RtlHardcoded" />
+        <TextView
+            android:id="@+id/tv_bg_ts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/text_bg_style" />
 
-    <TextView
-        android:id="@+id/tv_share_layout"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_share_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share_layout" />
+
+        <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+            android:id="@+id/cb_share_layout"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginLeft="6dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:text="@string/share_layout"
-        app:layout_constraintTop_toTopOf="@+id/tv_bg_ts"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_bg_ts"
-        app:layout_constraintRight_toLeftOf="@+id/cb_share_layout" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <io.legado.app.ui.widget.image.CircleImageView
-        android:id="@+id/bg0"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/image_cover_default"
-        app:civ_border_color="@color/tv_text_default"
-        app:civ_border_width="1dp"
-        app:text="@string/text"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/bg1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_bg_ts" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
 
-    <io.legado.app.ui.widget.image.CircleImageView
-        android:id="@+id/bg1"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/image_cover_default"
-        app:civ_border_color="@color/tv_text_default"
-        app:civ_border_width="1dp"
-        app:text="@string/text"
-        app:layout_constraintLeft_toRightOf="@+id/bg0"
-        app:layout_constraintRight_toLeftOf="@+id/bg2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bg0" />
+        <io.legado.app.ui.widget.image.CircleImageView
+            android:id="@+id/bg0"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/image_cover_default"
+            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_width="1dp"
+            app:text="@string/text" />
 
-    <io.legado.app.ui.widget.image.CircleImageView
-        android:id="@+id/bg2"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/image_cover_default"
-        app:civ_border_color="@color/tv_text_default"
-        app:civ_border_width="1dp"
-        app:text="@string/text"
-        app:layout_constraintLeft_toRightOf="@+id/bg1"
-        app:layout_constraintRight_toLeftOf="@+id/bg3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bg0" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <io.legado.app.ui.widget.image.CircleImageView
-        android:id="@+id/bg3"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/image_cover_default"
-        app:civ_border_color="@color/tv_text_default"
-        app:civ_border_width="1dp"
-        app:text="@string/text"
-        app:layout_constraintLeft_toRightOf="@+id/bg2"
-        app:layout_constraintRight_toLeftOf="@+id/bg4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bg0" />
+        <io.legado.app.ui.widget.image.CircleImageView
+            android:id="@+id/bg1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/image_cover_default"
+            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_width="1dp"
+            app:text="@string/text" />
 
-    <io.legado.app.ui.widget.image.CircleImageView
-        android:id="@+id/bg4"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/image_cover_default"
-        app:civ_border_color="@color/tv_text_default"
-        app:civ_border_width="1dp"
-        app:text="@string/text"
-        app:layout_constraintLeft_toRightOf="@+id/bg3"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bg0" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <io.legado.app.ui.widget.image.CircleImageView
+            android:id="@+id/bg2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/image_cover_default"
+            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_width="1dp"
+            app:text="@string/text" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.image.CircleImageView
+            android:id="@+id/bg3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/image_cover_default"
+            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_width="1dp"
+            app:text="@string/text" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.image.CircleImageView
+            android:id="@+id/bg4"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/image_cover_default"
+            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_width="1dp"
+            app:text="@string/text" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
+
+</LinearLayout>

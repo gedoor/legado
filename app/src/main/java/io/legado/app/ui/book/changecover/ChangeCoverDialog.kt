@@ -3,19 +3,24 @@ package io.legado.app.ui.book.changecover
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.Theme
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeCoverDialog : DialogFragment(),
-    ChangeCoverViewModel.CallBack,
+class ChangeCoverDialog : BaseDialogFragment(),
+    Toolbar.OnMenuItemClickListener,
     CoverAdapter.CallBack {
 
     companion object {
@@ -35,7 +40,7 @@ class ChangeCoverDialog : DialogFragment(),
 
     private var callBack: CallBack? = null
     private lateinit var viewModel: ChangeCoverViewModel
-    override lateinit var adapter: CoverAdapter
+    lateinit var adapter: CoverAdapter
 
     override fun onStart() {
         super.onStart()
@@ -51,29 +56,56 @@ class ChangeCoverDialog : DialogFragment(),
     ): View? {
         callBack = activity as? CallBack
         viewModel = getViewModel(ChangeCoverViewModel::class.java)
-        viewModel.callBack = this
         return inflater.inflate(R.layout.dialog_change_cover, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
-            refresh_progress_bar.isAutoLoading = it
-        })
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         tool_bar.setTitle(R.string.change_cover_source)
-        arguments?.let { bundle ->
-            bundle.getString("name")?.let {
-                viewModel.name = it
-            }
-            bundle.getString("author")?.let {
-                viewModel.author = it
-            }
-        }
+        viewModel.initData(arguments)
+        initMenu()
+        initView()
+    }
+
+    private fun initMenu() {
+        tool_bar.inflateMenu(R.menu.change_cover)
+        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.setOnMenuItemClickListener(this)
+    }
+
+    private fun initView() {
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = CoverAdapter(requireContext(), this)
         recycler_view.adapter = adapter
-        viewModel.initData()
+        viewModel.loadDbSearchBook()
     }
+
+    override fun observeLiveBus() {
+        super.observeLiveBus()
+        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
+            refresh_progress_bar.isAutoLoading = it
+            if (it) {
+                stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
+            } else {
+                stopMenuItem?.setIcon(R.drawable.ic_refresh_black_24dp)
+            }
+            tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        })
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
+            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
+            adapter.setItems(it)
+            diffResult.dispatchUpdatesTo(adapter)
+        })
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_stop -> viewModel.stopSearch()
+        }
+        return false
+    }
+
+    private val stopMenuItem: MenuItem?
+        get() = tool_bar.menu.findItem(R.id.menu_stop)
 
     override fun changeTo(coverUrl: String) {
         callBack?.coverChangeTo(coverUrl)

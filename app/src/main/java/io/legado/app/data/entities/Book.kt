@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -86,7 +87,7 @@ data class Book(
     @IgnoredOnParcel
     override var tocHtml: String? = null
 
-    fun getRealAuthor() = author.replace("作者：", "")
+    fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 

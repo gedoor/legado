@@ -169,7 +169,9 @@
 -dontwarn com.hwangjr.rxbus.**
 -dontwarn okhttp3.**
 -dontwarn org.conscrypt.**
+-dontwarn com.jeremyliao.liveeventbus.**
 
+-keep class com.jeremyliao.liveeventbus.** { *; }
 -keep class retrofit2.**{*;}
 -keep class okhttp3.**{*;}
 -keep class okio.**{*;}
@@ -186,6 +188,7 @@
 -keep class com.gyf.barlibrary.* {*;}
 ##JSOUP
 -keep class org.jsoup.**{*;}
+-keep class **.xpath.**{*;}
 
 -keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.**

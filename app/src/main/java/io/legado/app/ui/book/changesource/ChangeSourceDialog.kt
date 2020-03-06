@@ -8,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
@@ -27,7 +27,7 @@ import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
-class ChangeSourceDialog : DialogFragment(),
+class ChangeSourceDialog : BaseDialogFragment(),
     Toolbar.OnMenuItemClickListener,
     ChangeSourceAdapter.CallBack {
 
@@ -67,8 +67,7 @@ class ChangeSourceDialog : DialogFragment(),
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.initData(arguments)
         showTitle()
         initMenu()
@@ -76,7 +75,6 @@ class ChangeSourceDialog : DialogFragment(),
         initSearchView()
         initLiveData()
         viewModel.loadDbSearchBook()
-        viewModel.search()
     }
 
     private fun showTitle() {
@@ -113,15 +111,16 @@ class ChangeSourceDialog : DialogFragment(),
     }
 
     private fun initSearchView() {
-        search_view.setOnCloseListener {
+        val searchView = tool_bar.menu.findItem(R.id.menu_screen).actionView as SearchView
+        searchView.setOnCloseListener {
             showTitle()
             false
         }
-        search_view.setOnSearchClickListener {
+        searchView.setOnSearchClickListener {
             tool_bar.title = ""
             tool_bar.subtitle = ""
         }
-        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -137,6 +136,12 @@ class ChangeSourceDialog : DialogFragment(),
     private fun initLiveData() {
         viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
             refresh_progress_bar.isAutoLoading = it
+            if (it) {
+                stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
+            } else {
+                stopMenuItem?.setIcon(R.drawable.ic_refresh_black_24dp)
+            }
+            tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         })
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
@@ -145,12 +150,16 @@ class ChangeSourceDialog : DialogFragment(),
         })
     }
 
+    private val stopMenuItem: MenuItem?
+        get() = tool_bar.menu.findItem(R.id.menu_stop)
+
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_load_toc -> {
                 putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
                 item.isChecked = !item.isChecked
             }
+            R.id.menu_stop -> viewModel.stopSearch()
         }
         return false
     }
