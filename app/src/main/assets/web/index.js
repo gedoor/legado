@@ -388,6 +388,26 @@ $('#DebugKey').addEventListener('keydown', e => {
 		$('#debug').dispatchEvent(clickEvent);
 	}
 });
+$('#Filter').addEventListener('keydown', e => {
+	if (e.keyCode == 13) {
+		let cashList = [];
+		$('#RuleList').innerHTML = "";
+		let sKey = Filter.value ? Filter.value : '';
+		if (sKey == '') {
+			cashList = RuleSources;
+		} else {
+			let patt = new RegExp(sKey);
+			RuleSources.forEach(source => {
+				if (patt.test(source.bookSourceUrl) || patt.test(source.bookSourceName) || patt.test(source.bookSourceGroup)) {
+					cashList.push(source);
+				}
+			})
+		}
+		cashList.forEach(source => {
+			$('#RuleList').innerHTML += newRule(source);
+		})
+	}
+});
 
 // 列表规则更改事件
 $('#RuleList').addEventListener('click', e => {
