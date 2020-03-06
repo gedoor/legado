@@ -123,7 +123,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        app:max="50"
+        app:max="20"
         app:title="@string/line_size"
         app:layout_constraintTop_toBottomOf="@+id/dsb_text_letter_spacing" />
 
@@ -133,7 +133,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        app:max="50"
+        app:max="20"
         app:title="@string/paragraph_size"
         app:layout_constraintTop_toBottomOf="@+id/dsb_line_size" />
 

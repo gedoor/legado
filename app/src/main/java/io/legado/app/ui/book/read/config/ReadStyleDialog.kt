@@ -81,7 +81,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         dsb_text_letter_spacing.valueFormat = {
             ((it - 50) / 100f).toString()
         }
-        dsb_line_size.valueFormat = { (it / 10f).toString() }
+        dsb_line_size.valueFormat = { ((it - 10) / 10f).toString() }
         dsb_paragraph_spacing.valueFormat = { (it / 10f).toString() }
     }
 
@@ -132,7 +132,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             callBack?.showPaddingConfig()
         }
         dsb_text_size.onChanged = {
-            ReadBookConfig.textSize = it + 5
+            ReadBookConfig.textSize = it + 10
             postEvent(EventBus.UP_CONFIG, true)
         }
         dsb_text_letter_spacing.onChanged = {
