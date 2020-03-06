@@ -55,7 +55,7 @@ class BookInfoActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        tv_intro.movementMethod = ScrollingMovementMethod.getInstance()
+        // tv_intro.movementMethod = ScrollingMovementMethod.getInstance()
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.initData(intent)
