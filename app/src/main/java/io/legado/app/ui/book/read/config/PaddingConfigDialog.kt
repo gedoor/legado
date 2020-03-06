@@ -11,6 +11,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.dp
+import io.legado.app.utils.gone
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_read_padding.*
@@ -53,12 +54,11 @@ class PaddingConfigDialog : DialogFragment() {
 
     private fun initData() = with(ReadBookConfig) {
         if (hideStatusBar) {
-            tv_header_padding.visible()
-            dsb_header_padding_top.visible()
-            dsb_header_padding_bottom.visible()
-            dsb_header_padding_left.visible()
-            dsb_header_padding_right.visible()
+            ll_header_padding.visible()
             tv_body_padding.setPadding(0, 10.dp, 0, 10.dp)
+        } else {
+            ll_header_padding.gone()
+            tv_body_padding.setPadding(0, 0.dp, 0, 10.dp)
         }
         //正文
         dsb_padding_top.progress = paddingTop
