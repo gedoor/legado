@@ -24,12 +24,14 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
     private val searchBooks = ArrayList<SearchBook>()
 
-    fun initData(bundle: Bundle) {
-        bundle.getString("name")?.let {
-            name = it
-        }
-        bundle.getString("author")?.let {
-            author = it.replace(AppPattern.authorRegex, "")
+    fun initData(arguments: Bundle?) {
+        arguments?.let { bundle ->
+            bundle.getString("name")?.let {
+                name = it
+            }
+            bundle.getString("author")?.let {
+                author = it.replace(AppPattern.authorRegex, "")
+            }
         }
     }
 
@@ -74,6 +76,14 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
         task?.invokeOnCompletion {
             searchStateData.postValue(false)
+        }
+    }
+
+    fun stopSearch() {
+        if (task?.isActive == true) {
+            task?.cancel()
+        } else {
+            search()
         }
     }
 

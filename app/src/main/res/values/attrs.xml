@@ -163,4 +163,10 @@
         <attr name="radius" />
         <attr name="up_flat_angle" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="ArcView">
+        <attr name="arcHeight" format="dimension" />
+        <attr name="bgColor" format="color" />
+        <attr name="arcDirectionTop" format="boolean" />
+    </declare-styleable>
 </resources>
