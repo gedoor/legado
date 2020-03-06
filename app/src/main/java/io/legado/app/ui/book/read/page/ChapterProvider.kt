@@ -55,16 +55,12 @@ object ChapterProvider {
         var durY = 0f
         textPages.add(TextPage())
         for ((index, text) in contents.withIndex()) {
-            if (index == 0) {
-                if (ReadBookConfig.titleMode != 2) {
-                    durY = setTypeText(
-                        text, durY, textPages, pageLines, pageLengths, stringBuilder, true
-                    )
-                }
-            } else {
-                durY =
-                    setTypeText(text, durY, textPages, pageLines, pageLengths, stringBuilder, false)
+            val isTitle = index == 0
+            if (isTitle && ReadBookConfig.titleMode == 2) {
+                continue
             }
+            durY =
+                setTypeText(text, durY, textPages, pageLines, pageLengths, stringBuilder, isTitle)
         }
         textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
@@ -121,7 +117,7 @@ object ChapterProvider {
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
-                //新页面
+                //新建页面
                 durY = textPaint.textHeight + lineSpacingExtra
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
