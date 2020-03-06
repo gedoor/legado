@@ -254,7 +254,8 @@ object ReadBookConfig {
         var lineSpacingExtra: Int = 12,//行间距
         var paragraphSpacing: Int = 12,//段距
         var titleMode: Int = 0,//标题居中
-        var titleLineSpacing: Int = 0,
+        var titleTopSpacing: Int = 0,
+        var titleBottomSpacing: Int = 0,
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
@@ -266,7 +267,8 @@ object ReadBookConfig {
         var footerPaddingBottom: Int = 6,
         var footerPaddingLeft: Int = 16,
         var footerPaddingRight: Int = 16,
-        var footerPaddingTop: Int = 6
+        var footerPaddingTop: Int = 6,
+        var showFooterLine: Boolean = true
     ) {
         fun setBg(bgType: Int, bg: String) {
             if (AppConfig.isNightTheme) {
