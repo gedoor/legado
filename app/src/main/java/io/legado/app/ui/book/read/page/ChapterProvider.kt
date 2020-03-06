@@ -115,10 +115,11 @@ object ChapterProvider {
                 addCharsToLineFirst(textLine, words, textPaint, desiredWidth)
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
+                stringBuilder.append("\n")
                 val x = if (isTitle && ReadBookConfig.titleMode == 1)
                     (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
-                addCharsToLineLast(textLine, words, stringBuilder, textPaint, x)
+                addCharsToLineLast(textLine, words, textPaint, x)
             } else {
                 //中间行
                 addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
@@ -205,11 +206,9 @@ object ChapterProvider {
     private fun addCharsToLineLast(
         textLine: TextLine,
         words: String,
-        stringBuilder: StringBuilder,
         textPaint: TextPaint,
         startX: Float
     ) {
-        stringBuilder.append("\n")
         textLine.text = "$words\n"
         var x = startX
         words.toStringArray().forEach {
