@@ -124,15 +124,7 @@ object ChapterProvider {
                 //中间行
                 addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
             }
-            if (durY + textPaint.textHeight < visibleHeight) {
-                //当前页面新增行
-                stringBuilder.append(words)
-                if (isLastLine) stringBuilder.append("\n")
-                textLine.upTopBottom(durY, textPaint)
-                textPages.last().textLines.add(textLine)
-                durY += textPaint.textHeight * lineSpacingExtra / 10f
-                textPages.last().height = durY
-            } else {
+            if (durY + textPaint.textHeight > visibleHeight) {
                 //当前页面结束,设置各种值
                 textPages.last().text = stringBuilder.toString()
                 pageLines.add(textPages.last().textLines.size)
@@ -141,13 +133,14 @@ object ChapterProvider {
                 //新建页面
                 textPages.add(TextPage())
                 stringBuilder.clear()
-                stringBuilder.append(words)
-                if (isLastLine) stringBuilder.append("\n")
-                textLine.upTopBottom(0f, textPaint)
-                textPages.last().textLines.add(textLine)
-                durY = textPaint.textHeight * lineSpacingExtra / 10f
-                textPages.last().height = durY
+                durY = 0f
             }
+            stringBuilder.append(words)
+            if (isLastLine) stringBuilder.append("\n")
+            textPages.last().textLines.add(textLine)
+            textLine.upTopBottom(durY, textPaint)
+            durY += textPaint.textHeight * lineSpacingExtra / 10f
+            textPages.last().height = durY
         }
         durY += textPaint.textHeight * paragraphSpacing / 10f
         return durY
