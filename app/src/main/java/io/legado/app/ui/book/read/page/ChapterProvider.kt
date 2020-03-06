@@ -51,31 +51,17 @@ object ChapterProvider {
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
-        var surplusText = content
+        val contents = content.split("\n")
         var durY = 0f
         textPages.add(TextPage())
-        while (surplusText.isNotEmpty()) {
-            if (textPages.first().textLines.isEmpty()) {
-                //title
-                val end = surplusText.indexOf("\n")
-                if (end > 0) {
-                    val title = surplusText.substring(0, end)
-                    surplusText = surplusText.substring(end + 1)
+        for ((index, text) in contents.withIndex()) {
+            if (index == 0) {
+                if (ReadBookConfig.titleMode != 2) {
                     durY = setTypeText(
-                        title, durY, textPages, pageLines, pageLengths, stringBuilder, true
+                        text, durY, textPages, pageLines, pageLengths, stringBuilder, true
                     )
                 }
             } else {
-                //正文
-                val end = surplusText.indexOf("\n")
-                val text: String
-                if (end >= 0) {
-                    text = surplusText.substring(0, end)
-                    surplusText = surplusText.substring(end + 1)
-                } else {
-                    text = surplusText
-                    surplusText = ""
-                }
                 durY =
                     setTypeText(text, durY, textPages, pageLines, pageLengths, stringBuilder, false)
             }
