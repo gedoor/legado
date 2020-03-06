@@ -104,11 +104,7 @@ object ChapterProvider {
             Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         for (lineIndex in 0 until layout.lineCount) {
-            textPages.last().height = durY
             val textLine = TextLine(isTitle = isTitle)
-            textLine.lineBottom = paddingTop + durY + textPaint.textHeight
-            textLine.lineBase = textLine.lineBottom - textPaint.fontMetrics.descent
-            textLine.lineTop = paddingTop + durY
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -128,17 +124,23 @@ object ChapterProvider {
                 addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
             }
             if (durY + textPaint.textHeight < visibleHeight) {
+                textLine.upTopBottom(durY, textPaint)
                 textPages.last().textLines.add(textLine)
                 durY += textPaint.textHeight * lineSpacingExtra / 10f
+                textPages.last().height = durY
             } else {
                 textPages.last().text = stringBuilder.toString()
                 stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
+                textPages.last().height = durY
                 //新建页面
+                durY = 0f
+                textLine.upTopBottom(durY, textPaint)
                 durY = textPaint.textHeight * lineSpacingExtra / 10f
                 textPages.add(TextPage())
                 textPages.last().textLines.add(textLine)
+                textPages.last().height = durY
             }
         }
         durY += textPaint.textHeight * paragraphSpacing / 10f
@@ -290,7 +292,7 @@ object ChapterProvider {
         visibleBottom = paddingTop + visibleHeight
     }
 
-    private val TextPaint.textHeight: Float
+    val TextPaint.textHeight: Float
         get() {
             return this.fontMetrics.descent - fontMetrics.ascent + fontMetrics.leading
         }
