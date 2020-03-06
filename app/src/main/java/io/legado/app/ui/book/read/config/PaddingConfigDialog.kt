@@ -52,7 +52,7 @@ class PaddingConfigDialog : DialogFragment() {
         ReadBookConfig.save()
     }
 
-    private fun initData() = with(ReadBookConfig) {
+    private fun initData() = ReadBookConfig.apply {
         if (hideStatusBar) {
             ll_header_padding.visible()
             tv_body_padding.setPadding(0, 10.dp, 0, 10.dp)
@@ -75,6 +75,7 @@ class PaddingConfigDialog : DialogFragment() {
         dsb_footer_padding_bottom.progress = footerPaddingBottom
         dsb_footer_padding_left.progress = footerPaddingLeft
         dsb_footer_padding_right.progress = footerPaddingRight
+        cb_show_line.isChecked = showFooterLine
     }
 
     private fun initView() = with(ReadBookConfig) {
@@ -128,6 +129,12 @@ class PaddingConfigDialog : DialogFragment() {
         dsb_footer_padding_right.onChanged = {
             footerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, true)
+        }
+        cb_show_line.onCheckedChangeListener = { cb, isChecked ->
+            if (cb.isPressed) {
+                showFooterLine = isChecked
+                postEvent(EventBus.UP_CONFIG, true)
+            }
         }
     }
 

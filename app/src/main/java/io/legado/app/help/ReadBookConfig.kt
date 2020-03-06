@@ -170,6 +170,17 @@ object ReadBookConfig {
         set(value) =
             if (shareLayout) shareConfig.titleMode = value else durConfig.titleMode = value
 
+    var titleTopSpacing: Int
+        get() = if (shareLayout) shareConfig.titleTopSpacing else durConfig.titleTopSpacing
+        set(value) =
+            if (shareLayout) shareConfig.titleTopSpacing = value
+            else durConfig.titleTopSpacing = value
+    var titleBottomSpacing: Int
+        get() = if (shareLayout) shareConfig.titleBottomSpacing else durConfig.titleBottomSpacing
+        set(value) =
+            if (shareLayout) shareConfig.titleBottomSpacing = value
+            else durConfig.titleBottomSpacing = value
+
     var paddingBottom: Int
         get() = if (shareLayout) shareConfig.paddingBottom else durConfig.paddingBottom
         set(value) =
@@ -237,6 +248,12 @@ object ReadBookConfig {
         set(value) =
             if (shareLayout) shareConfig.footerPaddingTop = value
             else durConfig.footerPaddingTop = value
+
+    var showFooterLine: Boolean
+        get() = if (shareLayout) shareConfig.showFooterLine else durConfig.showFooterLine
+        set(value) =
+            if (shareLayout) shareConfig.showFooterLine = value
+            else durConfig.showFooterLine = value
 
     @Keep
     class Config(
