@@ -34,7 +34,8 @@ data class TextPage(
                         (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex)))
                 textLine.lineBottom =
                     textLine.lineBase + ChapterProvider.contentPaint.fontMetrics.descent
-                var x = (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
+                var x = ChapterProvider.paddingLeft +
+                        (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
                 textLine.text =
                     text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
                 for (i in textLine.text.indices) {
