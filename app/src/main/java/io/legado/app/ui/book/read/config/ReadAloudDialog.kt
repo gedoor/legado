@@ -62,6 +62,7 @@ class ReadAloudDialog : BaseDialogFragment() {
 
     private fun initData() {
         upPlayState()
+        upTimerText(BaseReadAloudService.timeMinute)
         seek_timer.progress = BaseReadAloudService.timeMinute
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
@@ -89,7 +90,7 @@ class ReadAloudDialog : BaseDialogFragment() {
         })
         seek_timer.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                tv_timer.text = requireContext().getString(R.string.timer_m, progress)
+                upTimerText(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
@@ -124,6 +125,10 @@ class ReadAloudDialog : BaseDialogFragment() {
         } else {
             iv_play_pause.setImageResource(R.drawable.ic_play_24dp)
         }
+    }
+
+    private fun upTimerText(timeMinute: Int) {
+        tv_timer.text = requireContext().getString(R.string.timer_m, timeMinute)
     }
 
     private fun upTtsSpeechRate() {
