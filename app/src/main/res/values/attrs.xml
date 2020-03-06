@@ -137,6 +137,15 @@
         <attr name="textColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="Battery">
+        <attr name="batteryOrientation">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="batteryColor" format="color" />
+        <attr name="batteryPower" format="integer" />
+    </declare-styleable>
+
     <declare-styleable name="VerticalSeekBar">
         <attr name="seekBarRotation">
             <!-- Clock wise - 90 deg; top = min, bottom = max -->
@@ -153,5 +162,11 @@
     <declare-styleable name="BadgeView">
         <attr name="radius" />
         <attr name="up_flat_angle" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ArcView">
+        <attr name="arcHeight" format="dimension" />
+        <attr name="bgColor" format="color" />
+        <attr name="arcDirectionTop" format="boolean" />
     </declare-styleable>
 </resources>

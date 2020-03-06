@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -27,9 +28,10 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.okButton
-import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.applyTint
+import io.legado.app.ui.widget.text.AutoCompleteTextView
+import io.legado.app.utils.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_toc_regex.*
 import kotlinx.android.synthetic.main.dialog_toc_regex_edit.view.*
 import kotlinx.android.synthetic.main.item_toc_regex.view.*
@@ -40,11 +42,12 @@ import java.util.*
 
 
 class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
-
+    private val importTocRuleKey = "tocRuleUrl"
     private lateinit var adapter: TocRegexAdapter
     private var tocRegexLiveData: LiveData<List<TxtTocRule>>? = null
     var selectedName: String? = null
     private var durRegex: String? = null
+    lateinit var viewModel: TocRegexViewModel
 
     override fun onStart() {
         super.onStart()
@@ -58,6 +61,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = getViewModel(TocRegexViewModel::class.java)
         return inflater.inflate(R.layout.dialog_toc_regex, container)
     }
 
@@ -121,17 +125,51 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> editRule()
-            R.id.menu_default -> importDefault()
+            R.id.menu_default -> viewModel.importDefault()
+            R.id.menu_import -> showImportDialog()
         }
         return false
     }
 
-    private fun importDefault() {
-        launch(IO) {
-            AnalyzeTxtFile.getDefaultRules().let {
-                App.db.txtTocRule().insert(*it.toTypedArray())
-            }
+    @SuppressLint("InflateParams")
+    private fun showImportDialog() {
+        val aCache = ACache.get(requireContext(), cacheDir = false)
+        val defaultUrl = "https://gitee.com/fisher52/YueDuJson/raw/master/myTxtChapterRule.json"
+        val cacheUrls: MutableList<String> = aCache
+            .getAsString(importTocRuleKey)
+            ?.splitNotBlank(",")
+            ?.toMutableList()
+            ?: mutableListOf()
+        if (!cacheUrls.contains(defaultUrl)) {
+            cacheUrls.add(0, defaultUrl)
         }
+        requireContext().alert(titleResource = R.string.import_book_source_on_line) {
+            var editText: AutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = this.edit_view
+                    edit_view.setFilterValues(cacheUrls)
+                    edit_view.delCallBack = {
+                        cacheUrls.remove(it)
+                        aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
+                    }
+                }
+            }
+            okButton {
+                val text = editText?.text?.toString()
+                text?.let {
+                    if (!cacheUrls.contains(it)) {
+                        cacheUrls.add(0, it)
+                        aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
+                    }
+                    Snackbar.make(tool_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    viewModel.importOnLine(it) { msg ->
+                        tool_bar.snackbar(msg)
+                    }
+                }
+            }
+            cancelButton()
+        }.show().applyTint()
     }
 
     @SuppressLint("InflateParams")
@@ -151,23 +189,11 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 rootView?.apply {
                     tocRule.name = tv_rule_name.text.toString()
                     tocRule.rule = tv_rule_regex.text.toString()
-                    saveRule(tocRule, rule)
+                    viewModel.saveRule(tocRule, rule)
                 }
             }
             cancelButton()
         }.show().applyTint()
-    }
-
-    private fun saveRule(rule: TxtTocRule, oldRule: TxtTocRule? = null) {
-        launch(IO) {
-            if (rule.serialNumber < 0) {
-                rule.serialNumber = adapter.getItems().lastOrNull()?.serialNumber ?: 0 + 1
-            }
-            oldRule?.let {
-                App.db.txtTocRule().delete(oldRule)
-            }
-            App.db.txtTocRule().insert(rule)
-        }
     }
 
     inner class TocRegexAdapter(context: Context) :
@@ -239,7 +265,6 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
             isMoved = false
         }
     }
-
 
     companion object {
         fun show(fragmentManager: FragmentManager, tocRegex: String? = null) {

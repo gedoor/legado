@@ -45,7 +45,12 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
                 searchBooks.addAll(it)
-                upAdapter()
+                if (it.size <= 1) {
+                    upAdapter()
+                    search()
+                } else {
+                    upAdapter()
+                }
             }
         }
     }
@@ -147,7 +152,11 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     fun stopSearch() {
-        task?.cancel()
+        if (task?.isActive == true) {
+            task?.cancel()
+        } else {
+            search()
+        }
     }
 
     override fun onCleared() {

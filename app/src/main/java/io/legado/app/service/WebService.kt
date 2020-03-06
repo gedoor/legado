@@ -3,12 +3,12 @@ package io.legado.app.service
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.IntentAction
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.IntentHelp
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getPrefInt
@@ -96,7 +96,7 @@ class WebService : BaseService() {
     }
 
     private fun getPort(): Int {
-        var port = App.INSTANCE.getPrefInt("webPort", 1122)
+        var port = getPrefInt(PreferKey.webPort, 1122)
         if (port > 65530 || port < 1024) {
             port = 1122
         }

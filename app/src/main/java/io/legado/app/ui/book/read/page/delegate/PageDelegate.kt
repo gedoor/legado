@@ -65,13 +65,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var mDirection = Direction.NONE
     var isCancel = false
     var isRunning = false
-    var isStarted = false
+    private var isStarted = false
     var isTextSelected = false
-    var selectedOnDown = false
+    private var selectedOnDown = false
 
-    var firstRelativePage = 0
-    var firstLineIndex: Int = 0
-    var firstCharIndex: Int = 0
+    private var firstRelativePage = 0
+    private var firstLineIndex: Int = 0
+    private var firstCharIndex: Int = 0
 
     init {
         curPage.resetPageOffset()
@@ -127,10 +127,12 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     private fun stopScroll() {
-        isMoved = false
-        isRunning = false
         isStarted = false
-        pageView.invalidate()
+        pageView.post {
+            isMoved = false
+            isRunning = false
+            pageView.invalidate()
+        }
     }
 
     open fun setViewSize(width: Int, height: Int) {

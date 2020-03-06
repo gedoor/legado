@@ -18,14 +18,16 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     }
 
     override fun onDraw(canvas: Canvas) {
+        if (!isRunning) return
         val offsetX = touchX - startX
 
         if ((mDirection == Direction.NEXT && offsetX > 0)
             || (mDirection == Direction.PREV && offsetX < 0)
-        ) return
+        ) {
+            return
+        }
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
-        if (!isRunning) return
         if (mDirection == Direction.PREV) {
             bitmapMatrix.setTranslate(distanceX, 0.toFloat())
             curBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
