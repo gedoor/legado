@@ -134,8 +134,6 @@ object ChapterProvider {
                 textPages.last().height = durY
             } else {
                 //当前页面结束,设置各种值
-                stringBuilder.append(words)
-                if (isLastLine) stringBuilder.append("\n")
                 textPages.last().text = stringBuilder.toString()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
