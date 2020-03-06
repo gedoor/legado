@@ -107,15 +107,15 @@ object ChapterProvider {
             val textLine = TextLine(isTitle = isTitle)
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
-            stringBuilder.append(words)
             textLine.text = words
             val desiredWidth = layout.getLineWidth(lineIndex)
+            var isLastLine = false
             if (lineIndex == 0 && layout.lineCount > 1 && !isTitle) {
                 //第一行
                 addCharsToLineFirst(textLine, words, textPaint, desiredWidth)
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
-                stringBuilder.append("\n")
+                isLastLine = true
                 val x = if (isTitle && ReadBookConfig.titleMode == 1)
                     (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
@@ -126,19 +126,25 @@ object ChapterProvider {
             }
             if (durY + textPaint.textHeight < visibleHeight) {
                 //当前页面新增行
+                stringBuilder.append(words)
+                if (isLastLine) stringBuilder.append("\n")
                 textLine.upTopBottom(durY, textPaint)
                 textPages.last().textLines.add(textLine)
                 durY += textPaint.textHeight * lineSpacingExtra / 10f
                 textPages.last().height = durY
             } else {
                 //当前页面结束,设置各种值
+                stringBuilder.append(words)
+                if (isLastLine) stringBuilder.append("\n")
                 textPages.last().text = stringBuilder.toString()
-                stringBuilder.clear()
                 pageLines.add(textPages.last().textLines.size)
                 pageLengths.add(textPages.last().text.length)
                 textPages.last().height = durY
                 //新建页面
                 textPages.add(TextPage())
+                stringBuilder.clear()
+                stringBuilder.append(words)
+                if (isLastLine) stringBuilder.append("\n")
                 textLine.upTopBottom(0f, textPaint)
                 textPages.last().textLines.add(textLine)
                 durY = textPaint.textHeight * lineSpacingExtra / 10f
