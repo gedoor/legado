@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.config
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Gravity
@@ -68,8 +69,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         initViewEvent()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
         ReadBookConfig.save()
     }
 
