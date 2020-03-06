@@ -106,22 +106,9 @@ object ChapterProvider {
         for (lineIndex in 0 until layout.lineCount) {
             textPages.last().height = durY
             val textLine = TextLine(isTitle = isTitle)
-            if (durY + textPaint.textHeight < visibleHeight) {
-                textPages.last().textLines.add(textLine)
-                durY += textPaint.textHeight * lineSpacingExtra / 10f
-            } else {
-                textPages.last().text = stringBuilder.toString()
-                stringBuilder.clear()
-                pageLines.add(textPages.last().textLines.size)
-                pageLengths.add(textPages.last().text.length)
-                //新建页面
-                durY = textPaint.textHeight * lineSpacingExtra / 10f
-                textPages.add(TextPage())
-                textPages.last().textLines.add(textLine)
-            }
-            textLine.lineBottom = paddingTop + durY - lineSpacingExtra
+            textLine.lineBottom = paddingTop + durY + textPaint.textHeight
             textLine.lineBase = textLine.lineBottom - textPaint.fontMetrics.descent
-            textLine.lineTop = textLine.lineBottom - textPaint.textHeight
+            textLine.lineTop = paddingTop + durY
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             stringBuilder.append(words)
@@ -139,6 +126,19 @@ object ChapterProvider {
             } else {
                 //中间行
                 addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
+            }
+            if (durY + textPaint.textHeight < visibleHeight) {
+                textPages.last().textLines.add(textLine)
+                durY += textPaint.textHeight * lineSpacingExtra / 10f
+            } else {
+                textPages.last().text = stringBuilder.toString()
+                stringBuilder.clear()
+                pageLines.add(textPages.last().textLines.size)
+                pageLengths.add(textPages.last().text.length)
+                //新建页面
+                durY = textPaint.textHeight * lineSpacingExtra / 10f
+                textPages.add(TextPage())
+                textPages.last().textLines.add(textLine)
             }
         }
         durY += textPaint.textHeight * paragraphSpacing / 10f
