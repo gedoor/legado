@@ -204,6 +204,7 @@
     <string name="clear_all_content">清除缓存会删除所有已保存章节,是否确认删除?</string>
     <string name="book_source_share_url">书源共享</string>
     <string name="replace_rule_summary">替换规则名称</string>
+    <string name="replace_rule_invalid">替换规则为空或者不满足正则表达式要求</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
     <string name="select_all_count">全选(%d/%d)</string>
