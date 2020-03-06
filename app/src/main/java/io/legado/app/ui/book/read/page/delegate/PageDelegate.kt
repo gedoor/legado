@@ -128,9 +128,11 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     private fun stopScroll() {
         isMoved = false
-        isRunning = false
         isStarted = false
-        pageView.invalidate()
+        pageView.post {
+            isRunning = false
+            pageView.invalidate()
+        }
     }
 
     open fun setViewSize(width: Int, height: Int) {
