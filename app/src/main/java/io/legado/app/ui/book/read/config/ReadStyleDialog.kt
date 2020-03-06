@@ -141,6 +141,18 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
+        iv_default1.onClick {
+            ReadBookConfig.lineSpacingExtra = 15
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        iv_default2.onClick {
+            ReadBookConfig.lineSpacingExtra = 11
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        iv_default3.onClick {
+            ReadBookConfig.lineSpacingExtra = 10
+            postEvent(EventBus.UP_CONFIG, true)
+        }
         bg0.onClick { changeBg(0) }
         bg0.onLongClick { showBgTextConfig(0) }
         bg1.onClick { changeBg(1) }

@@ -23,7 +23,10 @@
             android:id="@+id/tv_title_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/title_center"
             android:gravity="center"
             android:textSize="14sp" />
@@ -37,7 +40,10 @@
             android:id="@+id/tv_text_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/text_bold"
             android:gravity="center"
             android:textSize="14sp" />
@@ -51,7 +57,10 @@
             android:id="@+id/tv_text_font"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/text_font"
             android:gravity="center"
             android:textSize="14sp" />
@@ -65,7 +74,10 @@
             android:id="@+id/tv_text_indent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/text_indent"
             android:gravity="center"
             android:textSize="14sp" />
@@ -79,7 +91,10 @@
             android:id="@+id/chinese_converter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:gravity="center"
             android:textSize="14sp" />
 
@@ -103,9 +118,12 @@
             android:layout_weight="0.5" />
 
         <ImageView
+            android:id="@+id/iv_default1"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:padding="3dp"
+            android:background="?attr/selectableItemBackground"
+            android:tint="@color/tv_text_default"
+            android:padding="6dp"
             android:contentDescription="@string/default1"
             android:src="@drawable/ic_type_default_1" />
 
@@ -115,9 +133,12 @@
             android:layout_weight="1" />
 
         <ImageView
+            android:id="@+id/iv_default2"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:padding="3dp"
+            android:background="?attr/selectableItemBackground"
+            android:tint="@color/tv_text_default"
+            android:padding="6dp"
             android:contentDescription="@string/default2"
             android:src="@drawable/ic_type_default_2" />
 
@@ -127,9 +148,12 @@
             android:layout_weight="1" />
 
         <ImageView
+            android:id="@+id/iv_default3"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:padding="3dp"
+            android:background="?attr/selectableItemBackground"
+            android:tint="@color/tv_text_default"
+            android:padding="6dp"
             android:contentDescription="@string/default3"
             android:src="@drawable/ic_type_default_3" />
 
@@ -142,7 +166,10 @@
             android:id="@+id/tv_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/compose_type"
             android:gravity="center"
             android:textSize="14sp" />
@@ -156,7 +183,10 @@
             android:id="@+id/tv_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/padding"
             android:gravity="center"
             android:textSize="14sp" />
