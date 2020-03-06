@@ -203,4 +203,9 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        web_view.destroy()
+    }
+
 }

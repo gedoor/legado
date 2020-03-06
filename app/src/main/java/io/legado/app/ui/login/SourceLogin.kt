@@ -76,4 +76,8 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
         return super.onCompatOptionsItemSelected(item)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        web_view.destroy()
+    }
 }
