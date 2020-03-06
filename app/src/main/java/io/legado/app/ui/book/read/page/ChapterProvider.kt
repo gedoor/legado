@@ -294,7 +294,5 @@ object ChapterProvider {
     }
 
     val TextPaint.textHeight: Float
-        get() {
-            return this.fontMetrics.descent - fontMetrics.ascent + fontMetrics.leading
-        }
+        get() = this.fontMetrics.descent - fontMetrics.ascent + fontMetrics.leading
 }
