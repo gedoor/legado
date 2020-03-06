@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.widget.text
 
 import android.annotation.SuppressLint
 import android.content.Context
