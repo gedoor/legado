@@ -70,12 +70,11 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        bg = durConfig.bgDrawable(width, height)
-        bg?.let {
-            if (it is BitmapDrawable) {
-                bgMeanColor = BitmapUtils.getMeanColor(it.bitmap)
-            } else if (it is ColorDrawable) {
-                bgMeanColor = it.color
+        bg = durConfig.bgDrawable(width, height).apply {
+            if (this is BitmapDrawable) {
+                bgMeanColor = BitmapUtils.getMeanColor(bitmap)
+            } else if (this is ColorDrawable) {
+                bgMeanColor = color
             }
         }
     }
