@@ -147,6 +147,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                     okButton { viewModel.deleteBook(*adapter.selectedBooks.toTypedArray()) }
                     noButton { }
                 }.show().applyTint()
+            R.id.menu_update_enable ->
+                viewModel.upCanUpdate(adapter.selectedBooks.toTypedArray(), true)
+            R.id.menu_update_disable ->
+                viewModel.upCanUpdate(adapter.selectedBooks.toTypedArray(), true)
         }
         return false
     }
