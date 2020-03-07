@@ -40,6 +40,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.File
+import java.text.Collator
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     PopupMenu.OnMenuItemClickListener,
@@ -197,9 +198,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
-        groups.map {
-            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-        }
+        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+            .map {
+                groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            }
     }
 
     @SuppressLint("InflateParams")

@@ -28,6 +28,8 @@ object ChapterProvider {
     var visibleBottom = 0
     private var lineSpacingExtra = 0
     private var paragraphSpacing = 0
+    private var titleTopSpacing = 0
+    private var titleBottomSpacing = 0
     var typeface: Typeface = Typeface.SANS_SERIF
     var titlePaint = TextPaint()
     var contentPaint = TextPaint()
@@ -97,7 +99,7 @@ object ChapterProvider {
         stringBuilder: StringBuilder,
         isTitle: Boolean
     ): Float {
-        var durY = y
+        var durY = if (isTitle) y + titleTopSpacing else y
         val textPaint = if (isTitle) titlePaint else contentPaint
         val layout = StaticLayout(
             text, textPaint, visibleWidth,
@@ -142,6 +144,7 @@ object ChapterProvider {
             durY += textPaint.textHeight * lineSpacingExtra / 10f
             textPages.last().height = durY
         }
+        if (isTitle) durY += titleBottomSpacing
         durY += textPaint.textHeight * paragraphSpacing / 10f
         return durY
     }
@@ -262,18 +265,19 @@ object ChapterProvider {
         titlePaint.color = ReadBookConfig.durConfig.textColor()
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
         titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
+        titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
         //正文
         contentPaint.isAntiAlias = true
         contentPaint.color = ReadBookConfig.durConfig.textColor()
         contentPaint.letterSpacing = ReadBookConfig.letterSpacing
         val bold = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
         contentPaint.typeface = Typeface.create(typeface, bold)
+        contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
         //间距
         lineSpacingExtra = ReadBookConfig.lineSpacingExtra
         paragraphSpacing = ReadBookConfig.paragraphSpacing
-        titlePaint.textSize = (ReadBookConfig.textSize + 2).sp.toFloat()
-        contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
-
+        titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
+        titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
         upSize()
     }
 

@@ -27,9 +27,10 @@
             android:paddingRight="6dp"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
-            android:text="@string/title_center"
+            android:text="@string/title"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -46,7 +47,8 @@
             android:paddingBottom="4dp"
             android:text="@string/text_bold"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -63,7 +65,8 @@
             android:paddingBottom="4dp"
             android:text="@string/text_font"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -80,7 +83,8 @@
             android:paddingBottom="4dp"
             android:text="@string/text_indent"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -96,83 +100,8 @@
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:gravity="center"
-            android:textSize="14sp" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:gravity="center_vertical">
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-
-        <ImageView
-            android:id="@+id/iv_default1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?attr/selectableItemBackground"
-            android:tint="@color/tv_text_default"
-            android:padding="6dp"
-            android:contentDescription="@string/default1"
-            android:src="@drawable/ic_type_default_1" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/iv_default2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?attr/selectableItemBackground"
-            android:tint="@color/tv_text_default"
-            android:padding="6dp"
-            android:contentDescription="@string/default2"
-            android:src="@drawable/ic_type_default_2" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/iv_default3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?attr/selectableItemBackground"
-            android:tint="@color/tv_text_default"
-            android:padding="6dp"
-            android:contentDescription="@string/default3"
-            android:src="@drawable/ic_type_default_3" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:text="@string/compose_type"
-            android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -189,7 +118,8 @@
             android:paddingBottom="4dp"
             android:text="@string/padding"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -197,6 +127,43 @@
             android:layout_weight="0.5" />
 
     </LinearLayout>
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:max="45"
+        app:title="@string/text_size" />
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_letter_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:max="100"
+        app:title="@string/text_letter_spacing" />
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_line_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:max="20"
+        app:title="@string/line_size" />
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_paragraph_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:max="20"
+        app:title="@string/paragraph_size" />
 
     <View
         android:id="@+id/vw_bg_fg"
@@ -208,6 +175,8 @@
         android:id="@+id/tv_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
         android:text="@string/page_anim" />

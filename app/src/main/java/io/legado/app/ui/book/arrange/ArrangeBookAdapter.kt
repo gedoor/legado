@@ -13,7 +13,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book) {
     val groupRequestCode = 12
-    val selectedBooks: HashSet<Book> = hashSetOf()
+    private val selectedBooks: HashSet<Book> = hashSetOf()
     var actionItem: Book? = null
 
     fun selectAll(selectAll: Boolean) {
@@ -38,6 +38,16 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         }
         notifyDataSetChanged()
         callBack.upSelectCount()
+    }
+
+    fun selectedBooks(): Array<Book> {
+        val books = arrayListOf<Book>()
+        selectedBooks.forEach {
+            if (getItems().contains(it)) {
+                books.add(it)
+            }
+        }
+        return books.toTypedArray()
     }
 
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {

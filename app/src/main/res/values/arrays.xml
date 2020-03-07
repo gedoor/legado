@@ -93,10 +93,4 @@
         <item>系统等宽字体</item>
     </string-array>
 
-    <string-array name="title_mode">
-        <item>标题靠左</item>
-        <item>标题居中</item>
-        <item>标题隐藏</item>
-    </string-array>
-
 </resources>

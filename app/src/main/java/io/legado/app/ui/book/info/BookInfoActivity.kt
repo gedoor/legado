@@ -86,8 +86,13 @@ class BookInfoActivity :
                 }
             }
             R.id.menu_can_update -> {
-                viewModel.bookData.value?.let {
-                    it.canUpdate = !it.canUpdate
+                if (viewModel.inBookshelf) {
+                    viewModel.bookData.value?.let {
+                        it.canUpdate = !it.canUpdate
+                        viewModel.saveBook()
+                    }
+                } else {
+                    toast(R.string.after_add_bookshelf)
                 }
             }
         }
