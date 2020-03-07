@@ -151,7 +151,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             R.id.menu_update_enable ->
                 viewModel.upCanUpdate(adapter.selectedBooks.toTypedArray(), true)
             R.id.menu_update_disable ->
-                viewModel.upCanUpdate(adapter.selectedBooks.toTypedArray(), true)
+                viewModel.upCanUpdate(adapter.selectedBooks.toTypedArray(), false)
             R.id.menu_add_to_group -> selectGroup(0, addToGroupRequestCode)
         }
         return false
