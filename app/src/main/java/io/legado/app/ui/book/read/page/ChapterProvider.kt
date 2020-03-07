@@ -142,11 +142,9 @@ object ChapterProvider {
             textPages.last().textLines.add(textLine)
             textLine.upTopBottom(durY, textPaint)
             durY += textPaint.textHeight * lineSpacingExtra / 10f
-            if (isTitle) {
-                durY += titleBottomSpacing
-            }
             textPages.last().height = durY
         }
+        if (isTitle) durY += titleBottomSpacing
         durY += textPaint.textHeight * paragraphSpacing / 10f
         return durY
     }
