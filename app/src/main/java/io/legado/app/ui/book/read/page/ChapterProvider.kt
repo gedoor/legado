@@ -28,6 +28,8 @@ object ChapterProvider {
     var visibleBottom = 0
     private var lineSpacingExtra = 0
     private var paragraphSpacing = 0
+    private var titleTopSpacing = 0
+    private var titleBottomSpacing = 0
     var typeface: Typeface = Typeface.SANS_SERIF
     var titlePaint = TextPaint()
     var contentPaint = TextPaint()
@@ -97,7 +99,7 @@ object ChapterProvider {
         stringBuilder: StringBuilder,
         isTitle: Boolean
     ): Float {
-        var durY = y
+        var durY = if (isTitle) y + titleTopSpacing else y
         val textPaint = if (isTitle) titlePaint else contentPaint
         val layout = StaticLayout(
             text, textPaint, visibleWidth,
@@ -140,6 +142,9 @@ object ChapterProvider {
             textPages.last().textLines.add(textLine)
             textLine.upTopBottom(durY, textPaint)
             durY += textPaint.textHeight * lineSpacingExtra / 10f
+            if (isTitle) {
+                durY += titleBottomSpacing
+            }
             textPages.last().height = durY
         }
         durY += textPaint.textHeight * paragraphSpacing / 10f
@@ -273,7 +278,8 @@ object ChapterProvider {
         paragraphSpacing = ReadBookConfig.paragraphSpacing
         titlePaint.textSize = (ReadBookConfig.textSize + 2).sp.toFloat()
         contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
-
+        titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
+        titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
         upSize()
     }
 

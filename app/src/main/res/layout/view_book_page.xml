@@ -16,12 +16,14 @@
             android:id="@+id/tv_top_left"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_top_right"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -56,12 +58,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_bottom_right"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="12sp" />
 
     </LinearLayout>
 

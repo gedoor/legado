@@ -39,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="3dp"
+        app:max="100"
         app:title="上间距" />
 
     <io.legado.app.ui.widget.DetailSeekBar
@@ -46,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="3dp"
+        app:max="100"
         app:title="下间距" />
 
 </LinearLayout>
