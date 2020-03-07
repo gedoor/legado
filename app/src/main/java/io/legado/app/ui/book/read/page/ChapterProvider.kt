@@ -267,17 +267,17 @@ object ChapterProvider {
         titlePaint.color = ReadBookConfig.durConfig.textColor()
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
         titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
+        titlePaint.textSize = (ReadBookConfig.textSize + ReadBookConfig.titleSize).sp.toFloat()
         //正文
         contentPaint.isAntiAlias = true
         contentPaint.color = ReadBookConfig.durConfig.textColor()
         contentPaint.letterSpacing = ReadBookConfig.letterSpacing
         val bold = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
         contentPaint.typeface = Typeface.create(typeface, bold)
+        contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
         //间距
         lineSpacingExtra = ReadBookConfig.lineSpacingExtra
         paragraphSpacing = ReadBookConfig.paragraphSpacing
-        titlePaint.textSize = (ReadBookConfig.textSize + 2).sp.toFloat()
-        contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
         titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
         titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
         upSize()
