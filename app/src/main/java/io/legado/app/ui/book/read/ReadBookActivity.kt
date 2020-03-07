@@ -152,10 +152,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         PaddingConfigDialog().show(supportFragmentManager, "paddingConfig")
     }
 
-    fun showTypeConfig() {
-        ReadTypeDialog().show(supportFragmentManager, "readTypeDialog")
-    }
-
     fun showBgTextConfig() {
         BgTextConfigDialog().show(supportFragmentManager, "bgTextConfig")
     }

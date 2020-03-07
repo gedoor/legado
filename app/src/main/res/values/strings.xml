@@ -620,7 +620,6 @@
     <string name="select_end">文本选择结束位置</string>
     <string name="select_start">文本选择开始位置</string>
     <string name="share_layout">共用布局</string>
-    <string name="title_center">标题居中</string>
     <string name="browser">浏览器</string>
     <string name="import_default_rule">导入默认规则</string>
     <string name="name">名称</string>
@@ -634,4 +633,8 @@
     <string name="default1">预设一</string>
     <string name="default2">预设二</string>
     <string name="default3">预设三</string>
+    <string name="title">标题</string>
+    <string name="title_left">靠左</string>
+    <string name="title_center">居中</string>
+    <string name="title_hide">隐藏</string>
 </resources>
