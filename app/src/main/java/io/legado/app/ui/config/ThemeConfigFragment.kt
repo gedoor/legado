@@ -2,7 +2,6 @@ package io.legado.app.ui.config
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -177,7 +176,6 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     private fun recreateActivities() {
         postEvent(EventBus.RECREATE, "")
-        Handler().postDelayed({ activity?.recreate() }, 100L)
     }
 
 }
