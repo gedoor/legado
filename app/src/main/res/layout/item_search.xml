@@ -35,6 +35,7 @@
         android:singleLine="true"
         android:text="@string/app_name"
         android:textColor="@color/tv_text_default"
+        android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/bv_originCount"
         app:layout_constraintStart_toEndOf="@+id/iv_cover"
         app:layout_constraintTop_toTopOf="parent" />

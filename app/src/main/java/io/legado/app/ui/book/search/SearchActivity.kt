@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
+import java.text.Collator
 
 
 class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_search),
@@ -50,7 +51,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var bookData: LiveData<List<Book>>? = null
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
-    private var groups = hashSetOf<String>()
+    private var groups = linkedSetOf<String>()
     private var refreshTime = System.currentTimeMillis()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -229,12 +230,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         if (selectedGroup == "") {
             item?.isChecked = true
         }
-        groups.map {
-            item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-            if (it == selectedGroup) {
-                item?.isChecked = true
+        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+            .map {
+                item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+                if (it == selectedGroup) {
+                    item?.isChecked = true
+                }
             }
-        }
         menu?.setGroupCheckable(R.id.source_group, true, true)
     }
 
@@ -266,7 +268,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             } else {
                 App.db.searchKeywordDao().liveDataSearch(key)
             }
-        historyData?.observe(this, Observer { historyKeyAdapter.setItems(it)
+        historyData?.observe(this, Observer {
+            historyKeyAdapter.setItems(it)
             if (it.isEmpty()) {
                 tv_clear_history.invisible()
             } else {

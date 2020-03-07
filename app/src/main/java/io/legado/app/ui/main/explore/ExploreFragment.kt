@@ -17,14 +17,15 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.explore.ExploreShowActivity
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_find_book.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import java.text.Collator
 
 
 class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_book),
@@ -119,9 +120,10 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
     private fun upGroupsMenu() {
         groupsMenu?.let { subMenu ->
             subMenu.removeGroup(R.id.menu_group_text)
-            groups.forEach {
-                subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
-            }
+            groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+                .forEach {
+                    subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
+                }
         }
     }
 
