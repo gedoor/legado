@@ -6,6 +6,7 @@ import android.net.Uri
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Base64
+import android.webkit.URLUtil
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
@@ -14,6 +15,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.model.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.DocumentUtils
@@ -99,7 +101,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         webPic ?: return
         execute {
             val fileName = "${AppConst.fileNameFormat.format(Date(System.currentTimeMillis()))}.jpg"
-            webData2bitmap(webPic).let { biteArray ->
+            webData2bitmap(webPic)?.let { biteArray ->
                 if (path.isContentPath()) {
                     val uri = Uri.parse(path)
                     DocumentFile.fromTreeUri(context, uri)?.let { doc ->
@@ -110,14 +112,20 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                     val file = FileUtils.createFileIfNotExist(File(path), fileName)
                     file.writeBytes(biteArray)
                 }
-            }
+            } ?: throw Throwable("NULL")
         }.onError {
             toast("保存图片失败:${it.localizedMessage}")
+        }.onSuccess {
+            toast("保存成功")
         }
     }
 
-    private fun webData2bitmap(data: String): ByteArray {
-        return Base64.decode(data.split(",").toTypedArray()[1], Base64.DEFAULT)
+    private suspend fun webData2bitmap(data: String): ByteArray? {
+        return if (URLUtil.isValidUrl(data)) {
+            HttpHelper.simpleGetByteAsync(data)
+        } else {
+            Base64.decode(data.split(",").toTypedArray()[1], Base64.DEFAULT)
+        }
     }
 
     fun clHtml(content: String): String {
