@@ -7,8 +7,8 @@
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
-        android:layout_width="70dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="110dp"
         android:layout_margin="8dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
@@ -43,7 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintBottom_toBottomOf="@id/iv_cover"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
         app:layout_constraintRight_toRightOf="@id/tv_name"
