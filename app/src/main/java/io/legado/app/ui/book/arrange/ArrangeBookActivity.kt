@@ -32,6 +32,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         get() = getViewModel(ArrangeBookViewModel::class.java)
     override val groupList: ArrayList<BookGroup> = arrayListOf()
     private val groupRequestCode = 22
+    private val addToGroupRequestCode = 34
     private lateinit var adapter: ArrangeBookAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
     private var booksLiveData: LiveData<List<Book>>? = null
@@ -151,6 +152,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 viewModel.upCanUpdate(adapter.selectedBooks.toTypedArray(), true)
             R.id.menu_update_disable ->
                 viewModel.upCanUpdate(adapter.selectedBooks.toTypedArray(), true)
+            R.id.menu_add_to_group -> selectGroup(0, addToGroupRequestCode)
         }
         return false
     }
@@ -181,6 +183,13 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 adapter.actionItem?.let {
                     viewModel.updateBook(it.copy(group = groupId))
                 }
+            }
+            addToGroupRequestCode -> {
+                val books = arrayListOf<Book>()
+                adapter.selectedBooks.forEach {
+                    books.add(it.copy(group = it.group or groupId))
+                }
+                viewModel.updateBook(*books.toTypedArray())
             }
         }
     }
