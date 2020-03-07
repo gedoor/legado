@@ -224,12 +224,12 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         }
     }
 
-    private fun setBg() {
-        bg0.setTextColor(ReadBookConfig.getConfig(0).textColor())
-        bg1.setTextColor(ReadBookConfig.getConfig(1).textColor())
-        bg2.setTextColor(ReadBookConfig.getConfig(2).textColor())
-        bg3.setTextColor(ReadBookConfig.getConfig(3).textColor())
-        bg4.setTextColor(ReadBookConfig.getConfig(4).textColor())
+    private fun setBg() = ReadBookConfig.apply {
+        bg0.setTextColor(getConfig(0).textColor())
+        bg1.setTextColor(getConfig(1).textColor())
+        bg2.setTextColor(getConfig(2).textColor())
+        bg3.setTextColor(getConfig(3).textColor())
+        bg4.setTextColor(getConfig(4).textColor())
         for (i in 0..4) {
             val iv = when (i) {
                 1 -> bg1
@@ -238,22 +238,22 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 4 -> bg4
                 else -> bg0
             }
-            iv.setImageDrawable(ReadBookConfig.getConfig(i).bgDrawable(100, 150))
+            iv.setImageDrawable(getConfig(i).bgDrawable(100, 150))
         }
     }
 
-    private fun upBg() {
-        bg0.borderColor = requireContext().primaryColor
-        bg1.borderColor = requireContext().primaryColor
-        bg2.borderColor = requireContext().primaryColor
-        bg3.borderColor = requireContext().primaryColor
-        bg4.borderColor = requireContext().primaryColor
+    private fun upBg() = requireContext().apply {
+        bg0.borderColor = primaryColor
+        bg1.borderColor = primaryColor
+        bg2.borderColor = primaryColor
+        bg3.borderColor = primaryColor
+        bg4.borderColor = primaryColor
         when (ReadBookConfig.styleSelect) {
-            1 -> bg1.borderColor = requireContext().accentColor
-            2 -> bg2.borderColor = requireContext().accentColor
-            3 -> bg3.borderColor = requireContext().accentColor
-            4 -> bg4.borderColor = requireContext().accentColor
-            else -> bg0.borderColor = requireContext().accentColor
+            1 -> bg1.borderColor = accentColor
+            2 -> bg2.borderColor = accentColor
+            3 -> bg3.borderColor = accentColor
+            4 -> bg4.borderColor = accentColor
+            else -> bg0.borderColor = accentColor
         }
     }
 
