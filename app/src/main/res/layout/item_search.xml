@@ -75,7 +75,7 @@
             android:textColor="@color/tv_text_default"
             android:textSize="12sp" />
 
-        <TextView
+        <io.legado.app.ui.widget.text.MultilineTextView
             android:id="@+id/tv_introduce"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
