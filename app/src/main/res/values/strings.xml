@@ -330,6 +330,7 @@
     <string name="volume_key_page_on_play">朗读时音量键翻页</string>
     <string name="tip_margin_change">Tip边距跟随边距调整</string>
     <string name="allow_update">允许更新</string>
+    <string name="disable_update">禁止更新</string>
     <string name="revert_selection">反选</string>
     <string name="search_book_key">搜索书名、作者</string>
     <string name="debug_hint">书名、作者、URL</string>

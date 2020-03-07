@@ -35,6 +35,13 @@
     </RadioGroup>
 
     <io.legado.app.ui.widget.DetailSeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        app:max="10"
+        app:title="字号" />
+
+    <io.legado.app.ui.widget.DetailSeekBar
         android:id="@+id/dsb_title_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
