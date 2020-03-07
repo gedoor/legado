@@ -2,7 +2,7 @@ package io.legado.app.help
 
 import android.util.Base64
 import androidx.annotation.Keep
-import io.legado.app.constant.AppConst.DATE_FORMAT
+import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
@@ -50,6 +50,6 @@ interface JsExtensions {
     }
 
     fun timeFormat(time: Long): String {
-        return DATE_FORMAT.format(Date(time))
+        return dateFormat.format(Date(time))
     }
 }

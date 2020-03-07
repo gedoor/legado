@@ -639,4 +639,6 @@
     <string name="title_center">居中</string>
     <string name="title_hide">隐藏</string>
     <string name="add_to_group">加入分组</string>
+    <string name="save_image">保存图片</string>
+    <string name="no_default_path">没有默认路径</string>
 </resources>

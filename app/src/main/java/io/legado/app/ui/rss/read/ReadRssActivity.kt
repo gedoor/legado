@@ -1,6 +1,7 @@
 package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -14,6 +15,9 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
+import io.legado.app.utils.ACache
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.openUrl
@@ -21,17 +25,22 @@ import kotlinx.android.synthetic.main.activity_rss_read.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jetbrains.anko.share
+import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import org.jsoup.safety.Whitelist
 
+
 class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
+    FileChooserDialog.CallBack,
     ReadRssViewModel.CallBack {
 
     override val viewModel: ReadRssViewModel
         get() = getViewModel(ReadRssViewModel::class.java)
-
+    private val savePathRequestCode = 132
+    private val imagePathKey = ""
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null
+    var webPic: String? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
@@ -95,6 +104,30 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             domStorageEnabled = true
             allowContentAccess = true
         }
+        web_view.setOnLongClickListener {
+            val hitTestResult = web_view.hitTestResult
+            if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE ||
+                hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
+            ) {
+                hitTestResult.extra?.let {
+                    webPic = it
+                    saveImage()
+                    return@setOnLongClickListener true
+                }
+            }
+            return@setOnLongClickListener false
+        }
+    }
+
+    private fun saveImage() {
+        FilePicker.selectFolder(this, savePathRequestCode, getString(R.string.save_image)) {
+            val path = ACache.get(this).getAsString(imagePathKey)
+            if (path.isNullOrEmpty()) {
+                toast(R.string.no_default_path)
+            } else {
+                viewModel.saveImage(webPic, path)
+            }
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -113,7 +146,6 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                         url
                     )//不想用baseUrl进else
                 } else {
-                    //webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
                     web_view.loadDataWithBaseURL(
                         null,
                         html,
@@ -199,6 +231,24 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                     .trim()//朗读过程中总是听到一些杂音，清理一下
                 //longToast(需读内容)调试一下
                 viewModel.readAloud(text)
+            }
+        }
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            savePathRequestCode -> {
+                ACache.get(this).put(imagePathKey, currentPath)
+                viewModel.saveImage(webPic, currentPath)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            savePathRequestCode -> data?.data?.let {
+                onFilePicked(requestCode, it.toString())
             }
         }
     }

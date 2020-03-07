@@ -85,7 +85,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
+                .selectFile(
+                    this,
+                    importRequestCode,
+                    type = "text/*",
+                    allowExtensions = arrayOf("txt", "json")
+                )
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {

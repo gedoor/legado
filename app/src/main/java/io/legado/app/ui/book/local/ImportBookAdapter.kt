@@ -87,7 +87,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     ll_brief.visible()
                     tv_tag.text = item.name.substringAfterLast(".")
                     tv_size.text = StringUtils.toSize(item.size)
-                    tv_date.text = AppConst.DATE_FORMAT.format(item.date)
+                    tv_date.text = AppConst.dateFormat.format(item.date)
                     cb_select.isChecked = selectedUris.contains(item.uri.toString())
                 }
                 tv_name.text = item.name

@@ -2,18 +2,28 @@ package io.legado.app.ui.rss.read
 
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.util.Base64
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.isContentPath
+import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
+
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application),
     TextToSpeech.OnInitListener {
@@ -83,6 +93,31 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         }.onSuccess {
             callBack?.upStarMenu()
         }
+    }
+
+    fun saveImage(webPic: String?, path: String) {
+        webPic ?: return
+        execute {
+            val fileName = "${AppConst.fileNameFormat.format(Date(System.currentTimeMillis()))}.jpg"
+            webData2bitmap(webPic).let { biteArray ->
+                if (path.isContentPath()) {
+                    val uri = Uri.parse(path)
+                    DocumentFile.fromTreeUri(context, uri)?.let { doc ->
+                        DocumentUtils.createFileIfNotExist(doc, fileName)
+                            ?.writeBytes(context, biteArray)
+                    }
+                } else {
+                    val file = FileUtils.createFileIfNotExist(File(path), fileName)
+                    file.writeBytes(biteArray)
+                }
+            }
+        }.onError {
+            toast("保存图片失败:${it.localizedMessage}")
+        }
+    }
+
+    private fun webData2bitmap(data: String): ByteArray {
+        return Base64.decode(data.split(",").toTypedArray()[1], Base64.DEFAULT)
     }
 
     fun clHtml(content: String): String {

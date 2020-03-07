@@ -7,7 +7,7 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
 import io.legado.app.R
-import io.legado.app.constant.AppConst.TIME_FORMAT
+import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
@@ -85,7 +85,7 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun upTime() {
-        tv_top_left.text = TIME_FORMAT.format(Date(System.currentTimeMillis()))
+        tv_top_left.text = timeFormat.format(Date(System.currentTimeMillis()))
     }
 
     fun upBattery(battery: Int) {
