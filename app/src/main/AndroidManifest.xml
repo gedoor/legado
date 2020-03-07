@@ -186,6 +186,7 @@
         <activity
             android:name="io.legado.app.ui.book.chapterlist.ChapterListActivity"
             android:launchMode="singleTop" />
+        <!--RSS阅读-->
         <activity
             android:name=".ui.rss.read.ReadRssActivity"
             android:configChanges="orientation|screenSize"
