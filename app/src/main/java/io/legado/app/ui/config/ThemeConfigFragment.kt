@@ -169,8 +169,10 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     private fun upTheme(isNightTheme: Boolean) {
         if (AppConfig.isNightTheme == isNightTheme) {
-            App.INSTANCE.applyTheme()
-            recreateActivities()
+            listView.post {
+                App.INSTANCE.applyTheme()
+                recreateActivities()
+            }
         }
     }
 
