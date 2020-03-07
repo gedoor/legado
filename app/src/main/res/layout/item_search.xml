@@ -43,7 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="3dp"
         app:layout_constraintBottom_toBottomOf="@id/iv_cover"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
         app:layout_constraintRight_toRightOf="@id/tv_name"
@@ -78,7 +78,7 @@
         <TextView
             android:id="@+id/tv_introduce"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:ellipsize="end"
             android:text="@string/book_intro"
             android:textColor="@color/tv_text_default"
