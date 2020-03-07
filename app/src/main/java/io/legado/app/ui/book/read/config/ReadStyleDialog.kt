@@ -172,10 +172,15 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 .inflate(R.layout.dialog_title_config, null).apply {
                     ReadBookConfig.apply {
                         rg_title_mode.checkByIndex(titleMode)
+                        dsb_title_size.progress = titleSize
                         dsb_title_top.progress = titleTopSpacing
                         dsb_title_bottom.progress = titleBottomSpacing
                         rg_title_mode.onCheckedChange { _, checkedId ->
                             titleMode = rg_title_mode.getIndexById(checkedId)
+                            postEvent(EventBus.UP_CONFIG, true)
+                        }
+                        dsb_title_size.onChanged = {
+                            titleSize = it
                             postEvent(EventBus.UP_CONFIG, true)
                         }
                         dsb_title_top.onChanged = {
