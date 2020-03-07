@@ -29,7 +29,8 @@
             android:paddingBottom="4dp"
             android:text="@string/title"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -46,7 +47,8 @@
             android:paddingBottom="4dp"
             android:text="@string/text_bold"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -63,7 +65,8 @@
             android:paddingBottom="4dp"
             android:text="@string/text_font"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -80,7 +83,8 @@
             android:paddingBottom="4dp"
             android:text="@string/text_indent"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -96,7 +100,8 @@
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
@@ -113,7 +118,8 @@
             android:paddingBottom="4dp"
             android:text="@string/padding"
             android:gravity="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:radius="3dp" />
 
         <Space
             android:layout_width="0dp"
