@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -133,11 +134,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         ATH.applyEdgeEffectColor(rv_bookshelf_search)
         ATH.applyEdgeEffectColor(rv_history_key)
         bookAdapter = BookAdapter(this, this)
-        rv_bookshelf_search.layoutManager =
-            LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        rv_bookshelf_search.layoutManager = FlexboxLayoutManager(this)
         rv_bookshelf_search.adapter = bookAdapter
         historyKeyAdapter = HistoryKeyAdapter(this, this)
-        rv_history_key.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        rv_history_key.layoutManager = FlexboxLayoutManager(this)
         rv_history_key.adapter = historyKeyAdapter
         adapter = SearchAdapter(this, this)
         recycler_view.layoutManager = LinearLayoutManager(this)
