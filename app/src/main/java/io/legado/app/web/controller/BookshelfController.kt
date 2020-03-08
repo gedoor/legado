@@ -7,7 +7,6 @@ import io.legado.app.model.WebBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.web.utils.ReturnData
-import kotlinx.coroutines.runBlocking
 
 class BookshelfController {
 
@@ -37,25 +36,18 @@ class BookshelfController {
             return returnData.setErrorMsg("参数url不能为空，请指定内容地址")
         }
         val book = App.db.bookDao().getBook(strings[0])
-        val chapter = App.db.bookChapterDao().getChapter(strings[0], 1)
+        val chapter = App.db.bookChapterDao().getChapter(strings[0], strings[1].toInt())
         if (book == null || chapter == null) {
             returnData.setErrorMsg("未找到")
         } else {
-            val content = BookHelp.getContent(book, chapter)
+            var content = BookHelp.getContent(book, chapter)
             if (content != null) {
                 returnData.setData(content)
             } else {
-                runBlocking {
-                    App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
-                        WebBook(source).getContent(book, chapter)
-                            .onSuccess {
-                                returnData.setData(it!!)
-                            }
-                            .onError {
-                                returnData.setErrorMsg(it.localizedMessage)
-                            }
-                    } ?: returnData.setErrorMsg("未找到书源")
-                }
+                App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
+                    content = WebBook(source).getContentBlocking(book, chapter)
+                    returnData.setErrorMsg(content)
+                } ?: returnData.setErrorMsg("未找到书源")
             }
         }
         return returnData
