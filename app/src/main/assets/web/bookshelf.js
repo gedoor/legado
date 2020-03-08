@@ -6,6 +6,8 @@
     , books
     ;
 
+var now_chapter = -1;
+
 var formatTime = value => {
     return new Date(value).toLocaleString('zh-CN', {
         hour12: false, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"
@@ -62,6 +64,7 @@ var init = () => {
             });
             $$('#books img').forEach(bookImg =>
                 bookImg.addEventListener("click", () => {
+                    now_chapter = -1
                     $('#allcontent').classList.add("read");
                     var book = books[bookImg.getAttribute("data-series-num")];
                     $("#info").innerHTML = `<img src="${bookImg.src}">
@@ -130,7 +133,6 @@ $('#showchapter').addEventListener("click", () => {
     window.location.hash = "#chapter";
 });
 
-var now_chapter = -1;
 $('#up').addEventListener('click', e => {
     if (now_chapter > 0) {
         now_chapter--;
