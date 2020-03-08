@@ -9,7 +9,10 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import io.legado.app.R
 import io.legado.app.utils.dp
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.sp
 
 class BatteryView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private var battery = 100
@@ -20,17 +23,23 @@ class BatteryView(context: Context, attrs: AttributeSet?) : View(context, attrs)
     private val polar = Rect()
 
     init {
+        textPaint.textSize = 12.sp.toFloat()
+        textPaint.strokeWidth = 1.dp.toFloat()
         textPaint.isAntiAlias = true
         textPaint.textAlign = Paint.Align.CENTER
+        textPaint.color = context.getCompatColor(R.color.tv_text_default)
         textPaint.typeface = Typeface.createFromAsset(context.assets, "number.ttf")
-        batteryHeight = with(textPaint.fontMetrics) { descent - ascent + leading }.toInt() + 4.dp
-        batteryWidth = StaticLayout.getDesiredWidth("100", textPaint).toInt() + 5.dp
-        outFrame.set(0, 0, batteryWidth - 2.dp, batteryHeight)
-        polar.set(outFrame.right, batteryHeight / 4, batteryWidth, batteryHeight * 3 / 4)
+        batteryHeight = with(textPaint.fontMetrics) { descent - ascent + leading }.toInt()
+        batteryWidth = StaticLayout.getDesiredWidth("100", textPaint).toInt() + 10.dp
+        outFrame.set(1.dp, 1.dp, batteryWidth - 3.dp, batteryHeight - 1.dp)
+        polar.set(outFrame.right, batteryHeight / 3, batteryWidth, batteryHeight * 2 / 3)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(batteryWidth, batteryHeight)
+        super.onMeasure(
+            MeasureSpec.makeMeasureSpec(batteryWidth, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(batteryHeight, MeasureSpec.EXACTLY)
+        )
     }
 
     fun setBattery(battery: Int) {
@@ -40,11 +49,13 @@ class BatteryView(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawRect(polar, textPaint)
         textPaint.style = Paint.Style.STROKE
         canvas.drawRect(outFrame, textPaint)
+        textPaint.style = Paint.Style.FILL
+        canvas.drawRect(polar, textPaint)
         val text = battery.toString()
-        canvas.drawText(text, outFrame.right / 2.toFloat(), batteryHeight / 2.toFloat(), textPaint)
+        val baseHeight = batteryHeight - textPaint.fontMetrics.descent
+        canvas.drawText(text, outFrame.right / 2.toFloat(), baseHeight, textPaint)
     }
 
 }
