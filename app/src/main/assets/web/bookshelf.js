@@ -1,7 +1,7 @@
 ﻿var $ = document.querySelector.bind(document)
     , $$ = document.querySelectorAll.bind(document)
     , $c = document.createElement.bind(document)
-    , randomImg = "http://acg.bakayun.cn/randbg.php?t=dfzh"
+    , randomImg = "http://api.mtyqx.cn/api/random.php"
     , randomImg2 = "http://img.xjh.me/random_img.php"
     , books
     ;
@@ -13,13 +13,13 @@ var formatTime = value => {
 };
 
 var apiMap = {
-    getBookshelf: "/getBookshelf",
-    getChapterList: "/getChapterList",
-    getBookContent: "/getBookContent",
-    saveBook: "/saveBook"
+    "getBookshelf": "/getBookshelf",
+    "getChapterList": "/getChapterList",
+    "getBookContent": "/getBookContent",
+    "saveBook": "/saveBook"
 };
 
-var apiAddress = (apiName, url) => {
+var apiAddress = (apiName, url, index) => {
     let address = $('#address').value || window.location.host;
     if (!(/^http|^\/\//).test(address)) {
         address = "//" + address;
@@ -28,6 +28,9 @@ var apiAddress = (apiName, url) => {
         address += ":1122";
     }
     localStorage.setItem('address', address);
+    if (apiName == "getBookContent") {
+        return address + apiMap[apiName] + (url ? "?url=" + encodeURIComponent(url) : "") + "&index=" + index;
+    }
     return address + apiMap[apiName] + (url ? "?url=" + encodeURIComponent(url) : "");
 };
 
@@ -41,12 +44,12 @@ var init = () => {
                 alert(getBookshelf.errorMsg);
                 return;
             }
-            books = data.data.sort((book1, book2) => book1.serialNumber - book2.serialNumber);
-            books.forEach(book => {
+            books = data.data;
+            books.forEach((book, i) => {
                 let bookDiv = $c("div");
                 let img = $c("img");
                 img.src = book.coverUrl || randomImg;
-                img.setAttribute("data-series-num", book.serialNumber);
+                img.setAttribute("data-series-num", i);
                 bookDiv.appendChild(img);
                 bookDiv.innerHTML += `<table><tbody>
                                 <tr><td>书名：</td><td>${book.name}</td></tr>
@@ -85,9 +88,10 @@ var init = () => {
 
                             data.data.forEach(chapter => {
                                 let ch = $c("button");
-                                ch.setAttribute("data-url", chapter.durChapterUrl);
-                                ch.setAttribute("title", chapter.durChapterName);
-                                ch.innerHTML = chapter.durChapterName.length > 15 ? chapter.durChapterName.substring(0, 14) + "..." : chapter.durChapterName;
+                                ch.setAttribute("data-url", chapter.bookUrl);
+                                ch.setAttribute("data-index", chapter.index);
+                                ch.setAttribute("title", chapter.title);
+                                ch.innerHTML = chapter.title.length > 15 ? chapter.title.substring(0, 14) + "..." : chapter.title;
                                 $("#chapter").appendChild(ch);
                             });
                             $('#chapter').scrollTop = 0;
@@ -129,12 +133,16 @@ $('#showchapter').addEventListener("click", () => {
 $('#chapter').addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
         var url = e.target.getAttribute("data-url");
+        var index = e.target.getAttribute("data-index");
         var name = e.target.getAttribute("title");
         if (!url) {
-            alert("未取得章节地址");
+            alert("未取得书籍地址");
+        }
+        if (!index && (0 != index)) {
+            alert("未取得章节索引");
         }
         $("#content").innerHTML = "<p>" + name + " 加载中...</p>";
-        fetch(apiAddress("getBookContent", url), { mode: "cors" })
+        fetch(apiAddress("getBookContent", url, index), { mode: "cors" })
             .then(res => res.json())
             .then(data => {
                 if (!data.isSuccess) {
