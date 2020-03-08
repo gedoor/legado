@@ -18,6 +18,8 @@ import java.util.*
 
 class ContentView(context: Context) : FrameLayout(context) {
 
+    private var battery = 100
+
     init {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
@@ -67,6 +69,10 @@ class ContentView(context: Context) : FrameLayout(context) {
                 tv_bottom_left.setTextColor(it)
                 tv_bottom_right.setTextColor(it)
             }
+            if (hideStatusBar) {
+                tv_bottom_left.text = timeFormat.format(Date(System.currentTimeMillis()))
+                tv_bottom_right.text = context.getString(R.string.battery_show, battery)
+            }
         }
     }
 
@@ -90,6 +96,7 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun upBattery(battery: Int) {
+        this.battery = battery
         if (ReadBookConfig.hideStatusBar) {
             tv_bottom_right.text = context.getString(R.string.battery_show, battery)
         }
