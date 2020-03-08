@@ -137,13 +137,17 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun upGroup() {
         synchronized(this) {
+            bookGroups.remove(AppConst.bookGroupAll)
             bookGroups.remove(AppConst.bookGroupLocal)
             bookGroups.remove(AppConst.bookGroupAudio)
-            if (getPrefBoolean("bookGroupAudio", true)) {
-                bookGroups.add(1, AppConst.bookGroupAudio)
+            if (AppConfig.bookGroupAudioShow) {
+                bookGroups.add(0, AppConst.bookGroupAudio)
             }
-            if (getPrefBoolean("bookGroupLocal", true)) {
-                bookGroups.add(1, AppConst.bookGroupLocal)
+            if (AppConfig.bookGroupLocalShow) {
+                bookGroups.add(0, AppConst.bookGroupLocal)
+            }
+            if (AppConfig.bookGroupAllShow) {
+                bookGroups.add(0, AppConst.bookGroupAll)
             }
             bookshelfAdapter.notifyDataSetChanged()
         }
