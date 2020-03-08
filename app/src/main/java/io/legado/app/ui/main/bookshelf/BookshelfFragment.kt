@@ -109,7 +109,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             synchronized(this) {
                 tab_layout.removeOnTabSelectedListener(this)
                 bookGroups.clear()
-                bookGroups.add(AppConst.bookGroupAll)
+                if (AppConfig.bookGroupAllShow) {
+                    bookGroups.add(AppConst.bookGroupAll)
+                }
                 if (AppConfig.bookGroupLocalShow) {
                     bookGroups.add(AppConst.bookGroupLocal)
                 }
