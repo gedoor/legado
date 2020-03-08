@@ -58,7 +58,7 @@ class SourceController {
     }
 
     fun getSource(parameters: Map<String, List<String>>): ReturnData {
-        val url = parameters["url"]?.get(0)
+        val url = parameters["url"]?.getOrNull(0)
         val returnData = ReturnData()
         if (url.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书源地址")

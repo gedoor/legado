@@ -21,7 +21,7 @@ class BookshelfController {
         }
 
     fun getChapterList(parameters: Map<String, List<String>>): ReturnData {
-        val bookUrl = parameters["url"]?.get(0)
+        val bookUrl = parameters["url"]?.getOrNull(0)
         val returnData = ReturnData()
         if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
@@ -31,8 +31,8 @@ class BookshelfController {
     }
 
     fun getBookContent(parameters: Map<String, List<String>>): ReturnData {
-        val bookUrl = parameters["url"]?.get(0)
-        val index = parameters["index"]?.get(0)?.toInt()
+        val bookUrl = parameters["url"]?.getOrNull(0)
+        val index = parameters["index"]?.getOrNull(0)?.toInt()
         val returnData = ReturnData()
         if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
