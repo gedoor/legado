@@ -73,11 +73,9 @@ class ContentView(context: Context) : FrameLayout(context) {
             }
             if (hideStatusBar) {
                 tv_bottom_left.text = timeFormat.format(Date(System.currentTimeMillis()))
-                tv_bottom_right.gone()
                 battery_view.visible()
                 battery_view.setBattery(battery)
             } else {
-                tv_bottom_right.visible()
                 battery_view.gone()
             }
         }
