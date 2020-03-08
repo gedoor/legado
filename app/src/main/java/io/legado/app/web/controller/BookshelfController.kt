@@ -7,6 +7,7 @@ import io.legado.app.model.WebBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.web.utils.ReturnData
+import kotlinx.coroutines.runBlocking
 
 class BookshelfController {
 
@@ -49,7 +50,9 @@ class BookshelfController {
                 returnData.setData(content)
             } else {
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
-                    content = WebBook(source).getContentBlocking(book, chapter)
+                    content = runBlocking {
+                        WebBook(source).getContentSuspend(book, chapter)
+                    }
                     returnData.setErrorMsg(content)
                 } ?: returnData.setErrorMsg("未找到书源")
             }

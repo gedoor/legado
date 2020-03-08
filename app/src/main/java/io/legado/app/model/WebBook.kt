@@ -12,7 +12,6 @@ import io.legado.app.model.webBook.BookInfo
 import io.legado.app.model.webBook.BookList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 class WebBook(val bookSource: BookSource) {
@@ -140,75 +139,50 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            if (bookSource.getContentRule().content.isNullOrEmpty()) {
-                Debug.log(sourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
-                return@async bookChapter.url
-            }
-            val body =
-                if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
-                    book.tocHtml
-                } else {
-                    val analyzeUrl =
-                        AnalyzeUrl(
-                            book = book,
-                            ruleUrl = bookChapter.url,
-                            baseUrl = book.tocUrl,
-                            headerMapF = bookSource.getHeaderMap()
-                        )
-                    analyzeUrl.getResponseAwait(
-                        bookSource.bookSourceUrl,
-                        jsStr = bookSource.getContentRule().webJs,
-                        sourceRegex = bookSource.getContentRule().sourceRegex
-                    ).body
-                }
-            BookContent.analyzeContent(
-                this,
-                body,
-                book,
-                bookChapter,
-                bookSource,
-                bookChapter.url,
-                nextChapterUrl
+            getContentSuspend(
+                book, bookChapter, nextChapterUrl, scope
             )
         }
     }
 
-    fun getContentBlocking(
+    /**
+     * 章节内容
+     */
+    suspend fun getContentSuspend(
         book: Book,
         bookChapter: BookChapter,
-        nextChapterUrl: String? = null
+        nextChapterUrl: String? = null,
+        scope: CoroutineScope = Coroutine.DEFAULT
     ): String {
-        return runBlocking {
-            if (bookSource.getContentRule().content.isNullOrEmpty()) {
-                Debug.log(sourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
-                return@runBlocking bookChapter.url
-            }
-            val body =
-                if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
-                    book.tocHtml
-                } else {
-                    val analyzeUrl =
-                        AnalyzeUrl(
-                            book = book,
-                            ruleUrl = bookChapter.url,
-                            baseUrl = book.tocUrl,
-                            headerMapF = bookSource.getHeaderMap()
-                        )
-                    analyzeUrl.getResponseAwait(
-                        bookSource.bookSourceUrl,
-                        jsStr = bookSource.getContentRule().webJs,
-                        sourceRegex = bookSource.getContentRule().sourceRegex
-                    ).body
-                }
-            BookContent.analyzeContent(
-                this,
-                body,
-                book,
-                bookChapter,
-                bookSource,
-                bookChapter.url,
-                nextChapterUrl
-            )
+        if (bookSource.getContentRule().content.isNullOrEmpty()) {
+            Debug.log(sourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
+            return bookChapter.url
         }
+        val body =
+            if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
+                book.tocHtml
+            } else {
+                val analyzeUrl =
+                    AnalyzeUrl(
+                        book = book,
+                        ruleUrl = bookChapter.url,
+                        baseUrl = book.tocUrl,
+                        headerMapF = bookSource.getHeaderMap()
+                    )
+                analyzeUrl.getResponseAwait(
+                    bookSource.bookSourceUrl,
+                    jsStr = bookSource.getContentRule().webJs,
+                    sourceRegex = bookSource.getContentRule().sourceRegex
+                ).body
+            }
+        return BookContent.analyzeContent(
+            scope,
+            body,
+            book,
+            bookChapter,
+            bookSource,
+            bookChapter.url,
+            nextChapterUrl
+        )
     }
 }
