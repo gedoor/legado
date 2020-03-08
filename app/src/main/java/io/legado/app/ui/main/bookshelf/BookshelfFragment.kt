@@ -17,6 +17,7 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
@@ -109,10 +110,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 tab_layout.removeOnTabSelectedListener(this)
                 bookGroups.clear()
                 bookGroups.add(AppConst.bookGroupAll)
-                if (AppConst.bookGroupLocalShow) {
+                if (AppConfig.bookGroupLocalShow) {
                     bookGroups.add(AppConst.bookGroupLocal)
                 }
-                if (AppConst.bookGroupAudioShow) {
+                if (AppConfig.bookGroupAudioShow) {
                     bookGroups.add(AppConst.bookGroupAudio)
                 }
                 bookGroups.addAll(it)
