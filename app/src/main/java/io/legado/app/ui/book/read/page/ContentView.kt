@@ -68,6 +68,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 tv_top_right.setTextColor(it)
                 tv_bottom_left.setTextColor(it)
                 tv_bottom_right.setTextColor(it)
+                battery_view.setColor(it)
             }
             if (hideStatusBar) {
                 tv_bottom_left.text = timeFormat.format(Date(System.currentTimeMillis()))

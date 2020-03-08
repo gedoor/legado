@@ -9,6 +9,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.ColorInt
 import io.legado.app.R
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
@@ -23,7 +24,7 @@ class BatteryView(context: Context, attrs: AttributeSet?) : View(context, attrs)
     private val polar = Rect()
 
     init {
-        textPaint.textSize = 12.sp.toFloat()
+        textPaint.textSize = 10.sp.toFloat()
         textPaint.strokeWidth = 1.dp.toFloat()
         textPaint.isAntiAlias = true
         textPaint.textAlign = Paint.Align.CENTER
@@ -40,6 +41,11 @@ class BatteryView(context: Context, attrs: AttributeSet?) : View(context, attrs)
             MeasureSpec.makeMeasureSpec(batteryWidth, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(batteryHeight, MeasureSpec.EXACTLY)
         )
+    }
+
+    fun setColor(@ColorInt color: Int) {
+        textPaint.color = color
+        invalidate()
     }
 
     fun setBattery(battery: Int) {
