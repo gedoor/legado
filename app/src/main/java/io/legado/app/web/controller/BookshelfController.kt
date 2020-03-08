@@ -20,23 +20,27 @@ class BookshelfController {
         }
 
     fun getChapterList(parameters: Map<String, List<String>>): ReturnData {
-        val strings = parameters["url"]
+        val bookUrl = parameters["url"]?.get(0)
         val returnData = ReturnData()
-        if (strings == null) {
+        if (bookUrl == null) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
-        val chapterList = App.db.bookChapterDao().getChapterList(strings[0])
+        val chapterList = App.db.bookChapterDao().getChapterList(bookUrl)
         return returnData.setData(chapterList)
     }
 
     fun getBookContent(parameters: Map<String, List<String>>): ReturnData {
-        val strings = parameters["url"]
+        val bookUrl = parameters["url"]?.get(0)
+        val index = parameters["index"]?.get(0)?.toInt()
         val returnData = ReturnData()
-        if (strings == null) {
-            return returnData.setErrorMsg("参数url不能为空，请指定内容地址")
+        if (bookUrl == null) {
+            return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
-        val book = App.db.bookDao().getBook(strings[0])
-        val chapter = App.db.bookChapterDao().getChapter(strings[0], strings[1].toInt())
+        if (index == null) {
+            return returnData.setErrorMsg("参数index不能为空, 请指定目录序号")
+        }
+        val book = App.db.bookDao().getBook(bookUrl)
+        val chapter = App.db.bookChapterDao().getChapter(bookUrl, index)
         if (book == null || chapter == null) {
             returnData.setErrorMsg("未找到")
         } else {
