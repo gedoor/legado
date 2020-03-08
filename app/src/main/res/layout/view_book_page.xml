@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/page_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,7 +24,9 @@
             android:id="@+id/tv_top_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp" />
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     </LinearLayout>
 
@@ -51,6 +54,7 @@
         android:id="@+id/ll_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
@@ -65,7 +69,16 @@
             android:id="@+id/tv_bottom_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp" />
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/battery_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     </LinearLayout>
 

@@ -17,6 +17,7 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
@@ -108,11 +109,13 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             synchronized(this) {
                 tab_layout.removeOnTabSelectedListener(this)
                 bookGroups.clear()
-                bookGroups.add(AppConst.bookGroupAll)
-                if (AppConst.bookGroupLocalShow) {
+                if (AppConfig.bookGroupAllShow) {
+                    bookGroups.add(AppConst.bookGroupAll)
+                }
+                if (AppConfig.bookGroupLocalShow) {
                     bookGroups.add(AppConst.bookGroupLocal)
                 }
-                if (AppConst.bookGroupAudioShow) {
+                if (AppConfig.bookGroupAudioShow) {
                     bookGroups.add(AppConst.bookGroupAudio)
                 }
                 bookGroups.addAll(it)
@@ -134,13 +137,17 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun upGroup() {
         synchronized(this) {
+            bookGroups.remove(AppConst.bookGroupAll)
             bookGroups.remove(AppConst.bookGroupLocal)
             bookGroups.remove(AppConst.bookGroupAudio)
-            if (getPrefBoolean("bookGroupAudio", true)) {
-                bookGroups.add(1, AppConst.bookGroupAudio)
+            if (AppConfig.bookGroupAudioShow) {
+                bookGroups.add(0, AppConst.bookGroupAudio)
             }
-            if (getPrefBoolean("bookGroupLocal", true)) {
-                bookGroups.add(1, AppConst.bookGroupLocal)
+            if (AppConfig.bookGroupLocalShow) {
+                bookGroups.add(0, AppConst.bookGroupLocal)
+            }
+            if (AppConfig.bookGroupAllShow) {
+                bookGroups.add(0, AppConst.bookGroupAll)
             }
             bookshelfAdapter.notifyDataSetChanged()
         }
@@ -196,13 +203,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             }.show().applyTint()
     }
 
-    override fun onTabReselected(tab: TabLayout.Tab?) {
+    override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 
-    }
-
-    override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-    }
+    override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
         tab?.position?.let {

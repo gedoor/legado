@@ -100,6 +100,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 -1 -> App.db.bookDao().observeAll()
                 -2 -> App.db.bookDao().observeLocal()
                 -3 -> App.db.bookDao().observeAudio()
+                -11 -> App.db.bookDao().observeNoGroup()
                 else -> App.db.bookDao().observeByGroup(groupId)
             }
         booksLiveData?.observe(this, Observer {
@@ -112,6 +113,11 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         when (item.itemId) {
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "groupManage")
+            R.id.menu_no_group -> {
+                title_bar.subtitle = getString(R.string.no_group)
+                groupId = -11
+                initBookData()
+            }
             R.id.menu_all -> {
                 title_bar.subtitle = item.title
                 groupId = -1

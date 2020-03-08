@@ -479,6 +479,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 if (!ReadBook.isLocalBook) {
                     tv_chapter_url.text = it.url
                     tv_chapter_url.visible()
+                } else {
+                    tv_chapter_url.gone()
                 }
                 seek_read_page.max = it.pageSize().minus(1)
                 seek_read_page.progress = ReadBook.durPageIndex

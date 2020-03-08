@@ -27,7 +27,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="@string/chapter"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -38,7 +37,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="@string/chapter"
             android:textSize="12sp"
             android:visibility="gone" />
 

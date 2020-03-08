@@ -13,13 +13,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <io.legado.app.ui.widget.text.AccentTextView
-            android:id="@+id/tv_header_padding"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="10dp"
-            android:textSize="18sp"
-            android:text="@string/header" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <io.legado.app.ui.widget.text.AccentTextView
+                android:id="@+id/tv_header_padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:text="@string/header" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/showLine" />
+
+            <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+                android:id="@+id/cb_show_top_line"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_margin="6dp" />
+
+        </LinearLayout>
 
         <io.legado.app.ui.widget.DetailSeekBar
             android:id="@+id/dsb_header_padding_top"
@@ -109,7 +129,7 @@
             android:text="@string/showLine" />
 
         <io.legado.app.ui.widget.checkbox.SmoothCheckBox
-            android:id="@+id/cb_show_line"
+            android:id="@+id/cb_show_bottom_line"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_margin="6dp" />

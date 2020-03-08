@@ -31,12 +31,6 @@
             app:iconSpaceReserved="false" />
 
         <androidx.preference.Preference
-            android:key="zfbSk"
-            android:title="支付宝收款,支持红包"
-            android:summary="点击直接跳转支付宝"
-            app:iconSpaceReserved="false" />
-
-        <androidx.preference.Preference
             android:key="zfbHbRwm"
             android:title="支付宝红包二维码"
             android:summary="点击打开"

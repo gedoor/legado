@@ -270,8 +270,8 @@ object ChapterProvider {
         contentPaint.isAntiAlias = true
         contentPaint.color = ReadBookConfig.durConfig.textColor()
         contentPaint.letterSpacing = ReadBookConfig.letterSpacing
-        val bold = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
-        contentPaint.typeface = Typeface.create(typeface, bold)
+        val style = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
+        contentPaint.typeface = Typeface.create(typeface, style)
         contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
         //间距
         lineSpacingExtra = ReadBookConfig.lineSpacingExtra
@@ -294,5 +294,5 @@ object ChapterProvider {
     }
 
     val TextPaint.textHeight: Float
-        get() = this.fontMetrics.descent - fontMetrics.ascent + fontMetrics.leading
+        get() = fontMetrics.descent - fontMetrics.ascent + fontMetrics.leading
 }

@@ -1,12 +1,18 @@
 package io.legado.app.ui.about
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.openUrl
+import kotlinx.android.synthetic.main.activity_about.*
 import org.jetbrains.anko.share
+
 
 class AboutActivity : BaseActivity(R.layout.activity_about) {
 
@@ -17,6 +23,16 @@ class AboutActivity : BaseActivity(R.layout.activity_about) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fl_fragment, aboutFragment, fTag)
             .commit()
+        tv_app_summary.post {
+            val span = ForegroundColorSpan(accentColor)
+            val spannableString = SpannableString(tv_app_summary.text)
+            val start = spannableString.indexOf("开源阅读软件")
+            spannableString.setSpan(
+                span, start, start + 6,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            tv_app_summary.text = spannableString
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

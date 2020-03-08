@@ -127,7 +127,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
         FilePicker.selectFolder(this, exportRequestCode) {
             val path = ACache.get(this@DownloadActivity).getAsString(exportBookPathKey)
             if (path.isNullOrEmpty()) {
-                toast("没有默认路径")
+                toast(R.string.no_default_path)
             } else {
                 startExport(path)
             }
