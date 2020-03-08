@@ -5,6 +5,7 @@ import android.text.StaticLayout
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.ui.book.read.page.ChapterProvider
+import java.text.DecimalFormat
 
 data class TextPage(
     var index: Int = 0,
@@ -84,4 +85,20 @@ data class TextPage(
             lineStart += textLine.text.length
         }
     }
+
+    val readProgress: String
+        get() {
+            val df = DecimalFormat("0.0%")
+            if (chapterSize == 0 || pageSize == 0 && chapterIndex == 0) {
+                return "0.0%"
+            } else if (pageSize == 0) {
+                return df.format((chapterIndex + 1.0f) / chapterSize.toDouble())
+            }
+            var percent =
+                df.format(chapterIndex * 1.0f / chapterSize + 1.0f / chapterSize * (index + 1) / pageSize.toDouble())
+            if (percent == "100.0%" && (chapterIndex + 1 != chapterSize || index + 1 != pageSize)) {
+                percent = "99.9%"
+            }
+            return percent
+        }
 }

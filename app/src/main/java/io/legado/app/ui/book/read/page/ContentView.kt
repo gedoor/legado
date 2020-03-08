@@ -26,8 +26,7 @@ class ContentView(context: Context) : FrameLayout(context) {
         upStyle()
         upTime()
         content_text_view.upView = {
-            tv_bottom_left.text = it.title
-            setPageIndex(it.index, it.pageSize)
+            setProgress(it)
         }
     }
 
@@ -85,20 +84,19 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun upTime() {
-        tv_top_left.text = timeFormat.format(Date(System.currentTimeMillis()))
+        if (ReadBookConfig.hideStatusBar) {
+            tv_bottom_left.text = timeFormat.format(Date(System.currentTimeMillis()))
+        }
     }
 
     fun upBattery(battery: Int) {
-        tv_top_right.text = context.getString(R.string.battery_show, battery)
+        if (ReadBookConfig.hideStatusBar) {
+            tv_bottom_right.text = context.getString(R.string.battery_show, battery)
+        }
     }
 
     fun setContent(textPage: TextPage) {
-        tv_bottom_left.text = when (AppConfig.chineseConverterType) {
-            1 -> ZhConvertBootstrap.newInstance().toSimple(textPage.title)
-            2 -> ZhConvertBootstrap.newInstance().toTraditional(textPage.title)
-            else -> textPage.title
-        }
-        setPageIndex(textPage.index, textPage.pageSize)
+        setProgress(textPage)
         content_text_view.resetPageOffset()
         content_text_view.setContent(textPage)
     }
@@ -108,9 +106,19 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     @SuppressLint("SetTextI18n")
-    fun setPageIndex(pageIndex: Int?, pageSize: Int) {
-        pageIndex?.let {
-            tv_bottom_right.text = "${pageIndex.plus(1)}/${pageSize}"
+    fun setProgress(textPage: TextPage) = textPage.apply {
+        val title = when (AppConfig.chineseConverterType) {
+            1 -> ZhConvertBootstrap.newInstance().toSimple(textPage.title)
+            2 -> ZhConvertBootstrap.newInstance().toTraditional(textPage.title)
+            else -> textPage.title
+        }
+        val progress = "${index.plus(1)}/$pageSize  $readProgress"
+        if (ReadBookConfig.hideStatusBar) {
+            tv_top_left.text = title
+            tv_top_right.text = progress
+        } else {
+            tv_bottom_left.text = title
+            tv_bottom_right.text = progress
         }
     }
 
