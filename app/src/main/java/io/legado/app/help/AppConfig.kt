@@ -94,7 +94,7 @@ object AppConfig {
         }
 
     var bookGroupAllShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupAll", false)
+        get() = App.INSTANCE.getPrefBoolean("bookGroupAll", true)
         set(value) {
             App.INSTANCE.putPrefBoolean("bookGroupAll", value)
         }
