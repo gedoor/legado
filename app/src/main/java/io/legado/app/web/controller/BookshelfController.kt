@@ -23,7 +23,7 @@ class BookshelfController {
     fun getChapterList(parameters: Map<String, List<String>>): ReturnData {
         val bookUrl = parameters["url"]?.get(0)
         val returnData = ReturnData()
-        if (bookUrl == null) {
+        if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
         val chapterList = App.db.bookChapterDao().getChapterList(bookUrl)
@@ -34,7 +34,7 @@ class BookshelfController {
         val bookUrl = parameters["url"]?.get(0)
         val index = parameters["index"]?.get(0)?.toInt()
         val returnData = ReturnData()
-        if (bookUrl == null) {
+        if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
         if (index == null) {
