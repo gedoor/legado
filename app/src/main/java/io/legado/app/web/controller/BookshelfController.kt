@@ -45,15 +45,16 @@ class BookshelfController {
         if (book == null || chapter == null) {
             returnData.setErrorMsg("未找到")
         } else {
-            var content = BookHelp.getContent(book, chapter)
+            val content: String? = BookHelp.getContent(book, chapter)
             if (content != null) {
                 returnData.setData(content)
             } else {
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
-                    content = runBlocking {
+                    runBlocking {
                         WebBook(source).getContentSuspend(book, chapter)
+                    }.let {
+                        returnData.setData(it)
                     }
-                    returnData.setErrorMsg(content)
                 } ?: returnData.setErrorMsg("未找到书源")
             }
         }

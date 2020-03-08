@@ -42,7 +42,7 @@ import kotlin.collections.ArrayList
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
-    private var callBack: CallBack? = null
+    private val callBack: CallBack? get() = parentFragment as? CallBack
 
     override fun onStart() {
         super.onStart()
@@ -62,19 +62,12 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        callBack = parentFragment as? CallBack
+        tool_bar.title = getString(R.string.group_manage)
         initData()
+        initMenu()
     }
 
     private fun initData() {
-        tool_bar.title = getString(R.string.group_manage)
-        tool_bar.inflateMenu(R.menu.book_group_manage)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
-        tool_bar.setOnMenuItemClickListener(this)
-        tool_bar.menu.findItem(R.id.menu_group_local)
-            .isChecked = AppConst.bookGroupLocalShow
-        tool_bar.menu.findItem(R.id.menu_group_audio)
-            .isChecked = AppConst.bookGroupAudioShow
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
@@ -88,6 +81,16 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
+    }
+
+    private fun initMenu() {
+        tool_bar.inflateMenu(R.menu.book_group_manage)
+        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.setOnMenuItemClickListener(this)
+        tool_bar.menu.findItem(R.id.menu_group_local)
+            .isChecked = AppConst.bookGroupLocalShow
+        tool_bar.menu.findItem(R.id.menu_group_audio)
+            .isChecked = AppConst.bookGroupAudioShow
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
