@@ -203,13 +203,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             }.show().applyTint()
     }
 
-    override fun onTabReselected(tab: TabLayout.Tab?) {
+    override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 
-    }
-
-    override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-    }
+    override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
         tab?.position?.let {
