@@ -2,14 +2,12 @@ package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.view.*
+import android.webkit.*
+import androidx.core.view.size
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -17,10 +15,7 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
-import io.legado.app.utils.ACache
-import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.openUrl
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_read.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
@@ -40,7 +35,8 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     private val imagePathKey = ""
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null
-    var webPic: String? = null
+    private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
+    private var webPic: String? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
@@ -48,6 +44,20 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         initWebView()
         initLiveData()
         viewModel.initData(intent)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        when (newConfig.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+                window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            }
+            Configuration.ORIENTATION_PORTRAIT -> {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+            }
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -74,6 +84,20 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun initWebView() {
+        web_view.webChromeClient = object : WebChromeClient() {
+            override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                ll_view.invisible()
+                custom_web_view.addView(view)
+                customWebViewCallback = callback
+            }
+
+            override fun onHideCustomView() {
+                custom_web_view.removeAllViews()
+                ll_view.visible()
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
+        }
         web_view.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
@@ -207,7 +231,10 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         event?.let {
             when (keyCode) {
                 KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled && web_view.canGoBack()) {
-                    if (web_view.copyBackForwardList().size > 1) {
+                    if (custom_web_view.size > 0) {
+                        customWebViewCallback?.onCustomViewHidden()
+                        return true
+                    } else if (web_view.copyBackForwardList().size > 1) {
                         web_view.goBack()
                         return true
                     }
