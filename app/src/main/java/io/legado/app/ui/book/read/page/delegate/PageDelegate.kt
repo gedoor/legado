@@ -126,7 +126,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.invalidate()
     }
 
-    private fun stopScroll() {
+    protected fun stopScroll() {
         isStarted = false
         pageView.post {
             isMoved = false
