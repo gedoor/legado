@@ -20,9 +20,9 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
@@ -84,26 +84,35 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun initMenu() {
-        tool_bar.inflateMenu(R.menu.book_group_manage)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
-        tool_bar.menu.findItem(R.id.menu_group_local)
-            .isChecked = AppConst.bookGroupLocalShow
-        tool_bar.menu.findItem(R.id.menu_group_audio)
-            .isChecked = AppConst.bookGroupAudioShow
+        tool_bar.inflateMenu(R.menu.book_group_manage)
+        tool_bar.menu.let {
+            it.applyTint(requireContext(), Theme.getTheme())
+            it.findItem(R.id.menu_group_all)
+                .isChecked = AppConfig.bookGroupAllShow
+            it.findItem(R.id.menu_group_local)
+                .isChecked = AppConfig.bookGroupLocalShow
+            it.findItem(R.id.menu_group_audio)
+                .isChecked = AppConfig.bookGroupAudioShow
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> addGroup()
+            R.id.menu_group_all -> {
+                item.isChecked = !item.isChecked
+                AppConfig.bookGroupAllShow = item.isChecked
+                callBack?.upGroup()
+            }
             R.id.menu_group_local -> {
                 item.isChecked = !item.isChecked
-                AppConst.bookGroupLocalShow = item.isChecked
+                AppConfig.bookGroupLocalShow = item.isChecked
                 callBack?.upGroup()
             }
             R.id.menu_group_audio -> {
                 item.isChecked = !item.isChecked
-                AppConst.bookGroupAudioShow = item.isChecked
+                AppConfig.bookGroupAudioShow = item.isChecked
                 callBack?.upGroup()
             }
         }
