@@ -130,6 +130,25 @@ $('#showchapter').addEventListener("click", () => {
     window.location.hash = "#chapter";
 });
 
+var now_chapter = -1;
+$('#up').addEventListener('click', e => {
+    if (now_chapter > 0) {
+        now_chapter--;
+        let clickEvent = document.createEvent('MouseEvents');
+        clickEvent.initEvent("click", true, false);
+        $('[data-index="' + now_chapter + '"]').dispatchEvent(clickEvent);
+    }
+});
+
+$('#down').addEventListener('click', e => {
+    if (now_chapter > -1) {
+        now_chapter++;
+        let clickEvent = document.createEvent('MouseEvents');
+        clickEvent.initEvent("click", true, false);
+        $('[data-index="' + now_chapter + '"]').dispatchEvent(clickEvent);
+    }
+});
+
 $('#chapter').addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
         var url = e.target.getAttribute("data-url");
@@ -141,6 +160,7 @@ $('#chapter').addEventListener("click", (e) => {
         if (!index && (0 != index)) {
             alert("未取得章节索引");
         }
+        now_chapter = parseInt(index);
         $("#content").innerHTML = "<p>" + name + " 加载中...</p>";
         fetch(apiAddress("getBookContent", url, index), { mode: "cors" })
             .then(res => res.json())
