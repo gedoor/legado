@@ -11,19 +11,20 @@
         android:id="@+id/ll_header_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <io.legado.app.ui.widget.text.AccentTextView
                 android:id="@+id/tv_header_padding"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
+                android:layout_weight="1"
                 android:textSize="18sp"
                 android:text="@string/header" />
 
@@ -128,7 +129,7 @@
             android:text="@string/showLine" />
 
         <io.legado.app.ui.widget.checkbox.SmoothCheckBox
-            android:id="@+id/cb_show_line"
+            android:id="@+id/cb_show_bottom_line"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_margin="6dp" />

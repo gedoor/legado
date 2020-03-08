@@ -251,6 +251,12 @@ object ReadBookConfig {
             if (shareLayout) shareConfig.footerPaddingTop = value
             else durConfig.footerPaddingTop = value
 
+    var showHeaderLine: Boolean
+        get() = if (shareLayout) shareConfig.showHeaderLine else durConfig.showHeaderLine
+        set(value) =
+            if (shareLayout) shareConfig.showHeaderLine = value
+            else durConfig.showHeaderLine = value
+
     var showFooterLine: Boolean
         get() = if (shareLayout) shareConfig.showFooterLine else durConfig.showFooterLine
         set(value) =
@@ -288,6 +294,7 @@ object ReadBookConfig {
         var footerPaddingLeft: Int = 16,
         var footerPaddingRight: Int = 16,
         var footerPaddingTop: Int = 6,
+        var showHeaderLine: Boolean = false,
         var showFooterLine: Boolean = true
     ) {
         fun setBg(bgType: Int, bg: String) {
