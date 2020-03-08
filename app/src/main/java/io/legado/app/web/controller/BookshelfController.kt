@@ -37,7 +37,7 @@ class BookshelfController {
             return returnData.setErrorMsg("参数url不能为空，请指定内容地址")
         }
         val book = App.db.bookDao().getBook(strings[0])
-        val chapter = App.db.bookChapterDao().getChapter(strings[0], strings[1].toInt())
+        val chapter = App.db.bookChapterDao().getChapter(strings[0], 1)
         if (book == null || chapter == null) {
             returnData.setErrorMsg("未找到")
         } else {

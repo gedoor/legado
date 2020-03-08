@@ -108,7 +108,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 textBold = !textBold
                 tv_text_bold.isSelected = textBold
             }
-            postEvent(EventBus.UP_CONFIG, false)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_font.onClick {
             FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
