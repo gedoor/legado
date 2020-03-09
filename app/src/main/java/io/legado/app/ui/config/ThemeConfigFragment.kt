@@ -16,6 +16,8 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
+import io.legado.app.lib.theme.elevation
+import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 
 
@@ -25,6 +27,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
+        upPreferenceSummary("barElevation", AppConfig.elevation.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -145,6 +148,19 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                     recreateActivities()
                 }
             }.show().applyTint()
+            "barElevation" -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.bar_elevation))
+                .setMaxValue(32)
+                .setMinValue(0)
+                .setValue(AppConfig.elevation)
+                .setCustomButton((R.string.btn_default_s)) {
+                    AppConfig.elevation = App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+                    recreateActivities()
+                }
+                .show {
+                    AppConfig.elevation = it
+                    recreateActivities()
+                }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -180,4 +196,10 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         postEvent(EventBus.RECREATE, "")
     }
 
+    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+        val preference = findPreference<Preference>(preferenceKey) ?: return
+        when (preferenceKey) {
+            "barElevation" -> preference.summary = getString(R.string.bar_elevation_s, value)
+        }
+    }
 }

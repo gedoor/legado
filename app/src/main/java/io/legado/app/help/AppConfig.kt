@@ -111,4 +111,9 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
         }
 
+    var elevation: Int
+        get() = App.INSTANCE.getPrefInt("elevation", -1)
+        set(value) {
+            App.INSTANCE.putPrefInt("elevation", value)
+        }
 }
