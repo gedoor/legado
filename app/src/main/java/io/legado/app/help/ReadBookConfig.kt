@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -15,6 +16,7 @@ import java.io.File
 /**
  * 阅读界面配置
  */
+@Keep
 object ReadBookConfig {
     const val readConfigFileName = "readConfig.json"
     private val configFilePath =
@@ -27,6 +29,7 @@ object ReadBookConfig {
     val durConfig get() = getConfig(styleSelect)
     private val shareConfig get() = getConfig(5)
     var bg: Drawable? = null
+    var bgMeanColor: Int = 0
 
     init {
         upConfig()
@@ -67,7 +70,13 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        bg = durConfig.bgDrawable(width, height)
+        bg = durConfig.bgDrawable(width, height).apply {
+            if (this is BitmapDrawable) {
+                bgMeanColor = BitmapUtils.getMeanColor(bitmap)
+            } else if (this is ColorDrawable) {
+                bgMeanColor = color
+            }
+        }
     }
 
     fun save() {
@@ -155,10 +164,24 @@ object ReadBookConfig {
             if (shareLayout) shareConfig.paragraphSpacing = value
             else durConfig.paragraphSpacing = value
 
-    var titleCenter: Boolean
-        get() = if (shareLayout) shareConfig.titleCenter else durConfig.titleCenter
+    var titleMode: Int
+        get() = if (shareLayout) shareConfig.titleMode else durConfig.titleMode
         set(value) =
-            if (shareLayout) shareConfig.titleCenter = value else durConfig.titleCenter = value
+            if (shareLayout) shareConfig.titleMode = value else durConfig.titleMode = value
+    var titleSize: Int
+        get() = if (shareLayout) shareConfig.titleSize else durConfig.titleSize
+        set(value) =
+            if (shareLayout) shareConfig.titleSize = value else durConfig.titleSize = value
+    var titleTopSpacing: Int
+        get() = if (shareLayout) shareConfig.titleTopSpacing else durConfig.titleTopSpacing
+        set(value) =
+            if (shareLayout) shareConfig.titleTopSpacing = value
+            else durConfig.titleTopSpacing = value
+    var titleBottomSpacing: Int
+        get() = if (shareLayout) shareConfig.titleBottomSpacing else durConfig.titleBottomSpacing
+        set(value) =
+            if (shareLayout) shareConfig.titleBottomSpacing = value
+            else durConfig.titleBottomSpacing = value
 
     var paddingBottom: Int
         get() = if (shareLayout) shareConfig.paddingBottom else durConfig.paddingBottom
@@ -228,6 +251,19 @@ object ReadBookConfig {
             if (shareLayout) shareConfig.footerPaddingTop = value
             else durConfig.footerPaddingTop = value
 
+    var showHeaderLine: Boolean
+        get() = if (shareLayout) shareConfig.showHeaderLine else durConfig.showHeaderLine
+        set(value) =
+            if (shareLayout) shareConfig.showHeaderLine = value
+            else durConfig.showHeaderLine = value
+
+    var showFooterLine: Boolean
+        get() = if (shareLayout) shareConfig.showFooterLine else durConfig.showFooterLine
+        set(value) =
+            if (shareLayout) shareConfig.showFooterLine = value
+            else durConfig.showFooterLine = value
+
+    @Keep
     class Config(
         private var bgStr: String = "#EEEEEE",//白天背景
         private var bgStrNight: String = "#000000",//夜间背景
@@ -239,10 +275,13 @@ object ReadBookConfig {
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
         var textBold: Boolean = false,//是否粗体字
         var textSize: Int = 20,//文字大小
-        var letterSpacing: Float = 1f,//字间距
+        var letterSpacing: Float = 0.5f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
         var paragraphSpacing: Int = 12,//段距
-        var titleCenter: Boolean = true,//标题居中
+        var titleMode: Int = 0,//标题居中
+        var titleSize: Int = 0,
+        var titleTopSpacing: Int = 0,
+        var titleBottomSpacing: Int = 0,
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
@@ -254,7 +293,9 @@ object ReadBookConfig {
         var footerPaddingBottom: Int = 6,
         var footerPaddingLeft: Int = 16,
         var footerPaddingRight: Int = 16,
-        var footerPaddingTop: Int = 6
+        var footerPaddingTop: Int = 6,
+        var showHeaderLine: Boolean = false,
+        var showFooterLine: Boolean = true
     ) {
         fun setBg(bgType: Int, bg: String) {
             if (AppConfig.isNightTheme) {

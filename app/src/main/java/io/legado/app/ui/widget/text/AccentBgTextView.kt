@@ -14,31 +14,31 @@ import io.legado.app.utils.getCompatColor
 class AccentBgTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {
 
-    private var radios = 0
+    private var radius = 0
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AccentBgTextView)
-        radios = typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_radius, radios)
+        radius = typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_radius, radius)
         typedArray.recycle()
         upBackground()
         setTextColor(Color.WHITE)
     }
 
-    fun setRadios(radio: Int) {
-        this.radios = radio.dp
+    fun setRadius(radius: Int) {
+        this.radius = radius.dp
         upBackground()
     }
 
     private fun upBackground() {
         background = if (isInEditMode) {
             Selector.shapeBuild()
-                .setCornerRadius(radios)
+                .setCornerRadius(radius)
                 .setDefaultBgColor(context.getCompatColor(R.color.colorAccent))
                 .setPressedBgColor(ColorUtils.darkenColor(context.getCompatColor(R.color.colorAccent)))
                 .create()
         } else {
             Selector.shapeBuild()
-                .setCornerRadius(radios)
+                .setCornerRadius(radius)
                 .setDefaultBgColor(ThemeStore.accentColor(context))
                 .setPressedBgColor(ColorUtils.darkenColor(ThemeStore.accentColor(context)))
                 .create()

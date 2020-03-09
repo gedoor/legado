@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookProgress
 
 @Dao
 interface BookDao {
@@ -25,6 +26,9 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
     fun observeByGroup(group: Int): LiveData<List<Book>>
+
+    @Query("select * from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
+    fun observeNoGroup(): LiveData<List<Book>>
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun liveDataSearch(key: String): LiveData<List<Book>>
@@ -67,4 +71,23 @@ interface BookDao {
 
     @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
     fun upGroup(oldGroupId: Int, newGroupId: Int)
+
+    @get:Query("select bookUrl, durChapterIndex, durChapterPos, durChapterTime, durChapterTitle from books")
+    val allBookProgress: List<BookProgress>
+
+    @Query(
+        """
+        update books set 
+        durChapterIndex = :durChapterIndex, durChapterPos = :durChapterPos, 
+        durChapterTime = :durChapterTime, durChapterTitle = :durChapterTitle
+        where bookUrl = :bookUrl and durChapterTime < :durChapterTime
+    """
+    )
+    fun upBookProgress(
+        bookUrl: String,
+        durChapterIndex: Int,
+        durChapterPos: Int,
+        durChapterTime: Long,
+        durChapterTitle: String?
+    )
 }

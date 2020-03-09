@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
-import io.legado.app.ui.changecover.ChangeCoverDialog
+import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
 import org.jetbrains.anko.sdk27.listeners.onClick

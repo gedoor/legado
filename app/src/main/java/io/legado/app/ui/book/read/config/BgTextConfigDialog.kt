@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Gravity
@@ -13,11 +14,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.documentfile.provider.DocumentFile
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.EventBus
@@ -31,9 +32,8 @@ import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
-import java.io.File
 
-class BgTextConfigDialog : DialogFragment() {
+class BgTextConfigDialog : BaseDialogFragment() {
 
     companion object {
         const val TEXT_COLOR = 121
@@ -69,8 +69,7 @@ class BgTextConfigDialog : DialogFragment() {
         return inflater.inflate(R.layout.dialog_read_bg_text, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initData()
         initView()
     }
@@ -171,39 +170,44 @@ class BgTextConfigDialog : DialogFragment() {
             resultSelectBg -> {
                 if (resultCode == RESULT_OK) {
                     data?.data?.let { uri ->
-                        if (uri.toString().isContentPath()) {
-                            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
-                            doc?.let {
-                                var file = requireContext().getExternalFilesDir(null)
-                                    ?: requireContext().filesDir
-                                file =
-                                    FileUtils.createFileIfNotExist(file.absolutePath + File.separator + "bg" + File.separator + doc.name)
-                                DocumentUtils.readBytes(requireContext(), uri)?.let {
-                                    file.writeBytes(it)
-                                    ReadBookConfig.durConfig.setBg(2, file.absolutePath)
-                                    ReadBookConfig.upBg()
-                                    postEvent(EventBus.UP_CONFIG, false)
-                                }
-                            }
-                        } else {
-                            PermissionsCompat.Builder(this)
-                                .addPermissions(
-                                    Permissions.READ_EXTERNAL_STORAGE,
-                                    Permissions.WRITE_EXTERNAL_STORAGE
-                                )
-                                .rationale(R.string.bg_image_per)
-                                .onGranted {
-                                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                                        ReadBookConfig.durConfig.setBg(2, path)
-                                        ReadBookConfig.upBg()
-                                        postEvent(EventBus.UP_CONFIG, false)
-                                    }
-                                }
-                                .request()
-                        }
+                        setBgFromUri(uri)
                     }
                 }
             }
+        }
+    }
+
+    private fun setBgFromUri(uri: Uri) {
+        if (uri.toString().isContentPath()) {
+            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
+            doc?.name?.let {
+                var file = requireContext().getExternalFilesDir(null)
+                    ?: requireContext().filesDir
+                file = FileUtils.createFileIfNotExist(file, it, "bg")
+                kotlin.runCatching {
+                    DocumentUtils.readBytes(requireContext(), doc.uri)
+                }.getOrNull()?.let { byteArray ->
+                    file.writeBytes(byteArray)
+                    ReadBookConfig.durConfig.setBg(2, file.absolutePath)
+                    ReadBookConfig.upBg()
+                    postEvent(EventBus.UP_CONFIG, false)
+                } ?: toast("获取文件出错")
+            }
+        } else {
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                        ReadBookConfig.durConfig.setBg(2, path)
+                        ReadBookConfig.upBg()
+                        postEvent(EventBus.UP_CONFIG, false)
+                    }
+                }
+                .request()
         }
     }
 }

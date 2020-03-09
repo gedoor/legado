@@ -1,5 +1,7 @@
 package io.legado.app.ui.book.read.config
 
+import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Gravity
@@ -12,18 +14,18 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.getIndexById
-import io.legado.app.utils.getPrefString
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.putPrefString
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
+import kotlinx.android.synthetic.main.dialog_title_config.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -41,7 +43,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         }
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.background)
-            it.decorView.setPadding(0, 5, 0, 0)
+            it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
@@ -65,18 +67,21 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         initViewEvent()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
         ReadBookConfig.save()
     }
 
     private fun initView() {
+        root_view.setBackgroundColor(requireContext().bottomBackground)
         dsb_text_size.valueFormat = {
             (it + 5).toString()
         }
         dsb_text_letter_spacing.valueFormat = {
             ((it - 50) / 100f).toString()
         }
+        dsb_line_size.valueFormat = { ((it - 10) / 10f).toString() }
+        dsb_paragraph_spacing.valueFormat = { (it / 10f).toString() }
     }
 
     private fun initData() {
@@ -95,19 +100,15 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         chinese_converter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
-        tv_title_center.onClick {
-            ReadBookConfig.apply {
-                titleCenter = !titleCenter
-                tv_title_center.isSelected = titleCenter
-            }
-            postEvent(EventBus.UP_CONFIG, true)
+        tv_title_mode.onClick {
+            showTitleConfig()
         }
         tv_text_bold.onClick {
             ReadBookConfig.apply {
                 textBold = !textBold
                 tv_text_bold.isSelected = textBold
             }
-            postEvent(EventBus.UP_CONFIG, false)
+            postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_font.onClick {
             FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
@@ -125,6 +126,17 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             dismiss()
             callBack?.showPaddingConfig()
         }
+        rg_page_anim.onCheckedChange { _, checkedId ->
+            ReadBookConfig.pageAnim = rg_page_anim.getIndexById(checkedId)
+            callBack?.page_view?.upPageAnim()
+        }
+        cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
+            if (checkBox.isPressed) {
+                ReadBookConfig.shareLayout = isChecked
+                upStyle()
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
         dsb_text_size.onChanged = {
             ReadBookConfig.textSize = it + 5
             postEvent(EventBus.UP_CONFIG, true)
@@ -141,19 +153,6 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             ReadBookConfig.paragraphSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        rg_page_anim.onCheckedChange { _, checkedId ->
-            rg_page_anim.getIndexById(checkedId).let {
-                ReadBookConfig.pageAnim = it
-                callBack?.page_view?.upPageAnim()
-            }
-        }
-        cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
-            if (checkBox.isPressed) {
-                ReadBookConfig.shareLayout = isChecked
-                upStyle()
-                postEvent(EventBus.UP_CONFIG, true)
-            }
-        }
         bg0.onClick { changeBg(0) }
         bg0.onLongClick { showBgTextConfig(0) }
         bg1.onClick { changeBg(1) }
@@ -164,6 +163,36 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         bg3.onLongClick { showBgTextConfig(3) }
         bg4.onClick { changeBg(4) }
         bg4.onLongClick { showBgTextConfig(4) }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showTitleConfig() = ReadBookConfig.apply {
+        requireContext().alert(R.string.title) {
+            val rootView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_title_config, null).apply {
+                    rg_title_mode.checkByIndex(titleMode)
+                    dsb_title_size.progress = titleSize
+                    dsb_title_top.progress = titleTopSpacing
+                    dsb_title_bottom.progress = titleBottomSpacing
+                    rg_title_mode.onCheckedChange { _, checkedId ->
+                        titleMode = rg_title_mode.getIndexById(checkedId)
+                        postEvent(EventBus.UP_CONFIG, true)
+                    }
+                    dsb_title_size.onChanged = {
+                        titleSize = it
+                        postEvent(EventBus.UP_CONFIG, true)
+                    }
+                    dsb_title_top.onChanged = {
+                        titleTopSpacing = it
+                        postEvent(EventBus.UP_CONFIG, true)
+                    }
+                    dsb_title_bottom.onChanged = {
+                        titleBottomSpacing = it
+                        postEvent(EventBus.UP_CONFIG, true)
+                    }
+                }
+            customView = rootView
+        }.show()
     }
 
     private fun changeBg(index: Int) {
@@ -185,7 +214,6 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     private fun upStyle() {
         ReadBookConfig.let {
-            tv_title_center.isSelected = it.titleCenter
             tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
@@ -194,12 +222,12 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         }
     }
 
-    private fun setBg() {
-        bg0.setTextColor(ReadBookConfig.getConfig(0).textColor())
-        bg1.setTextColor(ReadBookConfig.getConfig(1).textColor())
-        bg2.setTextColor(ReadBookConfig.getConfig(2).textColor())
-        bg3.setTextColor(ReadBookConfig.getConfig(3).textColor())
-        bg4.setTextColor(ReadBookConfig.getConfig(4).textColor())
+    private fun setBg() = ReadBookConfig.apply {
+        bg0.setTextColor(getConfig(0).textColor())
+        bg1.setTextColor(getConfig(1).textColor())
+        bg2.setTextColor(getConfig(2).textColor())
+        bg3.setTextColor(getConfig(3).textColor())
+        bg4.setTextColor(getConfig(4).textColor())
         for (i in 0..4) {
             val iv = when (i) {
                 1 -> bg1
@@ -208,22 +236,22 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
                 4 -> bg4
                 else -> bg0
             }
-            iv.setImageDrawable(ReadBookConfig.getConfig(i).bgDrawable(100, 150))
+            iv.setImageDrawable(getConfig(i).bgDrawable(100, 150))
         }
     }
 
-    private fun upBg() {
-        bg0.borderColor = requireContext().primaryColor
-        bg1.borderColor = requireContext().primaryColor
-        bg2.borderColor = requireContext().primaryColor
-        bg3.borderColor = requireContext().primaryColor
-        bg4.borderColor = requireContext().primaryColor
+    private fun upBg() = requireContext().apply {
+        bg0.borderColor = primaryColor
+        bg1.borderColor = primaryColor
+        bg2.borderColor = primaryColor
+        bg3.borderColor = primaryColor
+        bg4.borderColor = primaryColor
         when (ReadBookConfig.styleSelect) {
-            1 -> bg1.borderColor = requireContext().accentColor
-            2 -> bg2.borderColor = requireContext().accentColor
-            3 -> bg3.borderColor = requireContext().accentColor
-            4 -> bg4.borderColor = requireContext().accentColor
-            else -> bg0.borderColor = requireContext().accentColor
+            1 -> bg1.borderColor = accentColor
+            2 -> bg2.borderColor = accentColor
+            3 -> bg3.borderColor = accentColor
+            4 -> bg4.borderColor = accentColor
+            else -> bg0.borderColor = accentColor
         }
     }
 

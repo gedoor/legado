@@ -141,8 +141,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun observeReplaceRuleData(key: String? = null) {
-        replaceRuleLiveData?.removeObservers(this)
         dataInit = false
+        replaceRuleLiveData?.removeObservers(this)
         replaceRuleLiveData = if (key.isNullOrEmpty()) {
             App.db.replaceRuleDao().liveDataAll()
         } else {
@@ -180,7 +180,12 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
+                .selectFile(
+                    this,
+                    importRequestCode,
+                    type = "text/*",
+                    allowExtensions = arrayOf("txt", "json")
+                )
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -213,7 +218,8 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
-                    edit_view.setFilterValues(cacheUrls) {
+                    edit_view.setFilterValues(cacheUrls)
+                    edit_view.delCallBack = {
                         cacheUrls.remove(it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
@@ -304,22 +310,27 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     override fun update(vararg rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.update(*rule)
     }
 
     override fun delete(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.delete(rule)
     }
 
     override fun edit(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         ReplaceEditDialog.show(supportFragmentManager, rule.id)
     }
 
     override fun toTop(rule: ReplaceRule) {
+        setResult(Activity.RESULT_OK)
         viewModel.toTop(rule)
     }
 
     override fun upOrder() {
+        setResult(Activity.RESULT_OK)
         viewModel.upOrder()
     }
 }

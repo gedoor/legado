@@ -26,12 +26,12 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     init {
         callBack = activity as CallBack
-        prevPage = ContentView(context)
-        addView(prevPage)
         nextPage = ContentView(context)
         addView(nextPage)
         curPage = ContentView(context)
         addView(curPage)
+        prevPage = ContentView(context)
+        addView(prevPage)
         upBg()
         setWillNotDraw(false)
         pageFactory = TextPageFactory(this)
@@ -40,6 +40,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (oldw != 0 && oldh != 0) {
             ReadBook.loadContent()
@@ -75,12 +76,10 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun fillPage(direction: PageDelegate.Direction) {
         when (direction) {
             PageDelegate.Direction.PREV -> {
-                pageFactory.moveToPrev()
-                upContent()
+                pageFactory.moveToPrev(true)
             }
             PageDelegate.Direction.NEXT -> {
-                pageFactory.moveToNext()
-                upContent()
+                pageFactory.moveToNext(true)
             }
             else -> Unit
         }
@@ -99,7 +98,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         upContent()
     }
 
-    fun upContent(relativePosition: Int = 0) {
+    override fun upContent(relativePosition: Int) {
         if (ReadBookConfig.isScroll) {
             curPage.setContent(pageFactory.currentPage)
         } else {
@@ -114,22 +113,6 @@ class PageView(context: Context, attrs: AttributeSet) :
             }
         }
         callBack.screenOffTimerStart()
-    }
-
-    fun moveToPrevPage(noAnim: Boolean = true) {
-        if (noAnim) {
-            fillPage(PageDelegate.Direction.PREV)
-        } else {
-            pageDelegate?.prevPageByAnim()
-        }
-    }
-
-    fun moveToNextPage(noAnim: Boolean = true) {
-        if (noAnim) {
-            fillPage(PageDelegate.Direction.NEXT)
-        } else {
-            pageDelegate?.nextPageByAnim()
-        }
     }
 
     fun upStyle() {

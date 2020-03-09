@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.GestureDetector
@@ -15,7 +14,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.utils.screenshot
 import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) :
@@ -25,7 +23,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.width * 0.66f, pageView.height * 0.66f
     )
     protected val context: Context = pageView.context
-    protected val slop = ViewConfiguration.get(context).scaledTouchSlop
+
     //起始点
     protected var startX: Float = 0f
     protected var startY: Float = 0f
@@ -40,21 +38,24 @@ abstract class PageDelegate(protected val pageView: PageView) :
     protected val curPage: ContentView get() = pageView.curPage
     protected val prevPage: ContentView get() = pageView.prevPage
 
-    protected var bitmap: Bitmap? = null
-
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
-
-    private val snackBar: Snackbar by lazy {
-        Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
-    }
 
     private val scroller: Scroller by lazy {
         Scroller(pageView.context, DecelerateInterpolator())
     }
 
+    protected val slopSquare by lazy {
+        val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+        scaledTouchSlop * scaledTouchSlop
+    }
+
     private val detector: GestureDetector by lazy {
         GestureDetector(pageView.context, this)
+    }
+
+    private val snackBar: Snackbar by lazy {
+        Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
     }
 
     var isMoved = false
@@ -64,13 +65,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
     var mDirection = Direction.NONE
     var isCancel = false
     var isRunning = false
-    var isStarted = false
+    private var isStarted = false
     var isTextSelected = false
-    var selectedOnDown = false
+    private var selectedOnDown = false
 
-    var firstRelativePage = 0
-    var firstLineIndex: Int = 0
-    var firstCharIndex: Int = 0
+    private var firstRelativePage = 0
+    private var firstLineIndex: Int = 0
+    private var firstCharIndex: Int = 0
 
     init {
         curPage.resetPageOffset()
@@ -125,12 +126,13 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.invalidate()
     }
 
-    private fun stopScroll() {
-        isRunning = false
+    protected fun stopScroll() {
         isStarted = false
-        pageView.invalidate()
-        bitmap?.recycle()
-        bitmap = null
+        pageView.post {
+            isMoved = false
+            isRunning = false
+            pageView.invalidate()
+        }
     }
 
     open fun setViewSize(width: Int, height: Int) {
@@ -166,21 +168,26 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     open fun onScroll() {}//移动contentView， slidePage
 
-    abstract fun nextPageByAnim()
+    open fun nextPageByAnim() {
+        abort()
+    }
 
-    abstract fun prevPageByAnim()
+    open fun prevPageByAnim() {
+        abort()
+    }
+
+    open fun keyTurnPage(direction: Direction) {
+        if (isRunning) return
+        when (direction) {
+            Direction.NEXT -> nextPageByAnim()
+            Direction.PREV -> prevPageByAnim()
+            else -> return
+        }
+    }
 
     @CallSuper
     open fun setDirection(direction: Direction) {
         mDirection = direction
-    }
-
-    open fun setBitmap() {
-        bitmap = when (mDirection) {
-            Direction.NEXT -> nextPage.screenshot()
-            Direction.PREV -> prevPage.screenshot()
-            else -> null
-        }
     }
 
     /**
@@ -191,11 +198,14 @@ abstract class PageDelegate(protected val pageView: PageView) :
         if (isStarted) return
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
-            if (event.action == MotionEvent.ACTION_UP && isMoved) {
-                if (selectedOnDown) {
-                    selectedOnDown = false
+            when (event.action) {
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> if (isMoved) {
+                    if (selectedOnDown) {
+                        selectedOnDown = false
+                    }
+                    if (!noNext) onAnimStart()
                 }
-                if (!noNext) onAnimStart()
             }
         }
     }
@@ -230,6 +240,10 @@ abstract class PageDelegate(protected val pageView: PageView) :
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         if (selectedOnDown) {
             selectedOnDown = false
+            return true
+        }
+        if (isMoved) {
+            if (!noNext) onAnimStart()
             return true
         }
         val x = e.x
@@ -321,7 +335,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     open fun onDestroy() {
-        bitmap?.recycle()
+
     }
 
     enum class Direction {

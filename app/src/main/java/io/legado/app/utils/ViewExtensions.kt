@@ -40,15 +40,21 @@ fun View.disableAutoFill() = run {
 }
 
 fun View.gone() {
-    visibility = GONE
+    if (visibility != GONE) {
+        visibility = GONE
+    }
 }
 
 fun View.invisible() {
-    visibility = INVISIBLE
+    if (visibility != INVISIBLE) {
+        visibility = INVISIBLE
+    }
 }
 
 fun View.visible() {
-    visibility = VISIBLE
+    if (visibility != VISIBLE) {
+        visibility = VISIBLE
+    }
 }
 
 fun View.visible(visible: Boolean) {

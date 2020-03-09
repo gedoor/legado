@@ -14,8 +14,13 @@ import org.jetbrains.anko.toast
 @Suppress("unused")
 object FilePicker {
 
-    fun selectFolder(activity: AppCompatActivity, requestCode: Int, default: (() -> Unit)? = null) {
-        activity.alert(titleResource = R.string.select_folder) {
+    fun selectFolder(
+        activity: AppCompatActivity,
+        requestCode: Int,
+        title: String = activity.getString(R.string.select_folder),
+        default: (() -> Unit)? = null
+    ) {
+        activity.alert(title = title) {
             val selectList =
                 activity.resources.getStringArray(R.array.select_folder).toMutableList()
             default ?: let {
@@ -45,9 +50,14 @@ object FilePicker {
         }.show()
     }
 
-    fun selectFolder(fragment: Fragment, requestCode: Int, default: (() -> Unit)? = null) {
+    fun selectFolder(
+        fragment: Fragment,
+        requestCode: Int,
+        title: String = fragment.getString(R.string.select_folder),
+        default: (() -> Unit)? = null
+    ) {
         fragment.requireContext()
-            .alert(titleResource = R.string.select_folder) {
+            .alert(title = title) {
                 val selectList =
                     fragment.resources.getStringArray(R.array.select_folder).toMutableList()
                 default ?: let {
@@ -80,11 +90,12 @@ object FilePicker {
     fun selectFile(
         activity: BaseActivity,
         requestCode: Int,
+        title: String = activity.getString(R.string.select_file),
         type: String,
         allowExtensions: Array<String>?,
         default: (() -> Unit)? = null
     ) {
-        activity.alert(titleResource = R.string.select_file) {
+        activity.alert(title = title) {
             val selectList =
                 activity.resources.getStringArray(R.array.select_folder).toMutableList()
             default ?: let {
@@ -119,12 +130,13 @@ object FilePicker {
     fun selectFile(
         fragment: Fragment,
         requestCode: Int,
+        title: String = fragment.getString(R.string.select_file),
         type: String,
         allowExtensions: Array<String>,
         default: (() -> Unit)? = null
     ) {
         fragment.requireContext()
-            .alert(titleResource = R.string.select_file) {
+            .alert(title = title) {
                 val selectList =
                     fragment.resources.getStringArray(R.array.select_folder).toMutableList()
                 default ?: let {

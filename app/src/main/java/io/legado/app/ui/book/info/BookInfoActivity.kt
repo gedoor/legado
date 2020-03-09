@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
@@ -20,14 +19,15 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.audio.AudioPlayActivity
+import io.legado.app.ui.book.changecover.ChangeCoverDialog
+import io.legado.app.ui.book.changesource.ChangeSourceDialog
+import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.changecover.ChangeCoverDialog
-import io.legado.app.ui.changesource.ChangeSourceDialog
-import io.legado.app.ui.chapterlist.ChapterListActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -52,8 +52,8 @@ class BookInfoActivity :
         get() = getViewModel(BookInfoViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        title_bar.background.alpha = 0
-        tv_intro.movementMethod = ScrollingMovementMethod.getInstance()
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.initData(intent)
@@ -86,8 +86,13 @@ class BookInfoActivity :
                 }
             }
             R.id.menu_can_update -> {
-                viewModel.bookData.value?.let {
-                    it.canUpdate = !it.canUpdate
+                if (viewModel.inBookshelf) {
+                    viewModel.bookData.value?.let {
+                        it.canUpdate = !it.canUpdate
+                        viewModel.saveBook()
+                    }
+                } else {
+                    toast(R.string.after_add_bookshelf)
                 }
             }
         }
@@ -103,7 +108,7 @@ class BookInfoActivity :
     private fun showBook(book: Book) {
         showCover(book)
         tv_name.text = book.name
-        tv_author.text = getString(R.string.author_show, book.author)
+        tv_author.text = getString(R.string.author_show, book.getRealAuthor())
         tv_origin.text = getString(R.string.origin_show, book.originName)
         tv_lasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tv_toc.text = getString(R.string.toc_s, getString(R.string.loading))
@@ -124,7 +129,6 @@ class BookInfoActivity :
         ImageLoader.load(this, book.getDisplayCover())
             .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
-            .centerCrop()
             .apply(bitmapTransform(BlurTransformation(this, 25)))
             .into(bg_book)  //模糊、渐变、缩小效果
     }
@@ -186,9 +190,7 @@ class BookInfoActivity :
         }
         tv_shelf.onClick {
             if (viewModel.inBookshelf) {
-                viewModel.delBook {
-                    upTvBookshelf()
-                }
+                deleteBook()
             } else {
                 viewModel.addToBookshelf {
                     upTvBookshelf()
@@ -205,7 +207,7 @@ class BookInfoActivity :
                 ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        tv_toc.onClick {
+        tv_toc_view.onClick {
             if (!viewModel.inBookshelf) {
                 viewModel.saveBook {
                     viewModel.saveChapterList {
@@ -216,9 +218,35 @@ class BookInfoActivity :
                 openChapterList()
             }
         }
-        tv_group.onClick {
+        tv_change_group.onClick {
             viewModel.bookData.value?.let {
                 GroupSelectDialog.show(supportFragmentManager, it.group)
+            }
+        }
+    }
+
+    private fun deleteBook() {
+        viewModel.bookData.value?.let {
+            if (it.isLocalBook()) {
+                alert(
+                    titleResource = R.string.sure,
+                    messageResource = R.string.sure_delete_book_file
+                ) {
+                    positiveButton(R.string.yes) {
+                        viewModel.delBook(true) {
+                            finish()
+                        }
+                    }
+                    negativeButton(R.string.no) {
+                        viewModel.delBook(false) {
+                            finish()
+                        }
+                    }
+                }.show()
+            } else {
+                viewModel.delBook {
+                    upTvBookshelf()
+                }
             }
         }
     }
@@ -320,7 +348,7 @@ class BookInfoActivity :
                 }
             } else {
                 if (!viewModel.inBookshelf) {
-                    viewModel.delBook(null)
+                    viewModel.delBook()
                 }
             }
         }

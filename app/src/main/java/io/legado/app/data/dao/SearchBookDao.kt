@@ -27,7 +27,7 @@ interface SearchBookDao {
         select t1.name, t1.author, t1.origin, t1.originName, t1.coverUrl, t1.bookUrl, t1.type, t1.time, t1.intro, t1.kind, t1.latestChapterTitle, t1.tocUrl, t1.variable, t1.wordCount, t2.customOrder as originOrder
         from searchBooks as t1 inner join book_sources as t2 
         on t1.origin = t2.bookSourceUrl 
-        where t1.name = :name and t1.author = :author 
+        where t1.name = :name and t1.author = :author and t2.enabled = 1
         order by t2.customOrder
         """
     )
@@ -38,7 +38,7 @@ interface SearchBookDao {
         select t1.name, t1.author, t1.origin, t1.originName, t1.coverUrl, t1.bookUrl, t1.type, t1.time, t1.intro, t1.kind, t1.latestChapterTitle, t1.tocUrl, t1.variable, t1.wordCount, t2.customOrder as originOrder
         from searchBooks as t1 inner join book_sources as t2 
         on t1.origin = t2.bookSourceUrl 
-        where t1.name = :name and t1.author = :author and originName like '%'||:key||'%'
+        where t1.name = :name and t1.author = :author and originName like '%'||:key||'%' and t2.enabled = 1
         order by t2.customOrder
         """
     )
@@ -49,7 +49,7 @@ interface SearchBookDao {
         select t1.name, t1.author, t1.origin, t1.originName, t1.coverUrl, t1.bookUrl, t1.type, t1.time, t1.intro, t1.kind, t1.latestChapterTitle, t1.tocUrl, t1.variable, t1.wordCount, t2.customOrder as originOrder
         from searchBooks as t1 inner join book_sources as t2 
         on t1.origin = t2.bookSourceUrl 
-        where t1.name = :name and t1.author = :author and t1.coverUrl is not null and t1.coverUrl <> ''
+        where t1.name = :name and t1.author = :author and t1.coverUrl is not null and t1.coverUrl <> '' and t2.enabled = 1
         order by t2.customOrder
         """
     )

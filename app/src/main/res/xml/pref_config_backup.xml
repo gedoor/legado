@@ -24,6 +24,13 @@
             android:summary="@string/web_dav_pw_s"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:key="webDavCreateDir"
+            android:defaultValue="true"
+            android:title="创建子文件夹"
+            android:summary="创建legado文件夹作为备份文件夹"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory app:iconSpaceReserved="false">

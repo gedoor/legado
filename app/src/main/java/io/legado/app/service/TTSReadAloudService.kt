@@ -175,9 +175,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         }
 
         override fun onError(s: String) {
-            launch {
-                toast(s)
-            }
+            pauseReadAloud(true)
         }
 
     }
