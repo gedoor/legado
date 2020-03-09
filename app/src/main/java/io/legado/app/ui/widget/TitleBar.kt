@@ -10,6 +10,8 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
+import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
 import io.legado.app.utils.navigationBarHeight
@@ -140,6 +142,13 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         backgroundColor = context.primaryColor
+        // targetElevation = context.elevation
+        stateListAnimator = null
+        if (AppConfig.elevation < 0) {
+            elevation = context.elevation
+        } else {
+            elevation = AppConfig.elevation.toFloat()
+        }
 
         a.recycle()
     }

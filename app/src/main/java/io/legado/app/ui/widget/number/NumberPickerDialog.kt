@@ -40,6 +40,17 @@ class NumberPickerDialog(context: Context) {
         return this
     }
 
+    fun setCustomButton(textId: Int, listener: (() -> Unit)?): NumberPickerDialog {
+        builder.setNeutralButton(textId) { _, _ ->
+            numberPicker?.let {
+                it.clearFocus()
+                it.hideSoftInput()
+                listener?.invoke()
+            }
+        }
+        return this;
+    }
+
     fun show(callBack: ((value: Int) -> Unit)?) {
         builder.setPositiveButton(R.string.ok) { _, _ ->
             numberPicker?.let {
