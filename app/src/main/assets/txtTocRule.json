@@ -26,7 +26,7 @@
     {
         "enable": false,
         "name": "数字(纯数字标题)",
-        "rule": "^\\d+$",
+        "rule": "(?<=[　\\s])\\d+[ 　\\t]{0,4}$",
         "serialNumber": 4
     },
     {
