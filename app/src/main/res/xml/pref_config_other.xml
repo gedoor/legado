@@ -6,14 +6,6 @@
         android:title="@string/main_activity"
         app:iconSpaceReserved="false">
 
-        <ListPreference
-            android:key="@string/pk_requested_direction"
-            android:defaultValue="0"
-            android:title="@string/screen_direction"
-            android:entries="@array/screen_direction_title"
-            android:entryValues="@array/screen_direction_value"
-            app:iconSpaceReserved="false" />
-
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="@string/pk_auto_refresh"

@@ -88,6 +88,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Help.setOrientation(this)
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Help.upLayoutInDisplayCutoutMode(window)
         initView()
