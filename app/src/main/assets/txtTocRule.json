@@ -24,69 +24,75 @@
         "serialNumber": 3
     },
     {
+        "enable": false,
+        "name": "数字(纯数字标题)",
+        "rule": "^\\d+$",
+        "serialNumber": 4
+    },
+    {
         "enable": true,
         "name": "数字 分隔符 标题名称",
         "rule": "^[ 　\\t]{0,4}\\d{1,5}[\\,\\.， 、\\-].{1,30}$",
-        "serialNumber": 4
+        "serialNumber": 5
     },
     {
         "enable": true,
         "name": "正文 标题/序号",
         "rule": "^[ 　\\t]{0,4}正文[ 　]{1,4}.{0,20}$",
-        "serialNumber": 5
+        "serialNumber": 6
     },
     {
         "enable": true,
         "name": "Chapter/Section/Part/Episode 序号 标题",
         "rule": "^[ 　\\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Ee]pisode|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)\\s{0,4}\\d{1,4}.{0,30}$",
-        "serialNumber": 6
+        "serialNumber": 7
     },
     {
         "enable": false,
         "name": "Chapter(去简介)",
         "rule": "^[ 　\\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Ee]pisode)\\s{0,4}\\d{1,4}.{0,30}$",
-        "serialNumber": 7
+        "serialNumber": 8
     },
     {
         "enable": true,
         "name": "特殊符号 序号 标题",
         "rule": "(?<=[\\s　]{0,4}).{1,3}(?:第|卷|[Cc]hapter)[\\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10}[章节]?[\\.:： \f\t].{0,20}$",
-        "serialNumber": 8
+        "serialNumber": 9
     },
     {
         "enable": false,
         "name": "特殊符号 标题(成对)",
         "rule": "(?<=[\\s　]{0,4})(?:[\\[〈「『〖〔《（【\\(].{1,30}[\\)】）》〕〗』」〉\\]]?|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
-        "serialNumber": 9
+        "serialNumber": 10
     },
     {
         "enable":true,
         "name": "特殊符号 标题(单个)",
         "rule": "(?<=[\\s　]{0,4})(?:[☆★✦✧].{1,30}|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
-        "serialNumber": 10
+        "serialNumber": 11
     },
     {
         "enable": true,
         "name": "章/卷 序号 标题",
         "rule": "^[ \\t　]{0,4}(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[卷章][\\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8})[ 　]{0,4}.{0,30}$",
-        "serialNumber": 11
+        "serialNumber": 12
     },
     {
         "enable":false,
         "name": "顶格标题",
         "rule": "^\\S.{1,20}$",
-        "serialNumber": 12
+        "serialNumber": 13
     },
     {
         "enable":false,
         "name": "双标题(前向)",
         "rule": "(?m)(?<=[ \\t　]{0,4})第[\\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$(?=[\\s　]{0,8}第[\\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章)",
-        "serialNumber": 13
+        "serialNumber": 14
     },
     {
         "enable":false,
         "name": "双标题(后向)",
         "rule": "(?m)(?<=[ \\t　]{0,4}第[\\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$[\\s　]{0,8})第[\\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$",
-        "serialNumber": 14
+        "serialNumber": 15
     }
 ]
