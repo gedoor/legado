@@ -108,3 +108,6 @@ val Context.isDarkTheme: Boolean
 
 val Fragment.isDarkTheme: Boolean
     get() = requireContext().isDarkTheme
+
+val Context.elevation: Float
+    get() = ThemeStore.elevation(this)

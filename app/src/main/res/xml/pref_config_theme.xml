@@ -27,6 +27,13 @@
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
+        android:defaultValue="true"
+        android:key="barElevation"
+        android:summary="@string/bar_elevation_s"
+        android:title="@string/bar_elevation"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
         android:key="defaultTheme"
         android:summary="@string/restore_default_theme"
         android:title="@string/default_theme"

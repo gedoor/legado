@@ -285,6 +285,14 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         }
 
         @CheckResult
+        fun elevation(context: Context): Float {
+            return prefs(context).getFloat(
+                ThemeStorePrefKeys.KEY_ELEVATION,
+                ATHUtils.resolveFloat(context, android.R.attr.elevation, context.resources.getDimension(R.dimen.design_appbar_elevation))
+            )
+        }
+
+        @CheckResult
         @ColorInt
         fun bottomBackground(context: Context): Int {
             return prefs(context).getInt(
