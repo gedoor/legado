@@ -64,40 +64,6 @@
 
         </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingTop="8dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="3dp">
-
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:singleLine="true"
-            android:text="@string/book_name"
-            android:textColor="@color/tv_text_default"
-            android:textSize="18sp"
-            tools:ignore="RtlHardcoded" />
-
-        <io.legado.app.ui.widget.LabelsBar
-            android:id="@+id/lb_kind"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
         <ScrollView
             android:background="@color/background"
             android:layout_weight="1.0"
@@ -118,6 +84,40 @@
                 android:background="@color/background"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/background"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="3dp">
+
+                    <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/book_name"
+                        android:textColor="@color/tv_text_default"
+                        android:textSize="18sp"
+                        tools:ignore="RtlHardcoded" />
+
+                    <io.legado.app.ui.widget.LabelsBar
+                        android:id="@+id/lb_kind"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:visibility="gone" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -202,7 +202,7 @@
                             android:paddingLeft="5dp"
                             android:paddingRight="5dp"
                             android:text="@string/change_origin"
-                            android:textSize="16sp"
+                            android:textSize="13sp"
                             app:radius="2dp" />
 
                     </LinearLayout>
@@ -241,6 +241,94 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp">
+
+                        <ImageView
+                            android:layout_width="18sp"
+                            android:layout_height="18sp"
+                            android:contentDescription="@string/read_dur_progress"
+                            android:paddingRight="2dp"
+                            android:src="@drawable/ic_groups"
+                            app:tint="@color/tv_text_summary"
+                            tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+                        <TextView
+                            android:id="@+id/tv_group"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:paddingRight="6dp"
+                            android:singleLine="true"
+                            android:text="@string/group_s"
+                            android:textColor="@color/tv_text_summary"
+                            android:textSize="13sp"
+                            tools:ignore="NestedWeights" />
+
+                        <io.legado.app.ui.widget.text.AccentBgTextView
+                            android:id="@+id/tv_change_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:text="@string/change_group"
+                            android:textSize="13sp"
+                            app:radius="2dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp">
+
+                        <ImageView
+                            android:layout_width="18sp"
+                            android:layout_height="18sp"
+                            android:contentDescription="@string/read_dur_progress"
+                            android:paddingRight="2dp"
+                            android:src="@drawable/ic_folder_open"
+                            app:tint="@color/tv_text_summary"
+                            tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+                        <TextView
+                            android:id="@+id/tv_toc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:paddingRight="6dp"
+                            android:singleLine="true"
+                            android:text="@string/toc_s"
+                            android:textColor="@color/tv_text_summary"
+                            android:textSize="13sp"
+                            tools:ignore="NestedWeights" />
+
+                        <io.legado.app.ui.widget.text.AccentBgTextView
+                            android:id="@+id/tv_toc_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:text="@string/view_toc"
+                            android:textSize="13sp"
+                            app:radius="2dp" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <io.legado.app.ui.widget.text.ScrollTextView
@@ -254,47 +342,17 @@
                     android:textColor="@color/tv_text_secondary"
                     android:textSize="14sp"
                     android:paddingLeft="8dp"
+                    android:paddingBottom="8dp"
                     android:visibility="visible" />
 
             </LinearLayout>
 
         </ScrollView>
 
-        <LinearLayout
-            android:id="@+id/view_other"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
-            android:orientation="vertical"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/fl_action"
-            app:layout_constraintTop_toBottomOf="@+id/view_info">
-
-            <TextView
-                android:id="@+id/tv_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:singleLine="true"
-                android:clickable="true"
-                android:text="@string/group_s"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_toc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground"
-                android:singleLine="true"
-                android:clickable="true"
-                android:text="@string/toc_s"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp" />
-
-        </LinearLayout>
+            android:layout_height="8dp"
+            android:background="@color/background"></View>
 
         <View
             android:layout_width="match_parent"
