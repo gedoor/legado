@@ -42,7 +42,12 @@ class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(co
             layout.getLineBottom(0) - 2.dp
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
-        polar.set(outFrame.right, outFrame.top + dj, width - 1.dp, outFrame.bottom - dj)
+        polar.set(
+            outFrame.right,
+            outFrame.top + dj,
+            width - 1.dp,
+            outFrame.bottom - dj
+        )
         batteryPaint.style = Paint.Style.STROKE
         canvas.drawRect(outFrame, batteryPaint)
         batteryPaint.style = Paint.Style.FILL
