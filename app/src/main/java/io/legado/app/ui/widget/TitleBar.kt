@@ -142,7 +142,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         backgroundColor = context.primaryColor
-        // targetElevation = context.elevation
+
         stateListAnimator = null
         elevation = if (AppConfig.elevation < 0) {
             context.elevation
