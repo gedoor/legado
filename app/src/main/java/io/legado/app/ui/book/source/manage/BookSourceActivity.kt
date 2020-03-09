@@ -40,6 +40,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.File
+import java.text.Collator
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     PopupMenu.OnMenuItemClickListener,
@@ -84,7 +85,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
+                .selectFile(
+                    this,
+                    importRequestCode,
+                    type = "text/*",
+                    allowExtensions = arrayOf("txt", "json")
+                )
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
@@ -197,9 +203,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
-        groups.map {
-            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-        }
+        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+            .map {
+                groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            }
     }
 
     @SuppressLint("InflateParams")
@@ -214,7 +221,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
-                    edit_view.setFilterValues(cacheUrls) {
+                    edit_view.setFilterValues(cacheUrls)
+                    edit_view.delCallBack = {
                         cacheUrls.remove(it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }

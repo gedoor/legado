@@ -16,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
@@ -32,7 +33,7 @@ class MoreConfigDialog : DialogFragment() {
         }
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.background)
-            it.decorView.setPadding(0, 5, 0, 0)
+            it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
@@ -47,7 +48,7 @@ class MoreConfigDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = LinearLayout(context)
-        view.setBackgroundResource(R.color.background)
+        view.setBackgroundColor(requireContext().bottomBackground)
         view.id = R.id.tag1
         container?.addView(view)
         return view

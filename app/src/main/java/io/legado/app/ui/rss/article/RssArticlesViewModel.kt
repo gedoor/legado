@@ -106,7 +106,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun clear() {
+    fun clearArticles() {
         execute {
             url?.let {
                 App.db.rssArticleDao().delete(it)

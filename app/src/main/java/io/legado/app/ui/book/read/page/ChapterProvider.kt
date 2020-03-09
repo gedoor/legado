@@ -13,9 +13,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
-import io.legado.app.utils.dp
-import io.legado.app.utils.getPrefString
-import io.legado.app.utils.removePref
+import io.legado.app.utils.*
 
 
 @Suppress("DEPRECATION")
@@ -28,8 +26,10 @@ object ChapterProvider {
     var visibleHeight = 0
     var visibleRight = 0
     var visibleBottom = 0
-    private var lineSpacingExtra = 0f
+    private var lineSpacingExtra = 0
     private var paragraphSpacing = 0
+    private var titleTopSpacing = 0
+    private var titleBottomSpacing = 0
     var typeface: Typeface = Typeface.SANS_SERIF
     var titlePaint = TextPaint()
     var contentPaint = TextPaint()
@@ -50,31 +50,16 @@ object ChapterProvider {
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
-        var surplusText = content
-        var durY = 0
+        val contents = content.split("\n")
+        var durY = 0f
         textPages.add(TextPage())
-        while (surplusText.isNotEmpty()) {
-            if (textPages.first().textLines.isEmpty()) {
-                //title
-                val end = surplusText.indexOf("\n")
-                if (end > 0) {
-                    val title = surplusText.substring(0, end)
-                    surplusText = surplusText.substring(end + 1)
-                    durY = joinTitle(title, durY, textPages, pageLines, pageLengths, stringBuilder)
-                }
-            } else {
-                //正文
-                val end = surplusText.indexOf("\n")
-                val text: String
-                if (end >= 0) {
-                    text = surplusText.substring(0, end)
-                    surplusText = surplusText.substring(end + 1)
-                } else {
-                    text = surplusText
-                    surplusText = ""
-                }
-                durY = joinBody(text, durY, textPages, pageLines, pageLengths, stringBuilder)
+        for ((index, text) in contents.withIndex()) {
+            val isTitle = index == 0
+            if (isTitle && ReadBookConfig.titleMode == 2) {
+                continue
             }
+            durY =
+                setTypeText(text, durY, textPages, pageLines, pageLengths, stringBuilder, isTitle)
         }
         textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
@@ -90,6 +75,7 @@ object ChapterProvider {
             item.chapterIndex = bookChapter.index
             item.chapterSize = chapterSize
             item.title = bookChapter.title
+            item.upLinesPosition(visibleHeight)
         }
         return TextChapter(
             bookChapter.index,
@@ -103,119 +89,64 @@ object ChapterProvider {
     }
 
     /**
-     * 标题
+     * 排版文字
      */
-    private fun joinTitle(
-        title: String,
-        y: Int,
-        textPages: ArrayList<TextPage>,
-        pageLines: ArrayList<Int>,
-        pageLengths: ArrayList<Int>,
-        stringBuilder: StringBuilder
-    ): Int {
-        var durY = y
-        val layout = StaticLayout(
-            title, titlePaint, visibleWidth,
-            Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
-        )
-        for (lineIndex in 0 until layout.lineCount) {
-            textPages.last().height = durY
-            val textLine = TextLine(isTitle = true)
-            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
-                + contentPaint.fontMetrics.descent < visibleHeight
-            ) {
-                textPages.last().textLines.add(textLine)
-                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-            } else {
-                textPages.last().text = stringBuilder.toString()
-                stringBuilder.clear()
-                pageLines.add(textPages.last().textLines.size)
-                pageLengths.add(textPages.last().text.length)
-                //新页面
-                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-                textPages.add(TextPage())
-                textPages.last().textLines.add(textLine)
-            }
-            textLine.lineTop = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
-            textLine.lineBase = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
-            textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
-            val words =
-                title.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
-            stringBuilder.append(words)
-            textLine.text = words
-            val desiredWidth = layout.getLineWidth(lineIndex)
-            if (lineIndex != layout.lineCount - 1) {
-                addCharsToLineMiddle(textLine, words, titlePaint, desiredWidth, 0f)
-            } else {
-                //最后一行
-                val x = if (ReadBookConfig.titleCenter)
-                    (visibleWidth - layout.getLineWidth(lineIndex)) / 2
-                else 0f
-                addCharsToLineLast(textLine, words, stringBuilder, titlePaint, x)
-            }
-        }
-        durY += paragraphSpacing
-        return durY
-    }
-
-    /**
-     * 正文
-     */
-    private fun joinBody(
+    private fun setTypeText(
         text: String,
-        y: Int,
+        y: Float,
         textPages: ArrayList<TextPage>,
         pageLines: ArrayList<Int>,
         pageLengths: ArrayList<Int>,
-        stringBuilder: StringBuilder
-    ): Int {
-        var durY = y
+        stringBuilder: StringBuilder,
+        isTitle: Boolean
+    ): Float {
+        var durY = if (isTitle) y + titleTopSpacing else y
+        val textPaint = if (isTitle) titlePaint else contentPaint
         val layout = StaticLayout(
-            text, contentPaint, visibleWidth,
-            Layout.Alignment.ALIGN_NORMAL, 1f, lineSpacingExtra, true
+            text, textPaint, visibleWidth,
+            Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         for (lineIndex in 0 until layout.lineCount) {
-            textPages.last().height = durY
-            val textLine = TextLine()
-            if (durY + layout.getLineBaseline(lineIndex) - layout.getLineTop(lineIndex)
-                + contentPaint.fontMetrics.descent < visibleHeight
-            ) {
-                textPages.last().textLines.add(textLine)
-                durY = durY + layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-            } else {
-                textPages.last().text = stringBuilder.toString()
-                stringBuilder.clear()
-                pageLines.add(textPages.last().textLines.size)
-                pageLengths.add(textPages.last().text.length)
-                //新页面
-                durY = layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)
-                textPages.add(TextPage())
-                textPages.last().textLines.add(textLine)
-            }
-            textLine.lineTop = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex))).toFloat()
-            textLine.lineBase = (paddingTop + durY -
-                    (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex))).toFloat()
-            textLine.lineBottom = textLine.lineBase + contentPaint.fontMetrics.descent
+            val textLine = TextLine(isTitle = isTitle)
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
-            stringBuilder.append(words)
             textLine.text = words
             val desiredWidth = layout.getLineWidth(lineIndex)
-            if (lineIndex == 0 && layout.lineCount > 1) {
+            var isLastLine = false
+            if (lineIndex == 0 && layout.lineCount > 1 && !isTitle) {
                 //第一行
-                addCharsToLineFirst(textLine, words, contentPaint, desiredWidth)
+                addCharsToLineFirst(textLine, words, textPaint, desiredWidth)
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
-                addCharsToLineLast(textLine, words, stringBuilder, contentPaint, 0f)
+                isLastLine = true
+                val x = if (isTitle && ReadBookConfig.titleMode == 1)
+                    (visibleWidth - layout.getLineWidth(lineIndex)) / 2
+                else 0f
+                addCharsToLineLast(textLine, words, textPaint, x)
             } else {
                 //中间行
-                addCharsToLineMiddle(textLine, words, contentPaint, desiredWidth, 0f)
+                addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
             }
+            if (durY + textPaint.textHeight > visibleHeight) {
+                //当前页面结束,设置各种值
+                textPages.last().text = stringBuilder.toString()
+                pageLines.add(textPages.last().textLines.size)
+                pageLengths.add(textPages.last().text.length)
+                textPages.last().height = durY
+                //新建页面
+                textPages.add(TextPage())
+                stringBuilder.clear()
+                durY = 0f
+            }
+            stringBuilder.append(words)
+            if (isLastLine) stringBuilder.append("\n")
+            textPages.last().textLines.add(textLine)
+            textLine.upTopBottom(durY, textPaint)
+            durY += textPaint.textHeight * lineSpacingExtra / 10f
+            textPages.last().height = durY
         }
-        durY += paragraphSpacing
+        if (isTitle) durY += titleBottomSpacing
+        durY += textPaint.textHeight * paragraphSpacing / 10f
         return durY
     }
 
@@ -231,10 +162,10 @@ object ChapterProvider {
         var x = 0f
         val bodyIndent = ReadBookConfig.bodyIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
-        for (i in 0..bodyIndent.lastIndex) {
+        bodyIndent.toStringArray().forEach {
             val x1 = x + icw
             textLine.addTextChar(
-                charData = bodyIndent[i].toString(),
+                charData = it,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
@@ -257,12 +188,11 @@ object ChapterProvider {
         val gapCount: Int = words.length - 1
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
-        for (i in words.indices) {
-            val char = words[i]
-            val cw = StaticLayout.getDesiredWidth(char.toString(), textPaint)
+        for ((i, char) in words.toStringArray().withIndex()) {
+            val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
             textLine.addTextChar(
-                charData = char.toString(),
+                charData = char,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
@@ -277,19 +207,16 @@ object ChapterProvider {
     private fun addCharsToLineLast(
         textLine: TextLine,
         words: String,
-        stringBuilder: StringBuilder,
         textPaint: TextPaint,
         startX: Float
     ) {
-        stringBuilder.append("\n")
         textLine.text = "$words\n"
         var x = startX
-        for (i in words.indices) {
-            val char = words[i].toString()
-            val cw = StaticLayout.getDesiredWidth(char, textPaint)
+        words.toStringArray().forEach {
+            val cw = StaticLayout.getDesiredWidth(it, textPaint)
             val x1 = x + cw
             textLine.addTextChar(
-                charData = char,
+                charData = it,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
@@ -339,18 +266,19 @@ object ChapterProvider {
         titlePaint.color = ReadBookConfig.durConfig.textColor()
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
         titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
+        titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
         //正文
         contentPaint.isAntiAlias = true
         contentPaint.color = ReadBookConfig.durConfig.textColor()
         contentPaint.letterSpacing = ReadBookConfig.letterSpacing
-        val bold = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
-        contentPaint.typeface = Typeface.create(typeface, bold)
+        val style = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
+        contentPaint.typeface = Typeface.create(typeface, style)
+        contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
         //间距
-        lineSpacingExtra = ReadBookConfig.lineSpacingExtra.dp.toFloat()
-        paragraphSpacing = ReadBookConfig.paragraphSpacing.dp
-        titlePaint.textSize = (ReadBookConfig.textSize + 2).dp.toFloat()
-        contentPaint.textSize = ReadBookConfig.textSize.dp.toFloat()
-
+        lineSpacingExtra = ReadBookConfig.lineSpacingExtra
+        paragraphSpacing = ReadBookConfig.paragraphSpacing
+        titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
+        titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
         upSize()
     }
 
@@ -366,4 +294,6 @@ object ChapterProvider {
         visibleBottom = paddingTop + visibleHeight
     }
 
+    val TextPaint.textHeight: Float
+        get() = fontMetrics.descent - fontMetrics.ascent + fontMetrics.leading
 }

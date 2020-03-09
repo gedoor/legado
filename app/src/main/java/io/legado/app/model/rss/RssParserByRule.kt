@@ -1,5 +1,6 @@
 package io.legado.app.model.rss
 
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
@@ -8,6 +9,7 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.NetworkUtils
 
+@Keep
 object RssParserByRule {
 
     @Throws(Exception::class)

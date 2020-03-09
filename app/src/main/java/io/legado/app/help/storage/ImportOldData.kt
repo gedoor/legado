@@ -36,7 +36,7 @@ object ImportOldData {
 
             try {// Book source
                 val sourceFile =
-                    FileUtils.createFileIfNotExist(file, "myBookSource.json")
+                    FileUtils.getFile(file, "myBookSource.json")
                 val json = sourceFile.readText()
                 val importCount = importOldSource(json)
                 withContext(Dispatchers.Main) {
@@ -49,12 +49,17 @@ object ImportOldData {
             }
 
             try {// Replace rules
-                val ruleFile =
-                    FileUtils.createFileIfNotExist(file, "myBookReplaceRule.json")
-                val json = ruleFile.readText()
-                val importCount = importOldReplaceRule(json)
-                withContext(Dispatchers.Main) {
-                    context.toast("成功导入替换规则${importCount}")
+                val ruleFile = FileUtils.getFile(file, "myBookReplaceRule.json")
+                if (ruleFile.exists()) {
+                    val json = ruleFile.readText()
+                    val importCount = importOldReplaceRule(json)
+                    withContext(Dispatchers.Main) {
+                        context.toast("成功导入替换规则${importCount}")
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        context.toast("未找到替换规则")
+                    }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -131,13 +136,17 @@ object ImportOldData {
         return bookSources.size
     }
 
+
+
     fun importOldReplaceRule(json: String): Int {
         val replaceRules = mutableListOf<ReplaceRule>()
         val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
         for (item in items) {
             val jsonItem = Restore.jsonPath.parse(item)
             OldRule.jsonToReplaceRule(jsonItem.jsonString())?.let {
-                replaceRules.add(it)
+                if (it.isValid()){
+                    replaceRules.add(it)
+                }
             }
         }
         App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())

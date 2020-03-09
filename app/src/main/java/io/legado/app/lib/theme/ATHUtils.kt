@@ -19,4 +19,16 @@ object ATHUtils {
             a.recycle()
         }
     }
+
+    @JvmOverloads
+    fun resolveFloat(context: Context, @AttrRes attr: Int, fallback: Float = 0.0f): Float {
+        val a = context.theme.obtainStyledAttributes(intArrayOf(attr))
+        return try {
+            a.getFloat(0, fallback)
+        } catch (e: Exception) {
+            fallback
+        } finally {
+            a.recycle()
+        }
+    }
 }

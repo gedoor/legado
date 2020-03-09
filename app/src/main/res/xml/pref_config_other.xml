@@ -38,6 +38,11 @@
             app:iconSpaceReserved="false" />
 
         <Preference
+            android:key="webPort"
+            android:title="@string/web_port_title"
+            app:iconSpaceReserved="false" />
+
+        <Preference
             android:key="downloadPath"
             android:title="@string/download_path"
             app:iconSpaceReserved="false" />

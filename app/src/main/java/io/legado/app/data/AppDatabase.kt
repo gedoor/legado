@@ -32,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .fallbackToDestructiveMigration()
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
-                        GlobalScope.launch { Restore.restore(Backup.backupPath) }
+                        GlobalScope.launch { Restore.restoreDatabase(Backup.backupPath) }
                     }
                 })
                 .build()

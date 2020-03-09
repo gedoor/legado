@@ -58,12 +58,12 @@ class SourceController {
     }
 
     fun getSource(parameters: Map<String, List<String>>): ReturnData {
-        val strings = parameters["url"]
+        val url = parameters["url"]?.getOrNull(0)
         val returnData = ReturnData()
-        if (strings == null) {
+        if (url.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书源地址")
         }
-        val bookSource = App.db.bookSourceDao().getBookSource(strings[0])
+        val bookSource = App.db.bookSourceDao().getBookSource(url)
             ?: return returnData.setErrorMsg("未找到书源，请检查书源地址")
         return returnData.setData(bookSource)
     }

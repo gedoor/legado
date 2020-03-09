@@ -39,7 +39,7 @@ object BookContent {
         var contentData = analyzeContent(
             book, baseUrl, body, contentRule, bookChapter, bookSource
         )
-        content.append(contentData.content.replace(bookChapter.title, ""))
+        content.append(contentData.content.replace(bookChapter.title, "")).append("\n")
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
             val nextChapterUrl = if (!nextChapterUrlF.isNullOrEmpty())
@@ -64,7 +64,7 @@ object BookContent {
                         )
                     nextUrl =
                         if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
-                    content.append(contentData.content)
+                    content.append(contentData.content).append("\n")
                 }
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
@@ -91,7 +91,7 @@ object BookContent {
                 }
             }
             for (item in contentDataList) {
-                content.append(item.content)
+                content.append(item.content).append("\n")
             }
         }
 

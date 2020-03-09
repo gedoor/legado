@@ -133,18 +133,24 @@
             android:name=".ui.about.DonateActivity"
             android:launchMode="singleTask" />
         <!--书源管理-->
-        <activity android:name=".ui.book.source.manage.BookSourceActivity">
+        <activity
+            android:name=".ui.book.source.manage.BookSourceActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="booksource"
                     android:scheme="yuedu" />
             </intent-filter>
         </activity>
         <!--订阅源管理-->
-        <activity android:name=".ui.rss.source.manage.RssSourceActivity">
+        <activity
+            android:name=".ui.rss.source.manage.RssSourceActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -159,7 +165,7 @@
         <!--替换规则界面-->
         <activity
             android:name=".ui.replacerule.ReplaceRuleActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -171,16 +177,43 @@
                     android:scheme="yuedu" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.book.arrange.ArrangeBookActivity" />
-        <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
-        <activity android:name=".ui.chapterlist.ChapterListActivity" />
-        <activity android:name=".ui.rss.read.ReadRssActivity" />
-        <activity android:name=".ui.importbook.ImportBookActivity" />
-        <activity android:name=".ui.explore.ExploreShowActivity" />
-        <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
-        <activity android:name=".ui.rss.article.RssArticlesActivity" />
-        <activity android:name=".ui.rss.favorites.RssFavoritesActivity" />
-        <activity android:name=".ui.download.DownloadActivity" />
+        <activity
+            android:name=".ui.book.arrange.ArrangeBookActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.book.source.debug.BookSourceDebugActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="io.legado.app.ui.book.chapterlist.ChapterListActivity"
+            android:launchMode="singleTop" />
+        <!--RSS阅读-->
+        <activity
+            android:name=".ui.rss.read.ReadRssActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="io.legado.app.ui.book.local.ImportBookActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="io.legado.app.ui.book.explore.ExploreShowActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.rss.source.debug.RssSourceDebugActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.rss.article.RssArticlesActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.rss.favorites.RssFavoritesActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="io.legado.app.ui.book.download.DownloadActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.login.SourceLogin"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
         <activity
             android:name=".receiver.SharedReceiverActivity"
             android:label="@string/receiving_shared_label">
@@ -195,7 +228,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.login.SourceLogin" />
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />

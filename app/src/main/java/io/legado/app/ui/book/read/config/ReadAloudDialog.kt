@@ -7,10 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -22,7 +23,7 @@ import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadAloudDialog : DialogFragment() {
+class ReadAloudDialog : BaseDialogFragment() {
     var callBack: CallBack? = null
 
     override fun onStart() {
@@ -52,20 +53,17 @@ class ReadAloudDialog : DialogFragment() {
         return inflater.inflate(R.layout.dialog_read_aloud, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initData()
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        ll_bottom_bg.setBackgroundColor(requireContext().bottomBackground)
         initOnChange()
+        initData()
         initOnClick()
     }
 
     private fun initData() {
-        observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
-        observeEvent<Int>(EventBus.TTS_DS) { seek_timer.progress = it }
         upPlayState()
+        upTimerText(BaseReadAloudService.timeMinute)
         seek_timer.progress = BaseReadAloudService.timeMinute
-        tv_timer.text =
-            requireContext().getString(R.string.timer_m, BaseReadAloudService.timeMinute)
         cb_tts_follow_sys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seek_tts_SpeechRate.isEnabled = !cb_tts_follow_sys.isChecked
         seek_tts_SpeechRate.progress = AppConfig.ttsSpeechRate
@@ -92,7 +90,7 @@ class ReadAloudDialog : DialogFragment() {
         })
         seek_timer.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                tv_timer.text = requireContext().getString(R.string.timer_m, progress)
+                upTimerText(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
@@ -129,12 +127,21 @@ class ReadAloudDialog : DialogFragment() {
         }
     }
 
+    private fun upTimerText(timeMinute: Int) {
+        tv_timer.text = requireContext().getString(R.string.timer_m, timeMinute)
+    }
+
     private fun upTtsSpeechRate() {
         ReadAloud.upTtsSpeechRate(requireContext())
         if (!BaseReadAloudService.pause) {
             ReadAloud.pause(requireContext())
             ReadAloud.resume(requireContext())
         }
+    }
+
+    override fun observeLiveBus() {
+        observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
+        observeEvent<Int>(EventBus.TTS_DS) { seek_timer.progress = it }
     }
 
     interface CallBack {

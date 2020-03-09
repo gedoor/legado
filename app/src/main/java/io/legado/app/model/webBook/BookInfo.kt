@@ -2,6 +2,7 @@ package io.legado.app.model.webBook
 
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.Debug
@@ -38,7 +39,7 @@ object BookInfo {
         Debug.log(bookSource.bookSourceUrl, "└${book.name}")
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
         analyzeRule.getString(infoRule.author).let {
-            if (it.isNotEmpty()) book.author = it
+            if (it.isNotEmpty()) book.author = it.replace(AppPattern.authorRegex, "")
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.author}")
         Debug.log(bookSource.bookSourceUrl, "┌获取分类")

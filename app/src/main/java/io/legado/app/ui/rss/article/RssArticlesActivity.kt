@@ -60,7 +60,7 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
             R.id.menu_clear -> {
                 viewModel.url?.let {
                     refresh_progress_bar.isAutoLoading = true
-                    viewModel.clear()
+                    viewModel.clearArticles()
                 }
             }
         }

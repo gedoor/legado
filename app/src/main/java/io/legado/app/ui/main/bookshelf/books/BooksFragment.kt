@@ -7,7 +7,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -57,9 +56,6 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
         initRecyclerView()
         upRecyclerData()
-        observeEvent<String>(EventBus.UP_BOOK) {
-            booksAdapter.notification(it)
-        }
     }
 
     private fun initRecyclerView() {
@@ -78,21 +74,6 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterGrid(requireContext(),this)
         }
         rv_bookshelf.adapter = booksAdapter
-        booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                if (positionStart == 0) {
-                    rv_bookshelf.scrollToPosition(0)
-                }
-            }
-
-            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
-                if (toPosition == 0) {
-                    rv_bookshelf.scrollToPosition(0)
-                }
-            }
-        })
     }
 
     private fun upRecyclerData() {
@@ -111,7 +92,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
                 else -> list.sortedByDescending { it.durChapterTime }
             }
             val diffResult = DiffUtil
-                .calculateDiff(BooksDiffCallBack(ArrayList(booksAdapter.getItems()), books))
+                .calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), books))
             booksAdapter.setItems(books, diffResult)
         })
     }
@@ -135,4 +116,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         return bookUrl in activityViewModel.updateList
     }
 
+    override fun observeLiveBus() {
+        super.observeLiveBus()
+        observeEvent<String>(EventBus.UP_BOOK) {
+            booksAdapter.notification(it)
+        }
+    }
 }

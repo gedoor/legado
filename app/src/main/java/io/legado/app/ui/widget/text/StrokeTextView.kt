@@ -12,10 +12,24 @@ import io.legado.app.utils.getCompatColor
 open class StrokeTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {
 
+    private var radius = 1.dp
+
     init {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.StrokeTextView)
+        radius = typedArray.getDimensionPixelOffset(R.styleable.StrokeTextView_radius, radius)
+        typedArray.recycle()
+        upBackground()
+    }
+
+    fun setRadius(radius: Int) {
+        this.radius = radius.dp
+        upBackground()
+    }
+
+    private fun upBackground() {
         if (isInEditMode) {
             background = Selector.shapeBuild()
-                .setCornerRadius(1.dp)
+                .setCornerRadius(radius)
                 .setStrokeWidth(1.dp)
                 .setDisabledStrokeColor(context.getCompatColor(R.color.md_grey_500))
                 .setDefaultStrokeColor(context.getCompatColor(R.color.tv_text_secondary))
@@ -31,7 +45,7 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
             )
         } else {
             background = Selector.shapeBuild()
-                .setCornerRadius(1.dp)
+                .setCornerRadius(radius)
                 .setStrokeWidth(1.dp)
                 .setDisabledStrokeColor(context.getCompatColor(R.color.md_grey_500))
                 .setDefaultStrokeColor(ThemeStore.textColorSecondary(context))

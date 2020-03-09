@@ -15,6 +15,10 @@
                 android:title="@string/group_manage" />
 
             <item
+                android:id="@+id/menu_no_group"
+                android:title="@string/no_group" />
+
+            <item
                 android:id="@+id/menu_all"
                 android:title="@string/all" />
 

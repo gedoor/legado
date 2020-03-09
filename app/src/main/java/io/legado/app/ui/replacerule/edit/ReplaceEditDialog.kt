@@ -16,6 +16,7 @@ import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.dialog_replace_edit.*
 
 class ReplaceEditDialog : DialogFragment(),
@@ -73,9 +74,15 @@ class ReplaceEditDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_save -> {
-                viewModel.save(getReplaceRule()) {
-                    callBack?.onReplaceRuleSave()
-                    dismiss()
+                val rule = getReplaceRule();
+                if (!rule.isValid()){
+                    toast(R.string.replace_rule_invalid)
+                }
+                else{
+                    viewModel.save(rule) {
+                        callBack?.onReplaceRuleSave()
+                        dismiss()
+                    }
                 }
             }
         }

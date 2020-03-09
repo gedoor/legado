@@ -160,7 +160,7 @@
     <string name="add_book_url">添加书籍网址</string>
     <string name="background">背景</string>
     <string name="author">作者</string>
-    <string name="author_show">作者:%s</string>
+    <string name="author_show">作者: %s</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_cache">清除缓存</string>
     <string name="clear_cache_success">成功清理缓存</string>
@@ -204,6 +204,7 @@
     <string name="clear_all_content">清除缓存会删除所有已保存章节,是否确认删除?</string>
     <string name="book_source_share_url">书源共享</string>
     <string name="replace_rule_summary">替换规则名称</string>
+    <string name="replace_rule_invalid">替换规则为空或者不满足正则表达式要求</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
     <string name="select_all_count">全选(%d/%d)</string>
@@ -226,13 +227,14 @@
     <string name="open_from_other">打开外部书籍</string>
     <string name="origin_show">来源:%s</string>
     <string name="import_replace_rule">本地导入</string>
-    <string name="import_replace_rule_on_line">网络导入</string>
+    <string name="import_replace_rule_on_line">导入在线规则</string>
     <string name="check_update_interval">检查更新间隔</string>
     <string name="bookshelf_px_0">按阅读时间</string>
     <string name="bookshelf_px_1">按更新时间</string>
     <string name="bookshelf_px_2">按书名</string>
     <string name="bookshelf_px_3">手动排序</string>
     <string name="read_type">阅读方式</string>
+    <string name="compose_type">排版</string>
     <string name="del_select">删除所选</string>
     <string name="del_msg">是否确认删除?</string>
     <string name="clear_font">默认字体</string>
@@ -328,6 +330,7 @@
     <string name="volume_key_page_on_play">朗读时音量键翻页</string>
     <string name="tip_margin_change">Tip边距跟随边距调整</string>
     <string name="allow_update">允许更新</string>
+    <string name="disable_update">禁止更新</string>
     <string name="revert_selection">反选</string>
     <string name="search_book_key">搜索书名、作者</string>
     <string name="debug_hint">书名、作者、URL</string>
@@ -496,8 +499,6 @@
     <string name="content_empty">文章内容为空</string>
     <string name="on_change_source">正在换源请等待…</string>
     <string name="chapter_list_empty">目录列表为空</string>
-    <string name="content_padding">正文边距</string>
-    <string name="tip_padding">Tip边距</string>
     <string name="text_letter_spacing">字距</string>
 
     <string name="source_tab_base">基本</string>
@@ -616,11 +617,10 @@
     <string name="selectText">长按选择文本</string>
     <string name="header">页眉</string>
     <string name="main_body">正文</string>
-    <string name="footer">页角</string>
+    <string name="footer">页脚</string>
     <string name="select_end">文本选择结束位置</string>
     <string name="select_start">文本选择开始位置</string>
     <string name="share_layout">共用布局</string>
-    <string name="title_center">标题居中</string>
     <string name="browser">浏览器</string>
     <string name="import_default_rule">导入默认规则</string>
     <string name="name">名称</string>
@@ -630,4 +630,21 @@
     <string name="plus">加</string>
     <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
+    <string name="sure_delete_book_file">是否删除源文件</string>
+    <string name="default1">预设一</string>
+    <string name="default2">预设二</string>
+    <string name="default3">预设三</string>
+    <string name="title">标题</string>
+    <string name="title_left">靠左</string>
+    <string name="title_center">居中</string>
+    <string name="title_hide">隐藏</string>
+    <string name="add_to_group">加入分组</string>
+    <string name="save_image">保存图片</string>
+    <string name="no_default_path">没有默认路径</string>
+    <string name="change_group">设置分组</string>
+    <string name="view_toc">查看目录</string>
+    <string name="bar_elevation">导航栏阴影</string>
+    <string name="bar_elevation_s">当前阴影大小(elevation): %s</string>
+    <string name="btn_default_s">默认</string>
+
 </resources>

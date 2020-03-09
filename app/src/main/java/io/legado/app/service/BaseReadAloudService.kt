@@ -124,16 +124,16 @@ abstract class BaseReadAloudService : BaseService(),
 
     open fun play() {
         pause = false
-        postEvent(EventBus.ALOUD_STATE, Status.PLAY)
         upNotification()
+        postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
 
     @CallSuper
     open fun pauseReadAloud(pause: Boolean) {
-        postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
         BaseReadAloudService.pause = pause
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
     }
 
     @CallSuper

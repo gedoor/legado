@@ -57,6 +57,16 @@ object HttpHelper {
         return null
     }
 
+    suspend fun simpleGetByteAsync(url: String): ByteArray? {
+        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
+            return getByteRetrofit(baseUrl)
+                .create(HttpGetApi::class.java)
+                .getMapByteAsync(url, mapOf(), mapOf())
+                .body()
+        }
+        return null
+    }
+
     inline fun <reified T> getApiService(baseUrl: String, encode: String? = null): T {
         return getRetrofit(baseUrl, encode).create(T::class.java)
     }

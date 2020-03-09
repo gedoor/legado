@@ -39,6 +39,8 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.File
+import java.text.Collator
+import java.util.*
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
@@ -81,7 +83,12 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
+                .selectFile(
+                    this,
+                    importRequestCode,
+                    type = "text/*",
+                    allowExtensions = arrayOf("txt", "json")
+                )
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage -> GroupManageDialog()
@@ -190,9 +197,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
-        groups.map {
-            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-        }
+        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+            .map {
+                groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            }
     }
 
     private fun initLiveDataSource(key: String? = null) {
@@ -227,7 +235,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
-                    edit_view.setFilterValues(cacheUrls) {
+                    edit_view.setFilterValues(cacheUrls)
+                    edit_view.delCallBack = {
                         cacheUrls.remove(it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }

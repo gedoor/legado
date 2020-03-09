@@ -202,7 +202,6 @@ constructor(urlStr: String) {
      * 上传文件
      */
     @Throws(IOException::class)
-    @JvmOverloads
     fun upload(localPath: String, contentType: String? = null): Boolean {
         val file = File(localPath)
         if (!file.exists()) return false

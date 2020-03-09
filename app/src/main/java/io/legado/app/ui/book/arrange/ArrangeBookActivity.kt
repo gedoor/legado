@@ -32,6 +32,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         get() = getViewModel(ArrangeBookViewModel::class.java)
     override val groupList: ArrayList<BookGroup> = arrayListOf()
     private val groupRequestCode = 22
+    private val addToGroupRequestCode = 34
     private lateinit var adapter: ArrangeBookAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
     private var booksLiveData: LiveData<List<Book>>? = null
@@ -99,10 +100,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 -1 -> App.db.bookDao().observeAll()
                 -2 -> App.db.bookDao().observeLocal()
                 -3 -> App.db.bookDao().observeAudio()
+                -11 -> App.db.bookDao().observeNoGroup()
                 else -> App.db.bookDao().observeByGroup(groupId)
             }
         booksLiveData?.observe(this, Observer {
-            adapter.selectedBooks.clear()
             adapter.setItems(it)
             upSelectCount()
         })
@@ -112,28 +113,29 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         when (item.itemId) {
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "groupManage")
+            R.id.menu_no_group -> {
+                title_bar.subtitle = getString(R.string.no_group)
+                groupId = -11
+                initBookData()
+            }
             R.id.menu_all -> {
                 title_bar.subtitle = item.title
                 groupId = -1
-                adapter.selectedBooks.clear()
                 initBookData()
             }
             R.id.menu_local -> {
                 title_bar.subtitle = item.title
                 groupId = -2
-                adapter.selectedBooks.clear()
                 initBookData()
             }
             R.id.menu_audio -> {
                 title_bar.subtitle = item.title
                 groupId = -3
-                adapter.selectedBooks.clear()
                 initBookData()
             }
             else -> if (item.groupId == R.id.menu_group) {
                 title_bar.subtitle = item.title
                 groupId = item.itemId
-                adapter.selectedBooks.clear()
                 initBookData()
             }
         }
@@ -144,9 +146,14 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         when (item?.itemId) {
             R.id.menu_del_selection ->
                 alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-                    okButton { viewModel.deleteBook(*adapter.selectedBooks.toTypedArray()) }
+                    okButton { viewModel.deleteBook(*adapter.selectedBooks()) }
                     noButton { }
                 }.show().applyTint()
+            R.id.menu_update_enable ->
+                viewModel.upCanUpdate(adapter.selectedBooks(), true)
+            R.id.menu_update_disable ->
+                viewModel.upCanUpdate(adapter.selectedBooks(), false)
+            R.id.menu_add_to_group -> selectGroup(0, addToGroupRequestCode)
         }
         return false
     }
@@ -168,7 +175,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         when (requestCode) {
             groupRequestCode -> {
                 val books = arrayListOf<Book>()
-                adapter.selectedBooks.forEach {
+                adapter.selectedBooks().forEach {
                     books.add(it.copy(group = groupId))
                 }
                 viewModel.updateBook(*books.toTypedArray())
@@ -178,11 +185,18 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                     viewModel.updateBook(it.copy(group = groupId))
                 }
             }
+            addToGroupRequestCode -> {
+                val books = arrayListOf<Book>()
+                adapter.selectedBooks().forEach {
+                    books.add(it.copy(group = it.group or groupId))
+                }
+                viewModel.updateBook(*books.toTypedArray())
+            }
         }
     }
 
     override fun upSelectCount() {
-        select_action_bar.upCountView(adapter.selectedBooks.size, adapter.getItems().size)
+        select_action_bar.upCountView(adapter.selectedBooks().size, adapter.getItems().size)
     }
 
     override fun deleteBook(book: Book) {

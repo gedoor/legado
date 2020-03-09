@@ -4,9 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_search"
-        android:title="@string/search"
+        android:id="@+id/menu_screen"
+        android:title="@string/screen"
+        android:icon="@drawable/ic_screen"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_stop"
+        android:title="@string/stop"
+        android:icon="@drawable/ic_stop_black_24dp"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 

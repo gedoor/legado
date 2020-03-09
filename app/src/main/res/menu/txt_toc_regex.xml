@@ -15,4 +15,9 @@
         android:title="@string/import_default_rule"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_import"
+        android:title="@string/import_replace_rule_on_line"
+        app:showAsAction="never" />
+
 </menu>
