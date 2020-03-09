@@ -22,9 +22,9 @@ data class TextPage(
         if (textLines.size <= 1) return
         if (visibleHeight - height > with(textLines.last()) { lineBottom - lineTop }) return
         val surplus = (visibleHeight - textLines.last().lineBottom)
+        if (surplus == 0f) return
         height += surplus
         val tj = surplus / (textLines.size - 1)
-        if (tj == 0f) return
         for (i in 1 until textLines.size) {
             val line = textLines[i]
             line.lineTop = line.lineTop + tj * i
