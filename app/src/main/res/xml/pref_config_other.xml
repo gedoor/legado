@@ -8,10 +8,10 @@
 
         <ListPreference
             android:key="@string/pk_requested_direction"
-            android:defaultValue="@string/screen_unspecified"
+            android:defaultValue="0"
             android:title="@string/screen_direction"
             android:entries="@array/screen_direction_title"
-            android:entryValues="@array/screen_direction_title"
+            android:entryValues="@array/screen_direction_value"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
