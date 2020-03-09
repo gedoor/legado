@@ -8,9 +8,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
-import io.legado.app.R
 import io.legado.app.utils.dp
-import io.legado.app.utils.getCompatColor
 
 class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     private val batteryPaint = Paint()
@@ -21,7 +19,7 @@ class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(co
         setPadding(4.dp, 0, 6.dp, 0)
         batteryPaint.strokeWidth = 1.dp.toFloat()
         batteryPaint.isAntiAlias = true
-        batteryPaint.color = context.getCompatColor(R.color.tv_text_default)
+        batteryPaint.color = paint.color
     }
 
     fun setColor(@ColorInt color: Int) {
