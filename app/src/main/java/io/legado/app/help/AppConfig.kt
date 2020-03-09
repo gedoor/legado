@@ -32,6 +32,9 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("transparentStatusBar", value)
         }
 
+    val requestedDirection: String?
+        get() = App.INSTANCE.getPrefString(R.string.pk_requested_direction)
+
     var backupPath: String?
         get() = App.INSTANCE.getPrefString(PreferKey.backupPath)
         set(value) {

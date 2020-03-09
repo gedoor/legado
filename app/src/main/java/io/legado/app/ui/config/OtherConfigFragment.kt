@@ -43,6 +43,10 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         upPreferenceSummary(getString(R.string.pk_download_path), BookHelp.downloadPath)
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
         upPreferenceSummary(PreferKey.webPort, webPort.toString())
+        upPreferenceSummary(
+            getString(R.string.pk_requested_direction),
+            AppConfig.requestedDirection
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,6 +107,9 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 setProcessTextEnable(it.getBoolean(key, true))
             }
             PreferKey.showRss -> postEvent(EventBus.SHOW_RSS, "unused")
+            getString(R.string.pk_requested_direction) -> {
+                upPreferenceSummary(key, AppConfig.requestedDirection)
+            }
         }
     }
 
