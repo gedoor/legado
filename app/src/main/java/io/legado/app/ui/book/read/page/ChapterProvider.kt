@@ -50,7 +50,7 @@ object ChapterProvider {
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
-        val contents = content.split("\n")
+        val contents = content.splitNotBlank("\n")
         var durY = 0f
         textPages.add(TextPage())
         for ((index, text) in contents.withIndex()) {
