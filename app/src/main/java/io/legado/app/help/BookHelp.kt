@@ -300,6 +300,8 @@ object BookHelp {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
         }
-        return c.replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
+        return c
+            .replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
+            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
     }
 }
