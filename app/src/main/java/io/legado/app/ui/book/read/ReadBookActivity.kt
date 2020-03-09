@@ -349,7 +349,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_DOWN -> textActionMenu?.dismiss()
+            MotionEvent.ACTION_MOVE -> {
                 when (v.id) {
                     R.id.cursor_left -> page_view.curPage.selectStartMove(
                         event.rawX + cursor_left.width,
@@ -361,6 +362,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     )
                 }
             }
+            MotionEvent.ACTION_UP -> showTextActionMenu()
         }
         return true
     }
@@ -372,7 +374,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         cursor_left.x = x - cursor_left.width
         cursor_left.y = y
         cursor_left.visible(true)
-        showTextActionMenu()
     }
 
     /**
@@ -382,7 +383,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         cursor_right.x = x
         cursor_right.y = y
         cursor_right.visible(true)
-        showTextActionMenu()
     }
 
     /**
@@ -397,7 +397,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 显示文本操作菜单
      */
-    private fun showTextActionMenu() {
+    override fun showTextActionMenu() {
         textActionMenu ?: let {
             textActionMenu = TextActionMenu(this, this)
         }
