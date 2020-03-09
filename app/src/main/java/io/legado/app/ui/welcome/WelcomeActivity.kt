@@ -48,7 +48,7 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     private fun startMainActivity() {
         startActivity<MainActivity>()
-        if (getPrefBoolean(getString(R.string.pk_default_read))) {
+        if (getPrefBoolean(R.string.pk_default_read)) {
             startActivity<ReadBookActivity>()
         }
         finish()

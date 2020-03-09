@@ -49,7 +49,7 @@ object AppConfig {
         }
 
     val autoRefreshBook: Boolean
-        get() = App.INSTANCE.getPrefBoolean(App.INSTANCE.getString(R.string.pk_auto_refresh))
+        get() = App.INSTANCE.getPrefBoolean(R.string.pk_auto_refresh)
 
     var threadCount: Int
         get() = App.INSTANCE.getPrefInt(PreferKey.threadCount, 16)
