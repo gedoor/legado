@@ -207,7 +207,7 @@ class BookInfoActivity :
                 ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        tv_toc.onClick {
+        tv_toc_view.onClick {
             if (!viewModel.inBookshelf) {
                 viewModel.saveBook {
                     viewModel.saveChapterList {
@@ -218,7 +218,7 @@ class BookInfoActivity :
                 openChapterList()
             }
         }
-        tv_group.onClick {
+        tv_change_group.onClick {
             viewModel.bookData.value?.let {
                 GroupSelectDialog.show(supportFragmentManager, it.group)
             }
