@@ -22,6 +22,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
@@ -66,6 +67,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
+        tv_ok.setTextColor(requireContext().accentColor)
+        tv_ok.onClick { dismiss() }
         App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, Observer {
             val groups = linkedSetOf<String>()
             it.map { group ->
