@@ -406,8 +406,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
         }
         textActionMenu?.let { popup ->
+            val popupHeight = popup.contentView.measuredHeight
             val x = text_menu_position.x.toInt()
-            val y = text_menu_position.y.toInt() - popup.contentView.measuredHeight
+            var y = text_menu_position.y.toInt() - popupHeight
+            if (y < statusBarHeight) {
+                y = (cursor_left.y + cursor_left.height).toInt()
+            }
+            if (cursor_right.y > y && cursor_right.y < y + popupHeight) {
+                y = (cursor_right.y + cursor_right.height).toInt()
+            }
             if (!popup.isShowing) {
                 popup.showAtLocation(text_menu_position, Gravity.TOP or Gravity.START, x, y)
             } else {
