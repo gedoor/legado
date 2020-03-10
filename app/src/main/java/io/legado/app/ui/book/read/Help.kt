@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.os.AsyncTask
 import android.os.Build
 import android.view.*
@@ -61,6 +62,18 @@ object Help {
             )
         }
     }
+
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    fun setOrientation(activity: Activity) = activity.apply {
+        when (AppConfig.requestedDirection) {
+            "0" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            "1" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            "2" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            "3" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+        }
+    }
+
 
     /**
      * 返回NavigationBar是否存在

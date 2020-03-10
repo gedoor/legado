@@ -67,7 +67,7 @@
         <item>@string/app_folder_picker</item>
     </string-array>
 
-    <string-array name="screen_direction_list_title">
+    <string-array name="screen_direction_title">
         <item>@string/screen_unspecified</item>
         <item>@string/screen_portrait</item>
         <item>@string/screen_landscape</item>

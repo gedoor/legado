@@ -16,25 +16,20 @@ class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
     DataSource {
 
-    var callBack: CallBack
-    var pageFactory: TextPageFactory
+    val callBack: CallBack get() = activity as CallBack
+    var pageFactory: TextPageFactory = TextPageFactory(this)
     var pageDelegate: PageDelegate? = null
 
-    var prevPage: ContentView
-    var curPage: ContentView
-    var nextPage: ContentView
+    var prevPage: ContentView = ContentView(context)
+    var curPage: ContentView = ContentView(context)
+    var nextPage: ContentView = ContentView(context)
 
     init {
-        callBack = activity as CallBack
-        nextPage = ContentView(context)
         addView(nextPage)
-        curPage = ContentView(context)
         addView(curPage)
-        prevPage = ContentView(context)
         addView(prevPage)
         upBg()
         setWillNotDraw(false)
-        pageFactory = TextPageFactory(this)
         upPageAnim()
     }
 
@@ -170,5 +165,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         val isInitFinish: Boolean
         fun clickCenter()
         fun screenOffTimerStart()
+        fun showTextActionMenu()
     }
 }

@@ -646,4 +646,5 @@
     <string name="bar_elevation">导航栏阴影</string>
     <string name="bar_elevation_s">当前阴影大小(elevation): %s</string>
     <string name="btn_default_s">默认</string>
+
 </resources>

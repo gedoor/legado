@@ -38,5 +38,11 @@
         <item>9</item>
     </string-array>
 
+    <string-array name="screen_direction_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 
 </resources>

@@ -185,6 +185,7 @@
             android:launchMode="singleTop" />
         <activity
             android:name="io.legado.app.ui.book.chapterlist.ChapterListActivity"
+            android:screenOrientation="behind"
             android:launchMode="singleTop" />
         <!--RSS阅读-->
         <activity

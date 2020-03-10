@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.data.entities.Book
+import io.legado.app.help.BookHelp
 import io.legado.app.utils.FileUtils
 
 
@@ -12,8 +13,17 @@ object LocalBook {
     fun importFile(doc: DocumentFile) {
         doc.name?.let { fileName ->
             val str = fileName.substringBeforeLast(".")
-            var name = str.substringBefore("作者")
-            val author = str.substringAfter("作者", "")
+            val authorIndex = str.indexOf("作者")
+            var name: String
+            var author: String
+            if (authorIndex == -1) {
+                name = str
+                author = ""
+            } else {
+                name = str.substring(0, authorIndex)
+                author = str.substring(authorIndex)
+                author = BookHelp.formatAuthor(author)
+            }
             val smhStart = name.indexOf("《")
             val smhEnd = name.indexOf("》")
             if (smhStart != -1 && smhEnd != -1) {

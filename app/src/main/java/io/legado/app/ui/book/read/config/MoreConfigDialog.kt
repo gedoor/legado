@@ -104,6 +104,11 @@ class MoreConfigDialog : DialogFragment() {
                 }
                 PreferKey.keepLight -> postEvent(key, true)
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
+                getString(R.string.pk_requested_direction) -> {
+                    activity?.let {
+                        Help.setOrientation(it)
+                    }
+                }
             }
         }
 

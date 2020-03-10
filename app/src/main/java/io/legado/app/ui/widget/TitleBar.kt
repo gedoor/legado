@@ -142,12 +142,12 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         backgroundColor = context.primaryColor
-        // targetElevation = context.elevation
+
         stateListAnimator = null
-        if (AppConfig.elevation < 0) {
-            elevation = context.elevation
+        elevation = if (AppConfig.elevation < 0) {
+            context.elevation
         } else {
-            elevation = AppConfig.elevation.toFloat()
+            AppConfig.elevation.toFloat()
         }
 
         a.recycle()
