@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.PopupMenu
@@ -18,8 +19,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.widget.SelectActionBar
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.getViewModel
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_import_book.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
+import java.util.*
 
 
 class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book),
@@ -37,6 +38,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     private val subDocs = arrayListOf<DocumentFile>()
     private lateinit var adapter: ImportBookAdapter
     private var localUriLiveData: LiveData<List<String>>? = null
+    private var path = FileUtils.getSdCardPath()
 
     override val viewModel: ImportBookViewModel
         get() = getViewModel(ImportBookViewModel::class.java)
@@ -95,8 +97,8 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         when (item?.itemId) {
             R.id.menu_del_selection ->
                 viewModel.deleteDoc(adapter.selectedUris) {
-                upPath()
-            }
+                    upPath()
+                }
         }
         return false
     }
@@ -111,11 +113,15 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     private fun upRootDoc() {
         AppConfig.importBookPath?.let {
-            val rootUri = Uri.parse(it)
-            rootDoc = DocumentFile.fromTreeUri(this, rootUri)
-            subDocs.clear()
-            upPath()
+            if (it.isContentPath()) {
+                val rootUri = Uri.parse(it)
+                rootDoc = DocumentFile.fromTreeUri(this, rootUri)
+                subDocs.clear()
+            } else {
+                path = it
+            }
         }
+        upPath()
     }
 
     @SuppressLint("SetTextI18n")
@@ -151,6 +157,32 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                     adapter.setData(docList)
                 }
             }
+        } ?: let {
+            val docList = arrayListOf<DocItem>()
+            File(path).listFiles()?.forEach {
+                if (it.isDirectory) {
+                    docList.add(
+                        DocItem(
+                            it.name,
+                            DocumentsContract.Document.MIME_TYPE_DIR,
+                            it.length(),
+                            Date(it.lastModified()),
+                            Uri.parse(it.absolutePath)
+                        )
+                    )
+                } else if (it.name.endsWith(".txt", true)) {
+                    docList.add(
+                        DocItem(
+                            it.name,
+                            it.extension,
+                            it.length(),
+                            Date(it.lastModified()),
+                            Uri.parse(it.absolutePath)
+                        )
+                    )
+                }
+            }
+            adapter.setData(docList)
         }
     }
 
@@ -188,6 +220,16 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     @Synchronized
     private fun goBackDir(): Boolean {
+        if (rootDoc == null) {
+            if (path != FileUtils.getSdCardPath()) {
+                File(path).parent?.let {
+                    path = it
+                    upPath()
+                    return true
+                }
+            }
+            return false
+        }
         return if (subDocs.isNotEmpty()) {
             subDocs.removeAt(subDocs.lastIndex)
             upPath()
