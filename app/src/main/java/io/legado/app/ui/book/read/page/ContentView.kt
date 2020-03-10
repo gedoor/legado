@@ -38,6 +38,7 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_top_right.typeface = ChapterProvider.typeface
             tv_bottom_left.typeface = ChapterProvider.typeface
             tv_bottom_right.typeface = ChapterProvider.typeface
+            battery_view.typeface = ChapterProvider.typeface
             //显示状态栏时隐藏header
             if (hideStatusBar) {
                 ll_header.layoutParams = ll_header.layoutParams.apply {
