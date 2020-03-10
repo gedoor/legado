@@ -4,8 +4,8 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
@@ -21,7 +21,7 @@ import kotlin.math.min
 object BookHelp {
     private const val cacheFolderName = "book_cache"
     val downloadPath: String
-        get() = App.INSTANCE.getPrefString(PreferKey.downloadPath)
+        get() = App.INSTANCE.getPrefString(R.string.pk_download_path)
             ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
             ?: App.INSTANCE.cacheDir.absolutePath
 
@@ -300,6 +300,8 @@ object BookHelp {
             1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
             2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
         }
-        return c.replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
+        return c
+            .replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
+            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
     }
 }

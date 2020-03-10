@@ -40,7 +40,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
-        upPreferenceSummary(PreferKey.downloadPath, BookHelp.downloadPath)
+        upPreferenceSummary(getString(R.string.pk_download_path), BookHelp.downloadPath)
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
         upPreferenceSummary(PreferKey.webPort, webPort.toString())
     }
@@ -74,7 +74,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 .show {
                     putPrefInt(PreferKey.webPort, it)
                 }
-            PreferKey.downloadPath -> selectDownloadPath()
+            getString(R.string.pk_download_path) -> selectDownloadPath()
             PreferKey.cleanCache -> {
                 BookHelp.clearCache()
                 toast(R.string.clear_cache_success)
@@ -85,7 +85,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.downloadPath -> {
+            getString(R.string.pk_download_path) -> {
                 upPreferenceSummary(key, BookHelp.downloadPath)
             }
             PreferKey.threadCount -> upPreferenceSummary(
@@ -141,13 +141,17 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
 
     private fun selectDownloadPath() {
         FilePicker.selectFolder(this, requestCodeDownloadPath) {
-            removePref(PreferKey.downloadPath)
+            removePref(getString(R.string.pk_download_path))
         }
+    }
+
+    private fun putDownloadPath(path: String) {
+        putPrefString(getString(R.string.pk_download_path), path)
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         if (requestCode == requestCodeDownloadPath) {
-            putPrefString(PreferKey.downloadPath, currentPath)
+            putDownloadPath(currentPath)
         }
     }
 
@@ -160,7 +164,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-                    putPrefString(PreferKey.downloadPath, uri.toString())
+                    putDownloadPath(uri.toString())
                 }
             }
         }

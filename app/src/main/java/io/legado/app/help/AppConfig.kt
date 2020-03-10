@@ -32,6 +32,9 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("transparentStatusBar", value)
         }
 
+    val requestedDirection: String?
+        get() = App.INSTANCE.getPrefString(R.string.pk_requested_direction)
+
     var backupPath: String?
         get() = App.INSTANCE.getPrefString(PreferKey.backupPath)
         set(value) {
@@ -49,7 +52,7 @@ object AppConfig {
         }
 
     val autoRefreshBook: Boolean
-        get() = App.INSTANCE.getPrefBoolean(App.INSTANCE.getString(R.string.pk_auto_refresh))
+        get() = App.INSTANCE.getPrefBoolean(R.string.pk_auto_refresh)
 
     var threadCount: Int
         get() = App.INSTANCE.getPrefInt(PreferKey.threadCount, 16)
@@ -111,4 +114,9 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
         }
 
+    var elevation: Int
+        get() = App.INSTANCE.getPrefInt("elevation", -1)
+        set(value) {
+            App.INSTANCE.putPrefInt("elevation", value)
+        }
 }

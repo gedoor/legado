@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="pk_auto_refresh">auto_refresh</string>
-    <string name="pk_screen_direction">list_screen_direction</string>
+    <string name="pk_requested_direction">list_screen_direction</string>
     <string name="pk_full_screen">full_screen</string>
     <string name="pk_threads_num">threads_num</string>
     <string name="pk_user_agent">user_agent</string>

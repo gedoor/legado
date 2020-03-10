@@ -160,7 +160,7 @@
     <string name="add_book_url">添加书籍网址</string>
     <string name="background">背景</string>
     <string name="author">作者</string>
-    <string name="author_show">作者:%s</string>
+    <string name="author_show">作者: %s</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_cache">清除缓存</string>
     <string name="clear_cache_success">成功清理缓存</string>
@@ -641,4 +641,10 @@
     <string name="add_to_group">加入分组</string>
     <string name="save_image">保存图片</string>
     <string name="no_default_path">没有默认路径</string>
+    <string name="change_group">设置分组</string>
+    <string name="view_toc">查看目录</string>
+    <string name="bar_elevation">导航栏阴影</string>
+    <string name="bar_elevation_s">当前阴影大小(elevation): %s</string>
+    <string name="btn_default_s">默认</string>
+
 </resources>

@@ -18,6 +18,21 @@ data class TextPage(
     var height: Float = 0f
 ) {
 
+    fun upLinesPosition(visibleHeight: Int) {
+        if (textLines.size <= 1) return
+        if (visibleHeight - height > with(textLines.last()) { lineBottom - lineTop }) return
+        val surplus = (visibleHeight - textLines.last().lineBottom)
+        if (surplus == 0f) return
+        height += surplus
+        val tj = surplus / (textLines.size - 1)
+        for (i in 1 until textLines.size) {
+            val line = textLines[i]
+            line.lineTop = line.lineTop + tj * i
+            line.lineBase = line.lineBase + tj * i
+            line.lineBottom = line.lineBottom + tj * i
+        }
+    }
+
     @Suppress("DEPRECATION")
     fun format(): TextPage {
         if (textLines.isEmpty() && ChapterProvider.visibleWidth > 0) {
@@ -101,4 +116,5 @@ data class TextPage(
             }
             return percent
         }
+
 }
