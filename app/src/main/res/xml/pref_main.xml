@@ -56,7 +56,9 @@
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <io.legado.app.ui.widget.prefs.PreferenceCategory app:iconSpaceReserved="false">
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:key="aboutCategory"
+        app:iconSpaceReserved="false">
 
         <androidx.preference.Preference
             android:key="donate"

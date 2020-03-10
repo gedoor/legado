@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import android.content.Context
+import android.content.pm.PackageManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -119,4 +120,18 @@ object AppConfig {
         set(value) {
             App.INSTANCE.putPrefInt("elevation", value)
         }
+
 }
+
+val Context.channel: String
+    get() {
+        try {
+            val pm = packageManager
+            val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            return appInfo.metaData.getString("channel") ?: ""
+        } catch (e: Exception) {
+            e.printStackTrace();
+        }
+        return ""
+    }
+

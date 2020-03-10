@@ -92,6 +92,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453392274790:android:b891abd2331577dff624a7",
+        "android_client_info": {
+          "package_name": "io.legado.play.release"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD90mfNLhA7cAzzI9SonpSz5mrF5BnmyJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

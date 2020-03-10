@@ -37,6 +37,7 @@ android {
         targetSdkVersion 29
         versionCode gitCommits
         versionName version
+        flavorDimensions "versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", name + "_" + version)
         multiDexEnabled true
@@ -73,7 +74,15 @@ android {
             }
         }
     }
-
+    productFlavors{
+        app{
+            manifestPlaceholders = [APP_CHANNEL_VALUE:"app"]
+        }
+        google{
+            applicationId "io.legado.play"
+            manifestPlaceholders = [APP_CHANNEL_VALUE:"google"]
+        }
+    }
     compileOptions {
         // Flag to enable support for the new language APIs
         //coreLibraryDesugaringEnabled true
@@ -130,6 +139,7 @@ dependencies {
     def room_version = '2.2.4'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
 
     //paging
     implementation 'androidx.paging:paging-runtime:2.1.1'
