@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.size
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
@@ -681,7 +682,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu?.dismiss()
         page_view.onDestroy()
-        SyncBookProgress.uploadBookProgress()
+        if (!BuildConfig.DEBUG) {
+            SyncBookProgress.uploadBookProgress()
+        }
     }
 
     override fun observeLiveBus() {
