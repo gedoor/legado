@@ -213,8 +213,12 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     @Synchronized
-    override fun nextDoc(doc: DocumentFile) {
-        subDocs.add(doc)
+    override fun nextDoc(uri: Uri) {
+        if (uri.toString().isContentPath()) {
+            subDocs.add(DocumentFile.fromSingleUri(this, uri)!!)
+        } else {
+            path = uri.toString()
+        }
         upPath()
     }
 
