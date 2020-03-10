@@ -27,6 +27,7 @@ import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
@@ -222,6 +223,9 @@ class BookInfoActivity :
             viewModel.bookData.value?.let {
                 GroupSelectDialog.show(supportFragmentManager, it.group)
             }
+        }
+        tv_author.onClick {
+            startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.author))
         }
     }
 
