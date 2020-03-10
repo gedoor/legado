@@ -370,10 +370,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 更新文字选择开始位置
      */
-    override fun upSelectedStart(x: Float, y: Float) {
+    override fun upSelectedStart(x: Float, y: Float, top: Float) {
         cursor_left.x = x - cursor_left.width
         cursor_left.y = y
         cursor_left.visible(true)
+        text_menu_position.x = x
+        text_menu_position.y = top
     }
 
     /**
@@ -399,17 +401,15 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun showTextActionMenu() {
         textActionMenu ?: let {
-            textActionMenu = TextActionMenu(this, this)
-        }
-        val x = cursor_left.x.toInt() + cursor_left.width
-        val y = if (cursor_left.y - statusBarHeight > ReadBookConfig.textSize.dp * 1.5 + 20.dp) {
-            (page_view.height - cursor_left.y + ReadBookConfig.textSize.dp * 1.5).toInt()
-        } else {
-            (page_view.height - cursor_left.y - cursor_left.height - 40.dp).toInt()
+            textActionMenu = TextActionMenu(this, this).apply {
+                contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+            }
         }
         textActionMenu?.let { popup ->
+            val x = text_menu_position.x.toInt()
+            val y = text_menu_position.y.toInt() - popup.contentView.measuredHeight
             if (!popup.isShowing) {
-                popup.showAtLocation(cursor_left, Gravity.BOTTOM or Gravity.START, x, y)
+                popup.showAtLocation(text_menu_position, Gravity.TOP or Gravity.START, x, y)
             } else {
                 popup.update(x, y, WRAP_CONTENT, WRAP_CONTENT)
             }
