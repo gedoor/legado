@@ -75,7 +75,7 @@ object ChapterProvider {
             item.chapterIndex = bookChapter.index
             item.chapterSize = chapterSize
             item.title = bookChapter.title
-            item.upLinesPosition(visibleHeight)
+            item.upLinesPosition()
         }
         return TextChapter(
             bookChapter.index,
