@@ -151,15 +151,16 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
      */
     @RequiresApi(Build.VERSION_CODES.M)
     private fun onInitializeMenu(menu: Menu) {
-        // Start with a menu Item order value that is high enough
-        // so that your "PROCESS_TEXT" menu items appear after the
-        // standard selection menu items like Cut, Copy, Paste.
-        var menuItemOrder = 100
-        for (resolveInfo in getSupportedActivities()) {
-            menu.add(
-                Menu.NONE, Menu.NONE,
-                menuItemOrder++, resolveInfo.loadLabel(context.packageManager)
-            ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
+        try {
+            var menuItemOrder = 100
+            for (resolveInfo in getSupportedActivities()) {
+                menu.add(
+                    Menu.NONE, Menu.NONE,
+                    menuItemOrder++, resolveInfo.loadLabel(context.packageManager)
+                ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
+            }
+        } catch (e: Exception) {
+            context.toast("获取文字操作菜单出错:${e.localizedMessage}")
         }
     }
 
