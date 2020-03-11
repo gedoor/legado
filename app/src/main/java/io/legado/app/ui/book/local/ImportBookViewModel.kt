@@ -11,10 +11,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
 
     fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
         execute {
-            uriList.forEach { uriStr ->
-                DocumentFile.fromSingleUri(context, Uri.parse(uriStr))?.let { doc ->
-                    LocalBook.importFile(doc)
-                }
+            uriList.forEach {
+                LocalBook.importFile(it)
             }
         }.onFinally {
             finally.invoke()
