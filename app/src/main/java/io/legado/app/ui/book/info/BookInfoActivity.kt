@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
@@ -33,6 +32,7 @@ import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.utils.dp
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
@@ -244,9 +244,10 @@ class BookInfoActivity :
                     val checkBox = CheckBox(this@BookInfoActivity).apply {
                         setText(R.string.delete_book_file)
                     }
-                    val view = LayoutInflater.from(this@BookInfoActivity)
-                        .inflate(R.layout.dialog_linear_layout, null)
-                    (view as LinearLayout).addView(checkBox)
+                    val view = LinearLayout(this@BookInfoActivity).apply {
+                        setPadding(16.dp, 0, 16.dp, 0)
+                        addView(checkBox)
+                    }
                     customView = view
                     positiveButton(R.string.yes) {
                         viewModel.delBook(checkBox.isChecked) {
