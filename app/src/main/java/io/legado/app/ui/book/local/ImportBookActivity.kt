@@ -162,15 +162,16 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             val docList = arrayListOf<DocItem>()
             File(path).listFiles()?.forEach {
                 if (it.isDirectory) {
-                    docList.add(
-                        DocItem(
-                            it.name,
-                            DocumentsContract.Document.MIME_TYPE_DIR,
-                            it.length(),
-                            Date(it.lastModified()),
-                            Uri.parse(it.absolutePath)
+                    if (!it.name.startsWith("."))
+                        docList.add(
+                            DocItem(
+                                it.name,
+                                DocumentsContract.Document.MIME_TYPE_DIR,
+                                it.length(),
+                                Date(it.lastModified()),
+                                Uri.parse(it.absolutePath)
+                            )
                         )
-                    )
                 } else if (it.name.endsWith(".txt", true)) {
                     docList.add(
                         DocItem(
@@ -183,6 +184,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                     )
                 }
             }
+            docList.sortWith(compareBy({ !it.isDir }, { it.name }))
             adapter.setData(docList)
         }
     }
