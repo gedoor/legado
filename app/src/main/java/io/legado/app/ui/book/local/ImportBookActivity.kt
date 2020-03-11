@@ -17,7 +17,8 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
-import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_import_book.*
@@ -31,6 +32,7 @@ import java.util.*
 
 
 class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book),
+    FileChooserDialog.CallBack,
     PopupMenu.OnMenuItemClickListener,
     ImportBookAdapter.CallBack {
     private val requestCodeSelectFolder = 342
@@ -59,7 +61,6 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ImportBookAdapter(this, this)
         recycler_view.adapter = adapter
-        rotate_loading.loadingColor = accentColor
         select_action_bar.setMainActionText(R.string.add_to_shelf)
         select_action_bar.inflateMenu(R.menu.import_book_sel)
         select_action_bar.setOnMenuItemClickListener(this)
@@ -88,7 +89,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_select_folder -> selectImportFolder()
+            R.id.menu_select_folder -> FilePicker.selectFolder(this, requestCodeSelectFolder)
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -118,6 +119,8 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 rootDoc = DocumentFile.fromTreeUri(this, rootUri)
                 subDocs.clear()
             } else {
+                rootDoc = null
+                subDocs.clear()
                 path = it
             }
         }
@@ -137,7 +140,6 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             tv_path.text = path
             adapter.selectedUris.clear()
             adapter.clearItems()
-            rotate_loading.show()
             launch(IO) {
                 val docList = DocumentUtils.listFiles(
                     this@ImportBookActivity,
@@ -153,7 +155,6 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 }
                 docList.sortWith(compareBy({ !it.isDir }, { it.name }))
                 withContext(Main) {
-                    rotate_loading.hide()
                     adapter.setData(docList)
                 }
             }
@@ -186,13 +187,12 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         }
     }
 
-    private fun selectImportFolder() {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, requestCodeSelectFolder)
-        } catch (e: Exception) {
-            e.printStackTrace()
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            requestCodeSelectFolder -> {
+                AppConfig.importBookPath = currentPath
+                upRootDoc()
+            }
         }
     }
 
