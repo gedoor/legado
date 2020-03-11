@@ -50,23 +50,11 @@
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <io.legado.app.ui.widget.anima.RotateLoading
-            android:id="@+id/rotate_loading"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center" />
-
-    </FrameLayout>
+        android:layout_weight="1" />
 
     <io.legado.app.ui.widget.SelectActionBar
         android:id="@+id/select_action_bar"

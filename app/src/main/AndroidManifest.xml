@@ -120,15 +120,19 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!--配置界面-->
         <activity
             android:name=".ui.config.ConfigActivity"
             android:launchMode="singleTask" />
+        <!--搜索界面-->
         <activity
             android:name="io.legado.app.ui.book.search.SearchActivity"
             android:launchMode="singleTask" />
+        <!--关于界面-->
         <activity
             android:name=".ui.about.AboutActivity"
             android:launchMode="singleTask" />
+        <!--捐赠界面-->
         <activity
             android:name=".ui.about.DonateActivity"
             android:launchMode="singleTask" />
@@ -177,12 +181,15 @@
                     android:scheme="yuedu" />
             </intent-filter>
         </activity>
+        <!--书籍管理-->
         <activity
             android:name=".ui.book.arrange.ArrangeBookActivity"
             android:launchMode="singleTop" />
+        <!--书源调试-->
         <activity
             android:name=".ui.book.source.debug.BookSourceDebugActivity"
             android:launchMode="singleTop" />
+        <!--目录-->
         <activity
             android:name="io.legado.app.ui.book.chapterlist.ChapterListActivity"
             android:screenOrientation="behind"
@@ -193,28 +200,36 @@
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop" />
+        <!--导入书籍-->
         <activity
             android:name="io.legado.app.ui.book.local.ImportBookActivity"
             android:launchMode="singleTop" />
+        <!--发现界面-->
         <activity
             android:name="io.legado.app.ui.book.explore.ExploreShowActivity"
             android:launchMode="singleTop" />
+        <!--订阅源调试-->
         <activity
             android:name=".ui.rss.source.debug.RssSourceDebugActivity"
             android:launchMode="singleTop" />
+        <!--订阅条目-->
         <activity
             android:name=".ui.rss.article.RssArticlesActivity"
             android:launchMode="singleTop" />
+        <!--Rss收藏-->
         <activity
             android:name=".ui.rss.favorites.RssFavoritesActivity"
             android:launchMode="singleTop" />
+        <!--下载界面-->
         <activity
             android:name="io.legado.app.ui.book.download.DownloadActivity"
             android:launchMode="singleTop" />
+        <!--书源登录-->
         <activity
             android:name=".ui.login.SourceLogin"
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true" />
+        <!--文字处理-->
         <activity
             android:name=".receiver.SharedReceiverActivity"
             android:label="@string/receiving_shared_label">
@@ -252,6 +267,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <meta-data
+            android:name="channel"
+            android:value="${APP_CHANNEL_VALUE}" />
     </application>
 
 </manifest>

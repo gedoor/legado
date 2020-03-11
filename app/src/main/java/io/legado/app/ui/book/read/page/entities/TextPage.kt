@@ -18,11 +18,11 @@ data class TextPage(
     var height: Float = 0f
 ) {
 
-    fun upLinesPosition(visibleHeight: Int) {
-        if (textLines.size <= 1) return
-        if (visibleHeight - height > with(textLines.last()) { lineBottom - lineTop }) return
-        val surplus = (visibleHeight - textLines.last().lineBottom)
-        if (surplus == 0f) return
+    fun upLinesPosition() = ChapterProvider.apply {
+        if (textLines.size <= 1) return@apply
+        if (visibleHeight - height > with(textLines.last()) { lineBottom - lineTop }) return@apply
+        val surplus = (visibleBottom - textLines.last().lineBottom)
+        if (surplus == 0f) return@apply
         height += surplus
         val tj = surplus / (textLines.size - 1)
         for (i in 1 until textLines.size) {
