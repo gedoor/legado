@@ -66,7 +66,7 @@ object BackupRestoreUi {
                     selectFolderRequestCode -> AppConfig.backupPath = Backup.legadoPath
                     else -> {
                         Coroutine.async {
-                            AppConfig.backupPath = Backup.legadoPath
+                            AppConfig.backupPath = path
                             Backup.backup(fragment.requireContext(), path)
                         }.onSuccess {
                             fragment.toast(R.string.backup_success)
