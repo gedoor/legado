@@ -159,6 +159,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 }
             }
         } ?: let {
+            tv_path.text = path
             val docList = arrayListOf<DocItem>()
             File(path).listFiles()?.forEach {
                 if (it.isDirectory) {
