@@ -103,7 +103,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             book?.bookUrl?.let { bookUrl ->
                 if (chapter.bookUrl == bookUrl) {
                     adapter.cacheFileNames.add(BookHelp.formatChapterName(chapter))
-                    adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+                    adapter.notifyItemChanged(chapter.index, true)
                 }
             }
         }
