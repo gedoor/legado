@@ -139,7 +139,6 @@ dependencies {
     def room_version = '2.2.4'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
-    kapt "android.arch.persistence.room:compiler:$room_version"
 
     //paging
     implementation 'androidx.paging:paging-runtime:2.1.1'
