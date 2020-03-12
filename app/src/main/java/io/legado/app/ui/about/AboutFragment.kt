@@ -73,7 +73,7 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     private fun showUpdateLog() {
         val log = String(requireContext().assets.open("updateLog.md").readBytes())
-        TextDialog.show(childFragmentManager, log, TextDialog.MD, 5000)
+        TextDialog.show(childFragmentManager, log, TextDialog.MD)
     }
 
     private fun showQqGroups() {
