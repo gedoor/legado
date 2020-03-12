@@ -7,14 +7,13 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.utils.gone
-import io.legado.app.utils.visible
+import io.legado.app.help.ItemTouchCallback
 import kotlinx.android.synthetic.main.item_arrange_book.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book) {
+    SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book),
+    ItemTouchCallback.OnItemTouchCallbackListener {
     val groupRequestCode = 12
     private val selectedBooks: HashSet<Book> = hashSetOf()
     var actionItem: Book? = null
@@ -56,12 +55,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
         with(holder.itemView) {
             tv_name.text = item.name
-//            tv_name.text = if (item.author.isEmpty()) {
-//                item.name
-//            } else {
-//                "${item.name}(${item.author})"
-//            }
-            tv_author.text = item.author // resources.getString(R.string.author_show, item.author)
+            tv_author.text = item.author
             tv_author.visibility = if (item.author.isEmpty()) View.GONE else View.VISIBLE
             tv_group_s.text = getGroupName(item.group)
             checkbox.isChecked = selectedBooks.contains(item)
@@ -115,7 +109,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 groupNames.add(it.groupName)
             }
         }
-        return groupNames;
+        return groupNames
     }
 
     private fun getGroupName(groupId: Int): String {
