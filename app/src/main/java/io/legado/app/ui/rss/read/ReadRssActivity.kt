@@ -246,8 +246,8 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun readAloud() {
-        if (viewModel.textToSpeech.isSpeaking) {
-            viewModel.textToSpeech.stop()
+        if (viewModel.textToSpeech?.isSpeaking == true) {
+            viewModel.textToSpeech?.stop()
             upTtsMenu(false)
         } else {
             web_view.settings.javaScriptEnabled = true
