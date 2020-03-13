@@ -91,7 +91,7 @@
         <!--书籍详情页-->
         <activity
             android:name=".ui.book.info.BookInfoActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTop" />
         <!--书籍信息编辑-->
         <activity
             android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity"
