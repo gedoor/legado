@@ -628,7 +628,6 @@
     <string name="more_menu">更多菜单</string>
     <string name="reduce">减</string>
     <string name="plus">加</string>
-    <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
     <string name="delete_book_file">删除源文件</string>
     <string name="default1">预设一</string>
@@ -646,5 +645,7 @@
     <string name="bar_elevation">导航栏阴影</string>
     <string name="bar_elevation_s">当前阴影大小(elevation): %s</string>
     <string name="btn_default_s">默认</string>
-
+    <string name="main_menu">主菜单</string>
+    <string name="request_permission">点击授予权限</string>
+    <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的"授予权限"按钮，或前往“设置”—“应用权限”—打开所需权限。如果授予权限后仍然不正常，请点击右上角的“选择文件夹”，使用系统文件夹选择器。</string>
 </resources>

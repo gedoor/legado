@@ -7,10 +7,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
@@ -29,6 +31,7 @@ import io.legado.app.ui.book.download.DownloadActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.main.bookshelf.books.BooksFragment
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_bookshelf_config.view.*
@@ -42,15 +45,14 @@ import org.jetbrains.anko.startActivity
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener,
-    GroupManageDialog.CallBack,
-    BookshelfAdapter.CallBack {
+    GroupManageDialog.CallBack {
 
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
 
-    private lateinit var bookshelfAdapter: BookshelfAdapter
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
+    private val fragmentMap = hashMapOf<Int, Fragment>()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -79,26 +81,17 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }
     }
 
-    override val groupSize: Int
-        get() = bookGroups.size
-
-    override fun getGroup(position: Int): BookGroup {
-        return bookGroups[position]
-    }
-
     private val selectedGroup: BookGroup
         get() = bookGroups[view_pager_bookshelf.currentItem]
 
     private fun initView() {
+        ATH.applyEdgeEffectColor(view_pager_bookshelf)
         tab_layout.isTabIndicatorFullWidth = false
         tab_layout.tabMode = TabLayout.MODE_SCROLLABLE
         tab_layout.setSelectedTabIndicatorColor(requireContext().accentColor)
-        ATH.applyEdgeEffectColor(view_pager_bookshelf)
-        bookshelfAdapter = BookshelfAdapter(this, this)
-        view_pager_bookshelf.adapter = bookshelfAdapter
-        TabLayoutMediator(tab_layout, view_pager_bookshelf) { tab, position ->
-            tab.text = bookGroups[position].groupName
-        }.attach()
+        tab_layout.setupWithViewPager(view_pager_bookshelf)
+        view_pager_bookshelf.offscreenPageLimit = 1
+        view_pager_bookshelf.adapter = TabFragmentPageAdapter(childFragmentManager)
     }
 
     private fun initBookGroupData() {
@@ -119,7 +112,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     bookGroups.add(AppConst.bookGroupAudio)
                 }
                 bookGroups.addAll(it)
-                bookshelfAdapter.notifyDataSetChanged()
+                view_pager_bookshelf.adapter?.notifyDataSetChanged()
                 tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
                 tab_layout.addOnTabSelectedListener(this)
             }
@@ -149,7 +142,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             if (AppConfig.bookGroupAllShow) {
                 bookGroups.add(0, AppConst.bookGroupAll)
             }
-            bookshelfAdapter.notifyDataSetChanged()
+            view_pager_bookshelf.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -211,5 +204,32 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         tab?.position?.let {
             putPrefInt(PreferKey.saveTabPosition, it)
         }
+    }
+
+    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return bookGroups[position].groupName
+        }
+
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
+
+        override fun getItem(position: Int): Fragment {
+            val group = bookGroups[position]
+            var fragment = fragmentMap[group.groupId]
+            if (fragment == null) {
+                fragment = BooksFragment.newInstance(position, group.groupId)
+                fragmentMap[group.groupId] = fragment
+            }
+            return fragment
+        }
+
+        override fun getCount(): Int {
+            return bookGroups.size
+        }
+
     }
 }

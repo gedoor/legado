@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
@@ -17,6 +18,8 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.help.AppConfig
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.widget.SelectActionBar
@@ -80,6 +83,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 }
             }
         })
+
     }
 
     private fun initEvent() {
@@ -123,6 +127,24 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 rootDoc = null
                 subDocs.clear()
                 path = it
+            }
+        } ?: let {
+            // 没有权限就显示一个授权提示和按钮
+            if (PermissionsCompat.check(this, *Permissions.Group.STORAGE)) {
+                hint_per.visibility = View.GONE
+            } else {
+                hint_per.visibility = View.VISIBLE
+                tv_request_per.onClick {
+                    PermissionsCompat.Builder(this)
+                        .addPermissions(*Permissions.Group.STORAGE)
+                        .rationale(R.string.tip_perm_request_storage)
+                        .onGranted {
+                            hint_per.visibility = View.GONE
+                            initData()
+                            upRootDoc()
+                        }
+                        .request()
+                }
             }
         }
         upPath()

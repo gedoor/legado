@@ -6,12 +6,14 @@ import android.view.MenuItem
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -64,6 +66,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
+        val itemTouchCallback = ItemTouchCallback()
+        itemTouchCallback.onItemTouchCallbackListener = adapter
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
         select_action_bar.setMainActionText(R.string.move_to_group)
         select_action_bar.inflateMenu(R.menu.arrange_book_sel)
         select_action_bar.setOnMenuItemClickListener(this)
