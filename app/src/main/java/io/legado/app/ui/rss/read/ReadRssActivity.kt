@@ -22,7 +22,6 @@ import org.apache.commons.text.StringEscapeUtils
 import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
-import org.jsoup.safety.Whitelist
 
 
 class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
@@ -253,11 +252,8 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             web_view.settings.javaScriptEnabled = true
             web_view.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
-                val text = Jsoup.clean(html, Whitelist.none())
-                    .replace(Regex("""&\w+;"""), "")
-                    .trim()//朗读过程中总是听到一些杂音，清理一下
-                //longToast(需读内容)调试一下
-                viewModel.readAloud(text)
+                Jsoup.parse(html).text()
+                viewModel.readAloud(Jsoup.parse(html).textArray())
             }
         }
     }
