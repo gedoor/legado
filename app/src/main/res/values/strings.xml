@@ -628,7 +628,6 @@
     <string name="more_menu">更多菜单</string>
     <string name="reduce">减</string>
     <string name="plus">加</string>
-    <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
     <string name="delete_book_file">删除源文件</string>
     <string name="default1">预设一</string>
@@ -646,5 +645,6 @@
     <string name="bar_elevation">导航栏阴影</string>
     <string name="bar_elevation_s">当前阴影大小(elevation): %s</string>
     <string name="btn_default_s">默认</string>
+    <string name="main_menu">主菜单</string>
 
 </resources>
