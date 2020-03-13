@@ -29,7 +29,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         }
     }
 
-    private var ttsIsSuccess: Boolean = false
+    private var ttsInitFinish = false
 
     override fun onCreate() {
         super.onCreate()
@@ -47,7 +47,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         if (status == TextToSpeech.SUCCESS) {
             textToSpeech?.language = Locale.CHINA
             textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
-            ttsIsSuccess = true
+            ttsInitFinish = true
             play()
         } else {
             launch {
@@ -58,7 +58,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
     @Synchronized
     override fun play() {
-        if (contentList.isEmpty() || !ttsIsSuccess) {
+        if (contentList.isEmpty() || !ttsInitFinish) {
             return
         }
         if (requestFocus()) {
