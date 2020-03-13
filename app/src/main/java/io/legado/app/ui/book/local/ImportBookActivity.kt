@@ -17,9 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
-import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -86,23 +84,6 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             }
         })
 
-        // 没有权限就显示一个授权提示和按钮
-        if (PermissionsCompat.check(this, *Permissions.Group.STORAGE)) {
-            hint_per.visibility = View.GONE
-        } else {
-            hint_per.visibility = View.VISIBLE
-            tv_request_per.onClick {
-                PermissionsCompat.Builder(this)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted {
-                        hint_per.visibility = View.GONE
-                        initData()
-                        upRootDoc()
-                    }
-                    .request()
-            }
-        }
     }
 
     private fun initEvent() {
@@ -146,6 +127,24 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 rootDoc = null
                 subDocs.clear()
                 path = it
+            }
+        } ?: let {
+            // 没有权限就显示一个授权提示和按钮
+            if (PermissionsCompat.check(this, *Permissions.Group.STORAGE)) {
+                hint_per.visibility = View.GONE
+            } else {
+                hint_per.visibility = View.VISIBLE
+                tv_request_per.onClick {
+                    PermissionsCompat.Builder(this)
+                        .addPermissions(*Permissions.Group.STORAGE)
+                        .rationale(R.string.tip_perm_request_storage)
+                        .onGranted {
+                            hint_per.visibility = View.GONE
+                            initData()
+                            upRootDoc()
+                        }
+                        .request()
+                }
             }
         }
         upPath()
