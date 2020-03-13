@@ -735,9 +735,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 }
             }
         }
-        observeEvent<String>(EventBus.REPLACE) {
-            ReplaceEditDialog().show(supportFragmentManager, "replaceEditDialog")
-        }
         observeEvent<Boolean>(PreferKey.keepLight) {
             upScreenTimeOut()
         }
