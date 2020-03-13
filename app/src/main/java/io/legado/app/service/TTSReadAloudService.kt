@@ -42,20 +42,21 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         clearTTS()
     }
 
+    @Synchronized
     override fun onInit(status: Int) {
-        launch {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeech?.language = Locale.CHINA
-                textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
-                ttsIsSuccess = true
-                play()
-            } else {
+        if (status == TextToSpeech.SUCCESS) {
+            textToSpeech?.language = Locale.CHINA
+            textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
+            ttsIsSuccess = true
+            play()
+        } else {
+            launch {
                 toast(R.string.tts_init_failed)
             }
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Synchronized
     override fun play() {
         if (contentList.isEmpty() || !ttsIsSuccess) {
             return
