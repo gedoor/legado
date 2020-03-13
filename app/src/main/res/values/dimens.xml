@@ -35,4 +35,6 @@
     <dimen name="fastscroll_scrollbar_margin_bottom">8dp</dimen>
     <dimen name="fastscroll_scrollbar_padding_start">8dp</dimen>
     <dimen name="fastscroll_scrollbar_padding_end">8dp</dimen>
+
+    <dimen name="fixed_height_bottom_padding">8dp</dimen>
 </resources>
