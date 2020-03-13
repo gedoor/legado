@@ -24,7 +24,6 @@ fun Element.textArray(): Array<String> {
         }
 
         override fun tail(node: Node, depth: Int) {
-            // make sure there is a space between block tags and immediately following text nodes <div>One</div>Two should be "One Two".
             if (node is Element) {
                 if (node.isBlock && node.nextSibling() is TextNode && !lastCharIsWhitespace(
                         accum
@@ -37,12 +36,11 @@ fun Element.textArray(): Array<String> {
     return text.splitNotBlank("\n")
 }
 
-private fun appendNormalisedText(
-    accum: StringBuilder,
-    textNode: TextNode
-) {
+private fun appendNormalisedText(accum: StringBuilder, textNode: TextNode) {
     val text = textNode.wholeText
-    if (preserveWhitespace(textNode.parentNode()) || textNode is CDataNode) accum.append(text) else StringUtil.appendNormalisedWhitespace(
+    if (preserveWhitespace(textNode.parentNode()) || textNode is CDataNode)
+        accum.append(text)
+    else StringUtil.appendNormalisedWhitespace(
         accum,
         text,
         lastCharIsWhitespace(accum)
@@ -50,7 +48,6 @@ private fun appendNormalisedText(
 }
 
 private fun preserveWhitespace(node: Node?): Boolean {
-    // looks only at this element and five levels up, to prevent recursion & needless stack searches
     if (node is Element) {
         var el = node as Element?
         var i = 0
