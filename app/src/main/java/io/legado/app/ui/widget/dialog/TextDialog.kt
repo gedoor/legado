@@ -77,9 +77,15 @@ class TextDialog : BaseDialogFragment() {
                     time -= 1000
                     badge_view.setBadgeCount((time / 1000).toInt())
                     if (time <= 0) {
-                        dialog?.setCancelable(true)
+                        view.post {
+                            dialog?.setCancelable(true)
+                        }
                     }
                 }
+            }
+        } else {
+            view.post {
+                dialog?.setCancelable(true)
             }
         }
     }
