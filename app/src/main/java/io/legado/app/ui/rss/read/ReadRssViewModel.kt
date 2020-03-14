@@ -35,7 +35,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<AnalyzeUrl>()
     var star = false
-    var textToSpeech: TextToSpeech = TextToSpeech(context, this)
+    var textToSpeech: TextToSpeech? = null
+    private var ttsInitFinish = false
+    private var ttsTextList = arrayListOf<String>()
 
     fun initData(intent: Intent) {
         execute {
@@ -143,28 +145,43 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
+    @Synchronized
     override fun onInit(status: Int) {
-        launch {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeech.language = Locale.CHINA
-                textToSpeech.setOnUtteranceProgressListener(TTSUtteranceListener())
-            } else {
+        if (status == TextToSpeech.SUCCESS) {
+            textToSpeech?.language = Locale.CHINA
+            textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
+            ttsInitFinish = true
+            play()
+        } else {
+            launch {
                 toast(R.string.tts_init_failed)
             }
         }
     }
 
-    fun readAloud(text: String) {
-        textToSpeech.stop()
-        text.split("\n", "  ", "　　").forEach {
-            textToSpeech.speak(it, TextToSpeech.QUEUE_ADD, null, "rss")
+    @Synchronized
+    private fun play() {
+        if (!ttsInitFinish) return
+        textToSpeech?.stop()
+        ttsTextList.forEach {
+            textToSpeech?.speak(it, TextToSpeech.QUEUE_ADD, null, "rss")
+        }
+    }
+
+    fun readAloud(textArray: Array<String>) {
+        ttsTextList.clear()
+        ttsTextList.addAll(textArray)
+        textToSpeech?.let {
+            play()
+        } ?: let {
+            textToSpeech = TextToSpeech(context, this)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        textToSpeech.stop()
-        textToSpeech.shutdown()
+        textToSpeech?.stop()
+        textToSpeech?.shutdown()
     }
 
     /**
