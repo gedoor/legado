@@ -81,7 +81,7 @@
     <string name="retry">重试</string>
     <string name="web_service">Web 服务</string>
     <string name="web_edit_source">web编辑书源</string>
-    <string name="http_ip">http://%s:%d</string>
+    <string name="http_ip">http://%1$s:%2$d</string>
     <string name="download_offline">离线下载</string>
     <string name="download_offline_t">离线下载</string>
     <string name="download_offline_s">下载选择的章节到本地</string>

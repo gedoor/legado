@@ -30,11 +30,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-gradle.taskGraph.whenReady {
-    tasks.each { task ->
-        if (task.name.contains("crashlyticsUploadDeobsRelease")) {
-            task.enabled = false
-        }
-    }
-}
