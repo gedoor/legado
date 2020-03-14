@@ -37,7 +37,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     var star = false
     var textToSpeech: TextToSpeech? = null
     private var ttsInitFinish = false
-    private var ttsText = ""
+    private var ttsTextList = arrayListOf<String>()
 
     fun initData(intent: Intent) {
         execute {
@@ -163,13 +163,14 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     private fun play() {
         if (!ttsInitFinish) return
         textToSpeech?.stop()
-        ttsText.split("\n", "  ", "　　").forEach {
+        ttsTextList.forEach {
             textToSpeech?.speak(it, TextToSpeech.QUEUE_ADD, null, "rss")
         }
     }
 
-    fun readAloud(text: String) {
-        ttsText = text
+    fun readAloud(textArray: Array<String>) {
+        ttsTextList.clear()
+        ttsTextList.addAll(textArray)
         textToSpeech?.let {
             play()
         } ?: let {

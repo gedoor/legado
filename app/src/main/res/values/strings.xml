@@ -81,7 +81,7 @@
     <string name="retry">重试</string>
     <string name="web_service">Web 服务</string>
     <string name="web_edit_source">web编辑书源</string>
-    <string name="http_ip">http://%s:%d</string>
+    <string name="http_ip">http://%1$s:%2$d</string>
     <string name="download_offline">离线下载</string>
     <string name="download_offline_t">离线下载</string>
     <string name="download_offline_s">下载选择的章节到本地</string>
@@ -207,14 +207,14 @@
     <string name="replace_rule_invalid">替换规则为空或者不满足正则表达式要求</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
-    <string name="select_all_count">全选(%d/%d)</string>
-    <string name="select_cancel_count">取消(%d/%d)</string>
+    <string name="select_all_count">全选(%1$d/%2$d)</string>
+    <string name="select_cancel_count">取消(%1$d/%2$d)</string>
     <string name="dark_theme">深色模式</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>
     <string name="download_cancel">取消下载</string>
     <string name="no_download">暂无任务</string>
-    <string name="download_count">已下载 %d/%d</string>
+    <string name="download_count">已下载 %1$d/%2$d</string>
     <string name="import_select_book">导入选择书籍</string>
     <string name="threads_num_title">更新和搜索线程数,太多会卡顿</string>
     <string name="change_icon">切换图标</string>
@@ -289,7 +289,7 @@
     <string name="padding_right">右边距</string>
     <string name="check_book_source">校验书源</string>
     <string name="check_select_source">校验所选</string>
-    <string name="progress_show">进度 %d/%d</string>
+    <string name="progress_show">进度 %1$d/%2$d</string>
     <string name="tts_fix">请安装并选择中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失败!</string>
     <string name="jf_convert">简繁转换</string>
@@ -599,7 +599,7 @@
     <string name="auto_dark_mode_s">夜间模式跟随系统</string>
     <string name="go_back">上级</string>
     <string name="tone_colour">在线朗读音色</string>
-    <string name="select_count">(%d/%d)</string>
+    <string name="select_count">(%1$d/%2$d)</string>
     <string name="show_rss">显示订阅</string>
     <string name="service_stop">服务已停止</string>
     <string name="service_start">正在启动服务\n具体信息查看通知栏</string>
