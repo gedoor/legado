@@ -29,24 +29,32 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<SearchBook>> {
         return Coroutine.async(scope, context) {
-            bookSource.searchUrl?.let { searchUrl ->
-                val analyzeUrl = AnalyzeUrl(
-                    ruleUrl = searchUrl,
-                    key = key,
-                    page = page,
-                    baseUrl = sourceUrl,
-                    headerMapF = bookSource.getHeaderMap()
-                )
-                val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
-                BookList.analyzeBookList(
-                    res.body,
-                    bookSource,
-                    analyzeUrl,
-                    res.url,
-                    true
-                )
-            } ?: arrayListOf()
+            searchBookSuspend(key, page)
         }
+    }
+
+    suspend fun searchBookSuspend(
+        key: String,
+        page: Int? = 1
+    ): ArrayList<SearchBook> {
+        bookSource.searchUrl?.let { searchUrl ->
+            val analyzeUrl = AnalyzeUrl(
+                ruleUrl = searchUrl,
+                key = key,
+                page = page,
+                baseUrl = sourceUrl,
+                headerMapF = bookSource.getHeaderMap()
+            )
+            val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
+            return BookList.analyzeBookList(
+                res.body,
+                bookSource,
+                analyzeUrl,
+                res.url,
+                true
+            )
+        }
+        return arrayListOf()
     }
 
     /**

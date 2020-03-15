@@ -21,7 +21,6 @@ import org.jetbrains.anko.toast
 
 
 object ReadBook {
-
     var titleDate = MutableLiveData<String>()
     var book: Book? = null
     var inBookshelf = false
@@ -34,9 +33,10 @@ object ReadBook {
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
     var webBook: WebBook? = null
+    var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
 
-    fun resetData(book: Book, noSource: () -> Unit) {
+    fun resetData(book: Book, noSource: (name: String, author: String) -> Unit) {
         this.book = book
         titleDate.postValue(book.name)
         durChapterIndex = book.durChapterIndex
@@ -46,19 +46,20 @@ object ReadBook {
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
-        upWebBook(book.origin, noSource)
+        upWebBook(book, noSource)
     }
 
-    fun upWebBook(origin: String, noSource: () -> Unit) {
-        if (origin == BookType.local) {
+    fun upWebBook(book: Book?, noSource: (name: String, author: String) -> Unit) {
+        book ?: return
+        if (book.origin == BookType.local) {
             webBook = null
         } else {
-            val bookSource = App.db.bookSourceDao().getBookSource(origin)
+            val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
             if (bookSource != null) {
                 webBook = WebBook(bookSource)
             } else {
                 webBook = null
-                noSource.invoke()
+                noSource.invoke(book.name, book.author)
             }
         }
     }

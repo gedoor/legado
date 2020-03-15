@@ -59,6 +59,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override val currentPage: TextPage
         get() = with(dataSource) {
+            ReadBook.msg?.let {
+                return@with TextPage(text = it).format()
+            }
             currentChapter?.let {
                 return@with it.page(pageIndex)
                     ?: TextPage(title = it.title).format()
@@ -68,6 +71,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override val nextPage: TextPage
         get() = with(dataSource) {
+            ReadBook.msg?.let {
+                return@with TextPage(text = it).format()
+            }
             currentChapter?.let {
                 if (pageIndex < it.pageSize() - 1) {
                     return@with it.page(pageIndex + 1)?.removePageAloudSpan()
@@ -86,6 +92,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override val prevPage: TextPage
         get() = with(dataSource) {
+            ReadBook.msg?.let {
+                return@with TextPage(text = it).format()
+            }
             if (pageIndex > 0) {
                 currentChapter?.let {
                     return@with it.page(pageIndex - 1)?.removePageAloudSpan()
