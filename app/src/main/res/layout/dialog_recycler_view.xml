@@ -15,7 +15,7 @@
         android:id="@+id/recycler_view"
         android:background="@color/background_card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1" />
 
     <LinearLayout
@@ -33,8 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
             android:padding="12dp"
-            android:clickable="true"
             android:text="@string/ok"
+            android:visibility="gone"
             tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
