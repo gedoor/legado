@@ -39,7 +39,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
-            ReadBook.resetData(book)
+            ReadBook.resetData(book) {
+                autoChangeSource()
+            }
             isInitFinish = true
             ReadBook.chapterSize = App.db.bookChapterDao().getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
@@ -60,7 +62,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         } else {
             isInitFinish = true
             ReadBook.titleDate.postValue(book.name)
-            ReadBook.upWebBook(book.origin)
+            ReadBook.upWebBook(book.origin) {
+                autoChangeSource()
+            }
             ReadBook.chapterSize = App.db.bookChapterDao().getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {

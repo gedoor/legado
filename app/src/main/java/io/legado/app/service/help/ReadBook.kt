@@ -36,7 +36,7 @@ object ReadBook {
     var webBook: WebBook? = null
     private val loadingChapters = arrayListOf<Int>()
 
-    fun resetData(book: Book) {
+    fun resetData(book: Book, noSource: () -> Unit) {
         this.book = book
         titleDate.postValue(book.name)
         durChapterIndex = book.durChapterIndex
@@ -46,12 +46,21 @@ object ReadBook {
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
-        upWebBook(book.origin)
+        upWebBook(book.origin, noSource)
     }
 
-    fun upWebBook(origin: String) {
-        val bookSource = App.db.bookSourceDao().getBookSource(origin)
-        webBook = if (bookSource != null) WebBook(bookSource) else null
+    fun upWebBook(origin: String, noSource: () -> Unit) {
+        if (origin == BookType.local) {
+            webBook = null
+        } else {
+            val bookSource = App.db.bookSourceDao().getBookSource(origin)
+            if (bookSource != null) {
+                webBook = WebBook(bookSource)
+            } else {
+                webBook = null
+                noSource.invoke()
+            }
+        }
     }
 
     fun moveToNextPage() {
