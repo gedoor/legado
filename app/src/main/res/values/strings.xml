@@ -225,7 +225,7 @@
     <string name="book_intro">内容简介</string>
     <string name="intro_show">简介:%s</string>
     <string name="open_from_other">打开外部书籍</string>
-    <string name="origin_show">来源:%s</string>
+    <string name="origin_show">来源: %s</string>
     <string name="import_replace_rule">本地导入</string>
     <string name="import_replace_rule_on_line">导入在线规则</string>
     <string name="check_update_interval">检查更新间隔</string>
