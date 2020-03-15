@@ -11,6 +11,7 @@
         android:elevation="10dp"
         android:background="@color/background"
         app:labelVisibilityMode="labeled"
+        app:itemIconSize="26dp"
         app:menu="@menu/main_bnv"
         app:layout_constraintBottom_toBottomOf="parent" />
 
