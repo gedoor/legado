@@ -157,12 +157,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun autoChangeSource(name: String, author: String) {
         execute {
-            App.db.bookSourceDao().allTextEnabled.forEach {
+            App.db.bookSourceDao().allTextEnabled.forEach { source ->
                 try {
-                    val searchBooks = WebBook(it).searchBookSuspend(name)
-
+                    val searchBooks = WebBook(source).searchBookSuspend(name)
+                    searchBooks.getOrNull(0)?.let {
+                        if (it.name == name && (it.author == author || author == "")) {
+                            changeTo(it.toBook())
+                            return@forEach
+                        }
+                    }
                 } catch (e: Exception) {
-
+                    //nothing
                 }
             }
         }.onStart {
