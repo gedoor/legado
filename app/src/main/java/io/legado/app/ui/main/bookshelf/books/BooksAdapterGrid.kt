@@ -21,7 +21,6 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
             if (bundle == null) {
                 ATH.applyBackgroundTint(this)
                 tv_name.text = item.name
-                bv_author.text = item.author
                 iv_cover.load(item.getDisplayCover(), item.name, item.author)
                 if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
                     bv_unread.invisible()
@@ -35,7 +34,6 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 bundle.keySet().map {
                     when (it) {
                         "name" -> tv_name.text = item.name
-                        "author" -> bv_author.text = item.author
                         "cover" -> iv_cover.load(item.getDisplayCover(), item.name, item.author)
                         "refresh" -> if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
                             bv_unread.invisible()
