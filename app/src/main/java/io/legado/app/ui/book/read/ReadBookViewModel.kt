@@ -54,7 +54,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
                     ReadBook.durChapterIndex = ReadBook.chapterSize - 1
                 }
-                ReadBook.loadContent()
+                ReadBook.loadContent(resetPageOffset = true)
             }
             if (ReadBook.inBookshelf) {
                 ReadBook.saveRead()
@@ -74,7 +74,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 if (ReadBook.curTextChapter != null) {
-                    ReadBook.callBack?.upContent()
+                    ReadBook.callBack?.upContent(resetPageOffset = false)
                 }
             }
         }
@@ -107,7 +107,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     App.db.bookDao().update(book)
                     ReadBook.chapterSize = it.size
-                    ReadBook.loadContent()
+                    ReadBook.loadContent(resetPageOffset = true)
                 }
             } else {
                 ReadBook.webBook?.getChapterList(book, this)
@@ -117,7 +117,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                                 App.db.bookChapterDao().insert(*cList.toTypedArray())
                                 App.db.bookDao().update(book)
                                 ReadBook.chapterSize = cList.size
-                                ReadBook.loadContent()
+                                ReadBook.loadContent(resetPageOffset = true)
                             } else {
                                 changeDruChapterIndex(cList)
                             }
@@ -191,7 +191,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             ReadBook.chapterSize = chapters.size
-            ReadBook.loadContent()
+            ReadBook.loadContent(resetPageOffset = true)
         }
     }
 
@@ -205,7 +205,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.durPageIndex = pageIndex
         }
         ReadBook.saveRead()
-        ReadBook.loadContent()
+        ReadBook.loadContent(resetPageOffset = true)
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
@@ -233,7 +233,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookChapterDao().getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 ?.let { chapter ->
                     BookHelp.delContent(book, chapter)
-                    ReadBook.loadContent(ReadBook.durChapterIndex)
+                    ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
         }
     }

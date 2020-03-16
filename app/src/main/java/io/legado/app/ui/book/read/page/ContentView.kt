@@ -108,7 +108,7 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
     }
 
-    fun setContent(textPage: TextPage, resetPageOffset: Boolean) {
+    fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
         setProgress(textPage)
         if (resetPageOffset)
             resetPageOffset()
