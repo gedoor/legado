@@ -25,6 +25,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
@@ -684,6 +685,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         page_view.onDestroy()
         if (!BuildConfig.DEBUG) {
             SyncBookProgress.uploadBookProgress()
+            Backup.autoBack(this)
         }
     }
 
