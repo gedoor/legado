@@ -49,7 +49,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         setOnDismissListener {
             contentView.apply {
                 iv_menu_more.setImageResource(R.drawable.ic_more_vert)
-                recycler_view_top.gone()
+                recycler_view_more.gone()
                 adapter.setItems(menu.visibleItems)
                 recycler_view.visible()
             }
@@ -58,6 +58,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
 
     private fun initRecyclerView() = with(contentView) {
         recycler_view.adapter = adapter
+        recycler_view_more.adapter = adapter
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
         adapter.setItems(menu.visibleItems)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -69,13 +70,12 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         iv_menu_more.onClick {
             if (recycler_view.isVisible) {
                 iv_menu_more.setImageResource(R.drawable.ic_arrow_back)
-                recycler_view_top.adapter = adapter
                 adapter.setItems(moreMenu.visibleItems)
                 recycler_view.gone()
-                recycler_view_top.visible()
+                recycler_view_more.visible()
             } else {
                 iv_menu_more.setImageResource(R.drawable.ic_more_vert)
-                recycler_view_top.gone()
+                recycler_view_more.gone()
                 adapter.setItems(menu.visibleItems)
                 recycler_view.visible()
             }
