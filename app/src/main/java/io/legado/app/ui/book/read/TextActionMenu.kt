@@ -50,7 +50,6 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             contentView.apply {
                 iv_menu_more.setImageResource(R.drawable.ic_more_vert)
                 recycler_view_top.gone()
-                recycler_view_bottom.gone()
                 adapter.setItems(menu.visibleItems)
                 recycler_view.visible()
             }
@@ -77,7 +76,6 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             } else {
                 iv_menu_more.setImageResource(R.drawable.ic_more_vert)
                 recycler_view_top.gone()
-                recycler_view_bottom.gone()
                 adapter.setItems(menu.visibleItems)
                 recycler_view.visible()
             }
