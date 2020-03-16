@@ -221,6 +221,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
                 android:text="@string/chapter_list"
+                android:maxLines="1"
                 android:textColor="@color/tv_text_default"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -256,6 +257,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
                 android:text="@string/main_menu"
+                android:maxLines="1"
                 android:textColor="@color/tv_text_default"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -291,6 +293,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
                 android:text="@string/to_backstage"
+                android:maxLines="1"
                 android:textColor="@color/tv_text_default"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -325,7 +328,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
-                android:text="@string/aloud_config"
+                android:text="@string/setting"
+                android:maxLines="1"
                 android:textColor="@color/tv_text_default"
                 android:textSize="12sp" />
         </LinearLayout>
