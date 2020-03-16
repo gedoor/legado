@@ -15,13 +15,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
-import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.size
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.utils.gone
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.visible
@@ -35,6 +33,10 @@ import org.jetbrains.anko.toast
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
     PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
+    private val adapter = Adapter(context)
+    private val menu = MenuBuilder(context)
+    private val moreMenu = MenuBuilder(context)
+
     init {
         @SuppressLint("InflateParams")
         contentView = LayoutInflater.from(context).inflate(R.layout.popup_action_menu, null)
@@ -44,33 +46,40 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         isFocusable = false
 
         initRecyclerView()
+        setOnDismissListener {
+            contentView.apply {
+                iv_menu_more.setImageResource(R.drawable.ic_more_vert)
+                recycler_view_top.gone()
+                recycler_view_bottom.gone()
+                adapter.setItems(menu.visibleItems)
+                recycler_view.visible()
+            }
+        }
     }
 
     private fun initRecyclerView() = with(contentView) {
-        val adapter = Adapter(context)
-        recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         recycler_view.adapter = adapter
-        val menu = MenuBuilder(context)
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
         adapter.setItems(menu.visibleItems)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val popupMenu = PopupMenu(context, iv_menu_more)
-            onInitializeMenu(popupMenu.menu)
-            if (popupMenu.menu.size > 0) {
-                iv_menu_more.visible()
-                popupMenu.setOnMenuItemClickListener { item ->
-                    item.intent?.let {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
-                            context.startActivity(it)
-                        }
-                    }
-                    this@TextActionMenu.dismiss()
-                    true
-                }
-            }
-            iv_menu_more.onClick {
-                popupMenu.show()
+            onInitializeMenu(moreMenu)
+        }
+        if (moreMenu.size() > 0) {
+            iv_menu_more.visible()
+        }
+        iv_menu_more.onClick {
+            if (recycler_view.isVisible) {
+                iv_menu_more.setImageResource(R.drawable.ic_arrow_back)
+                recycler_view_top.adapter = adapter
+                adapter.setItems(moreMenu.visibleItems)
+                recycler_view.gone()
+                recycler_view_top.visible()
+            } else {
+                iv_menu_more.setImageResource(R.drawable.ic_more_vert)
+                recycler_view_top.gone()
+                recycler_view_bottom.gone()
+                adapter.setItems(menu.visibleItems)
+                recycler_view.visible()
             }
         }
     }

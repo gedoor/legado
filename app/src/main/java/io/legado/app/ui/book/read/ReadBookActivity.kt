@@ -403,11 +403,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun showTextActionMenu() {
         textActionMenu ?: let {
-            textActionMenu = TextActionMenu(this, this).apply {
-                contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-            }
+            textActionMenu = TextActionMenu(this, this)
         }
         textActionMenu?.let { popup ->
+            popup.contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
             val popupHeight = popup.contentView.measuredHeight
             val x = text_menu_position.x.toInt()
             var y = text_menu_position.y.toInt() - popupHeight
