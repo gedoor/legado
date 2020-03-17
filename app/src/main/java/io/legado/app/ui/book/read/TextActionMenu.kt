@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.gone
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.sendToClip
@@ -28,10 +30,12 @@ import kotlinx.android.synthetic.main.popup_action_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
+import java.util.*
 
 @SuppressLint("RestrictedApi")
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
-    PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
+    PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
+    TextToSpeech.OnInitListener {
 
     private val adapter = Adapter(context)
     private val menu = MenuBuilder(context)
@@ -111,6 +115,13 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         when (item.itemId) {
             R.id.menu_copy -> context.sendToClip(callBack.selectedText)
             R.id.menu_share_str -> context.share(callBack.selectedText)
+            R.id.menu_aloud -> {
+                if (BaseReadAloudService.isRun) {
+                    context.toast(R.string.alouding_disable)
+                    return
+                }
+                readAloud(callBack.selectedText)
+            }
             R.id.menu_browser -> {
                 try {
                     val intent = if (callBack.selectedText.isAbsUrl()) {
@@ -135,6 +146,31 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                 }
             }
         }
+    }
+
+    private var textToSpeech: TextToSpeech? = null
+    private var ttsInitFinish = false
+    private var lastText: String = ""
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun readAloud(text: String) {
+        if (textToSpeech == null && !ttsInitFinish) {
+            lastText = text
+            textToSpeech = TextToSpeech(context, this)
+            return
+        }
+        if (text == "") return
+        if (textToSpeech?.isSpeaking == true)
+            textToSpeech?.stop()
+        textToSpeech?.speak(text, TextToSpeech.QUEUE_ADD, null, "select_text")
+        lastText = ""
+    }
+
+    @Synchronized
+    override fun onInit(status: Int) {
+        textToSpeech?.language = Locale.CHINA
+        ttsInitFinish = true
+        readAloud(lastText)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
