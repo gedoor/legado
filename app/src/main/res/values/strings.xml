@@ -648,4 +648,5 @@
     <string name="main_menu">主菜单</string>
     <string name="request_permission">点击授予权限</string>
     <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的"授予权限"按钮，或前往“设置”—“应用权限”—打开所需权限。如果授予权限后仍然不正常，请点击右上角的“选择文件夹”，使用系统文件夹选择器。</string>
+    <string name="alouding_disable">全文朗读中不能朗读选中文字</string>
 </resources>
