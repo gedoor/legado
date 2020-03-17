@@ -154,8 +154,8 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun readAloud(text: String) {
+        lastText = text
         if (textToSpeech == null) {
-            lastText = text
             textToSpeech = TextToSpeech(context, this)
             return
         }
