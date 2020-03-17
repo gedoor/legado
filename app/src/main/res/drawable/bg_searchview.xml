@@ -3,9 +3,9 @@
     <!-- 角度 -->
     <corners android:radius="35dp"/>
     <!-- 填充色 -->
-    <solid android:color="@color/transparent30" />
+    <solid android:color="@color/transparent10" />
     <!-- 描边 设置线宽及颜色 -->
     <stroke
-        android:color="@color/transparent30"
+        android:color="@color/transparent10"
         android:width="0.5dp" />
 </shape>
