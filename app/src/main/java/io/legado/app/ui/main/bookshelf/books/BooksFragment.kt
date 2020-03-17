@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -74,6 +75,19 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterGrid(requireContext(),this)
         }
         rv_bookshelf.adapter = booksAdapter
+        booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+
+                }
+            }
+
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                if (toPosition == 0) {
+
+                }
+            }
+        })
     }
 
     private fun upRecyclerData() {

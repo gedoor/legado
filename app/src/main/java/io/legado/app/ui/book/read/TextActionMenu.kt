@@ -128,6 +128,12 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     context.toast(e.localizedMessage ?: "ERROR")
                 }
             }
+            else -> item.intent?.let {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
+                    context.startActivity(it)
+                }
+            }
         }
     }
 
