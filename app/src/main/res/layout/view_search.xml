@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.SearchView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_view"
-    android:theme="?attr/actionBarStyle"
-    android:background="@drawable/bg_searchview"
-    android:layout_width="match_parent"
-    android:layout_height="34dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    android:imeOptions="actionSearch"
-    app:defaultQueryHint="搜索"
-    app:queryBackground="@null"
-    app:submitBackground="@color/transparent" />
+<androidx.appcompat.widget.SearchView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/search_view"
+        android:theme="?attr/actionBarStyle"
+        android:background="@drawable/bg_searchview"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:imeOptions="actionSearch"
+        app:queryBackground="@null"
+        app:submitBackground="@null"
+        app:defaultQueryHint="搜索"/>
