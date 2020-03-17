@@ -10,6 +10,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:imeOptions="actionSearch"
-        app:queryBackground="@drawable/bg_searchview"
+    app:queryBackground="@null"
         app:submitBackground="@color/transparent"
         app:defaultQueryHint="搜索"/>
