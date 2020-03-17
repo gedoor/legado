@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="15dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -36,7 +33,8 @@
             android:layout_gravity="center"
             android:layout_marginRight="4dp"
             app:hide_mode="gone"
-            app:loading_width="1dp" />
+            app:loading_width="1dp"
+            tools:ignore="RtlHardcoded" />
 
         <ImageView
             android:id="@+id/iv_status"
