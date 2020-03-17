@@ -285,7 +285,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
         if (isMandatoryUpdate || System.currentTimeMillis() - refreshTime > 500) {
             refreshTime = System.currentTimeMillis()
-            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), items))
+            val diffResult =
+                DiffUtil.calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), items))
             adapter.setItems(items, diffResult)
         }
     }
