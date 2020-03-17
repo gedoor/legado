@@ -39,7 +39,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
-            ReadBook.resetData(book)
+            ReadBook.resetData(book) { name, author ->
+                autoChangeSource(name, author)
+            }
             isInitFinish = true
             ReadBook.chapterSize = App.db.bookChapterDao().getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
@@ -52,7 +54,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
                     ReadBook.durChapterIndex = ReadBook.chapterSize - 1
                 }
-                ReadBook.loadContent()
+                ReadBook.loadContent(resetPageOffset = true)
             }
             if (ReadBook.inBookshelf) {
                 ReadBook.saveRead()
@@ -60,7 +62,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         } else {
             isInitFinish = true
             ReadBook.titleDate.postValue(book.name)
-            ReadBook.upWebBook(book.origin)
+            ReadBook.upWebBook(book) { name, author ->
+                autoChangeSource(name, author)
+            }
             ReadBook.chapterSize = App.db.bookChapterDao().getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
@@ -70,7 +74,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 if (ReadBook.curTextChapter != null) {
-                    ReadBook.callBack?.upContent()
+                    ReadBook.callBack?.upContent(resetPageOffset = false)
                 }
             }
         }
@@ -103,7 +107,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     App.db.bookDao().update(book)
                     ReadBook.chapterSize = it.size
-                    ReadBook.loadContent()
+                    ReadBook.loadContent(resetPageOffset = true)
                 }
             } else {
                 ReadBook.webBook?.getChapterList(book, this)
@@ -113,7 +117,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                                 App.db.bookChapterDao().insert(*cList.toTypedArray())
                                 App.db.bookDao().update(book)
                                 ReadBook.chapterSize = cList.size
-                                ReadBook.loadContent()
+                                ReadBook.loadContent(resetPageOffset = true)
                             } else {
                                 changeDruChapterIndex(cList)
                             }
@@ -122,7 +126,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         }
                     }?.onError {
                         toast(R.string.error_load_toc)
-                    } ?: autoChangeSource()
+                    } ?: autoChangeSource(book.name, book.author)
             }
         }
     }
@@ -151,8 +155,28 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun autoChangeSource() {
-
+    private fun autoChangeSource(name: String, author: String) {
+        execute {
+            App.db.bookSourceDao().allTextEnabled.forEach { source ->
+                try {
+                    val searchBooks = WebBook(source).searchBookSuspend(name)
+                    searchBooks.getOrNull(0)?.let {
+                        if (it.name == name && (it.author == author || author == "")) {
+                            changeTo(it.toBook())
+                            return@forEach
+                        }
+                    }
+                } catch (e: Exception) {
+                    //nothing
+                }
+            }
+        }.onStart {
+            ReadBook.msg = "正在自动换源"
+            ReadBook.callBack?.upContent()
+        }.onFinally {
+            ReadBook.msg = null
+            ReadBook.callBack?.upContent()
+        }
     }
 
     private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
@@ -167,7 +191,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             ReadBook.chapterSize = chapters.size
-            ReadBook.loadContent()
+            ReadBook.loadContent(resetPageOffset = true)
         }
     }
 
@@ -181,7 +205,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.durPageIndex = pageIndex
         }
         ReadBook.saveRead()
-        ReadBook.loadContent()
+        ReadBook.loadContent(resetPageOffset = true)
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
@@ -208,9 +232,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookChapterDao().getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 ?.let { chapter ->
-                BookHelp.delContent(book, chapter)
-                    ReadBook.loadContent(ReadBook.durChapterIndex)
-            }
+                    BookHelp.delContent(book, chapter)
+                    ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
+                }
         }
     }
 

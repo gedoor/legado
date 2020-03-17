@@ -3,8 +3,6 @@ package io.legado.app.ui.main
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
-import androidx.core.view.forEach
-import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -17,7 +15,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
-import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -96,14 +93,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                 bottom_navigation_view.menu.getItem(3).isChecked = true
             }
         }
-
-
-//        bottom_navigation_view.menu.forEachIndexed { index, item ->
-//            if (item.isChecked)
-//                item.icon = getDrawable(res[1][index])
-//            else
-//                item.icon = getDrawable(res[0][index])
-//        }
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
@@ -122,13 +111,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             }
         }
         return super.onKeyUp(keyCode, event)
-    }
-
-    override fun finish() {
-        if (!BuildConfig.DEBUG) {
-            Backup.autoBack(this)
-        }
-        super.finish()
     }
 
     override fun onDestroy() {

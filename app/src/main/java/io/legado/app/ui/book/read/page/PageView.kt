@@ -38,7 +38,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (oldw != 0 && oldh != 0) {
-            ReadBook.loadContent()
+            ReadBook.loadContent(resetPageOffset = false)
         }
     }
 
@@ -93,9 +93,9 @@ class PageView(context: Context, attrs: AttributeSet) :
         upContent()
     }
 
-    override fun upContent(relativePosition: Int) {
+    override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
         if (ReadBookConfig.isScroll) {
-            curPage.setContent(pageFactory.currentPage)
+            curPage.setContent(pageFactory.currentPage, resetPageOffset)
         } else {
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)

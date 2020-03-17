@@ -59,3 +59,4 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 class Launcher1 : WelcomeActivity()
 class Launcher2 : WelcomeActivity()
 class Launcher3 : WelcomeActivity()
+class Launcher4 : WelcomeActivity()

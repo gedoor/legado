@@ -5,10 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.ui.welcome.Launcher1
-import io.legado.app.ui.welcome.Launcher2
-import io.legado.app.ui.welcome.Launcher3
-import io.legado.app.ui.welcome.WelcomeActivity
+import io.legado.app.ui.welcome.*
 import org.jetbrains.anko.toast
 
 /**
@@ -20,7 +17,8 @@ object LauncherIconHelp {
     private val componentNames = arrayListOf(
         ComponentName(App.INSTANCE, Launcher1::class.java.name),
         ComponentName(App.INSTANCE, Launcher2::class.java.name),
-        ComponentName(App.INSTANCE, Launcher3::class.java.name)
+        ComponentName(App.INSTANCE, Launcher3::class.java.name),
+        ComponentName(App.INSTANCE, Launcher4::class.java.name)
     )
 
     fun changeIcon(icon: String?) {
