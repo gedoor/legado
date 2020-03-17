@@ -18,6 +18,7 @@
     <color name="background_menu">@color/md_grey_200</color>
     <color name="transparent">#00000000</color>
 
+    <color name="transparent10">#10000000</color>
     <color name="transparent30">#30000000</color>
 
     <color name="highlight">#d3321b</color>
