@@ -32,7 +32,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 tv_name.text = item.bookSourceName
             }
             if (exIndex == holder.layoutPosition) {
-                iv_status.setImageResource(R.drawable.ic_remove)
+                iv_status.setImageResource(R.drawable.ic_arrow_down)
                 rotate_loading.loadingColor = context.accentColor
                 rotate_loading.show()
                 if (scrollTo >= 0) {
@@ -68,7 +68,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     }
                 }
             } else {
-                iv_status.setImageResource(R.drawable.ic_add)
+                iv_status.setImageResource(R.drawable.ic_arrow_right)
                 rotate_loading.hide()
                 gl_child.gone()
             }
