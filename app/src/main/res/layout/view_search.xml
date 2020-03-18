@@ -14,5 +14,4 @@
         app:queryBackground="@null"
         app:submitBackground="@null"
         app:searchHintIcon="@drawable/ic_search_hint"
-        app:goIcon="@drawable/ic_search"
         app:defaultQueryHint="搜索"/>
