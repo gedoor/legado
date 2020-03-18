@@ -93,6 +93,34 @@
                 android:resource="@xml/shortcuts"
                 android:launchMode="singleTask" />
         </activity>
+        <!--图标5-->
+        <activity
+            android:name=".ui.welcome.Launcher5"
+            android:icon="@mipmap/launcher5"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--图标6-->
+        <activity
+            android:name=".ui.welcome.Launcher6"
+            android:icon="@mipmap/launcher6"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
         <!--主界面-->
         <activity
             android:name=".ui.main.MainActivity"

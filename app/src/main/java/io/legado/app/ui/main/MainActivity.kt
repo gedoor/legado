@@ -15,7 +15,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
-import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -112,13 +111,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             }
         }
         return super.onKeyUp(keyCode, event)
-    }
-
-    override fun finish() {
-        if (!BuildConfig.DEBUG) {
-            Backup.autoBack(this)
-        }
-        super.finish()
     }
 
     override fun onDestroy() {

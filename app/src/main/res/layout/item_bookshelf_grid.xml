@@ -48,19 +48,6 @@
             tools:ignore="RtlHardcoded" />
     </FrameLayout>
 
-    <io.legado.app.ui.widget.text.BadgeView
-        android:id="@+id/bv_author"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:includeFontPadding="false"
-        android:singleLine="true"
-        app:radius="1dp"
-        app:up_flat_angle="true"
-        app:layout_constraintLeft_toLeftOf="@id/iv_cover"
-        app:layout_constraintBottom_toBottomOf="@id/iv_cover"
-        tools:ignore="RtlHardcoded" />
-
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"

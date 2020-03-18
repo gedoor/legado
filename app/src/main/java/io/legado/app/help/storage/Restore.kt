@@ -128,7 +128,7 @@ object Restore {
                 bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
             }
             ChapterProvider.upStyle()
-            ReadBook.loadContent()
+            ReadBook.loadContent(resetPageOffset = false)
         }
         withContext(Main) {
             if (AppConfig.isNightTheme && AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES) {

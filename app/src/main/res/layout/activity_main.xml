@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:elevation="10dp"
         android:background="@color/background"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/main_bnv"
         app:layout_constraintBottom_toBottomOf="parent" />
 

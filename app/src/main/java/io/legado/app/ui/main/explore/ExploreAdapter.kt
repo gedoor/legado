@@ -12,6 +12,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.ACache
+import io.legado.app.utils.dp
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
@@ -28,11 +29,16 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
         with(holder.itemView) {
+            if (holder.layoutPosition == getActualItemCount() - 1) {
+                setPadding(16.dp, 12.dp, 16.dp, 12.dp)
+            } else {
+                setPadding(16.dp, 12.dp, 16.dp, 0)
+            }
             if (payloads.isEmpty()) {
                 tv_name.text = item.bookSourceName
             }
             if (exIndex == holder.layoutPosition) {
-                iv_status.setImageResource(R.drawable.ic_remove)
+                iv_status.setImageResource(R.drawable.ic_arrow_down)
                 rotate_loading.loadingColor = context.accentColor
                 rotate_loading.show()
                 if (scrollTo >= 0) {
@@ -68,7 +74,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     }
                 }
             } else {
-                iv_status.setImageResource(R.drawable.ic_add)
+                iv_status.setImageResource(R.drawable.ic_arrow_right)
                 rotate_loading.hide()
                 gl_child.gone()
             }

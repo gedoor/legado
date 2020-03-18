@@ -225,7 +225,7 @@
     <string name="book_intro">内容简介</string>
     <string name="intro_show">简介:%s</string>
     <string name="open_from_other">打开外部书籍</string>
-    <string name="origin_show">来源:%s</string>
+    <string name="origin_show">来源: %s</string>
     <string name="import_replace_rule">本地导入</string>
     <string name="import_replace_rule_on_line">导入在线规则</string>
     <string name="check_update_interval">检查更新间隔</string>
@@ -581,7 +581,7 @@
     <string name="book_type">类型:</string>
     <string name="book_type_text">文本</string>
     <string name="book_type_audio">音频</string>
-    <string name="to_backstage">转到后台</string>
+    <string name="to_backstage">后台</string>
     <string name="importing">正在导入</string>
     <string name="exporting">正在导出</string>
     <string name="custom_page_key">自定义翻页按键</string>
@@ -648,4 +648,5 @@
     <string name="main_menu">主菜单</string>
     <string name="request_permission">点击授予权限</string>
     <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的"授予权限"按钮，或前往“设置”—“应用权限”—打开所需权限。如果授予权限后仍然不正常，请点击右上角的“选择文件夹”，使用系统文件夹选择器。</string>
+    <string name="alouding_disable">全文朗读中不能朗读选中文字</string>
 </resources>

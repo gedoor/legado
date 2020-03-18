@@ -9,6 +9,7 @@
 * 左下角选择书源文件所在的路径；
 * 点击书源文件导入；
 * 导入后返回书源管理界面；
+* 新版qq下载路径:Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/
 
 3.如何新建大佬发的单独书源？
 * 复制书源代码；

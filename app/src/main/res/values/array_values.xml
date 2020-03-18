@@ -7,6 +7,8 @@
         <item>launcher2</item>
         <item>launcher3</item>
         <item>launcher4</item>
+        <item>launcher5</item>
+        <item>launcher6</item>
     </string-array>
 
     <string-array name="screen_time_out_value">
