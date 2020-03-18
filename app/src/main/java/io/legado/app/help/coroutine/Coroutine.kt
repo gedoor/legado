@@ -113,7 +113,7 @@ class Coroutine<T>(
     fun cancel(cause: CancellationException? = null) {
         job.cancel(cause)
         cancel?.let {
-            scope.plus(Dispatchers.Main).launch {
+            MainScope().launch {
                 if (null == it.context) {
                     it.block.invoke(scope)
                 } else {
@@ -177,6 +177,7 @@ class Coroutine<T>(
         value: R,
         callback: Callback<R>
     ) {
+        if (!scope.isActive) return
         if (null == callback.context) {
             callback.block.invoke(scope, value)
         } else {
