@@ -49,28 +49,29 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        val oldItem = oldItems[oldItemPosition]
-        val newItem = newItems[newItemPosition]
         val payload = Bundle()
-        if (oldItem.name != newItem.name) {
+        val newItem: SearchBook? = if ((newItemPosition >= 0) && (newItemPosition < newItems.size)) newItems[newItemPosition] else null
+        val oldItem: SearchBook? = if ((oldItemPosition >= 0) && (oldItemPosition < oldItems.size)) oldItems[oldItemPosition] else null
+        if (newItem == null) return payload
+        if (oldItem?.name != newItem.name) {
             payload.putString("name", newItem.name)
         }
-        if (oldItem.author != newItem.author) {
+        if (oldItem?.author != newItem.author) {
             payload.putString("author", newItem.author)
         }
-        if (oldItem.origins.size != newItem.origins.size) {
+        if (oldItem?.origins?.size != newItem.origins.size) {
             payload.putInt("origins", newItem.origins.size)
         }
-        if (oldItem.coverUrl != newItem.coverUrl) {
+        if (oldItem?.coverUrl != newItem.coverUrl) {
             payload.putString("cover", newItem.coverUrl)
         }
-        if (oldItem.kind != newItem.kind) {
+        if (oldItem?.kind != newItem.kind) {
             payload.putString("kind", newItem.kind)
         }
-        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
+        if (oldItem?.latestChapterTitle != newItem.latestChapterTitle) {
             payload.putString("last", newItem.latestChapterTitle)
         }
-        if (oldItem.intro != newItem.intro) {
+        if (oldItem?.intro != newItem.intro) {
             payload.putString("intro", newItem.intro)
         }
         return payload
