@@ -19,7 +19,8 @@ object LauncherIconHelp {
         ComponentName(App.INSTANCE, Launcher2::class.java.name),
         ComponentName(App.INSTANCE, Launcher3::class.java.name),
         ComponentName(App.INSTANCE, Launcher4::class.java.name),
-        ComponentName(App.INSTANCE, Launcher5::class.java.name)
+        ComponentName(App.INSTANCE, Launcher5::class.java.name),
+        ComponentName(App.INSTANCE, Launcher6::class.java.name)
     )
 
     fun changeIcon(icon: String?) {
