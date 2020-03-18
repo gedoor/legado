@@ -43,7 +43,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchKey = key
             searchBooks.clear()
         }
-        isSearchLiveData.postValue(true)
         task = execute {
             val searchGroup = context.getPrefString("searchGroup") ?: ""
             val bookSourceList = if (searchGroup.isBlank()) {
@@ -71,6 +70,11 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                         }
                     }
             }
+        }.onStart {
+            isSearchLiveData.postValue(true)
+        }.onCancel {
+            isSearchLiveData.postValue(false)
+            isLoading = false
         }
 
         task?.invokeOnCompletion {

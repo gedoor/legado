@@ -72,7 +72,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun search() {
         task = execute {
-            searchStateData.postValue(true)
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
@@ -95,6 +94,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         }
                     }
             }
+        }.onStart {
+            searchStateData.postValue(true)
+        }.onCancel {
+            searchStateData.postValue(false)
         }
 
         task?.invokeOnCompletion {
