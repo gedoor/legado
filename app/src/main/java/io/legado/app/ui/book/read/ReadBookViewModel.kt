@@ -117,15 +117,16 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                                 App.db.bookChapterDao().insert(*cList.toTypedArray())
                                 App.db.bookDao().update(book)
                                 ReadBook.chapterSize = cList.size
+                                ReadBook.upMsg(null)
                                 ReadBook.loadContent(resetPageOffset = true)
                             } else {
                                 changeDruChapterIndex(cList)
                             }
                         } else {
-                            toast(R.string.error_load_toc)
+                            ReadBook.upMsg(context.getString(R.string.error_load_toc))
                         }
                     }?.onError {
-                        toast(R.string.error_load_toc)
+                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
                     }
             }
         }
@@ -133,6 +134,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeTo(book1: Book) {
         execute {
+            ReadBook.upMsg(null)
             ReadBook.book?.let {
                 App.db.bookDao().delete(it)
             }
@@ -171,11 +173,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
         }.onStart {
-            ReadBook.msg = "正在自动换源"
-            ReadBook.callBack?.upContent()
+            ReadBook.upMsg("正在自动换源")
         }.onFinally {
-            ReadBook.msg = null
-            ReadBook.callBack?.upContent()
+            ReadBook.upMsg(null)
         }
     }
 
