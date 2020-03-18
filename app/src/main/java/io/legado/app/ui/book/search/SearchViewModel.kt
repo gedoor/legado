@@ -55,7 +55,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 WebBook(item).searchBook(
                     searchKey,
                     searchPage,
-                    scope = this@execute,
+                        scope = this,
                     context = searchPool
                 )
                     .timeout(30000L)
