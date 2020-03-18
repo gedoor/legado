@@ -11,7 +11,6 @@ import android.text.style.ImageSpan
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import io.legado.app.R
@@ -41,8 +40,7 @@ class SearchView : SearchView {
         super.onLayout(changed, left, top, right, bottom)
         try {
             if (textView == null) {
-                textView =
-                    findViewById<View>(androidx.appcompat.R.id.search_src_text) as TextView
+                textView = findViewById(androidx.appcompat.R.id.search_src_text)
                 mSearchHintIcon = this.context.getDrawable(R.drawable.ic_search_hint)
                 updateQueryHint()
             }
@@ -69,9 +67,8 @@ class SearchView : SearchView {
     }
 
     private fun updateQueryHint() {
-        if (textView != null) {
-            val hint = queryHint
-            textView!!.hint = getDecoratedHint(hint ?: "")
+        textView?.let {
+            it.hint = getDecoratedHint(queryHint ?: "")
         }
     }
 
