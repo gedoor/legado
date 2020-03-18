@@ -3,7 +3,6 @@ package io.legado.app.ui.book.search
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.widget.SearchView
@@ -113,6 +112,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                     viewModel.saveSearchKey(query)
                     viewModel.search(it)
                 }
+                openOrCloseHistory(false)
                 return true
             }
 
