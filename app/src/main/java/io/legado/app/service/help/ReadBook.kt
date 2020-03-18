@@ -33,7 +33,7 @@ object ReadBook {
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
     var webBook: WebBook? = null
-    private var msg: String? = null
+    var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
 
     fun resetData(book: Book, noSource: (name: String, author: String) -> Unit) {

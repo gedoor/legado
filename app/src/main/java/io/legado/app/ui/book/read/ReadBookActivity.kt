@@ -682,6 +682,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu?.dismiss()
         page_view.onDestroy()
+        ReadBook.msg = null
         if (!BuildConfig.DEBUG) {
             SyncBookProgress.uploadBookProgress()
             Backup.autoBack(this)
