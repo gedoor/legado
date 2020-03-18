@@ -27,6 +27,7 @@ import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
+import kotlin.math.max
 
 
 class BooksFragment : BaseFragment(R.layout.fragment_books),
@@ -72,19 +73,23 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterList(requireContext(), this)
         } else {
             rv_bookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
-            booksAdapter = BooksAdapterGrid(requireContext(),this)
+            booksAdapter = BooksAdapterGrid(requireContext(), this)
         }
         rv_bookshelf.adapter = booksAdapter
         booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                if (positionStart == 0) {
-
+                val layoutManager = rv_bookshelf.layoutManager
+                if (positionStart == 0 && layoutManager is LinearLayoutManager) {
+                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                    rv_bookshelf.scrollToPosition(max(0, scrollTo))
                 }
             }
 
             override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-                if (toPosition == 0) {
-
+                val layoutManager = rv_bookshelf.layoutManager
+                if (toPosition == 0 && layoutManager is LinearLayoutManager) {
+                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                    rv_bookshelf.scrollToPosition(max(0, scrollTo))
                 }
             }
         })

@@ -80,6 +80,8 @@
         <item>icon2</item>
         <item>icon3</item>
         <item>icon4</item>
+        <item>icon5</item>
+        <item>icon6</item>
     </string-array>
 
     <string-array name="chinese_mode">
