@@ -16,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -34,59 +33,57 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
      * 开始搜索
      */
     fun search(key: String) {
-        launch {
-            task?.cancel()
-            if (key.isEmpty() && searchKey.isEmpty()) {
-                return@launch
-            } else if (key.isEmpty()) {
-                isLoading = true
-                searchPage++
-            } else if (key.isNotEmpty()) {
-                isLoading = true
-                searchPage = 1
-                searchKey = key
-                searchBooks.clear()
+        task?.cancel()
+        if (key.isEmpty() && searchKey.isEmpty()) {
+            return
+        } else if (key.isEmpty()) {
+            isLoading = true
+            searchPage++
+        } else if (key.isNotEmpty()) {
+            isLoading = true
+            searchPage = 1
+            searchKey = key
+            searchBooks.clear()
+        }
+        task = execute {
+            val searchGroup = context.getPrefString("searchGroup") ?: ""
+            val bookSourceList = if (searchGroup.isBlank()) {
+                App.db.bookSourceDao().allEnabled
+            } else {
+                App.db.bookSourceDao().getEnabledByGroup(searchGroup)
             }
-            task = execute {
-                val searchGroup = context.getPrefString("searchGroup") ?: ""
-                val bookSourceList = if (searchGroup.isBlank()) {
-                    App.db.bookSourceDao().allEnabled
-                } else {
-                    App.db.bookSourceDao().getEnabledByGroup(searchGroup)
-                }
-                for (item in bookSourceList) {
-                    //task取消时自动取消 by （scope = this@execute）
-                    WebBook(item).searchBook(
-                            searchKey,
-                            searchPage,
-                            scope = this,
-                            context = searchPool
-                        )
-                        .timeout(30000L)
-                        .onSuccess(IO) {
-                            if (isActive) {
-                                it?.let { list ->
-                                    if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                                        precisionSearch(this, list)
-                                    } else {
-                                        App.db.searchBookDao().insert(*list.toTypedArray())
-                                        mergeItems(this, list)
-                                    }
+            for (item in bookSourceList) {
+                //task取消时自动取消 by （scope = this@execute）
+                WebBook(item).searchBook(
+                        searchKey,
+                        searchPage,
+                        scope = this,
+                        context = searchPool
+                    )
+                    .timeout(30000L)
+                    .onSuccess(IO) {
+                        if (isActive) {
+                            it?.let { list ->
+                                if (context.getPrefBoolean(PreferKey.precisionSearch)) {
+                                    precisionSearch(this, list)
+                                } else {
+                                    App.db.searchBookDao().insert(*list.toTypedArray())
+                                    mergeItems(this, list)
                                 }
                             }
                         }
-                }
-            }.onStart {
-                isSearchLiveData.postValue(true)
-            }.onCancel {
-                isSearchLiveData.postValue(false)
-                isLoading = false
+                    }
             }
+        }.onStart {
+            isSearchLiveData.postValue(true)
+        }.onCancel {
+            isSearchLiveData.postValue(false)
+            isLoading = false
+        }
 
-            task?.invokeOnCompletion {
-                isSearchLiveData.postValue(false)
-                isLoading = false
-            }
+        task?.invokeOnCompletion {
+            isSearchLiveData.postValue(false)
+            isLoading = false
         }
     }
 
