@@ -50,8 +50,8 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
         val payload = Bundle()
-        val newItem: SearchBook? = if ((newItemPosition >= 0) && (newItemPosition < newItems.size)) newItems[newItemPosition] else null
-        val oldItem: SearchBook? = if ((oldItemPosition >= 0) && (oldItemPosition < oldItems.size)) oldItems[oldItemPosition] else null
+        val newItem = newItems.getOrNull(newItemPosition)
+        val oldItem = oldItems.getOrNull(oldItemPosition)
         if (newItem == null) return payload
         if (oldItem?.name != newItem.name) {
             payload.putString("name", newItem.name)
