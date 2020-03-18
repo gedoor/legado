@@ -161,7 +161,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookSourceDao().allTextEnabled.forEach { source ->
                 try {
-                    val searchBooks = WebBook(source).searchBookSuspend(name)
+                    val searchBooks = WebBook(source).searchBookSuspend(this, name)
                     searchBooks.getOrNull(0)?.let {
                         if (it.name == name && (it.author == author || author == "")) {
                             changeTo(it.toBook())
