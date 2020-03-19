@@ -27,7 +27,7 @@ class WebBook(val bookSource: BookSource) {
         page: Int? = 1,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
-    ): Coroutine<List<SearchBook>> {
+    ): Coroutine<ArrayList<SearchBook>> {
         return Coroutine.async(scope, context) {
             searchBookSuspend(scope, key, page)
         }
