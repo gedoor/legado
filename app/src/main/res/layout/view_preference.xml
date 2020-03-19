@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bg_prefs_color"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,21 +10,23 @@
     android:paddingBottom="4dp"
     android:minHeight="42dp"
     android:clickable="true"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:focusable="true">
 
-    <ImageView android:id="@+id/preference_icon"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <ImageView
+        android:id="@+id/preference_icon"
         android:layout_marginRight="16dp"
         android:scaleType="fitCenter"
         android:visibility="visible"
         android:paddingTop="1dp"
         android:layout_width="24dp"
-        android:layout_height="24dp" />
+        android:layout_height="24dp"
+        tools:ignore="ContentDescription,RtlHardcoded" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_weight="1.0"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content">
 
         <TextView
@@ -36,19 +37,16 @@
             android:text="@string/title"
             android:textColor="@color/tv_text_default"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/preference_desc"
             android:paddingBottom="8dp"
-            android:singleLine="true"
             android:textSize="14sp"
             android:textColor="@color/tv_text_summary"
             android:text="@string/default1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <FrameLayout
@@ -61,7 +59,7 @@
         android:visibility="gone"
         android:gravity="right|center_vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        tools:ignore="RtlHardcoded" />
 
 </LinearLayout>
