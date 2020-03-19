@@ -12,8 +12,10 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.isActive
 import java.util.concurrent.Executors
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
@@ -43,7 +45,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchKey = key
             searchBooks.clear()
         }
-        isSearchLiveData.postValue(true)
         task = execute {
             val searchGroup = context.getPrefString("searchGroup") ?: ""
             val bookSourceList = if (searchGroup.isBlank()) {
@@ -54,23 +55,30 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(
-                    searchKey,
-                    searchPage,
-                    scope = this@execute,
-                    context = searchPool
-                )
+                        searchKey,
+                        searchPage,
+                        scope = this,
+                        context = searchPool
+                    )
                     .timeout(30000L)
                     .onSuccess(IO) {
-                        it?.let { list ->
-                            if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                                precisionSearch(list)
-                            } else {
-                                App.db.searchBookDao().insert(*list.toTypedArray())
-                                mergeItems(list)
+                        if (isActive) {
+                            it?.let { list ->
+                                if (context.getPrefBoolean(PreferKey.precisionSearch)) {
+                                    precisionSearch(this, list)
+                                } else {
+                                    App.db.searchBookDao().insert(*list.toTypedArray())
+                                    mergeItems(this, list)
+                                }
                             }
                         }
                     }
             }
+        }.onStart {
+            isSearchLiveData.postValue(true)
+        }.onCancel {
+            isSearchLiveData.postValue(false)
+            isLoading = false
         }
 
         task?.invokeOnCompletion {
@@ -82,7 +90,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 精确搜索处理
      */
-    private fun precisionSearch(searchBooks: List<SearchBook>) {
+    private fun precisionSearch(scope: CoroutineScope, searchBooks: List<SearchBook>) {
         val books = arrayListOf<SearchBook>()
         searchBooks.forEach { searchBook ->
             if (searchBook.name.contains(searchKey, true)
@@ -90,14 +98,16 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             ) books.add(searchBook)
         }
         App.db.searchBookDao().insert(*books.toTypedArray())
-        mergeItems(books)
+        if (scope.isActive) {
+            mergeItems(scope, books)
+        }
     }
 
     /**
      * 合并搜索结果并排序
      */
     @Synchronized
-    private fun mergeItems(newDataS: List<SearchBook>) {
+    private fun mergeItems(scope: CoroutineScope, newDataS: List<SearchBook>) {
         if (newDataS.isNotEmpty()) {
             val copyDataS = ArrayList(searchBooks)
             val searchBooksAdd = ArrayList<SearchBook>()
@@ -141,6 +151,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
             }
+            if (!scope.isActive) return
             searchBooks.sortWith(Comparator { o1, o2 ->
                 if (o1.name == searchKey && o2.name != searchKey) {
                     1
@@ -166,6 +177,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     0
                 }
             })
+            if (!scope.isActive) return
             searchBooks = copyDataS
             searchBookLiveData.postValue(copyDataS)
         }

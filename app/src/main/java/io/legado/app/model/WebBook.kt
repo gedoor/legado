@@ -29,11 +29,12 @@ class WebBook(val bookSource: BookSource) {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<SearchBook>> {
         return Coroutine.async(scope, context) {
-            searchBookSuspend(key, page)
+            searchBookSuspend(scope, key, page)
         }
     }
 
     suspend fun searchBookSuspend(
+        scope: CoroutineScope,
         key: String,
         page: Int? = 1
     ): ArrayList<SearchBook> {
@@ -47,6 +48,7 @@ class WebBook(val bookSource: BookSource) {
             )
             val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
             return BookList.analyzeBookList(
+                scope,
                 res.body,
                 bookSource,
                 analyzeUrl,
@@ -75,6 +77,7 @@ class WebBook(val bookSource: BookSource) {
             )
             val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
             BookList.analyzeBookList(
+                scope,
                 res.body,
                 bookSource,
                 analyzeUrl,
