@@ -4,6 +4,9 @@
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/main_activity"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
@@ -24,12 +27,17 @@
             android:defaultValue="true"
             android:key="showRss"
             android:title="@string/show_rss"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/other_setting"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <Preference

@@ -12,13 +12,15 @@ import io.legado.app.lib.theme.accentColor
 class SwitchPreference(context: Context, attrs: AttributeSet) :
     SwitchPreferenceCompat(context, attrs) {
 
+    init {
+        layoutResource = R.layout.view_preference
+    }
+
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
-        holder?.let {
-            val view = it.findViewById(R.id.switchWidget)
-            if (view is SwitchCompat) {
-                ATH.setTint(view, context.accentColor)
-            }
+        val v = Preference.bindView<SwitchCompat>(context, holder, icon, title, summary, widgetLayoutResource, R.id.switchWidget)
+        if (v is SwitchCompat) {
+            ATH.setTint(v, context.accentColor)
         }
     }
 
