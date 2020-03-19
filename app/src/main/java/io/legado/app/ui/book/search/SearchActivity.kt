@@ -112,6 +112,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                     viewModel.saveSearchKey(query)
                     viewModel.search(it)
                 }
+                openOrCloseHistory(false)
                 return true
             }
 
@@ -128,6 +129,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 openOrCloseHistory(hasFocus)
             }
         }
+        openOrCloseHistory(true)
     }
 
     private fun initRecyclerView() {

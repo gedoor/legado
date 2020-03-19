@@ -4,21 +4,24 @@
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/web_dav_set"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
-        <androidx.preference.EditTextPreference
+        <io.legado.app.ui.widget.prefs.EditTextPreference
             android:key="web_dav_url"
             android:title="WebDav 服务器地址"
             android:summary="@string/web_dav_url_s"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.EditTextPreference
+        <io.legado.app.ui.widget.prefs.EditTextPreference
             android:key="web_dav_account"
             android:title="WebDav 账号"
             android:summary="@string/web_dav_account_s"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.EditTextPreference
+        <io.legado.app.ui.widget.prefs.EditTextPreference
             android:key="web_dav_password"
             android:title="WebDav 密码"
             android:summary="@string/web_dav_pw_s"
@@ -29,28 +32,33 @@
             android:defaultValue="true"
             android:title="创建子文件夹"
             android:summary="创建legado文件夹作为备份文件夹"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <io.legado.app.ui.widget.prefs.PreferenceCategory app:iconSpaceReserved="false">
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        app:layout="@layout/view_preference_category"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="backupUri"
             android:title="备份路径"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="web_dav_backup"
             android:title="备份"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="web_dav_restore"
             android:title="恢复"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="import_old"
             android:title="导入旧版本数据"
             app:iconSpaceReserved="false" />

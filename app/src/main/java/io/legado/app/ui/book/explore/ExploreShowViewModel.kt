@@ -35,11 +35,9 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
             WebBook(source).exploreBook(url, page, this)
                 .timeout(30000L)
                 .onSuccess(IO) { searchBooks ->
-                    searchBooks?.let {
-                        booksData.postValue(searchBooks)
-                        App.db.searchBookDao().insert(*searchBooks.toTypedArray())
-                        page++
-                    }
+                    booksData.postValue(searchBooks)
+                    App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+                    page++
                 }
         }
     }

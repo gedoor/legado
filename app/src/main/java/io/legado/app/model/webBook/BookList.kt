@@ -9,11 +9,15 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
 
 object BookList {
 
     @Throws(Exception::class)
     fun analyzeBookList(
+        scope: CoroutineScope,
         body: String?,
         bookSource: BookSource,
         analyzeUrl: AnalyzeUrl,
@@ -28,12 +32,13 @@ object BookList {
             )
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
+        if (!scope.isActive) throw CancellationException()
         val analyzeRule = AnalyzeRule(null)
         analyzeRule.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
             if (baseUrl.matches(it.toRegex())) {
                 Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
-                getInfoItem(analyzeRule, bookSource, baseUrl)?.let { searchBook ->
+                getInfoItem(scope, analyzeRule, bookSource, baseUrl)?.let { searchBook ->
                     searchBook.infoHtml = body
                     bookList.add(searchBook)
                 }
@@ -59,7 +64,7 @@ object BookList {
         collections = analyzeRule.getElements(ruleList)
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
-            getInfoItem(analyzeRule, bookSource, baseUrl)?.let { searchBook ->
+            getInfoItem(scope, analyzeRule, bookSource, baseUrl)?.let { searchBook ->
                 searchBook.infoHtml = body
                 bookList.add(searchBook)
             }
@@ -74,8 +79,9 @@ object BookList {
             val ruleWordCount = analyzeRule.splitSourceRule(bookListRule.wordCount)
             Debug.log(bookSource.bookSourceUrl, "└列表大小:${collections.size}")
             for ((index, item) in collections.withIndex()) {
+                if (!scope.isActive) throw CancellationException()
                 getSearchItem(
-                    item, analyzeRule, bookSource, baseUrl, index == 0,
+                    scope, item, analyzeRule, bookSource, baseUrl, index == 0,
                     ruleName = ruleName, ruleBookUrl = ruleBookUrl, ruleAuthor = ruleAuthor,
                     ruleCoverUrl = ruleCoverUrl, ruleIntro = ruleIntro, ruleKind = ruleKind,
                     ruleLastChapter = ruleLastChapter, ruleWordCount = ruleWordCount
@@ -93,7 +99,9 @@ object BookList {
         return bookList
     }
 
+    @Throws(Exception::class)
     private fun getInfoItem(
+        scope: CoroutineScope,
         analyzeRule: AnalyzeRule,
         bookSource: BookSource,
         baseUrl: String
@@ -108,29 +116,37 @@ object BookList {
         with(bookSource.getBookInfoRule()) {
             init?.let {
                 if (it.isNotEmpty()) {
+                    if (!scope.isActive) throw CancellationException()
                     Debug.log(bookSource.bookSourceUrl, "≡执行详情页初始化规则")
                     analyzeRule.setContent(analyzeRule.getElement(it))
                 }
             }
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取书名")
             searchBook.name = analyzeRule.getString(name)
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.name}")
             if (searchBook.name.isNotEmpty()) {
+                if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取作者")
                 searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(author))
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.author}")
+                if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取分类")
                 searchBook.kind = analyzeRule.getStringList(kind)?.joinToString(",")
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}")
+                if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取字数")
                 searchBook.wordCount = analyzeRule.getString(wordCount)
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}")
+                if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取最新章节")
                 searchBook.latestChapterTitle = analyzeRule.getString(lastChapter)
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}")
+                if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取简介")
                 searchBook.intro = analyzeRule.getString(intro)
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", true)
+                if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
                 searchBook.coverUrl = analyzeRule.getString(coverUrl, true)
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}")
@@ -140,7 +156,9 @@ object BookList {
         return null
     }
 
+    @Throws(Exception::class)
     private fun getSearchItem(
+        scope: CoroutineScope,
         item: Any,
         analyzeRule: AnalyzeRule,
         bookSource: BookSource,
@@ -162,30 +180,38 @@ object BookList {
         searchBook.originOrder = bookSource.customOrder
         analyzeRule.book = searchBook
         analyzeRule.setContent(item)
+        if (!scope.isActive) throw CancellationException()
         Debug.log(bookSource.bookSourceUrl, "┌获取书名", log)
         searchBook.name = analyzeRule.getString(ruleName)
         Debug.log(bookSource.bookSourceUrl, "└${searchBook.name}", log)
         if (searchBook.name.isNotEmpty()) {
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取作者", log)
             searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(ruleAuthor))
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.author}", log)
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取分类", log)
             searchBook.kind = analyzeRule.getStringList(ruleKind)?.joinToString(",")
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}", log)
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取字数", log)
             searchBook.wordCount = analyzeRule.getString(ruleWordCount)
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}", log)
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取最新章节", log)
             searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}", log)
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取简介", log)
             searchBook.intro = analyzeRule.getString(ruleIntro)
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", log, true)
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取封面链接", log)
             analyzeRule.getString(ruleCoverUrl).let {
                 if (it.isNotEmpty()) searchBook.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
             }
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}", log)
+            if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取详情页链接", log)
             searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)
             if (searchBook.bookUrl.isEmpty()) {

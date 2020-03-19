@@ -29,6 +29,7 @@
     <string name="delete">删除</string>
     <string name="replace">替换</string>
     <string name="replace_purify">替换净化</string>
+    <string name="replace_purify_desc">配置替换净化规则</string>
     <string name="not_available">暂无</string>
     <string name="enable">启用</string>
     <string name="replace_purify_search">替换净化-搜索</string>
@@ -58,6 +59,7 @@
     <string name="book_local">添加本地</string>
     <string name="book_source">书源</string>
     <string name="book_source_manage">书源管理</string>
+    <string name="book_source_manage_desc">新建/导入/编辑/管理书源</string>
     <string name="setting">设置</string>
     <string name="theme_setting">主题设置</string>
     <string name="theme_setting_s">与界面/颜色相关的一些设置</string>
@@ -80,6 +82,7 @@
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
     <string name="web_service">Web 服务</string>
+    <string name="web_service_desc">启用Web服务</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%1$s:%2$d</string>
     <string name="download_offline">离线下载</string>
@@ -442,6 +445,7 @@
     <string name="click_on_selected_show_menu">选中时点击可弹出菜单</string>
     <string name="theme">主题</string>
     <string name="theme_mode">主题模式</string>
+    <string name="theme_mode_desc">选择主题模式</string>
     <string name="default_theme">默认主题</string>
     <string name="restore_default_theme">恢复主题为默认配色</string>
     <string name="join_qq_group">加入QQ群</string>
@@ -457,6 +461,7 @@
     <string name="import_per">导入本地书籍需存储权限</string>
     <string name="night_theme">夜间模式</string>
     <string name="eink_theme">E-Ink 模式</string>
+    <string name="eink_theme_desc">电子墨水屏模式</string>
     <string name="get_storage_per">本软件需要存储权限来存储备份书籍信息</string>
     <string name="double_click_exit">再按一次退出程序</string>
     <string name="import_book_per">导入本地书籍需存储权限</string>

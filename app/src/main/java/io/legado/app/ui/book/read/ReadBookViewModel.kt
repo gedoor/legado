@@ -112,20 +112,21 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 ReadBook.webBook?.getChapterList(book, this)
                     ?.onSuccess(IO) { cList ->
-                        if (!cList.isNullOrEmpty()) {
+                        if (cList.isNotEmpty()) {
                             if (changeDruChapterIndex == null) {
                                 App.db.bookChapterDao().insert(*cList.toTypedArray())
                                 App.db.bookDao().update(book)
                                 ReadBook.chapterSize = cList.size
+                                ReadBook.upMsg(null)
                                 ReadBook.loadContent(resetPageOffset = true)
                             } else {
                                 changeDruChapterIndex(cList)
                             }
                         } else {
-                            toast(R.string.error_load_toc)
+                            ReadBook.upMsg(context.getString(R.string.error_load_toc))
                         }
                     }?.onError {
-                        toast(R.string.error_load_toc)
+                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
                     }
             }
         }
@@ -133,6 +134,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeTo(book1: Book) {
         execute {
+            ReadBook.upMsg(null)
             ReadBook.book?.let {
                 App.db.bookDao().delete(it)
             }
@@ -159,7 +161,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookSourceDao().allTextEnabled.forEach { source ->
                 try {
-                    val searchBooks = WebBook(source).searchBookSuspend(name)
+                    val searchBooks = WebBook(source).searchBookSuspend(this, name)
                     searchBooks.getOrNull(0)?.let {
                         if (it.name == name && (it.author == author || author == "")) {
                             changeTo(it.toBook())
@@ -171,11 +173,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
         }.onStart {
-            ReadBook.msg = "正在自动换源"
-            ReadBook.callBack?.upContent()
+            ReadBook.upMsg("正在自动换源")
         }.onFinally {
-            ReadBook.msg = null
-            ReadBook.callBack?.upContent()
+            ReadBook.upMsg(null)
         }
     }
 

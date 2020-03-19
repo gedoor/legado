@@ -130,10 +130,8 @@ class DownloadService : BaseService() {
                                     //    notificationContent = "启动:" + chapter.title
                                     //}
                                     .onSuccess(IO) { content ->
-                                        content?.let {
-                                            downloadCount[entry.key]?.increaseSuccess()
-                                            BookHelp.saveContent(book, chapter, content)
-                                        }
+                                        downloadCount[entry.key]?.increaseSuccess()
+                                        BookHelp.saveContent(book, chapter, content)
                                     }
                                     .onFinally(IO) {
                                         synchronized(this@DownloadService) {

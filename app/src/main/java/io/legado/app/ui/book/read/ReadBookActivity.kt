@@ -92,6 +92,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ReadBook.msg = null
         Help.setOrientation(this)
         super.onCreate(savedInstanceState)
     }
@@ -682,6 +683,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu?.dismiss()
         page_view.onDestroy()
+        ReadBook.msg = null
         if (!BuildConfig.DEBUG) {
             SyncBookProgress.uploadBookProgress()
             Backup.autoBack(this)

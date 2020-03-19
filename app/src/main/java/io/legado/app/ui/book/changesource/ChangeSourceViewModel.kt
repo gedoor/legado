@@ -72,14 +72,13 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun search() {
         task = execute {
-            searchStateData.postValue(true)
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(name, scope = this@execute, context = searchPool)
                     .timeout(30000L)
                     .onSuccess(IO) {
-                        it?.forEach { searchBook ->
+                        it.forEach { searchBook ->
                             if (searchBook.name == name && searchBook.author == author) {
                                 if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
                                     if (searchBook.tocUrl.isEmpty()) {
@@ -95,6 +94,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         }
                     }
             }
+        }.onStart {
+            searchStateData.postValue(true)
+        }.onCancel {
+            searchStateData.postValue(false)
         }
 
         task?.invokeOnCompletion {
@@ -107,7 +110,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                 WebBook(bookSource).getBookInfo(book, this)
                     .onSuccess {
-                        it?.let { loadChapter(it) }
+                        loadChapter(it)
                     }.onError {
                         debug { context.getString(R.string.error_get_book_info) }
                     }
@@ -119,13 +122,11 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                 WebBook(bookSource).getChapterList(book, this)
-                    .onSuccess(IO) {
-                        it?.let { chapters ->
-                            if (chapters.isNotEmpty()) {
-                                book.latestChapterTitle = chapters.last().title
-                                val searchBook: SearchBook = book.toSearchBook()
-                                searchFinish(searchBook)
-                            }
+                    .onSuccess(IO) { chapters ->
+                        if (chapters.isNotEmpty()) {
+                            book.latestChapterTitle = chapters.last().title
+                            val searchBook: SearchBook = book.toSearchBook()
+                            searchFinish(searchBook)
                         }
                     }.onError {
                         debug { context.getString(R.string.error_get_chapter_list) }

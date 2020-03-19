@@ -24,7 +24,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource>(context, R.layout.item_find_book) {
-    private var exIndex = 0
+    private var exIndex = -1
     private var scrollTo = -1
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
