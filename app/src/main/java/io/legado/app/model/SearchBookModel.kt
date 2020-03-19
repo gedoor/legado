@@ -49,10 +49,8 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
                     )
                     .timeout(30000L)
                     .onSuccess(IO) {
-                        it?.let {
-                            if (searchId == mSearchId) {
-                                callBack.onSearchSuccess(it)
-                            }
+                        if (searchId == mSearchId) {
+                            callBack.onSearchSuccess(it)
                         }
                     }
             }

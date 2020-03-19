@@ -63,13 +63,11 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     .timeout(30000L)
                     .onSuccess(IO) {
                         if (isActive) {
-                            it?.let { list ->
-                                if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                                    precisionSearch(this, list)
-                                } else {
-                                    App.db.searchBookDao().insert(*list.toTypedArray())
-                                    mergeItems(this, list)
-                                }
+                            if (context.getPrefBoolean(PreferKey.precisionSearch)) {
+                                precisionSearch(this, it)
+                            } else {
+                                App.db.searchBookDao().insert(*it.toTypedArray())
+                                mergeItems(this, it)
                             }
                         }
                     }

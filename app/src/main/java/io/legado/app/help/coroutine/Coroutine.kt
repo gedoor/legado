@@ -28,7 +28,7 @@ class Coroutine<T>(
     private val job: Job
 
     private var start: VoidCallback? = null
-    private var success: Callback<T?>? = null
+    private var success: Callback<T>? = null
     private var error: Callback<Throwable>? = null
     private var finally: VoidCallback? = null
     private var cancel: VoidCallback? = null
@@ -79,7 +79,7 @@ class Coroutine<T>(
 
     fun onSuccess(
         context: CoroutineContext? = null,
-        block: suspend CoroutineScope.(T?) -> Unit
+        block: suspend CoroutineScope.(T) -> Unit
     ): Coroutine<T> {
         this.success = Callback(context, block)
         return this@Coroutine
@@ -192,7 +192,7 @@ class Coroutine<T>(
         context: CoroutineContext,
         timeMillis: Long,
         noinline block: suspend CoroutineScope.() -> T
-    ): T? {
+    ): T {
         return withContext(scope.coroutineContext.plus(context)) {
             if (timeMillis > 0L) withTimeout(timeMillis) {
                 block()

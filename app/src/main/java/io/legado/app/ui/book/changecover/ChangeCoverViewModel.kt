@@ -57,7 +57,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                 WebBook(item).searchBook(name, scope = this@execute, context = searchPool)
                     .timeout(30000L)
                     .onSuccess(Dispatchers.IO) {
-                        if (it != null && it.isNotEmpty()) {
+                        if (it.isNotEmpty()) {
                             val searchBook = it[0]
                             if (searchBook.name == name && searchBook.author == author
                                 && !searchBook.coverUrl.isNullOrEmpty()

@@ -187,7 +187,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }.onError {
             finally(it.localizedMessage ?: "")
         }.onSuccess {
-            finally(it ?: "导入完成")
+            finally(it)
         }
     }
 

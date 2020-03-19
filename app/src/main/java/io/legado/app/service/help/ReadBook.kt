@@ -245,7 +245,7 @@ object ReadBook {
         book?.let { book ->
             webBook?.getContent(book, chapter)
                 ?.onSuccess(Dispatchers.IO) { content ->
-                    if (content.isNullOrEmpty()) {
+                    if (content.isEmpty()) {
                         contentLoadFinish(
                             chapter,
                             App.INSTANCE.getString(R.string.content_empty),

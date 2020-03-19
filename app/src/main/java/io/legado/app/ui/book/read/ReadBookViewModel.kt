@@ -112,7 +112,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 ReadBook.webBook?.getChapterList(book, this)
                     ?.onSuccess(IO) { cList ->
-                        if (!cList.isNullOrEmpty()) {
+                        if (cList.isNotEmpty()) {
                             if (changeDruChapterIndex == null) {
                                 App.db.bookChapterDao().insert(*cList.toTypedArray())
                                 App.db.bookDao().update(book)

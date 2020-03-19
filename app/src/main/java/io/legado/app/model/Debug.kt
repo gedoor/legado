@@ -56,9 +56,7 @@ object Debug {
         log(debugSource, "︾开始解析")
         Rss.getArticles(rssSource, null)
             .onSuccess {
-                if (it == null) {
-                    log(debugSource, "︽解析失败", state = -1)
-                } else if(it.articles.isEmpty()) {
+                if (it.articles.isEmpty()) {
                     log(debugSource, "⇒列表页解析成功，为空")
                     log(debugSource, "︽解析完成", state = 1000)
                 } else {
@@ -140,14 +138,12 @@ object Debug {
         log(debugSource, "︾开始解析发现页")
         val explore = webBook.exploreBook(url, 1)
             .onSuccess { exploreBooks ->
-                exploreBooks?.let {
-                    if (exploreBooks.isNotEmpty()) {
-                        log(debugSource, "︽发现页解析完成")
-                        log(debugSource, showTime = false)
-                        infoDebug(webBook, exploreBooks[0].toBook())
-                    } else {
-                        log(debugSource, "︽未获取到书籍", state = -1)
-                    }
+                if (exploreBooks.isNotEmpty()) {
+                    log(debugSource, "︽发现页解析完成")
+                    log(debugSource, showTime = false)
+                    infoDebug(webBook, exploreBooks[0].toBook())
+                } else {
+                    log(debugSource, "︽未获取到书籍", state = -1)
                 }
             }
             .onError {
@@ -164,14 +160,12 @@ object Debug {
         log(debugSource, "︾开始解析搜索页")
         val search = webBook.searchBook(key, 1)
             .onSuccess { searchBooks ->
-                searchBooks?.let {
-                    if (searchBooks.isNotEmpty()) {
-                        log(debugSource, "︽搜索页解析完成")
-                        log(debugSource, showTime = false)
-                        infoDebug(webBook, searchBooks[0].toBook())
-                    } else {
-                        log(debugSource, "︽未获取到书籍", state = -1)
-                    }
+                if (searchBooks.isNotEmpty()) {
+                    log(debugSource, "︽搜索页解析完成")
+                    log(debugSource, showTime = false)
+                    infoDebug(webBook, searchBooks[0].toBook())
+                } else {
+                    log(debugSource, "︽未获取到书籍", state = -1)
                 }
             }
             .onError {
@@ -197,16 +191,14 @@ object Debug {
     private fun tocDebug(webBook: WebBook, book: Book) {
         log(debugSource, "︾开始解析目录页")
         val chapterList = webBook.getChapterList(book)
-            .onSuccess { chapterList ->
-                chapterList?.let {
-                    if (it.isNotEmpty()) {
-                        log(debugSource, "︽目录页解析完成")
-                        log(debugSource, showTime = false)
-                        val nextChapterUrl = if (it.size > 1) it[1].url else null
-                        contentDebug(webBook, book, it[0], nextChapterUrl)
-                    } else {
-                        log(debugSource, "︽目录列表为空", state = -1)
-                    }
+            .onSuccess {
+                if (it.isNotEmpty()) {
+                    log(debugSource, "︽目录页解析完成")
+                    log(debugSource, showTime = false)
+                    val nextChapterUrl = if (it.size > 1) it[1].url else null
+                    contentDebug(webBook, book, it[0], nextChapterUrl)
+                } else {
+                    log(debugSource, "︽目录列表为空", state = -1)
                 }
             }
             .onError {
