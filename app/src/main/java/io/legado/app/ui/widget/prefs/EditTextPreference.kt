@@ -14,9 +14,8 @@ class EditTextPreference(context: Context, attrs: AttributeSet) : androidx.prefe
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+        Preference.bindView<TextView>(context, holder, icon, title, summary, null, null)
         super.onBindViewHolder(holder)
-        val txt = if (text == null || text.isEmpty()) summary else text
-        val v = Preference.bindView<TextView>(context, holder, icon, title, txt, null, null)
     }
 
 }

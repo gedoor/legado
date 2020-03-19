@@ -10,22 +10,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceViewHolder
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jaredrummler.android.colorpicker.ColorPanelView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatDrawable
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_icon_preference.view.*
-import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
@@ -34,7 +29,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
     private val mEntryDrawables = arrayListOf<Drawable?>()
 
     init {
-        layoutResource = io.legado.app.R.layout.view_preference
+        layoutResource = R.layout.view_preference
         widgetLayoutResource = R.layout.view_icon
 
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.IconListPreference, 0, 0)
@@ -63,7 +58,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
             val selectedIndex = findIndexOfValue(value)
             if (selectedIndex >= 0) {
                 val drawable = mEntryDrawables[selectedIndex]
-                v?.setImageDrawable(drawable)
+                v.setImageDrawable(drawable)
             }
         }
     }

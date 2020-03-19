@@ -17,11 +17,19 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
-        super.onBindViewHolder(holder)
-        val v = Preference.bindView<SwitchCompat>(context, holder, icon, title, summary, widgetLayoutResource, R.id.switchWidget)
+        val v = Preference.bindView<SwitchCompat>(
+            context,
+            holder,
+            icon,
+            title,
+            summary,
+            widgetLayoutResource,
+            R.id.switchWidget
+        )
         if (v is SwitchCompat) {
             ATH.setTint(v, context.accentColor)
         }
+        super.onBindViewHolder(holder)
     }
 
 }
