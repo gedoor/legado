@@ -40,22 +40,22 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="threadCount"
             android:title="@string/threads_num_title"
             app:iconSpaceReserved="false" />
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="webPort"
             android:title="@string/web_port_title"
             app:iconSpaceReserved="false" />
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="downloadPath"
             android:title="@string/download_path"
             app:iconSpaceReserved="false" />
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="cleanCache"
             android:title="@string/cleanCache"
             app:iconSpaceReserved="false" />
