@@ -1,7 +1,6 @@
 package io.legado.app.model
 
 import io.legado.app.App
-import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -22,6 +21,7 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
     fun search(searchId: Long, key: String) {
         if (searchId != mSearchId) {
             task?.cancel()
+            callBack.onSearchCancel()
             mSearchId = searchId
             searchPage = 1
             if (key.isEmpty()) {
@@ -55,19 +55,30 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
                     }
             }
         }.onStart {
-
-        }.onCancel {
-
+            callBack.onSearchStart()
         }
 
         task?.invokeOnCompletion {
-
+            if (searchId == mSearchId) {
+                callBack.onSearchFinish()
+            }
         }
     }
 
-    private data class SearchEngine(val bookSource: BookSource, var hasMore: Boolean = true)
+    fun cancelSearch() {
+        task?.cancel()
+        mSearchId = 0
+        callBack.onSearchCancel()
+    }
+
+    fun close() {
+        task?.cancel()
+        mSearchId = 0
+        searchPool.close()
+    }
 
     interface CallBack {
+        fun onSearchStart()
         fun onSearchSuccess(searchBooks: ArrayList<SearchBook>)
         fun onSearchFinish()
         fun onSearchCancel()

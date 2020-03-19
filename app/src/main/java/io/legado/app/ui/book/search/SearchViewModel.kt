@@ -7,82 +7,56 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.help.AppConfig
-import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.WebBook
+import io.legado.app.model.SearchBookModel
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.isActive
-import java.util.concurrent.Executors
 
-class SearchViewModel(application: Application) : BaseViewModel(application) {
-    private var searchPool =
-        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    private var task: Coroutine<*>? = null
+class SearchViewModel(application: Application) : BaseViewModel(application)
+    , SearchBookModel.CallBack {
+    private val searchBookModel = SearchBookModel(this, this)
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
-    var searchPage = 1
     var isLoading = false
     var searchBooks = arrayListOf<SearchBook>()
+    private var searchID = 0L
 
     /**
      * 开始搜索
      */
     fun search(key: String) {
-        task?.cancel()
-        if (key.isEmpty() && searchKey.isEmpty()) {
-            return
-        } else if (key.isEmpty()) {
-            isLoading = true
-            searchPage++
-        } else if (key.isNotEmpty()) {
-            isLoading = true
-            searchPage = 1
-            searchKey = key
+        if (searchKey != key && key.isNotEmpty()) {
+            searchBookModel.cancelSearch()
             searchBooks.clear()
+            searchBookLiveData.postValue(searchBooks)
+            searchID = System.currentTimeMillis()
+            searchKey = key
         }
-        task = execute {
-            val searchGroup = context.getPrefString("searchGroup") ?: ""
-            val bookSourceList = if (searchGroup.isBlank()) {
-                App.db.bookSourceDao().allEnabled
-            } else {
-                App.db.bookSourceDao().getEnabledByGroup(searchGroup)
-            }
-            for (item in bookSourceList) {
-                //task取消时自动取消 by （scope = this@execute）
-                WebBook(item).searchBook(
-                        searchKey,
-                        searchPage,
-                        scope = this,
-                        context = searchPool
-                    )
-                    .timeout(30000L)
-                    .onSuccess(IO) {
-                        if (isActive) {
-                            if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                                precisionSearch(this, it)
-                            } else {
-                                App.db.searchBookDao().insert(*it.toTypedArray())
-                                mergeItems(this, it)
-                            }
-                        }
-                    }
-            }
-        }.onStart {
-            isSearchLiveData.postValue(true)
-        }.onCancel {
-            isSearchLiveData.postValue(false)
-            isLoading = false
-        }
+        searchBookModel.search(searchID, searchKey)
+    }
 
-        task?.invokeOnCompletion {
-            isSearchLiveData.postValue(false)
-            isLoading = false
+    override fun onSearchStart() {
+        isSearchLiveData.postValue(true)
+    }
+
+    override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
+        if (context.getPrefBoolean(PreferKey.precisionSearch)) {
+            precisionSearch(this, searchBooks)
+        } else {
+            App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+            mergeItems(this, searchBooks)
         }
+    }
+
+    override fun onSearchFinish() {
+        isSearchLiveData.postValue(false)
+        isLoading = false
+    }
+
+    override fun onSearchCancel() {
+        isSearchLiveData.postValue(false)
+        isLoading = false
     }
 
     /**
@@ -185,7 +159,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
      * 停止搜索
      */
     fun stop() {
-        task?.cancel()
+        searchBookModel.cancelSearch()
     }
 
     /**
@@ -221,7 +195,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
-        searchPool.close()
+        searchBookModel.close()
     }
 
 }
