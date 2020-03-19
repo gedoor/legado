@@ -18,10 +18,16 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
     private var searchKey: String = ""
     private var task: Coroutine<*>? = null
 
+    private fun initSearchPool() {
+        searchPool =
+            Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
+    }
+
     fun search(searchId: Long, key: String) {
         if (searchId != mSearchId) {
             task?.cancel()
-            callBack.onSearchCancel()
+            searchPool.close()
+            initSearchPool()
             mSearchId = searchId
             searchPage = 1
             if (key.isEmpty()) {
