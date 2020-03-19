@@ -6,14 +6,24 @@ import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.jaredrummler.android.colorpicker.*
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.accentColor
+import org.jetbrains.anko.layoutInflater
+import org.jetbrains.anko.px2dip
 
 class ColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
     ColorPickerDialogListener {
@@ -37,6 +47,8 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
 
     init {
         isPersistent = true
+        layoutResource = io.legado.app.R.layout.view_preference
+
         val a = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference)
         showDialog = a.getBoolean(R.styleable.ColorPreference_cpv_showDialog, true)
 
@@ -110,8 +122,11 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        val preview = holder.itemView.findViewById(R.id.cpv_preference_preview_color_panel) as ColorPanelView
-        preview.color = color
+        val v = io.legado.app.ui.widget.prefs.Preference.bindView<ColorPanelView>(context, holder, icon, title, summary, widgetLayoutResource,
+            io.legado.app.R.id.cpv_preference_preview_color_panel, 30, 30)
+        if (v is ColorPanelView) {
+            v?.color = color
+        }
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {
