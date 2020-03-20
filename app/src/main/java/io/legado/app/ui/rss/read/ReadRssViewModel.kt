@@ -15,6 +15,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
+import io.legado.app.data.entities.RssStar
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.model.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -34,7 +35,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     var rssArticle: RssArticle? = null
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<AnalyzeUrl>()
-    var star = false
+    var rssStar: RssStar? = null
     var textToSpeech: TextToSpeech? = null
     private var ttsInitFinish = false
     private var ttsTextList = arrayListOf<String>()
@@ -45,8 +46,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             val link = intent.getStringExtra("link")
             if (origin != null && link != null) {
                 rssSource = App.db.rssSourceDao().getByKey(origin)
-                star = App.db.rssStarDao().get(origin, link) != null
-                rssArticle = App.db.rssArticleDao().get(origin, link)
+                rssStar = App.db.rssStarDao().get(origin, link)
+                rssArticle = rssStar?.toRssArticle() ?: App.db.rssArticleDao().get(origin, link)
                 rssArticle?.let { rssArticle ->
                     if (!rssArticle.description.isNullOrBlank()) {
                         contentLiveData.postValue(rssArticle.description)
@@ -86,13 +87,12 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
 
     fun favorite() {
         execute {
-            rssArticle?.let {
-                if (star) {
-                    App.db.rssStarDao().delete(it.origin, it.link)
-                } else {
-                    App.db.rssStarDao().insert(it.toStar())
-                }
-                star = !star
+            rssStar?.let {
+                App.db.rssStarDao().delete(it.origin, it.link)
+                rssStar = null
+            } ?: rssArticle?.toStar()?.let {
+                App.db.rssStarDao().insert(it)
+                rssStar = it
             }
         }.onSuccess {
             callBack?.upStarMenu()
