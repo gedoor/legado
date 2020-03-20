@@ -21,13 +21,10 @@
         android:layout_height="match_parent"
         android:background="#50000000" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
-        android:fitsSystemWindows="true"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -40,7 +37,7 @@
         android:paddingStart="3dp"
         android:paddingEnd="3dp"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/title_bar"
         app:layout_constraintRight_toRightOf="parent" />
 
     <io.legado.app.ui.widget.image.CircleImageView
@@ -54,7 +51,7 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
     <TextView
         android:id="@+id/tv_sub_title"
