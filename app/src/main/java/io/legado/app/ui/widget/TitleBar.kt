@@ -2,6 +2,7 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.View
@@ -184,6 +185,11 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
 
     fun setSubTitleTextAppearance(@StyleRes resId: Int) {
         toolbar.setSubtitleTextAppearance(context, resId)
+    }
+
+    fun transparent() {
+        elevation = 0f
+        backgroundColor = Color.TRANSPARENT
     }
 
     private fun attachToActivity() {
