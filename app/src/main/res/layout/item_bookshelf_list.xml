@@ -56,7 +56,7 @@
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="12dp"
         android:includeFontPadding="false"
         android:paddingBottom="4dp"
@@ -175,12 +175,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
-        android:background="@color/background_menu"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
