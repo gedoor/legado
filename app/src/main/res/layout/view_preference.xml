@@ -7,7 +7,7 @@
     android:paddingLeft="16dp"
     android:paddingTop="10dp"
     android:paddingRight="16dp"
-    android:paddingBottom="4dp"
+    android:paddingBottom="10dp"
     android:minHeight="42dp"
     android:clickable="true"
     android:orientation="horizontal"
@@ -27,11 +27,11 @@
         android:orientation="vertical"
         android:layout_weight="1.0"
         android:layout_width="0dp"
+        android:layout_gravity="center_vertical"
         android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/preference_title"
-            android:paddingBottom="8dp"
             android:singleLine="true"
             android:textSize="16sp"
             android:text="@string/title"
@@ -39,9 +39,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <View
+            android:id="@+id/preference_padding"
+            android:layout_width="match_parent"
+            android:layout_height="6dp" />
+
         <TextView
             android:id="@+id/preference_desc"
-            android:paddingBottom="8dp"
             android:textSize="14sp"
             android:textColor="@color/tv_text_summary"
             android:text="@string/default1"
@@ -54,8 +58,6 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:visibility="gone"
         android:gravity="right|center_vertical"
         android:layout_width="wrap_content"

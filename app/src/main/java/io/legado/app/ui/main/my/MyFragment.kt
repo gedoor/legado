@@ -79,12 +79,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
             observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
                 webServicePre?.isChecked = false
             }
-            findPreference<NameListPreference>(PreferKey.themeMode)?.let {
-                it.setOnPreferenceChangeListener { _, _ ->
-                    view?.post { App.INSTANCE.applyDayNight() }
-                    true
-                }
-            }
             if (requireContext().channel == "google") {
                 findPreference<PreferenceCategory>("aboutCategory")
                     ?.removePreference(findPreference("donate"))

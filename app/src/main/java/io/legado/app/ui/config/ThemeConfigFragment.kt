@@ -19,6 +19,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.IconListPreference
+import io.legado.app.ui.widget.prefs.NameListPreference
 import io.legado.app.utils.*
 
 
@@ -31,6 +32,12 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         if (Build.VERSION.SDK_INT < 26) {
             findPreference<IconListPreference>(PreferKey.launcherIcon)?.let {
                 preferenceScreen.removePreference(it)
+            }
+        }
+        findPreference<NameListPreference>(PreferKey.themeMode)?.let {
+            it.setOnPreferenceChangeListener { _, _ ->
+                view?.post { App.INSTANCE.applyDayNight() }
+                true
             }
         }
         upPreferenceSummary("barElevation", AppConfig.elevation.toString())
