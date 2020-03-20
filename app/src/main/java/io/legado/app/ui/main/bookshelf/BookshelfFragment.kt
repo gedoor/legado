@@ -61,7 +61,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         setSupportToolbar(toolbar)
         initView()
         initBookGroupData()
-        UIUtils.setToolbarMoreIconCustomColor(toolbar)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
