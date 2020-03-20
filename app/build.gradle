@@ -136,12 +136,12 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //room
-    def room_version = '2.2.4'
+    def room_version = '2.2.5'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
     //paging
-    implementation 'androidx.paging:paging-runtime:2.1.1'
+    implementation 'androidx.paging:paging-runtime:2.1.2'
 
     //anko
     def anko_version = '0.10.8'
