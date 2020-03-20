@@ -21,7 +21,10 @@ object Rss {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<Result> {
         return Coroutine.async(scope, context) {
-            val analyzeUrl = AnalyzeUrl(pageUrl ?: rssSource.sourceUrl)
+            val analyzeUrl = AnalyzeUrl(
+                pageUrl ?: rssSource.sourceUrl,
+                headerMapF = rssSource.getHeaderMap()
+            )
             val body = analyzeUrl.getResponseAwait(rssSource.sourceUrl).body
             RssParserByRule.parseXML(body, rssSource)
         }
