@@ -33,12 +33,15 @@ object Rss {
     fun getContent(
         rssArticle: RssArticle,
         ruleContent: String,
+        rssSource: RssSource?,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            val body = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin)
-                .getResponseAwait(rssArticle.origin)
+            val body = AnalyzeUrl(
+                rssArticle.link, baseUrl = rssArticle.origin,
+                headerMapF = rssSource?.getHeaderMap()
+            ).getResponseAwait(rssArticle.origin)
                 .body
             val analyzeRule = AnalyzeRule()
             analyzeRule.setContent(

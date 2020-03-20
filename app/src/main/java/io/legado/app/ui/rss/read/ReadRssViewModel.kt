@@ -23,6 +23,7 @@ import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentPath
 import io.legado.app.utils.writeBytes
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
@@ -79,9 +80,15 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
-        Rss.getContent(rssArticle, ruleContent, this)
-            .onSuccess {
-                contentLiveData.postValue(it)
+        Rss.getContent(rssArticle, ruleContent, rssSource, this)
+            .onSuccess(IO) { body ->
+                rssArticle.description = body
+                App.db.rssArticleDao().insert(rssArticle)
+                rssStar?.let {
+                    it.description = body
+                    App.db.rssStarDao().insert(it)
+                }
+                contentLiveData.postValue(body)
             }
     }
 
