@@ -230,6 +230,9 @@ class BookInfoActivity :
         tv_author.onClick {
             startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.author))
         }
+        tv_name.onClick {
+            startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.name))
+        }
     }
 
     @SuppressLint("InflateParams")
