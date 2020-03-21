@@ -13,7 +13,7 @@ import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
     fun dispatchIndent(uri:Uri):Intent?{
-            var url = "";
+            val url:String
             //如果是普通的url，需要根据返回的内容判断是什么
             if(uri.scheme == "file" || uri.scheme == "content"){
                 val file = File(uri.path.toString())
