@@ -57,8 +57,7 @@ class BookInfoActivity :
         get() = getViewModel(BookInfoViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title_bar.transparent()
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.initData(intent)
@@ -230,6 +229,9 @@ class BookInfoActivity :
         }
         tv_author.onClick {
             startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.author))
+        }
+        tv_name.onClick {
+            startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.name))
         }
     }
 

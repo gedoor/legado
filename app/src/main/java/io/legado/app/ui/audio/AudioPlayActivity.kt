@@ -46,9 +46,8 @@ class AudioPlayActivity :
     private var adjustProgress = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        AudioPlay.titleData.observe(this, Observer { toolbar.title = it })
+        title_bar.transparent()
+        AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
         AudioPlay.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)
         initView()
