@@ -29,6 +29,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
     private val mEntryDrawables = arrayListOf<Drawable?>()
 
     init {
+        layoutResource = R.layout.view_preference
         widgetLayoutResource = R.layout.view_icon
 
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.IconListPreference, 0, 0)
@@ -52,11 +53,12 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
-        holder?.itemView?.findViewById<ImageView>(R.id.preview)?.let {
+        val v = Preference.bindView<ImageView>(context, holder, icon, title, summary, widgetLayoutResource, R.id.preview, 50, 50)
+        if (v is ImageView) {
             val selectedIndex = findIndexOfValue(value)
             if (selectedIndex >= 0) {
                 val drawable = mEntryDrawables[selectedIndex]
-                it.setImageDrawable(drawable)
+                v.setImageDrawable(drawable)
             }
         }
     }

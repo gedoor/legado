@@ -36,6 +36,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     private var durChapterIndex = 0
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var tocLiveData: LiveData<List<BookChapter>>? = null
+    private var scrollToDurChapter = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.chapterCallBack = this
@@ -74,7 +75,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             book?.let {
                 durChapterIndex = it.durChapterIndex
                 tv_current_chapter_info.text = it.durChapterTitle
-                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                 initCacheFileNames(it)
             }
         }
@@ -85,7 +85,10 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
         tocLiveData?.observe(viewLifecycleOwner, Observer {
             adapter.setItems(it)
-            mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+            if (!scrollToDurChapter) {
+                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+                scrollToDurChapter = true
+            }
         })
     }
 

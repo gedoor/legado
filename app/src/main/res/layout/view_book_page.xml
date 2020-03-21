@@ -18,6 +18,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textSize="12sp" />
 
         <TextView
@@ -26,6 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     </LinearLayout>
@@ -62,7 +66,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textSize="12sp" />
 
         <TextView
@@ -71,6 +76,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
         <io.legado.app.ui.widget.BatteryView
@@ -79,6 +86,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:textSize="10sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:ignore="RtlHardcoded,RtlSymmetry,SmallSp" />
 
     </LinearLayout>

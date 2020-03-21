@@ -102,7 +102,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         deniedCallback = null
     }
 
-    private fun getDeniedPermissions(permissions: Array<String>?): Array<String>? {
+    fun getDeniedPermissions(permissions: Array<String>?): Array<String>? {
         if (permissions != null) {
             val deniedPermissionList = ArrayList<String>()
             for (permission in permissions) {

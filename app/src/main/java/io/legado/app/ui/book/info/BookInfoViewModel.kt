@@ -59,13 +59,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                     WebBook(bookSource).getBookInfo(book, this)
                         .onSuccess(IO) {
-                            it?.let {
-                                bookData.postValue(book)
-                                if (inBookshelf) {
-                                    App.db.bookDao().update(book)
-                                }
-                                loadChapter(it, changeDruChapterIndex)
+                            bookData.postValue(book)
+                            if (inBookshelf) {
+                                App.db.bookDao().update(book)
                             }
+                            loadChapter(it, changeDruChapterIndex)
                         }.onError {
                             toast(R.string.error_get_book_info)
                         }
@@ -92,20 +90,18 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                     WebBook(bookSource).getChapterList(book, this)
                         .onSuccess(IO) {
-                            it?.let {
-                                if (it.isNotEmpty()) {
-                                    if (inBookshelf) {
-                                        App.db.bookDao().update(book)
-                                        App.db.bookChapterDao().insert(*it.toTypedArray())
-                                    }
-                                    if (changeDruChapterIndex == null) {
-                                        chapterListData.postValue(it)
-                                    } else {
-                                        changeDruChapterIndex(it)
-                                    }
-                                } else {
-                                    toast(R.string.chapter_list_empty)
+                            if (it.isNotEmpty()) {
+                                if (inBookshelf) {
+                                    App.db.bookDao().update(book)
+                                    App.db.bookChapterDao().insert(*it.toTypedArray())
                                 }
+                                if (changeDruChapterIndex == null) {
+                                    chapterListData.postValue(it)
+                                } else {
+                                    changeDruChapterIndex(it)
+                                }
+                            } else {
+                                toast(R.string.chapter_list_empty)
                             }
                         }.onError {
                             chapterListData.postValue(null)

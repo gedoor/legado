@@ -14,13 +14,10 @@
         android:contentDescription="@string/bg_image"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
-        android:fitsSystemWindows="true"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/book_info" />
 
@@ -81,7 +78,8 @@
                 android:paddingLeft="10dp"
                 android:paddingTop="8dp"
                 android:paddingRight="16dp"
-                android:paddingBottom="3dp">
+                android:paddingBottom="3dp"
+                tools:ignore="RtlHardcoded">
 
                 <TextView
                     android:id="@+id/tv_name"
@@ -147,14 +145,13 @@
             android:layout_weight="1.0"
             android:orientation="vertical"
             android:layout_marginTop="65dp"
-            android:layout_marginLeft="1px"
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@color/background"
                 android:fillViewport="true"
@@ -162,7 +159,8 @@
                 android:focusable="true"
                 android:padding="0dp"
                 android:scrollbarStyle="outsideInset"
-                android:scrollbars="vertical">
+                android:scrollbars="vertical"
+                tools:ignore="NestedWeights">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -212,7 +210,7 @@
                                 android:text="@string/origin_format"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
                                 android:id="@+id/tv_change_source"
@@ -257,7 +255,7 @@
                                 android:text="@string/read_dur_progress"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
 
                         </LinearLayout>
 
@@ -290,7 +288,7 @@
                                 android:text="@string/group_s"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
                                 android:id="@+id/tv_change_group"
@@ -334,7 +332,7 @@
                                 android:text="@string/toc_s"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
                                 android:id="@+id/tv_toc_view"
@@ -373,7 +371,7 @@
                 android:layout_marginBottom="1px"
                 android:layout_width="match_parent"
                 android:layout_height="8dp"
-                android:background="@color/background"></View>
+                android:background="@color/background" />
 
             <LinearLayout
                 android:id="@+id/fl_action"

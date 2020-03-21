@@ -37,6 +37,8 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
 
     init {
         isPersistent = true
+        layoutResource = io.legado.app.R.layout.view_preference
+
         val a = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference)
         showDialog = a.getBoolean(R.styleable.ColorPreference_cpv_showDialog, true)
 
@@ -109,9 +111,12 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
+        val v = io.legado.app.ui.widget.prefs.Preference.bindView<ColorPanelView>(context, holder, icon, title, summary, widgetLayoutResource,
+            io.legado.app.R.id.cpv_preference_preview_color_panel, 30, 30)
+        if (v is ColorPanelView) {
+            v.color = color
+        }
         super.onBindViewHolder(holder)
-        val preview = holder.itemView.findViewById(R.id.cpv_preference_preview_color_panel) as ColorPanelView
-        preview.color = color
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {

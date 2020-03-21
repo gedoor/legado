@@ -4,6 +4,9 @@
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/main_activity"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
@@ -24,30 +27,35 @@
             android:defaultValue="true"
             android:key="showRss"
             android:title="@string/show_rss"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/other_setting"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="threadCount"
             android:title="@string/threads_num_title"
             app:iconSpaceReserved="false" />
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="webPort"
             android:title="@string/web_port_title"
             app:iconSpaceReserved="false" />
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="downloadPath"
             android:title="@string/download_path"
             app:iconSpaceReserved="false" />
 
-        <Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="cleanCache"
             android:title="@string/cleanCache"
             app:iconSpaceReserved="false" />

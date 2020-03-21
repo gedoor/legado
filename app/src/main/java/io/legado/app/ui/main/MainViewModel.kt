@@ -33,11 +33,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                                     updateList.remove(book.bookUrl)
                                     postEvent(EventBus.UP_BOOK, book.bookUrl)
                                 }
-                                it?.let {
-                                    App.db.bookDao().update(book)
-                                    App.db.bookChapterDao().delByBook(book.bookUrl)
-                                    App.db.bookChapterDao().insert(*it.toTypedArray())
-                                }
+                                App.db.bookDao().update(book)
+                                App.db.bookChapterDao().delByBook(book.bookUrl)
+                                App.db.bookChapterDao().insert(*it.toTypedArray())
                             }
                             .onError {
                                 synchronized(this) {

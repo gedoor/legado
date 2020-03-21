@@ -21,7 +21,6 @@ import io.legado.app.utils.observeEvent
 import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.dialog_read_aloud.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ReadAloudDialog : BaseDialogFragment() {
     var callBack: CallBack? = null
@@ -34,7 +33,7 @@ class ReadAloudDialog : BaseDialogFragment() {
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
+            it.setBackgroundDrawableResource(R.color.background)
             it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
@@ -54,10 +53,10 @@ class ReadAloudDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        ll_bottom_bg.setBackgroundColor(requireContext().bottomBackground)
+        root_view.setBackgroundColor(requireContext().bottomBackground)
         initOnChange()
         initData()
-        initOnClick()
+        initEvent()
     }
 
     private fun initData() {
@@ -101,22 +100,19 @@ class ReadAloudDialog : BaseDialogFragment() {
         })
     }
 
-    private fun initOnClick() {
-        iv_menu.onClick { callBack?.showMenuBar(); dismiss() }
-        iv_other_config.onClick {
+    private fun initEvent() {
+        ll_main_menu.onClick { callBack?.showMenuBar(); dismiss() }
+        ll_setting.onClick {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
+        tv_pre.onClick { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
+        tv_next.onClick { ReadBook.moveToNextChapter(true) }
         iv_stop.onClick { ReadAloud.stop(requireContext()); dismiss() }
         iv_play_pause.onClick { callBack?.onClickReadAloud() }
         iv_play_prev.onClick { ReadAloud.prevParagraph(requireContext()) }
-        iv_play_prev.onLongClick {
-            ReadBook.moveToPrevChapter(upContent = true, toLast = false)
-            true
-        }
         iv_play_next.onClick { ReadAloud.nextParagraph(requireContext()) }
-        iv_play_next.onLongClick { ReadBook.moveToNextChapter(true); true }
-        fabToc.onClick { callBack?.openChapterList() }
-        fabBack.onClick { callBack?.finish() }
+        ll_catalog.onClick { callBack?.openChapterList() }
+        ll_to_backstage.onClick { callBack?.finish() }
     }
 
     private fun upPlayState() {

@@ -48,30 +48,24 @@ object BackupRestoreUi {
                     selectBackupFolder(fragment, backupSelectRequestCode)
                 }
             } else {
-                backupUsePermission(fragment, requestCode = backupSelectRequestCode)
+                backupUsePermission(fragment, backupPath)
             }
         }
     }
 
     private fun backupUsePermission(
         fragment: Fragment,
-        path: String = Backup.legadoPath,
-        requestCode: Int = selectFolderRequestCode
+        path: String
     ) {
         PermissionsCompat.Builder(fragment)
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
-                when (requestCode) {
-                    selectFolderRequestCode -> AppConfig.backupPath = Backup.legadoPath
-                    else -> {
-                        Coroutine.async {
-                            AppConfig.backupPath = path
-                            Backup.backup(fragment.requireContext(), path)
-                        }.onSuccess {
-                            fragment.toast(R.string.backup_success)
-                        }
-                    }
+                Coroutine.async {
+                    AppConfig.backupPath = path
+                    Backup.backup(fragment.requireContext(), path)
+                }.onSuccess {
+                    fragment.toast(R.string.backup_success)
                 }
             }
             .request()
@@ -107,7 +101,7 @@ object BackupRestoreUi {
         }
     }
 
-    private fun restoreUsePermission(fragment: Fragment, path: String = Backup.legadoPath) {
+    private fun restoreUsePermission(fragment: Fragment, path: String) {
         PermissionsCompat.Builder(fragment)
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)

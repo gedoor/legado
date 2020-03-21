@@ -8,7 +8,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.http.HttpHelper
-import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
@@ -108,7 +107,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             FileUtils.createFileIfNotExist(file, "exportReplaceRule.json")
                 .writeText(json)
         }.onSuccess {
-            context.toast("成功导出至\n${Backup.exportPath}")
+            context.toast("成功导出至\n${file.absolutePath}")
         }.onError {
             context.toast("导出失败\n${it.localizedMessage}")
         }
@@ -121,7 +120,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             doc.createFile("", "exportReplaceRule.json")
                 ?.writeText(context, json)
         }.onSuccess {
-            context.toast("成功导出至\n${Backup.exportPath}")
+            context.toast("成功导出至\n${doc.uri.path}")
         }.onError {
             context.toast("导出失败\n${it.localizedMessage}")
         }

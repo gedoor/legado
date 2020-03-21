@@ -51,14 +51,13 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
     fun search() {
         task = execute {
-            searchStateData.postValue(true)
             val bookSourceList = App.db.bookSourceDao().allEnabled
             for (item in bookSourceList) {
                 //task取消时自动取消 by （scope = this@execute）
                 WebBook(item).searchBook(name, scope = this@execute, context = searchPool)
                     .timeout(30000L)
                     .onSuccess(Dispatchers.IO) {
-                        if (it != null && it.isNotEmpty()) {
+                        if (it.isNotEmpty()) {
                             val searchBook = it[0]
                             if (searchBook.name == name && searchBook.author == author
                                 && !searchBook.coverUrl.isNullOrEmpty()
@@ -72,6 +71,10 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                         }
                     }
             }
+        }.onStart {
+            searchStateData.postValue(true)
+        }.onCancel {
+            searchStateData.postValue(false)
         }
 
         task?.invokeOnCompletion {

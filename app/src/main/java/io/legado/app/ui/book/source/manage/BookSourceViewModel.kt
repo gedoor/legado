@@ -8,7 +8,6 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.http.HttpHelper
-import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
@@ -96,7 +95,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             FileUtils.createFileIfNotExist(file, "exportBookSource.json")
                 .writeText(json)
         }.onSuccess {
-            context.toast("成功导出至\n${Backup.exportPath}")
+            context.toast("成功导出至\n${file.absolutePath}")
         }.onError {
             context.toast("导出失败\n${it.localizedMessage}")
         }
@@ -109,7 +108,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             doc.createFile("", "exportBookSource.json")
                 ?.writeText(context, json)
         }.onSuccess {
-            context.toast("成功导出至\n${Backup.exportPath}")
+            context.toast("成功导出至\n${doc.uri.path}")
         }.onError {
             context.toast("导出失败\n${it.localizedMessage}")
         }
@@ -211,7 +210,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }.onError {
             finally(it.localizedMessage ?: "")
         }.onSuccess {
-            finally(it ?: "导入完成")
+            finally(it)
         }
     }
 
