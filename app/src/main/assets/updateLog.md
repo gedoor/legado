@@ -269,14 +269,7 @@
   - 调试正文页>>输入正文页URL，如：`--https://www.zhaishuyuan.com/chapter/30394/20940996`
   
 * 修改订阅中自动添加style的情景
-  订阅源的内容规则中存在`<style>`或`style=`时，直接显示内容规则的原始内容,否则会在前面加以下内容
-  ```
-  <style>
-  	img{max-width:100% !important; width:auto; height:auto;}
-  	video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
-  	body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
-  </style>
-  ```
+  订阅源的内容规则中存在`<style>`或`style=`时，直接显示内容规则的原始内容
 
 **2019/12/28**
 * 添加下载界面
