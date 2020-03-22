@@ -4,10 +4,12 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.readText
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
@@ -15,10 +17,18 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
         val url: String
         //如果是普通的url，需要根据返回的内容判断是什么
         if (uri.scheme == "file" || uri.scheme == "content") {
-            val file = File(uri.path.toString())
+            val content = if (uri.scheme == "file") {
+                val file = File(uri.path.toString())
+                if (file.exists()) {
+                    file.readText()
+                } else {
+                    null
+                }
+            } else {
+                DocumentFile.fromSingleUri(context, uri)?.readText(context)
+            }
             var scheme = ""
-            if (file.exists()) {
-                val content = file.readText()
+            if (content != null) {
                 if (content.isJsonObject() || content.isJsonArray()) {
                     //暂时根据文件内容判断属于什么
                     when {
