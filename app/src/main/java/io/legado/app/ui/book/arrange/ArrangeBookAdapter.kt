@@ -127,19 +127,26 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
         Collections.swap(getItems(), srcPosition, targetPosition)
         notifyItemMoved(srcPosition, targetPosition)
+        if (getItem(srcPosition)?.order == getItem(targetPosition)?.order) {
+            for ((index, item) in getItems().withIndex()) {
+                item.order = index + 1
+            }
+        }
         isMoved = true
         return true
     }
 
     override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         if (isMoved) {
-
+            callBack.updateBook(*getItems().toTypedArray())
         }
+        isMoved = false
     }
 
     interface CallBack {
         val groupList: List<BookGroup>
         fun upSelectCount()
+        fun updateBook(vararg book: Book)
         fun deleteBook(book: Book)
         fun selectGroup(groupId: Int, requestCode: Int)
     }

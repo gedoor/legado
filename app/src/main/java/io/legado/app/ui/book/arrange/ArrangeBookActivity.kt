@@ -213,6 +213,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         select_action_bar.upCountView(adapter.selectedBooks().size, adapter.getItems().size)
     }
 
+    override fun updateBook(vararg book: Book) {
+        viewModel.updateBook(*book)
+    }
+
     override fun deleteBook(book: Book) {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton {
