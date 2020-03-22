@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ItemTouchCallback
@@ -23,6 +24,7 @@ import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
 
@@ -109,8 +111,14 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 -11 -> App.db.bookDao().observeNoGroup()
                 else -> App.db.bookDao().observeByGroup(groupId)
             }
-        booksLiveData?.observe(this, Observer {
-            adapter.setItems(it)
+        booksLiveData?.observe(this, Observer { list ->
+            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                1 -> list.sortedByDescending { it.latestChapterTime }
+                2 -> list.sortedBy { it.name }
+                3 -> list.sortedBy { it.order }
+                else -> list
+            }
+            adapter.setItems(books)
             upSelectCount()
         })
     }
