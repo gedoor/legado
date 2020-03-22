@@ -133,6 +133,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             if (inBookshelf) {
                 bookData.value?.let {
+                    book.group = it.group
                     book.order = it.order
                     App.db.bookDao().delete(it)
                 }
