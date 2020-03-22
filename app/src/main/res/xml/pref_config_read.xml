@@ -60,7 +60,7 @@
         android:key="selectText"
         app:iconSpaceReserved="false" />
 
-    <Preference
+    <io.legado.app.ui.widget.prefs.Preference
         android:key="customPageKey"
         android:title="@string/custom_page_key"
         app:iconSpaceReserved="false" />
