@@ -8,7 +8,7 @@ import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getViewModel
 
 
-class FileAssociation :
+class FileAssociationActivity :
     VMBaseActivity<FileAssociationViewModel>(R.layout.activity_file_association) {
     override val viewModel: FileAssociationViewModel
         get() = getViewModel(FileAssociationViewModel::class.java)

@@ -287,7 +287,9 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.config.FileAssociation" android:launchMode="singleTop">
+        <activity
+            android:name=".ui.config.FileAssociationActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
