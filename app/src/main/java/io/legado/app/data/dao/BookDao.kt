@@ -33,6 +33,9 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun liveDataSearch(key: String): LiveData<List<Book>>
 
+    @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
+    fun getBooksByGroup(group: Int): List<Book>
+
     @Query("SELECT * FROM books WHERE `name` in (:names)")
     fun findByName(vararg names: String): List<Book>
 
