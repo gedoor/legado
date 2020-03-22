@@ -116,7 +116,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 1 -> list.sortedByDescending { it.latestChapterTime }
                 2 -> list.sortedBy { it.name }
                 3 -> list.sortedBy { it.order }
-                else -> list
+                else -> list.sortedByDescending { it.durChapterTime }
             }
             adapter.setItems(books)
             upSelectCount()
