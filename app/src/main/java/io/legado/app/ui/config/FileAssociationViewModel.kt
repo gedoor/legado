@@ -8,7 +8,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
-import org.jetbrains.anko.toast
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
@@ -22,12 +21,16 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                     val content = file.readText()
                     if (content.isJsonObject() || content.isJsonArray()){
                         //暂时根据文件内容判断属于什么
-                        if (content.contains("bookSourceUrl")){
-                            scheme = "booksource"
-                        }else if (content.contains("sourceUrl")){
-                            scheme = "rsssource"
-                        }else if (content.contains("pattern")){
-                            scheme = "replace"
+                        when {
+                            content.contains("bookSourceUrl") -> {
+                                scheme = "booksource"
+                            }
+                            content.contains("sourceUrl") -> {
+                                scheme = "rsssource"
+                            }
+                            content.contains("pattern") -> {
+                                scheme = "replace"
+                            }
                         }
                     }
                     if (TextUtils.isEmpty(scheme)){
@@ -54,7 +57,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
             }
             val data = Uri.parse(url)
             val newIndent = Intent(Intent.ACTION_VIEW)
-            newIndent.data = data;
+        newIndent.data = data
             return  newIndent
     }
 }

@@ -8,20 +8,22 @@ import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getViewModel
 
 
-class FileAssociation : VMBaseActivity<FileAssociationViewModel>(R.layout.activity_file_association) {
+class FileAssociation :
+    VMBaseActivity<FileAssociationViewModel>(R.layout.activity_file_association) {
     override val viewModel: FileAssociationViewModel
         get() = getViewModel(FileAssociationViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        if (null != intent.data){
-            val newIntent = viewModel.dispatchIndent(intent.data!!)
-            if (newIntent != null){
+        intent.data?.let { data ->
+            val newIntent = viewModel.dispatchIndent(data)
+            if (newIntent != null) {
                 this.startActivityForResult(newIntent, 100)
-            }else{
+            } else {
                 gotoMainActivity()
             }
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -29,7 +31,7 @@ class FileAssociation : VMBaseActivity<FileAssociationViewModel>(R.layout.activi
         gotoMainActivity()
     }
 
-    private fun gotoMainActivity(){
+    private fun gotoMainActivity() {
         val mIntent = Intent()
         mIntent.setClass(this, MainActivity::class.java)
         startActivity(mIntent)
