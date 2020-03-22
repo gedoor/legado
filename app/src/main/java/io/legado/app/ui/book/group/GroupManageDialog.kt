@@ -217,7 +217,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             return true
         }
 
-        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
             if (isMoved) {
                 for ((index, item) in getItems().withIndex()) {
                     item.order = index + 1

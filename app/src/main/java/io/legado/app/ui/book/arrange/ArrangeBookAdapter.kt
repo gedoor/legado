@@ -2,6 +2,7 @@ package io.legado.app.ui.book.arrange
 
 import android.content.Context
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -10,6 +11,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ItemTouchCallback
 import kotlinx.android.synthetic.main.item_arrange_book.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
 
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book),
@@ -118,6 +120,21 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
             return ""
         }
         return groupNames.joinToString(",")
+    }
+
+    private var isMoved = false
+
+    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        Collections.swap(getItems(), srcPosition, targetPosition)
+        notifyItemMoved(srcPosition, targetPosition)
+        isMoved = true
+        return true
+    }
+
+    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        if (isMoved) {
+
+        }
     }
 
     interface CallBack {

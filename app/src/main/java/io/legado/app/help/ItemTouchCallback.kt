@@ -106,7 +106,7 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
-        onItemTouchCallbackListener?.clearView(recyclerView, viewHolder)
+        onItemTouchCallbackListener?.onClearView(recyclerView, viewHolder)
     }
 
     interface OnItemTouchCallbackListener {
@@ -131,7 +131,10 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
             return true
         }
 
-        fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        /**
+         * 手指松开
+         */
+        fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
 
         }
 
