@@ -10,11 +10,26 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import java.io.File
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
-
+    fun importSourceFromFilePath(path: String, finally: (msg: String) -> Unit) {
+        execute {
+            val file = File(path)
+            if (file.exists()) {
+                importSource(file.readText(), finally)
+            } else {
+                withContext(Dispatchers.Main) {
+                    finally("打开文件出错")
+                }
+            }
+        }.onError {
+            finally(it.localizedMessage ?: "打开文件出错")
+        }
+    }
     fun importSource(text: String, showMsg: (msg: String) -> Unit) {
         execute {
             if (text.isAbsUrl()) {

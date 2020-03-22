@@ -287,7 +287,17 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".ui.config.FileAssociation" android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="application/json" />
+            </intent-filter>
+        </activity>
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
         <service android:name=".service.WebService" />
