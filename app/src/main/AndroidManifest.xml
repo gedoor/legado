@@ -300,6 +300,7 @@
                 <data android:mimeType="application/json" />
             </intent-filter>
         </activity>
+
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
         <service android:name=".service.WebService" />
