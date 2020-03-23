@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="1"
-        android:text="悦读"
+        android:text="阅读"
         android:textSize="49sp"
         app:layout_constraintVertical_bias="0.3"
         app:layout_constraintRight_toLeftOf="@+id/tv_sub_title"
