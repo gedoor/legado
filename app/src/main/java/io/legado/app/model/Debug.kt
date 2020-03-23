@@ -67,7 +67,7 @@ object Debug {
                         if (ruleContent.isNullOrEmpty()) {
                             log(debugSource, "⇒内容规则为空，默认获取整个网页", state = 1000)
                         } else {
-                            rssContentDebug(it.articles[0], ruleContent)
+                            rssContentDebug(it.articles[0], ruleContent, rssSource)
                         }
                     } else {
                         log(debugSource, "⇒存在描述规则，不解析内容页")
@@ -80,9 +80,9 @@ object Debug {
             }
     }
 
-    private fun rssContentDebug(rssArticle: RssArticle, ruleContent: String) {
+    private fun rssContentDebug(rssArticle: RssArticle, ruleContent: String, rssSource: RssSource) {
         log(debugSource, "︾开始解析内容页")
-        Rss.getContent(rssArticle, ruleContent)
+        Rss.getContent(rssArticle, ruleContent, rssSource)
             .onSuccess {
                 log(debugSource, it)
                 log(debugSource, "︽内容页解析完成", state = 1000)

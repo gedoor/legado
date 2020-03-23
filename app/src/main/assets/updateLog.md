@@ -3,6 +3,21 @@
 * 请关注[开源阅读]()支持我,同时关注合作公众号[小说拾遗](),阅读公众号小编。
 * 弄了个企业公众号[开源阅读](),后面弄好后会把原来的[开源阅读软件]()迁移过来
 
+**2020/03/22**
+* 添加文件关联 by wqfantexi
+* 手动排序可以了,在书架整理里面拖动排序
+* 删除分组时同时删除书籍里的分组信息,下次添加新分组时不会自动出现在分组内
+* 修复换源丢失分组信息的bug
+* 修复部分朗读引擎不自动朗读下一章的bug
+
+**2020/03/21**
+* 详情页点击书名搜索
+
+**2020/03/20**
+* 自动备份文件和手动备份文件分开
+* 修复一些rss收藏取消不了的bug
+* 修复rss请求头无效bug
+
 **2020/03/19**
 * 美化界面我的 by yangyxd
 * 优化搜索
@@ -258,14 +273,7 @@
   - 调试正文页>>输入正文页URL，如：`--https://www.zhaishuyuan.com/chapter/30394/20940996`
   
 * 修改订阅中自动添加style的情景
-  订阅源的内容规则中存在`<style>`或`style=`时，直接显示内容规则的原始内容,否则会在前面加以下内容
-  ```
-  <style>
-  	img{max-width:100% !important; width:auto; height:auto;}
-  	video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
-  	body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
-  </style>
-  ```
+  订阅源的内容规则中存在`<style>`或`style=`时，直接显示内容规则的原始内容
 
 **2019/12/28**
 * 添加下载界面

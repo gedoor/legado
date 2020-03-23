@@ -91,6 +91,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun changeTo(book1: Book) {
         execute {
             AudioPlay.book?.let {
+                book1.order = it.order
                 App.db.bookDao().delete(it)
             }
             withContext(Dispatchers.Main) {
