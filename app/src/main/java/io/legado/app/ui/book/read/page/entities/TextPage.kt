@@ -20,7 +20,7 @@ data class TextPage(
 
     fun upLinesPosition() = ChapterProvider.apply {
         if (textLines.size <= 1) return@apply
-        if (visibleHeight - height > with(textLines.last()) { lineBottom - lineTop }) return@apply
+        if (visibleHeight - height >= with(textLines.last()) { lineBottom - lineTop }) return@apply
         val surplus = (visibleBottom - textLines.last().lineBottom)
         if (surplus == 0f) return@apply
         height += surplus
