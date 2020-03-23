@@ -20,7 +20,7 @@
     <string name="dialog_setting">去设置</string>
 
     <string name="tip_cannot_jump_setting_page">无法跳转至设置界面</string>
-    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
+    <string name="tip_perm_request_storage">悦读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
 
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
@@ -42,7 +42,6 @@
     <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
     <string name="last_read">最后阅读</string>
-    <string name="read_summary">让阅读成为一种习惯。</string>
     <string name="update_log">更新日志</string>
     <string name="receiving_shared_label">悦读·搜索</string>
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
