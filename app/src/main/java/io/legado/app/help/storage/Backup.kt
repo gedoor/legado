@@ -31,11 +31,10 @@ object Backup {
     fun autoBack(context: Context) {
         val lastBackup = context.getPrefLong(PreferKey.lastBackup)
         if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
-            return
-        }
-        Coroutine.async {
-            context.getPrefString(PreferKey.backupPath)?.let {
-                backup(context, it, true)
+            Coroutine.async {
+                context.getPrefString(PreferKey.backupPath)?.let {
+                    backup(context, it, true)
+                }
             }
         }
     }

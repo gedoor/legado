@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ItemTouchCallback
@@ -23,6 +24,7 @@ import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
 
@@ -68,7 +70,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
-        itemTouchCallback.isCanDrag = true
+        itemTouchCallback.isCanDrag = getPrefInt(PreferKey.bookshelfSort) == 3
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
         select_action_bar.setMainActionText(R.string.move_to_group)
         select_action_bar.inflateMenu(R.menu.arrange_book_sel)
@@ -109,8 +111,14 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 -11 -> App.db.bookDao().observeNoGroup()
                 else -> App.db.bookDao().observeByGroup(groupId)
             }
-        booksLiveData?.observe(this, Observer {
-            adapter.setItems(it)
+        booksLiveData?.observe(this, Observer { list ->
+            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                1 -> list.sortedByDescending { it.latestChapterTime }
+                2 -> list.sortedBy { it.name }
+                3 -> list.sortedBy { it.order }
+                else -> list.sortedByDescending { it.durChapterTime }
+            }
+            adapter.setItems(books)
             upSelectCount()
         })
     }
@@ -203,6 +211,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
 
     override fun upSelectCount() {
         select_action_bar.upCountView(adapter.selectedBooks().size, adapter.getItems().size)
+    }
+
+    override fun updateBook(vararg book: Book) {
+        viewModel.updateBook(*book)
     }
 
     override fun deleteBook(book: Book) {

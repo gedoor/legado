@@ -136,6 +136,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             ReadBook.upMsg(null)
             ReadBook.book?.let {
+                book1.group = it.group
+                book1.order = it.order
                 App.db.bookDao().delete(it)
             }
             ReadBook.prevTextChapter = null

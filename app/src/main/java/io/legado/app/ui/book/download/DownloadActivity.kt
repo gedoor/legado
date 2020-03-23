@@ -13,6 +13,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -81,9 +82,15 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     private fun initLiveData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = App.db.bookDao().observeDownload()
-        bookshelfLiveData?.observe(this, Observer {
-            adapter.setItems(it)
-            initCacheSize(it)
+        bookshelfLiveData?.observe(this, Observer { list ->
+            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                1 -> list.sortedByDescending { it.latestChapterTime }
+                2 -> list.sortedBy { it.name }
+                3 -> list.sortedBy { it.order }
+                else -> list.sortedByDescending { it.durChapterTime }
+            }
+            adapter.setItems(books)
+            initCacheSize(books)
         })
     }
 

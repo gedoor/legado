@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">阅读</string>
+    <string name="app_name">悦读</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -20,7 +20,7 @@
     <string name="dialog_setting">去设置</string>
 
     <string name="tip_cannot_jump_setting_page">无法跳转至设置界面</string>
-    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
+    <string name="tip_perm_request_storage">悦读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
 
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
@@ -42,9 +42,8 @@
     <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
     <string name="last_read">最后阅读</string>
-    <string name="read_summary">让阅读成为一种习惯。</string>
     <string name="update_log">更新日志</string>
-    <string name="receiving_shared_label">阅读·搜索</string>
+    <string name="receiving_shared_label">悦读·搜索</string>
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
@@ -132,8 +131,6 @@
     <string name="previous_chapter">上一章</string>
     <string name="pt_hide_status_bar">隐藏状态栏</string>
     <string name="ps_hide_status_bar">阅读界面隐藏状态栏</string>
-    <string name="pt_read_line_adjust">阅读行数调整</string>
-    <string name="ps_read_line_adjust">阅读行数减一行,如阅读界面显示不全可启用</string>
     <string name="read_aloud">朗读</string>
     <string name="read_aloud_t">正在朗读</string>
     <string name="read_aloud_s">点击打开阅读界面</string>
@@ -612,7 +609,7 @@
     <string name="sys_folder_picker">系统文件夹选择器</string>
     <string name="app_folder_picker">自带选择器\n(Android10以上因权限限制可能无法使用)</string>
     <string name="a10_permission_toast">Android10以上因权限限制可能无法读写文件</string>
-    <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示阅读·搜索</string>
+    <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示悦读·搜索</string>
     <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
     <string name="record_log">记录日志</string>
     <string name="chinese_converter">中文简繁体转换</string>

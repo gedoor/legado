@@ -133,6 +133,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             if (inBookshelf) {
                 bookData.value?.let {
+                    book.group = it.group
+                    book.order = it.order
                     App.db.bookDao().delete(it)
                 }
                 App.db.bookDao().insert(book)
@@ -164,6 +166,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun saveBook(success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let { book ->
+                if (book.order == 0) {
+                    book.order = App.db.bookDao().maxOrder + 1
+                }
                 App.db.bookDao().insert(book)
             }
         }.onSuccess {
@@ -184,6 +189,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun addToBookshelf(success: (() -> Unit)?) {
         execute {
             bookData.value?.let { book ->
+                if (book.order == 0) {
+                    book.order = App.db.bookDao().maxOrder + 1
+                }
                 App.db.bookDao().insert(book)
             }
             chapterListData.value?.let {

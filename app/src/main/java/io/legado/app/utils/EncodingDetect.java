@@ -66,7 +66,7 @@ public class EncodingDetect {
     }
 
     public static String getEncode(@NonNull byte[] bytes) {
-        int len = bytes.length > 2000 ? 2000 : bytes.length;
+        int len = Math.min(bytes.length, 2000);
         byte[] cBytes = new byte[len];
         System.arraycopy(bytes, 0, cBytes, 0, len);
         BytesEncodingDetect bytesEncodingDetect = new BytesEncodingDetect();
@@ -1010,14 +1010,8 @@ class BytesEncodingDetect extends Encoding {
                     column = rawtext[i + 1] + 256;
                     if (column < 0x9f) {
                         adjust = 1;
-                        if (column > 0x7f) {
-                            column -= 0x20;
-                        } else {
-                            column -= 0x19;
-                        }
                     } else {
                         adjust = 0;
-                        column -= 0x7e;
                     }
                     if (row < 0xa0) {
                         row = ((row - 0x70) << 1) - adjust;

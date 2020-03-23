@@ -12,16 +12,16 @@ interface BookDao {
     @Query("SELECT * FROM books order by durChapterTime desc")
     fun observeAll(): LiveData<List<Book>>
 
-    @Query("SELECT * FROM books WHERE type = ${BookType.audio} order by durChapterTime desc")
+    @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
     fun observeAudio(): LiveData<List<Book>>
 
-    @Query("SELECT * FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
+    @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
     fun observeLocal(): LiveData<List<Book>>
 
-    @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}' order by durChapterTime desc")
+    @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}'")
     fun observeLocalUri(): LiveData<List<String>>
 
-    @Query("SELECT * FROM books WHERE origin <> '${BookType.local}' and type = 0 order by durChapterTime desc")
+    @Query("SELECT * FROM books WHERE origin <> '${BookType.local}' and type = 0")
     fun observeDownload(): LiveData<List<Book>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
@@ -32,6 +32,9 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun liveDataSearch(key: String): LiveData<List<Book>>
+
+    @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
+    fun getBooksByGroup(group: Int): List<Book>
 
     @Query("SELECT * FROM books WHERE `name` in (:names)")
     fun findByName(vararg names: String): List<Book>
@@ -56,6 +59,9 @@ interface BookDao {
 
     @get:Query("SELECT COUNT(*) FROM books")
     val allBookCount: Int
+
+    @get:Query("select max(`order`) from books")
+    val maxOrder: Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg book: Book)
