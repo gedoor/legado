@@ -154,10 +154,12 @@ abstract class PageDelegate(protected val pageView: PageView) :
         }
     }
 
-    fun abort() {
+    fun abort(): Boolean {
         if (!scroller.isFinished) {
             scroller.abortAnimation()
+            return true
         }
+        return false
     }
 
     open fun onAnimStart() {}//scroller start
