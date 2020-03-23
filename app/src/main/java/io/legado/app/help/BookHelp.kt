@@ -11,6 +11,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
@@ -242,24 +243,16 @@ object BookHelp {
     private var replaceRules: List<ReplaceRule> = arrayListOf()
 
     @Synchronized
-    fun upReplaceRules(name: String? = null, origin: String? = null) {
-        if (name != null) {
-            if (bookName != name || bookOrigin != origin) {
-                replaceRules = if (origin.isNullOrEmpty()) {
-                    App.db.replaceRuleDao().findEnabledByScope(name)
-                } else {
-                    App.db.replaceRuleDao().findEnabledByScope(name, origin)
-                }
-                bookName = name
-                bookOrigin = origin
-            }
-        } else {
-            val o = bookOrigin
-            bookName?.let {
-                replaceRules = if (o.isNullOrEmpty()) {
-                    App.db.replaceRuleDao().findEnabledByScope(it)
-                } else {
-                    App.db.replaceRuleDao().findEnabledByScope(it, o)
+    suspend fun upReplaceRules() {
+        withContext(IO) {
+            synchronized(this) {
+                val o = bookOrigin
+                bookName?.let {
+                    replaceRules = if (o.isNullOrEmpty()) {
+                        App.db.replaceRuleDao().findEnabledByScope(it)
+                    } else {
+                        App.db.replaceRuleDao().findEnabledByScope(it, o)
+                    }
                 }
             }
         }
@@ -274,7 +267,17 @@ object BookHelp {
     ): String {
         var c = content
         if (enableReplace) {
-            upReplaceRules(name, origin)
+            synchronized(this) {
+                if (bookName != name || bookOrigin != origin) {
+                    bookName = name
+                    bookOrigin = origin
+                    replaceRules = if (origin.isNullOrEmpty()) {
+                        App.db.replaceRuleDao().findEnabledByScope(name)
+                    } else {
+                        App.db.replaceRuleDao().findEnabledByScope(name, origin)
+                    }
+                }
+            }
             replaceRules.forEach { item ->
                 item.pattern.let {
                     if (it.isNotEmpty()) {
