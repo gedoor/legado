@@ -59,7 +59,7 @@ class AnalyzeTxtFile {
 
         //获取文件中的数据到buffer，直到没有数据为止
         while (bookStream.read(buffer, 0, buffer.size).also { length = it } > 0) {
-            ++blockPos
+            blockPos++
             //如果存在Chapter
             if (rulePattern != null) { //将数据转换成String
                 var blockContent = String(buffer, 0, length, charset)
@@ -85,7 +85,7 @@ class AnalyzeTxtFile {
                     }
                     //如果 seekPos == 0 && nextChapterPos != 0 表示当前block处前面有一段内容
                     //第一种情况一定是序章 第二种情况可能是上一个章节的内容
-                    if (seekPos == 0 && chapterStart != 0) { //获取当前章节的内容
+                    if (seekPos == 0 && chapterStart != 0 && toc.isEmpty()) { //获取当前章节的内容
                         val chapter = BookChapter()
                         chapter.title = "前言"
                         chapter.start = 0
@@ -106,6 +106,7 @@ class AnalyzeTxtFile {
                         val curChapter = BookChapter()
                         curChapter.title = matcher.group()
                         curChapter.start = lastChapter?.end ?: 0
+                        toc.add(curChapter)
                     }
                     //设置指针偏移
                     seekPos += chapterContent.length
