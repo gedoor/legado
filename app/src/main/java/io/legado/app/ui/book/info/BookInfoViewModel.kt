@@ -81,7 +81,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute {
             if (book.isLocalBook()) {
-                AnalyzeTxtFile.analyze(context, book).let {
+                AnalyzeTxtFile().analyze(context, book).let {
                     App.db.bookDao().update(book)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     chapterListData.postValue(it)

@@ -102,7 +102,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute {
             if (book.isLocalBook()) {
-                AnalyzeTxtFile.analyze(context, book).let {
+                AnalyzeTxtFile().analyze(context, book).let {
                     App.db.bookChapterDao().delByBook(book.bookUrl)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     App.db.bookDao().update(book)
