@@ -45,7 +45,11 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                 }
                 if (TextUtils.isEmpty(scheme)) {
                     execute {
-                        LocalBook.importFile(uri.path.toString())
+                        if (uri.scheme == "content"){
+                            LocalBook.importFile(uri.toString())
+                        }else{
+                            LocalBook.importFile(uri.path.toString())
+                        }
                         toast("添加本地文件成功${uri.path}")
                     }
                     return null
@@ -54,8 +58,13 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                 toast("文件不存在")
                 return null
             }
+            // content模式下，需要传递完整的路径，方便后续解析
+            url = if (uri.scheme == "content"){
+                "yuedu://${scheme}/importonline?src=$uri"
+            }else{
+                "yuedu://${scheme}/importonline?src=${uri.path}"
+            }
 
-            url = "yuedu://${scheme}/importonline?src=${uri.path}"
         } else if (uri.scheme == "yuedu") {
             url = uri.toString()
         } else {

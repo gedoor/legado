@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.source.manage
 
 import android.app.Application
+import android.net.Uri
 import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.JsonPath
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import java.io.File
+import java.net.URLEncoder
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -156,9 +158,20 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun importSourceFromFilePath(path: String, finally: (msg: String) -> Unit) {
         execute {
-            val file = File(path)
-            if (file.exists()) {
-                importSource(file.readText(), finally)
+            val content = if (path.isContentPath()) {
+                //在前面被解码了，如果不进行编码，中文会无法识别
+                val newPath = Uri.encode(path, ":/.")
+                DocumentFile.fromSingleUri(context, Uri.parse(newPath))?.readText(context)
+            } else {
+                val file = File(path)
+                if (file.exists()) {
+                    file.readText()
+                } else {
+                    null
+                }
+            }
+            if (content != null) {
+                importSource(content, finally)
             } else {
                 withContext(Dispatchers.Main) {
                     finally("打开文件出错")
