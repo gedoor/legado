@@ -68,31 +68,24 @@ object AnalyzeTxtFile {
                 //如果存在相应章节
                 while (matcher.find()) { //获取匹配到的字符在字符串中的起始位置
                     val chapterStart = matcher.start()
+                    //获取章节内容
+                    val chapterContent = blockContent.substring(seekPos, chapterStart)
                     //如果 seekPos == 0 && nextChapterPos != 0 表示当前block处前面有一段内容
                     //第一种情况一定是序章 第二种情况可能是上一个章节的内容
                     if (seekPos == 0 && chapterStart != 0) { //获取当前章节的内容
-                        val chapterContent = blockContent.substring(seekPos, chapterStart)
-                        //设置指针偏移
-                        seekPos += chapterContent.length
-                        //获取上一章节
-                        val lastChapter = toc.lastOrNull()
-                            ?: BookChapter().apply {
-                                toc.add(this)
-                                start = 0
-                                title = "前言"
-                            }
-                        //将当前段落添加上一章去
-                        lastChapter.end =
-                            lastChapter.end!! + chapterContent.toByteArray(charset).size
+                        val chapter = BookChapter()
+                        chapter.title = "前言"
+                        chapter.start = 0
+                        chapter.end = chapterContent.toByteArray(charset).size.toLong()
+                        toc.add(chapter)
                         //创建当前章节
                         val curChapter = BookChapter()
                         curChapter.title = matcher.group()
-                        curChapter.start = lastChapter.end
+                        curChapter.start = chapter.end
+                        curChapter.end = chapter.end
                         toc.add(curChapter)
-                    } else { //是否存在章节
-                        if (toc.size != 0) { //获取章节内容
-                            val chapterContent = blockContent.substring(seekPos, matcher.start())
-                            seekPos += chapterContent.length
+                    } else {
+                        if (toc.size != 0) {
                             //获取上一章节
                             val lastChapter = toc.last()
                             lastChapter.end =
@@ -110,6 +103,8 @@ object AnalyzeTxtFile {
                             toc.add(curChapter)
                         }
                     }
+                    //设置指针偏移
+                    seekPos += chapterContent.length
                 }
             } else { //进行本地虚拟分章
                 //章节在buffer的偏移量
