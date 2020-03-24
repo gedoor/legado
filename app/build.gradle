@@ -108,7 +108,7 @@ kapt {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     //kotlin
@@ -128,7 +128,7 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.google.android:flexbox:1.1.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     //lifecycle
     def lifecycle_version = '2.2.0'
@@ -157,7 +157,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     //规则相关
-    implementation 'org.jsoup:jsoup:1.12.1'
+    implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
@@ -165,11 +165,11 @@ dependencies {
     implementation 'com.github.gedoor:rhino-android:1.4'
 
     //Retrofit
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.8.0'
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     //webServer
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
@@ -186,7 +186,7 @@ dependencies {
     implementation 'org.apache.commons:commons-text:1.8'
 
     //MarkDown
-    implementation 'ru.noties.markwon:core:3.0.2'
+    implementation 'ru.noties.markwon:core:3.1.0'
 
     //转换繁体
     implementation 'com.github.houbb:opencc4j:1.4.0'
