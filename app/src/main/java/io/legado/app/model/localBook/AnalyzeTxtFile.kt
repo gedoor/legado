@@ -82,26 +82,17 @@ object AnalyzeTxtFile {
                         val curChapter = BookChapter()
                         curChapter.title = matcher.group()
                         curChapter.start = chapter.end
-                        curChapter.end = chapter.end
                         toc.add(curChapter)
                     } else {
-                        if (toc.size != 0) {
-                            //获取上一章节
-                            val lastChapter = toc.last()
-                            lastChapter.end =
-                                lastChapter.start!! + chapterContent.toByteArray(charset).size
-                            //创建当前章节
-                            val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
-                            curChapter.start = lastChapter.end
-                            toc.add(curChapter)
-                        } else { //如果章节不存在则创建章节
-                            val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
-                            curChapter.start = 0L
-                            curChapter.end = 0L
-                            toc.add(curChapter)
+                        val lastChapter = toc.lastOrNull()
+                        lastChapter?.let {
+                            //上一章节结束等于这一章节开始
+                            it.end = it.start!! + chapterContent.toByteArray(charset).size
                         }
+                        //创建当前章节
+                        val curChapter = BookChapter()
+                        curChapter.title = matcher.group()
+                        curChapter.start = lastChapter?.end ?: 0
                     }
                     //设置指针偏移
                     seekPos += chapterContent.length
