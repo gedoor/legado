@@ -16,8 +16,10 @@ import java.util.regex.Pattern
 object AnalyzeTxtFile {
     private const val folderName = "bookTxt"
     private const val BLANK: Byte = 0x0a
+
     //默认从文件中获取数据的长度
     private const val BUFFER_SIZE = 512 * 1024
+
     //没有标题的时候，每个章节的最大长度
     private const val MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024
     val cacheFolder: File by lazy {
@@ -72,26 +74,21 @@ object AnalyzeTxtFile {
                         val chapterContent = blockContent.substring(seekPos, chapterStart)
                         //设置指针偏移
                         seekPos += chapterContent.length
-                        if (toc.size == 0) { //如果当前没有章节，那么就是序章
-                            //加入简介
-                            book.intro = chapterContent
-                            //创建当前章节
-                            val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
-                            curChapter.start = chapterContent.toByteArray(charset).size.toLong()
-                            toc.add(curChapter)
-                        } else { //否则就block分割之后，上一个章节的剩余内容
-                            //获取上一章节
-                            val lastChapter = toc.last()
-                            //将当前段落添加上一章去
-                            lastChapter.end =
-                                lastChapter.end!! + chapterContent.toByteArray(charset).size
-                            //创建当前章节
-                            val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
-                            curChapter.start = lastChapter.end
-                            toc.add(curChapter)
-                        }
+                        //获取上一章节
+                        val lastChapter = toc.lastOrNull()
+                            ?: BookChapter().apply {
+                                toc.add(this)
+                                start = 0
+                                title = "前言"
+                            }
+                        //将当前段落添加上一章去
+                        lastChapter.end =
+                            lastChapter.end!! + chapterContent.toByteArray(charset).size
+                        //创建当前章节
+                        val curChapter = BookChapter()
+                        curChapter.title = matcher.group()
+                        curChapter.start = lastChapter.end
+                        toc.add(curChapter)
                     } else { //是否存在章节
                         if (toc.size != 0) { //获取章节内容
                             val chapterContent = blockContent.substring(seekPos, matcher.start())
