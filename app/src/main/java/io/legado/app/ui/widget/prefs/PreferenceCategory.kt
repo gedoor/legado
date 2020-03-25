@@ -1,7 +1,6 @@
 package io.legado.app.ui.widget.prefs
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
@@ -10,6 +9,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.getCompatColor
 
 
 class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCategory(context, attrs) {
@@ -25,7 +25,11 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCate
             val view = it.findViewById(R.id.preference_title)
             if (view is TextView) {  //  && !view.isInEditMode
                 view.text = title
-                view.setTextColor(context.accentColor) //设置title文本的颜色
+                if (view.isInEditMode) {
+                    view.setTextColor(context.getCompatColor(R.color.colorAccent))
+                } else {
+                    view.setTextColor(context.accentColor)
+                }
                 view.isVisible = title != null && title.isNotEmpty()
 
                 val da = it.findViewById(R.id.preference_divider_above)

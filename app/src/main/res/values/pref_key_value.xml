@@ -10,7 +10,6 @@
     <string name="pk_find_expand_group">expandGroupFind</string>
     <string name="pk_default_read">defaultToRead</string>
     <string name="pk_auto_download">autoDownload</string>
-    <string name="pk_download_path">downloadPath</string>
     <string name="pk_check_update">checkUpdate</string>
 
     <string name="source_rule_url">https://gitee.com/alanskycn/yuedu/blob/master/Rule/README.md</string>

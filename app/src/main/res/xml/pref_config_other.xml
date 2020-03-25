@@ -51,11 +51,6 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
-            android:key="downloadPath"
-            android:title="@string/download_path"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.ui.widget.prefs.Preference
             android:key="cleanCache"
             android:title="@string/cleanCache"
             app:iconSpaceReserved="false" />
