@@ -41,9 +41,6 @@ class ContentView(context: Context) : FrameLayout(context) {
             battery_view.typeface = ChapterProvider.typeface
             //显示状态栏时隐藏header
             if (hideStatusBar) {
-                ll_header.layoutParams = ll_header.layoutParams.apply {
-                    height = context.statusBarHeight + headerPaddingTop.dp + headerPaddingBottom.dp
-                }
                 ll_header.setPadding(
                     headerPaddingLeft.dp,
                     headerPaddingTop.dp,

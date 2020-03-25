@@ -25,6 +25,12 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/read_body_to_lh"
+        android:key="readBodyToLh"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/pt_hide_navigation_bar"
         android:key="hideNavigationBar"

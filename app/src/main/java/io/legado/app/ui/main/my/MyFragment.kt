@@ -13,7 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.channel
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -85,7 +85,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     true
                 }
             }
-            if (requireContext().channel == "google") {
+            if (AppConfig.isGooglePlay) {
                 findPreference<PreferenceCategory>("aboutCategory")
                     ?.removePreference(findPreference("donate"))
             }
