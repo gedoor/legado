@@ -60,16 +60,16 @@ class AnalyzeTxtFile {
         //获取文件中的数据到buffer，直到没有数据为止
         while (bookStream.read(buffer, 0, buffer.size).also { length = it } > 0) {
             blockPos++
+            var blockContent = String(buffer, charset)
+            val lastN = blockContent.lastIndexOf("\n")
+            if (lastN > 0) {
+                blockContent = blockContent.substring(0, lastN)
+                length = blockContent.toByteArray(charset).size
+                allLength += length
+                bookStream.seek(allLength.toLong())
+            }
             //如果存在Chapter
             if (rulePattern != null) { //将数据转换成String
-                var blockContent = String(buffer, 0, length, charset)
-                val lastN = blockContent.lastIndexOf("\n")
-                if (lastN != 0) {
-                    blockContent = blockContent.substring(0, lastN)
-                    length = blockContent.toByteArray(charset).size
-                    allLength += length
-                    bookStream.seek(allLength.toLong())
-                }
                 //当前Block下使过的String的指针
                 var seekPos = 0
                 //进行正则匹配
@@ -80,6 +80,7 @@ class AnalyzeTxtFile {
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     if (chapterContent.length > 30000 && pattern == null) {
+                        //移除不匹配的规则
                         tocRules.remove(tocRule)
                         return analyze(bookStream, book, null)
                     }
