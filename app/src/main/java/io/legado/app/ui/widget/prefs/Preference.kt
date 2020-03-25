@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget.prefs
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -11,11 +12,15 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
+import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.utils.getCompatColor
 import org.jetbrains.anko.layoutInflater
 import kotlin.math.roundToInt
 
-class Preference(context: Context, attrs: AttributeSet) : androidx.preference.Preference(context, attrs) {
+class Preference(context: Context, attrs: AttributeSet) :
+    androidx.preference.Preference(context, attrs) {
 
     init {
         // isPersistent = true
@@ -24,9 +29,22 @@ class Preference(context: Context, attrs: AttributeSet) : androidx.preference.Pr
 
     companion object {
 
-        fun <T: View> bindView(context: Context, it: PreferenceViewHolder?, icon: Drawable?, title: CharSequence?, summary: CharSequence?, weightLayoutRes: Int?,  viewId: Int?,
-                               weightWidth: Int = 0, weightHeight: Int = 0): T? {
+        fun <T : View> bindView(
+            context: Context,
+            it: PreferenceViewHolder?,
+            icon: Drawable?,
+            title: CharSequence?,
+            summary: CharSequence?,
+            weightLayoutRes: Int?,
+            viewId: Int?,
+            weightWidth: Int = 0,
+            weightHeight: Int = 0
+        ): T? {
             if (it == null) return null
+            it.itemView.background = Selector.drawableBuild()
+                .setDefaultDrawable(ColorDrawable(context.backgroundColor))
+                .setPressedDrawable(ColorDrawable(context.getCompatColor(R.color.btn_bg_press)))
+                .create()
             val view = it.findViewById(R.id.preference_title)
             if (view is TextView) {
                 view.text = title
@@ -62,9 +80,11 @@ class Preference(context: Context, attrs: AttributeSet) : androidx.preference.Pr
                     if (weightWidth > 0 || weightHeight > 0) {
                         val lp = lay.layoutParams
                         if (weightHeight > 0)
-                            lp.height = (context.resources.displayMetrics.density * weightHeight).roundToInt()
+                            lp.height =
+                                (context.resources.displayMetrics.density * weightHeight).roundToInt()
                         if (weightWidth > 0)
-                            lp.width = (context.resources.displayMetrics.density * weightWidth).roundToInt()
+                            lp.width =
+                                (context.resources.displayMetrics.density * weightWidth).roundToInt()
                         lay.layoutParams = lp
                     }
 
