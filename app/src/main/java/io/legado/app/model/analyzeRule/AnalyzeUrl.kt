@@ -13,9 +13,8 @@ import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.utils.*
 import okhttp3.FormBody
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import java.net.URLEncoder
 import java.util.*
@@ -40,7 +39,7 @@ class AnalyzeUrl(
 ) : JsExtensions {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
-        private val jsonType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
 
     private var baseUrl: String = ""
@@ -182,7 +181,7 @@ class AnalyzeUrl(
             RequestMethod.POST -> {
                 bodyTxt?.let {
                     if (it.isJson()) {
-                        body = it.toRequestBody(jsonType)
+                        body = RequestBody.create(jsonType, it)
                     } else {
                         analyzeFields(it)
                     }
