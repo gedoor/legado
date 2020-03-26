@@ -63,7 +63,8 @@ class AnalyzeTxtFile {
         while (bookStream.read(buffer).also { length = it } > 0) {
             blockPos++
             //如果存在Chapter
-            if (rulePattern != null) { //将数据转换成String
+            if (rulePattern != null) {
+                //将数据转换成String, 不能超过length
                 var blockContent = String(buffer, 0, length, charset)
                 val lastN = blockContent.lastIndexOf("\n")
                 if (lastN > 0) {
