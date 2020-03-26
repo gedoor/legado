@@ -331,7 +331,7 @@ object ReadBook {
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durPageIndex
-                curTextChapter?.let {
+                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }
                 App.db.bookDao().update(book)
