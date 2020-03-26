@@ -225,6 +225,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             R.id.menu_copy_text ->
                 TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
             R.id.menu_update_toc -> ReadBook.book?.let {
+                ReadBook.upMsg(getString(R.string.toc_updateing))
                 viewModel.loadChapterList(it)
             }
             R.id.menu_enable_replace -> ReadBook.book?.let {
