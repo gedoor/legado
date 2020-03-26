@@ -129,6 +129,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         ReadBook.upMsg(context.getString(R.string.error_load_toc))
                     }
             }
+        }.onError {
+            ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
         }
     }
 

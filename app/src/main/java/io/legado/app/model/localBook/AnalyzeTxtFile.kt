@@ -18,6 +18,7 @@ class AnalyzeTxtFile {
     private val tocRules = arrayListOf<TxtTocRule>()
     private lateinit var charset: Charset
 
+    @Throws(Exception::class)
     fun analyze(context: Context, book: Book): ArrayList<BookChapter> {
         val bookFile = getBookFile(context, book)
         book.charset = EncodingDetect.getEncode(bookFile)
@@ -33,6 +34,7 @@ class AnalyzeTxtFile {
         return analyze(bookStream, book, rulePattern)
     }
 
+    @Throws(Exception::class)
     private fun analyze(
         bookStream: RandomAccessFile,
         book: Book,

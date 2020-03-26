@@ -112,6 +112,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     toast(R.string.error_no_source)
                 }
             }
+        }.onError {
+            toast("LoadTocError:${it.localizedMessage}")
         }
     }
 
