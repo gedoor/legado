@@ -86,16 +86,25 @@ class AnalyzeTxtFile {
                     }
                     //如果 seekPos == 0 && nextChapterPos != 0 表示当前block处前面有一段内容
                     //第一种情况一定是序章 第二种情况可能是上一个章节的内容
-                    if (seekPos == 0 && chapterStart != 0 && toc.isEmpty()) { //获取当前章节的内容
-                        val chapter = BookChapter()
-                        chapter.title = "前言"
-                        chapter.start = 0
-                        chapter.end = chapterContent.toByteArray(charset).size.toLong()
-                        toc.add(chapter)
+                    if (seekPos == 0 && chapterStart != 0) { //获取当前章节的内容
+                        val contentSize = chapterContent.toByteArray(charset).size.toLong()
+                        if (toc.isEmpty()) {
+                            if (StringUtils.trim(chapterContent).isNotEmpty()) {
+                                val chapter = BookChapter()
+                                chapter.title = "前言"
+                                chapter.start = 0
+                                chapter.end = contentSize
+                                toc.add(chapter)
+                            }
+                        } else {
+                            toc.last().let {
+                                it.end = it.end!! + contentSize
+                            }
+                        }
                         //创建当前章节
                         val curChapter = BookChapter()
                         curChapter.title = matcher.group()
-                        curChapter.start = chapter.end
+                        curChapter.start = (toc.lastOrNull()?.end ?: 0) + contentSize
                         toc.add(curChapter)
                     } else {
                         val lastChapter = toc.lastOrNull()
