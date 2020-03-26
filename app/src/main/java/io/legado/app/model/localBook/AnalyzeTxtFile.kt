@@ -64,7 +64,7 @@ class AnalyzeTxtFile {
             blockPos++
             //如果存在Chapter
             if (rulePattern != null) { //将数据转换成String
-                var blockContent = String(buffer, charset)
+                var blockContent = String(buffer, 0, length, charset)
                 val lastN = blockContent.lastIndexOf("\n")
                 if (lastN > 0) {
                     blockContent = blockContent.substring(0, lastN)
