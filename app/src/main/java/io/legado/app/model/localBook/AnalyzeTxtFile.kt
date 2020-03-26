@@ -136,7 +136,7 @@ class AnalyzeTxtFile {
                         }
                     }
                     //设置指针偏移
-                    seekPos += chapterLength
+                    seekPos += chapterContent.length
                 }
             } else { //进行本地虚拟分章
                 //章节在buffer的偏移量
