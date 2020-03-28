@@ -648,4 +648,6 @@
     <string name="alouding_disable">全文朗读中不能朗读选中文字</string>
     <string name="read_body_to_lh">扩展到刘海</string>
     <string name="toc_updateing">更新目录中</string>
+    <string name="media_button_on_exit_title">全程响应耳机按键</string>
+    <string name="media_button_on_exit_summary">即使退出软件也响应耳机按键</string>
 </resources>
