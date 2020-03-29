@@ -195,8 +195,11 @@ class DownloadService : BaseService() {
 }
 
 class DownloadCount{
-    @Volatile public var downloadFinishedCount = 0 // 下载完成的条目数量
-    @Volatile public var successCount = 0 //下载成功的条目数量
+    @Volatile
+    var downloadFinishedCount = 0 // 下载完成的条目数量
+
+    @Volatile
+    var successCount = 0 //下载成功的条目数量
 
     fun increaseSuccess(){
         ++successCount;
