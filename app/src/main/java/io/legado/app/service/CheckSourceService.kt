@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
@@ -70,26 +71,30 @@ class CheckSourceService : BaseService() {
         if (processIndex < allIds.size) {
             val sourceUrl = allIds[processIndex]
             App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
-                val webBook = WebBook(source)
-                webBook.searchBook("我的", scope = this, context = searchPool)
-                    .onError(IO) {
-                        source.addGroup("失效")
-                        App.db.bookSourceDao().update(source)
-                    }.onFinally(IO) {
-                        check()
-                        checkedIds.add(sourceUrl)
-                        updateNotification(
-                            checkedIds.size,
-                            getString(R.string.progress_show, checkedIds.size, allIds.size)
-                        )
-                        synchronized(this) {
-                            if (processIndex >= allIds.size + threadCount - 1) {
-                                stopSelf()
-                            }
-                        }
-                    }
+                check(source)
             }
         }
+    }
+
+    private fun check(source: BookSource) {
+        val webBook = WebBook(source)
+        webBook.searchBook("我的", scope = this, context = searchPool)
+            .onError(IO) {
+                source.addGroup("失效")
+                App.db.bookSourceDao().update(source)
+            }.onFinally(IO) {
+                check()
+                checkedIds.add(source.bookSourceUrl)
+                updateNotification(
+                    checkedIds.size,
+                    getString(R.string.progress_show, checkedIds.size, allIds.size)
+                )
+                synchronized(this) {
+                    if (processIndex >= allIds.size + threadCount - 1) {
+                        stopSelf()
+                    }
+                }
+            }
     }
 
     /**
