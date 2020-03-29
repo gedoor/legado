@@ -121,7 +121,7 @@ object AppConfig {
             App.INSTANCE.putPrefInt("elevation", value)
         }
 
-    val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean("readBodyToLh", true)
+    val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
 
     val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
 }

@@ -42,4 +42,5 @@ object PreferKey {
     const val shareLayout = "shareLayout"
     const val readStyleSelect = "readStyleSelect"
     const val systemTypefaces = "system_typefaces"
+    const val readBodyToLh = "readBodyToLh"
 }
