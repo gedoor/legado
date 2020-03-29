@@ -68,10 +68,12 @@ class CheckSourceService : BaseService() {
         synchronized(this) {
             processIndex++
         }
-        if (processIndex < allIds.size) {
-            val sourceUrl = allIds[processIndex]
-            App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
-                check(source)
+        execute {
+            if (processIndex < allIds.size) {
+                val sourceUrl = allIds[processIndex]
+                App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
+                    check(source)
+                } ?: onNext(sourceUrl)
             }
         }
     }
@@ -83,18 +85,22 @@ class CheckSourceService : BaseService() {
                 source.addGroup("失效")
                 App.db.bookSourceDao().update(source)
             }.onFinally(IO) {
-                check()
-                checkedIds.add(source.bookSourceUrl)
-                updateNotification(
-                    checkedIds.size,
-                    getString(R.string.progress_show, checkedIds.size, allIds.size)
-                )
-                synchronized(this) {
-                    if (processIndex >= allIds.size + threadCount - 1) {
-                        stopSelf()
-                    }
-                }
+                onNext(source.bookSourceUrl)
             })
+    }
+
+    private fun onNext(sourceUrl: String) {
+        synchronized(this) {
+            check()
+            checkedIds.add(sourceUrl)
+            updateNotification(
+                checkedIds.size,
+                getString(R.string.progress_show, checkedIds.size, allIds.size)
+            )
+            if (processIndex >= allIds.size + threadCount - 1) {
+                stopSelf()
+            }
+        }
     }
 
     /**
