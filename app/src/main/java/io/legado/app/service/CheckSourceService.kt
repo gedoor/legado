@@ -72,7 +72,11 @@ class CheckSourceService : BaseService() {
             if (processIndex < allIds.size) {
                 val sourceUrl = allIds[processIndex]
                 App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
-                    check(source)
+                    if (source.searchUrl.isNullOrEmpty()) {
+                        onNext(sourceUrl)
+                    } else {
+                        check(source)
+                    }
                 } ?: onNext(sourceUrl)
             }
         }
