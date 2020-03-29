@@ -10,7 +10,7 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
-import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import kotlinx.coroutines.Dispatchers.IO
@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 class CheckSourceService : BaseService() {
     private val threadCount = AppConfig.threadCount
     private var searchPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
-    private var task: Coroutine<*>? = null
+    private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
@@ -43,23 +43,23 @@ class CheckSourceService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        task?.cancel()
+        tasks.clear()
         searchPool.close()
     }
 
     private fun check(ids: List<String>) {
-        task?.cancel()
+        if (allIds.isNotEmpty()) {
+            toast("已有书源在校验,等完成后再试")
+            return
+        }
+        tasks.clear()
         allIds.clear()
         checkedIds.clear()
         allIds.addAll(ids)
         processIndex = 0
         updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
-        task = execute {
-            for (i in 0 until threadCount) {
-                check()
-            }
-        }.onError {
-            toast("校验书源出错:${it.localizedMessage}")
+        for (i in 0 until threadCount) {
+            check()
         }
     }
 
@@ -78,7 +78,7 @@ class CheckSourceService : BaseService() {
 
     private fun check(source: BookSource) {
         val webBook = WebBook(source)
-        webBook.searchBook("我的", scope = this, context = searchPool)
+        tasks.add(webBook.searchBook("我的", scope = this, context = searchPool)
             .onError(IO) {
                 source.addGroup("失效")
                 App.db.bookSourceDao().update(source)
@@ -94,7 +94,7 @@ class CheckSourceService : BaseService() {
                         stopSelf()
                     }
                 }
-            }
+            })
     }
 
     /**
