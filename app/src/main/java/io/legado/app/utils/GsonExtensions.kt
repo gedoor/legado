@@ -3,7 +3,6 @@ package io.legado.app.utils
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
-import com.google.gson.reflect.TypeToken
 import org.jetbrains.anko.attempt
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -15,7 +14,7 @@ val GSON: Gson by lazy {
         .create()
 }
 
-inline fun <reified T> genericType(): Type = object : TypeToken<T>() {}.type
+inline fun <reified T> genericType(): Type = T::class.java
 
 @Throws(JsonSyntaxException::class)
 inline fun <reified T> Gson.fromJsonObject(json: String?): T? {//可转成任意类型
