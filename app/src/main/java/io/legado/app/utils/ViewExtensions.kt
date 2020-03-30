@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.os.Build
 import android.view.View
 import android.view.View.*
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.RadioGroup
 import android.widget.SeekBar
@@ -40,15 +41,21 @@ fun View.disableAutoFill() = run {
 }
 
 fun View.gone() {
-    visibility = GONE
+    if (visibility != GONE) {
+        visibility = GONE
+    }
 }
 
 fun View.invisible() {
-    visibility = INVISIBLE
+    if (visibility != INVISIBLE) {
+        visibility = INVISIBLE
+    }
 }
 
 fun View.visible() {
-    visibility = VISIBLE
+    if (visibility != VISIBLE) {
+        visibility = VISIBLE
+    }
 }
 
 fun View.visible(visible: Boolean) {
@@ -67,6 +74,13 @@ fun View.screenshot(): Bitmap? {
         draw(c)
         screenshot
     }.getOrNull()
+}
+
+fun View.setMargin(left: Int, top: Int, right: Int, bottom: Int) {
+    if (layoutParams is ViewGroup.MarginLayoutParams) {
+        (layoutParams as ViewGroup.MarginLayoutParams).setMargins(left, top, right, bottom)
+        requestLayout()
+    }
 }
 
 fun SeekBar.progressAdd(int: Int) {

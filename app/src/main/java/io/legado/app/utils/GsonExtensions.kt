@@ -15,8 +15,7 @@ val GSON: Gson by lazy {
         .create()
 }
 
-inline fun <reified T> genericType() = object : TypeToken<T>() {}.type
-
+inline fun <reified T> genericType(): Type = object : TypeToken<T>() {}.type
 
 @Throws(JsonSyntaxException::class)
 inline fun <reified T> Gson.fromJsonObject(json: String?): T? {//可转成任意类型

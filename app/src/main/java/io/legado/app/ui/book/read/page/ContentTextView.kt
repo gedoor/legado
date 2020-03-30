@@ -31,6 +31,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val selectStart = arrayOf(0, 0, 0)
     private val selectEnd = arrayOf(0, 0, 0)
     private var textPage: TextPage = TextPage()
+
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
     private val maxScrollOffset = 100f
@@ -210,7 +211,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         selectEnd[0] = 0
                         selectEnd[1] = lineIndex
                         selectEnd[2] = charIndex
-                        upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                        upSelectedStart(
+                            textChar.start,
+                            textLine.lineBottom + relativeOffset,
+                            textLine.lineTop + relativeOffset
+                        )
                         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         select(0, lineIndex, charIndex)
                         return
@@ -236,7 +241,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         selectEnd[0] = 1
                         selectEnd[1] = lineIndex
                         selectEnd[2] = charIndex
-                        upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                        upSelectedStart(
+                            textChar.start,
+                            textLine.lineBottom + relativeOffset,
+                            textLine.lineTop + relativeOffset
+                        )
                         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         select(1, lineIndex, charIndex)
                         return
@@ -259,7 +268,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         selectEnd[0] = 2
                         selectEnd[1] = lineIndex
                         selectEnd[2] = charIndex
-                        upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                        upSelectedStart(
+                            textChar.start,
+                            textLine.lineBottom + relativeOffset,
+                            textLine.lineTop + relativeOffset
+                        )
                         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                         select(2, lineIndex, charIndex)
                         return
@@ -287,7 +300,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectStart[0] = 0
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
-                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                            upSelectedStart(
+                                textChar.start,
+                                textLine.lineBottom + relativeOffset,
+                                textLine.lineTop + relativeOffset
+                            )
                             upSelectChars()
                         }
                         return
@@ -311,7 +328,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectStart[0] = 1
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
-                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                            upSelectedStart(
+                                textChar.start,
+                                textLine.lineBottom + relativeOffset,
+                                textLine.lineTop + relativeOffset
+                            )
                             upSelectChars()
                         }
                         return
@@ -333,7 +354,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             selectStart[0] = 2
                             selectStart[1] = lineIndex
                             selectStart[2] = charIndex
-                            upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset)
+                            upSelectedStart(
+                                textChar.start,
+                                textLine.lineBottom + relativeOffset,
+                                textLine.lineTop + relativeOffset
+                            )
                             upSelectChars()
                         }
                         return
@@ -427,7 +452,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         selectStart[2] = charIndex
         val textLine = relativePage(relativePage).textLines[lineIndex]
         val textChar = textLine.textChars[charIndex]
-        upSelectedStart(textChar.start, textLine.lineBottom + relativeOffset(relativePage))
+        upSelectedStart(
+            textChar.start,
+            textLine.lineBottom + relativeOffset(relativePage),
+            textLine.lineTop
+        )
         upSelectChars()
     }
 
@@ -475,12 +504,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         invalidate()
     }
 
-    private fun upSelectedStart(x: Float, y: Float) {
-        callBack.upSelectedStart(x, y + callBack.headerHeight)
+    private fun upSelectedStart(x: Float, y: Float, top: Float) = callBack.apply {
+        upSelectedStart(x, y + headerHeight, top + headerHeight)
     }
 
-    private fun upSelectedEnd(x: Float, y: Float) {
-        callBack.upSelectedEnd(x, y + callBack.headerHeight)
+    private fun upSelectedEnd(x: Float, y: Float) = callBack.apply {
+        upSelectedEnd(x, y + headerHeight)
     }
 
     fun cancelSelect() {
@@ -580,7 +609,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     interface CallBack {
-        fun upSelectedStart(x: Float, y: Float)
+        fun upSelectedStart(x: Float, y: Float, top: Float)
         fun upSelectedEnd(x: Float, y: Float)
         fun onCancelSelect()
         val headerHeight: Int

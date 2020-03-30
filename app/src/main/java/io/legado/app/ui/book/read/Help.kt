@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.os.AsyncTask
 import android.os.Build
 import android.view.*
@@ -62,6 +63,18 @@ object Help {
         }
     }
 
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    fun setOrientation(activity: Activity) = activity.apply {
+        when (AppConfig.requestedDirection) {
+            "0" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            "1" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            "2" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            "3" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+        }
+    }
+
+
     /**
      * 返回NavigationBar是否存在
      * 该方法需要在View完全被绘制出来之后调用，否则判断不了
@@ -99,7 +112,7 @@ object Help {
      * 适配刘海
      */
     fun upLayoutInDisplayCutoutMode(window: Window) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && AppConfig.readBodyToLh) {
             window.attributes = window.attributes.apply {
                 layoutInDisplayCutoutMode =
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES

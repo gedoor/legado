@@ -37,7 +37,10 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     override fun onTouch(event: MotionEvent) {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                abort()
+                if (abort()) {
+                    onAnimStop()
+                    stopScroll()
+                }
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isTextSelected) {
@@ -93,7 +96,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             }
         }
         if (isMoved) {
-            isCancel = if (mDirection == Direction.NEXT) touchX > lastX else touchX < lastX
+            isCancel = if (mDirection == Direction.NEXT) sumX > lastX else sumX < lastX
             isRunning = true
             //设置触摸点
             setTouchPoint(sumX, sumY)

@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -23,7 +24,9 @@ import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.prefs.NameListPreference
+import io.legado.app.ui.widget.prefs.PreferenceCategory
 import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
@@ -46,9 +49,10 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
-            R.id.menu_help -> startActivity<AboutActivity>()
-            R.id.menu_backup -> BackupRestoreUi.backup(this)
-            R.id.menu_restore -> BackupRestoreUi.restore(this)
+            R.id.menu_help -> {
+                val text = String(requireContext().assets.open("help.md").readBytes())
+                TextDialog.show(childFragmentManager, text, TextDialog.MD)
+            }
         }
     }
 
@@ -80,6 +84,10 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     view?.post { App.INSTANCE.applyDayNight() }
                     true
                 }
+            }
+            if (AppConfig.isGooglePlay) {
+                findPreference<PreferenceCategory>("aboutCategory")
+                    ?.removePreference(findPreference("donate"))
             }
         }
 

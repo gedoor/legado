@@ -1,12 +1,10 @@
 <resources>
+    <!--App-->
     <string name="app_name">阅读</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="receiving_shared_label">阅读·搜索</string>
+    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
 
+    <!--Other-->
     <string name="menu_backup">Home</string>
     <string name="menu_restore">恢复</string>
     <string name="menu_import_old">导入阅读数据</string>
@@ -18,9 +16,7 @@
     <string name="dialog_cancel">取消</string>
     <string name="dialog_confirm">确定</string>
     <string name="dialog_setting">去设置</string>
-
     <string name="tip_cannot_jump_setting_page">无法跳转至设置界面</string>
-    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
 
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
@@ -29,6 +25,7 @@
     <string name="delete">删除</string>
     <string name="replace">替换</string>
     <string name="replace_purify">替换净化</string>
+    <string name="replace_purify_desc">配置替换净化规则</string>
     <string name="not_available">暂无</string>
     <string name="enable">启用</string>
     <string name="replace_purify_search">替换净化-搜索</string>
@@ -41,9 +38,7 @@
     <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
     <string name="last_read">最后阅读</string>
-    <string name="read_summary">让阅读成为一种习惯。</string>
     <string name="update_log">更新日志</string>
-    <string name="receiving_shared_label">阅读·搜索</string>
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
@@ -58,6 +53,7 @@
     <string name="book_local">添加本地</string>
     <string name="book_source">书源</string>
     <string name="book_source_manage">书源管理</string>
+    <string name="book_source_manage_desc">新建/导入/编辑/管理书源</string>
     <string name="setting">设置</string>
     <string name="theme_setting">主题设置</string>
     <string name="theme_setting_s">与界面/颜色相关的一些设置</string>
@@ -80,8 +76,9 @@
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
     <string name="web_service">Web 服务</string>
+    <string name="web_service_desc">启用Web服务</string>
     <string name="web_edit_source">web编辑书源</string>
-    <string name="http_ip">http://%s:%d</string>
+    <string name="http_ip">http://%1$s:%2$d</string>
     <string name="download_offline">离线下载</string>
     <string name="download_offline_t">离线下载</string>
     <string name="download_offline_s">下载选择的章节到本地</string>
@@ -129,8 +126,6 @@
     <string name="previous_chapter">上一章</string>
     <string name="pt_hide_status_bar">隐藏状态栏</string>
     <string name="ps_hide_status_bar">阅读界面隐藏状态栏</string>
-    <string name="pt_read_line_adjust">阅读行数调整</string>
-    <string name="ps_read_line_adjust">阅读行数减一行,如阅读界面显示不全可启用</string>
     <string name="read_aloud">朗读</string>
     <string name="read_aloud_t">正在朗读</string>
     <string name="read_aloud_s">点击打开阅读界面</string>
@@ -160,7 +155,7 @@
     <string name="add_book_url">添加书籍网址</string>
     <string name="background">背景</string>
     <string name="author">作者</string>
-    <string name="author_show">作者:%s</string>
+    <string name="author_show">作者: %s</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_cache">清除缓存</string>
     <string name="clear_cache_success">成功清理缓存</string>
@@ -207,14 +202,14 @@
     <string name="replace_rule_invalid">替换规则为空或者不满足正则表达式要求</string>
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
-    <string name="select_all_count">全选(%d/%d)</string>
-    <string name="select_cancel_count">取消(%d/%d)</string>
+    <string name="select_all_count">全选(%1$d/%2$d)</string>
+    <string name="select_cancel_count">取消(%1$d/%2$d)</string>
     <string name="dark_theme">深色模式</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>
     <string name="download_cancel">取消下载</string>
     <string name="no_download">暂无任务</string>
-    <string name="download_count">已下载 %d/%d</string>
+    <string name="download_count">已下载 %1$d/%2$d</string>
     <string name="import_select_book">导入选择书籍</string>
     <string name="threads_num_title">更新和搜索线程数,太多会卡顿</string>
     <string name="change_icon">切换图标</string>
@@ -225,7 +220,7 @@
     <string name="book_intro">内容简介</string>
     <string name="intro_show">简介:%s</string>
     <string name="open_from_other">打开外部书籍</string>
-    <string name="origin_show">来源:%s</string>
+    <string name="origin_show">来源: %s</string>
     <string name="import_replace_rule">本地导入</string>
     <string name="import_replace_rule_on_line">导入在线规则</string>
     <string name="check_update_interval">检查更新间隔</string>
@@ -234,6 +229,7 @@
     <string name="bookshelf_px_2">按书名</string>
     <string name="bookshelf_px_3">手动排序</string>
     <string name="read_type">阅读方式</string>
+    <string name="compose_type">排版</string>
     <string name="del_select">删除所选</string>
     <string name="del_msg">是否确认删除?</string>
     <string name="clear_font">默认字体</string>
@@ -288,7 +284,7 @@
     <string name="padding_right">右边距</string>
     <string name="check_book_source">校验书源</string>
     <string name="check_select_source">校验所选</string>
-    <string name="progress_show">进度 %d/%d</string>
+    <string name="progress_show">进度 %1$d/%2$d</string>
     <string name="tts_fix">请安装并选择中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失败!</string>
     <string name="jf_convert">简繁转换</string>
@@ -329,6 +325,7 @@
     <string name="volume_key_page_on_play">朗读时音量键翻页</string>
     <string name="tip_margin_change">Tip边距跟随边距调整</string>
     <string name="allow_update">允许更新</string>
+    <string name="disable_update">禁止更新</string>
     <string name="revert_selection">反选</string>
     <string name="search_book_key">搜索书名、作者</string>
     <string name="debug_hint">书名、作者、URL</string>
@@ -440,6 +437,7 @@
     <string name="click_on_selected_show_menu">选中时点击可弹出菜单</string>
     <string name="theme">主题</string>
     <string name="theme_mode">主题模式</string>
+    <string name="theme_mode_desc">选择主题模式</string>
     <string name="default_theme">默认主题</string>
     <string name="restore_default_theme">恢复主题为默认配色</string>
     <string name="join_qq_group">加入QQ群</string>
@@ -455,6 +453,7 @@
     <string name="import_per">导入本地书籍需存储权限</string>
     <string name="night_theme">夜间模式</string>
     <string name="eink_theme">E-Ink 模式</string>
+    <string name="eink_theme_desc">电子墨水屏模式</string>
     <string name="get_storage_per">本软件需要存储权限来存储备份书籍信息</string>
     <string name="double_click_exit">再按一次退出程序</string>
     <string name="import_book_per">导入本地书籍需存储权限</string>
@@ -579,7 +578,7 @@
     <string name="book_type">类型:</string>
     <string name="book_type_text">文本</string>
     <string name="book_type_audio">音频</string>
-    <string name="to_backstage">转到后台</string>
+    <string name="to_backstage">后台</string>
     <string name="importing">正在导入</string>
     <string name="exporting">正在导出</string>
     <string name="custom_page_key">自定义翻页按键</string>
@@ -597,7 +596,7 @@
     <string name="auto_dark_mode_s">夜间模式跟随系统</string>
     <string name="go_back">上级</string>
     <string name="tone_colour">在线朗读音色</string>
-    <string name="select_count">(%d/%d)</string>
+    <string name="select_count">(%1$d/%2$d)</string>
     <string name="show_rss">显示订阅</string>
     <string name="service_stop">服务已停止</string>
     <string name="service_start">正在启动服务\n具体信息查看通知栏</string>
@@ -605,7 +604,7 @@
     <string name="sys_folder_picker">系统文件夹选择器</string>
     <string name="app_folder_picker">自带选择器\n(Android10以上因权限限制可能无法使用)</string>
     <string name="a10_permission_toast">Android10以上因权限限制可能无法读写文件</string>
-    <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示阅读·搜索</string>
+    <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示欣悦·搜索</string>
     <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
     <string name="record_log">记录日志</string>
     <string name="chinese_converter">中文简繁体转换</string>
@@ -619,7 +618,6 @@
     <string name="select_end">文本选择结束位置</string>
     <string name="select_start">文本选择开始位置</string>
     <string name="share_layout">共用布局</string>
-    <string name="title_center">标题居中</string>
     <string name="browser">浏览器</string>
     <string name="import_default_rule">导入默认规则</string>
     <string name="name">名称</string>
@@ -627,7 +625,29 @@
     <string name="more_menu">更多菜单</string>
     <string name="reduce">减</string>
     <string name="plus">加</string>
-    <string name="other_aloud_setting">其它朗读设置</string>
     <string name="system_typeface">系统内置字体样式</string>
-    <string name="sure_delete_book_file">是否删除源文件</string>
+    <string name="delete_book_file">删除源文件</string>
+    <string name="default1">预设一</string>
+    <string name="default2">预设二</string>
+    <string name="default3">预设三</string>
+    <string name="title">标题</string>
+    <string name="title_left">靠左</string>
+    <string name="title_center">居中</string>
+    <string name="title_hide">隐藏</string>
+    <string name="add_to_group">加入分组</string>
+    <string name="save_image">保存图片</string>
+    <string name="no_default_path">没有默认路径</string>
+    <string name="change_group">设置分组</string>
+    <string name="view_toc">查看目录</string>
+    <string name="bar_elevation">导航栏阴影</string>
+    <string name="bar_elevation_s">当前阴影大小(elevation): %s</string>
+    <string name="btn_default_s">默认</string>
+    <string name="main_menu">主菜单</string>
+    <string name="request_permission">点击授予权限</string>
+    <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的"授予权限"按钮，或前往“设置”—“应用权限”—打开所需权限。如果授予权限后仍然不正常，请点击右上角的“选择文件夹”，使用系统文件夹选择器。</string>
+    <string name="alouding_disable">全文朗读中不能朗读选中文字</string>
+    <string name="read_body_to_lh">扩展到刘海</string>
+    <string name="toc_updateing">更新目录中</string>
+    <string name="media_button_on_exit_title">全程响应耳机按键</string>
+    <string name="media_button_on_exit_summary">即使退出软件也响应耳机按键</string>
 </resources>

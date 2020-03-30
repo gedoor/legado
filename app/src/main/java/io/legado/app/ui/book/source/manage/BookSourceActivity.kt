@@ -40,6 +40,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.File
+import java.text.Collator
 
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     PopupMenu.OnMenuItemClickListener,
@@ -84,7 +85,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
+                .selectFile(
+                    this,
+                    importRequestCode,
+                    type = "text/*",
+                    allowExtensions = arrayOf("txt", "json")
+                )
             R.id.menu_import_source_onLine -> showImportDialog()
         }
         if (item.groupId == R.id.source_group) {
@@ -98,8 +104,14 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-                    viewModel.importSource(url) { msg ->
-                        title_bar.snackbar(msg)
+                    if (url.startsWith("http", false)){
+                        viewModel.importSource(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
+                    }
+                    else{
+                        viewModel.importSourceFromFilePath(url){msg ->
+                            title_bar.snackbar(msg)}
                     }
                 }
                 else -> {
@@ -197,9 +209,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
-        groups.map {
-            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-        }
+        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+            .map {
+                groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            }
     }
 
     @SuppressLint("InflateParams")

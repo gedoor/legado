@@ -14,8 +14,13 @@ import org.jetbrains.anko.toast
 @Suppress("unused")
 object FilePicker {
 
-    fun selectFolder(activity: AppCompatActivity, requestCode: Int, default: (() -> Unit)? = null) {
-        activity.alert(titleResource = R.string.select_folder) {
+    fun selectFolder(
+        activity: AppCompatActivity,
+        requestCode: Int,
+        title: String = activity.getString(R.string.select_folder),
+        default: (() -> Unit)? = null
+    ) {
+        activity.alert(title = title) {
             val selectList =
                 activity.resources.getStringArray(R.array.select_folder).toMutableList()
             default ?: let {
@@ -26,7 +31,7 @@ object FilePicker {
                     0 -> default?.invoke()
                     1 -> {
                         try {
-                            val intent = getSelectDirIntent()
+                            val intent = createSelectDirIntent()
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
@@ -45,9 +50,14 @@ object FilePicker {
         }.show()
     }
 
-    fun selectFolder(fragment: Fragment, requestCode: Int, default: (() -> Unit)? = null) {
+    fun selectFolder(
+        fragment: Fragment,
+        requestCode: Int,
+        title: String = fragment.getString(R.string.select_folder),
+        default: (() -> Unit)? = null
+    ) {
         fragment.requireContext()
-            .alert(titleResource = R.string.select_folder) {
+            .alert(title = title) {
                 val selectList =
                     fragment.resources.getStringArray(R.array.select_folder).toMutableList()
                 default ?: let {
@@ -58,7 +68,7 @@ object FilePicker {
                         0 -> default?.invoke()
                         1 -> {
                             try {
-                                val intent = getSelectDirIntent()
+                                val intent = createSelectDirIntent()
                                 fragment.startActivityForResult(intent, requestCode)
                             } catch (e: java.lang.Exception) {
                                 e.printStackTrace()
@@ -80,11 +90,12 @@ object FilePicker {
     fun selectFile(
         activity: BaseActivity,
         requestCode: Int,
+        title: String = activity.getString(R.string.select_file),
         type: String,
         allowExtensions: Array<String>?,
         default: (() -> Unit)? = null
     ) {
-        activity.alert(titleResource = R.string.select_file) {
+        activity.alert(title = title) {
             val selectList =
                 activity.resources.getStringArray(R.array.select_folder).toMutableList()
             default ?: let {
@@ -95,7 +106,7 @@ object FilePicker {
                     0 -> default?.invoke()
                     1 -> {
                         try {
-                            val intent = getSelectFileIntent()
+                            val intent = createSelectFileIntent()
                             intent.type = type//设置类型
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
@@ -119,12 +130,13 @@ object FilePicker {
     fun selectFile(
         fragment: Fragment,
         requestCode: Int,
+        title: String = fragment.getString(R.string.select_file),
         type: String,
         allowExtensions: Array<String>,
         default: (() -> Unit)? = null
     ) {
         fragment.requireContext()
-            .alert(titleResource = R.string.select_file) {
+            .alert(title = title) {
                 val selectList =
                     fragment.resources.getStringArray(R.array.select_folder).toMutableList()
                 default ?: let {
@@ -135,7 +147,7 @@ object FilePicker {
                         0 -> default?.invoke()
                         1 -> {
                             try {
-                                val intent = getSelectFileIntent()
+                                val intent = createSelectFileIntent()
                                 intent.type = type//设置类型
                                 fragment.startActivityForResult(intent, requestCode)
                             } catch (e: java.lang.Exception) {
@@ -156,14 +168,14 @@ object FilePicker {
             }.show()
     }
 
-    private fun getSelectFileIntent(): Intent {
+    private fun createSelectFileIntent(): Intent {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         return intent
     }
 
-    private fun getSelectDirIntent(): Intent {
+    private fun createSelectDirIntent(): Intent {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         return intent

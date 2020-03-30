@@ -1,13 +1,11 @@
 package io.legado.app
 
-import android.app.Activity
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
-import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -56,7 +54,7 @@ class App : Application() {
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
 
-        registerActivityLife()
+        registerActivityLifecycleCallbacks(ActivityHelp)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -116,9 +114,7 @@ class App : Application() {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannelId() {
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-        notificationManager?.let {
+        (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.let {
             //用唯一的ID创建渠道对象
             val downloadChannel = NotificationChannel(
                 channelIdDownload,
@@ -157,32 +153,4 @@ class App : Application() {
         }
     }
 
-    private fun registerActivityLife() {
-        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-            override fun onActivityPaused(activity: Activity) {
-            }
-
-            override fun onActivityResumed(activity: Activity) {
-            }
-
-            override fun onActivityStarted(activity: Activity) {
-
-            }
-
-            override fun onActivityDestroyed(activity: Activity) {
-                ActivityHelp.remove(activity)
-            }
-
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
-            }
-
-            override fun onActivityStopped(activity: Activity) {
-            }
-
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                ActivityHelp.add(activity)
-            }
-
-        })
-    }
 }

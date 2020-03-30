@@ -8,6 +8,15 @@ import io.legado.app.data.entities.Book
 
 class ArrangeBookViewModel(application: Application) : BaseViewModel(application) {
 
+    fun upCanUpdate(books: Array<Book>, canUpdate: Boolean) {
+        execute {
+            books.forEach {
+                it.canUpdate = canUpdate
+            }
+            App.db.bookDao().update(*books)
+        }
+    }
+
     fun updateBook(vararg book: Book) {
         execute {
             App.db.bookDao().update(*book)

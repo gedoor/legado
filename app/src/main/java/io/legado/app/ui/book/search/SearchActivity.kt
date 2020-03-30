@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
+import java.text.Collator
 
 
 class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_search),
@@ -49,7 +51,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var bookData: LiveData<List<Book>>? = null
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
-    private var groups = hashSetOf<String>()
+    private var groups = linkedSetOf<String>()
     private var refreshTime = System.currentTimeMillis()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -110,6 +112,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                     viewModel.saveSearchKey(query)
                     viewModel.search(it)
                 }
+                openOrCloseHistory(false)
                 return true
             }
 
@@ -126,6 +129,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 openOrCloseHistory(hasFocus)
             }
         }
+        openOrCloseHistory(true)
     }
 
     private fun initRecyclerView() {
@@ -133,11 +137,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         ATH.applyEdgeEffectColor(rv_bookshelf_search)
         ATH.applyEdgeEffectColor(rv_history_key)
         bookAdapter = BookAdapter(this, this)
-        rv_bookshelf_search.layoutManager =
-            LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        rv_bookshelf_search.layoutManager = FlexboxLayoutManager(this)
         rv_bookshelf_search.adapter = bookAdapter
         historyKeyAdapter = HistoryKeyAdapter(this, this)
-        rv_history_key.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        rv_history_key.layoutManager = FlexboxLayoutManager(this)
         rv_history_key.adapter = historyKeyAdapter
         adapter = SearchAdapter(this, this)
         recycler_view.layoutManager = LinearLayoutManager(this)
@@ -229,12 +232,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         if (selectedGroup == "") {
             item?.isChecked = true
         }
-        groups.map {
-            item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-            if (it == selectedGroup) {
-                item?.isChecked = true
+        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+            .map {
+                item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+                if (it == selectedGroup) {
+                    item?.isChecked = true
+                }
             }
-        }
         menu?.setGroupCheckable(R.id.source_group, true, true)
     }
 
@@ -266,7 +270,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             } else {
                 App.db.searchKeywordDao().liveDataSearch(key)
             }
-        historyData?.observe(this, Observer { historyKeyAdapter.setItems(it)
+        historyData?.observe(this, Observer {
+            historyKeyAdapter.setItems(it)
             if (it.isEmpty()) {
                 tv_clear_history.invisible()
             } else {
@@ -280,15 +285,12 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      */
     @Synchronized
     private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
-        if (!isMandatoryUpdate && System.currentTimeMillis() - refreshTime < 500) {
-            return
-        }
-        refreshTime = System.currentTimeMillis()
-        try {
-            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), items))
-            adapter.setItems(items, diffResult)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val searchItems = ArrayList(items)
+        if (isMandatoryUpdate || System.currentTimeMillis() - refreshTime > 500) {
+            refreshTime = System.currentTimeMillis()
+            val diffResult =
+                DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), searchItems))
+            adapter.setItems(searchItems, diffResult)
         }
     }
 

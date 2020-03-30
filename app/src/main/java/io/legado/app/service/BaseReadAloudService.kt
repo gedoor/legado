@@ -111,11 +111,17 @@ abstract class BaseReadAloudService : BaseService(),
                 if (getPrefBoolean(PreferKey.readAloudByPage)) {
                     for (index in pageIndex..textChapter.lastIndex()) {
                         textChapter.page(index)?.text?.split("\n")?.let {
-                            contentList.addAll(it)
+                            if (it.isNotEmpty()) {
+                                contentList.addAll(it)
+                            }
                         }
                     }
                 } else {
-                    contentList.addAll(textChapter.getUnRead(pageIndex).split("\n"))
+                    textChapter.getUnRead(pageIndex).split("\n").forEach {
+                        if (it.isNotEmpty()) {
+                            contentList.add(it)
+                        }
+                    }
                 }
                 if (play) play()
             } ?: stopSelf()

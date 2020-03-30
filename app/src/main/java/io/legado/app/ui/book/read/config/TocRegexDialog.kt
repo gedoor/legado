@@ -252,8 +252,8 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
             return super.onMove(srcPosition, targetPosition)
         }
 
-        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-            super.clearView(recyclerView, viewHolder)
+        override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.onClearView(recyclerView, viewHolder)
             if (isMoved) {
                 for ((index, item) in getItems().withIndex()) {
                     item.serialNumber = index + 1

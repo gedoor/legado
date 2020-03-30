@@ -1,8 +1,8 @@
 package io.legado.app.ui.config
 
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -17,6 +17,8 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
+import io.legado.app.ui.widget.number.NumberPickerDialog
+import io.legado.app.ui.widget.prefs.IconListPreference
 import io.legado.app.utils.*
 
 
@@ -26,6 +28,12 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
+        if (Build.VERSION.SDK_INT < 26) {
+            findPreference<IconListPreference>(PreferKey.launcherIcon)?.let {
+                preferenceScreen.removePreference(it)
+            }
+        }
+        upPreferenceSummary("barElevation", AppConfig.elevation.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,6 +154,19 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                     recreateActivities()
                 }
             }.show().applyTint()
+            "barElevation" -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.bar_elevation))
+                .setMaxValue(32)
+                .setMinValue(0)
+                .setValue(AppConfig.elevation)
+                .setCustomButton((R.string.btn_default_s)) {
+                    AppConfig.elevation = App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+                    recreateActivities()
+                }
+                .show {
+                    AppConfig.elevation = it
+                    recreateActivities()
+                }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -170,14 +191,21 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     private fun upTheme(isNightTheme: Boolean) {
         if (AppConfig.isNightTheme == isNightTheme) {
-            App.INSTANCE.applyTheme()
-            recreateActivities()
+            listView.post {
+                App.INSTANCE.applyTheme()
+                recreateActivities()
+            }
         }
     }
 
     private fun recreateActivities() {
         postEvent(EventBus.RECREATE, "")
-        Handler().postDelayed({ activity?.recreate() }, 100L)
     }
 
+    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+        val preference = findPreference<Preference>(preferenceKey) ?: return
+        when (preferenceKey) {
+            "barElevation" -> preference.summary = getString(R.string.bar_elevation_s, value)
+        }
+    }
 }

@@ -159,6 +159,10 @@
         <attr name="radius" />
     </declare-styleable>
 
+    <declare-styleable name="StrokeTextView">
+        <attr name="radius" />
+    </declare-styleable>
+
     <declare-styleable name="BadgeView">
         <attr name="radius" />
         <attr name="up_flat_angle" format="boolean" />
@@ -168,5 +172,18 @@
         <attr name="arcHeight" format="dimension" />
         <attr name="bgColor" format="color" />
         <attr name="arcDirectionTop" format="boolean" />
+    </declare-styleable>
+
+
+    <declare-styleable name="ShadowLayout"><attr format="color" name="shadowColor"/><attr format="dimension" name="shadowRadius"/><attr format="dimension" name="shadowDx"/><attr format="dimension" name="shadowDy"/><attr name="shadowShape">
+        <flag name="rectangle" value="0x0001"/>
+        <flag name="oval" value="0x0010"/>
+        </attr><attr name="shadowSide">
+            <flag name="all" value="0x1111"/>
+            <flag name="left" value="0x0001"/>
+            <flag name="top" value="0x0010"/>
+            <flag name="right" value="0x0100"/>
+            <flag name="bottom" value="0x1000"/>
+        </attr>
     </declare-styleable>
 </resources>

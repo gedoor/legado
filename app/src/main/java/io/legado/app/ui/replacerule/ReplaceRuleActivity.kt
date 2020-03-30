@@ -81,8 +81,15 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-                    viewModel.importSource(url) { msg ->
-                        title_bar.snackbar(msg)
+                    if (url.startsWith("http", false)){
+                        viewModel.importSource(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
+                    }
+                    else{
+                        viewModel.importSourceFromFilePath(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
                     }
                 }
                 else -> {
@@ -180,7 +187,12 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, "text/*", arrayOf("txt", "json"))
+                .selectFile(
+                    this,
+                    importRequestCode,
+                    type = "text/*",
+                    allowExtensions = arrayOf("txt", "json")
+                )
         }
         return super.onCompatOptionsItemSelected(item)
     }

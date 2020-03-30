@@ -2,7 +2,6 @@ package io.legado.app.ui.about
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.preference.Preference
@@ -12,7 +11,6 @@ import io.legado.app.utils.ACache
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
 import org.jetbrains.anko.longToast
-import java.net.URLEncoder
 
 class DonateFragment : PreferenceFragmentCompat() {
 
@@ -36,7 +34,6 @@ class DonateFragment : PreferenceFragmentCompat() {
             "zfbHbRwm" -> requireContext().openUrl(zfbHbRwmUrl)
             "zfbSkRwm" -> requireContext().openUrl(zfbSkRwmUrl)
             "qqSkRwm" -> requireContext().openUrl(qqSkRwmUrl)
-            "zfbSk" -> aliDonate(requireContext())
             "zfbHbSsm" -> getZfbHb(requireContext())
             "gzGzh" -> requireContext().sendToClip("开源阅读软件")
         }
@@ -56,21 +53,6 @@ class DonateFragment : PreferenceFragmentCompat() {
         } finally {
             ACache.get(requireContext(), cacheDir = false)
                 .put("proTime", System.currentTimeMillis())
-        }
-    }
-
-    private fun aliDonate(context: Context) {
-        try {
-            val qrCode = URLEncoder.encode(
-                "https://qr.alipay.com/tsx06677nwdk3javroq4ef0?_s=Dweb-other",
-                "utf-8"
-            )
-            val aliPayQr =
-                "alipayqr://platformapi/startapp?saId=10000007&qrcode=$qrCode&_t=${System.currentTimeMillis()}"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(aliPayQr))
-            context.startActivity(intent)
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 

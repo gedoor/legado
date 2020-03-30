@@ -5,6 +5,7 @@ import android.text.StaticLayout
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.ui.book.read.page.ChapterProvider
+import java.text.DecimalFormat
 
 data class TextPage(
     var index: Int = 0,
@@ -17,6 +18,21 @@ data class TextPage(
     var height: Float = 0f
 ) {
 
+    fun upLinesPosition() = ChapterProvider.apply {
+        if (textLines.size <= 1) return@apply
+        if (visibleHeight - height >= with(textLines.last()) { lineBottom - lineTop }) return@apply
+        val surplus = (visibleBottom - textLines.last().lineBottom)
+        if (surplus == 0f) return@apply
+        height += surplus
+        val tj = surplus / (textLines.size - 1)
+        for (i in 1 until textLines.size) {
+            val line = textLines[i]
+            line.lineTop = line.lineTop + tj * i
+            line.lineBase = line.lineBase + tj * i
+            line.lineBottom = line.lineBottom + tj * i
+        }
+    }
+
     @Suppress("DEPRECATION")
     fun format(): TextPage {
         if (textLines.isEmpty() && ChapterProvider.visibleWidth > 0) {
@@ -28,12 +44,11 @@ data class TextPage(
             if (y < 0) y = 0f
             for (lineIndex in 0 until layout.lineCount) {
                 val textLine = TextLine()
-                textLine.lineTop = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)))
-                textLine.lineBase = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex)))
+                textLine.lineTop = ChapterProvider.paddingTop + y + layout.getLineTop(lineIndex)
+                textLine.lineBase =
+                    ChapterProvider.paddingTop + y + layout.getLineBaseline(lineIndex)
                 textLine.lineBottom =
-                    textLine.lineBase + ChapterProvider.contentPaint.fontMetrics.descent
+                    ChapterProvider.paddingTop + y + layout.getLineBottom(lineIndex)
                 var x = ChapterProvider.paddingLeft +
                         (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
                 textLine.text =
@@ -84,4 +99,21 @@ data class TextPage(
             lineStart += textLine.text.length
         }
     }
+
+    val readProgress: String
+        get() {
+            val df = DecimalFormat("0.0%")
+            if (chapterSize == 0 || pageSize == 0 && chapterIndex == 0) {
+                return "0.0%"
+            } else if (pageSize == 0) {
+                return df.format((chapterIndex + 1.0f) / chapterSize.toDouble())
+            }
+            var percent =
+                df.format(chapterIndex * 1.0f / chapterSize + 1.0f / chapterSize * (index + 1) / pageSize.toDouble())
+            if (percent == "100.0%" && (chapterIndex + 1 != chapterSize || index + 1 != pageSize)) {
+                percent = "99.9%"
+            }
+            return percent
+        }
+
 }

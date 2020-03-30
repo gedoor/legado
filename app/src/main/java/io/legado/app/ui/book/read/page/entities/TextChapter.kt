@@ -12,29 +12,12 @@ data class TextChapter(
     val chaptersSize: Int
 ) {
     fun page(index: Int): TextPage? {
-        if (index >= 0 && index < pages.size) {
-            return pages[index]
-        }
-        return null
+        return pages.getOrNull(index)
     }
 
     fun lastPage(): TextPage? {
         if (pages.isNotEmpty()) {
             return pages[pages.lastIndex]
-        }
-        return null
-    }
-
-    fun scrollPage(): TextPage? {
-        if (pages.isNotEmpty()) {
-            val stringBuilder = StringBuilder()
-            pages.forEach {
-                stringBuilder.append(it.text)
-            }
-            return TextPage(
-                index = 0, text = stringBuilder.toString(), title = title,
-                pageSize = pages.size, chapterSize = chaptersSize, chapterIndex = position
-            )
         }
         return null
     }
@@ -68,28 +51,6 @@ data class TextChapter(
             }
         }
         return stringBuilder.toString()
-    }
-
-    fun getStartLine(pageIndex: Int): Int {
-        if (pageLines.size > pageIndex) {
-            var lines = 0
-            for (index: Int in 0 until pageIndex) {
-                lines += pageLines[index] + 1
-            }
-            return lines
-        }
-        return 0
-    }
-
-    fun getPageIndex(line: Int): Int {
-        var lines = 0
-        for (pageIndex in pageLines.indices) {
-            lines += pageLines[pageIndex] + 1
-            if (line < lines) {
-                return pageIndex
-            }
-        }
-        return 0
     }
 
     fun getContent(): String {

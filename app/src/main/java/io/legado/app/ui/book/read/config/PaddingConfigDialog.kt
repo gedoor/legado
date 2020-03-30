@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.config
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -47,8 +48,8 @@ class PaddingConfigDialog : DialogFragment() {
         initView()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
         ReadBookConfig.save()
     }
 
@@ -75,7 +76,8 @@ class PaddingConfigDialog : DialogFragment() {
         dsb_footer_padding_bottom.progress = footerPaddingBottom
         dsb_footer_padding_left.progress = footerPaddingLeft
         dsb_footer_padding_right.progress = footerPaddingRight
-        cb_show_line.isChecked = showFooterLine
+        cb_show_top_line.isChecked = showHeaderLine
+        cb_show_bottom_line.isChecked = showFooterLine
     }
 
     private fun initView() = with(ReadBookConfig) {
@@ -130,7 +132,13 @@ class PaddingConfigDialog : DialogFragment() {
             footerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        cb_show_line.onCheckedChangeListener = { cb, isChecked ->
+        cb_show_top_line.onCheckedChangeListener = { cb, isChecked ->
+            if (cb.isPressed) {
+                showHeaderLine = isChecked
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        cb_show_bottom_line.onCheckedChangeListener = { cb, isChecked ->
             if (cb.isPressed) {
                 showFooterLine = isChecked
                 postEvent(EventBus.UP_CONFIG, true)

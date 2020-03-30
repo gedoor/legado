@@ -16,4 +16,16 @@ data class RssStar(
     var description: String? = null,
     var content: String? = null,
     var image: String? = null
-)
+) {
+    fun toRssArticle(): RssArticle {
+        return RssArticle(
+            origin = origin,
+            title = title,
+            link = link,
+            pubDate = pubDate,
+            description = description,
+            content = content,
+            image = image
+        )
+    }
+}

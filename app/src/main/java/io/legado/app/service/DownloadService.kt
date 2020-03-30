@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.postEvent
@@ -25,12 +26,14 @@ import java.util.concurrent.Executors
 class DownloadService : BaseService() {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
+    private var tasks = CompositeCoroutine()
     private val handler = Handler()
     private var runnable: Runnable = Runnable { upDownload() }
     private val downloadMap = hashMapOf<String, LinkedHashSet<BookChapter>>()
+    private val downloadCount = hashMapOf<String, DownloadCount>();
     private val finalMap = hashMapOf<String, LinkedHashSet<BookChapter>>()
     private var notificationContent = "正在启动下载"
+
     private val notificationBuilder by lazy {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
@@ -97,6 +100,11 @@ class DownloadService : BaseService() {
         finalMap.remove(bookUrl)
     }
 
+    private fun updateNotification(downloadCount:DownloadCount, totalCount: Int, content: String){
+        notificationContent =
+            "进度:${downloadCount.downloadFinishedCount}/$totalCount,成功:${downloadCount.successCount},$content"
+    }
+
     private fun download() {
         val task = Coroutine.async(this, context = searchPool) {
             downloadMap.forEach { entry ->
@@ -106,6 +114,9 @@ class DownloadService : BaseService() {
                     val bookSource =
                         App.db.bookSourceDao().getBookSource(book.origin) ?: return@async
                     val webBook = WebBook(bookSource)
+
+                    downloadCount[entry.key] = DownloadCount()
+
                     entry.value.forEach { chapter ->
                         if (!isActive) return@async
                         if (downloadMap.containsKey(book.bookUrl)) {
@@ -115,17 +126,14 @@ class DownloadService : BaseService() {
                                     chapter,
                                     scope = this,
                                     context = searchPool
-                                )
-                                    .onStart {
-                                        notificationContent = chapter.title
-                                    }
-                                    .onSuccess(IO) { content ->
-                                        content?.let {
-                                            BookHelp.saveContent(book, chapter, content)
-                                        }
+                                ).onSuccess(IO) { content ->
+                                        downloadCount[entry.key]?.increaseSuccess()
+                                        BookHelp.saveContent(book, chapter, content)
                                     }
                                     .onFinally(IO) {
                                         synchronized(this@DownloadService) {
+                                            downloadCount[entry.key]?.increaseFinished()
+                                            downloadCount[entry.key]?.let { updateNotification(it, entry.value.size, chapter.title) }
                                             val chapterMap =
                                                 finalMap[book.bookUrl]
                                                     ?: linkedSetOf<BookChapter>().apply {
@@ -135,9 +143,14 @@ class DownloadService : BaseService() {
                                             if (chapterMap.size == entry.value.size) {
                                                 downloadMap.remove(book.bookUrl)
                                                 finalMap.remove(book.bookUrl)
+                                                downloadCount.remove(entry.key)
                                             }
                                         }
                                     }
+                            } else{
+                                //无需下载的，设置为增加成功
+                                downloadCount[entry.key]?.increaseSuccess()
+                                downloadCount[entry.key]?.increaseFinished()
                             }
                         }
                     }
@@ -149,7 +162,7 @@ class DownloadService : BaseService() {
         tasks.add(task)
         task.invokeOnCompletion {
             tasks.remove(task)
-            if (tasks.isEmpty()) {
+            if (tasks.isEmpty) {
                 stopSelf()
             }
         }
@@ -175,5 +188,22 @@ class DownloadService : BaseService() {
         builder.setContentText(content)
         val notification = builder.build()
         startForeground(AppConst.notificationIdDownload, notification)
+    }
+
+
+    class DownloadCount {
+        @Volatile
+        var downloadFinishedCount = 0 // 下载完成的条目数量
+
+        @Volatile
+        var successCount = 0 //下载成功的条目数量
+
+        fun increaseSuccess() {
+            ++successCount;
+        }
+
+        fun increaseFinished() {
+            ++downloadFinishedCount;
+        }
     }
 }
