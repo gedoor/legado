@@ -169,7 +169,7 @@ data class BookSource(
                         }
                     }
                     val b = a.split("(&&|\n)+".toRegex())
-                    b.map { c ->
+                    b.forEach { c ->
                         val d = c.split("::")
                         if (d.size > 1)
                             exploreKinds.add(ExploreKind(d[0], d[1]))
