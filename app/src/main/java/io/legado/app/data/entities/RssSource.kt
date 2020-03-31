@@ -23,6 +23,7 @@ data class RssSource(
     var sourceIcon: String = "",
     var sourceGroup: String? = null,
     var enabled: Boolean = true,
+    var sortUrl: String? = null,
     //列表规则
     var ruleArticles: String? = null,
     var ruleNextPage: String? = null,
