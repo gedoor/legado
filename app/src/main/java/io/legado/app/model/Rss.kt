@@ -15,6 +15,8 @@ import kotlin.coroutines.CoroutineContext
 object Rss {
 
     fun getArticles(
+        sortName: String,
+        sortUrl: String,
         rssSource: RssSource,
         pageUrl: String? = null,
         scope: CoroutineScope = Coroutine.DEFAULT,
@@ -22,11 +24,11 @@ object Rss {
     ): Coroutine<Result> {
         return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(
-                pageUrl ?: rssSource.sourceUrl,
+                pageUrl ?: sortUrl,
                 headerMapF = rssSource.getHeaderMap()
             )
             val body = analyzeUrl.getResponseAwait(rssSource.sourceUrl).body
-            RssParserByRule.parseXML(body, rssSource)
+            RssParserByRule.parseXML(sortName, sortUrl, body, rssSource)
         }
     }
 

@@ -104,7 +104,7 @@ data class RssSource(
         val sortMap = linkedMapOf<String, String>()
         val sortUrl = sortUrl
         if (sortUrl.isNullOrEmpty()) {
-            sortMap["default"] = sourceUrl
+            sortMap[""] = sourceUrl
         } else {
             sortUrl.split("(&&|\n)+".toRegex()).forEach { c ->
                 val d = c.split("::")

@@ -1,83 +1,67 @@
 package io.legado.app.ui.rss.article
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.VMBaseActivity
+import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
-import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_rss_artivles.*
+import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.startActivity
+import kotlinx.android.synthetic.main.fragment_rss_articles.*
 import kotlinx.android.synthetic.main.view_load_more.view.*
 import kotlinx.android.synthetic.main.view_refresh_recycler.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 
-class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activity_rss_artivles),
-    RssArticlesViewModel.CallBack,
+class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragment_rss_articles),
     RssArticlesAdapter.CallBack {
 
+    companion object {
+        fun create(sortName: String, sortUrl: String): RssArticlesFragment {
+            return RssArticlesFragment().apply {
+                val bundle = Bundle()
+                bundle.putString("sortName", sortName)
+                bundle.putString("sortUrl", sortUrl)
+                arguments = bundle
+            }
+        }
+    }
+
+    private val activityViewModel: RssSortViewModel
+        get() = getViewModelOfActivity(RssSortViewModel::class.java)
     override val viewModel: RssArticlesViewModel
         get() = getViewModel(RssArticlesViewModel::class.java)
-
-    override lateinit var adapter: RssArticlesAdapter
-    private val editSource = 12319
+    lateinit var adapter: RssArticlesAdapter
     private lateinit var loadMoreView: LoadMoreView
     private var rssArticlesData: LiveData<List<RssArticle>>? = null
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel.callBack = this
-        viewModel.titleLiveData.observe(this, Observer {
-            title_bar.title = it
-        })
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.init(arguments)
         initView()
-        viewModel.initData(intent) {
-            initData()
-            refresh_recycler_view.startLoading()
-        }
-    }
-
-    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.rss_articles, menu)
-        return super.onCompatCreateOptionsMenu(menu)
-    }
-
-    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
-                startActivityForResult<RssSourceEditActivity>(editSource, Pair("data", it))
-            }
-            R.id.menu_clear -> {
-                viewModel.url?.let {
-                    refresh_progress_bar.isAutoLoading = true
-                    viewModel.clearArticles()
-                }
-            }
-        }
-        return super.onCompatOptionsItemSelected(item)
+        refresh_recycler_view.startLoading()
+        initView()
+        initData()
     }
 
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(VerticalDivider(this))
-        adapter = RssArticlesAdapter(this, this)
+        recycler_view.layoutManager = LinearLayoutManager(requireContext())
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
+        adapter = RssArticlesAdapter(requireContext(), this)
         recycler_view.adapter = adapter
-        loadMoreView = LoadMoreView(this)
+        loadMoreView = LoadMoreView(requireContext())
         adapter.addFooterView(loadMoreView)
         refresh_recycler_view.onRefreshStart = {
-            viewModel.url?.let {
-                viewModel.loadContent()
+            activityViewModel.rssSource?.let {
+                viewModel.loadContent(it)
             }
         }
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -91,10 +75,10 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
     }
 
     private fun initData() {
-        viewModel.url?.let {
+        activityViewModel.url?.let {
             rssArticlesData?.removeObservers(this)
             rssArticlesData = App.db.rssArticleDao().liveByOrigin(it)
-            rssArticlesData?.observe(this, Observer { list ->
+            rssArticlesData?.observe(viewLifecycleOwner, Observer { list ->
                 adapter.setItems(list)
             })
         }
@@ -104,21 +88,25 @@ class RssArticlesActivity : VMBaseActivity<RssArticlesViewModel>(R.layout.activi
         if (viewModel.isLoading) return
         if (loadMoreView.hasMore && adapter.getActualItemCount() > 0) {
             loadMoreView.rotate_loading.show()
-            viewModel.loadMore()
+            activityViewModel.rssSource?.let {
+                viewModel.loadMore(it)
+            }
         }
     }
 
-    override fun loadFinally(hasMore: Boolean) {
-        refresh_recycler_view.stopLoading()
-        if (hasMore) {
-            loadMoreView.startLoad()
-        } else {
-            loadMoreView.noMore()
-        }
+    override fun observeLiveBus() {
+        viewModel.loadFinally.observe(viewLifecycleOwner, Observer {
+            refresh_recycler_view.stopLoading()
+            if (it) {
+                loadMoreView.startLoad()
+            } else {
+                loadMoreView.noMore()
+            }
+        })
     }
 
     override fun readRss(rssArticle: RssArticle) {
-        viewModel.read(rssArticle)
+        activityViewModel.read(rssArticle)
         startActivity<ReadRssActivity>(
             Pair("title", rssArticle.title),
             Pair("origin", rssArticle.origin),
