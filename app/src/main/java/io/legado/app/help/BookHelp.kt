@@ -237,6 +237,5 @@ object BookHelp {
         }
         return c
             .replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
-            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
     }
 }
