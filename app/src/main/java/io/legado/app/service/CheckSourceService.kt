@@ -102,7 +102,7 @@ class CheckSourceService : BaseService() {
                 checkedIds.size,
                 getString(R.string.progress_show, checkedIds.size, allIds.size)
             )
-            if (processIndex >= allIds.size + threadCount - 1) {
+            if (processIndex >= allIds.size + min(threadCount, allIds.size) - 1) {
                 stopSelf()
             }
         }
