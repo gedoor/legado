@@ -57,7 +57,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         isLoading = true
         val pageUrl = nextPageUrl
         if (!pageUrl.isNullOrEmpty()) {
-            Rss.getArticles(sortName, sortUrl, rssSource, pageUrl)
+            Rss.getArticles(sortName, pageUrl, rssSource, pageUrl)
                 .onSuccess(Dispatchers.IO) {
                     nextPageUrl = it.nextPageUrl
                     it.articles.let { list ->
