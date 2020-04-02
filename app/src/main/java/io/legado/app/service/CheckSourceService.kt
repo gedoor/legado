@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
+import kotlin.math.min
 
 class CheckSourceService : BaseService() {
     private val threadCount = AppConfig.threadCount
@@ -58,7 +59,7 @@ class CheckSourceService : BaseService() {
         allIds.addAll(ids)
         processIndex = 0
         updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
-        for (i in 0 until threadCount) {
+        for (i in 0 until min(threadCount, allIds.size)) {
             check()
         }
     }
