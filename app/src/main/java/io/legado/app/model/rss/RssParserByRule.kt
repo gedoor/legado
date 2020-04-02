@@ -45,7 +45,7 @@ object RssParserByRule {
                 Debug.log(sourceUrl, "┌获取下一页链接")
                 nextUrl = analyzeRule.getString(rssSource.ruleNextPage)
                 if (nextUrl.isNotEmpty()) {
-                    nextUrl = NetworkUtils.getAbsoluteURL(sourceUrl, nextUrl)
+                    nextUrl = NetworkUtils.getAbsoluteURL(sortUrl, nextUrl)
                 }
                 Debug.log(sourceUrl, "└$nextUrl")
             }
