@@ -134,6 +134,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             timeBatteryReceiver = null
         }
         upSystemUiVisibility()
+        if (!BuildConfig.DEBUG) {
+            SyncBookProgress.uploadBookProgress()
+            Backup.autoBack(this)
+        }
     }
 
     /**
