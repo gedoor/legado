@@ -42,6 +42,9 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE bookUrl = :bookUrl")
     fun getBook(bookUrl: String): Book?
 
+    @Query("SELECT * FROM books WHERE name = :name and author = :author")
+    fun getBook(name: String, author: String): Book?
+
     @get:Query("SELECT * FROM books where origin <> '${BookType.local}' and type = 0")
     val webBooks: List<Book>
 

@@ -171,6 +171,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 if (book.order == 0) {
                     book.order = App.db.bookDao().maxOrder + 1
                 }
+                App.db.bookDao().getBook(book.name, book.author)?.let {
+                    book.durChapterPos = it.durChapterPos
+                    book.durChapterTitle = it.durChapterTitle
+                }
                 App.db.bookDao().insert(book)
             }
         }.onSuccess {
@@ -193,6 +197,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let { book ->
                 if (book.order == 0) {
                     book.order = App.db.bookDao().maxOrder + 1
+                }
+                App.db.bookDao().getBook(book.name, book.author)?.let {
+                    book.durChapterPos = it.durChapterPos
+                    book.durChapterTitle = it.durChapterTitle
                 }
                 App.db.bookDao().insert(book)
             }
