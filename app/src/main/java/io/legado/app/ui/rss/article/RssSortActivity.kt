@@ -16,7 +16,6 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
-import kotlinx.android.synthetic.main.view_refresh_recycler.*
 import org.jetbrains.anko.startActivityForResult
 
 class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_artivles) {
@@ -51,7 +50,6 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
             }
             R.id.menu_clear -> {
                 viewModel.url?.let {
-                    refresh_progress_bar.isAutoLoading = true
                     viewModel.clearArticles()
                 }
             }
