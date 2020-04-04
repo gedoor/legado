@@ -60,7 +60,7 @@ object RssParserByRule {
                     ruleTitle, rulePubDate, ruleDescription, ruleImage, ruleLink
                 )?.let {
                     it.sort = sortName
-                    it.origin = rssSource.sourceUrl
+                    it.origin = sourceUrl
                     articleList.add(it)
                 }
             }

@@ -39,7 +39,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     }
                     App.db.rssArticleDao().insert(*list.toTypedArray())
                     if (!rssSource.ruleNextPage.isNullOrEmpty()) {
-                        App.db.rssArticleDao().clearOld(rssSource.sourceUrl, order)
+                        App.db.rssArticleDao().clearOld(rssSource.sourceUrl, sortName, order)
                         loadFinally.postValue(true)
                     } else {
                         withContext(Dispatchers.Main) {
