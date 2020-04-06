@@ -77,7 +77,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             book?.let {
                 durChapterIndex = it.durChapterIndex
                 tv_current_chapter_info.text =
-                    "${it.durChapterTitle}(${it.durChapterIndex}/${it.totalChapterNum})"
+                    "${it.durChapterTitle}(${it.durChapterIndex + 1}/${it.totalChapterNum})"
                 initCacheFileNames(it)
             }
         }
