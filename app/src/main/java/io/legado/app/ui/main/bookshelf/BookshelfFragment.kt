@@ -120,7 +120,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                         if (AppConfig.bookGroupAudioShow) {
                             bookGroups.add(AppConst.bookGroupAudio)
                         }
-                        showGroupNone = if (App.db.bookDao().noGroupSize > 0) {
+                        showGroupNone = if (App.db.bookDao().noGroupSize > 0 && it.isNotEmpty()) {
                             bookGroups.add(AppConst.bookGroupNone)
                             true
                         } else {
@@ -166,7 +166,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     bookGroups.remove(AppConst.bookGroupLocal)
                     bookGroups.remove(AppConst.bookGroupAudio)
                     bookGroups.remove(AppConst.bookGroupNone)
-                    showGroupNone = if (App.db.bookDao().noGroupSize > 0) {
+                    showGroupNone =
+                        if (App.db.bookDao().noGroupSize > 0 && bookGroups.isNotEmpty()) {
                         bookGroups.add(0, AppConst.bookGroupNone)
                         true
                     } else {
