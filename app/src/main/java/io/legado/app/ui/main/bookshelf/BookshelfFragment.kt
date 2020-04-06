@@ -54,8 +54,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         get() = getViewModel(BookshelfViewModel::class.java)
 
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
+    private var noGroupLiveData: LiveData<Int>? = null
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Int, Fragment>()
+    private var showGroupNone = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -104,11 +106,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             viewModel.checkGroup(it)
             launch {
                 synchronized(this) {
-
+                    tab_layout.removeOnTabSelectedListener(this@BookshelfFragment)
                 }
                 withContext(IO) {
                     synchronized(this@BookshelfFragment) {
-                        tab_layout.removeOnTabSelectedListener(this@BookshelfFragment)
                         bookGroups.clear()
                         if (AppConfig.bookGroupAllShow) {
                             bookGroups.add(AppConst.bookGroupAll)
@@ -119,15 +120,31 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                         if (AppConfig.bookGroupAudioShow) {
                             bookGroups.add(AppConst.bookGroupAudio)
                         }
-                        if (App.db.bookDao().noGroupSize > 0) {
+                        showGroupNone = if (App.db.bookDao().noGroupSize > 0) {
                             bookGroups.add(AppConst.bookGroupNone)
+                            true
+                        } else {
+                            false
                         }
                         bookGroups.addAll(it)
                     }
                 }
-                view_pager_bookshelf.adapter?.notifyDataSetChanged()
-                tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
-                tab_layout.addOnTabSelectedListener(this@BookshelfFragment)
+                synchronized(this@BookshelfFragment) {
+                    view_pager_bookshelf.adapter?.notifyDataSetChanged()
+                    tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
+                    tab_layout.addOnTabSelectedListener(this@BookshelfFragment)
+                }
+            }
+        })
+        noGroupLiveData?.removeObservers(viewLifecycleOwner)
+        noGroupLiveData = App.db.bookDao().observeNoGroupSize()
+        noGroupLiveData?.observe(viewLifecycleOwner, Observer {
+            if (it > 0 && !showGroupNone) {
+                showGroupNone = true
+                upGroup()
+            } else if (it == 0 && showGroupNone) {
+                showGroupNone = false
+                upGroup()
             }
         })
     }
@@ -149,8 +166,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     bookGroups.remove(AppConst.bookGroupLocal)
                     bookGroups.remove(AppConst.bookGroupAudio)
                     bookGroups.remove(AppConst.bookGroupNone)
-                    if (App.db.bookDao().noGroupSize > 0) {
+                    showGroupNone = if (App.db.bookDao().noGroupSize > 0) {
                         bookGroups.add(0, AppConst.bookGroupNone)
+                        true
+                    } else {
+                        false
                     }
                     if (AppConfig.bookGroupAudioShow) {
                         bookGroups.add(0, AppConst.bookGroupAudio)
@@ -163,7 +183,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     }
                 }
             }
-            view_pager_bookshelf.adapter?.notifyDataSetChanged()
+            synchronized(this@BookshelfFragment) {
+                view_pager_bookshelf.adapter?.notifyDataSetChanged()
+            }
         }
     }
 

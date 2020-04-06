@@ -30,6 +30,9 @@ interface BookDao {
     @Query("select * from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
     fun observeNoGroup(): LiveData<List<Book>>
 
+    @Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
+    fun observeNoGroupSize(): LiveData<Int>
+
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun liveDataSearch(key: String): LiveData<List<Book>>
 
