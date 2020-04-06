@@ -74,13 +74,13 @@ android {
             }
         }
     }
-    productFlavors{
-        app{
-            manifestPlaceholders = [APP_CHANNEL_VALUE:"app"]
+    productFlavors {
+        app {
+            manifestPlaceholders = [APP_CHANNEL_VALUE: "app"]
         }
-        google{
+        google {
             applicationId "io.legado.play"
-            manifestPlaceholders = [APP_CHANNEL_VALUE:"google"]
+            manifestPlaceholders = [APP_CHANNEL_VALUE: "google"]
         }
     }
     compileOptions {
@@ -115,7 +115,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //fireBase
-    implementation 'com.google.firebase:firebase-core:17.2.3'
+    implementation 'com.google.firebase:firebase-core:17.3.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     //androidX
