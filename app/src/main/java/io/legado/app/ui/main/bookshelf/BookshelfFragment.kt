@@ -39,6 +39,9 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.startActivity
 
 
@@ -99,22 +102,32 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
             viewModel.checkGroup(it)
-            synchronized(this) {
-                tab_layout.removeOnTabSelectedListener(this)
-                bookGroups.clear()
-                if (AppConfig.bookGroupAllShow) {
-                    bookGroups.add(AppConst.bookGroupAll)
+            launch {
+                synchronized(this) {
+
                 }
-                if (AppConfig.bookGroupLocalShow) {
-                    bookGroups.add(AppConst.bookGroupLocal)
+                withContext(IO) {
+                    synchronized(this@BookshelfFragment) {
+                        tab_layout.removeOnTabSelectedListener(this@BookshelfFragment)
+                        bookGroups.clear()
+                        if (AppConfig.bookGroupAllShow) {
+                            bookGroups.add(AppConst.bookGroupAll)
+                        }
+                        if (AppConfig.bookGroupLocalShow) {
+                            bookGroups.add(AppConst.bookGroupLocal)
+                        }
+                        if (AppConfig.bookGroupAudioShow) {
+                            bookGroups.add(AppConst.bookGroupAudio)
+                        }
+                        if (App.db.bookDao().noGroupSize > 0) {
+                            bookGroups.add(AppConst.bookGroupNone)
+                        }
+                        bookGroups.addAll(it)
+                    }
                 }
-                if (AppConfig.bookGroupAudioShow) {
-                    bookGroups.add(AppConst.bookGroupAudio)
-                }
-                bookGroups.addAll(it)
                 view_pager_bookshelf.adapter?.notifyDataSetChanged()
                 tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
-                tab_layout.addOnTabSelectedListener(this)
+                tab_layout.addOnTabSelectedListener(this@BookshelfFragment)
             }
         })
     }
@@ -129,18 +142,26 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override fun upGroup() {
-        synchronized(this) {
-            bookGroups.remove(AppConst.bookGroupAll)
-            bookGroups.remove(AppConst.bookGroupLocal)
-            bookGroups.remove(AppConst.bookGroupAudio)
-            if (AppConfig.bookGroupAudioShow) {
-                bookGroups.add(0, AppConst.bookGroupAudio)
-            }
-            if (AppConfig.bookGroupLocalShow) {
-                bookGroups.add(0, AppConst.bookGroupLocal)
-            }
-            if (AppConfig.bookGroupAllShow) {
-                bookGroups.add(0, AppConst.bookGroupAll)
+        launch {
+            withContext(IO) {
+                synchronized(this@BookshelfFragment) {
+                    bookGroups.remove(AppConst.bookGroupAll)
+                    bookGroups.remove(AppConst.bookGroupLocal)
+                    bookGroups.remove(AppConst.bookGroupAudio)
+                    bookGroups.remove(AppConst.bookGroupNone)
+                    if (App.db.bookDao().noGroupSize > 0) {
+                        bookGroups.add(0, AppConst.bookGroupNone)
+                    }
+                    if (AppConfig.bookGroupAudioShow) {
+                        bookGroups.add(0, AppConst.bookGroupAudio)
+                    }
+                    if (AppConfig.bookGroupLocalShow) {
+                        bookGroups.add(0, AppConst.bookGroupLocal)
+                    }
+                    if (AppConfig.bookGroupAllShow) {
+                        bookGroups.add(0, AppConst.bookGroupAll)
+                    }
+                }
             }
             view_pager_bookshelf.adapter?.notifyDataSetChanged()
         }

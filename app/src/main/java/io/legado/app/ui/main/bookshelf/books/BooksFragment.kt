@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -98,9 +99,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private fun upRecyclerData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = when (groupId) {
-            -1 -> App.db.bookDao().observeAll()
-            -2 -> App.db.bookDao().observeLocal()
-            -3 -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
+            AppConst.bookGroupLocal.groupId -> App.db.bookDao().observeLocal()
+            AppConst.bookGroupAudio.groupId -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, Observer { list ->
