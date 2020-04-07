@@ -23,7 +23,8 @@ class TextDialog : BaseDialogFragment() {
             fragmentManager: FragmentManager,
             content: String?,
             mode: Int = 0,
-            time: Long = 0
+            time: Long = 0,
+            autoClose: Boolean = false
         ) {
             TextDialog().apply {
                 val bundle = Bundle()
@@ -32,12 +33,15 @@ class TextDialog : BaseDialogFragment() {
                 bundle.putLong("time", time)
                 arguments = bundle
                 isCancelable = false
+                this.autoClose = autoClose
             }.show(fragmentManager, "textDialog")
         }
 
     }
 
     private var time = 0L
+
+    private var autoClose: Boolean = false
 
     override fun onStart() {
         super.onStart()
@@ -79,6 +83,7 @@ class TextDialog : BaseDialogFragment() {
                     if (time <= 0) {
                         view.post {
                             dialog?.setCancelable(true)
+                            if (autoClose) dialog?.cancel()
                         }
                     }
                 }
@@ -86,6 +91,7 @@ class TextDialog : BaseDialogFragment() {
         } else {
             view.post {
                 dialog?.setCancelable(true)
+                if (autoClose) dialog?.cancel()
             }
         }
     }
