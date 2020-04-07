@@ -24,7 +24,7 @@ import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 
 
-class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
+class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read, false),
     FileChooserDialog.CallBack,
     ReadRssViewModel.CallBack {
 
