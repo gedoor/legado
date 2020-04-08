@@ -110,7 +110,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 }
                 var noGroupSize = 0
                 withContext(IO) {
-                    noGroupSize = App.db.bookDao().noGroupSize
+                    if (AppConfig.bookGroupNoneShow) {
+                        noGroupSize = App.db.bookDao().noGroupSize
+                    }
                 }
                 synchronized(this@BookshelfFragment) {
                     bookGroups.clear()
@@ -162,7 +164,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         launch {
             var noGroupSize = 0
             withContext(IO) {
-                noGroupSize = App.db.bookDao().noGroupSize
+                if (AppConfig.bookGroupNoneShow) {
+                    noGroupSize = App.db.bookDao().noGroupSize
+                }
             }
             synchronized(this@BookshelfFragment) {
                 bookGroups.remove(AppConst.bookGroupAll)
