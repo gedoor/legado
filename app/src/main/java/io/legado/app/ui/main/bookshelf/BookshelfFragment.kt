@@ -141,7 +141,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         noGroupLiveData?.removeObservers(viewLifecycleOwner)
         noGroupLiveData = App.db.bookDao().observeNoGroupSize()
         noGroupLiveData?.observe(viewLifecycleOwner, Observer {
-            if (it > 0 && !showGroupNone) {
+            if (it > 0 && !showGroupNone && AppConfig.bookGroupNoneShow) {
                 showGroupNone = true
                 upGroup()
             } else if (it == 0 && showGroupNone) {
