@@ -99,6 +99,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 .isChecked = AppConfig.bookGroupLocalShow
             it.findItem(R.id.menu_group_audio)
                 .isChecked = AppConfig.bookGroupAudioShow
+            it.findItem(R.id.menu_group_none)
+                .isChecked = AppConfig.bookGroupNoneShow
         }
     }
 
@@ -119,6 +121,10 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 item.isChecked = !item.isChecked
                 AppConfig.bookGroupAudioShow = item.isChecked
                 callBack?.upGroup()
+            }
+            R.id.menu_group_none -> {
+                item.isChecked = !item.isChecked
+                AppConfig.bookGroupNoneShow = item.isChecked
             }
         }
         return true

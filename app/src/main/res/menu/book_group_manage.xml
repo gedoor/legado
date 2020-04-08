@@ -31,4 +31,11 @@
         android:checked="true"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_group_none"
+        android:title="@string/no_group"
+        android:checkable="true"
+        android:checked="true"
+        app:showAsAction="never" />
+
 </menu>

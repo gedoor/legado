@@ -94,8 +94,10 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
+        tool_bar.menu.findItem(R.id.menu_group_all).isVisible = false
         tool_bar.menu.findItem(R.id.menu_group_local).isVisible = false
         tool_bar.menu.findItem(R.id.menu_group_audio).isVisible = false
+        tool_bar.menu.findItem(R.id.menu_group_none).isVisible = false
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
