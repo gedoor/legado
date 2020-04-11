@@ -201,6 +201,7 @@ class AnalyzeTxtFile {
             bean.url = (MD5Utils.md5Encode16(book.originName + i + bean.title) ?: "")
         }
         book.latestChapterTitle = toc.last().title
+        book.totalChapterNum = toc.size
 
         System.gc()
         System.runFinalization()
