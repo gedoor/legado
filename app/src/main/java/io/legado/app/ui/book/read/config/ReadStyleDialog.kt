@@ -104,10 +104,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             showTitleConfig()
         }
         tv_text_bold.onClick {
-            ReadBookConfig.apply {
-                textBold = !textBold
-                tv_text_bold.isSelected = textBold
-            }
+            ReadBookConfig.textBold = !ReadBookConfig.textBold
+            tv_text_bold.isSelected = ReadBookConfig.textBold
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_font.onClick {
