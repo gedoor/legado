@@ -279,13 +279,13 @@ object ChapterProvider {
         paragraphSpacing = ReadBookConfig.paragraphSpacing
         titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
         titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
-        upSize()
+        upViewSize()
     }
 
     /**
      * 更新View尺寸
      */
-    fun upSize() {
+    fun upViewSize() {
         paddingLeft = ReadBookConfig.paddingLeft.dp
         paddingTop = ReadBookConfig.paddingTop.dp
         visibleWidth = viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp
