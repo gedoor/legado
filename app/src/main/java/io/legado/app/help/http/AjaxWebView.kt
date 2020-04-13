@@ -180,6 +180,7 @@ class AjaxWebView {
             mWebView.get()?.evaluateJavascript(mJavaScript) {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
+                        .replace("^\"|\"$".toRegex(), "")
                     handler.obtainMessage(MSG_SUCCESS, Res(url, content))
                         .sendToTarget()
                     handler.removeCallbacks(this)
