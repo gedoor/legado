@@ -252,6 +252,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             web_view.settings.javaScriptEnabled = true
             web_view.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
+                    .replace("^\"|\"$".toRegex(), "")
                 Jsoup.parse(html).text()
                 viewModel.readAloud(Jsoup.parse(html).textArray())
             }
