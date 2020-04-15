@@ -265,7 +265,8 @@ object ChapterProvider {
         titlePaint = TextPaint()
         titlePaint.color = ReadBookConfig.durConfig.textColor()
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
-        titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
+        titlePaint.typeface =
+            Typeface.create(typeface, if (ReadBookConfig.textBold) 900 else 700, false)
         titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
         titlePaint.isAntiAlias = true
         //正文
