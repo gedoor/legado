@@ -5,7 +5,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
+import com.hankcs.hanlp.HanLP
 import io.legado.app.R
 import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.help.AppConfig
@@ -119,8 +119,8 @@ class ContentView(context: Context) : FrameLayout(context) {
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
         val title = when (AppConfig.chineseConverterType) {
-            1 -> ZhConvertBootstrap.newInstance().toSimple(textPage.title)
-            2 -> ZhConvertBootstrap.newInstance().toTraditional(textPage.title)
+            1 -> HanLP.convertToSimplifiedChinese(textPage.title)
+            2 -> HanLP.convertToTraditionalChinese(textPage.title)
             else -> textPage.title
         }
         if (ReadBookConfig.hideStatusBar) {
