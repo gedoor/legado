@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import java.io.File
-import java.net.URLEncoder
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -228,7 +227,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     private fun importSourceUrl(url: String): Int {
-        HttpHelper.simpleGet(url)?.let { body ->
+        HttpHelper.simpleGet(url, "UTF-8")?.let { body ->
             val bookSources = mutableListOf<BookSource>()
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
