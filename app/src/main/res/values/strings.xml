@@ -652,4 +652,5 @@
     <string name="media_button_on_exit_title">全程响应耳机按键</string>
     <string name="media_button_on_exit_summary">即使退出软件也响应耳机按键</string>
     <string name="middle">中</string>
+    <string name="information">信息</string>
 </resources>

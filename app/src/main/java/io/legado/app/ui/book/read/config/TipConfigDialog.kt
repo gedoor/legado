@@ -7,7 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.help.ReadTipConfig
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.book.read.Help
+import kotlinx.android.synthetic.main.dialog_tip_config.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class TipConfigDialog : BaseDialogFragment() {
 
@@ -35,8 +39,56 @@ class TipConfigDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-
+        initView()
+        initEvent()
     }
 
+    private fun initView() {
+        tv_header_left.text = ReadTipConfig.tipHeaderLeftStr
+        tv_header_middle.text = ReadTipConfig.tipHeaderMiddleStr
+        tv_header_right.text = ReadTipConfig.tipHeaderRightStr
+        tv_footer_left.text = ReadTipConfig.tipFooterLeftStr
+        tv_footer_middle.text = ReadTipConfig.tipFooterMiddleStr
+        tv_footer_right.text = ReadTipConfig.tipFooterRightStr
+    }
+
+    private fun initEvent() {
+        tv_header_left.onClick {
+            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
+                ReadTipConfig.tipHeaderLeft = i
+                tv_header_left.text = ReadTipConfig.tipArray[i]
+            }
+        }
+        tv_header_middle.onClick {
+            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
+                ReadTipConfig.tipHeaderMiddle = i
+                tv_header_middle.text = ReadTipConfig.tipArray[i]
+            }
+        }
+        tv_header_right.onClick {
+            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
+                ReadTipConfig.tipHeaderRight = i
+                tv_header_right.text = ReadTipConfig.tipArray[i]
+            }
+        }
+        tv_footer_left.onClick {
+            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
+                ReadTipConfig.tipFooterLeft = i
+                tv_footer_left.text = ReadTipConfig.tipArray[i]
+            }
+        }
+        tv_footer_middle.onClick {
+            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
+                ReadTipConfig.tipFooterMiddle = i
+                tv_footer_middle.text = ReadTipConfig.tipArray[i]
+            }
+        }
+        tv_footer_right.onClick {
+            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
+                ReadTipConfig.tipFooterRight = i
+                tv_footer_right.text = ReadTipConfig.tipArray[i]
+            }
+        }
+    }
 
 }

@@ -96,4 +96,10 @@
         <item>系统等宽字体</item>
     </string-array>
 
+    <string-array name="read_tip">
+        <item>无</item>
+        <item>标题</item>
+        <item></item>
+    </string-array>
+
 </resources>
