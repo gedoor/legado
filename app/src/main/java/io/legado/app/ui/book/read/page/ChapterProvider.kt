@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page
 
 import android.graphics.Typeface
+import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -265,8 +266,11 @@ object ChapterProvider {
         titlePaint = TextPaint()
         titlePaint.color = ReadBookConfig.durConfig.textColor()
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
-        titlePaint.typeface =
+        titlePaint.typeface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             Typeface.create(typeface, if (ReadBookConfig.textBold) 900 else 700, false)
+        } else {
+            Typeface.create(typeface, Typeface.BOLD)
+        }
         titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
         titlePaint.isAntiAlias = true
         //正文
