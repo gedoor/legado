@@ -46,7 +46,7 @@ object ReadTipConfig {
         }
 
     var tipFooterMiddle: Int
-        get() = App.INSTANCE.getPrefInt("tipFooterMiddle", none)
+        get() = App.INSTANCE.getPrefInt("tipFooterMiddle", totalProgress)
         set(value) {
             App.INSTANCE.putPrefInt("tipFooterMiddle", value)
         }
