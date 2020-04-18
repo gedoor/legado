@@ -191,7 +191,7 @@ dependencies {
     implementation 'ru.noties.markwon:core:3.1.0'
 
     //转换繁体
-    implementation 'com.github.houbb:opencc4j:1.4.0'
+    implementation 'com.hankcs:hanlp:portable-1.7.7'
 
 }
 

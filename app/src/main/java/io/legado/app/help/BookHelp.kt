@@ -1,6 +1,6 @@
 package io.legado.app.help
 
-import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
@@ -233,8 +233,8 @@ object BookHelp {
         }
         try {
             when (AppConfig.chineseConverterType) {
-                1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
-                2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
+                1 -> c = HanLP.convertToSimplifiedChinese(c)
+                2 -> c = HanLP.convertToTraditionalChinese(c)
             }
         } catch (e: Exception) {
             withContext(Main) {
