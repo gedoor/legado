@@ -125,7 +125,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             callBack?.showPaddingConfig()
         }
         tv_tip.onClick {
-
+            TipConfigDialog().show(childFragmentManager, "tipConfigDialog")
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
             ReadBookConfig.pageAnim = rg_page_anim.getIndexById(checkedId)
