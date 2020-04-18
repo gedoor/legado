@@ -99,7 +99,10 @@
     <string-array name="read_tip">
         <item>无</item>
         <item>标题</item>
-        <item></item>
+        <item>时间</item>
+        <item>电量</item>
+        <item>页数</item>
+        <item>总进度</item>
     </string-array>
 
 </resources>
