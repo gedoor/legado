@@ -102,7 +102,6 @@
         <item>时间</item>
         <item>电量</item>
         <item>页数</item>
-        <item>总进度</item>
     </string-array>
 
 </resources>
