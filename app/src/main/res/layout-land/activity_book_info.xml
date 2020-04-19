@@ -361,7 +361,8 @@
                         android:text="@string/book_intro"
                         android:textColor="@color/tv_text_secondary"
                         android:textSize="14sp"
-                        android:visibility="visible" />
+                        android:visibility="visible"
+                        tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                 </LinearLayout>
 
