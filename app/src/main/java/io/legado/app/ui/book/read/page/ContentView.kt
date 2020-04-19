@@ -14,7 +14,10 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
-import io.legado.app.utils.*
+import io.legado.app.utils.dp
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.statusBarHeight
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import java.util.*
 
@@ -22,6 +25,9 @@ import java.util.*
 class ContentView(context: Context) : FrameLayout(context) {
 
     private var battery = 100
+
+    val headerHeight: Int
+        get() = if (ReadBookConfig.hideStatusBar) ll_header.height else context.statusBarHeight
 
     init {
         //设置背景防止切换背景时文字重叠
@@ -49,19 +55,14 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_footer_middle.setColor(durConfig.textColor())
             tv_footer_right.setColor(durConfig.textColor())
             //显示状态栏时隐藏header
-            if (hideStatusBar) {
-                ll_header.setPadding(
-                    headerPaddingLeft.dp,
-                    headerPaddingTop.dp,
-                    headerPaddingRight.dp,
-                    headerPaddingBottom.dp
-                )
-                ll_header.visible()
-                page_panel.setPadding(0, 0, 0, 0)
-            } else {
-                ll_header.gone()
-                page_panel.setPadding(0, context.statusBarHeight, 0, 0)
-            }
+            vw_status_bar.setPadding(0, context.statusBarHeight, 0, 0)
+            vw_status_bar.isGone = hideStatusBar
+            ll_header.setPadding(
+                headerPaddingLeft.dp,
+                headerPaddingTop.dp,
+                headerPaddingRight.dp,
+                headerPaddingBottom.dp
+            )
             ll_footer.setPadding(
                 footerPaddingLeft.dp,
                 footerPaddingTop.dp,
@@ -90,17 +91,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_footer_left.isInvisible = tipFooterLeftNone
             tv_footer_right.isGone = tipFooterRightNone
             tv_footer_middle.isGone = tipFooterMiddleNone
+            ll_header.isGone = hideHeader
+            ll_footer.isGone = hideFooter
         }
     }
-
-    val headerHeight: Int
-        get() {
-            return if (ReadBookConfig.hideStatusBar) {
-                ll_header.height
-            } else {
-                context.statusBarHeight
-            }
-        }
 
     fun setBg(bg: Drawable?) {
         page_panel.background = bg

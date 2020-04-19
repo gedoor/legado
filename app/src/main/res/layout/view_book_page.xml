@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <View
+        android:id="@+id/vw_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
     <LinearLayout
         android:id="@+id/ll_header"
         android:layout_width="match_parent"
