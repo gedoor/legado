@@ -8,6 +8,10 @@
     <string name="menu_backup">Home</string>
     <string name="menu_restore">恢复</string>
     <string name="menu_import_old">导入阅读数据</string>
+    <string name="mkdirs">创建子文件夹</string>
+    <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
+    <string name="backup_path">备份路径</string>
+    <string name="menu_import_old_version">导入旧版数据</string>
     <string name="menu_import_github">导入Github数据</string>
     <string name="menu_replace_rule">净化替换</string>
     <string name="menu_send">Send</string>
@@ -558,8 +562,11 @@
     <string name="export">导出</string>
     <string name="load_toc">加载目录</string>
     <string name="tts">TTS</string>
+    <string name="web_dav_pw">WebDav 密码</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
     <string name="web_dav_url_s">输入你的服务器地址</string>
+    <string name="web_dav_url">WebDav 服务器地址</string>
+    <string name="web_dav_account">WebDav 账号</string>
     <string name="web_dav_account_s">输入你的WebDav账号</string>
     <string name="rss_source">订阅源</string>
     <string name="rss_source_edit">编辑订阅源</string>
@@ -651,8 +658,36 @@
     <string name="toc_updateing">更新目录中</string>
     <string name="media_button_on_exit_title">全程响应耳机按键</string>
     <string name="media_button_on_exit_summary">即使退出软件也响应耳机按键</string>
+    <string name="contributors">开发人员</string>
+    <string name="contact">联系我们</string>
+    <string name="license">开源许可</string>
+    <string name="other" translatable="false">其它</string>
+    <string name="official_account" translatable="false">开源阅读软件</string>
+    <string name="follow_official_account">关注公众号</string>
+    <string name="wechat">微信</string>
+    <string name="thanks">您的支持是我更新的动力</string>
+    <string name="about_official_account">公众号[开源阅读软件]</string>
+    <string name="source_auto_changing">正在自动换源</string>
+    <string name="click_to_apply">点击加入</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
     <string name="hideHeader">隐藏页眉</string>
     <string name="hideFooter">隐藏页脚</string>
+  
+    <!--color-->
+    <string name="primary">主色调</string>
+    <string name="accent">强调色</string>
+    <string name="background_color">背景色</string>
+    <string name="navbar_color">底部操作栏颜色</string>
+    <string name="day">白天</string>
+    <string name="day_color_primary">白天，主色调</string>
+    <string name="day_color_accent">白天，强调色</string>
+    <string name="day_background_color">白天，背景色</string>
+    <string name="day_navbar_color">白天，底栏色</string>
+    <string name="night">夜间</string>
+    <string name="night_primary">夜间，主色调</string>
+    <string name="night_accent">夜间，强调色</string>
+    <string name="night_background_color">夜间，背景色</string>
+    <string name="night_navbar_color">夜间，底栏色</string>
+
 </resources>

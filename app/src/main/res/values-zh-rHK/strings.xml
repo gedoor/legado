@@ -8,6 +8,10 @@
     <string name="menu_backup">Home</string>
     <string name="menu_restore">還原</string>
     <string name="menu_import_old">導入閲讀數據</string>
+    <string name="mkdirs">創建子文件夾</string>
+    <string name="mkdirs_description">創建 legado 文件夾作爲備份路徑</string>
+    <string name="backup_path">備份路徑</string>
+    <string name="menu_import_old_version">導入舊版數據</string>
     <string name="menu_import_github">導入 Github 數據</string>
     <string name="menu_replace_rule">淨化替換</string>
     <string name="menu_send">Send</string>
@@ -558,8 +562,11 @@
     <string name="export">導出</string>
     <string name="load_toc">加載目錄</string>
     <string name="tts">TTS</string>
+    <string name="web_dav_pw">WebDav 密碼</string>
     <string name="web_dav_pw_s">輸入你的 WebDav 授權密碼</string>
     <string name="web_dav_url_s">輸入你的服務器地址</string>
+    <string name="web_dav_url">WebDav 服務器地址</string>
+    <string name="web_dav_account">WebDav 賬號</string>
     <string name="web_dav_account_s">輸入你的 WebDav 賬號</string>
     <string name="rss_source">訂閲源</string>
     <string name="rss_source_edit">編輯訂閲源</string>
@@ -651,4 +658,31 @@
     <string name="toc_updateing">更新目錄中</string>
     <string name="media_button_on_exit_title">全程響應耳機按鍵</string>
     <string name="media_button_on_exit_summary">即使退出軟件也響應耳機按鍵</string>
+    <string name="contributors">開發人員</string>
+    <string name="contact">聯繫我們</string>
+    <string name="license">開源許可</string>
+    <string name="follow_official_account">關注公衆號</string>
+    <string name="wechat">WeChat</string>
+    <string name="thanks">你的支持是我更新的動力</string>
+    <string name="about_official_account">公众号[开源阅读软件]</string>
+    <string name="source_auto_changing">正在自動換源</string>
+    <string name="click_to_apply">點擊加入</string>
+    <string name="middle">中</string>
+    <string name="information">信息</string>
+
+    <!--color-->
+    <string name="primary">主色調</string>
+    <string name="accent">強調色</string>
+    <string name="background_color">背景色</string>
+    <string name="navbar_color">導航欄顏色</string>
+    <string name="day">白天</string>
+    <string name="day_color_primary">白天，主色調</string>
+    <string name="day_color_accent">白天，強調色</string>
+    <string name="day_background_color">白天，背景色</string>
+    <string name="day_navbar_color">白天，導航欄顏色</string>
+    <string name="night">夜間</string>
+    <string name="night_primary">夜間，主色調</string>
+    <string name="night_accent">夜間，強調色</string>
+    <string name="night_background_color">夜間，背景色</string>
+    <string name="night_navbar_color">夜間，導航欄顏色</string>
 </resources>

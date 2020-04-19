@@ -178,7 +178,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
         }.onStart {
-            ReadBook.upMsg("正在自动换源")
+            ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onFinally {
             ReadBook.upMsg(null)
         }
