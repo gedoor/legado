@@ -710,6 +710,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
             page_view.upBg()
+            page_view.upTipStyle()
             page_view.upStyle()
             if (it) {
                 ReadBook.loadContent(resetPageOffset = false)
