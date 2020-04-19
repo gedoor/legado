@@ -13,6 +13,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_tip_config.*
+import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class TipConfigDialog : BaseDialogFragment() {
@@ -52,6 +53,8 @@ class TipConfigDialog : BaseDialogFragment() {
         tv_footer_left.text = ReadTipConfig.tipFooterLeftStr
         tv_footer_middle.text = ReadTipConfig.tipFooterMiddleStr
         tv_footer_right.text = ReadTipConfig.tipFooterRightStr
+        sw_hide_header.isChecked = ReadTipConfig.hideHeader
+        sw_hide_footer.isChecked = ReadTipConfig.hideFooter
     }
 
     private fun initEvent() {
@@ -94,6 +97,18 @@ class TipConfigDialog : BaseDialogFragment() {
             selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
                 ReadTipConfig.tipFooterRight = i
                 tv_footer_right.text = ReadTipConfig.tipArray[i]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        sw_hide_header.onCheckedChange { buttonView, isChecked ->
+            if (buttonView?.isPressed == true) {
+                ReadTipConfig.hideHeader = isChecked
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        sw_hide_footer.onCheckedChange { buttonView, isChecked ->
+            if (buttonView?.isPressed == true) {
+                ReadTipConfig.hideFooter = isChecked
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }

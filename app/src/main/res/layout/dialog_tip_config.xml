@@ -108,4 +108,18 @@
 
     </LinearLayout>
 
+    <Switch
+        android:id="@+id/sw_hide_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="@string/hideHeader" />
+
+    <Switch
+        android:id="@+id/sw_hide_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="@string/hideFooter" />
+
 </LinearLayout>

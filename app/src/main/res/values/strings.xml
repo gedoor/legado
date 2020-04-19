@@ -653,4 +653,6 @@
     <string name="media_button_on_exit_summary">即使退出软件也响应耳机按键</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
+    <string name="hideHeader">隐藏页眉</string>
+    <string name="hideFooter">隐藏页脚</string>
 </resources>

@@ -2,7 +2,9 @@ package io.legado.app.help
 
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefInt
 
 object ReadTipConfig {
@@ -54,5 +56,17 @@ object ReadTipConfig {
         get() = App.INSTANCE.getPrefInt("tipFooterRight", page)
         set(value) {
             App.INSTANCE.putPrefInt("tipFooterRight", value)
+        }
+
+    var hideHeader: Boolean
+        get() = App.INSTANCE.getPrefBoolean("hideHeader", true)
+        set(value) {
+            App.INSTANCE.putPrefBoolean("hideHeader", value)
+        }
+
+    var hideFooter: Boolean
+        get() = App.INSTANCE.getPrefBoolean("hideFooter", false)
+        set(value) {
+            App.INSTANCE.putPrefBoolean("hideFooter", value)
         }
 }
