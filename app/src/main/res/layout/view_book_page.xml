@@ -13,8 +13,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_top_left"
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/tv_header_left"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -22,8 +22,18 @@
             android:ellipsize="end"
             android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/tv_top_right"
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/tv_header_middle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/tv_header_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
@@ -61,8 +71,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_bottom_left"
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/tv_footer_left"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -70,22 +80,22 @@
             android:ellipsize="end"
             android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/tv_bottom_right"
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/tv_footer_middle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="gone" />
+
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/tv_footer_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:textSize="12sp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            tools:ignore="RtlHardcoded,RtlSymmetry" />
-
-        <io.legado.app.ui.widget.BatteryView
-            android:id="@+id/battery_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:textSize="10sp"
             android:maxLines="1"
             android:ellipsize="end"
             tools:ignore="RtlHardcoded,RtlSymmetry,SmallSp" />

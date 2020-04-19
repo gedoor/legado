@@ -6,20 +6,19 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.putPrefInt
 
 object ReadTipConfig {
-    val tipArray = App.INSTANCE.resources.getStringArray(R.array.read_tip)
+    val tipArray: Array<String> = App.INSTANCE.resources.getStringArray(R.array.read_tip)
     const val none = 0
     const val chapterTitle = 1
     const val time = 2
     const val battery = 3
     const val page = 4
-    const val totalProgress = 5
 
-    val tipHeaderLeftStr: String = tipArray[tipHeaderLeft]
-    val tipHeaderMiddleStr: String = tipArray[tipHeaderMiddle]
-    val tipHeaderRightStr: String = tipArray[tipHeaderRight]
-    val tipFooterLeftStr: String = tipArray[tipFooterLeft]
-    val tipFooterMiddleStr: String = tipArray[tipFooterMiddle]
-    val tipFooterRightStr: String = tipArray[tipFooterRight]
+    val tipHeaderLeftStr: String get() = tipArray.getOrElse(tipHeaderLeft) { tipArray[none] }
+    val tipHeaderMiddleStr: String get() = tipArray.getOrElse(tipHeaderMiddle) { tipArray[none] }
+    val tipHeaderRightStr: String get() = tipArray.getOrElse(tipHeaderRight) { tipArray[none] }
+    val tipFooterLeftStr: String get() = tipArray.getOrElse(tipFooterLeft) { tipArray[none] }
+    val tipFooterMiddleStr: String get() = tipArray.getOrElse(tipFooterMiddle) { tipArray[none] }
+    val tipFooterRightStr: String get() = tipArray.getOrElse(tipFooterRight) { tipArray[none] }
 
     var tipHeaderLeft: Int
         get() = App.INSTANCE.getPrefInt("tipHeaderLeft", time)
@@ -46,7 +45,7 @@ object ReadTipConfig {
         }
 
     var tipFooterMiddle: Int
-        get() = App.INSTANCE.getPrefInt("tipFooterMiddle", totalProgress)
+        get() = App.INSTANCE.getPrefInt("tipFooterMiddle", none)
         set(value) {
             App.INSTANCE.putPrefInt("tipFooterMiddle", value)
         }

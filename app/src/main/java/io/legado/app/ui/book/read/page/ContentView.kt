@@ -5,11 +5,14 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import com.hankcs.hanlp.HanLP
 import io.legado.app.R
 import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.ReadTipConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
@@ -24,9 +27,8 @@ class ContentView(context: Context) : FrameLayout(context) {
         //设置背景防止切换背景时文字重叠
         setBackgroundColor(context.getCompatColor(R.color.background))
         inflate(context, R.layout.view_book_page, this)
-
+        upTipStyle()
         upStyle()
-        upTime()
         content_text_view.upView = {
             setProgress(it)
         }
@@ -34,11 +36,18 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun upStyle() {
         ReadBookConfig.apply {
-            tv_top_left.typeface = ChapterProvider.typeface
-            tv_top_right.typeface = ChapterProvider.typeface
-            tv_bottom_left.typeface = ChapterProvider.typeface
-            tv_bottom_right.typeface = ChapterProvider.typeface
-            battery_view.typeface = ChapterProvider.typeface
+            tv_header_left.typeface = ChapterProvider.typeface
+            tv_header_middle.typeface = ChapterProvider.typeface
+            tv_header_right.typeface = ChapterProvider.typeface
+            tv_footer_left.typeface = ChapterProvider.typeface
+            tv_footer_middle.typeface = ChapterProvider.typeface
+            tv_footer_right.typeface = ChapterProvider.typeface
+            tv_header_left.setColor(durConfig.textColor())
+            tv_header_middle.setColor(durConfig.textColor())
+            tv_header_right.setColor(durConfig.textColor())
+            tv_footer_left.setColor(durConfig.textColor())
+            tv_footer_middle.setColor(durConfig.textColor())
+            tv_footer_right.setColor(durConfig.textColor())
             //显示状态栏时隐藏header
             if (hideStatusBar) {
                 ll_header.setPadding(
@@ -62,20 +71,25 @@ class ContentView(context: Context) : FrameLayout(context) {
             vw_top_divider.visible(showHeaderLine)
             vw_bottom_divider.visible(showFooterLine)
             content_text_view.upVisibleRect()
-            durConfig.textColor().let {
-                tv_top_left.setTextColor(it)
-                tv_top_right.setTextColor(it)
-                tv_bottom_left.setTextColor(it)
-                tv_bottom_right.setTextColor(it)
-                battery_view.setColor(it)
-            }
-            if (hideStatusBar) {
-                tv_bottom_left.text = timeFormat.format(Date(System.currentTimeMillis()))
-                battery_view.visible()
-                battery_view.setBattery(battery)
-            } else {
-                battery_view.gone()
-            }
+        }
+        upTime()
+        upBattery(battery)
+    }
+
+    fun upTipStyle() {
+        ReadTipConfig.apply {
+            val tipHeaderLeftNone = tipHeaderLeft == none
+            val tipHeaderRightNone = tipHeaderRight == none
+            val tipHeaderMiddleNone = tipHeaderMiddle == none
+            val tipFooterLeftNone = tipFooterLeft == none
+            val tipFooterRightNone = tipFooterRight == none
+            val tipFooterMiddleNone = tipFooterMiddle == none
+            tv_header_left.isInvisible = tipHeaderLeftNone
+            tv_header_right.isGone = tipHeaderRightNone
+            tv_header_middle.isGone = tipHeaderMiddleNone
+            tv_footer_left.isInvisible = tipFooterLeftNone
+            tv_footer_right.isGone = tipFooterRightNone
+            tv_footer_middle.isGone = tipFooterMiddleNone
         }
     }
 
@@ -93,16 +107,32 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun upTime() {
-        if (ReadBookConfig.hideStatusBar) {
-            tv_bottom_right.text = timeFormat.format(Date(System.currentTimeMillis()))
+        val tvTime = when (ReadTipConfig.time) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
         }
+        tvTime?.isBattery = false
+        tvTime?.text = timeFormat.format(Date(System.currentTimeMillis()))
     }
 
     fun upBattery(battery: Int) {
         this.battery = battery
-        if (ReadBookConfig.hideStatusBar) {
-            battery_view.setBattery(battery)
+        val tvBattery = when (ReadTipConfig.battery) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
         }
+        tvBattery?.isBattery = true
+        tvBattery?.setBattery(battery)
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
@@ -123,14 +153,28 @@ class ContentView(context: Context) : FrameLayout(context) {
             2 -> HanLP.convertToTraditionalChinese(textPage.title)
             else -> textPage.title
         }
-        if (ReadBookConfig.hideStatusBar) {
-            tv_top_left.text = title
-            tv_top_right.text = readProgress
-            tv_bottom_left.text = "${index.plus(1)}/$pageSize"
-        } else {
-            tv_bottom_left.text = title
-            tv_bottom_right.text = "${index.plus(1)}/$pageSize  $readProgress"
+        val tvTitle = when (ReadTipConfig.chapterTitle) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
         }
+        tvTitle?.isBattery = false
+        tvTitle?.text = title
+        val tvPage = when (ReadTipConfig.page) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
+        }
+        tvPage?.isBattery = false
+        tvPage?.text = "${index.plus(1)}/$pageSize  $readProgress"
     }
 
     fun onScroll(offset: Float) {
