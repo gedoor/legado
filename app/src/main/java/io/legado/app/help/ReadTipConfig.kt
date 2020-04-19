@@ -14,6 +14,8 @@ object ReadTipConfig {
     const val time = 2
     const val battery = 3
     const val page = 4
+    const val totalProgress = 5
+    const val pageAndTotal = 6
 
     val tipHeaderLeftStr: String get() = tipArray.getOrElse(tipHeaderLeft) { tipArray[none] }
     val tipHeaderMiddleStr: String get() = tipArray.getOrElse(tipHeaderMiddle) { tipArray[none] }
@@ -53,7 +55,7 @@ object ReadTipConfig {
         }
 
     var tipFooterRight: Int
-        get() = App.INSTANCE.getPrefInt("tipFooterRight", page)
+        get() = App.INSTANCE.getPrefInt("tipFooterRight", pageAndTotal)
         set(value) {
             App.INSTANCE.putPrefInt("tipFooterRight", value)
         }

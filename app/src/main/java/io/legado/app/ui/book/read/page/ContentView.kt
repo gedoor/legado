@@ -14,6 +14,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.statusBarHeight
@@ -25,6 +26,12 @@ import java.util.*
 class ContentView(context: Context) : FrameLayout(context) {
 
     private var battery = 100
+    private var tvTitle: BatteryView? = null
+    private var tvTime: BatteryView? = null
+    private var tvBattery: BatteryView? = null
+    private var tvPage: BatteryView? = null
+    private var tvTotalProgress: BatteryView? = null
+    private var tvPageAndTotal: BatteryView? = null
 
     val headerHeight: Int
         get() = if (ReadBookConfig.hideStatusBar) ll_header.height else context.statusBarHeight
@@ -94,6 +101,84 @@ class ContentView(context: Context) : FrameLayout(context) {
             ll_header.isGone = hideHeader
             ll_footer.isGone = hideFooter
         }
+        tvTitle = when (ReadTipConfig.chapterTitle) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
+        }
+        tvTitle?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvTime = when (ReadTipConfig.time) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
+        }
+        tvTime?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvBattery = when (ReadTipConfig.battery) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
+        }
+        tvBattery?.apply {
+            isBattery = true
+            textSize = 10f
+        }
+        tvPage = when (ReadTipConfig.page) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
+        }
+        tvPage?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvTotalProgress = when (ReadTipConfig.totalProgress) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
+        }
+        tvTotalProgress?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvPageAndTotal = when (ReadTipConfig.pageAndTotal) {
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
+            ReadTipConfig.tipHeaderRight -> tv_header_right
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
+            ReadTipConfig.tipFooterRight -> tv_footer_right
+            else -> null
+        }
+        tvPageAndTotal?.apply {
+            isBattery = false
+            textSize = 12f
+        }
     }
 
     fun setBg(bg: Drawable?) {
@@ -101,31 +186,11 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun upTime() {
-        val tvTime = when (ReadTipConfig.time) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
-            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
-            ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
-            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
-            ReadTipConfig.tipFooterRight -> tv_footer_right
-            else -> null
-        }
-        tvTime?.isBattery = false
         tvTime?.text = timeFormat.format(Date(System.currentTimeMillis()))
     }
 
     fun upBattery(battery: Int) {
         this.battery = battery
-        val tvBattery = when (ReadTipConfig.battery) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
-            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
-            ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
-            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
-            ReadTipConfig.tipFooterRight -> tv_footer_right
-            else -> null
-        }
-        tvBattery?.isBattery = true
         tvBattery?.setBattery(battery)
     }
 
@@ -147,28 +212,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             2 -> HanLP.convertToTraditionalChinese(textPage.title)
             else -> textPage.title
         }
-        val tvTitle = when (ReadTipConfig.chapterTitle) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
-            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
-            ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
-            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
-            ReadTipConfig.tipFooterRight -> tv_footer_right
-            else -> null
-        }
-        tvTitle?.isBattery = false
         tvTitle?.text = title
-        val tvPage = when (ReadTipConfig.page) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
-            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
-            ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
-            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
-            ReadTipConfig.tipFooterRight -> tv_footer_right
-            else -> null
-        }
-        tvPage?.isBattery = false
-        tvPage?.text = "${index.plus(1)}/$pageSize  $readProgress"
+        tvPage?.text = "${index.plus(1)}/$pageSize"
+        tvTotalProgress?.text = readProgress
+        tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
     }
 
     fun onScroll(offset: Float) {
