@@ -671,7 +671,9 @@
     <string name="click_to_apply">点击加入</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
-
+    <string name="hideHeader">隐藏页眉</string>
+    <string name="hideFooter">隐藏页脚</string>
+  
     <!--color-->
     <string name="primary">主色调</string>
     <string name="accent">强调色</string>
@@ -687,4 +689,5 @@
     <string name="night_accent">夜间，强调色</string>
     <string name="night_background_color">夜间，背景色</string>
     <string name="night_navbar_color">夜间，底栏色</string>
+
 </resources>
