@@ -293,7 +293,7 @@ object ReadBook {
     ) {
         Coroutine.async {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
-                val c = BookHelp.disposeContent(
+                val contents = BookHelp.disposeContent(
                     chapter.title,
                     book!!.name,
                     webBook?.bookSource?.bookSourceUrl,
@@ -302,18 +302,21 @@ object ReadBook {
                 )
                 when (chapter.index) {
                     durChapterIndex -> {
-                        curTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
+                        curTextChapter =
+                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(resetPageOffset = resetPageOffset)
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
                     durChapterIndex - 1 -> {
-                        prevTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
+                        prevTextChapter =
+                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(-1, resetPageOffset)
                     }
                     durChapterIndex + 1 -> {
-                        nextTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
+                        nextTextChapter =
+                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(1, resetPageOffset)
                     }
                 }

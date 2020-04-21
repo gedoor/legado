@@ -44,14 +44,13 @@ object ChapterProvider {
      */
     fun getTextChapter(
         bookChapter: BookChapter,
-        content: String,
+        contents: List<String>,
         chapterSize: Int
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
-        val contents = content.split("\n")
         var durY = 0f
         textPages.add(TextPage())
         for ((index, text) in contents.withIndex()) {

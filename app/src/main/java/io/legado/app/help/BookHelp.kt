@@ -196,7 +196,7 @@ object BookHelp {
         origin: String?,
         content: String,
         enableReplace: Boolean
-    ): String {
+    ): List<String> {
         var c = content
         if (enableReplace) {
             synchronized(this) {
@@ -228,9 +228,6 @@ object BookHelp {
                 }
             }
         }
-        if (!c.substringBefore("\n").contains(title)) {
-            c = "$title\n$c"
-        }
         try {
             when (AppConfig.chineseConverterType) {
                 1 -> c = HanLP.convertToSimplifiedChinese(c)
@@ -241,8 +238,13 @@ object BookHelp {
                 App.INSTANCE.toast("简繁转换出错")
             }
         }
-        return c
-            .replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
-            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
+        val contents = arrayListOf<String>()
+        c.split("\n").forEach {
+            val str = it.replace("^\\s+".toRegex(), "")
+            if (str.isNotEmpty()) {
+                contents.add("${ReadBookConfig.bodyIndent}str")
+            }
+        }
+        return contents
     }
 }
