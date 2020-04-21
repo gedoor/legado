@@ -241,7 +241,12 @@ object BookHelp {
         val contents = arrayListOf<String>()
         c.split("\n").forEach {
             val str = it.replace("^\\s+".toRegex(), "")
-            if (str.isNotEmpty()) {
+            if (contents.isEmpty()) {
+                contents.add(title)
+                if (it != title && it.isNotEmpty()) {
+                    contents.add("${ReadBookConfig.bodyIndent}$str")
+                }
+            } else if (str.isNotEmpty()) {
                 contents.add("${ReadBookConfig.bodyIndent}$str")
             }
         }
