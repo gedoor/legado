@@ -154,10 +154,12 @@ abstract class PageDelegate(protected val pageView: PageView) :
         }
     }
 
-    fun abort() {
+    fun abort(): Boolean {
         if (!scroller.isFinished) {
             scroller.abortAnimation()
+            return true
         }
+        return false
     }
 
     open fun onAnimStart() {}//scroller start
@@ -200,11 +202,16 @@ abstract class PageDelegate(protected val pageView: PageView) :
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
             when (event.action) {
                 MotionEvent.ACTION_UP,
-                MotionEvent.ACTION_CANCEL -> if (isMoved) {
-                    if (selectedOnDown) {
-                        selectedOnDown = false
+                MotionEvent.ACTION_CANCEL -> {
+                    if (isTextSelected) {
+                        pageView.callBack.showTextActionMenu()
                     }
-                    if (!noNext) onAnimStart()
+                    if (isMoved) {
+                        if (selectedOnDown) {
+                            selectedOnDown = false
+                        }
+                        if (!noNext) onAnimStart()
+                    }
                 }
             }
         }

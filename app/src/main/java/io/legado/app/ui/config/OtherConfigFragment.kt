@@ -1,8 +1,6 @@
 package io.legado.app.ui.config
 
-import android.app.Activity.RESULT_OK
 import android.content.ComponentName
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -19,17 +17,13 @@ import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
-import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 
 
 class OtherConfigFragment : PreferenceFragmentCompat(),
-    FileChooserDialog.CallBack,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeDownloadPath = 25324
     private val packageManager = App.INSTANCE.packageManager
     private val componentName = ComponentName(
         App.INSTANCE,
@@ -40,7 +34,6 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
-        upPreferenceSummary(PreferKey.downloadPath, BookHelp.downloadPath)
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
         upPreferenceSummary(PreferKey.webPort, webPort.toString())
     }
@@ -74,7 +67,6 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 .show {
                     putPrefInt(PreferKey.webPort, it)
                 }
-            PreferKey.downloadPath -> selectDownloadPath()
             PreferKey.cleanCache -> {
                 BookHelp.clearCache()
                 toast(R.string.clear_cache_success)
@@ -85,9 +77,6 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.downloadPath -> {
-                upPreferenceSummary(key, BookHelp.downloadPath)
-            }
             PreferKey.threadCount -> upPreferenceSummary(
                 key, AppConfig.threadCount.toString()
             )
@@ -139,30 +128,4 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         }
     }
 
-    private fun selectDownloadPath() {
-        FilePicker.selectFolder(this, requestCodeDownloadPath) {
-            removePref(PreferKey.downloadPath)
-        }
-    }
-
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == requestCodeDownloadPath) {
-            putPrefString(PreferKey.downloadPath, currentPath)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeDownloadPath -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    requireContext().contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    putPrefString(PreferKey.downloadPath, uri.toString())
-                }
-            }
-        }
-    }
 }

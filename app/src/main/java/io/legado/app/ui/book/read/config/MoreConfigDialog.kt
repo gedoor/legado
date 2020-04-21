@@ -94,6 +94,7 @@ class MoreConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
+                PreferKey.readBodyToLh -> activity?.recreate()
                 PreferKey.hideStatusBar -> {
                     ReadBookConfig.hideStatusBar = getPrefBoolean(PreferKey.hideStatusBar)
                     postEvent(EventBus.UP_CONFIG, true)
@@ -104,6 +105,11 @@ class MoreConfigDialog : DialogFragment() {
                 }
                 PreferKey.keepLight -> postEvent(key, true)
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
+                getString(R.string.pk_requested_direction) -> {
+                    activity?.let {
+                        Help.setOrientation(it)
+                    }
+                }
             }
         }
 

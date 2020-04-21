@@ -6,20 +6,8 @@
     <item
         android:id="@+id/menu_help"
         android:title="@string/help"
-        android:icon="@drawable/ic_live_help_black_24dp"
+        android:icon="@drawable/ic_help"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
-
-    <item
-        android:id="@+id/menu_backup"
-        android:title="@string/backup"
-        android:icon="@drawable/ic_backup"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/menu_restore"
-        android:title="@string/restore"
-        android:icon="@drawable/ic_restore"
-        app:showAsAction="always" />
 
 </menu>

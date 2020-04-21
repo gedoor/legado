@@ -1,6 +1,7 @@
 package io.legado.app.ui.config
 
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.preference.Preference
@@ -16,8 +17,8 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
-import io.legado.app.lib.theme.elevation
 import io.legado.app.ui.widget.number.NumberPickerDialog
+import io.legado.app.ui.widget.prefs.IconListPreference
 import io.legado.app.utils.*
 
 
@@ -27,6 +28,11 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
+        if (Build.VERSION.SDK_INT < 26) {
+            findPreference<IconListPreference>(PreferKey.launcherIcon)?.let {
+                preferenceScreen.removePreference(it)
+            }
+        }
         upPreferenceSummary("barElevation", AppConfig.elevation.toString())
     }
 

@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
-import androidx.room.PrimaryKey
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.utils.GSON
@@ -15,9 +14,12 @@ import java.nio.charset.Charset
 import kotlin.math.max
 
 @Parcelize
-@Entity(tableName = "books", indices = [(Index(value = ["bookUrl"], unique = true))])
+@Entity(
+    tableName = "books",
+    primaryKeys = ["name", "author"],
+    indices = [(Index(value = ["bookUrl"], unique = true))]
+)
 data class Book(
-    @PrimaryKey
     override var bookUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
     var origin: String = BookType.local,        // 书源URL(默认BookType.local)
@@ -31,7 +33,7 @@ data class Book(
     var intro: String? = null,                  // 简介内容(书源获取)
     var customIntro: String? = null,            // 简介内容(用户修改)
     var charset: String? = null,                // 自定义字符集名称(仅适用于本地书籍)
-    var type: Int = 0,                          // @BookType
+    var type: Int = 0,                          // 0:text 1:audio
     var group: Int = 0,                         // 自定义分组索引号
     var latestChapterTitle: String? = null,     // 最新章节标题
     var latestChapterTime: Long = System.currentTimeMillis(),            // 最新章节标题更新时间

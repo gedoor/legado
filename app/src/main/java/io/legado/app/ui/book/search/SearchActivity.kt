@@ -112,6 +112,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                     viewModel.saveSearchKey(query)
                     viewModel.search(it)
                 }
+                openOrCloseHistory(false)
                 return true
             }
 
@@ -128,6 +129,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
                 openOrCloseHistory(hasFocus)
             }
         }
+        openOrCloseHistory(true)
     }
 
     private fun initRecyclerView() {
@@ -283,10 +285,12 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      */
     @Synchronized
     private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
+        val searchItems = ArrayList(items)
         if (isMandatoryUpdate || System.currentTimeMillis() - refreshTime > 500) {
             refreshTime = System.currentTimeMillis()
-            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), items))
-            adapter.setItems(items, diffResult)
+            val diffResult =
+                DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), searchItems))
+            adapter.setItems(searchItems, diffResult)
         }
     }
 

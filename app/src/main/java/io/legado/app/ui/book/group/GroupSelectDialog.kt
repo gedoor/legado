@@ -94,8 +94,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
-        tool_bar.menu.findItem(R.id.menu_group_local).isVisible = false
-        tool_bar.menu.findItem(R.id.menu_group_audio).isVisible = false
+        tool_bar.menu.setGroupVisible(R.id.menu_groups, false)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
@@ -203,7 +202,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             return true
         }
 
-        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
             if (isMoved) {
                 for ((index, item) in getItems().withIndex()) {
                     item.order = index + 1

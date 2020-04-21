@@ -185,7 +185,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     private val movedItems = hashSetOf<BookSource>()
 
-    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         if (movedItems.isNotEmpty()) {
             callBack.update(*movedItems.toTypedArray())
             movedItems.clear()

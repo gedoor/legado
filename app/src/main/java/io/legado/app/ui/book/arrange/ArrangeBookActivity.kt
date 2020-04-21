@@ -6,12 +6,16 @@ import android.view.MenuItem
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -21,6 +25,7 @@ import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
 
@@ -64,6 +69,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
+        val itemTouchCallback = ItemTouchCallback()
+        itemTouchCallback.onItemTouchCallbackListener = adapter
+        itemTouchCallback.isCanDrag = getPrefInt(PreferKey.bookshelfSort) == 3
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
         select_action_bar.setMainActionText(R.string.move_to_group)
         select_action_bar.inflateMenu(R.menu.arrange_book_sel)
         select_action_bar.setOnMenuItemClickListener(this)
@@ -97,14 +106,20 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         booksLiveData?.removeObservers(this)
         booksLiveData =
             when (groupId) {
-                -1 -> App.db.bookDao().observeAll()
-                -2 -> App.db.bookDao().observeLocal()
-                -3 -> App.db.bookDao().observeAudio()
-                -11 -> App.db.bookDao().observeNoGroup()
+                AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
+                AppConst.bookGroupLocal.groupId -> App.db.bookDao().observeLocal()
+                AppConst.bookGroupAudio.groupId -> App.db.bookDao().observeAudio()
+                AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
                 else -> App.db.bookDao().observeByGroup(groupId)
             }
-        booksLiveData?.observe(this, Observer {
-            adapter.setItems(it)
+        booksLiveData?.observe(this, Observer { list ->
+            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                1 -> list.sortedByDescending { it.latestChapterTime }
+                2 -> list.sortedBy { it.name }
+                3 -> list.sortedBy { it.order }
+                else -> list.sortedByDescending { it.durChapterTime }
+            }
+            adapter.setItems(books)
             upSelectCount()
         })
     }
@@ -115,22 +130,22 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 .show(supportFragmentManager, "groupManage")
             R.id.menu_no_group -> {
                 title_bar.subtitle = getString(R.string.no_group)
-                groupId = -11
+                groupId = AppConst.bookGroupNone.groupId
                 initBookData()
             }
             R.id.menu_all -> {
                 title_bar.subtitle = item.title
-                groupId = -1
+                groupId = AppConst.bookGroupAll.groupId
                 initBookData()
             }
             R.id.menu_local -> {
                 title_bar.subtitle = item.title
-                groupId = -2
+                groupId = AppConst.bookGroupLocal.groupId
                 initBookData()
             }
             R.id.menu_audio -> {
                 title_bar.subtitle = item.title
-                groupId = -3
+                groupId = AppConst.bookGroupAudio.groupId
                 initBookData()
             }
             else -> if (item.groupId == R.id.menu_group) {
@@ -197,6 +212,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
 
     override fun upSelectCount() {
         select_action_bar.upCountView(adapter.selectedBooks().size, adapter.getItems().size)
+    }
+
+    override fun updateBook(vararg book: Book) {
+        viewModel.updateBook(*book)
     }
 
     override fun deleteBook(book: Book) {

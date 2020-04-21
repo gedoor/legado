@@ -18,9 +18,9 @@ import androidx.core.app.NotificationCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.IntentAction
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -275,7 +275,7 @@ class AudioPlayService : BaseService(),
         AudioPlay.book?.let { book ->
             AudioPlay.webBook?.getContent(book, chapter, scope = this)
                 ?.onSuccess(IO) { content ->
-                    if (content.isNullOrEmpty()) {
+                    if (content.isEmpty()) {
                         withContext(Main) {
                             toast("未获取到资源链接")
                         }

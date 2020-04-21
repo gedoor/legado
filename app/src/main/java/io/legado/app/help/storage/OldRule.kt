@@ -19,7 +19,7 @@ object OldRule {
             source = GSON.fromJsonObject<BookSource>(json.trim())
         }
         runCatching {
-            if (source == null || source?.searchUrl.isNullOrBlank()) {
+            if (source == null || source?.ruleToc.isNullOrBlank()) {
                 source = BookSource().apply {
                     val jsonItem = jsonPath.parse(json.trim())
                     bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""

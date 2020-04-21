@@ -117,8 +117,15 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-                    viewModel.importSource(url) { msg ->
-                        title_bar.snackbar(msg)
+                    if (url.startsWith("http", false)){
+                        viewModel.importSource(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
+                    }
+                    else{
+                        viewModel.importSourceFromFilePath(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
                     }
                 }
                 else -> {

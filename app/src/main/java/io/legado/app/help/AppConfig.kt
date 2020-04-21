@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import android.content.Context
+import android.content.pm.PackageManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -32,6 +33,9 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("transparentStatusBar", value)
         }
 
+    val requestedDirection: String?
+        get() = App.INSTANCE.getPrefString(R.string.pk_requested_direction)
+
     var backupPath: String?
         get() = App.INSTANCE.getPrefString(PreferKey.backupPath)
         set(value) {
@@ -49,7 +53,7 @@ object AppConfig {
         }
 
     val autoRefreshBook: Boolean
-        get() = App.INSTANCE.getPrefBoolean(App.INSTANCE.getString(R.string.pk_auto_refresh))
+        get() = App.INSTANCE.getPrefBoolean(R.string.pk_auto_refresh)
 
     var threadCount: Int
         get() = App.INSTANCE.getPrefInt(PreferKey.threadCount, 16)
@@ -111,9 +115,32 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
         }
 
+    var bookGroupNoneShow: Boolean
+        get() = App.INSTANCE.getPrefBoolean("bookGroupNone", false)
+        set(value) {
+            App.INSTANCE.putPrefBoolean("bookGroupNone", value)
+        }
+
     var elevation: Int
         get() = App.INSTANCE.getPrefInt("elevation", -1)
         set(value) {
             App.INSTANCE.putPrefInt("elevation", value)
         }
+
+    val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
+
+    val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
 }
+
+val Context.channel: String
+    get() {
+        try {
+            val pm = packageManager
+            val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            return appInfo.metaData.getString("channel") ?: ""
+        } catch (e: Exception) {
+            e.printStackTrace();
+        }
+        return ""
+    }
+

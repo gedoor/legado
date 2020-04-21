@@ -67,7 +67,7 @@
         <item>@string/app_folder_picker</item>
     </string-array>
 
-    <string-array name="screen_direction_list_title">
+    <string-array name="screen_direction_title">
         <item>@string/screen_unspecified</item>
         <item>@string/screen_portrait</item>
         <item>@string/screen_landscape</item>
@@ -79,6 +79,9 @@
         <item>icon1</item>
         <item>icon2</item>
         <item>icon3</item>
+        <item>icon4</item>
+        <item>icon5</item>
+        <item>icon6</item>
     </string-array>
 
     <string-array name="chinese_mode">
@@ -91,6 +94,16 @@
         <item>系统默认字体</item>
         <item>系统衬线字体</item>
         <item>系统等宽字体</item>
+    </string-array>
+
+    <string-array name="read_tip">
+        <item>无</item>
+        <item>标题</item>
+        <item>时间</item>
+        <item>电量</item>
+        <item>页数</item>
+        <item>进度</item>
+        <item>页数及进度</item>
     </string-array>
 
 </resources>

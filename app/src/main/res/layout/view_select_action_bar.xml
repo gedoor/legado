@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:paddingRight="8dp"
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
     android:gravity="center_vertical"
-    android:elevation="2dp">
+    android:elevation="2dp" >
 
     <io.legado.app.lib.theme.view.ATECheckBox
         android:id="@+id/cb_selected_all"

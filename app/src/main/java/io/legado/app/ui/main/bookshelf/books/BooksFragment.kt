@@ -7,9 +7,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -26,6 +28,7 @@ import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
+import kotlin.math.max
 
 
 class BooksFragment : BaseFragment(R.layout.fragment_books),
@@ -71,17 +74,35 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterList(requireContext(), this)
         } else {
             rv_bookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
-            booksAdapter = BooksAdapterGrid(requireContext(),this)
+            booksAdapter = BooksAdapterGrid(requireContext(), this)
         }
         rv_bookshelf.adapter = booksAdapter
+        booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                val layoutManager = rv_bookshelf.layoutManager
+                if (positionStart == 0 && layoutManager is LinearLayoutManager) {
+                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                    rv_bookshelf.scrollToPosition(max(0, scrollTo))
+                }
+            }
+
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                val layoutManager = rv_bookshelf.layoutManager
+                if (toPosition == 0 && layoutManager is LinearLayoutManager) {
+                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                    rv_bookshelf.scrollToPosition(max(0, scrollTo))
+                }
+            }
+        })
     }
 
     private fun upRecyclerData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = when (groupId) {
-            -1 -> App.db.bookDao().observeAll()
-            -2 -> App.db.bookDao().observeLocal()
-            -3 -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
+            AppConst.bookGroupLocal.groupId -> App.db.bookDao().observeLocal()
+            AppConst.bookGroupAudio.groupId -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, Observer { list ->

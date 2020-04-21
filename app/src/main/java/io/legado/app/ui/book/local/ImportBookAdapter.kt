@@ -1,7 +1,7 @@
 package io.legado.app.ui.book.local
 
 import android.content.Context
-import androidx.documentfile.provider.DocumentFile
+import android.net.Uri
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -101,7 +101,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.onClick {
             getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
-                    callBack.nextDoc(DocumentFile.fromSingleUri(context, it.uri)!!)
+                    callBack.nextDoc(it.uri)
                 } else if (!bookshelf.contains(it.uri.toString())) {
                     if (!selectedUris.contains(it.uri.toString())) {
                         selectedUris.add(it.uri.toString())
@@ -116,7 +116,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
-        fun nextDoc(doc: DocumentFile)
+        fun nextDoc(uri: Uri)
         fun upCountView()
     }
 

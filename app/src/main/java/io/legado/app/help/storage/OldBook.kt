@@ -40,7 +40,6 @@ object OldBook {
             book.durChapterTitle = jsonItem.readString("$.durChapterName")
             book.durChapterPos = jsonItem.readInt("$.durChapterPage") ?: 0
             book.durChapterTime = jsonItem.readLong("$.finalDate") ?: 0
-            book.group = jsonItem.readInt("$.group") ?: 0
             book.intro = jsonItem.readString("$.bookInfoBean.introduce")
             book.latestChapterTitle = jsonItem.readString("$.lastChapterName")
             book.lastCheckCount = jsonItem.readInt("$.newChapters") ?: 0

@@ -18,11 +18,11 @@ data class TextPage(
     var height: Float = 0f
 ) {
 
-    fun upLinesPosition(visibleHeight: Int) {
-        if (textLines.size <= 1) return
-        if (visibleHeight - height > with(textLines.last()) { lineBottom - lineTop }) return
-        val surplus = (visibleHeight - textLines.last().lineBottom)
-        if (surplus == 0f) return
+    fun upLinesPosition() = ChapterProvider.apply {
+        if (textLines.size <= 1) return@apply
+        if (visibleHeight - height >= with(textLines.last()) { lineBottom - lineTop }) return@apply
+        val surplus = (visibleBottom - textLines.last().lineBottom)
+        if (surplus == 0f) return@apply
         height += surplus
         val tj = surplus / (textLines.size - 1)
         for (i in 1 until textLines.size) {
@@ -44,12 +44,11 @@ data class TextPage(
             if (y < 0) y = 0f
             for (lineIndex in 0 until layout.lineCount) {
                 val textLine = TextLine()
-                textLine.lineTop = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)))
-                textLine.lineBase = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex)))
+                textLine.lineTop = ChapterProvider.paddingTop + y + layout.getLineTop(lineIndex)
+                textLine.lineBase =
+                    ChapterProvider.paddingTop + y + layout.getLineBaseline(lineIndex)
                 textLine.lineBottom =
-                    textLine.lineBase + ChapterProvider.contentPaint.fontMetrics.descent
+                    ChapterProvider.paddingTop + y + layout.getLineBottom(lineIndex)
                 var x = ChapterProvider.paddingLeft +
                         (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
                 textLine.text =

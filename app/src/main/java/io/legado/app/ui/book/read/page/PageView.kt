@@ -16,25 +16,20 @@ class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
     DataSource {
 
-    var callBack: CallBack
-    var pageFactory: TextPageFactory
+    val callBack: CallBack get() = activity as CallBack
+    var pageFactory: TextPageFactory = TextPageFactory(this)
     var pageDelegate: PageDelegate? = null
 
-    var prevPage: ContentView
-    var curPage: ContentView
-    var nextPage: ContentView
+    var prevPage: ContentView = ContentView(context)
+    var curPage: ContentView = ContentView(context)
+    var nextPage: ContentView = ContentView(context)
 
     init {
-        callBack = activity as CallBack
-        nextPage = ContentView(context)
         addView(nextPage)
-        curPage = ContentView(context)
         addView(curPage)
-        prevPage = ContentView(context)
         addView(prevPage)
         upBg()
         setWillNotDraw(false)
-        pageFactory = TextPageFactory(this)
         upPageAnim()
     }
 
@@ -43,7 +38,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (oldw != 0 && oldh != 0) {
-            ReadBook.loadContent()
+            ReadBook.loadContent(resetPageOffset = false)
         }
     }
 
@@ -98,9 +93,9 @@ class PageView(context: Context, attrs: AttributeSet) :
         upContent()
     }
 
-    override fun upContent(relativePosition: Int) {
+    override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
         if (ReadBookConfig.isScroll) {
-            curPage.setContent(pageFactory.currentPage)
+            curPage.setContent(pageFactory.currentPage, resetPageOffset)
         } else {
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
@@ -113,6 +108,12 @@ class PageView(context: Context, attrs: AttributeSet) :
             }
         }
         callBack.screenOffTimerStart()
+    }
+
+    fun upTipStyle() {
+        curPage.upTipStyle()
+        prevPage.upTipStyle()
+        nextPage.upTipStyle()
     }
 
     fun upStyle() {
@@ -170,5 +171,6 @@ class PageView(context: Context, attrs: AttributeSet) :
         val isInitFinish: Boolean
         fun clickCenter()
         fun screenOffTimerStart()
+        fun showTextActionMenu()
     }
 }

@@ -37,7 +37,10 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     override fun onTouch(event: MotionEvent) {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                abort()
+                if (abort()) {
+                    onAnimStop()
+                    stopScroll()
+                }
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isTextSelected) {

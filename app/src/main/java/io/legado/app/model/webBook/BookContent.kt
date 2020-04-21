@@ -2,6 +2,7 @@ package io.legado.app.model.webBook
 
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
@@ -39,7 +40,12 @@ object BookContent {
         var contentData = analyzeContent(
             book, baseUrl, body, contentRule, bookChapter, bookSource
         )
-        content.append(contentData.content.replace(bookChapter.title, "")).append("\n")
+        if (bookSource.bookSourceType == BookType.default) {
+            content.append(contentData.content.replace(bookChapter.title, "")).append("\n")
+        } else {
+            content.append(contentData.content).append("\n")
+        }
+
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
             val nextChapterUrl = if (!nextChapterUrlF.isNullOrEmpty())
@@ -95,6 +101,7 @@ object BookContent {
             }
         }
 
+        content.deleteCharAt(content.length - 1)
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")

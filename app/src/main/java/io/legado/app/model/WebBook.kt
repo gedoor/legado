@@ -27,26 +27,36 @@ class WebBook(val bookSource: BookSource) {
         page: Int? = 1,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
-    ): Coroutine<List<SearchBook>> {
+    ): Coroutine<ArrayList<SearchBook>> {
         return Coroutine.async(scope, context) {
-            bookSource.searchUrl?.let { searchUrl ->
-                val analyzeUrl = AnalyzeUrl(
-                    ruleUrl = searchUrl,
-                    key = key,
-                    page = page,
-                    baseUrl = sourceUrl,
-                    headerMapF = bookSource.getHeaderMap()
-                )
-                val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
-                BookList.analyzeBookList(
-                    res.body,
-                    bookSource,
-                    analyzeUrl,
-                    res.url,
-                    true
-                )
-            } ?: arrayListOf()
+            searchBookSuspend(scope, key, page)
         }
+    }
+
+    suspend fun searchBookSuspend(
+        scope: CoroutineScope,
+        key: String,
+        page: Int? = 1
+    ): ArrayList<SearchBook> {
+        bookSource.searchUrl?.let { searchUrl ->
+            val analyzeUrl = AnalyzeUrl(
+                ruleUrl = searchUrl,
+                key = key,
+                page = page,
+                baseUrl = sourceUrl,
+                headerMapF = bookSource.getHeaderMap()
+            )
+            val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
+            return BookList.analyzeBookList(
+                scope,
+                res.body,
+                bookSource,
+                analyzeUrl,
+                res.url,
+                true
+            )
+        }
+        return arrayListOf()
     }
 
     /**
@@ -67,6 +77,7 @@ class WebBook(val bookSource: BookSource) {
             )
             val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
             BookList.analyzeBookList(
+                scope,
                 res.body,
                 bookSource,
                 analyzeUrl,

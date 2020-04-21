@@ -22,10 +22,9 @@ import org.apache.commons.text.StringEscapeUtils
 import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
-import org.jsoup.safety.Whitelist
 
 
-class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
+class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read, false),
     FileChooserDialog.CallBack,
     ReadRssViewModel.CallBack {
 
@@ -194,7 +193,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     override fun upStarMenu() {
-        if (viewModel.star) {
+        if (viewModel.rssStar != null) {
             starMenuItem?.setIcon(R.drawable.ic_star)
             starMenuItem?.setTitle(R.string.in_favorites)
         } else {
@@ -246,18 +245,16 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun readAloud() {
-        if (viewModel.textToSpeech.isSpeaking) {
-            viewModel.textToSpeech.stop()
+        if (viewModel.textToSpeech?.isSpeaking == true) {
+            viewModel.textToSpeech?.stop()
             upTtsMenu(false)
         } else {
             web_view.settings.javaScriptEnabled = true
             web_view.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
-                val text = Jsoup.clean(html, Whitelist.none())
-                    .replace(Regex("""&\w+;"""), "")
-                    .trim()//朗读过程中总是听到一些杂音，清理一下
-                //longToast(需读内容)调试一下
-                viewModel.readAloud(text)
+                    .replace("^\"|\"$".toRegex(), "")
+                Jsoup.parse(html).text()
+                viewModel.readAloud(Jsoup.parse(html).textArray())
             }
         }
     }

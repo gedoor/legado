@@ -78,7 +78,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             putPrefInt(PreferKey.versionCode, App.INSTANCE.versionCode)
             if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
-                TextDialog.show(supportFragmentManager, log, TextDialog.MD)
+                TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
             }
         }
     }
@@ -114,11 +114,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         return super.onKeyUp(keyCode, event)
     }
 
-    override fun finish() {
+    override fun onPause() {
+        super.onPause()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
-        super.finish()
     }
 
     override fun onDestroy() {

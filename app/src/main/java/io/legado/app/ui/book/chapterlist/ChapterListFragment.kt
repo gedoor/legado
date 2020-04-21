@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.chapterlist
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +14,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
@@ -36,6 +37,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     private var durChapterIndex = 0
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var tocLiveData: LiveData<List<BookChapter>>? = null
+    private var scrollToDurChapter = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.chapterCallBack = this
@@ -53,7 +55,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initView() {
-        ll_chapter_base_info.setBackgroundColor(backgroundColor)
+        ll_chapter_base_info.setBackgroundColor(bottomBackground)
         iv_chapter_top.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
         iv_chapter_bottom.onClick {
             if (adapter.itemCount > 0) {
@@ -65,6 +67,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initBook() {
         launch {
             withContext(IO) {
@@ -73,8 +76,8 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             initDoc()
             book?.let {
                 durChapterIndex = it.durChapterIndex
-                tv_current_chapter_info.text = it.durChapterTitle
-                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+                tv_current_chapter_info.text =
+                    "${it.durChapterTitle}(${it.durChapterIndex + 1}/${it.totalChapterNum})"
                 initCacheFileNames(it)
             }
         }
@@ -85,7 +88,10 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
         tocLiveData?.observe(viewLifecycleOwner, Observer {
             adapter.setItems(it)
-            mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+            if (!scrollToDurChapter) {
+                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+                scrollToDurChapter = true
+            }
         })
     }
 
@@ -103,7 +109,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             book?.bookUrl?.let { bookUrl ->
                 if (chapter.bookUrl == bookUrl) {
                     adapter.cacheFileNames.add(BookHelp.formatChapterName(chapter))
-                    adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+                    adapter.notifyItemChanged(chapter.index, true)
                 }
             }
         }

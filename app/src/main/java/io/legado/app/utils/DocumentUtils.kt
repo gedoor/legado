@@ -98,7 +98,7 @@ object DocumentUtils {
                     DocumentsContract.Document.COLUMN_LAST_MODIFIED,
                     DocumentsContract.Document.COLUMN_SIZE,
                     DocumentsContract.Document.COLUMN_MIME_TYPE
-                ), null, null, null
+                ), null, null, DocumentsContract.Document.COLUMN_DISPLAY_NAME
             )
             c?.let {
                 val ici = c.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
