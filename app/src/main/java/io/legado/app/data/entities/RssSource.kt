@@ -23,6 +23,7 @@ data class RssSource(
     var sourceIcon: String = "",
     var sourceGroup: String? = null,
     var enabled: Boolean = true,
+    var sortUrl: String? = null,
     //列表规则
     var ruleArticles: String? = null,
     var ruleNextPage: String? = null,
@@ -99,4 +100,16 @@ data class RssSource(
         return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
 
+    fun sortUrls(): LinkedHashMap<String, String> {
+        val sortMap = linkedMapOf<String, String>()
+        sortUrl?.split("(&&|\n)+".toRegex())?.forEach { c ->
+            val d = c.split("::")
+            if (d.size > 1)
+                sortMap[d[0]] = d[1]
+        }
+        if (sortMap.isEmpty()) {
+            sortMap[""] = sourceUrl
+        }
+        return sortMap
+    }
 }

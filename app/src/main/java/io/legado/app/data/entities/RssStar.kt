@@ -9,6 +9,7 @@ import androidx.room.Entity
 )
 data class RssStar(
     var origin: String = "",
+    var sort: String = "",
     var title: String = "",
     var starTime: Long = 0,
     var link: String = "",
@@ -20,6 +21,7 @@ data class RssStar(
     fun toRssArticle(): RssArticle {
         return RssArticle(
             origin = origin,
+            sort = sort,
             title = title,
             link = link,
             pubDate = pubDate,

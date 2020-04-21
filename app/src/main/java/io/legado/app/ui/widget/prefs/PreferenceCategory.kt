@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
@@ -36,13 +37,18 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCate
                 view.isVisible = title != null && title.isNotEmpty()
 
                 val da = it.findViewById(R.id.preference_divider_above)
+                val dividerColor = if (AppConfig.isNightTheme) {
+                    ColorUtils.shiftColor(context.backgroundColor, 1.05f)
+                } else {
+                    ColorUtils.shiftColor(context.backgroundColor, 0.95f)
+                }
                 if (da is View) {
-                    da.setBackgroundColor(ColorUtils.darkenColor(context.backgroundColor))
+                    da.setBackgroundColor(dividerColor)
                     da.isVisible = it.isDividerAllowedAbove
                 }
                 val db = it.findViewById(R.id.preference_divider_below)
                 if (db is View) {
-                    db.setBackgroundColor(ColorUtils.darkenColor(context.backgroundColor))
+                    db.setBackgroundColor(dividerColor)
                     db.isVisible = it.isDividerAllowedBelow
                 }
             }

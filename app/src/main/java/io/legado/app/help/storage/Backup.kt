@@ -32,9 +32,7 @@ object Backup {
         val lastBackup = context.getPrefLong(PreferKey.lastBackup)
         if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
             Coroutine.async {
-                context.getPrefString(PreferKey.backupPath)?.let {
-                    backup(context, it, true)
-                }
+                backup(context, context.getPrefString(PreferKey.backupPath) ?: "", true)
             }
         }
     }
@@ -71,7 +69,11 @@ object Backup {
                 if (path.isContentPath()) {
                     copyBackup(context, Uri.parse(path), isAuto)
                 } else {
-                    copyBackup(File(path), isAuto)
+                    if (path.isEmpty()) {
+                        copyBackup(context.getExternalFilesDir(null)!!, false)
+                    } else {
+                        copyBackup(File(path), isAuto)
+                    }
                 }
             }
         }

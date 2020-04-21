@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -105,10 +106,10 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         booksLiveData?.removeObservers(this)
         booksLiveData =
             when (groupId) {
-                -1 -> App.db.bookDao().observeAll()
-                -2 -> App.db.bookDao().observeLocal()
-                -3 -> App.db.bookDao().observeAudio()
-                -11 -> App.db.bookDao().observeNoGroup()
+                AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
+                AppConst.bookGroupLocal.groupId -> App.db.bookDao().observeLocal()
+                AppConst.bookGroupAudio.groupId -> App.db.bookDao().observeAudio()
+                AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
                 else -> App.db.bookDao().observeByGroup(groupId)
             }
         booksLiveData?.observe(this, Observer { list ->
@@ -129,22 +130,22 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 .show(supportFragmentManager, "groupManage")
             R.id.menu_no_group -> {
                 title_bar.subtitle = getString(R.string.no_group)
-                groupId = -11
+                groupId = AppConst.bookGroupNone.groupId
                 initBookData()
             }
             R.id.menu_all -> {
                 title_bar.subtitle = item.title
-                groupId = -1
+                groupId = AppConst.bookGroupAll.groupId
                 initBookData()
             }
             R.id.menu_local -> {
                 title_bar.subtitle = item.title
-                groupId = -2
+                groupId = AppConst.bookGroupLocal.groupId
                 initBookData()
             }
             R.id.menu_audio -> {
                 title_bar.subtitle = item.title
-                groupId = -3
+                groupId = AppConst.bookGroupAudio.groupId
                 initBookData()
             }
             else -> if (item.groupId == R.id.menu_group) {

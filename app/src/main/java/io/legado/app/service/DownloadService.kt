@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.utils.postEvent
@@ -25,7 +26,7 @@ import java.util.concurrent.Executors
 class DownloadService : BaseService() {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
+    private var tasks = CompositeCoroutine()
     private val handler = Handler()
     private var runnable: Runnable = Runnable { upDownload() }
     private val downloadMap = hashMapOf<String, LinkedHashSet<BookChapter>>()
@@ -125,11 +126,7 @@ class DownloadService : BaseService() {
                                     chapter,
                                     scope = this,
                                     context = searchPool
-                                )
-                                    //.onStart {
-                                    //    notificationContent = "启动:" + chapter.title
-                                    //}
-                                    .onSuccess(IO) { content ->
+                                ).onSuccess(IO) { content ->
                                         downloadCount[entry.key]?.increaseSuccess()
                                         BookHelp.saveContent(book, chapter, content)
                                     }
@@ -165,7 +162,7 @@ class DownloadService : BaseService() {
         tasks.add(task)
         task.invokeOnCompletion {
             tasks.remove(task)
-            if (tasks.isEmpty()) {
+            if (tasks.isEmpty) {
                 stopSelf()
             }
         }
@@ -192,17 +189,21 @@ class DownloadService : BaseService() {
         val notification = builder.build()
         startForeground(AppConst.notificationIdDownload, notification)
     }
-}
 
-class DownloadCount{
-    @Volatile public var downloadFinishedCount = 0 // 下载完成的条目数量
-    @Volatile public var successCount = 0 //下载成功的条目数量
 
-    fun increaseSuccess(){
-        ++successCount;
-    }
+    class DownloadCount {
+        @Volatile
+        var downloadFinishedCount = 0 // 下载完成的条目数量
 
-    fun increaseFinished(){
-        ++downloadFinishedCount;
+        @Volatile
+        var successCount = 0 //下载成功的条目数量
+
+        fun increaseSuccess() {
+            ++successCount;
+        }
+
+        fun increaseFinished() {
+            ++downloadFinishedCount;
+        }
     }
 }

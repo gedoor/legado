@@ -107,6 +107,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     App.db.bookDao().update(book)
                     ReadBook.chapterSize = it.size
+                    ReadBook.upMsg(null)
                     ReadBook.loadContent(resetPageOffset = true)
                 }
             } else {
@@ -129,6 +130,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         ReadBook.upMsg(context.getString(R.string.error_load_toc))
                     }
             }
+        }.onError {
+            ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
         }
     }
 
@@ -175,7 +178,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
         }.onStart {
-            ReadBook.upMsg("正在自动换源")
+            ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onFinally {
             ReadBook.upMsg(null)
         }

@@ -204,7 +204,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
     }
 
     private fun importSourceUrl(url: String): Int {
-        HttpHelper.simpleGet(url)?.let { body ->
+        HttpHelper.simpleGet(url, "UTF-8")?.let { body ->
             val sources = mutableListOf<RssSource>()
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {

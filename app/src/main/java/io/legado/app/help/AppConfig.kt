@@ -115,13 +115,19 @@ object AppConfig {
             App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
         }
 
+    var bookGroupNoneShow: Boolean
+        get() = App.INSTANCE.getPrefBoolean("bookGroupNone", false)
+        set(value) {
+            App.INSTANCE.putPrefBoolean("bookGroupNone", value)
+        }
+
     var elevation: Int
         get() = App.INSTANCE.getPrefInt("elevation", -1)
         set(value) {
             App.INSTANCE.putPrefInt("elevation", value)
         }
 
-    val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean("readBodyToLh", true)
+    val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
 
     val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
 }

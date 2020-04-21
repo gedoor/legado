@@ -18,6 +18,7 @@ class AnalyzeTxtFile {
     private val tocRules = arrayListOf<TxtTocRule>()
     private lateinit var charset: Charset
 
+    @Throws(Exception::class)
     fun analyze(context: Context, book: Book): ArrayList<BookChapter> {
         val bookFile = getBookFile(context, book)
         book.charset = EncodingDetect.getEncode(bookFile)
@@ -33,6 +34,7 @@ class AnalyzeTxtFile {
         return analyze(bookStream, book, rulePattern)
     }
 
+    @Throws(Exception::class)
     private fun analyze(
         bookStream: RandomAccessFile,
         book: Book,
@@ -58,18 +60,19 @@ class AnalyzeTxtFile {
         var allLength = 0
 
         //获取文件中的数据到buffer，直到没有数据为止
-        while (bookStream.read(buffer, 0, buffer.size).also { length = it } > 0) {
+        while (bookStream.read(buffer).also { length = it } > 0) {
             blockPos++
-            var blockContent = String(buffer, charset)
-            val lastN = blockContent.lastIndexOf("\n")
-            if (lastN > 0) {
-                blockContent = blockContent.substring(0, lastN)
-                length = blockContent.toByteArray(charset).size
-                allLength += length
-                bookStream.seek(allLength.toLong())
-            }
             //如果存在Chapter
-            if (rulePattern != null) { //将数据转换成String
+            if (rulePattern != null) {
+                //将数据转换成String, 不能超过length
+                var blockContent = String(buffer, 0, length, charset)
+                val lastN = blockContent.lastIndexOf("\n")
+                if (lastN > 0) {
+                    blockContent = blockContent.substring(0, lastN)
+                    length = blockContent.toByteArray(charset).size
+                    allLength += length
+                    bookStream.seek(allLength.toLong())
+                }
                 //当前Block下使过的String的指针
                 var seekPos = 0
                 //进行正则匹配
@@ -79,35 +82,59 @@ class AnalyzeTxtFile {
                     val chapterStart = matcher.start()
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
-                    if (chapterContent.length > 30000 && pattern == null) {
+                    val chapterLength = chapterContent.toByteArray(charset).size
+                    if (chapterLength > 30000 && pattern == null) {
                         //移除不匹配的规则
                         tocRules.remove(tocRule)
                         return analyze(bookStream, book, null)
                     }
                     //如果 seekPos == 0 && nextChapterPos != 0 表示当前block处前面有一段内容
-                    //第一种情况一定是序章 第二种情况可能是上一个章节的内容
-                    if (seekPos == 0 && chapterStart != 0 && toc.isEmpty()) { //获取当前章节的内容
-                        val chapter = BookChapter()
-                        chapter.title = "前言"
-                        chapter.start = 0
-                        chapter.end = chapterContent.toByteArray(charset).size.toLong()
-                        toc.add(chapter)
-                        //创建当前章节
-                        val curChapter = BookChapter()
-                        curChapter.title = matcher.group()
-                        curChapter.start = chapter.end
-                        toc.add(curChapter)
-                    } else {
-                        val lastChapter = toc.lastOrNull()
-                        lastChapter?.let {
-                            //上一章节结束等于这一章节开始
-                            it.end = it.start!! + chapterContent.toByteArray(charset).size
+                    //第一种情况一定是序章 第二种情况是上一个章节的内容
+                    if (seekPos == 0 && chapterStart != 0) { //获取当前章节的内容
+                        if (toc.isEmpty()) { //如果当前没有章节，那么就是序章
+                            //加入简介
+                            if (StringUtils.trim(chapterContent).isNotEmpty()) {
+                                val qyChapter = BookChapter()
+                                qyChapter.title = "前言"
+                                qyChapter.start = 0
+                                qyChapter.end = chapterLength.toLong()
+                                toc.add(qyChapter)
+                            }
+                            //创建当前章节
+                            val curChapter = BookChapter()
+                            curChapter.title = matcher.group()
+                            curChapter.start = chapterLength.toLong()
+                            toc.add(curChapter)
+                        } else { //否则就block分割之后，上一个章节的剩余内容
+                            //获取上一章节
+                            val lastChapter = toc.last()
+                            //将当前段落添加上一章去
+                            lastChapter.end =
+                                lastChapter.end!! + chapterLength.toLong()
+                            //创建当前章节
+                            val curChapter = BookChapter()
+                            curChapter.title = matcher.group()
+                            curChapter.start = lastChapter.end
+                            toc.add(curChapter)
                         }
-                        //创建当前章节
-                        val curChapter = BookChapter()
-                        curChapter.title = matcher.group()
-                        curChapter.start = lastChapter?.end ?: 0
-                        toc.add(curChapter)
+                    } else {
+                        if (toc.isNotEmpty()) { //获取章节内容
+                            //获取上一章节
+                            val lastChapter = toc.last()
+                            lastChapter.end =
+                                lastChapter.start!! + chapterContent.toByteArray(charset).size.toLong()
+                            //创建当前章节
+                            val curChapter = BookChapter()
+                            curChapter.title = matcher.group()
+                            curChapter.start = lastChapter.end
+                            toc.add(curChapter)
+                        } else { //如果章节不存在则创建章节
+                            val curChapter = BookChapter()
+                            curChapter.title = matcher.group()
+                            curChapter.start = 0
+                            curChapter.end = 0
+                            toc.add(curChapter)
+                        }
                     }
                     //设置指针偏移
                     seekPos += chapterContent.length
@@ -154,7 +181,8 @@ class AnalyzeTxtFile {
             //block的偏移点
             curOffset += length.toLong()
 
-            if (rulePattern != null) { //设置上一章的结尾
+            if (rulePattern != null) {
+                //设置上一章的结尾
                 val lastChapter = toc.last()
                 lastChapter.end = curOffset
             }
@@ -173,6 +201,7 @@ class AnalyzeTxtFile {
             bean.url = (MD5Utils.md5Encode16(book.originName + i + bean.title) ?: "")
         }
         book.latestChapterTitle = toc.last().title
+        book.totalChapterNum = toc.size
 
         System.gc()
         System.runFinalization()
@@ -220,10 +249,9 @@ class AnalyzeTxtFile {
             val bookFile = getBookFile(App.INSTANCE, book)
             //获取文件流
             val bookStream = RandomAccessFile(bookFile, "r")
-            bookStream.seek(bookChapter.start ?: 0)
-            val extent = (bookChapter.end!! - bookChapter.start!!).toInt()
-            val content = ByteArray(extent)
-            bookStream.read(content, 0, extent)
+            val content = ByteArray((bookChapter.end!! - bookChapter.start!!).toInt())
+            bookStream.seek(bookChapter.start!!)
+            bookStream.read(content)
             return String(content, book.fileCharset())
         }
 

@@ -44,12 +44,11 @@ data class TextPage(
             if (y < 0) y = 0f
             for (lineIndex in 0 until layout.lineCount) {
                 val textLine = TextLine()
-                textLine.lineTop = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)))
-                textLine.lineBase = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex)))
+                textLine.lineTop = ChapterProvider.paddingTop + y + layout.getLineTop(lineIndex)
+                textLine.lineBase =
+                    ChapterProvider.paddingTop + y + layout.getLineBaseline(lineIndex)
                 textLine.lineBottom =
-                    textLine.lineBase + ChapterProvider.contentPaint.fontMetrics.descent
+                    ChapterProvider.paddingTop + y + layout.getLineBottom(lineIndex)
                 var x = ChapterProvider.paddingLeft +
                         (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
                 textLine.text =

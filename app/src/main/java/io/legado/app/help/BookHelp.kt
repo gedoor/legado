@@ -1,6 +1,6 @@
 package io.legado.app.help
 
-import com.github.houbb.opencc4j.core.impl.ZhConvertBootstrap
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
@@ -231,12 +231,17 @@ object BookHelp {
         if (!c.substringBefore("\n").contains(title)) {
             c = "$title\n$c"
         }
-        when (AppConfig.chineseConverterType) {
-            1 -> c = ZhConvertBootstrap.newInstance().toSimple(c)
-            2 -> c = ZhConvertBootstrap.newInstance().toTraditional(c)
+        try {
+            when (AppConfig.chineseConverterType) {
+                1 -> c = HanLP.convertToSimplifiedChinese(c)
+                2 -> c = HanLP.convertToTraditionalChinese(c)
+            }
+        } catch (e: Exception) {
+            withContext(Main) {
+                App.INSTANCE.toast("简繁转换出错")
+            }
         }
         return c
             .replace("\\s*\\n+\\s*".toRegex(), "\n${ReadBookConfig.bodyIndent}")
-            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
     }
 }

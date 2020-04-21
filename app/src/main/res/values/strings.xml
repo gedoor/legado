@@ -8,6 +8,10 @@
     <string name="menu_backup">Home</string>
     <string name="menu_restore">恢复</string>
     <string name="menu_import_old">导入阅读数据</string>
+    <string name="mkdirs">创建子文件夹</string>
+    <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
+    <string name="backup_path">备份路径</string>
+    <string name="menu_import_old_version">导入旧版数据</string>
     <string name="menu_import_github">导入Github数据</string>
     <string name="menu_replace_rule">净化替换</string>
     <string name="menu_send">Send</string>
@@ -376,6 +380,7 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
@@ -557,8 +562,11 @@
     <string name="export">导出</string>
     <string name="load_toc">加载目录</string>
     <string name="tts">TTS</string>
+    <string name="web_dav_pw">WebDav 密码</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
     <string name="web_dav_url_s">输入你的服务器地址</string>
+    <string name="web_dav_url">WebDav 服务器地址</string>
+    <string name="web_dav_account">WebDav 账号</string>
     <string name="web_dav_account_s">输入你的WebDav账号</string>
     <string name="rss_source">订阅源</string>
     <string name="rss_source_edit">编辑订阅源</string>
@@ -604,7 +612,7 @@
     <string name="sys_folder_picker">系统文件夹选择器</string>
     <string name="app_folder_picker">自带选择器\n(Android10以上因权限限制可能无法使用)</string>
     <string name="a10_permission_toast">Android10以上因权限限制可能无法读写文件</string>
-    <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示欣悦·搜索</string>
+    <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示阅读·搜索</string>
     <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
     <string name="record_log">记录日志</string>
     <string name="chinese_converter">中文简繁体转换</string>
@@ -647,4 +655,39 @@
     <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的"授予权限"按钮，或前往“设置”—“应用权限”—打开所需权限。如果授予权限后仍然不正常，请点击右上角的“选择文件夹”，使用系统文件夹选择器。</string>
     <string name="alouding_disable">全文朗读中不能朗读选中文字</string>
     <string name="read_body_to_lh">扩展到刘海</string>
+    <string name="toc_updateing">更新目录中</string>
+    <string name="media_button_on_exit_title">全程响应耳机按键</string>
+    <string name="media_button_on_exit_summary">即使退出软件也响应耳机按键</string>
+    <string name="contributors">开发人员</string>
+    <string name="contact">联系我们</string>
+    <string name="license">开源许可</string>
+    <string name="other" translatable="false">其它</string>
+    <string name="official_account" translatable="false">开源阅读软件</string>
+    <string name="follow_official_account">关注公众号</string>
+    <string name="wechat">微信</string>
+    <string name="thanks">您的支持是我更新的动力</string>
+    <string name="about_official_account">公众号[开源阅读软件]</string>
+    <string name="source_auto_changing">正在自动换源</string>
+    <string name="click_to_apply">点击加入</string>
+    <string name="middle">中</string>
+    <string name="information">信息</string>
+    <string name="hideHeader">隐藏页眉</string>
+    <string name="hideFooter">隐藏页脚</string>
+  
+    <!--color-->
+    <string name="primary">主色调</string>
+    <string name="accent">强调色</string>
+    <string name="background_color">背景色</string>
+    <string name="navbar_color">底部操作栏颜色</string>
+    <string name="day">白天</string>
+    <string name="day_color_primary">白天，主色调</string>
+    <string name="day_color_accent">白天，强调色</string>
+    <string name="day_background_color">白天，背景色</string>
+    <string name="day_navbar_color">白天，底栏色</string>
+    <string name="night">夜间</string>
+    <string name="night_primary">夜间，主色调</string>
+    <string name="night_accent">夜间，强调色</string>
+    <string name="night_background_color">夜间，背景色</string>
+    <string name="night_navbar_color">夜间，底栏色</string>
+
 </resources>

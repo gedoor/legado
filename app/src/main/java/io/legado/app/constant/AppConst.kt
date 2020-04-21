@@ -49,6 +49,7 @@ object AppConst {
     val bookGroupAll = BookGroup(-1, App.INSTANCE.getString(R.string.all))
     val bookGroupLocal = BookGroup(-2, App.INSTANCE.getString(R.string.local))
     val bookGroupAudio = BookGroup(-3, App.INSTANCE.getString(R.string.audio))
+    val bookGroupNone = BookGroup(-4, App.INSTANCE.getString(R.string.no_group))
 
     const val notificationIdRead = 1144771
     const val notificationIdAudio = 1144772

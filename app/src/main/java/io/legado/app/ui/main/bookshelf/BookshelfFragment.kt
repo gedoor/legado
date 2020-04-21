@@ -39,6 +39,9 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.fragment_bookshelf.*
 import kotlinx.android.synthetic.main.view_tab_layout.*
 import kotlinx.android.synthetic.main.view_title_bar.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.startActivity
 
 
@@ -51,8 +54,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         get() = getViewModel(BookshelfViewModel::class.java)
 
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
+    private var noGroupLiveData: LiveData<Int>? = null
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Int, Fragment>()
+    private var showGroupNone = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
@@ -99,22 +104,49 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
             viewModel.checkGroup(it)
-            synchronized(this) {
-                tab_layout.removeOnTabSelectedListener(this)
-                bookGroups.clear()
-                if (AppConfig.bookGroupAllShow) {
-                    bookGroups.add(AppConst.bookGroupAll)
+            launch {
+                synchronized(this) {
+                    tab_layout.removeOnTabSelectedListener(this@BookshelfFragment)
                 }
-                if (AppConfig.bookGroupLocalShow) {
-                    bookGroups.add(AppConst.bookGroupLocal)
+                var noGroupSize = 0
+                withContext(IO) {
+                    if (AppConfig.bookGroupNoneShow) {
+                        noGroupSize = App.db.bookDao().noGroupSize
+                    }
                 }
-                if (AppConfig.bookGroupAudioShow) {
-                    bookGroups.add(AppConst.bookGroupAudio)
+                synchronized(this@BookshelfFragment) {
+                    bookGroups.clear()
+                    if (AppConfig.bookGroupAllShow) {
+                        bookGroups.add(AppConst.bookGroupAll)
+                    }
+                    if (AppConfig.bookGroupLocalShow) {
+                        bookGroups.add(AppConst.bookGroupLocal)
+                    }
+                    if (AppConfig.bookGroupAudioShow) {
+                        bookGroups.add(AppConst.bookGroupAudio)
+                    }
+                    showGroupNone = if (noGroupSize > 0 && it.isNotEmpty()) {
+                        bookGroups.add(AppConst.bookGroupNone)
+                        true
+                    } else {
+                        false
+                    }
+                    bookGroups.addAll(it)
+                    view_pager_bookshelf.adapter?.notifyDataSetChanged()
+                    tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
+                    tab_layout.addOnTabSelectedListener(this@BookshelfFragment)
                 }
-                bookGroups.addAll(it)
-                view_pager_bookshelf.adapter?.notifyDataSetChanged()
-                tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
-                tab_layout.addOnTabSelectedListener(this)
+            }
+        })
+        noGroupLiveData?.removeObservers(viewLifecycleOwner)
+        noGroupLiveData = App.db.bookDao().observeNoGroupSize()
+        noGroupLiveData?.observe(viewLifecycleOwner, Observer {
+            if (it > 0 && !showGroupNone && AppConfig.bookGroupNoneShow) {
+                showGroupNone = true
+                upGroup()
+            } else if (it == 0 && showGroupNone) {
+                showGroupNone = false
+                upGroup()
             }
         })
     }
@@ -129,20 +161,36 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override fun upGroup() {
-        synchronized(this) {
-            bookGroups.remove(AppConst.bookGroupAll)
-            bookGroups.remove(AppConst.bookGroupLocal)
-            bookGroups.remove(AppConst.bookGroupAudio)
-            if (AppConfig.bookGroupAudioShow) {
-                bookGroups.add(0, AppConst.bookGroupAudio)
+        launch {
+            var noGroupSize = 0
+            withContext(IO) {
+                if (AppConfig.bookGroupNoneShow) {
+                    noGroupSize = App.db.bookDao().noGroupSize
+                }
             }
-            if (AppConfig.bookGroupLocalShow) {
-                bookGroups.add(0, AppConst.bookGroupLocal)
+            synchronized(this@BookshelfFragment) {
+                bookGroups.remove(AppConst.bookGroupAll)
+                bookGroups.remove(AppConst.bookGroupLocal)
+                bookGroups.remove(AppConst.bookGroupAudio)
+                bookGroups.remove(AppConst.bookGroupNone)
+                showGroupNone =
+                    if (noGroupSize > 0 && bookGroups.isNotEmpty()) {
+                        bookGroups.add(0, AppConst.bookGroupNone)
+                        true
+                    } else {
+                        false
+                    }
+                if (AppConfig.bookGroupAudioShow) {
+                    bookGroups.add(0, AppConst.bookGroupAudio)
+                }
+                if (AppConfig.bookGroupLocalShow) {
+                    bookGroups.add(0, AppConst.bookGroupLocal)
+                }
+                if (AppConfig.bookGroupAllShow) {
+                    bookGroups.add(0, AppConst.bookGroupAll)
+                }
+                view_pager_bookshelf.adapter?.notifyDataSetChanged()
             }
-            if (AppConfig.bookGroupAllShow) {
-                bookGroups.add(0, AppConst.bookGroupAll)
-            }
-            view_pager_bookshelf.adapter?.notifyDataSetChanged()
         }
     }
 
