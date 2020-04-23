@@ -189,7 +189,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 rootView?.apply {
                     tocRule.name = tv_rule_name.text.toString()
                     tocRule.rule = tv_rule_regex.text.toString()
-                    viewModel.saveRule(tocRule, rule)
+                    viewModel.saveRule(tocRule)
                 }
             }
             cancelButton()
