@@ -53,13 +53,14 @@ object ChapterProvider {
         val stringBuilder = StringBuilder()
         var durY = 0f
         textPages.add(TextPage())
-        for ((index, text) in contents.withIndex()) {
+        contents.forEachIndexed { index, text ->
             val isTitle = index == 0
-            if (isTitle && ReadBookConfig.titleMode == 2) {
-                continue
+            if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                durY = setTypeText(
+                    text, durY, textPages, pageLines,
+                    pageLengths, stringBuilder, isTitle
+                )
             }
-            durY =
-                setTypeText(text, durY, textPages, pageLines, pageLengths, stringBuilder, isTitle)
         }
         textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
@@ -69,7 +70,7 @@ object ChapterProvider {
         if (pageLengths.size < textPages.size) {
             pageLengths.add(textPages.last().text.length)
         }
-        for ((index, item) in textPages.withIndex()) {
+        textPages.forEachIndexed { index, item ->
             item.index = index
             item.pageSize = textPages.size
             item.chapterIndex = bookChapter.index
