@@ -109,7 +109,7 @@ abstract class BaseReadAloudService : BaseService(),
                 readAloudNumber = textChapter.getReadLength(pageIndex)
                 contentList.clear()
                 if (getPrefBoolean(PreferKey.readAloudByPage)) {
-                    for (index in pageIndex..textChapter.lastIndex()) {
+                    for (index in pageIndex..textChapter.lastIndex) {
                         textChapter.page(index)?.text?.split("\n")?.let {
                             contentList.addAll(it)
                         }

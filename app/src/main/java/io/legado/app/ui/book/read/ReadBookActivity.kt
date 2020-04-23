@@ -507,7 +507,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 } else {
                     tv_chapter_url.gone()
                 }
-                seek_read_page.max = it.pageSize().minus(1)
+                seek_read_page.max = it.pageSize.minus(1)
                 seek_read_page.progress = ReadBook.durPageIndex
                 tv_pre.isEnabled = ReadBook.durChapterIndex != 0
                 tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1

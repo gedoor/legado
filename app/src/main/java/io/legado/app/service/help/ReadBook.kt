@@ -107,7 +107,7 @@ object ReadBook {
 
     fun moveToPrevChapter(upContent: Boolean, toLast: Boolean = true): Boolean {
         if (durChapterIndex > 0) {
-            durPageIndex = if (toLast) prevTextChapter?.lastIndex() ?: 0 else 0
+            durPageIndex = if (toLast) prevTextChapter?.lastIndex ?: 0 else 0
             durChapterIndex--
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
@@ -176,10 +176,10 @@ object ReadBook {
 
     fun durChapterPos(): Int {
         curTextChapter?.let {
-            if (durPageIndex < it.pageSize()) {
+            if (durPageIndex < it.pageSize) {
                 return durPageIndex
             }
-            return it.pageSize() - 1
+            return it.pageSize - 1
         }
         return durPageIndex
     }
