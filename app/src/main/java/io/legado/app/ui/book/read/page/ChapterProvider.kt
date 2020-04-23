@@ -189,11 +189,11 @@ object ChapterProvider {
         val gapCount: Int = words.length - 1
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
-        for ((i, char) in words.toStringArray().withIndex()) {
-            val cw = StaticLayout.getDesiredWidth(char, textPaint)
-            val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
+        words.toStringArray().forEachIndexed { index, s ->
+            val cw = StaticLayout.getDesiredWidth(s, textPaint)
+            val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
             textLine.addTextChar(
-                charData = char,
+                charData = s,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
