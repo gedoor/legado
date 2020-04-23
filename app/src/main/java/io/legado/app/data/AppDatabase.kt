@@ -36,7 +36,9 @@ abstract class AppDatabase : RoomDatabase() {
                         database.execSQL("DROP TABLE txtTocRules")
                         database.execSQL(
                             """
-                            CREATE TABLE txtTocRules(id INTEGER NOT NULL, name TEXT NOT NULL, rule TEXT NOT NULL, serialNumber INTEGER NOT NULL, enable INTEGER NOT NULL, PRIMARY KEY (id))
+                            CREATE TABLE txtTocRules(id INTEGER NOT NULL, 
+                            name TEXT NOT NULL, rule TEXT NOT NULL, serialNumber INTEGER NOT NULL, 
+                            enable INTEGER NOT NULL, PRIMARY KEY (id))
                         """
                         )
                     }
