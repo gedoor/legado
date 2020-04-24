@@ -63,7 +63,9 @@ object Help {
         }
     }
 
-
+    /**
+     * 屏幕方向
+     */
     @SuppressLint("SourceLockedOrientationActivity")
     fun setOrientation(activity: Activity) = activity.apply {
         when (AppConfig.requestedDirection) {
