@@ -19,7 +19,7 @@ object OldRule {
             source = GSON.fromJsonObject<BookSource>(json.trim())
         }
         runCatching {
-            if (source == null || source?.ruleToc.isNullOrBlank()) {
+            if (source == null || source?.ruleToc == null) {
                 source = BookSource().apply {
                     val jsonItem = jsonPath.parse(json.trim())
                     bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
@@ -37,7 +37,7 @@ object OldRule {
                     if (exploreUrl.isNullOrBlank()) {
                         enabledExplore = false
                     }
-                    val searchRule = SearchRule(
+                    ruleSearch = SearchRule(
                         bookList = toNewRule(jsonItem.readString("ruleSearchList")),
                         name = toNewRule(jsonItem.readString("ruleSearchName")),
                         author = toNewRule(jsonItem.readString("ruleSearchAuthor")),
@@ -47,8 +47,7 @@ object OldRule {
                         coverUrl = toNewRule(jsonItem.readString("ruleSearchCoverUrl")),
                         lastChapter = toNewRule(jsonItem.readString("ruleSearchLastChapter"))
                     )
-                    ruleSearch = GSON.toJson(searchRule)
-                    val exploreRule = ExploreRule(
+                    ruleExplore = ExploreRule(
                         bookList = toNewRule(jsonItem.readString("ruleFindList")),
                         name = toNewRule(jsonItem.readString("ruleFindName")),
                         author = toNewRule(jsonItem.readString("ruleFindAuthor")),
@@ -58,8 +57,7 @@ object OldRule {
                         coverUrl = toNewRule(jsonItem.readString("ruleFindCoverUrl")),
                         lastChapter = toNewRule(jsonItem.readString("ruleFindLastChapter"))
                     )
-                    ruleExplore = GSON.toJson(exploreRule)
-                    val bookInfoRule = BookInfoRule(
+                    ruleBookInfo = BookInfoRule(
                         init = toNewRule(jsonItem.readString("ruleBookInfoInit")),
                         name = toNewRule(jsonItem.readString("ruleBookName")),
                         author = toNewRule(jsonItem.readString("ruleBookAuthor")),
@@ -69,23 +67,20 @@ object OldRule {
                         lastChapter = toNewRule(jsonItem.readString("ruleBookLastChapter")),
                         tocUrl = toNewRule(jsonItem.readString("ruleChapterUrl"))
                     )
-                    ruleBookInfo = GSON.toJson(bookInfoRule)
-                    val chapterRule = TocRule(
+                    ruleToc = TocRule(
                         chapterList = toNewRule(jsonItem.readString("ruleChapterList")),
                         chapterName = toNewRule(jsonItem.readString("ruleChapterName")),
                         chapterUrl = toNewRule(jsonItem.readString("ruleContentUrl")),
                         nextTocUrl = toNewRule(jsonItem.readString("ruleChapterUrlNext"))
                     )
-                    ruleToc = GSON.toJson(chapterRule)
                     var content = toNewRule(jsonItem.readString("ruleBookContent")) ?: ""
                     if (content.startsWith("$") && !content.startsWith("$.")) {
                         content = content.substring(1)
                     }
-                    val contentRule = ContentRule(
+                    ruleContent = ContentRule(
                         content = content,
                         nextContentUrl = toNewRule(jsonItem.readString("ruleContentUrlNext"))
                     )
-                    ruleContent = GSON.toJson(contentRule)
                 }
             }
         }
