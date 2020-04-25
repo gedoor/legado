@@ -350,7 +350,7 @@ class BookSourceEditActivity :
         return true
     }
 
-    override fun sendText(text: String) {
+    private fun insertText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -362,6 +362,23 @@ class BookSourceEditActivity :
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
+        }
+    }
+
+    override fun sendText(text: String) {
+        if (text == AppConst.keyboardToolChars[0]) {
+            insertText(
+                """
+                ,{
+                "charset": "",
+                "method": "POST",
+                "body": "",
+                "headers": "{"User-Agent": ""}"
+                }
+            """.trimIndent()
+            )
+        } else {
+            insertText(text)
         }
     }
 
