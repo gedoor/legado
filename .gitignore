@@ -9,4 +9,6 @@
 /release
 /tmp
 node_modules/
+/app/app
+/app/google
 package-lock.json
