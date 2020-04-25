@@ -373,7 +373,7 @@ class BookSourceEditActivity :
                 "charset": "",
                 "method": "POST",
                 "body": "",
-                "headers": "{"User-Agent": ""}"
+                "headers": {"User-Agent": ""}
                 }
                 """.trimIndent()
             )

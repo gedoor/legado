@@ -206,7 +206,7 @@ class RssSourceEditActivity :
                 "charset": "",
                 "method": "POST",
                 "body": "",
-                "headers": "{"User-Agent": ""}"
+                "headers": {"User-Agent": ""}
                 }
 
             """.trimIndent()
