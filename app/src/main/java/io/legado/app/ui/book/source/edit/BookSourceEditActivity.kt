@@ -375,7 +375,7 @@ class BookSourceEditActivity :
                 "body": "",
                 "headers": "{"User-Agent": ""}"
                 }
-            """.trimIndent()
+                """.trimIndent()
             )
         } else {
             insertText(text)
