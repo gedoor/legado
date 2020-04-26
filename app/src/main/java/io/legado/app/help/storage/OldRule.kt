@@ -1,5 +1,6 @@
 package io.legado.app.help.storage
 
+import androidx.annotation.Keep
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
@@ -128,6 +129,7 @@ object OldRule {
         return source
     }
 
+    @Keep
     data class BookSourceAny(
         var bookSourceName: String = "",                // 名称
         var bookSourceGroup: String? = null,            // 分组
