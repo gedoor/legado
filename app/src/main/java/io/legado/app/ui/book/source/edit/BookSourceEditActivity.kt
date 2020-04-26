@@ -367,16 +367,7 @@ class BookSourceEditActivity :
 
     override fun sendText(text: String) {
         if (text == AppConst.keyboardToolChars[0]) {
-            insertText(
-                """
-                ,{
-                "charset": "",
-                "method": "POST",
-                "body": "",
-                "headers": {"User-Agent": ""}
-                }
-                """.trimIndent()
-            )
+            insertText(AppConst.urlOption)
         } else {
             insertText(text)
         }

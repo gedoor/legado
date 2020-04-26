@@ -56,4 +56,15 @@ object AppConst {
     const val notificationIdAudio = 1144772
     const val notificationIdWeb = 1144773
     const val notificationIdDownload = 1144774
+
+    val urlOption: String by lazy {
+        """
+        ,{
+        "charset": "",
+        "method": "POST",
+        "body": "",
+        "headers": {"User-Agent": ""}
+        }
+        """.trimIndent()
+    }
 }
