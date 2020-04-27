@@ -162,6 +162,7 @@ class AnalyzeUrl(
                 options.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
                 options.headers?.let { headers ->
                     if (headers is Map<*, *>) {
+                        @Suppress("unchecked_cast")
                         headerMap.putAll(headers as Map<out String, String>)
                     }
                     if (headers is String) {
