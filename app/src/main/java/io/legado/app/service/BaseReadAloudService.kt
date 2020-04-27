@@ -116,7 +116,9 @@ abstract class BaseReadAloudService : BaseService(),
                     }
                 } else {
                     textChapter.getUnRead(pageIndex).split("\n").forEach {
-                        contentList.add(it)
+                        if (it.isNotEmpty()) {
+                            contentList.add(it)
+                        }
                     }
                 }
                 if (play) play()
