@@ -20,11 +20,13 @@ import java.util.*
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
     companion object {
-        var textToSpeech: TextToSpeech? = null
+        private var textToSpeech: TextToSpeech? = null
 
         fun clearTTS() {
-            textToSpeech?.stop()
-            textToSpeech?.shutdown()
+            textToSpeech?.let {
+                it.stop()
+                it.shutdown()
+            }
             textToSpeech = null
         }
     }
@@ -45,9 +47,11 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     @Synchronized
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            textToSpeech?.language = Locale.CHINA
-            textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
-            ttsInitFinish = true
+            textToSpeech?.let {
+                it.language = Locale.CHINA
+                it.setOnUtteranceProgressListener(TTSUtteranceListener())
+                ttsInitFinish = true
+            }
             play()
         } else {
             launch {
