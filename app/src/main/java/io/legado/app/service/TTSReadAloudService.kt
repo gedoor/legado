@@ -21,6 +21,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
     companion object {
         private var textToSpeech: TextToSpeech? = null
+        private var ttsInitFinish = false
 
         fun clearTTS() {
             textToSpeech?.let {
@@ -28,10 +29,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 it.shutdown()
             }
             textToSpeech = null
+            ttsInitFinish = false
         }
     }
-
-    private var ttsInitFinish = false
 
     override fun onCreate() {
         super.onCreate()
