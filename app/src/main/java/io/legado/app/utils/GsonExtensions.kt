@@ -50,16 +50,16 @@ class ParameterizedTypeImpl(private val clazz: Class<*>) : ParameterizedType {
  * 修复Int变为Double的问题
  */
 class MapDeserializerDoubleAsIntFix :
-    JsonDeserializer<Map<String, Any>?> {
+    JsonDeserializer<Map<String, Any?>?> {
 
     @Throws(JsonParseException::class)
     override fun deserialize(
         jsonElement: JsonElement,
         type: Type,
         jsonDeserializationContext: JsonDeserializationContext
-    ): Map<String, Any>? {
+    ): Map<String, Any?>? {
         @Suppress("unchecked_cast")
-        return read(jsonElement) as? Map<String, Any>
+        return read(jsonElement) as? Map<String, Any?>
     }
 
     fun read(`in`: JsonElement): Any? {
