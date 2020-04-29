@@ -170,7 +170,6 @@ class AnalyzeUrl(
                             ?.let { headerMap.putAll(it) }
                     }
                 }
-
                 charset = option.charset
                 body = if (option.body is String) {
                     option.body
@@ -207,7 +206,6 @@ class AnalyzeUrl(
             }
         }
     }
-
 
     /**
      * 解析QueryMap
