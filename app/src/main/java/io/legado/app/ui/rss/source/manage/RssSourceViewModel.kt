@@ -147,7 +147,6 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                     null
                 }
             }
-
             if (null != content) {
                 GSON.fromJsonArray<RssSource>(content)?.let {
                     App.db.rssSourceDao().insert(*it.toTypedArray())
@@ -215,8 +214,8 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             }
             App.db.rssSourceDao().insert(*sources.toTypedArray())
             return sources.size
-
         }
         return 0
     }
+
 }

@@ -45,12 +45,9 @@ class RssAdapter(context: Context, val callBack: CallBack) :
         popupMenu.inflate(R.menu.rss_main_item)
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.menu_top -> {
-                }
-                R.id.menu_edit -> {
-                }
-                R.id.menu_del -> {
-                }
+                R.id.menu_top -> callBack.toTop(rssSource)
+                R.id.menu_edit -> callBack.edit(rssSource)
+                R.id.menu_del -> callBack.del(rssSource)
             }
             true
         }
@@ -59,5 +56,8 @@ class RssAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun openRss(rssSource: RssSource)
+        fun toTop(rssSource: RssSource)
+        fun edit(rssSource: RssSource)
+        fun del(rssSource: RssSource)
     }
 }
