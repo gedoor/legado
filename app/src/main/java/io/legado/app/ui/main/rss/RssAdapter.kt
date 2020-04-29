@@ -1,6 +1,8 @@
 package io.legado.app.ui.main.rss
 
 import android.content.Context
+import android.view.View
+import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -8,6 +10,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.ImageLoader
 import kotlinx.android.synthetic.main.item_rss.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class RssAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss) {
@@ -29,6 +32,29 @@ class RssAdapter(context: Context, val callBack: CallBack) :
                 callBack.openRss(it)
             }
         }
+        holder.itemView.onLongClick {
+            getItem(holder.layoutPosition)?.let {
+                showMenu(holder.itemView, it)
+            }
+            true
+        }
+    }
+
+    private fun showMenu(view: View, rssSource: RssSource) {
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.inflate(R.menu.rss_main_item)
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_top -> {
+                }
+                R.id.menu_edit -> {
+                }
+                R.id.menu_del -> {
+                }
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     interface CallBack {

@@ -51,7 +51,7 @@ class AnalyzeUrl(
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
     private var charset: String? = null
-    private var body: Any? = null
+    private var body: String? = null
     private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
 
@@ -157,10 +157,10 @@ class AnalyzeUrl(
             baseUrl = it
         }
         if (urlArray.size > 1) {
-            val options = GSON.fromJsonObject<UrlOption>(urlArray[1])
-            options?.let { _ ->
-                options.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
-                options.headers?.let { headers ->
+            val option = GSON.fromJsonObject<UrlOption>(urlArray[1])
+            option?.let { _ ->
+                option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
+                option.headers?.let { headers ->
                     if (headers is Map<*, *>) {
                         @Suppress("unchecked_cast")
                         headerMap.putAll(headers as Map<out String, String>)
@@ -170,9 +170,14 @@ class AnalyzeUrl(
                             ?.let { headerMap.putAll(it) }
                     }
                 }
-                body = options.body
-                charset = options.charset
-                options.webView?.let {
+
+                charset = option.charset
+                body = if (option.body is String) {
+                    option.body
+                } else {
+                    GSON.toJson(option.body)
+                }
+                option.webView?.let {
                     if (it.toString().isNotEmpty()) {
                         useWebView = true
                     }
@@ -191,13 +196,13 @@ class AnalyzeUrl(
             }
             RequestMethod.POST -> {
                 body?.let {
-                    if (it is String) {
-                        analyzeFields(it)
+                    if (it.isJson()) {
+                        requestBody = RequestBody.create(jsonType, GSON.toJson(it))
                     } else {
-                        body = RequestBody.create(jsonType, GSON.toJson(it))
+                        analyzeFields(it)
                     }
                 } ?: let {
-                    body = FormBody.Builder().build()
+                    requestBody = FormBody.Builder().build()
                 }
             }
         }
@@ -288,7 +293,7 @@ class AnalyzeUrl(
             params.requestMethod = method
             params.javaScript = jsStr
             params.sourceRegex = sourceRegex
-            params.postData = body?.toString()?.toByteArray()
+            params.postData = body?.toByteArray()
             params.tag = tag
             return HttpHelper.ajax(params)
         }
