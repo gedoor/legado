@@ -197,7 +197,7 @@ class AnalyzeUrl(
             RequestMethod.POST -> {
                 body?.let {
                     if (it.isJson()) {
-                        requestBody = RequestBody.create(jsonType, GSON.toJson(it))
+                        requestBody = RequestBody.create(jsonType, it)
                     } else {
                         analyzeFields(it)
                     }
