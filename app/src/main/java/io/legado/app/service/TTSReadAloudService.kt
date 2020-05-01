@@ -35,8 +35,13 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
     override fun onCreate() {
         super.onCreate()
-        textToSpeech = TextToSpeech(this, this)
+        initTts()
         upSpeechRate()
+    }
+
+    private fun initTts() {
+        ttsInitFinish = false
+        textToSpeech = TextToSpeech(this, this)
     }
 
     override fun onDestroy() {
@@ -98,7 +103,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         if (this.getPrefBoolean("ttsFollowSys", true)) {
             if (reset) {
                 clearTTS()
-                textToSpeech = TextToSpeech(this, this)
+                initTts()
             }
         } else {
             textToSpeech?.setSpeechRate((AppConfig.ttsSpeechRate + 5) / 10f)
