@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
@@ -163,6 +164,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun autoChangeSource(name: String, author: String) {
+        if (!AppConfig.autoChangeSource) return
         execute {
             App.db.bookSourceDao().allTextEnabled.forEach { source ->
                 try {
