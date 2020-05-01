@@ -165,4 +165,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         searchPool.close()
     }
 
+    fun disableSource(sourceUrl: String) {
+        execute {
+
+        }
+    }
+
 }

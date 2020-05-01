@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="pk_auto_refresh">auto_refresh</string>
-    <string name="pk_requested_direction">list_screen_direction</string>
-    <string name="pk_full_screen">full_screen</string>
-    <string name="pk_threads_num">threads_num</string>
-    <string name="pk_user_agent">user_agent</string>
-    <string name="pk_bookshelf_px">bookshelf_px</string>
-    <string name="pk_read_type">read_type</string>
-    <string name="pk_find_expand_group">expandGroupFind</string>
-    <string name="pk_default_read">defaultToRead</string>
-    <string name="pk_auto_download">autoDownload</string>
-    <string name="pk_check_update">checkUpdate</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="pk_auto_refresh" tools:ignore="MissingTranslation">auto_refresh</string>
+    <string name="pk_requested_direction" tools:ignore="MissingTranslation">list_screen_direction</string>
+    <string name="pk_full_screen" tools:ignore="MissingTranslation">full_screen</string>
+    <string name="pk_threads_num" tools:ignore="MissingTranslation">threads_num</string>
+    <string name="pk_user_agent" tools:ignore="MissingTranslation">user_agent</string>
+    <string name="pk_bookshelf_px" tools:ignore="MissingTranslation">bookshelf_px</string>
+    <string name="pk_read_type" tools:ignore="MissingTranslation">read_type</string>
+    <string name="pk_find_expand_group" tools:ignore="MissingTranslation">expandGroupFind</string>
+    <string name="pk_default_read" tools:ignore="MissingTranslation">defaultToRead</string>
+    <string name="pk_auto_download" tools:ignore="MissingTranslation">autoDownload</string>
+    <string name="pk_check_update" tools:ignore="MissingTranslation">checkUpdate</string>
+    <string name="legado_gzh" tools:ignore="MissingTranslation">开源阅读</string>
 
-    <string name="source_rule_url">https://gitee.com/alanskycn/yuedu/blob/master/Rule/README.md</string>
-    <string name="this_github_url">https://github.com/gedoor/legado</string>
-    <string name="contributors_url">https://github.com/gedoor/legado/graphs/contributors</string>
-    <string name="disclaimer_url">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
-    <string name="home_page_url">https://gedoor.github.io/MyBookshelf/</string>
-    <string name="latest_release_url">https://github.com/gedoor/legado/releases/latest</string>
-    <string name="latest_release_api">https://api.github.com/repos/gedoor/legado/releases/latest</string>
+    <string name="source_rule_url" tools:ignore="MissingTranslation">https://gitee.com/alanskycn/yuedu/blob/master/Rule/README.md</string>
+    <string name="this_github_url" tools:ignore="MissingTranslation">https://github.com/gedoor/legado</string>
+    <string name="contributors_url" tools:ignore="MissingTranslation">https://github.com/gedoor/legado/graphs/contributors</string>
+    <string name="disclaimer_url" tools:ignore="MissingTranslation">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
+    <string name="home_page_url" tools:ignore="MissingTranslation">https://gedoor.github.io/MyBookshelf/</string>
+    <string name="latest_release_url" tools:ignore="MissingTranslation">https://github.com/gedoor/legado/releases/latest</string>
+    <string name="latest_release_api" tools:ignore="MissingTranslation">https://api.github.com/repos/gedoor/legado/releases/latest</string>
 </resources>

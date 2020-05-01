@@ -26,7 +26,7 @@ class AboutActivity : BaseActivity(R.layout.activity_about) {
         tv_app_summary.post {
             val span = ForegroundColorSpan(accentColor)
             val spannableString = SpannableString(tv_app_summary.text)
-            val start = spannableString.indexOf("开源阅读软件")
+            val start = spannableString.indexOf(getString(R.string.legado_gzh))
             spannableString.setSpan(
                 span, start, start + 6,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

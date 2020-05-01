@@ -88,7 +88,7 @@
     <string name="download_offline_s">下载选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
-        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读软件]！
+        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读]！
     </string>
     <string name="app_share_description">
         阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
@@ -662,11 +662,11 @@
     <string name="contact">联系我们</string>
     <string name="license">开源许可</string>
     <string name="other" translatable="false">其它</string>
-    <string name="official_account" translatable="false">开源阅读软件</string>
+    <string name="official_account" translatable="false">开源阅读</string>
     <string name="follow_official_account">关注公众号</string>
     <string name="wechat">微信</string>
     <string name="thanks">您的支持是我更新的动力</string>
-    <string name="about_official_account">公众号[开源阅读软件]</string>
+    <string name="about_official_account">公众号[开源阅读]</string>
     <string name="source_auto_changing">正在自动换源</string>
     <string name="click_to_apply">点击加入</string>
     <string name="middle">中</string>

@@ -34,7 +34,7 @@ class RssAdapter(context: Context, val callBack: CallBack) :
         }
         holder.itemView.onLongClick {
             getItem(holder.layoutPosition)?.let {
-                showMenu(holder.itemView, it)
+                showMenu(holder.itemView.iv_icon, it)
             }
             true
         }
