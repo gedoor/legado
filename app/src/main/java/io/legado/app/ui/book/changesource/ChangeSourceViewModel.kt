@@ -167,7 +167,10 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun disableSource(sourceUrl: String) {
         execute {
-
+            App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
+                source.enabled = false
+                App.db.bookSourceDao().update(source)
+            }
         }
     }
 
