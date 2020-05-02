@@ -401,7 +401,7 @@
     <string name="rule_chapter_name">章節名稱規則 (ChapterName)</string>
     <string name="rule_chapter_url">章節 URL 規則 (chapterUrl)</string>
     <string name="rule_is_vip">VIP 標識 (isVip)</string>
-    <string name="rule_update_time">章節信息 (ChapterInfo)</string>
+    <string name="rule_update_time">更新時間 (ChapterInfo)</string>
     <string name="rule_book_content">正文規則 (content)</string>
     <string name="rule_next_content">正文下一頁 URL 規則 (nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
@@ -685,7 +685,7 @@
     <string name="night_accent">夜間，強調色</string>
     <string name="night_background_color">夜間，背景色</string>
     <string name="night_navbar_color">夜間，導航欄顏色</string>
-    <string name="hideHeader">隐藏页眉</string>
-    <string name="hideFooter">隐藏页脚</string>
-    <string name="auto_change_source">自动换源</string>
+    <string name="hideHeader">隱藏頁眉</string>
+    <string name="hideFooter">隱藏頁脚</string>
+    <string name="auto_change_source">自動換源</string>
 </resources>

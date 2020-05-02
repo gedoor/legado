@@ -7,10 +7,11 @@
     android:paddingLeft="16dp"
     android:paddingTop="10dp"
     android:paddingRight="16dp"
-    android:paddingBottom="4dp"
+    android:paddingBottom="10dp"
     android:minHeight="42dp"
     android:clickable="true"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:focusable="true">
 
     <ImageView
@@ -41,7 +42,6 @@
 
         <TextView
             android:id="@+id/preference_desc"
-            android:paddingBottom="8dp"
             android:textSize="14sp"
             android:textColor="@color/tv_text_summary"
             android:text="@string/default1"

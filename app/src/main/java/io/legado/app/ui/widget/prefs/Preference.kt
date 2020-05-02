@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
@@ -45,7 +46,7 @@ class Preference(context: Context, attrs: AttributeSet) :
                 val tvSummary = it.findViewById(R.id.preference_desc)
                 if (tvSummary is TextView) {
                     tvSummary.text = summary
-                    tvSummary.isVisible = summary != null && summary.isNotEmpty()
+                    tvSummary.isGone = summary.isNullOrEmpty()
                 }
 
                 val iconView = it.findViewById(R.id.preference_icon)
