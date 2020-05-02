@@ -41,7 +41,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
             ReadBook.resetData(book)
-            if (ReadBook.webBook == null) {
+            if (!book.isLocalBook() && ReadBook.webBook == null) {
                 autoChangeSource(book.name, book.author)
                 return
             }
@@ -66,7 +66,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             isInitFinish = true
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
-            if (ReadBook.webBook == null) {
+            if (!book.isLocalBook() && ReadBook.webBook == null) {
                 autoChangeSource(book.name, book.author)
                 return
             }
