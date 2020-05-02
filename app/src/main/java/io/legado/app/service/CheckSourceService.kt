@@ -20,7 +20,7 @@ import java.util.concurrent.Executors
 import kotlin.math.min
 
 class CheckSourceService : BaseService() {
-    private val threadCount = AppConfig.threadCount
+    private var threadCount = AppConfig.threadCount
     private var searchPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
@@ -58,20 +58,24 @@ class CheckSourceService : BaseService() {
         checkedIds.clear()
         allIds.addAll(ids)
         processIndex = 0
+        threadCount = min(allIds.size, threadCount)
         updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
-        for (i in 0 until min(threadCount, allIds.size)) {
+        for (i in 0 until threadCount) {
             check()
         }
     }
 
-
+    /**
+     * 检测
+     */
     private fun check() {
+        val index = processIndex
         synchronized(this) {
             processIndex++
         }
         execute {
-            if (processIndex < allIds.size) {
-                val sourceUrl = allIds[processIndex]
+            if (index < allIds.size) {
+                val sourceUrl = allIds[index]
                 App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
                     if (source.searchUrl.isNullOrEmpty()) {
                         onNext(sourceUrl)
@@ -102,7 +106,7 @@ class CheckSourceService : BaseService() {
                 checkedIds.size,
                 getString(R.string.progress_show, checkedIds.size, allIds.size)
             )
-            if (processIndex >= allIds.size + min(threadCount, allIds.size) - 1) {
+            if (processIndex >= allIds.size + threadCount - 1) {
                 stopSelf()
             }
         }
