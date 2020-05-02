@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -143,8 +142,8 @@ class ContentView(context: Context) : FrameLayout(context) {
             ReadTipConfig.tipHeaderLeft -> {
                 ConstraintUtil(ll_header).begin()
                     .clear(R.id.tv_header_left, 2)
-                    .setWidth(R.id.tv_header_left, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    .setHorizontalWeight(R.id.tv_footer_left, 0f)
+                    .setHorizontalWeight(R.id.tv_footer_left, 0.0F)
+                    .setWidth(R.id.tv_header_left, LayoutParams.WRAP_CONTENT)
                     .commit()
                 tv_header_left
             }
@@ -153,8 +152,8 @@ class ContentView(context: Context) : FrameLayout(context) {
             ReadTipConfig.tipFooterLeft -> {
                 ConstraintUtil(ll_header).begin()
                     .clear(R.id.tv_footer_left, 2)
-                    .setWidth(R.id.tv_footer_left, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    .setHorizontalWeight(R.id.tv_footer_left, 0f)
+                    .setHorizontalWeight(R.id.tv_footer_left, 0.0F)
+                    .setWidth(R.id.tv_footer_left, LayoutParams.WRAP_CONTENT)
                     .commit()
                 tv_footer_left
             }

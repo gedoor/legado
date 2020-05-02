@@ -86,7 +86,11 @@ class TipConfigDialog : BaseDialogFragment() {
                     tipHeaderLeft = i
                     tv_header_left.text = tipArray[i]
                 }
-                postEvent(EventBus.UP_CONFIG, true)
+                if (i == ReadTipConfig.battery) {
+                    activity?.recreate()
+                } else {
+                    postEvent(EventBus.UP_CONFIG, true)
+                }
             }
         }
         tv_header_middle.onClick {
@@ -179,7 +183,11 @@ class TipConfigDialog : BaseDialogFragment() {
                     tipFooterLeft = i
                     tv_footer_left.text = tipArray[i]
                 }
-                postEvent(EventBus.UP_CONFIG, true)
+                if (i == ReadTipConfig.battery) {
+                    activity?.recreate()
+                } else {
+                    postEvent(EventBus.UP_CONFIG, true)
+                }
             }
         }
         tv_footer_middle.onClick {
