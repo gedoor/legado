@@ -144,6 +144,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 ConstraintUtil(ll_header).begin()
                     .clear(R.id.tv_header_left, 2)
                     .setWidth(R.id.tv_header_left, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    .setHorizontalWeight(R.id.tv_footer_left, 0f)
                     .commit()
                 tv_header_left
             }
@@ -153,6 +154,7 @@ class ContentView(context: Context) : FrameLayout(context) {
                 ConstraintUtil(ll_header).begin()
                     .clear(R.id.tv_footer_left, 2)
                     .setWidth(R.id.tv_footer_left, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    .setHorizontalWeight(R.id.tv_footer_left, 0f)
                     .commit()
                 tv_footer_left
             }
