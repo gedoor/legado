@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
 import kotlinx.coroutines.Dispatchers
@@ -58,24 +59,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             Rss.getArticles(sortName, pageUrl, rssSource, pageUrl)
                 .onSuccess(Dispatchers.IO) {
                     nextPageUrl = it.nextPageUrl
-                    it.articles.let { list ->
-                        if (list.isEmpty()) {
-                            loadFinally.postValue(false)
-                            return@let
-                        }
-                        val firstArticle = list.first()
-                        if (App.db.rssArticleDao()
-                                .get(firstArticle.origin, firstArticle.link) != null
-                        ) {
-                            loadFinally.postValue(false)
-                        } else {
-                            list.forEach { rssArticle ->
-                                rssArticle.order = order--
-                            }
-                            App.db.rssArticleDao().insert(*list.toTypedArray())
-                        }
-                    }
-                    isLoading = false
+                    loadMoreSuccess(it.articles)
                 }
                 .onError {
                     loadFinally.postValue(false)
@@ -85,5 +69,25 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    private fun loadMoreSuccess(articles: MutableList<RssArticle>) {
+        articles.let { list ->
+            if (list.isEmpty()) {
+                loadFinally.postValue(false)
+                return@let
+            }
+            val firstArticle = list.first()
+            val dbArticle = App.db.rssArticleDao()
+                .get(firstArticle.origin, firstArticle.link)
+            if (dbArticle != null) {
+                loadFinally.postValue(false)
+            } else {
+                list.forEach { rssArticle ->
+                    rssArticle.order = order--
+                }
+                App.db.rssArticleDao().insert(*list.toTypedArray())
+            }
+        }
+        isLoading = false
+    }
 
 }
