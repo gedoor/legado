@@ -21,7 +21,7 @@ data class RssArticle(
 ) {
 
     override fun hashCode(): Int {
-        return super.hashCode()
+        return link.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {

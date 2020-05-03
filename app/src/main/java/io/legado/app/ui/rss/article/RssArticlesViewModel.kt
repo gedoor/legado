@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Rss
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     var isLoading = true
     var order = System.currentTimeMillis()
     private var nextPageUrl: String? = null
-    private val articles = arrayListOf<RssArticle>()
     var sortName: String = ""
     var sortUrl: String = ""
 
@@ -62,10 +60,13 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     nextPageUrl = it.nextPageUrl
                     it.articles.let { list ->
                         if (list.isEmpty()) {
-                            loadFinally.postValue(true)
+                            loadFinally.postValue(false)
                             return@let
                         }
-                        if (articles.contains(list.first())) {
+                        val firstArticle = list.first()
+                        if (App.db.rssArticleDao()
+                                .get(firstArticle.origin, firstArticle.link) != null
+                        ) {
                             loadFinally.postValue(false)
                         } else {
                             list.forEach { rssArticle ->
@@ -75,6 +76,9 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                         }
                     }
                     isLoading = false
+                }
+                .onError {
+                    loadFinally.postValue(false)
                 }
         } else {
             loadFinally.postValue(false)
