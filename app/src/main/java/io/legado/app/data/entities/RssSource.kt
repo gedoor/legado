@@ -34,9 +34,11 @@ data class RssSource(
     var ruleImage: String? = null,
     var ruleLink: String? = null,
     var ruleContent: String? = null,
+    var css: String? = null,
     var header: String? = null,
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
+
     var customOrder: Int = 0
 ) : Parcelable, JsExtensions {
 

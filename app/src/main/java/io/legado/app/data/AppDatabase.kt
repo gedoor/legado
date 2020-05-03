@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class],
-    version = 11,
+    version = 12,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -31,24 +31,36 @@ abstract class AppDatabase : RoomDatabase() {
         fun createDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
-                .addMigrations(object : Migration(10, 11) {
-                    override fun migrate(database: SupportSQLiteDatabase) {
-                        database.execSQL("DROP TABLE txtTocRules")
-                        database.execSQL(
-                            """
-                            CREATE TABLE txtTocRules(id INTEGER NOT NULL, 
-                            name TEXT NOT NULL, rule TEXT NOT NULL, serialNumber INTEGER NOT NULL, 
-                            enable INTEGER NOT NULL, PRIMARY KEY (id))
-                            """
-                        )
-                    }
-                })
+                .addMigrations(migration_10_11, migration_11_12)
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
                         GlobalScope.launch { Restore.restoreDatabase(Backup.backupPath) }
                     }
                 })
                 .build()
+        }
+
+        private val migration_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE txtTocRules")
+                database.execSQL(
+                    """
+                    CREATE TABLE txtTocRules(id INTEGER NOT NULL, 
+                    name TEXT NOT NULL, rule TEXT NOT NULL, serialNumber INTEGER NOT NULL, 
+                    enable INTEGER NOT NULL, PRIMARY KEY (id))
+                    """
+                )
+            }
+        }
+
+        private val migration_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE rssSources ADD css TEXT
+                    """
+                )
+            }
         }
     }
 
