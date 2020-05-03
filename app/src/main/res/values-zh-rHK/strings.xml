@@ -417,6 +417,7 @@
     <string name="r_description">描述規則 (ruleDescription)</string>
     <string name="r_image">圖片 url 規則 (ruleImage)</string>
     <string name="r_content">內容規則 (ruleContent)</string>
+    <string name="r_style">樣式</string>
     <string name="r_link">鏈接規則 (ruleLink)</string>
     <!-- source end-->
 
