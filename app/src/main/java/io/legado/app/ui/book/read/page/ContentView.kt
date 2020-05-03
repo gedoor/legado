@@ -115,10 +115,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvTime = when (ReadTipConfig.time) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -141,10 +141,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 10f
         }
         tvPage = when (ReadTipConfig.page) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -154,10 +154,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvTotalProgress = when (ReadTipConfig.totalProgress) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -167,10 +167,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvPageAndTotal = when (ReadTipConfig.pageAndTotal) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
