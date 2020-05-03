@@ -20,6 +20,19 @@
 
         <io.legado.app.ui.widget.BatteryView
             android:id="@+id/tv_header_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/tv_header_right" />
+
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/bv_header_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
@@ -85,6 +98,19 @@
 
         <io.legado.app.ui.widget.BatteryView
             android:id="@+id/tv_footer_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/tv_footer_right"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <io.legado.app.ui.widget.BatteryView
+            android:id="@+id/bv_footer_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"

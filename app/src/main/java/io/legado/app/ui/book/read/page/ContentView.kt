@@ -15,7 +15,10 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.widget.BatteryView
-import io.legado.app.utils.*
+import io.legado.app.utils.dp
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.statusBarHeight
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_book_page.view.*
 import java.util.*
 
@@ -46,15 +49,19 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun upStyle() {
         ReadBookConfig.apply {
+            bv_header_left.typeface = ChapterProvider.typeface
             tv_header_left.typeface = ChapterProvider.typeface
             tv_header_middle.typeface = ChapterProvider.typeface
             tv_header_right.typeface = ChapterProvider.typeface
+            bv_footer_left.typeface = ChapterProvider.typeface
             tv_footer_left.typeface = ChapterProvider.typeface
             tv_footer_middle.typeface = ChapterProvider.typeface
             tv_footer_right.typeface = ChapterProvider.typeface
+            bv_header_left.setColor(durConfig.textColor())
             tv_header_left.setColor(durConfig.textColor())
             tv_header_middle.setColor(durConfig.textColor())
             tv_header_right.setColor(durConfig.textColor())
+            bv_footer_left.setColor(durConfig.textColor())
             tv_footer_left.setColor(durConfig.textColor())
             tv_footer_middle.setColor(durConfig.textColor())
             tv_footer_right.setColor(durConfig.textColor())
@@ -83,40 +90,22 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun upTipStyle() {
         ReadTipConfig.apply {
-            val tipHeaderLeftNone = tipHeaderLeft == none
-            val tipHeaderRightNone = tipHeaderRight == none
-            val tipHeaderMiddleNone = tipHeaderMiddle == none
-            val tipFooterLeftNone = tipFooterLeft == none
-            val tipFooterRightNone = tipFooterRight == none
-            val tipFooterMiddleNone = tipFooterMiddle == none
-            tv_header_left.isInvisible = tipHeaderLeftNone
-            tv_header_right.isGone = tipHeaderRightNone
-            tv_header_middle.isGone = tipHeaderMiddleNone
-            tv_footer_left.isInvisible = tipFooterLeftNone
-            tv_footer_right.isGone = tipFooterRightNone
-            tv_footer_middle.isGone = tipFooterMiddleNone
+            tv_header_left.isInvisible = tipHeaderLeft != chapterTitle
+            bv_header_left.isInvisible = tipHeaderLeft == none || !tv_header_left.isInvisible
+            tv_header_right.isGone = tipHeaderRight == none
+            tv_header_middle.isGone = tipHeaderMiddle == none
+            tv_footer_left.isInvisible = tipFooterLeft != chapterTitle
+            bv_footer_left.isInvisible = tipFooterLeft == none || !tv_footer_left.isInvisible
+            tv_footer_right.isGone = tipFooterRight == none
+            tv_footer_middle.isGone = tipFooterMiddle == none
             ll_header.isGone = hideHeader
             ll_footer.isGone = hideFooter
         }
         tvTitle = when (ReadTipConfig.chapterTitle) {
-            ReadTipConfig.tipHeaderLeft -> {
-                ConstraintUtil(ll_header).begin()
-                    .rightToLeftOf(R.id.tv_header_left, R.id.tv_header_right)
-                    .setWidth(R.id.tv_header_left, 0)
-                    .setHorizontalWeight(R.id.tv_header_left, 1f)
-                    .commit()
-                tv_header_left
-            }
+            ReadTipConfig.tipHeaderLeft -> tv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> {
-                ConstraintUtil(ll_footer).begin()
-                    .rightToLeftOf(R.id.tv_footer_left, R.id.tv_footer_right)
-                    .setWidth(R.id.tv_footer_left, 0)
-                    .setHorizontalWeight(R.id.tv_footer_left, 1f)
-                    .commit()
-                tv_footer_left
-            }
+            ReadTipConfig.tipFooterLeft -> tv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -139,24 +128,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvBattery = when (ReadTipConfig.battery) {
-            ReadTipConfig.tipHeaderLeft -> {
-                ConstraintUtil(ll_header).begin()
-                    .clear(R.id.tv_header_left, 2)
-                    .setHorizontalWeight(R.id.tv_footer_left, 0.0F)
-                    .setWidth(R.id.tv_header_left, LayoutParams.WRAP_CONTENT)
-                    .commit()
-                tv_header_left
-            }
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> {
-                ConstraintUtil(ll_header).begin()
-                    .clear(R.id.tv_footer_left, 2)
-                    .setHorizontalWeight(R.id.tv_footer_left, 0.0F)
-                    .setWidth(R.id.tv_footer_left, LayoutParams.WRAP_CONTENT)
-                    .commit()
-                tv_footer_left
-            }
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
