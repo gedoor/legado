@@ -30,7 +30,7 @@ class DownloadService : BaseService() {
     private val handler = Handler()
     private var runnable: Runnable = Runnable { upDownload() }
     private val downloadMap = hashMapOf<String, LinkedHashSet<BookChapter>>()
-    private val downloadCount = hashMapOf<String, DownloadCount>();
+    private val downloadCount = hashMapOf<String, DownloadCount>()
     private val finalMap = hashMapOf<String, LinkedHashSet<BookChapter>>()
     private var notificationContent = "正在启动下载"
 
@@ -199,11 +199,11 @@ class DownloadService : BaseService() {
         var successCount = 0 //下载成功的条目数量
 
         fun increaseSuccess() {
-            ++successCount;
+            ++successCount
         }
 
         fun increaseFinished() {
-            ++downloadFinishedCount;
+            ++downloadFinishedCount
         }
     }
 }
