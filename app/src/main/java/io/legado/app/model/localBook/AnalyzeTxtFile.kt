@@ -40,6 +40,7 @@ class AnalyzeTxtFile {
         book: Book,
         pattern: Pattern?
     ): ArrayList<BookChapter> {
+        bookStream.seek(0)
         val toc = arrayListOf<BookChapter>()
         var tocRule: TxtTocRule? = null
         val rulePattern = pattern ?: let {
@@ -83,7 +84,8 @@ class AnalyzeTxtFile {
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size
-                    if (chapterLength > 30000 && pattern == null) {
+                    val lastStart = toc.lastOrNull()?.start ?: 0
+                    if (curOffset + chapterLength - lastStart > 50000 && pattern == null) {
                         //移除不匹配的规则
                         tocRules.remove(tocRule)
                         return analyze(bookStream, book, null)
@@ -138,6 +140,11 @@ class AnalyzeTxtFile {
                     }
                     //设置指针偏移
                     seekPos += chapterContent.length
+                }
+                if (seekPos == 0 && length > 50000 && pattern == null) {
+                    //移除不匹配的规则
+                    tocRules.remove(tocRule)
+                    return analyze(bookStream, book, null)
                 }
             } else { //进行本地虚拟分章
                 //章节在buffer的偏移量
