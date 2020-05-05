@@ -52,7 +52,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         clearTTS()
     }
 
-    @Synchronized
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             textToSpeech?.let {
