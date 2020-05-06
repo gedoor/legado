@@ -4,6 +4,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
@@ -47,7 +48,7 @@ object BookList {
         }
         val collections: List<Any>
         var reverse = false
-        val bookListRule = when {
+        val bookListRule: BookListRule = when {
             isSearch -> bookSource.getSearchRule()
             bookSource.getExploreRule().bookList.isNullOrBlank() -> bookSource.getSearchRule()
             else -> bookSource.getExploreRule()

@@ -81,7 +81,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute {
             if (book.isLocalBook()) {
-                AnalyzeTxtFile.analyze(context, book).let {
+                AnalyzeTxtFile().analyze(context, book).let {
                     App.db.bookDao().update(book)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     chapterListData.postValue(it)
@@ -112,6 +112,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     toast(R.string.error_no_source)
                 }
             }
+        }.onError {
+            toast("LoadTocError:${it.localizedMessage}")
         }
     }
 
@@ -156,8 +158,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 chapters
             )
             book.durChapterTitle = chapters[book.durChapterIndex].title
-            App.db.bookDao().insert(book)
-            App.db.bookChapterDao().insert(*chapters.toTypedArray())
+            if (inBookshelf) {
+                App.db.bookDao().insert(book)
+                App.db.bookChapterDao().insert(*chapters.toTypedArray())
+            }
             bookData.postValue(book)
             chapterListData.postValue(chapters)
         }
@@ -168,6 +172,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let { book ->
                 if (book.order == 0) {
                     book.order = App.db.bookDao().maxOrder + 1
+                }
+                App.db.bookDao().getBook(book.name, book.author)?.let {
+                    book.durChapterPos = it.durChapterPos
+                    book.durChapterTitle = it.durChapterTitle
                 }
                 App.db.bookDao().insert(book)
             }
@@ -191,6 +199,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let { book ->
                 if (book.order == 0) {
                     book.order = App.db.bookDao().maxOrder + 1
+                }
+                App.db.bookDao().getBook(book.name, book.author)?.let {
+                    book.durChapterPos = it.durChapterPos
+                    book.durChapterTitle = it.durChapterTitle
                 }
                 App.db.bookDao().insert(book)
             }

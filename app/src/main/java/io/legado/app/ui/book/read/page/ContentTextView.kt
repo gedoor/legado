@@ -61,7 +61,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         super.onSizeChanged(w, h, oldw, oldh)
         ChapterProvider.viewWidth = w
         ChapterProvider.viewHeight = h
-        ChapterProvider.upSize()
+        ChapterProvider.upViewSize()
         upVisibleRect()
         textPage.format()
     }

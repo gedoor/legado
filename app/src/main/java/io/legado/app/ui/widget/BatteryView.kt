@@ -14,6 +14,7 @@ class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(co
     private val batteryPaint = Paint()
     private val outFrame = Rect()
     private val polar = Rect()
+    var isBattery = false
 
     init {
         setPadding(4.dp, 0, 6.dp, 0)
@@ -35,11 +36,12 @@ class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(co
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (!isBattery) return
         outFrame.set(
             1.dp,
-            layout.getLineTop(0) + 2.dp,
+            layout.getLineBaseline(0) + layout.getLineAscent(0) + 2.dp,
             width - 3.dp,
-            layout.getLineBottom(0) - 2.dp
+            layout.getLineBaseline(0) + 2.dp
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
         polar.set(

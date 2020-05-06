@@ -135,6 +135,7 @@ class RssSourceEditActivity :
             add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.source_url))
             add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.source_icon))
             add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.source_group))
+            add(EditEntity("sortUrl", rssSource?.sortUrl, R.string.sort_url))
             add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.r_articles))
             add(EditEntity("ruleNextPage", rssSource?.ruleNextPage, R.string.r_next))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.r_title))
@@ -143,6 +144,7 @@ class RssSourceEditActivity :
             add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.r_image))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.r_link))
             add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.r_content))
+            add(EditEntity("style", rssSource?.style, R.string.r_style))
             add(EditEntity("header", rssSource?.header, R.string.source_http_header))
         }
         adapter.editEntities = sourceEntities
@@ -159,6 +161,7 @@ class RssSourceEditActivity :
                 "sourceUrl" -> source.sourceUrl = it.value ?: ""
                 "sourceIcon" -> source.sourceIcon = it.value ?: ""
                 "sourceGroup" -> source.sourceGroup = it.value
+                "sortUrl" -> source.sortUrl = it.value
                 "ruleArticles" -> source.ruleArticles = it.value
                 "ruleNextPage" -> source.ruleNextPage = it.value
                 "ruleTitle" -> source.ruleTitle = it.value
@@ -167,6 +170,7 @@ class RssSourceEditActivity :
                 "ruleImage" -> source.ruleImage = it.value
                 "ruleLink" -> source.ruleLink = it.value
                 "ruleContent" -> source.ruleContent = it.value
+                "style" -> source.style = it.value
                 "header" -> source.header = it.value
             }
         }
@@ -181,7 +185,7 @@ class RssSourceEditActivity :
         return true
     }
 
-    override fun sendText(text: String) {
+    private fun insertText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -193,6 +197,14 @@ class RssSourceEditActivity :
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
+        }
+    }
+
+    override fun sendText(text: String) {
+        if (text == AppConst.keyboardToolChars[0]) {
+            insertText(AppConst.urlOption)
+        } else {
+            insertText(text)
         }
     }
 

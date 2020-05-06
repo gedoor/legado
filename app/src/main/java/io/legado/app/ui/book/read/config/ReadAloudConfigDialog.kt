@@ -16,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.Help
@@ -42,8 +43,8 @@ class ReadAloudConfigDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = LinearLayout(context)
-        view.setBackgroundResource(R.color.background)
+        val view = LinearLayout(requireContext())
+        view.setBackgroundColor(requireContext().backgroundColor)
         view.id = R.id.tag1
         container?.addView(view)
         return view

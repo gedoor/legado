@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -11,8 +12,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuPopupHelper
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
 import io.legado.app.App
+import java.lang.reflect.Field
 
 
 private tailrec fun getCompatActivity(context: Context?): AppCompatActivity? {
@@ -107,4 +111,17 @@ fun RadioGroup.getCheckedIndex(): Int {
 
 fun RadioGroup.checkByIndex(index: Int) {
     check(get(index).id)
+}
+
+@SuppressLint("RestrictedApi")
+fun PopupMenu.show(x: Int, y: Int) {
+    try {
+        val field: Field = this.javaClass.getDeclaredField("mPopup")
+        field.isAccessible = true
+        (field.get(this) as MenuPopupHelper).show(x, y)
+    } catch (e: NoSuchFieldException) {
+        e.printStackTrace()
+    } catch (e: IllegalAccessException) {
+        e.printStackTrace()
+    }
 }

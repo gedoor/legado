@@ -104,10 +104,8 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
             showTitleConfig()
         }
         tv_text_bold.onClick {
-            ReadBookConfig.apply {
-                textBold = !textBold
-                tv_text_bold.isSelected = textBold
-            }
+            ReadBookConfig.textBold = !ReadBookConfig.textBold
+            tv_text_bold.isSelected = ReadBookConfig.textBold
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_font.onClick {
@@ -125,6 +123,9 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         tv_padding.onClick {
             dismiss()
             callBack?.showPaddingConfig()
+        }
+        tv_tip.onClick {
+            TipConfigDialog().show(childFragmentManager, "tipConfigDialog")
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
             ReadBookConfig.pageAnim = rg_page_anim.getIndexById(checkedId)

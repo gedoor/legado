@@ -15,23 +15,14 @@ data class TextChapter(
         return pages.getOrNull(index)
     }
 
-    fun lastPage(): TextPage? {
-        if (pages.isNotEmpty()) {
-            return pages[pages.lastIndex]
-        }
-        return null
-    }
+    val lastPage: TextPage? get() = pages.lastOrNull()
 
-    fun lastIndex(): Int {
-        return pages.size - 1
-    }
+    val lastIndex: Int get() = pages.lastIndex
+
+    val pageSize: Int get() = pages.size
 
     fun isLastIndex(index: Int): Boolean {
         return index >= pages.size - 1
-    }
-
-    fun pageSize(): Int {
-        return pages.size
     }
 
     fun getReadLength(pageIndex: Int): Int {
@@ -45,8 +36,8 @@ data class TextChapter(
 
     fun getUnRead(pageIndex: Int): String {
         val stringBuilder = StringBuilder()
-        if (pageIndex < pages.size && pages.isNotEmpty()) {
-            for (index in pageIndex..lastIndex()) {
+        if (pages.isNotEmpty()) {
+            for (index in pageIndex..pages.lastIndex) {
                 stringBuilder.append(pages[index].text)
             }
         }
@@ -61,4 +52,3 @@ data class TextChapter(
         return stringBuilder.toString()
     }
 }
-

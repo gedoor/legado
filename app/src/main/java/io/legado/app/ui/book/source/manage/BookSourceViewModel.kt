@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.source.manage
 
 import android.app.Application
+import android.net.Uri
 import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.JsonPath
@@ -156,9 +157,20 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun importSourceFromFilePath(path: String, finally: (msg: String) -> Unit) {
         execute {
-            val file = File(path)
-            if (file.exists()) {
-                importSource(file.readText(), finally)
+            val content = if (path.isContentPath()) {
+                //在前面被解码了，如果不进行编码，中文会无法识别
+                val newPath = Uri.encode(path, ":/.")
+                DocumentFile.fromSingleUri(context, Uri.parse(newPath))?.readText(context)
+            } else {
+                val file = File(path)
+                if (file.exists()) {
+                    file.readText()
+                } else {
+                    null
+                }
+            }
+            if (content != null) {
+                importSource(content, finally)
             } else {
                 withContext(Dispatchers.Main) {
                     finally("打开文件出错")
@@ -215,7 +227,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     private fun importSourceUrl(url: String): Int {
-        HttpHelper.simpleGet(url)?.let { body ->
+        HttpHelper.simpleGet(url, "UTF-8")?.let { body ->
             val bookSources = mutableListOf<BookSource>()
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {

@@ -160,7 +160,6 @@
 -dontwarn rx.**
 
 -dontwarn okio.**
--dontwarn retrofit2.**
 -dontwarn javax.annotation.**
 -dontwarn org.apache.log4j.lf5.viewer.**
 -dontnote org.apache.log4j.lf5.viewer.**
@@ -172,7 +171,6 @@
 -dontwarn com.jeremyliao.liveeventbus.**
 
 -keep class com.jeremyliao.liveeventbus.** { *; }
--keep class retrofit2.**{*;}
 -keep class okhttp3.**{*;}
 -keep class okio.**{*;}
 -keep class com.hwangjr.rxbus.**{*;}

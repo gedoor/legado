@@ -13,7 +13,7 @@ import io.legado.app.utils.NetworkUtils
 object RssParserByRule {
 
     @Throws(Exception::class)
-    fun parseXML(body: String?, rssSource: RssSource): Result {
+    fun parseXML(sortName: String, sortUrl: String, body: String?, rssSource: RssSource): Result {
         val sourceUrl = rssSource.sourceUrl
         var nextUrl: String? = null
         if (body.isNullOrBlank()) {
@@ -28,11 +28,11 @@ object RssParserByRule {
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
             Debug.log(sourceUrl, "⇒列表规则为空, 使用默认规则解析")
-            return RssParser.parseXML(body, sourceUrl)
+            return RssParser.parseXML(sortName, body, sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
-            analyzeRule.setContent(body, rssSource.sourceUrl)
+            analyzeRule.setContent(body, sortUrl)
             var reverse = false
             if (ruleArticles.startsWith("-")) {
                 reverse = true
@@ -45,7 +45,7 @@ object RssParserByRule {
                 Debug.log(sourceUrl, "┌获取下一页链接")
                 nextUrl = analyzeRule.getString(rssSource.ruleNextPage)
                 if (nextUrl.isNotEmpty()) {
-                    nextUrl = NetworkUtils.getAbsoluteURL(sourceUrl, nextUrl)
+                    nextUrl = NetworkUtils.getAbsoluteURL(sortUrl, nextUrl)
                 }
                 Debug.log(sourceUrl, "└$nextUrl")
             }
@@ -59,7 +59,8 @@ object RssParserByRule {
                     sourceUrl, item, analyzeRule, index == 0,
                     ruleTitle, rulePubDate, ruleDescription, ruleImage, ruleLink
                 )?.let {
-                    it.origin = rssSource.sourceUrl
+                    it.sort = sortName
+                    it.origin = sourceUrl
                     articleList.add(it)
                 }
             }

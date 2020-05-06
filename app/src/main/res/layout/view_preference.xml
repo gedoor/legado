@@ -11,6 +11,7 @@
     android:minHeight="42dp"
     android:clickable="true"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:focusable="true">
 
     <ImageView
@@ -50,7 +51,9 @@
             android:textColor="@color/tv_text_summary"
             android:text="@string/default1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
     </LinearLayout>
 
     <FrameLayout

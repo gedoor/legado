@@ -165,4 +165,14 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         searchPool.close()
     }
 
+    fun disableSource(searchBook: SearchBook) {
+        execute {
+            App.db.bookSourceDao().getBookSource(searchBook.origin)?.let { source ->
+                source.enabled = false
+                App.db.bookSourceDao().update(source)
+            }
+            searchBooks.remove(searchBook)
+        }
+    }
+
 }

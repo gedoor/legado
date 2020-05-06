@@ -3,9 +3,11 @@ package io.legado.app.help.http
 import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.*
+import okhttp3.ConnectionSpec
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
@@ -13,14 +15,12 @@ import kotlin.coroutines.resume
 object HttpHelper {
 
     val client: OkHttpClient by lazy {
-        val default = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-            .tlsVersions(TlsVersion.TLS_1_2)
-            .build()
 
-        val specs = ArrayList<ConnectionSpec>()
-        specs.add(default)
-        specs.add(ConnectionSpec.COMPATIBLE_TLS)
-        specs.add(ConnectionSpec.CLEARTEXT)
+        val specs = arrayListOf(
+            ConnectionSpec.MODERN_TLS,
+            ConnectionSpec.COMPATIBLE_TLS,
+            ConnectionSpec.CLEARTEXT
+        )
 
         val builder = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)

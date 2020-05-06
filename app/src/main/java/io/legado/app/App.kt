@@ -73,7 +73,7 @@ class App : Application() {
                 .primaryColor(
                     getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
                 ).accentColor(
-                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_brown_800))
+                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
                 ).backgroundColor(
                     getPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
                 ).bottomBackground(

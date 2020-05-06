@@ -257,7 +257,7 @@
             android:launchMode="singleTop" />
         <!--订阅条目-->
         <activity
-            android:name=".ui.rss.article.RssArticlesActivity"
+            android:name=".ui.rss.article.RssSortActivity"
             android:launchMode="singleTop" />
         <!--Rss收藏-->
         <activity
@@ -300,6 +300,7 @@
                 <data android:mimeType="application/json" />
             </intent-filter>
         </activity>
+
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.DownloadService" />
         <service android:name=".service.WebService" />

@@ -36,7 +36,7 @@ object ReadBook {
     var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
 
-    fun resetData(book: Book, noSource: (name: String, author: String) -> Unit) {
+    fun resetData(book: Book) {
         this.book = book
         titleDate.postValue(book.name)
         durChapterIndex = book.durChapterIndex
@@ -46,20 +46,19 @@ object ReadBook {
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
-        upWebBook(book, noSource)
+        upWebBook(book)
     }
 
-    fun upWebBook(book: Book?, noSource: (name: String, author: String) -> Unit) {
+    fun upWebBook(book: Book?) {
         book ?: return
-        if (book.origin == BookType.local) {
-            webBook = null
+        webBook = if (book.origin == BookType.local) {
+            null
         } else {
             val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
             if (bookSource != null) {
-                webBook = WebBook(bookSource)
+                WebBook(bookSource)
             } else {
-                webBook = null
-                noSource.invoke(book.name, book.author)
+                null
             }
         }
     }
@@ -107,7 +106,7 @@ object ReadBook {
 
     fun moveToPrevChapter(upContent: Boolean, toLast: Boolean = true): Boolean {
         if (durChapterIndex > 0) {
-            durPageIndex = if (toLast) prevTextChapter?.lastIndex() ?: 0 else 0
+            durPageIndex = if (toLast) prevTextChapter?.lastIndex ?: 0 else 0
             durChapterIndex--
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
@@ -176,10 +175,10 @@ object ReadBook {
 
     fun durChapterPos(): Int {
         curTextChapter?.let {
-            if (durPageIndex < it.pageSize()) {
+            if (durPageIndex < it.pageSize) {
                 return durPageIndex
             }
-            return it.pageSize() - 1
+            return it.pageSize - 1
         }
         return durPageIndex
     }
@@ -293,7 +292,7 @@ object ReadBook {
     ) {
         Coroutine.async {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
-                val c = BookHelp.disposeContent(
+                val contents = BookHelp.disposeContent(
                     chapter.title,
                     book!!.name,
                     webBook?.bookSource?.bookSourceUrl,
@@ -302,18 +301,21 @@ object ReadBook {
                 )
                 when (chapter.index) {
                     durChapterIndex -> {
-                        curTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
+                        curTextChapter =
+                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(resetPageOffset = resetPageOffset)
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
                     durChapterIndex - 1 -> {
-                        prevTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
+                        prevTextChapter =
+                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(-1, resetPageOffset)
                     }
                     durChapterIndex + 1 -> {
-                        nextTextChapter = ChapterProvider.getTextChapter(chapter, c, chapterSize)
+                        nextTextChapter =
+                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(1, resetPageOffset)
                     }
                 }
@@ -331,7 +333,7 @@ object ReadBook {
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durPageIndex
-                curTextChapter?.let {
+                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }
                 App.db.bookDao().update(book)

@@ -101,6 +101,7 @@ object BookContent {
             }
         }
 
+        content.deleteCharAt(content.length - 1)
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")

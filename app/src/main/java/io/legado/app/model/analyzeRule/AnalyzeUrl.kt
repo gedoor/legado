@@ -13,9 +13,8 @@ import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.utils.*
 import okhttp3.FormBody
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import java.net.URLEncoder
 import java.util.*
@@ -40,7 +39,7 @@ class AnalyzeUrl(
 ) : JsExtensions {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
-        private val jsonType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
 
     private var baseUrl: String = ""
@@ -52,8 +51,8 @@ class AnalyzeUrl(
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
     private var charset: String? = null
-    private var bodyTxt: String? = null
-    private var body: RequestBody? = null
+    private var body: String? = null
+    private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
 
     init {
@@ -158,15 +157,30 @@ class AnalyzeUrl(
             baseUrl = it
         }
         if (urlArray.size > 1) {
-            val options = GSON.fromJsonObject<Map<String, String>>(urlArray[1])
-            options?.let { _ ->
-                options["method"]?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
-                options["headers"]?.let { headers ->
-                    GSON.fromJsonObject<Map<String, String>>(headers)?.let { headerMap.putAll(it) }
+            val option = GSON.fromJsonObject<UrlOption>(urlArray[1])
+            option?.let { _ ->
+                option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
+                option.headers?.let { headers ->
+                    if (headers is Map<*, *>) {
+                        @Suppress("unchecked_cast")
+                        headerMap.putAll(headers as Map<out String, String>)
+                    }
+                    if (headers is String) {
+                        GSON.fromJsonObject<Map<String, String>>(headers)
+                            ?.let { headerMap.putAll(it) }
+                    }
                 }
-                options["body"]?.let { bodyTxt = it }
-                options["charset"]?.let { charset = it }
-                options["webView"]?.let { if (it.isNotEmpty()) useWebView = true }
+                charset = option.charset
+                body = if (option.body is String) {
+                    option.body
+                } else {
+                    GSON.toJson(option.body)
+                }
+                option.webView?.let {
+                    if (it.toString().isNotEmpty()) {
+                        useWebView = true
+                    }
+                }
             }
         }
         when (method) {
@@ -180,19 +194,18 @@ class AnalyzeUrl(
                 }
             }
             RequestMethod.POST -> {
-                bodyTxt?.let {
+                body?.let {
                     if (it.isJson()) {
-                        body = it.toRequestBody(jsonType)
+                        requestBody = RequestBody.create(jsonType, it)
                     } else {
                         analyzeFields(it)
                     }
                 } ?: let {
-                    body = FormBody.Builder().build()
+                    requestBody = FormBody.Builder().build()
                 }
             }
         }
     }
-
 
     /**
      * 解析QueryMap
@@ -254,7 +267,7 @@ class AnalyzeUrl(
                 } else {
                     HttpHelper
                         .getApiService<HttpPostApi>(baseUrl, charset)
-                        .postBody(url, body!!, headerMap)
+                        .postBody(url, requestBody!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
@@ -278,7 +291,7 @@ class AnalyzeUrl(
             params.requestMethod = method
             params.javaScript = jsStr
             params.sourceRegex = sourceRegex
-            params.postData = bodyTxt?.toByteArray()
+            params.postData = body?.toByteArray()
             params.tag = tag
             return HttpHelper.ajax(params)
         }
@@ -295,7 +308,7 @@ class AnalyzeUrl(
                 } else {
                     HttpHelper
                         .getApiService<HttpPostApi>(baseUrl, charset)
-                        .postBodyAsync(url, body!!, headerMap)
+                        .postBodyAsync(url, requestBody!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
@@ -307,5 +320,13 @@ class AnalyzeUrl(
         }
         return Res(NetworkUtils.getUrl(res), res.body())
     }
+
+    data class UrlOption(
+        val method: String?,
+        val charset: String?,
+        val webView: Any?,
+        val headers: Any?,
+        val body: Any?
+    )
 
 }

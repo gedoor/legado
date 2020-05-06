@@ -24,7 +24,7 @@ import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 
 
-class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read),
+class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read, false),
     FileChooserDialog.CallBack,
     ReadRssViewModel.CallBack {
 
@@ -252,6 +252,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
             web_view.settings.javaScriptEnabled = true
             web_view.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
+                    .replace("^\"|\"$".toRegex(), "")
                 Jsoup.parse(html).text()
                 viewModel.readAloud(Jsoup.parse(html).textArray())
             }

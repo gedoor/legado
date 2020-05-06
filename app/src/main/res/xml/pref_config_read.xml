@@ -25,6 +25,12 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/read_body_to_lh"
+        android:key="readBodyToLh"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/pt_hide_navigation_bar"
         android:key="hideNavigationBar"
@@ -52,6 +58,12 @@
         android:defaultValue="false"
         android:title="@string/volume_key_page_on_play"
         android:key="volumeKeyPageOnPlay"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/auto_change_source"
+        android:key="autoChangeSource"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference

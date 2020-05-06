@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page
 
 import android.graphics.Typeface
+import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -31,8 +32,8 @@ object ChapterProvider {
     private var titleTopSpacing = 0
     private var titleBottomSpacing = 0
     var typeface: Typeface = Typeface.SANS_SERIF
-    var titlePaint = TextPaint()
-    var contentPaint = TextPaint()
+    lateinit var titlePaint: TextPaint
+    lateinit var contentPaint: TextPaint
 
     init {
         upStyle()
@@ -43,23 +44,23 @@ object ChapterProvider {
      */
     fun getTextChapter(
         bookChapter: BookChapter,
-        content: String,
+        contents: List<String>,
         chapterSize: Int
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
-        val contents = content.split("\n")
         var durY = 0f
         textPages.add(TextPage())
-        for ((index, text) in contents.withIndex()) {
+        contents.forEachIndexed { index, text ->
             val isTitle = index == 0
-            if (isTitle && ReadBookConfig.titleMode == 2) {
-                continue
+            if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                durY = setTypeText(
+                    text, durY, textPages, pageLines,
+                    pageLengths, stringBuilder, isTitle
+                )
             }
-            durY =
-                setTypeText(text, durY, textPages, pageLines, pageLengths, stringBuilder, isTitle)
         }
         textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
@@ -69,7 +70,7 @@ object ChapterProvider {
         if (pageLengths.size < textPages.size) {
             pageLengths.add(textPages.last().text.length)
         }
-        for ((index, item) in textPages.withIndex()) {
+        textPages.forEachIndexed { index, item ->
             item.index = index
             item.pageSize = textPages.size
             item.chapterIndex = bookChapter.index
@@ -188,11 +189,11 @@ object ChapterProvider {
         val gapCount: Int = words.length - 1
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
-        for ((i, char) in words.toStringArray().withIndex()) {
-            val cw = StaticLayout.getDesiredWidth(char, textPaint)
-            val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
+        words.toStringArray().forEachIndexed { index, s ->
+            val cw = StaticLayout.getDesiredWidth(s, textPaint)
+            val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
             textLine.addTextChar(
-                charData = char,
+                charData = s,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
@@ -262,30 +263,36 @@ object ChapterProvider {
             Typeface.SANS_SERIF
         }
         //标题
-        titlePaint.isAntiAlias = true
+        titlePaint = TextPaint()
         titlePaint.color = ReadBookConfig.durConfig.textColor()
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
-        titlePaint.typeface = Typeface.create(typeface, Typeface.BOLD)
+        titlePaint.typeface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Typeface.create(typeface, if (ReadBookConfig.textBold) 900 else 700, false)
+        } else {
+            Typeface.create(typeface, Typeface.BOLD)
+        }
         titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
+        titlePaint.isAntiAlias = true
         //正文
-        contentPaint.isAntiAlias = true
+        contentPaint = TextPaint()
         contentPaint.color = ReadBookConfig.durConfig.textColor()
         contentPaint.letterSpacing = ReadBookConfig.letterSpacing
         val style = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
         contentPaint.typeface = Typeface.create(typeface, style)
         contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
+        contentPaint.isAntiAlias = true
         //间距
         lineSpacingExtra = ReadBookConfig.lineSpacingExtra
         paragraphSpacing = ReadBookConfig.paragraphSpacing
         titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
         titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
-        upSize()
+        upViewSize()
     }
 
     /**
      * 更新View尺寸
      */
-    fun upSize() {
+    fun upViewSize() {
         paddingLeft = ReadBookConfig.paddingLeft.dp
         paddingTop = ReadBookConfig.paddingTop.dp
         visibleWidth = viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp

@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.chapterlist
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +14,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
@@ -54,7 +55,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initView() {
-        ll_chapter_base_info.setBackgroundColor(backgroundColor)
+        ll_chapter_base_info.setBackgroundColor(bottomBackground)
         iv_chapter_top.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
         iv_chapter_bottom.onClick {
             if (adapter.itemCount > 0) {
@@ -66,6 +67,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initBook() {
         launch {
             withContext(IO) {
@@ -74,7 +76,8 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             initDoc()
             book?.let {
                 durChapterIndex = it.durChapterIndex
-                tv_current_chapter_info.text = it.durChapterTitle
+                tv_current_chapter_info.text =
+                    "${it.durChapterTitle}(${it.durChapterIndex + 1}/${it.totalChapterNum})"
                 initCacheFileNames(it)
             }
         }

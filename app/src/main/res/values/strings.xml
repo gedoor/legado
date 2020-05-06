@@ -1,15 +1,17 @@
 <resources>
+    <!--App-->
     <string name="app_name">阅读</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="receiving_shared_label">阅读·搜索</string>
+    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
 
+    <!--Other-->
     <string name="menu_backup">Home</string>
     <string name="menu_restore">恢复</string>
     <string name="menu_import_old">导入阅读数据</string>
+    <string name="mkdirs">创建子文件夹</string>
+    <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
+    <string name="backup_path">备份路径</string>
+    <string name="menu_import_old_version">导入旧版数据</string>
     <string name="menu_import_github">导入Github数据</string>
     <string name="menu_replace_rule">净化替换</string>
     <string name="menu_send">Send</string>
@@ -18,9 +20,7 @@
     <string name="dialog_cancel">取消</string>
     <string name="dialog_confirm">确定</string>
     <string name="dialog_setting">去设置</string>
-
     <string name="tip_cannot_jump_setting_page">无法跳转至设置界面</string>
-    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”—打开所需权限</string>
 
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
@@ -42,9 +42,7 @@
     <string name="all">全部</string>
     <string name="recent_reading">最近阅读</string>
     <string name="last_read">最后阅读</string>
-    <string name="read_summary">让阅读成为一种习惯。</string>
     <string name="update_log">更新日志</string>
-    <string name="receiving_shared_label">阅读·搜索</string>
     <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
@@ -90,7 +88,7 @@
     <string name="download_offline_s">下载选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
-        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读软件]！
+        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读]！
     </string>
     <string name="app_share_description">
         阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
@@ -132,8 +130,6 @@
     <string name="previous_chapter">上一章</string>
     <string name="pt_hide_status_bar">隐藏状态栏</string>
     <string name="ps_hide_status_bar">阅读界面隐藏状态栏</string>
-    <string name="pt_read_line_adjust">阅读行数调整</string>
-    <string name="ps_read_line_adjust">阅读行数减一行,如阅读界面显示不全可启用</string>
     <string name="read_aloud">朗读</string>
     <string name="read_aloud_t">正在朗读</string>
     <string name="read_aloud_s">点击打开阅读界面</string>
@@ -384,6 +380,7 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
@@ -404,7 +401,7 @@
     <string name="rule_chapter_name">章节名称规则(ChapterName)</string>
     <string name="rule_chapter_url">章节URL规则(chapterUrl)</string>
     <string name="rule_is_vip">VIP标识(isVip)</string>
-    <string name="rule_update_time">章节信息(ChapterInfo)</string>
+    <string name="rule_update_time">更新时间(ChapterInfo)</string>
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
@@ -420,6 +417,7 @@
     <string name="r_description">描述规则(ruleDescription)</string>
     <string name="r_image">图片url规则(ruleImage)</string>
     <string name="r_content">内容规则(ruleContent)</string>
+    <string name="r_style">样式(style)</string>
     <string name="r_link">链接规则(ruleLink)</string>
     <!-- source end-->
 
@@ -565,8 +563,11 @@
     <string name="export">导出</string>
     <string name="load_toc">加载目录</string>
     <string name="tts">TTS</string>
+    <string name="web_dav_pw">WebDav 密码</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
     <string name="web_dav_url_s">输入你的服务器地址</string>
+    <string name="web_dav_url">WebDav 服务器地址</string>
+    <string name="web_dav_account">WebDav 账号</string>
     <string name="web_dav_account_s">输入你的WebDav账号</string>
     <string name="rss_source">订阅源</string>
     <string name="rss_source_edit">编辑订阅源</string>
@@ -654,4 +655,41 @@
     <string name="request_permission">点击授予权限</string>
     <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的"授予权限"按钮，或前往“设置”—“应用权限”—打开所需权限。如果授予权限后仍然不正常，请点击右上角的“选择文件夹”，使用系统文件夹选择器。</string>
     <string name="alouding_disable">全文朗读中不能朗读选中文字</string>
+    <string name="read_body_to_lh">扩展到刘海</string>
+    <string name="toc_updateing">更新目录中</string>
+    <string name="media_button_on_exit_title">全程响应耳机按键</string>
+    <string name="media_button_on_exit_summary">即使退出软件也响应耳机按键</string>
+    <string name="contributors">开发人员</string>
+    <string name="contact">联系我们</string>
+    <string name="license">开源许可</string>
+    <string name="other" translatable="false">其它</string>
+    <string name="official_account" translatable="false">开源阅读</string>
+    <string name="follow_official_account">关注公众号</string>
+    <string name="wechat">微信</string>
+    <string name="thanks">您的支持是我更新的动力</string>
+    <string name="about_official_account">公众号[开源阅读]</string>
+    <string name="source_auto_changing">正在自动换源</string>
+    <string name="click_to_apply">点击加入</string>
+    <string name="middle">中</string>
+    <string name="information">信息</string>
+    <string name="hideHeader">隐藏页眉</string>
+    <string name="hideFooter">隐藏页脚</string>
+  
+    <!--color-->
+    <string name="primary">主色调</string>
+    <string name="accent">强调色</string>
+    <string name="background_color">背景色</string>
+    <string name="navbar_color">底部操作栏颜色</string>
+    <string name="day">白天</string>
+    <string name="day_color_primary">白天，主色调</string>
+    <string name="day_color_accent">白天，强调色</string>
+    <string name="day_background_color">白天，背景色</string>
+    <string name="day_navbar_color">白天，底栏色</string>
+    <string name="night">夜间</string>
+    <string name="night_primary">夜间，主色调</string>
+    <string name="night_accent">夜间，强调色</string>
+    <string name="night_background_color">夜间，背景色</string>
+    <string name="night_navbar_color">夜间，底栏色</string>
+    <string name="auto_change_source">自动换源</string>
+
 </resources>

@@ -27,7 +27,6 @@ object ReadBookConfig {
         GSON.fromJsonArray<Config>(json)!!
     }
     val durConfig get() = getConfig(styleSelect)
-    private val shareConfig get() = getConfig(5)
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
 
@@ -139,129 +138,145 @@ object ReadBookConfig {
     var bodyIndent = "　".repeat(bodyIndentCount)
     var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
     var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
+
+    private val config get() = if (shareLayout) getConfig(5) else durConfig
+
     var textBold: Boolean
-        get() = if (shareLayout) shareConfig.textBold else durConfig.textBold
-        set(value) = if (shareLayout) shareConfig.textBold = value else durConfig.textBold = value
+        get() = config.textBold
+        set(value) {
+            config.textBold = value
+        }
 
     var textSize: Int
-        get() = if (shareLayout) shareConfig.textSize else durConfig.textSize
-        set(value) = if (shareLayout) shareConfig.textSize = value else durConfig.textSize = value
+        get() = config.textSize
+        set(value) {
+            config.textSize = value
+        }
 
     var letterSpacing: Float
-        get() = if (shareLayout) shareConfig.letterSpacing else durConfig.letterSpacing
-        set(value) =
-            if (shareLayout) shareConfig.letterSpacing = value else durConfig.letterSpacing = value
+        get() = config.letterSpacing
+        set(value) {
+            config.letterSpacing = value
+        }
 
     var lineSpacingExtra: Int
-        get() = if (shareLayout) shareConfig.lineSpacingExtra else durConfig.lineSpacingExtra
-        set(value) =
-            if (shareLayout) shareConfig.lineSpacingExtra = value
-            else durConfig.lineSpacingExtra = value
+        get() = config.lineSpacingExtra
+        set(value) {
+            config.lineSpacingExtra = value
+        }
 
     var paragraphSpacing: Int
-        get() = if (shareLayout) shareConfig.paragraphSpacing else durConfig.paragraphSpacing
-        set(value) =
-            if (shareLayout) shareConfig.paragraphSpacing = value
-            else durConfig.paragraphSpacing = value
+        get() = config.paragraphSpacing
+        set(value) {
+            config.paragraphSpacing = value
+        }
 
     var titleMode: Int
-        get() = if (shareLayout) shareConfig.titleMode else durConfig.titleMode
-        set(value) =
-            if (shareLayout) shareConfig.titleMode = value else durConfig.titleMode = value
+        get() = config.titleMode
+        set(value) {
+            config.titleMode = value
+        }
     var titleSize: Int
-        get() = if (shareLayout) shareConfig.titleSize else durConfig.titleSize
-        set(value) =
-            if (shareLayout) shareConfig.titleSize = value else durConfig.titleSize = value
+        get() = config.titleSize
+        set(value) {
+            config.titleSize = value
+        }
+
     var titleTopSpacing: Int
-        get() = if (shareLayout) shareConfig.titleTopSpacing else durConfig.titleTopSpacing
-        set(value) =
-            if (shareLayout) shareConfig.titleTopSpacing = value
-            else durConfig.titleTopSpacing = value
+        get() = config.titleTopSpacing
+        set(value) {
+            config.titleTopSpacing = value
+        }
+
     var titleBottomSpacing: Int
-        get() = if (shareLayout) shareConfig.titleBottomSpacing else durConfig.titleBottomSpacing
-        set(value) =
-            if (shareLayout) shareConfig.titleBottomSpacing = value
-            else durConfig.titleBottomSpacing = value
+        get() = config.titleBottomSpacing
+        set(value) {
+            config.titleBottomSpacing = value
+        }
 
     var paddingBottom: Int
-        get() = if (shareLayout) shareConfig.paddingBottom else durConfig.paddingBottom
-        set(value) =
-            if (shareLayout) shareConfig.paddingBottom = value else durConfig.paddingBottom = value
+        get() = config.paddingBottom
+        set(value) {
+            config.paddingBottom = value
+        }
 
     var paddingLeft: Int
-        get() = if (shareLayout) shareConfig.paddingLeft else durConfig.paddingLeft
-        set(value) =
-            if (shareLayout) shareConfig.paddingLeft = value else durConfig.paddingLeft = value
+        get() = config.paddingLeft
+        set(value) {
+            config.paddingLeft = value
+        }
 
     var paddingRight: Int
-        get() = if (shareLayout) shareConfig.paddingRight else durConfig.paddingRight
-        set(value) =
-            if (shareLayout) shareConfig.paddingRight = value else durConfig.paddingRight = value
+        get() = config.paddingRight
+        set(value) {
+            config.paddingRight = value
+        }
 
     var paddingTop: Int
-        get() = if (shareLayout) shareConfig.paddingTop else durConfig.paddingTop
-        set(value) =
-            if (shareLayout) shareConfig.paddingTop = value else durConfig.paddingTop = value
+        get() = config.paddingTop
+        set(value) {
+            config.paddingTop = value
+        }
 
     var headerPaddingBottom: Int
-        get() = if (shareLayout) shareConfig.headerPaddingBottom else durConfig.headerPaddingBottom
-        set(value) =
-            if (shareLayout) shareConfig.headerPaddingBottom = value
-            else durConfig.headerPaddingBottom = value
+        get() = config.headerPaddingBottom
+        set(value) {
+            config.headerPaddingBottom = value
+        }
 
     var headerPaddingLeft: Int
-        get() = if (shareLayout) shareConfig.headerPaddingLeft else durConfig.headerPaddingLeft
-        set(value) =
-            if (shareLayout) shareConfig.headerPaddingLeft = value
-            else durConfig.headerPaddingLeft = value
+        get() = config.headerPaddingLeft
+        set(value) {
+            config.headerPaddingLeft = value
+        }
 
     var headerPaddingRight: Int
-        get() = if (shareLayout) shareConfig.headerPaddingRight else durConfig.headerPaddingRight
-        set(value) =
-            if (shareLayout) shareConfig.headerPaddingRight = value
-            else durConfig.headerPaddingRight = value
+        get() = config.headerPaddingRight
+        set(value) {
+            config.headerPaddingRight = value
+        }
 
     var headerPaddingTop: Int
-        get() = if (shareLayout) shareConfig.headerPaddingTop else durConfig.headerPaddingTop
-        set(value) =
-            if (shareLayout) shareConfig.headerPaddingTop = value
-            else durConfig.headerPaddingTop = value
+        get() = config.headerPaddingTop
+        set(value) {
+            config.headerPaddingTop = value
+        }
 
     var footerPaddingBottom: Int
-        get() = if (shareLayout) shareConfig.footerPaddingBottom else durConfig.footerPaddingBottom
-        set(value) =
-            if (shareLayout) shareConfig.footerPaddingBottom = value
-            else durConfig.footerPaddingBottom = value
+        get() = config.footerPaddingBottom
+        set(value) {
+            config.footerPaddingBottom = value
+        }
 
     var footerPaddingLeft: Int
-        get() = if (shareLayout) shareConfig.footerPaddingLeft else durConfig.footerPaddingLeft
-        set(value) =
-            if (shareLayout) shareConfig.footerPaddingLeft = value
-            else durConfig.footerPaddingLeft = value
+        get() = config.footerPaddingLeft
+        set(value) {
+            config.footerPaddingLeft = value
+        }
 
     var footerPaddingRight: Int
-        get() = if (shareLayout) shareConfig.footerPaddingRight else durConfig.footerPaddingRight
-        set(value) =
-            if (shareLayout) shareConfig.footerPaddingRight = value
-            else durConfig.footerPaddingRight = value
+        get() = config.footerPaddingRight
+        set(value) {
+            config.footerPaddingRight = value
+        }
 
     var footerPaddingTop: Int
-        get() = if (shareLayout) shareConfig.footerPaddingTop else durConfig.footerPaddingTop
-        set(value) =
-            if (shareLayout) shareConfig.footerPaddingTop = value
-            else durConfig.footerPaddingTop = value
+        get() = config.footerPaddingTop
+        set(value) {
+            config.footerPaddingTop = value
+        }
 
     var showHeaderLine: Boolean
-        get() = if (shareLayout) shareConfig.showHeaderLine else durConfig.showHeaderLine
-        set(value) =
-            if (shareLayout) shareConfig.showHeaderLine = value
-            else durConfig.showHeaderLine = value
+        get() = config.showHeaderLine
+        set(value) {
+            config.showHeaderLine = value
+        }
 
     var showFooterLine: Boolean
-        get() = if (shareLayout) shareConfig.showFooterLine else durConfig.showFooterLine
-        set(value) =
-            if (shareLayout) shareConfig.showFooterLine = value
-            else durConfig.showFooterLine = value
+        get() = config.showFooterLine
+        set(value) {
+            config.showFooterLine = value
+        }
 
     @Keep
     class Config(

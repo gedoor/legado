@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
-        android:title="微信"
-        app:layout="@layout/view_preference_category"
+        android:title="@string/wechat"
+            app:layout="@layout/view_preference_category"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <io.legado.app.ui.widget.prefs.Preference
-            android:key="gzGzh"
-            android:title="关注公众号"
-            android:summary="关注[开源阅读软件]点击广告支持我"
+                android:key="gzGzh"
+                android:title="@string/follow_official_account"
+                android:summary="关注[开源阅读软件]点击广告支持我"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
