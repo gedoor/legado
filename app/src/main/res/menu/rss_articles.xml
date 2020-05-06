@@ -12,4 +12,8 @@
         android:title="@string/clear"
         app:showAsAction="never" />
 
+    <group android:id="@+id/source_channel">
+
+    </group>
+
 </menu>
