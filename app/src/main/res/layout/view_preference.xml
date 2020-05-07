@@ -28,6 +28,7 @@
         android:orientation="vertical"
         android:layout_weight="1.0"
         android:layout_width="0dp"
+        android:layout_gravity="center_vertical"
         android:layout_height="wrap_content">
 
         <TextView
@@ -38,6 +39,11 @@
             android:textColor="@color/tv_text_default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/preference_padding"
+            android:layout_width="match_parent"
+            android:layout_height="6dp" />
 
         <TextView
             android:id="@+id/preference_desc"
@@ -55,8 +61,6 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:visibility="gone"
         android:gravity="right|center_vertical"
         android:layout_width="wrap_content"

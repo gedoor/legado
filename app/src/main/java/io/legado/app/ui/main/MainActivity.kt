@@ -1,8 +1,13 @@
 package io.legado.app.ui.main
 
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.widget.Toolbar
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -26,6 +31,7 @@ import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.view_title_bar.*
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
