@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.SubMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -18,7 +17,7 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
 import org.jetbrains.anko.startActivityForResult
-import java.util.LinkedHashMap
+import java.util.*
 
 class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_artivles) {
 
@@ -66,8 +65,8 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
             }
         }
         if (item.groupId == R.id.source_channel) {
-            var key = item.title.toString();
-            var i = fragments.keys.indexOf(key)
+            val key = item.title.toString();
+            val i = fragments.keys.indexOf(key)
             if (i >= 0)
                 view_pager.currentItem = i
         }
@@ -77,15 +76,15 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
     private fun upChannelMenu() {
         // 加入频道列表
         groupMenu?.removeGroup(R.id.source_channel)
-        var sourceChannel = viewModel.rssSource?.sourceGroup
+        val sourceChannel = viewModel.rssSource?.sourceGroup
         channels.clear()
         sourceChannel?.split("\n\n")?.forEach { c ->
             val d = c.split("::")
             if (d.size > 1) {
                 channels[d[0]] = d[1]
-                var item = groupMenu?.add(R.id.source_channel, Menu.NONE, Menu.NONE, d[0])
+                val item = groupMenu?.add(R.id.source_channel, Menu.NONE, Menu.NONE, d[0])
                 item?.isCheckable = true
-                var keys = fragments.keys
+                val keys = fragments.keys
                 item?.isChecked = keys.indexOf(d[0]) == view_pager.currentItem
             }
         }
@@ -96,9 +95,9 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
         viewModel.rssSource?.sortUrls()?.forEach {
             fragments[it.key] = RssArticlesFragment.create(it.key, it.value)
         }
-        var sortUrlsSize = fragments.size
+        val sortUrlsSize = fragments.size
         if (sortUrlsSize <= 1) {
-            channels?.forEach {
+            channels.forEach {
                 fragments[it.key] = RssArticlesFragment.create(it.key, it.value)
             }
         }

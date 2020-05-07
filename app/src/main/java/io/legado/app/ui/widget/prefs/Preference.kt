@@ -56,10 +56,6 @@ class Preference(context: Context, attrs: AttributeSet) :
                     iconView.setColorFilter(context.accentColor)
                 }
 
-                val paddingView = it.findViewById(R.id.preference_padding)
-                if (paddingView != null) {
-                    paddingView.isVisible = view.isVisible && tvSummary != null && tvSummary.isVisible
-                }
             }
 
             if (weightLayoutRes != null && weightLayoutRes != 0 && viewId != null && viewId != 0) {

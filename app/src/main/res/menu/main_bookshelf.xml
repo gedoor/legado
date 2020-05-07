@@ -28,7 +28,7 @@
 
     <item
         android:id="@+id/menu_group_manage"
-        android:icon="@drawable/ic_groups_menu"
+        android:icon="@drawable/ic_groups"
         android:title="@string/group_manage"
         app:showAsAction="never" />
 
