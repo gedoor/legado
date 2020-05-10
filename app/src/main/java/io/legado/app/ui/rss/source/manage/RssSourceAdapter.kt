@@ -40,14 +40,14 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
-    fun getSelection(): LinkedHashSet<RssSource> {
-        val selection = linkedSetOf<RssSource>()
+    fun getSelection(): List<RssSource> {
+        val selection = arrayListOf<RssSource>()
         getItems().forEach {
             if (selected.contains(it)) {
                 selection.add(it)
             }
         }
-        return selection
+        return selection.sortedBy { it.customOrder }
     }
 
     override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {

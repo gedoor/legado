@@ -10,7 +10,7 @@ import org.jetbrains.anko.toast
 
 object CheckSource {
 
-    fun start(context: Context, sources: LinkedHashSet<BookSource>) {
+    fun start(context: Context, sources: List<BookSource>) {
         if (sources.isEmpty()) {
             context.toast(R.string.non_select)
             return

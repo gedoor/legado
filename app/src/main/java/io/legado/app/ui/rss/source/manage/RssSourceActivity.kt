@@ -204,7 +204,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
-        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
+        groups.sortedWith(Collator.getInstance(Locale.CHINESE))
             .map {
                 groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
             }

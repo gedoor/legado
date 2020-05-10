@@ -46,14 +46,14 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
-    fun getSelection(): LinkedHashSet<BookSource> {
-        val selection = linkedSetOf<BookSource>()
+    fun getSelection(): List<BookSource> {
+        val selection = arrayListOf<BookSource>()
         getItems().map {
             if (selected.contains(it)) {
                 selection.add(it)
             }
         }
-        return selection
+        return selection.sortedBy { it.customOrder }
     }
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
