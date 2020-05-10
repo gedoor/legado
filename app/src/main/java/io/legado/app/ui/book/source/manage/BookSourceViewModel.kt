@@ -31,7 +31,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun bottomSource(vararg sources: BookSource) {
         execute {
-            val maxOrder = App.db.bookSourceDao().minOrder + 1
+            val maxOrder = App.db.bookSourceDao().maxOrder + 1
             sources.forEachIndexed { index, bookSource ->
                 bookSource.customOrder = maxOrder + index
             }
