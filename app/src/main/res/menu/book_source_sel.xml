@@ -28,6 +28,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_bottom_sel"
+        android:title="@string/to_bottom"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_export_selection"
         android:title="@string/export_selection"
         app:showAsAction="never" />

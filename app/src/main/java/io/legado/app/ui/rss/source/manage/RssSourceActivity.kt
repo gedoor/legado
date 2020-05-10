@@ -107,6 +107,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
             R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
+            R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
         }
         return true
     }
@@ -336,6 +337,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     override fun toTop(source: RssSource) {
         viewModel.topSource(source)
+    }
+
+    override fun toBottom(source: RssSource) {
+        viewModel.bottomSource(source)
     }
 
     override fun upOrder() {

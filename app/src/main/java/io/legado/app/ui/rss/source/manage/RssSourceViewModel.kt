@@ -27,6 +27,16 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+    fun bottomSource(vararg sources: RssSource) {
+        execute {
+            val maxOrder = App.db.rssSourceDao().maxOrder + 1
+            sources.forEachIndexed { index, rssSource ->
+                rssSource.customOrder = maxOrder + index
+            }
+            App.db.rssSourceDao().update(*sources)
+        }
+    }
+
     fun del(rssSource: RssSource) {
         execute { App.db.rssSourceDao().delete(rssSource) }
     }

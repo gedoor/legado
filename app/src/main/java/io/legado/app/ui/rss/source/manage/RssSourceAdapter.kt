@@ -111,6 +111,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
+                R.id.menu_bottom -> callBack.toBottom(source)
                 R.id.menu_del -> callBack.del(source)
             }
             true
@@ -151,6 +152,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         fun edit(source: RssSource)
         fun update(vararg source: RssSource)
         fun toTop(source: RssSource)
+        fun toBottom(source: RssSource)
         fun upOrder()
         fun upCountView()
     }

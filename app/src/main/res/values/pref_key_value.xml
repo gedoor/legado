@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="pk_auto_refresh" tools:ignore="MissingTranslation">auto_refresh</string>
-    <string name="pk_requested_direction" tools:ignore="MissingTranslation">list_screen_direction</string>
-    <string name="pk_full_screen" tools:ignore="MissingTranslation">full_screen</string>
-    <string name="pk_threads_num" tools:ignore="MissingTranslation">threads_num</string>
-    <string name="pk_user_agent" tools:ignore="MissingTranslation">user_agent</string>
-    <string name="pk_bookshelf_px" tools:ignore="MissingTranslation">bookshelf_px</string>
-    <string name="pk_read_type" tools:ignore="MissingTranslation">read_type</string>
-    <string name="pk_find_expand_group" tools:ignore="MissingTranslation">expandGroupFind</string>
-    <string name="pk_default_read" tools:ignore="MissingTranslation">defaultToRead</string>
-    <string name="pk_auto_download" tools:ignore="MissingTranslation">autoDownload</string>
-    <string name="pk_check_update" tools:ignore="MissingTranslation">checkUpdate</string>
-    <string name="legado_gzh" tools:ignore="MissingTranslation">开源阅读</string>
+<resources>
+    <string name="pk_auto_refresh" translatable="false">auto_refresh</string>
+    <string name="pk_requested_direction" translatable="false">list_screen_direction</string>
+    <string name="pk_full_screen" translatable="false">full_screen</string>
+    <string name="pk_threads_num" translatable="false">threads_num</string>
+    <string name="pk_user_agent" translatable="false">user_agent</string>
+    <string name="pk_bookshelf_px" translatable="false">bookshelf_px</string>
+    <string name="pk_read_type" translatable="false">read_type</string>
+    <string name="pk_find_expand_group" translatable="false">expandGroupFind</string>
+    <string name="pk_default_read" translatable="false">defaultToRead</string>
+    <string name="pk_auto_download" translatable="false">autoDownload</string>
+    <string name="pk_check_update" translatable="false">checkUpdate</string>
+    <string name="legado_gzh" translatable="false">开源阅读</string>
 
-    <string name="source_rule_url" tools:ignore="MissingTranslation">https://gitee.com/alanskycn/yuedu/blob/master/Rule/README.md</string>
-    <string name="this_github_url" tools:ignore="MissingTranslation">https://github.com/gedoor/legado</string>
-    <string name="contributors_url" tools:ignore="MissingTranslation">https://github.com/gedoor/legado/graphs/contributors</string>
-    <string name="disclaimer_url" tools:ignore="MissingTranslation">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
-    <string name="home_page_url" tools:ignore="MissingTranslation">https://gedoor.github.io/MyBookshelf/</string>
-    <string name="latest_release_url" tools:ignore="MissingTranslation">https://github.com/gedoor/legado/releases/latest</string>
-    <string name="latest_release_api" tools:ignore="MissingTranslation">https://api.github.com/repos/gedoor/legado/releases/latest</string>
+    <string name="source_rule_url" translatable="false">https://gitee.com/alanskycn/yuedu/blob/master/Rule/README.md</string>
+    <string name="this_github_url" translatable="false">https://github.com/gedoor/legado</string>
+    <string name="contributors_url" translatable="false">https://github.com/gedoor/legado/graphs/contributors</string>
+    <string name="disclaimer_url" translatable="false">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
+    <string name="home_page_url" translatable="false">https://gedoor.github.io/MyBookshelf/</string>
+    <string name="latest_release_url" translatable="false">https://github.com/gedoor/legado/releases/latest</string>
+    <string name="latest_release_api" translatable="false">https://api.github.com/repos/gedoor/legado/releases/latest</string>
 </resources>

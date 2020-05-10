@@ -204,6 +204,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
             R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
             R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
+            R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
         }
         return true
     }
@@ -285,6 +286,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun toTop(bookSource: BookSource) {
         viewModel.topSource(bookSource)
+    }
+
+    override fun toBottom(bookSource: BookSource) {
+        viewModel.bottomSource(bookSource)
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
