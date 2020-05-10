@@ -13,6 +13,9 @@ import java.io.File
 
 object ImageLoader {
 
+    /**
+     * 自动判断path类型
+     */
     fun load(context: Context, path: String?): RequestBuilder<Drawable> {
         return when {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
