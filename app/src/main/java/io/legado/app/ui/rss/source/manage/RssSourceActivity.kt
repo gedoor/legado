@@ -106,8 +106,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
-            R.id.menu_check_source -> {
-            }
+            R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
         }
         return true
     }

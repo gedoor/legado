@@ -19,10 +19,13 @@ import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
-    fun topSource(bookSource: BookSource) {
+    fun topSource(vararg sources: BookSource) {
         execute {
-            bookSource.customOrder = App.db.bookSourceDao().minOrder - 1
-            App.db.bookSourceDao().insert(bookSource)
+            val minOrder = App.db.bookSourceDao().minOrder - 1
+            sources.forEachIndexed { index, bookSource ->
+                bookSource.customOrder = minOrder - index
+            }
+            App.db.bookSourceDao().update(*sources)
         }
     }
 

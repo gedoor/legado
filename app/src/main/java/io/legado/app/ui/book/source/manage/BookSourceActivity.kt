@@ -203,6 +203,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
             R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
             R.id.menu_check_source -> CheckSource.start(this, adapter.getSelection())
+            R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
         }
         return true
     }

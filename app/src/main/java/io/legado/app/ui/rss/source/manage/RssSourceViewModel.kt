@@ -17,10 +17,13 @@ import java.io.File
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
 
-    fun topSource(rssSource: RssSource) {
+    fun topSource(vararg sources: RssSource) {
         execute {
-            rssSource.customOrder = App.db.rssSourceDao().minOrder - 1
-            App.db.rssSourceDao().insert(rssSource)
+            val minOrder = App.db.rssSourceDao().minOrder - 1
+            sources.forEachIndexed { index, rssSource ->
+                rssSource.customOrder = minOrder - index
+            }
+            App.db.rssSourceDao().update(*sources)
         }
     }
 
