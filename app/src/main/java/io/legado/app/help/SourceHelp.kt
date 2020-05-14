@@ -37,6 +37,7 @@ object SourceHelp {
 
     private fun is18Plus(url: String?): Boolean {
         url ?: return false
+        if (AppConfig.isGooglePlay) return false
         list18Plus.forEach {
             if (url.contains(it)) {
                 return true
