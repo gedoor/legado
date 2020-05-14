@@ -9,6 +9,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
@@ -162,7 +163,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             }
             if (null != content) {
                 GSON.fromJsonArray<RssSource>(content)?.let {
-                    App.db.rssSourceDao().insert(*it.toTypedArray())
+                    SourceHelp.insertRssSource(*it.toTypedArray())
                 }
             }
         }.onSuccess {
@@ -184,7 +185,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                         }
                     } else {
                         GSON.fromJsonArray<RssSource>(text1)?.let {
-                            App.db.rssSourceDao().insert(*it.toTypedArray())
+                            SourceHelp.insertRssSource(*it.toTypedArray())
                             count = 1
                         }
                     }
@@ -199,7 +200,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                             rssSources.add(it)
                         }
                     }
-                    App.db.rssSourceDao().insert(*rssSources.toTypedArray())
+                    SourceHelp.insertRssSource(*rssSources.toTypedArray())
                     "导入${rssSources.size}条"
                 }
                 text1.isAbsUrl() -> {
@@ -225,7 +226,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                     sources.add(source)
                 }
             }
-            App.db.rssSourceDao().insert(*sources.toTypedArray())
+            SourceHelp.insertRssSource(*sources.toTypedArray())
             return sources.size
         }
         return 0
