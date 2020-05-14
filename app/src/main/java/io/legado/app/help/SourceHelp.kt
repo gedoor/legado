@@ -21,7 +21,7 @@ object SourceHelp {
 
     fun insertRssSource(vararg rssSources: RssSource) {
         rssSources.forEach { rssSource ->
-            if (is18Plus(rssSource.sortUrl)) {
+            if (is18Plus(rssSource.sourceUrl)) {
                 handler.post {
                     App.INSTANCE.toast("${rssSource.sourceName}是18+网址,禁止导入.")
                 }
