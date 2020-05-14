@@ -11,8 +11,12 @@ import org.jetbrains.anko.toast
 object SourceHelp {
 
     private val handler = Handler(Looper.getMainLooper())
-    private val list18Plus by lazy {
-        String(App.INSTANCE.assets.open("18PlusList.txt").readBytes()).splitNotBlank("\n")
+    private val list18Plus: Array<String> by lazy {
+        try {
+            String(App.INSTANCE.assets.open("18PlusList.txt").readBytes()).splitNotBlank("\n")
+        } catch (e: Exception) {
+            arrayOf()
+        }
     }
 
     fun insertRssSource(vararg rssSources: RssSource) {
