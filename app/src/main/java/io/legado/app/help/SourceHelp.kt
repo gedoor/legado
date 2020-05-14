@@ -13,9 +13,10 @@ object SourceHelp {
     private val handler = Handler(Looper.getMainLooper())
     private val list18Plus by lazy {
         try {
-            String(App.INSTANCE.assets.open("18PlusList.txt").readBytes()).splitNotBlank("\n")
+            return@lazy String(App.INSTANCE.assets.open("18PlusList.txt").readBytes())
+                .splitNotBlank("\n")
         } catch (e: Exception) {
-            arrayOf<String>()
+            return@lazy arrayOf<String>()
         }
     }
 
