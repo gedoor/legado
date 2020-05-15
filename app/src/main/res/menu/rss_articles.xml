@@ -12,8 +12,9 @@
         android:title="@string/clear"
         app:showAsAction="never" />
 
-    <group android:id="@+id/source_channel">
-
-    </group>
+    <item
+        android:id="@+id/menu_switch_layout"
+        android:title="@string/switchLayout"
+        app:showAsAction="never" />
 
 </menu>

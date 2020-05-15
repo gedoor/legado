@@ -132,6 +132,12 @@ object AppConfig {
     val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
 
     val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
+
+    var rssLayout: Int
+        get() = App.INSTANCE.getPrefInt("rssLayoutMode")
+        set(value) {
+            App.INSTANCE.putPrefInt("rssLayoutMode", value)
+        }
 }
 
 val Context.channel: String

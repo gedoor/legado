@@ -51,11 +51,12 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         initData()
     }
 
-    private fun initView() {
+    fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
-        adapter = RssArticlesAdapter(requireContext(), this)
+        var layoutId = R.layout.item_rss_article;
+        adapter = RssArticlesAdapter(requireContext(), layoutId, this)
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())
         adapter.addFooterView(loadMoreView)
