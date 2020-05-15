@@ -466,6 +466,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 if (getPrefBoolean("volumeKeyPageOnPlay")
                     || BaseReadAloudService.pause
                 ) {
+                    page_view.pageDelegate?.isCancel = false
                     page_view.pageDelegate?.keyTurnPage(direction)
                     return true
                 }
