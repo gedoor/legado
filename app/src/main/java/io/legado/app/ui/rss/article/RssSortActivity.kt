@@ -17,7 +17,6 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
 import org.jetbrains.anko.startActivityForResult
-import java.util.*
 
 class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_artivles) {
 
@@ -26,8 +25,6 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
     private val editSource = 12319
     private val fragments = linkedMapOf<String, RssArticlesFragment>()
     private lateinit var adapter: TabFragmentPageAdapter
-    private val channels = LinkedHashMap<String, String>()
-    private var groupMenu: Menu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         adapter = TabFragmentPageAdapter(supportFragmentManager)
@@ -37,7 +34,6 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
             title_bar.title = it
         })
         viewModel.initData(intent) {
-            upChannelMenu()
             upFragments()
         }
     }
@@ -45,12 +41,6 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_articles, menu)
         return super.onCompatCreateOptionsMenu(menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        groupMenu = menu
-        upChannelMenu()
-        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
@@ -64,30 +54,7 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
                 }
             }
         }
-        if (item.groupId == R.id.source_channel) {
-            val key = item.title.toString();
-            val i = fragments.keys.indexOf(key)
-            if (i >= 0)
-                view_pager.currentItem = i
-        }
         return super.onCompatOptionsItemSelected(item)
-    }
-
-    private fun upChannelMenu() {
-        // 加入频道列表
-        groupMenu?.removeGroup(R.id.source_channel)
-        val sourceChannel = viewModel.rssSource?.sourceGroup
-        channels.clear()
-        sourceChannel?.split("\n\n")?.forEach { c ->
-            val d = c.split("::")
-            if (d.size > 1) {
-                channels[d[0]] = d[1]
-                val item = groupMenu?.add(R.id.source_channel, Menu.NONE, Menu.NONE, d[0])
-                item?.isCheckable = true
-                val keys = fragments.keys
-                item?.isChecked = keys.indexOf(d[0]) == view_pager.currentItem
-            }
-        }
     }
 
     private fun upFragments() {
@@ -95,13 +62,7 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
         viewModel.rssSource?.sortUrls()?.forEach {
             fragments[it.key] = RssArticlesFragment.create(it.key, it.value)
         }
-        val sortUrlsSize = fragments.size
-        if (sortUrlsSize <= 1) {
-            channels.forEach {
-                fragments[it.key] = RssArticlesFragment.create(it.key, it.value)
-            }
-        }
-        if (sortUrlsSize == 1) {
+        if (fragments.size == 1) {
             tab_layout.gone()
         } else {
             tab_layout.visible()
