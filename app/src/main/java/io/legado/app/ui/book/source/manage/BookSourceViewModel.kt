@@ -233,6 +233,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 else -> "格式不对"
             }
         }.onError {
+            it.printStackTrace()
             finally(it.localizedMessage ?: "")
         }.onSuccess {
             finally(it)
@@ -240,7 +241,11 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     private fun importSourceUrl(url: String): Int {
-        HttpHelper.simpleGet(url, "UTF-8")?.let { body ->
+        HttpHelper.simpleGet(url, "UTF-8").let { body ->
+            if (body == null) {
+                toast("访问网站失败")
+                return 0
+            }
             val bookSources = mutableListOf<BookSource>()
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
@@ -252,6 +257,5 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             App.db.bookSourceDao().insert(*bookSources.toTypedArray())
             return bookSources.size
         }
-        return 0
     }
 }
