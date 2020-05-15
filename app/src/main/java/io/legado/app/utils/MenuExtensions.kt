@@ -19,8 +19,13 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)
     }
+    val primaryTextColor = context.primaryTextColor
     val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
-    val tintColor = UIUtils.getMenuColor(context, theme)
+    val tintColor = when (theme) {
+        Theme.Dark -> context.getCompatColor(R.color.md_white_1000)
+        Theme.Light -> context.getCompatColor(R.color.md_black_1000)
+        else -> primaryTextColor
+    }
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
             //overflow：展开的item
