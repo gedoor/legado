@@ -88,7 +88,7 @@ class ReplaceEditDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_save -> {
-                val rule = getReplaceRule();
+                val rule = getReplaceRule()
                 if (!rule.isValid()){
                     toast(R.string.replace_rule_invalid)
                 }
