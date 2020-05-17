@@ -1,10 +1,13 @@
 package io.legado.app.ui.replacerule.edit
 
-import android.graphics.Rect
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.EditText
 import android.widget.PopupWindow
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
@@ -19,8 +22,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.dialog_replace_edit.*
-import org.jetbrains.anko.displayMetrics
-import kotlin.math.abs
+import org.jetbrains.anko.sdk27.listeners.onFocusChange
 
 class ReplaceEditDialog : DialogFragment(),
     Toolbar.OnMenuItemClickListener,
@@ -45,14 +47,11 @@ class ReplaceEditDialog : DialogFragment(),
     }
 
     private lateinit var viewModel: ReplaceEditViewModel
-    private var mSoftKeyboardTool: PopupWindow? = null
-    private var mIsSoftKeyBoardShowing = false
+    private lateinit var mSoftKeyboardTool: PopupWindow
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
-        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), WRAP_CONTENT)
+        dialog?.window?.setLayout(MATCH_PARENT, WRAP_CONTENT)
     }
 
     override fun onCreateView(
@@ -67,7 +66,6 @@ class ReplaceEditDialog : DialogFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mSoftKeyboardTool = KeyboardToolPop(requireContext(), AppConst.keyboardToolChars, this)
-        ll_content.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         tool_bar.inflateMenu(R.menu.replace_edit)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
@@ -76,6 +74,14 @@ class ReplaceEditDialog : DialogFragment(),
         })
         arguments?.let {
             viewModel.initData(it)
+        }
+        et_replace_rule.onFocusChange { v, hasFocus ->
+            if (hasFocus) {
+                mSoftKeyboardTool.width = et_replace_rule.width
+                mSoftKeyboardTool.showAsDropDown(v)
+            } else {
+                mSoftKeyboardTool.dismiss()
+            }
         }
     }
 
@@ -119,42 +125,27 @@ class ReplaceEditDialog : DialogFragment(),
 
     val callBack get() = activity as? CallBack
 
-    override fun sendText(text: String) {
-
-    }
-
-    private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.let {
-            if (it.isShowing) return
-            view?.let { view ->
-                it.showAtLocation(view, Gravity.BOTTOM, 0, 0)
+    private fun insertText(text: String) {
+        if (text.isBlank()) return
+        val view = dialog?.window?.decorView?.findFocus()
+        if (view is EditText) {
+            val start = view.selectionStart
+            val end = view.selectionEnd
+            val edit = view.editableText//获取EditText的文字
+            if (start < 0 || start >= edit.length) {
+                edit.append(text)
+            } else {
+                edit.replace(start, end, text)//光标所在位置插入文字
             }
         }
     }
 
-    private fun closePopupWindow() {
-        mSoftKeyboardTool?.dismiss()
-    }
-
-    private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {
-        override fun onGlobalLayout() {
-            activity?.let {
-                val rect = Rect()
-                // 获取当前页面窗口的显示范围
-                dialog?.window?.decorView?.getWindowVisibleDisplayFrame(rect)
-                val screenHeight = it.displayMetrics.heightPixels
-                val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
-                val preShowing = mIsSoftKeyBoardShowing
-                if (abs(keyboardHeight) > screenHeight / 5) {
-                    mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-                    showKeyboardTopPopupWindow()
-                } else {
-                    mIsSoftKeyBoardShowing = false
-                    if (preShowing) {
-                        closePopupWindow()
-                    }
-                }
-            }
+    override fun sendText(text: String) {
+        if (text == AppConst.keyboardToolChars[0]) {
+            val view = dialog?.window?.decorView?.findFocus()
+            view?.clearFocus()
+        } else {
+            insertText(text)
         }
     }
 
