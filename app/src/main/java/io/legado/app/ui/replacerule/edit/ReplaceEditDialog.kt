@@ -1,26 +1,30 @@
 package io.legado.app.ui.replacerule.edit
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.PopupWindow
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import io.legado.app.R
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.dialog_replace_edit.*
+import org.jetbrains.anko.displayMetrics
+import kotlin.math.abs
 
 class ReplaceEditDialog : DialogFragment(),
-    Toolbar.OnMenuItemClickListener {
+    Toolbar.OnMenuItemClickListener,
+    KeyboardToolPop.CallBack {
 
     companion object {
 
@@ -41,6 +45,8 @@ class ReplaceEditDialog : DialogFragment(),
     }
 
     private lateinit var viewModel: ReplaceEditViewModel
+    private var mSoftKeyboardTool: PopupWindow? = null
+    private var mIsSoftKeyBoardShowing = false
 
     override fun onStart() {
         super.onStart()
@@ -60,6 +66,8 @@ class ReplaceEditDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mSoftKeyboardTool = KeyboardToolPop(requireContext(), AppConst.keyboardToolChars, this)
+        view.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         tool_bar.inflateMenu(R.menu.replace_edit)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
@@ -110,6 +118,45 @@ class ReplaceEditDialog : DialogFragment(),
     }
 
     val callBack get() = activity as? CallBack
+
+    override fun sendText(text: String) {
+        TODO("Not yet implemented")
+    }
+
+    private fun showKeyboardTopPopupWindow() {
+        mSoftKeyboardTool?.let {
+            if (it.isShowing) return
+            view?.let { view ->
+                it.showAtLocation(view, Gravity.BOTTOM, 0, 0)
+            }
+        }
+    }
+
+    private fun closePopupWindow() {
+        mSoftKeyboardTool?.dismiss()
+    }
+
+    private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            activity?.let {
+                val rect = Rect()
+                // 获取当前页面窗口的显示范围
+                dialog?.window?.decorView?.getWindowVisibleDisplayFrame(rect)
+                val screenHeight = it.displayMetrics.heightPixels
+                val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
+                val preShowing = mIsSoftKeyBoardShowing
+                if (abs(keyboardHeight) > screenHeight / 5) {
+                    mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
+                    showKeyboardTopPopupWindow()
+                } else {
+                    mIsSoftKeyBoardShowing = false
+                    if (preShowing) {
+                        closePopupWindow()
+                    }
+                }
+            }
+        }
+    }
 
     interface CallBack {
         fun onReplaceRuleSave()

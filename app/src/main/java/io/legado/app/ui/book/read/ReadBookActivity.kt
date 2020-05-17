@@ -584,7 +584,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         autoPageProgress++
         if (autoPageProgress >= 460) {
             autoPageProgress = 0
-            ReadBook.moveToNextPage()
+            page_view.fillPage(PageDelegate.Direction.NEXT)
         } else {
             page_view.invalidate()
         }
