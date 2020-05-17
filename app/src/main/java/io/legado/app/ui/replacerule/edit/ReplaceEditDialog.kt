@@ -67,7 +67,7 @@ class ReplaceEditDialog : DialogFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mSoftKeyboardTool = KeyboardToolPop(requireContext(), AppConst.keyboardToolChars, this)
-        view.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
+        ll_content.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         tool_bar.inflateMenu(R.menu.replace_edit)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         tool_bar.setOnMenuItemClickListener(this)
@@ -120,7 +120,7 @@ class ReplaceEditDialog : DialogFragment(),
     val callBack get() = activity as? CallBack
 
     override fun sendText(text: String) {
-        TODO("Not yet implemented")
+
     }
 
     private fun showKeyboardTopPopupWindow() {
