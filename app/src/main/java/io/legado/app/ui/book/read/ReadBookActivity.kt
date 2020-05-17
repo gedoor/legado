@@ -346,6 +346,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                             toast(R.string.read_aloud_pause)
                             return true
                         }
+                        if (isAutoPage) {
+                            autoPageStop()
+                            return true
+                        }
                     }
                 }
             }
@@ -561,14 +565,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun autoPage() {
         if (isAutoPage) {
-            isAutoPage = false
-            mHandler.removeCallbacks(autoPageRunnable)
-            page_view.upContent()
+            autoPageStop()
         } else {
             isAutoPage = true
             autoPagePlus()
         }
         read_menu.setAutoPage(isAutoPage)
+    }
+
+    private fun autoPageStop() {
+        isAutoPage = false
+        mHandler.removeCallbacks(autoPageRunnable)
+        page_view.upContent()
     }
 
     private fun autoPagePlus() {
