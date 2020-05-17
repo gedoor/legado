@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
@@ -11,6 +12,8 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.activity
+import io.legado.app.utils.screenshot
+import kotlinx.android.synthetic.main.activity_book_read.view.*
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -44,8 +47,14 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-
         pageDelegate?.onDraw(canvas)
+        if (callBack.isAutoPage) {
+            nextPage.screenshot()?.let {
+                val rect =
+                    Rect(0, 0, page_view.width, page_view.height * callBack.autoPageProgress / 460)
+                canvas.drawBitmap(it, rect, rect, null)
+            }
+        }
     }
 
     override fun computeScroll() {
@@ -169,6 +178,8 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     interface CallBack {
         val isInitFinish: Boolean
+        val isAutoPage: Boolean
+        val autoPageProgress: Int
         fun clickCenter()
         fun screenOffTimerStart()
         fun showTextActionMenu()

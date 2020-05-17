@@ -86,8 +86,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val mHandler = Handler()
     private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
     private val autoPageRunnable: Runnable = Runnable { autoPagePlus() }
-    private var autoPageProgress = 0
-    private var isAutoPage = false
+    override var autoPageProgress = 0
+    override var isAutoPage = false
     private var screenTimeOut: Long = 0
     private var timeBatteryReceiver: TimeBatteryReceiver? = null
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
@@ -574,9 +574,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private fun autoPagePlus() {
         mHandler.removeCallbacks(autoPageRunnable)
         autoPageProgress++
-        if (autoPageProgress >= 46) {
+        if (autoPageProgress >= 460) {
             autoPageProgress = 0
             ReadBook.moveToNextPage()
+        } else {
+            page_view.invalidate()
         }
         mHandler.postDelayed(autoPageRunnable, 100)
     }
