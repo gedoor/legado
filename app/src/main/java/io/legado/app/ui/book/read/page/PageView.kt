@@ -3,11 +3,13 @@ package io.legado.app.ui.book.read.page
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.TextChapter
@@ -26,6 +28,12 @@ class PageView(context: Context, attrs: AttributeSet) :
     var prevPage: ContentView = ContentView(context)
     var curPage: ContentView = ContentView(context)
     var nextPage: ContentView = ContentView(context)
+    private val autoPageRect by lazy { Rect() }
+    private val autoPagePint by lazy {
+        Paint().apply {
+            color = context.accentColor
+        }
+    }
 
     init {
         addView(nextPage)
@@ -50,9 +58,16 @@ class PageView(context: Context, attrs: AttributeSet) :
         pageDelegate?.onDraw(canvas)
         if (callBack.isAutoPage) {
             nextPage.screenshot()?.let {
-                val rect =
-                    Rect(0, 0, page_view.width, page_view.height * callBack.autoPageProgress / 460)
-                canvas.drawBitmap(it, rect, rect, null)
+                val bottom = page_view.height * callBack.autoPageProgress / 460
+                autoPageRect.set(0, 0, page_view.width, bottom)
+                canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
+                canvas.drawRect(
+                    0f,
+                    bottom.toFloat() - 1,
+                    page_view.width.toFloat(),
+                    bottom.toFloat(),
+                    autoPagePint
+                )
             }
         }
     }
@@ -155,18 +170,18 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override val currentChapter: TextChapter?
         get() {
-        return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
-    }
+            return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
+        }
 
     override val nextChapter: TextChapter?
         get() {
-        return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
-    }
+            return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
+        }
 
     override val prevChapter: TextChapter?
         get() {
-        return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
-    }
+            return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
+        }
 
     override fun hasNextChapter(): Boolean {
         return ReadBook.durChapterIndex < ReadBook.chapterSize - 1
