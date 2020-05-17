@@ -77,7 +77,7 @@ class ReplaceEditDialog : DialogFragment(),
         }
         et_replace_rule.onFocusChange { v, hasFocus ->
             if (hasFocus) {
-                mSoftKeyboardTool.width = et_replace_rule.width
+                mSoftKeyboardTool.width = v.width
                 mSoftKeyboardTool.showAsDropDown(v)
             } else {
                 mSoftKeyboardTool.dismiss()
