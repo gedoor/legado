@@ -55,7 +55,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
-        adapter = RssArticlesAdapter(requireContext(), this)
+        adapter = RssArticlesAdapter(requireContext(), activityViewModel.layoutId, this)
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())
         adapter.addFooterView(loadMoreView)

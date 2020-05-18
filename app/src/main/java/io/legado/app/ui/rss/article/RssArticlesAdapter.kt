@@ -18,8 +18,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.textColorResource
 
 
-class RssArticlesAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<RssArticle>(context, R.layout.item_rss_article) {
+class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack) :
+    SimpleRecyclerAdapter<RssArticle>(context, layoutId) {
 
     override fun convert(holder: ItemViewHolder, item: RssArticle, payloads: MutableList<Any>) {
         with(holder.itemView) {
