@@ -2,49 +2,52 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:paddingLeft="5dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:paddingRight="5dp"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:padding="16dp">
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="0dp"
+        android:layout_height="272dp"
+        android:contentDescription="@string/loading"
+        android:visibility="visible"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg_img_border"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:maxLines="2"
         android:ellipsize="end"
         android:text="@string/app_name"
         android:textColor="@color/tv_text_default"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_pub_date"
+        android:textSize="12sp"
+        android:paddingTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/image_view"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/image_view"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/tv_pub_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="8dp"
         android:text="@string/app_name"
-        android:textSize="12sp"
-        android:textStyle="italic"
+        android:textSize="10sp"
         android:maxLines="1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingTop="8dp"
+        android:paddingBottom="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/image_view" />
-
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="110dp"
-        android:layout_height="68dp"
-        android:contentDescription="@string/img_cover"
-        android:paddingLeft="16dp"
-        android:visibility="gone"
-        android:scaleType="centerCrop"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,17 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="14dp">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/img_cover"
-        android:visibility="gone"
+        android:layout_height="200dp"
+        android:contentDescription="@string/loading"
+        android:visibility="visible"
         android:scaleType="centerCrop"
-        android:layout_marginBottom="12dp"
+        android:padding="12dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,6 +28,8 @@
         android:textColor="@color/tv_text_default"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         app:layout_constraintTop_toBottomOf="@+id/image_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -38,14 +39,22 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="16dp"
         android:text="@string/app_name"
-        android:textSize="12sp"
+        android:textSize="10sp"
         android:maxLines="1"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="10dp"
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
+    <View
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pub_date"
+        android:layout_height="8dp"
+        android:layout_width="match_parent"
+        android:background="@color/bg_divider_line" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

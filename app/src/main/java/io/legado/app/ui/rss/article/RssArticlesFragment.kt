@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
@@ -21,9 +22,10 @@ import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_rss_articles.*
 import kotlinx.android.synthetic.main.view_load_more.view.*
 import kotlinx.android.synthetic.main.view_refresh_recycler.*
+import org.jetbrains.anko.padding
 
 class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragment_rss_articles),
-    RssArticlesAdapter.CallBack {
+    RssArticlesBaseAdapter.CallBack {
 
     companion object {
         fun create(sortName: String, sortUrl: String): RssArticlesFragment {
@@ -40,7 +42,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         get() = getViewModelOfActivity(RssSortViewModel::class.java)
     override val viewModel: RssArticlesViewModel
         get() = getViewModel(RssArticlesViewModel::class.java)
-    lateinit var adapter: RssArticlesAdapter
+    lateinit var adapter: RssArticlesBaseAdapter
     private lateinit var loadMoreView: LoadMoreView
     private var rssArticlesData: LiveData<List<RssArticle>>? = null
 
@@ -59,8 +61,6 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
 
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
 
         var rssLayoutConfig = AppConfig.rssLayout
         var layoutId = R.layout.item_rss_article
@@ -69,7 +69,19 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         else if (rssLayoutConfig == 2)
             layoutId = R.layout.item_rss_article_2
 
-        adapter = RssArticlesAdapter(requireContext(), layoutId, this)
+        if (rssLayoutConfig == 2) {
+            recycler_view.padding = 8
+            recycler_view.layoutManager = GridLayoutManager(requireContext(), 2)
+            while (recycler_view.itemDecorationCount > 0)
+                recycler_view.removeItemDecorationAt(0)
+            adapter = RssArticlesGridAdapter(requireContext(), layoutId, this)
+        } else {
+            recycler_view.padding = 0
+            recycler_view.layoutManager = LinearLayoutManager(requireContext())
+            recycler_view.addItemDecoration(VerticalDivider(requireContext()))
+            adapter = RssArticlesAdapter(requireContext(), layoutId, this)
+        }
+
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())
         adapter.addFooterView(loadMoreView)

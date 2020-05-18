@@ -39,7 +39,7 @@
         android:id="@+id/image_view"
         android:layout_width="110dp"
         android:layout_height="68dp"
-        android:contentDescription="@string/img_cover"
+        android:contentDescription="@string/loading"
         android:paddingLeft="16dp"
         android:visibility="gone"
         android:scaleType="centerCrop"

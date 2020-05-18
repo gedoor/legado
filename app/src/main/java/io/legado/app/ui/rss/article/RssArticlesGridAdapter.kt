@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_rss_article.view.*
 import org.jetbrains.anko.textColorResource
 
 
-class RssArticlesAdapter(context: Context, private val layoutId: Int, callBack: CallBack) :
+class RssArticlesGridAdapter(context: Context, private val layoutId: Int, callBack: CallBack) :
     RssArticlesBaseAdapter(context, layoutId, callBack) {
 
     override fun convert(holder: ItemViewHolder, item: RssArticle, payloads: MutableList<Any>) {
