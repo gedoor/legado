@@ -1,5 +1,6 @@
 package io.legado.app.help.http
 
+import io.legado.app.constant.AppConst
 import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -94,6 +95,7 @@ object HttpHelper {
         return Interceptor { chain ->
             val request = chain.request()
                 .newBuilder()
+                .addHeader(AppConst.UA_NAME, AppConst.userAgent)
                 .addHeader("Keep-Alive", "300")
                 .addHeader("Connection", "Keep-Alive")
                 .addHeader("Cache-Control", "no-cache")
