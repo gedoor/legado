@@ -84,7 +84,7 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
         if (i > 2) i = 0
         AppConfig.rssLayout = i
         fragments?.forEach {
-            it.value?.initView()
+            it.value?.switchLayout()
         };
     }
 

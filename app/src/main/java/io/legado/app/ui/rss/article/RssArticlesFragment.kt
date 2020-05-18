@@ -10,6 +10,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.RssArticle
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
@@ -51,11 +52,23 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         initData()
     }
 
-    fun initView() {
+    fun switchLayout() {
+        initView()
+        initData()
+    }
+
+    private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
-        var layoutId = R.layout.item_rss_article;
+
+        var rssLayoutConfig = AppConfig.rssLayout
+        var layoutId = R.layout.item_rss_article
+        if (rssLayoutConfig == 1)
+            layoutId = R.layout.item_rss_article_1
+        else if (rssLayoutConfig == 2)
+            layoutId = R.layout.item_rss_article_2
+
         adapter = RssArticlesAdapter(requireContext(), layoutId, this)
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())
