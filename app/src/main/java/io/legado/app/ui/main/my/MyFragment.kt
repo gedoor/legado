@@ -13,7 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.channel
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -79,7 +79,13 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
             observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
                 webServicePre?.isChecked = false
             }
-            if (requireContext().channel == "google") {
+            findPreference<NameListPreference>(PreferKey.themeMode)?.let {
+                it.setOnPreferenceChangeListener { _, _ ->
+                    view?.post { App.INSTANCE.applyDayNight() }
+                    true
+                }
+            }
+            if (AppConfig.isGooglePlay) {
                 findPreference<PreferenceCategory>("aboutCategory")
                     ?.removePreference(findPreference("donate"))
             }

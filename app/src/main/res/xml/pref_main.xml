@@ -20,13 +20,23 @@
         android:icon="@drawable/ic_cfg_replace"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="false"
-        android:key="isEInkMode"
-        android:title="@string/eink_theme"
-        android:summary="@string/eink_theme_desc"
-        android:icon="@drawable/ic_cfg_e_lnk"
+    <io.legado.app.ui.widget.prefs.NameListPreference
+        android:defaultValue="0"
+        android:entries="@array/theme_mode"
+        android:entryValues="@array/theme_mode_v"
+        android:key="themeMode"
+        android:title="@string/theme_mode"
+        android:summary="@string/theme_mode_desc"
+        android:icon="@drawable/ic_cfg_theme"
         app:iconSpaceReserved="false" />
+
+    <!--    <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="isEInkMode"
+            android:title="@string/eink_theme"
+            android:summary="@string/eink_theme_desc"
+            android:icon="@drawable/ic_cfg_e_lnk"
+            app:iconSpaceReserved="false" />-->
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
