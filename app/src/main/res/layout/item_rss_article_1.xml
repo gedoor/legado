@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:contentDescription="@string/loading"
         android:visibility="visible"
         android:scaleType="centerCrop"

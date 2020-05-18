@@ -79,9 +79,10 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
 
     /** 切换布局 */
     private fun switchLayout() {
-        var i = AppConfig.rssLayout + 1
+        if (viewModel.rssSource == null) return
+        var i = AppConfig.getRssLayout(viewModel.rssSource!!) + 1
         if (i > 2) i = 0
-        AppConfig.rssLayout = i
+        AppConfig.setRssLayout(viewModel.rssSource!!, i)
         fragments?.forEach {
             it.value?.switchLayout()
         };

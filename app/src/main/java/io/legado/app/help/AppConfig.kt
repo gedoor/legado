@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.*
 
 object AppConfig {
@@ -133,11 +134,19 @@ object AppConfig {
 
     val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
 
-    var rssLayout: Int
-        get() = App.INSTANCE.getPrefInt("rssLayoutMode")
-        set(value) {
-            App.INSTANCE.putPrefInt("rssLayoutMode", value)
-        }
+    private fun rssSourceKey(source: RssSource): String {
+        return source?.sourceUrl
+    }
+
+    fun getRssLayout(source: RssSource): Int {
+        return App.INSTANCE.getPrefInt("rssLayoutMode_" + MD5Utils.md5Encode(rssSourceKey(source)))
+    }
+
+    fun setRssLayout(source: RssSource, value: Int) {
+        App.INSTANCE.putPrefInt("rssLayoutMode_" + MD5Utils.md5Encode(rssSourceKey(source)), value)
+    }
+
+
 }
 
 val Context.channel: String

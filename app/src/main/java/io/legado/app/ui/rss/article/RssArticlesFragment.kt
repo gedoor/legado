@@ -55,6 +55,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     }
 
     fun switchLayout() {
+        refresh_recycler_view.startLoading()
         initView()
         initData()
     }
@@ -62,7 +63,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
 
-        var rssLayoutConfig = AppConfig.rssLayout
+        var rssLayoutConfig = activityViewModel.rssSource?.let { AppConfig.getRssLayout(it) }
         var layoutId = R.layout.item_rss_article
         if (rssLayoutConfig == 1)
             layoutId = R.layout.item_rss_article_1
@@ -70,7 +71,8 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
             layoutId = R.layout.item_rss_article_2
 
         if (rssLayoutConfig == 2) {
-            recycler_view.padding = 8
+            recycler_view.setPadding(8, 0, 8, 0)
+
             recycler_view.layoutManager = GridLayoutManager(requireContext(), 2)
             while (recycler_view.itemDecorationCount > 0)
                 recycler_view.removeItemDecorationAt(0)
