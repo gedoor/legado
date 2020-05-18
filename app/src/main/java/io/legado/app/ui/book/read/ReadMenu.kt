@@ -140,7 +140,11 @@ class ReadMenu : FrameLayout {
         })
 
         //自动翻页
-        fabAutoPage.onClick { callBack?.autoPage() }
+        fabAutoPage.onClick {
+            runMenuOut {
+                callBack?.autoPage()
+            }
+        }
 
         //替换
         fabReplaceRule.onClick { callBack?.openReplaceRule() }

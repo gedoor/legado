@@ -85,7 +85,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     private val mHandler = Handler()
     private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
-
+    private val autoPageRunnable: Runnable = Runnable { autoPagePlus() }
+    override var autoPageProgress = 0
+    override var isAutoPage = false
     private var screenTimeOut: Long = 0
     private var timeBatteryReceiver: TimeBatteryReceiver? = null
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
@@ -344,6 +346,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                             toast(R.string.read_aloud_pause)
                             return true
                         }
+                        if (isAutoPage) {
+                            autoPageStop()
+                            return true
+                        }
                     }
                 }
             }
@@ -558,7 +564,31 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 自动翻页
      */
     override fun autoPage() {
+        if (isAutoPage) {
+            autoPageStop()
+        } else {
+            isAutoPage = true
+            autoPagePlus()
+        }
+        read_menu.setAutoPage(isAutoPage)
+    }
 
+    private fun autoPageStop() {
+        isAutoPage = false
+        mHandler.removeCallbacks(autoPageRunnable)
+        page_view.upContent()
+    }
+
+    private fun autoPagePlus() {
+        mHandler.removeCallbacks(autoPageRunnable)
+        autoPageProgress++
+        if (autoPageProgress >= 460) {
+            autoPageProgress = 0
+            page_view.fillPage(PageDelegate.Direction.NEXT)
+        } else {
+            page_view.invalidate()
+        }
+        mHandler.postDelayed(autoPageRunnable, 100)
     }
 
     /**

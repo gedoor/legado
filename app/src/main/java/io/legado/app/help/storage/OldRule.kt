@@ -20,7 +20,7 @@ object OldRule {
         } catch (e: Exception) {
             null
         }
-        runCatching {
+        try {
             if (sourceAny?.ruleToc == null) {
                 source.apply {
                     val jsonItem = jsonPath.parse(json.trim())
@@ -125,6 +125,8 @@ object OldRule {
                     GSON.fromJsonObject(GSON.toJson(sourceAny.ruleContent))
                 }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         return source
     }

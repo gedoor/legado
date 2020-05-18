@@ -17,7 +17,6 @@ import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_artivles.*
 import org.jetbrains.anko.startActivityForResult
-import java.util.*
 
 class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_artivles) {
 
@@ -44,10 +43,13 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+<<<<<<< HEAD
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         return super.onPrepareOptionsMenu(menu)
     }
 
+=======
+>>>>>>> 6c28abcdcd7b57f40de92223ec9e6241805e2b7c
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
@@ -58,9 +60,12 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
                     viewModel.clearArticles()
                 }
             }
+<<<<<<< HEAD
             R.id.menu_switch_layout -> {
                 switchLayout()
             }
+=======
+>>>>>>> 6c28abcdcd7b57f40de92223ec9e6241805e2b7c
         }
         return super.onCompatOptionsItemSelected(item)
     }
