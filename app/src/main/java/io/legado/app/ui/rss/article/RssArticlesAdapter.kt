@@ -30,11 +30,11 @@ class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack
             if (item.image.isNullOrBlank() && !callBack.isGridLayout) {
                 image_view.gone()
             } else {
-                val glide = ImageLoader.load(context, item.image)
+                val imageLoader = ImageLoader.load(context, item.image)
                 if (callBack.isGridLayout) {
-                    glide.placeholder(R.drawable.image_rss_article)
+                    imageLoader.placeholder(R.drawable.image_rss_article)
                 } else {
-                    glide.addListener(object : RequestListener<Drawable> {
+                    imageLoader.addListener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
                             model: Any?,
@@ -58,7 +58,7 @@ class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack
 
                     })
                 }
-                glide.into(image_view)
+                imageLoader.into(image_view)
             }
             if (item.read) {
                 tv_title.textColorResource = R.color.tv_text_summary
