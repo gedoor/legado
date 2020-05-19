@@ -1,5 +1,6 @@
 package io.legado.app.ui.config
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -115,6 +116,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     }
 
+    @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "defaultTheme" -> alert(title = "切换默认主题") {

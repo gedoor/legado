@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import io.legado.app.App
@@ -122,7 +123,11 @@ object AppConfig {
         }
 
     var elevation: Int
-        get() = App.INSTANCE.getPrefInt("elevation", -1)
+        @SuppressLint("PrivateResource")
+        get() = App.INSTANCE.getPrefInt(
+            "elevation",
+            App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+        )
         set(value) {
             App.INSTANCE.putPrefInt("elevation", value)
         }
