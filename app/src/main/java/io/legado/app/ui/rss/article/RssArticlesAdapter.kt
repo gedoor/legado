@@ -8,16 +8,18 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_rss_article.view.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.textColorResource
 
 
-class RssArticlesAdapter(context: Context, private val layoutId: Int, callBack: CallBack) :
-    RssArticlesBaseAdapter(context, layoutId, callBack) {
+class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack) :
+    SimpleRecyclerAdapter<RssArticle>(context, layoutId) {
 
     override fun convert(holder: ItemViewHolder, item: RssArticle, payloads: MutableList<Any>) {
         with(holder.itemView) {
@@ -60,4 +62,15 @@ class RssArticlesAdapter(context: Context, private val layoutId: Int, callBack: 
         }
     }
 
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callBack.readRss(it)
+            }
+        }
+    }
+
+    interface CallBack {
+        fun readRss(rssArticle: RssArticle)
+    }
 }

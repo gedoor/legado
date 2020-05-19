@@ -523,9 +523,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     /**
-     * 更新进度条
+     * 页面改变
      */
-    override fun upPageProgress() {
+    override fun pageChanged() {
+        autoPageProgress = 0
         launch {
             seek_read_page.progress = ReadBook.durPageIndex
         }

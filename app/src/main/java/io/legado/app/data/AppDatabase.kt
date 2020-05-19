@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class],
-    version = 12,
+    version = 13,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -31,7 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun createDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
-                .addMigrations(migration_10_11, migration_11_12)
+                .addMigrations(migration_10_11, migration_11_12, migration_12_13)
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
                         GlobalScope.launch { Restore.restoreDatabase(Backup.backupPath) }
@@ -58,6 +58,16 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL(
                     """
                     ALTER TABLE rssSources ADD style TEXT
+                    """
+                )
+            }
+        }
+
+        private val migration_12_13 = object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE rssSources ADD articleStyle INTEGER NOT NULL DEFAULT 0
                     """
                 )
             }

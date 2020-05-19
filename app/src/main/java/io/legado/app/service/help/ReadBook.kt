@@ -148,7 +148,7 @@ object ReadBook {
     }
 
     private fun curPageChanged() {
-        callBack?.upPageProgress()
+        callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
             readAloud(!BaseReadAloudService.pause)
         }
@@ -344,7 +344,7 @@ object ReadBook {
     interface CallBack {
         fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
         fun upView()
-        fun upPageProgress()
+        fun pageChanged()
         fun contentLoadFinish()
     }
 }

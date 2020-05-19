@@ -670,6 +670,7 @@
     <string name="click_to_apply">點擊加入</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
+    <string name="switchLayout">切換佈局</string>
 
     <!--color-->
     <string name="primary">主色調</string>
