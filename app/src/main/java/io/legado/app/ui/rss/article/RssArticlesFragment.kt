@@ -54,12 +54,16 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
 
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
-        recycler_view.layoutManager = if (activityViewModel.isGridLayout) {
-            GridLayoutManager(requireContext(), 2)
+        if (activityViewModel.isGridLayout) {
+            recycler_view.setPadding(8,0,8,0)
+            recycler_view.layoutManager = GridLayoutManager(requireContext(), 2)
+            while (recycler_view.itemDecorationCount > 0)
+                recycler_view.removeItemDecorationAt(0)
         } else {
-            LinearLayoutManager(requireContext())
+            recycler_view.setPadding(0,0,0,0)
+            recycler_view.layoutManager = LinearLayoutManager(requireContext())
+            recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         }
-        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         adapter = RssArticlesAdapter(requireContext(), activityViewModel.layoutId, this)
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())

@@ -243,7 +243,6 @@
     <string name="del_all">删除所有</string>
     <string name="searchHistory">搜索历史</string>
     <string name="clear">清除</string>
-    <string name="switchLayout">切换布局</string>
     <string name="showTitle">正文显示标题</string>
     <string name="refresh_default">书源同步</string>
     <string name="no_last_chapter">无最新章节信息</string>
