@@ -16,9 +16,11 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
     var rssSource: RssSource? = null
     val titleLiveData = MutableLiveData<String>()
     var order = System.currentTimeMillis()
+    val isGridLayout get() = rssSource?.articleStyle == 2
     val layoutId
         get() = when (rssSource?.articleStyle) {
             1 -> R.layout.item_rss_article_1
+            2 -> R.layout.item_rss_article_2
             else -> R.layout.item_rss_article
         }
 
@@ -40,7 +42,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
 
     fun switchLayout() {
         rssSource?.let {
-            if (it.articleStyle < 1) {
+            if (it.articleStyle < 2) {
                 it.articleStyle = it.articleStyle + 1
             } else {
                 it.articleStyle = 0

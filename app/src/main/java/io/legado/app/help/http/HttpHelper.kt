@@ -44,11 +44,7 @@ object HttpHelper {
             val response = getApiService<HttpGetApi>(baseUrl, encode)
                 .get(url, mapOf())
                 .execute()
-            return if (response.body() != null) {
-                response.body()
-            } else {
-                response.errorBody().toString()
-            }
+            return response.body()
         }
         return null
     }
