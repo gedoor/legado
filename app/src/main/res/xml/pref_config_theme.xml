@@ -12,15 +12,6 @@
         app:icons="@array/icons"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.ui.widget.prefs.NameListPreference
-        android:defaultValue="0"
-        android:entries="@array/theme_mode"
-        android:entryValues="@array/theme_mode_v"
-        android:key="themeMode"
-        android:title="@string/theme_mode"
-        android:summary="@string/theme_mode_desc"
-        app:iconSpaceReserved="false" />
-
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
         android:key="transparentStatusBar"
