@@ -43,6 +43,8 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     lateinit var adapter: RssArticlesAdapter
     private lateinit var loadMoreView: LoadMoreView
     private var rssArticlesData: LiveData<List<RssArticle>>? = null
+    override val isGridLayout: Boolean
+        get() = activityViewModel.isGridLayout
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.init(arguments)
