@@ -2,6 +2,8 @@ package io.legado.app.ui.rss.article
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -18,15 +20,22 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.textColorResource
 
 
-class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack) :
+class RssArticlesAdapter(context: Context, layoutId: Int, private val isGridLayout: Boolean, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssArticle>(context, layoutId) {
+
+    fun emptyImage(image_view: ImageView) {
+        if (isGridLayout)
+            image_view.setImageResource(R.drawable.rss_img_default)
+        else
+            image_view.gone()
+    }
 
     override fun convert(holder: ItemViewHolder, item: RssArticle, payloads: MutableList<Any>) {
         with(holder.itemView) {
             tv_title.text = item.title
             tv_pub_date.text = item.pubDate
             if (item.image.isNullOrBlank()) {
-                image_view.gone()
+                emptyImage(image_view)
             } else {
                 ImageLoader.load(context, item.image)
                     .addListener(object : RequestListener<Drawable> {
@@ -36,8 +45,8 @@ class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack
                             target: Target<Drawable>?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            image_view.gone()
-                            return false
+                            emptyImage(image_view)
+                            return true
                         }
 
                         override fun onResourceReady(
