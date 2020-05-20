@@ -138,20 +138,7 @@ object AppConfig {
     val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
 
     val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
-
-    private fun rssSourceKey(source: RssSource): String {
-        return source?.sourceUrl
-    }
-
-    fun getRssLayout(source: RssSource): Int {
-        return App.INSTANCE.getPrefInt("rssLayoutMode_" + MD5Utils.md5Encode(rssSourceKey(source)))
-    }
-
-    fun setRssLayout(source: RssSource, value: Int) {
-        App.INSTANCE.putPrefInt("rssLayoutMode_" + MD5Utils.md5Encode(rssSourceKey(source)), value)
-    }
-
-
+    
 }
 
 val Context.channel: String

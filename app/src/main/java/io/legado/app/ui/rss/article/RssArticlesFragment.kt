@@ -64,7 +64,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
             recycler_view.layoutManager = LinearLayoutManager(requireContext())
             recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         }
-        adapter = RssArticlesAdapter(requireContext(), activityViewModel.layoutId, this)
+        adapter = RssArticlesAdapter(requireContext(), activityViewModel.layoutId, activityViewModel.isGridLayout, this)
         recycler_view.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())
         adapter.addFooterView(loadMoreView)
