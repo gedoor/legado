@@ -1,9 +1,8 @@
 package io.legado.app.ui.rss.article
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -20,33 +19,30 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.textColorResource
 
 
-class RssArticlesAdapter(context: Context, layoutId: Int, private val isGridLayout: Boolean, val callBack: CallBack) :
+class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssArticle>(context, layoutId) {
 
-    fun emptyImage(image_view: ImageView) {
-        if (isGridLayout)
-            image_view.setImageResource(R.drawable.rss_img_default)
-        else
-            image_view.gone()
-    }
-
+    @SuppressLint("CheckResult")
     override fun convert(holder: ItemViewHolder, item: RssArticle, payloads: MutableList<Any>) {
         with(holder.itemView) {
             tv_title.text = item.title
             tv_pub_date.text = item.pubDate
-            if (item.image.isNullOrBlank()) {
-                emptyImage(image_view)
+            if (item.image.isNullOrBlank() && !callBack.isGridLayout) {
+                image_view.gone()
             } else {
-                ImageLoader.load(context, item.image)
-                    .addListener(object : RequestListener<Drawable> {
+                val imageLoader = ImageLoader.load(context, item.image)
+                if (callBack.isGridLayout) {
+                    imageLoader.placeholder(R.drawable.image_rss_article)
+                } else {
+                    imageLoader.addListener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
                             model: Any?,
                             target: Target<Drawable>?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            emptyImage(image_view)
-                            return true
+                            image_view.gone()
+                            return false
                         }
 
                         override fun onResourceReady(
@@ -61,7 +57,8 @@ class RssArticlesAdapter(context: Context, layoutId: Int, private val isGridLayo
                         }
 
                     })
-                    .into(image_view)
+                }
+                imageLoader.into(image_view)
             }
             if (item.read) {
                 tv_title.textColorResource = R.color.tv_text_summary
@@ -80,6 +77,7 @@ class RssArticlesAdapter(context: Context, layoutId: Int, private val isGridLayo
     }
 
     interface CallBack {
+        val isGridLayout: Boolean
         fun readRss(rssArticle: RssArticle)
     }
 }
