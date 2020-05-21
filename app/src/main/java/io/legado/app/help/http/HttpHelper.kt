@@ -42,7 +42,7 @@ object HttpHelper {
     fun simpleGet(url: String, encode: String? = null): String? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             val response = getApiService<HttpGetApi>(baseUrl, encode)
-                .get(url, mapOf())
+                .get(url, mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
                 .execute()
             return response.body()
         }
@@ -52,7 +52,7 @@ object HttpHelper {
     suspend fun simpleGetAsync(url: String, encode: String? = null): String? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             val response = getApiService<HttpGetApi>(baseUrl, encode)
-                .getAsync(url, mapOf())
+                .getAsync(url, mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
             return response.body()
         }
         return null
@@ -62,7 +62,7 @@ object HttpHelper {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             return getByteRetrofit(baseUrl)
                 .create(HttpGetApi::class.java)
-                .getMapByteAsync(url, mapOf(), mapOf())
+                .getMapByteAsync(url, mapOf(), mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
                 .body()
         }
         return null
@@ -91,7 +91,6 @@ object HttpHelper {
         return Interceptor { chain ->
             val request = chain.request()
                 .newBuilder()
-                .addHeader(AppConst.UA_NAME, AppConst.userAgent)
                 .addHeader("Keep-Alive", "300")
                 .addHeader("Connection", "Keep-Alive")
                 .addHeader("Cache-Control", "no-cache")
