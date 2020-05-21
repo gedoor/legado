@@ -30,35 +30,35 @@ class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack
             if (item.image.isNullOrBlank() && !callBack.isGridLayout) {
                 image_view.gone()
             } else {
-                val imageLoader = ImageLoader.load(context, item.image)
-                if (callBack.isGridLayout) {
-                    imageLoader.placeholder(R.drawable.image_rss_article)
-                } else {
-                    imageLoader.addListener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            image_view.gone()
-                            return false
-                        }
+                ImageLoader.load(context, item.image).apply {
+                    if (callBack.isGridLayout) {
+                        placeholder(R.drawable.image_rss_article)
+                    } else {
+                        addListener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_view.gone()
+                                return false
+                            }
 
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            image_view.visible()
-                            return false
-                        }
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_view.visible()
+                                return false
+                            }
 
-                    })
-                }
-                imageLoader.into(image_view)
+                        })
+                    }
+                }.into(image_view)
             }
             if (item.read) {
                 tv_title.textColorResource = R.color.tv_text_summary
