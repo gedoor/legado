@@ -20,11 +20,45 @@ function hashParam(key, val) {
 // 创建书源规则容器对象
 const RuleJSON = (() => {
 	let ruleJson = {};
-	$$('.rules textarea').forEach(item => ruleJson[item.id] = '');
-//	for (let item of $$('.rules textarea')) ruleJson[item.id] = '';
-	ruleJson.serialNumber = 0;
+	let searchJson = {};
+	let exploreJson = {};
+	let bookInfoJson = {};
+	let tocJson = {};
+	let contentJson = {};
+
+	// 基本以及其他
+	$$('.rules .base').forEach(item => ruleJson[item.title] = '');
+	ruleJson.lastUpdateTime = 0;
+	ruleJson.customOrder = 0;
 	ruleJson.weight = 0;
-	ruleJson.enable = true;
+	ruleJson.enabled = true;
+	ruleJson.enabledExplore = true;
+
+	// 搜索规则
+	$$('.rules .ruleSearch').forEach(item => searchJson[item.title] = '');
+	//ruleJson.ruleSearch = JSON.stringify(searchJson);
+	ruleJson.ruleSearch = searchJson;
+
+	// 发现规则
+	$$('.rules .ruleExplore').forEach(item => exploreJson[item.title] = '');
+	//ruleJson.ruleExplore = JSON.stringify(exploreJson);
+	ruleJson.ruleExplore = exploreJson;
+
+	// 详情页规则
+	$$('.rules .ruleBookInfo').forEach(item => bookInfoJson[item.title] = '');
+	//ruleJson.ruleBookInfo = JSON.stringify(bookInfoJson);
+	ruleJson.ruleBookInfo = bookInfoJson;
+
+	// 目录规则
+	$$('.rules .ruleToc').forEach(item => tocJson[item.title] = '');
+	//ruleJson.ruleToc = JSON.stringify(tocJson);
+	ruleJson.ruleToc = tocJson;
+
+	// 正文规则
+	$$('.rules .ruleContent').forEach(item => contentJson[item.title] = '');
+	//ruleJson.ruleContent = JSON.stringify(contentJson);
+	ruleJson.ruleContent = contentJson;
+
 	return ruleJson;
 })();
 // 选项卡Tab切换事件处理
@@ -72,15 +106,133 @@ function HttpPost(url, data) {
 }
 // 将书源表单转化为书源对象
 function rule2json() {
-	Object.keys(RuleJSON).forEach((key) => RuleJSON[key] = $('#' + key).value);
-	RuleJSON.serialNumber = RuleJSON.serialNumber == '' ? 0 : parseInt(RuleJSON.serialNumber);
+	// 转换base
+	Object.keys(RuleJSON).forEach(key => {
+		if (!key.startsWith("rule")) {
+			RuleJSON[key] = $('#' + key).value;
+		}
+	});
+
+	// 转换搜索规则
+	let searchJson = {};
+	//Object.keys(JSON.parse(RuleJSON.ruleSearch)).forEach(key => {
+	Object.keys(RuleJSON.ruleSearch).forEach(key => {
+		searchJson[key] = $('#' + 'ruleSearch_' + key).value;
+	});
+	//RuleJSON.ruleSearch = JSON.stringify(searchJson);
+	RuleJSON.ruleSearch = searchJson;
+
+	// 转换发现规则
+	let exploreJson = {};
+	//Object.keys(JSON.parse(RuleJSON.ruleExplore)).forEach(key => {
+	Object.keys(RuleJSON.ruleExplore).forEach(key => {
+		exploreJson[key] = $('#' + 'ruleExplore_' + key).value;
+	});
+	//RuleJSON.ruleExplore = JSON.stringify(exploreJson);
+	RuleJSON.ruleExplore = exploreJson;
+
+	// 转换详情页规则
+	let bookInfoJson = {};
+	//Object.keys(JSON.parse(RuleJSON.ruleBookInfo)).forEach(key => {
+	Object.keys(RuleJSON.ruleBookInfo).forEach(key => {
+		bookInfoJson[key] = $('#' + 'ruleBookInfo_' + key).value;
+	});
+	//RuleJSON.ruleBookInfo = JSON.stringify(bookInfoJson);
+	RuleJSON.ruleBookInfo = bookInfoJson;
+
+	// 转换目录规则
+	let tocJson = {};
+	//Object.keys(JSON.parse(RuleJSON.ruleToc)).forEach(key => {
+	Object.keys(RuleJSON.ruleToc).forEach(key => {
+		tocJson[key] = $('#' + 'ruleToc_' + key).value;
+	});
+	//RuleJSON.ruleToc = JSON.stringify(tocJson);
+	RuleJSON.ruleToc = tocJson;
+
+	// 转换正文规则
+	let contentJson = {};
+	//Object.keys(JSON.parse(RuleJSON.ruleContent)).forEach(key => {
+	Object.keys(RuleJSON.ruleContent).forEach(key => {
+		contentJson[key] = $('#' + 'ruleContent_' + key).value;
+	});
+	//RuleJSON.ruleContent = JSON.stringify(contentJson);
+	RuleJSON.ruleContent = contentJson;
+
+	RuleJSON.lastUpdateTime = RuleJSON.lastUpdateTime == '' ? 0 : parseInt(RuleJSON.lastUpdateTime);
+	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
-	RuleJSON.enable = RuleJSON.enable == '' || RuleJSON.enable.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	RuleJSON.bookSourceType == RuleJSON.bookSourceType == '' ? 0 : parseInt(RuleJSON.weight);
+	RuleJSON.enabled = RuleJSON.enabled == '' || String(RuleJSON.enabled).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	RuleJSON.enabledExplore = RuleJSON.enabledExplore == '' || String(RuleJSON.enabledExplore).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	return RuleJSON;
 }
 // 将书源对象填充到书源表单
 function json2rule(RuleEditor) {
-	Object.keys(RuleJSON).forEach((key) => $("#" + key).value = RuleEditor[key] ? RuleEditor[key] : '');
+	// 转换base
+	Object.keys(RuleJSON).forEach(key => {
+		if (!key.startsWith("rule")) {
+			let val = RuleEditor[key];
+			if (typeof val == "number") {
+				$("#" + key).value = val ? String(val) : '0';
+			}
+			else if (typeof val == "boolean") {
+				$("#" + key).value = val ? String(val) : 'false';
+			}
+			else {
+				$("#" + key).value = val ? String(val) : '';
+			}
+		}
+	});
+
+	// 转换搜索规则
+	if (RuleEditor.ruleSearch) {
+		//let searchJson = JSON.parse(RuleEditor.ruleSearch);
+		let searchJson = RuleEditor.ruleSearch;
+		//Object.keys(JSON.parse(RuleJSON.ruleSearch)).forEach(key => {
+		Object.keys(RuleJSON.ruleSearch).forEach(key => {
+			$('#' + 'ruleSearch_' + key).value = searchJson[key] ? searchJson[key] : '';
+		});
+	}
+
+	// 转换发现规则
+	if (RuleEditor.ruleExplore) {
+		//let exploreJson = JSON.parse(RuleEditor.ruleExplore);
+		//Object.keys(JSON.parse(RuleJSON.ruleExplore)).forEach(key => {
+		let exploreJson = RuleEditor.ruleExplore;
+		Object.keys(RuleJSON.ruleExplore).forEach(key => {
+			$('#' + 'ruleExplore_' + key).value = exploreJson[key] ? exploreJson[key] : '';
+		});
+	}
+
+	// 转换详情页规则
+	if (RuleEditor.ruleBookInfo) {
+		//let bookInfoJson = JSON.parse(RuleEditor.ruleBookInfo);
+		//Object.keys(JSON.parse(RuleJSON.ruleBookInfo)).forEach(key => {
+		let bookInfoJson = RuleEditor.ruleBookInfo;
+        Object.keys(RuleJSON.ruleBookInfo).forEach(key => {
+			$('#' + 'ruleBookInfo_' + key).value = bookInfoJson[key] ? bookInfoJson[key] : '';
+		});
+	}
+
+	// 转换目录规则
+	if (RuleEditor.ruleToc) {
+		//let tocJson = JSON.parse(RuleEditor.ruleToc);
+		//Object.keys(JSON.parse(RuleJSON.ruleToc)).forEach(key => {
+		let tocJson = RuleEditor.ruleToc;
+		Object.keys(RuleJSON.ruleToc).forEach(key => {
+			$('#' + 'ruleToc_' + key).value = tocJson[key] ? tocJson[key] : '';
+		});
+	}
+
+	// 转换正文规则
+	if (RuleEditor.ruleContent) {
+		//let contentJson = JSON.parse(RuleEditor.ruleContent);
+		//Object.keys(JSON.parse(RuleJSON.ruleContent)).forEach(key => {
+		let contentJson = RuleEditor.ruleContent;
+        Object.keys(RuleJSON.ruleContent).forEach(key => {
+			$('#' + 'ruleContent_' + key).value = contentJson[key] ? contentJson[key] : '';
+		});
+	}
 }
 // 记录操作过程
 var course = { "old": [], "now": {}, "new": [] };
@@ -153,16 +305,16 @@ $('.menu').addEventListener('click', e => {
 								});
 								failMsg = '\n推送失败的书源将用红色字体标注!';
 							}
-							alert(`批量推送书源到「阅读APP」\n共计: ${RuleSources.length} 条\n成功: ${okData.length} 条\n失败: ${RuleSources.length - okData.length} 条${failMsg}`);
+							alert(`批量推送书源到「阅读3.0APP」\n共计: ${RuleSources.length} 条\n成功: ${okData.length} 条\n失败: ${RuleSources.length - okData.length} 条${failMsg}`);
 						}
 						else {
-							alert(`批量推送书源到「阅读APP」成功!\n共计: ${RuleSources.length} 条`);
+							alert(`批量推送书源到「阅读3.0APP」成功!\n共计: ${RuleSources.length} 条`);
 						}
 					}
 					else {
 						alert(`批量推送书源失败!\nErrorMsg: ${json.errorMsg}`);
 					}
-				}).catch(err => { alert(`批量推送书源失败,无法连接到「阅读APP」!\n${err}`); });
+				}).catch(err => { alert(`批量推送书源失败,无法连接到「阅读3.0APP」!\n${err}`); });
 				thisNode.setAttribute('class', '');
 			})();
 			return;
@@ -181,7 +333,7 @@ $('.menu').addEventListener('click', e => {
 					else {
 						alert(`批量拉取书源失败!\nErrorMsg: ${json.errorMsg}`);
 					}
-				}).catch(err => { alert(`批量拉取书源失败,无法连接到「阅读APP」!\n${err}`); });
+				}).catch(err => { alert(`批量拉取书源失败,无法连接到「阅读3.0APP」!\n${err}`); });
 				thisNode.setAttribute('class', '');
 			})();
 			return;
@@ -244,9 +396,9 @@ $('.menu').addEventListener('click', e => {
 			(async () => {
 				let saveRule = [rule2json()];
 				await HttpPost(`/saveSources`, saveRule).then(json => {
-					alert(json.isSuccess ? `书源《${saveRule[0].bookSourceName}》已成功保存到「阅读APP」` : `书源《${saveRule[0].bookSourceName}》保存失败!\nErrorMsg: ${json.errorMsg}`);
+					alert(json.isSuccess ? `书源《${saveRule[0].bookSourceName}》已成功保存到「阅读3.0APP」` : `书源《${saveRule[0].bookSourceName}》保存失败!\nErrorMsg: ${json.errorMsg}`);
 					setRule(saveRule[0]);
-				}).catch(err => { alert(`保存书源失败,无法连接到「阅读APP」!\n${err}`); });
+				}).catch(err => { alert(`保存书源失败,无法连接到「阅读3.0APP」!\n${err}`); });
 				thisNode.setAttribute('class', '');
 			})();
 			return;
@@ -259,6 +411,26 @@ $('#DebugKey').addEventListener('keydown', e => {
 		let clickEvent = document.createEvent('MouseEvents');
 		clickEvent.initEvent("click", true, false);
 		$('#debug').dispatchEvent(clickEvent);
+	}
+});
+$('#Filter').addEventListener('keydown', e => {
+	if (e.keyCode == 13) {
+		let cashList = [];
+		$('#RuleList').innerHTML = "";
+		let sKey = Filter.value ? Filter.value : '';
+		if (sKey == '') {
+			cashList = RuleSources;
+		} else {
+			let patt = new RegExp(sKey);
+			RuleSources.forEach(source => {
+				if (patt.test(source.bookSourceUrl) || patt.test(source.bookSourceName) || patt.test(source.bookSourceGroup)) {
+					cashList.push(source);
+				}
+			})
+		}
+		cashList.forEach(source => {
+			$('#RuleList').innerHTML += newRule(source);
+		})
 	}
 });
 
@@ -348,7 +520,7 @@ $('.tab3>.titlebar').addEventListener('click', e => {
 						console.log(deleteSources);
 						console.log(`以上书源已删除!`)
 					}
-				}).catch(err => { alert(`删除书源失败,无法连接到「阅读APP」!\n${err}`); });
+				}).catch(err => { alert(`删除书源失败,无法连接到「阅读3.0APP」!\n${err}`); });
 			}
 			break;
 		case 'ClrAll':

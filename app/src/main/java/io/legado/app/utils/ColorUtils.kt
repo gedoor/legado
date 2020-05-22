@@ -4,7 +4,11 @@ import android.graphics.Color
 
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
+@Suppress("unused")
 object ColorUtils {
 
     fun intToString(intColor: Int): String {
@@ -52,7 +56,7 @@ object ColorUtils {
 
     @ColorInt
     fun adjustAlpha(@ColorInt color: Int, @FloatRange(from = 0.0, to = 1.0) factor: Float): Int {
-        val alpha = Math.round(Color.alpha(color) * factor)
+        val alpha = (Color.alpha(color) * factor).roundToInt()
         val red = Color.red(color)
         val green = Color.green(color)
         val blue = Color.blue(color)
@@ -61,7 +65,7 @@ object ColorUtils {
 
     @ColorInt
     fun withAlpha(@ColorInt baseColor: Int, @FloatRange(from = 0.0, to = 1.0) alpha: Float): Int {
-        val a = Math.min(255, Math.max(0, (alpha * 255).toInt())) shl 24
+        val a = min(255, max(0, (alpha * 255).toInt())) shl 24
         val rgb = 0x00ffffff and baseColor
         return a + rgb
     }

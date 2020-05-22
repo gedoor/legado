@@ -4,58 +4,64 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 
 /**
  * 阅读界面配置
  */
+@Keep
 object ReadBookConfig {
     const val readConfigFileName = "readConfig.json"
     private val configFilePath =
         App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName
     val configList: ArrayList<Config> = arrayListOf()
-
-    var styleSelect
-        get() = App.INSTANCE.getPrefInt("readStyleSelect")
-        set(value) = App.INSTANCE.putPrefInt("readStyleSelect", value)
+    private val defaultConfigs by lazy {
+        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
+        GSON.fromJsonArray<Config>(json)!!
+    }
+    val durConfig get() = getConfig(styleSelect)
     var bg: Drawable? = null
+    var bgMeanColor: Int = 0
 
     init {
         upConfig()
     }
 
     @Synchronized
-    fun getConfig(index: Int = styleSelect): Config {
+    fun getConfig(index: Int): Config {
         if (configList.size < 5) {
-            reset()
+            resetAll()
+        }
+        if (configList.size < 6) {
+            configList.add(Config())
         }
         return configList[index]
     }
 
     fun upConfig() {
+        (getConfigs() ?: defaultConfigs).let {
+            configList.clear()
+            configList.addAll(it)
+        }
+    }
+
+    private fun getConfigs(): List<Config>? {
         val configFile = File(configFilePath)
-        val json = if (configFile.exists()) {
-            configFile.readText()
-        } else {
-            String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
+        if (configFile.exists()) {
+            try {
+                val json = configFile.readText()
+                return GSON.fromJsonArray(json)
+            } catch (e: Exception) {
+            }
         }
-        try {
-            GSON.fromJsonArray<Config>(json)?.let {
-                configList.clear()
-                configList.addAll(it)
-            } ?: reset()
-        } catch (e: Exception) {
-            reset()
-        }
+        return null
     }
 
     fun upBg() {
@@ -63,52 +69,248 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        bg = getConfig().bgDrawable(width, height)
-    }
-
-    fun save() {
-        GlobalScope.launch(IO) {
-            val json = GSON.toJson(configList)
-            val configFile = File(configFilePath)
-            //获取流并存储
-            try {
-                BufferedWriter(FileWriter(configFile)).use { writer ->
-                    writer.write(json)
-                    writer.flush()
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
+        bg = durConfig.bgDrawable(width, height).apply {
+            if (this is BitmapDrawable) {
+                bgMeanColor = BitmapUtils.getMeanColor(bitmap)
+            } else if (this is ColorDrawable) {
+                bgMeanColor = color
             }
         }
     }
 
-    private fun reset() {
-        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
-        GSON.fromJsonArray<Config>(json)?.let {
-            configList.clear()
-            configList.addAll(it)
+    fun save() {
+        Coroutine.async {
+            val json = GSON.toJson(configList)
+            FileUtils.createFileIfNotExist(configFilePath).writeText(json)
         }
-        save()
     }
 
-    data class Config(
-        var bgStr: String = "#EEEEEE",
-        var bgStrNight: String = "#000000",
-        var bgType: Int = 0,
-        var bgTypeNight: Int = 0,
-        var darkStatusIcon: Boolean = true,
-        var darkStatusIconNight: Boolean = false,
-        var letterSpacing: Float = 1f,
-        var lineSpacingExtra: Int = 12,
-        var lineSpacingMultiplier: Float = 1.2f,
-        var paddingBottom: Int = 0,
+    fun resetDur() {
+        defaultConfigs[styleSelect].let {
+            durConfig.setBg(it.bgType(), it.bgStr())
+            durConfig.setTextColor(it.textColor())
+            upBg()
+            save()
+        }
+    }
+
+    private fun resetAll() {
+        defaultConfigs.let {
+            configList.clear()
+            configList.addAll(it)
+            save()
+        }
+    }
+
+    //配置写入读取
+    var styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
+        set(value) {
+            field = value
+            if (App.INSTANCE.getPrefInt(PreferKey.readStyleSelect) != value) {
+                App.INSTANCE.putPrefInt(PreferKey.readStyleSelect, value)
+            }
+        }
+    var shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
+        set(value) {
+            field = value
+            if (App.INSTANCE.getPrefBoolean(PreferKey.shareLayout) != value) {
+                App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
+            }
+        }
+    var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+        set(value) {
+            field = value
+            isScroll = value == 3
+            if (App.INSTANCE.getPrefInt(PreferKey.pageAnim) != value) {
+                App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
+            }
+        }
+    var isScroll = pageAnim == 3
+    val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
+    var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
+        set(value) {
+            field = value
+            bodyIndent = "　".repeat(value)
+            if (App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2) != value) {
+                App.INSTANCE.putPrefInt(PreferKey.bodyIndent, value)
+            }
+        }
+    var bodyIndent = "　".repeat(bodyIndentCount)
+    var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
+    var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
+
+    private val config get() = if (shareLayout) getConfig(5) else durConfig
+
+    var textBold: Boolean
+        get() = config.textBold
+        set(value) {
+            config.textBold = value
+        }
+
+    var textSize: Int
+        get() = config.textSize
+        set(value) {
+            config.textSize = value
+        }
+
+    var letterSpacing: Float
+        get() = config.letterSpacing
+        set(value) {
+            config.letterSpacing = value
+        }
+
+    var lineSpacingExtra: Int
+        get() = config.lineSpacingExtra
+        set(value) {
+            config.lineSpacingExtra = value
+        }
+
+    var paragraphSpacing: Int
+        get() = config.paragraphSpacing
+        set(value) {
+            config.paragraphSpacing = value
+        }
+
+    var titleMode: Int
+        get() = config.titleMode
+        set(value) {
+            config.titleMode = value
+        }
+    var titleSize: Int
+        get() = config.titleSize
+        set(value) {
+            config.titleSize = value
+        }
+
+    var titleTopSpacing: Int
+        get() = config.titleTopSpacing
+        set(value) {
+            config.titleTopSpacing = value
+        }
+
+    var titleBottomSpacing: Int
+        get() = config.titleBottomSpacing
+        set(value) {
+            config.titleBottomSpacing = value
+        }
+
+    var paddingBottom: Int
+        get() = config.paddingBottom
+        set(value) {
+            config.paddingBottom = value
+        }
+
+    var paddingLeft: Int
+        get() = config.paddingLeft
+        set(value) {
+            config.paddingLeft = value
+        }
+
+    var paddingRight: Int
+        get() = config.paddingRight
+        set(value) {
+            config.paddingRight = value
+        }
+
+    var paddingTop: Int
+        get() = config.paddingTop
+        set(value) {
+            config.paddingTop = value
+        }
+
+    var headerPaddingBottom: Int
+        get() = config.headerPaddingBottom
+        set(value) {
+            config.headerPaddingBottom = value
+        }
+
+    var headerPaddingLeft: Int
+        get() = config.headerPaddingLeft
+        set(value) {
+            config.headerPaddingLeft = value
+        }
+
+    var headerPaddingRight: Int
+        get() = config.headerPaddingRight
+        set(value) {
+            config.headerPaddingRight = value
+        }
+
+    var headerPaddingTop: Int
+        get() = config.headerPaddingTop
+        set(value) {
+            config.headerPaddingTop = value
+        }
+
+    var footerPaddingBottom: Int
+        get() = config.footerPaddingBottom
+        set(value) {
+            config.footerPaddingBottom = value
+        }
+
+    var footerPaddingLeft: Int
+        get() = config.footerPaddingLeft
+        set(value) {
+            config.footerPaddingLeft = value
+        }
+
+    var footerPaddingRight: Int
+        get() = config.footerPaddingRight
+        set(value) {
+            config.footerPaddingRight = value
+        }
+
+    var footerPaddingTop: Int
+        get() = config.footerPaddingTop
+        set(value) {
+            config.footerPaddingTop = value
+        }
+
+    var showHeaderLine: Boolean
+        get() = config.showHeaderLine
+        set(value) {
+            config.showHeaderLine = value
+        }
+
+    var showFooterLine: Boolean
+        get() = config.showFooterLine
+        set(value) {
+            config.showFooterLine = value
+        }
+
+    @Keep
+    class Config(
+        private var bgStr: String = "#EEEEEE",//白天背景
+        private var bgStrNight: String = "#000000",//夜间背景
+        private var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
+        private var bgTypeNight: Int = 0,//夜间背景类型
+        private var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
+        private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
+        private var textColor: String = "#3E3D3B",//白天文字颜色
+        private var textColorNight: String = "#ADADAD",//夜间文字颜色
+        var textBold: Boolean = false,//是否粗体字
+        var textSize: Int = 20,//文字大小
+        var letterSpacing: Float = 0.5f,//字间距
+        var lineSpacingExtra: Int = 12,//行间距
+        var paragraphSpacing: Int = 12,//段距
+        var titleMode: Int = 0,//标题居中
+        var titleSize: Int = 0,
+        var titleTopSpacing: Int = 0,
+        var titleBottomSpacing: Int = 0,
+        var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
-        var paddingTop: Int = 0,
-        var textBold: Boolean = false,
-        var textColor: String = "#3E3D3B",
-        var textColorNight: String = "#adadad",
-        var textSize: Int = 15
+        var paddingTop: Int = 6,
+        var headerPaddingBottom: Int = 0,
+        var headerPaddingLeft: Int = 16,
+        var headerPaddingRight: Int = 16,
+        var headerPaddingTop: Int = 0,
+        var footerPaddingBottom: Int = 6,
+        var footerPaddingLeft: Int = 16,
+        var footerPaddingRight: Int = 16,
+        var footerPaddingTop: Int = 6,
+        var showHeaderLine: Boolean = false,
+        var showFooterLine: Boolean = true
     ) {
         fun setBg(bgType: Int, bg: String) {
             if (AppConfig.isNightTheme) {
@@ -126,6 +328,7 @@ object ReadBookConfig {
             } else {
                 textColor = "#${color.hexString}"
             }
+            ChapterProvider.upStyle()
         }
 
         fun setStatusIconDark(isDark: Boolean) {
@@ -168,7 +371,7 @@ object ReadBookConfig {
                     1 -> {
                         BitmapDrawable(
                             resources,
-                            BitmapUtils.decodeBitmap(
+                            BitmapUtils.decodeAssetsBitmap(
                                 App.INSTANCE,
                                 "bg" + File.separator + bgStr(),
                                 width,

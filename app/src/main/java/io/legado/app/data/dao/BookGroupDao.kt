@@ -13,14 +13,14 @@ interface BookGroupDao {
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun liveDataAll(): LiveData<List<BookGroup>>
 
-    @get:Query("SELECT MAX(groupId) FROM book_groups")
-    val maxId: Int
+    @get:Query("SELECT sum(groupId) FROM book_groups")
+    val idsSum: Int
 
     @get:Query("SELECT MAX(`order`) FROM book_groups")
     val maxOrder: Int
 
-    @Query("SELECT * FROM book_groups ORDER BY `order`")
-    fun all(): List<BookGroup>
+    @get:Query("SELECT * FROM book_groups ORDER BY `order`")
+    val all: List<BookGroup>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookGroup: BookGroup)

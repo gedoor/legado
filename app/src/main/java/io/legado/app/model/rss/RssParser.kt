@@ -1,6 +1,5 @@
 package io.legado.app.model.rss
 
-import io.legado.app.constant.RSSKeywords
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.model.Debug
 import org.xmlpull.v1.XmlPullParser
@@ -12,7 +11,7 @@ import java.io.StringReader
 object RssParser {
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun parseXML(xml: String, sourceUrl: String): Result {
+    fun parseXML(sortName: String, xml: String, sourceUrl: String): Result {
 
         val articleList = mutableListOf<RssArticle>()
         var currentArticle = RssArticle()
@@ -34,26 +33,26 @@ object RssParser {
             // Start parsing the item
             if (eventType == XmlPullParser.START_TAG) {
                 when {
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM, true) ->
+                    xmlPullParser.name.equals(RSS_ITEM, true) ->
                         insideItem = true
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_TITLE, true) ->
+                    xmlPullParser.name.equals(RSS_ITEM_TITLE, true) ->
                         if (insideItem) currentArticle.title = xmlPullParser.nextText().trim()
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_LINK, true) ->
+                    xmlPullParser.name.equals(RSS_ITEM_LINK, true) ->
                         if (insideItem) currentArticle.link = xmlPullParser.nextText().trim()
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_THUMBNAIL, true) ->
+                    xmlPullParser.name.equals(RSS_ITEM_THUMBNAIL, true) ->
                         if (insideItem) currentArticle.image =
-                            xmlPullParser.getAttributeValue(null, RSSKeywords.RSS_ITEM_URL)
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_ENCLOSURE, true) ->
+                            xmlPullParser.getAttributeValue(null, RSS_ITEM_URL)
+                    xmlPullParser.name.equals(RSS_ITEM_ENCLOSURE, true) ->
                         if (insideItem) {
                             val type =
-                                xmlPullParser.getAttributeValue(null, RSSKeywords.RSS_ITEM_TYPE)
+                                xmlPullParser.getAttributeValue(null, RSS_ITEM_TYPE)
                             if (type != null && type.contains("image/")) {
                                 currentArticle.image =
-                                    xmlPullParser.getAttributeValue(null, RSSKeywords.RSS_ITEM_URL)
+                                    xmlPullParser.getAttributeValue(null, RSS_ITEM_URL)
                             }
                         }
                     xmlPullParser.name
-                        .equals(RSSKeywords.RSS_ITEM_DESCRIPTION, true) ->
+                        .equals(RSS_ITEM_DESCRIPTION, true) ->
                         if (insideItem) {
                             val description = xmlPullParser.nextText()
                             currentArticle.description = description.trim()
@@ -61,7 +60,7 @@ object RssParser {
                                 currentArticle.image = getImageUrl(description)
                             }
                         }
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_CONTENT, true) ->
+                    xmlPullParser.name.equals(RSS_ITEM_CONTENT, true) ->
                         if (insideItem) {
                             val content = xmlPullParser.nextText().trim()
                             currentArticle.content = content
@@ -70,7 +69,7 @@ object RssParser {
                             }
                         }
                     xmlPullParser.name
-                        .equals(RSSKeywords.RSS_ITEM_PUB_DATE, true) ->
+                        .equals(RSS_ITEM_PUB_DATE, true) ->
                         if (insideItem) {
                             val nextTokenType = xmlPullParser.next()
                             if (nextTokenType == XmlPullParser.TEXT) {
@@ -79,7 +78,7 @@ object RssParser {
                             // Skip to be able to find date inside 'tag' tag
                             continue@loop
                         }
-                    xmlPullParser.name.equals(RSSKeywords.RSS_ITEM_TIME, true) ->
+                    xmlPullParser.name.equals(RSS_ITEM_TIME, true) ->
                         if (insideItem) currentArticle.pubDate = xmlPullParser.nextText()
                 }
             } else if (eventType == XmlPullParser.END_TAG
@@ -88,6 +87,7 @@ object RssParser {
                 // The item is correctly parsed
                 insideItem = false
                 currentArticle.origin = sourceUrl
+                currentArticle.sort = sortName
                 articleList.add(currentArticle)
                 currentArticle = RssArticle()
             }
@@ -129,4 +129,17 @@ object RssParser {
         }
         return url
     }
+
+    private const val RSS_ITEM = "item"
+    private const val RSS_ITEM_TITLE = "title"
+    private const val RSS_ITEM_LINK = "link"
+    private const val RSS_ITEM_CATEGORY = "category"
+    private const val RSS_ITEM_THUMBNAIL = "media:thumbnail"
+    private const val RSS_ITEM_ENCLOSURE = "enclosure"
+    private const val RSS_ITEM_DESCRIPTION = "description"
+    private const val RSS_ITEM_CONTENT = "content:encoded"
+    private const val RSS_ITEM_PUB_DATE = "pubDate"
+    private const val RSS_ITEM_TIME = "time"
+    private const val RSS_ITEM_URL = "url"
+    private const val RSS_ITEM_TYPE = "type"
 }

@@ -2,16 +2,17 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.media.MediaPlayer
-import io.legado.app.constant.Bus
-import io.legado.app.data.api.IHttpPostApi
+import io.legado.app.constant.EventBus
+import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.service.help.ReadBook
-import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.postEvent
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -24,7 +25,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private val mediaPlayer = MediaPlayer()
     private lateinit var ttsFolder: String
-    private var job: Job? = null
+    private var task: Coroutine<*>? = null
     private var playingIndex = -1
 
     override fun onCreate() {
@@ -37,12 +38,12 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onDestroy() {
         super.onDestroy()
+        task?.cancel()
         mediaPlayer.release()
     }
 
     override fun newReadAloud(dataKey: String?, play: Boolean) {
         mediaPlayer.reset()
-        job?.cancel()
         playingIndex = -1
         super.newReadAloud(dataKey, play)
     }
@@ -60,17 +61,17 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun downloadAudio() {
-        job = launch(IO) {
+        task?.cancel()
+        task = execute {
             FileUtils.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
                 if (isActive) {
                     val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
-                        .create(IHttpPostApi::class.java)
+                        .create(HttpPostApi::class.java)
                         .postMapByteAsync(
                             "http://tts.baidu.com/text2audio",
                             getAudioBody(contentList[index]), mapOf()
-                        ).await()
-                        .body()
+                        ).body()
                     if (bytes != null && isActive) {
                         val file = getSpeakFile(index)
                         file.writeBytes(bytes)
@@ -88,11 +89,12 @@ class HttpReadAloudService : BaseReadAloudService(),
     @Synchronized
     private fun playAudio(fd: FileDescriptor) {
         if (playingIndex != nowSpeak && requestFocus()) {
-            playingIndex = nowSpeak
             try {
                 mediaPlayer.reset()
                 mediaPlayer.setDataSource(fd)
                 mediaPlayer.prepareAsync()
+                playingIndex = nowSpeak
+                postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -100,14 +102,14 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun getSpeakFile(index: Int = nowSpeak): File {
-        return FileUtils.getFile("${ttsFolder}${File.separator}${index}.mp3")
+        return FileUtils.createFileIfNotExist("${ttsFolder}${File.separator}${index}.mp3")
     }
 
     private fun getAudioBody(content: String): Map<String, String> {
         return mapOf(
             Pair("tex", encodeTwo(content)),
-            Pair("spd", ((getPrefInt("ttsSpeechRate", 25) + 5) / 5).toString()),
-            Pair("per", getPrefString("ttsSpeechPer") ?: "0"),
+            Pair("spd", ((AppConfig.ttsSpeechRate + 5) / 10 + 4).toString()),
+            Pair("per", AppConfig.ttsSpeechPer),
             Pair("cuid", "baidu_speech_demo"),
             Pair("idx", "1"),
             Pair("cod", "2"),
@@ -135,20 +137,26 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun resumeReadAloud() {
         super.resumeReadAloud()
-        mediaPlayer.start()
-    }
-
-    override fun upSpeechRate(reset: Boolean) {
-        job?.cancel()
-        mediaPlayer.reset()
-        for (i in 0 until nowSpeak) {
-            contentList.removeAt(0)
+        if (playingIndex == -1) {
+            play()
+        } else {
+            mediaPlayer.start()
         }
-        nowSpeak = 0
-        playingIndex = -1
-        play()
     }
 
+    /**
+     * 更新朗读速度
+     */
+    override fun upSpeechRate(reset: Boolean) {
+        task?.cancel()
+        mediaPlayer.stop()
+        playingIndex = -1
+        downloadAudio()
+    }
+
+    /**
+     * 上一段
+     */
     override fun prevP() {
         if (nowSpeak > 0) {
             mediaPlayer.stop()
@@ -158,6 +166,9 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
+    /**
+     * 下一段
+     */
     override fun nextP() {
         if (nowSpeak < contentList.size - 1) {
             mediaPlayer.stop()
@@ -177,15 +188,27 @@ class HttpReadAloudService : BaseReadAloudService(),
                 ReadBook.moveToNextPage()
             }
         }
-        postEvent(Bus.TTS_START, readAloudNumber + 1)
+        postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
     }
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        LogUtils.d("mp", "what:$what extra:$extra")
+        if (what == -38 && extra == 0) {
+            return true
+        }
+        handler.postDelayed({
+            readAloudNumber += contentList[nowSpeak].length + 1
+            if (nowSpeak < contentList.lastIndex) {
+                nowSpeak++
+                play()
+            } else {
+                nextChapter()
+            }
+        }, 1000)
         return true
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
-        LogUtils.d("播放完成", contentList[nowSpeak])
         readAloudNumber += contentList[nowSpeak].length + 1
         if (nowSpeak < contentList.lastIndex) {
             nowSpeak++

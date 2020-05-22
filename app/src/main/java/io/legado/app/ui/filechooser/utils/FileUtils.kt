@@ -34,13 +34,13 @@ object FileUtils {
      * 将目录分隔符统一为平台默认的分隔符，并为目录结尾添加分隔符
      */
     fun separator(path: String): String {
-        var path = path
+        var path1 = path
         val separator = File.separator
-        path = path.replace("\\", separator)
-        if (!path.endsWith(separator)) {
-            path += separator
+        path1 = path1.replace("\\", separator)
+        if (!path1.endsWith(separator)) {
+            path1 += separator
         }
-        return path
+        return path1
     }
 
     fun closeSilently(c: Closeable?) {
@@ -60,9 +60,9 @@ object FileUtils {
     @JvmOverloads
     fun listDirs(
         startDirPath: String,
-        excludeDirs: Array<String?>? = null, @SortType sortType: Int = BY_NAME_ASC
+        excludeDirs: Array<String>? = null, @SortType sortType: Int = BY_NAME_ASC
     ): Array<File?> {
-        var excludeDirs = excludeDirs
+        var excludeDirs1 = excludeDirs
         val dirList = ArrayList<File>()
         val startDir = File(startDirPath)
         if (!startDir.isDirectory) {
@@ -75,12 +75,12 @@ object FileUtils {
             f.isDirectory
         })
             ?: return arrayOfNulls(0)
-        if (excludeDirs == null) {
-            excludeDirs = arrayOfNulls(0)
+        if (excludeDirs1 == null) {
+            excludeDirs1 = arrayOf()
         }
         for (dir in dirs) {
             val file = dir.absoluteFile
-            if (!excludeDirs.contentDeepToString().contains(file.name)) {
+            if (!excludeDirs1.contentDeepToString().contains(file.name)) {
                 dirList.add(file)
             }
         }
@@ -115,7 +115,7 @@ object FileUtils {
     @JvmOverloads
     fun listDirsAndFiles(
         startDirPath: String,
-        allowExtensions: Array<String?>? = null
+        allowExtensions: Array<String>? = null
     ): Array<File?>? {
         val dirs: Array<File?>?
         val files: Array<File?>? = if (allowExtensions == null) {
@@ -147,15 +147,15 @@ object FileUtils {
         if (!f.isDirectory) {
             return arrayOfNulls(0)
         }
-        val files = f.listFiles(FileFilter { f ->
-            if (f == null) {
+        val files = f.listFiles(FileFilter { file ->
+            if (file == null) {
                 return@FileFilter false
             }
-            if (f.isDirectory) {
+            if (file.isDirectory) {
                 return@FileFilter false
             }
 
-            filterPattern?.matcher(f.name)?.find() ?: true
+            filterPattern?.matcher(file.name)?.find() ?: true
         })
             ?: return arrayOfNulls(0)
         for (file in files) {
@@ -189,12 +189,13 @@ object FileUtils {
     /**
      * 列出指定目录下的所有文件
      */
-    fun listFiles(startDirPath: String, allowExtensions: Array<String?>): Array<File?>? {
+    fun listFiles(startDirPath: String, allowExtensions: Array<String>?): Array<File?>? {
         val file = File(startDirPath)
-        return file.listFiles { dir, name ->
+        return file.listFiles { _, name ->
             //返回当前目录所有以某些扩展名结尾的文件
             val extension = getExtension(name)
-            allowExtensions.contentDeepToString().contains(extension)
+            allowExtensions?.contentDeepToString()?.contains(extension) == true
+                    || allowExtensions == null
         }
     }
 
@@ -202,7 +203,10 @@ object FileUtils {
      * 列出指定目录下的所有文件
      */
     fun listFiles(startDirPath: String, allowExtension: String?): Array<File?>? {
-        return listFiles(startDirPath, arrayOf(allowExtension))
+        return if (allowExtension == null)
+            listFiles(startDirPath, allowExtension = null)
+        else
+            listFiles(startDirPath, arrayOf(allowExtension))
     }
 
     /**
@@ -294,10 +298,8 @@ object FileUtils {
                 bis.close()
                 bos.close()
             } else if (src.isDirectory) {
-                val files = src.listFiles()
-
                 tar.mkdirs()
-                for (file in files) {
+                src.listFiles()?.forEach { file ->
                     copy(file.absoluteFile, File(tar.absoluteFile, file.name))
                 }
             }
@@ -399,18 +401,16 @@ object FileUtils {
     fun writeBytes(filepath: String, data: ByteArray): Boolean {
         val file = File(filepath)
         var fos: FileOutputStream? = null
-        try {
+        return try {
             if (!file.exists()) {
-
-                file.parentFile.mkdirs()
-
+                file.parentFile?.mkdirs()
                 file.createNewFile()
             }
             fos = FileOutputStream(filepath)
             fos.write(data)
-            return true
+            true
         } catch (e: IOException) {
-            return false
+            false
         } finally {
             closeSilently(fos)
         }
@@ -422,16 +422,16 @@ object FileUtils {
     fun appendText(path: String, content: String): Boolean {
         val file = File(path)
         var writer: FileWriter? = null
-        try {
+        return try {
             if (!file.exists()) {
 
                 file.createNewFile()
             }
             writer = FileWriter(file, true)
             writer.write(content)
-            return true
+            true
         } catch (e: IOException) {
-            return false
+            false
         } finally {
             closeSilently(writer)
         }

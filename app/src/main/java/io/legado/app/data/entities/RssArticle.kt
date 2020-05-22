@@ -9,6 +9,7 @@ import androidx.room.Entity
 )
 data class RssArticle(
     var origin: String = "",
+    var sort: String = "",
     var title: String = "",
     var order: Long = 0,
     var link: String = "",
@@ -20,7 +21,7 @@ data class RssArticle(
 ) {
 
     override fun hashCode(): Int {
-        return super.hashCode()
+        return link.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -36,6 +37,7 @@ data class RssArticle(
     fun toStar(): RssStar {
         return RssStar(
             origin = origin,
+            sort = sort,
             title = title,
             starTime = System.currentTimeMillis(),
             link = link,

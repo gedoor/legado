@@ -7,12 +7,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -21,18 +21,16 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.ItemTouchCallback
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.cancelButton
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.lib.theme.view.ATEAutoCompleteTextView
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
+import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -40,28 +38,34 @@ import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
-import java.io.FileNotFoundException
+import java.io.File
+import java.text.Collator
+import java.util.*
 
 
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
+    PopupMenu.OnMenuItemClickListener,
     FileChooserDialog.CallBack,
     RssSourceAdapter.CallBack {
 
     override val viewModel: RssSourceViewModel
         get() = getViewModel(RssSourceViewModel::class.java)
-
+    private val importRecordKey = "rssSourceRecordKey"
     private val qrRequestCode = 101
-    private val importSource = 13141
+    private val importRequestCode = 124
+    private val exportRequestCode = 65
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initUriScheme()
         initRecyclerView()
         initSearchView()
         initLiveDataGroup()
         initLiveDataSource()
+        initViewEvent()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -78,13 +82,13 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
-            R.id.menu_select_all -> adapter.selectAll()
-            R.id.menu_revert_selection -> adapter.revertSelection()
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelectionIds())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelectionIds())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelectionIds())
-            R.id.menu_export_selection -> viewModel.exportSelection(adapter.getSelectionIds())
-            R.id.menu_import_source_local -> selectFileSys()
+            R.id.menu_import_source_local -> FilePicker
+                .selectFile(
+                    this,
+                    importRequestCode,
+                    type = "text/*",
+                    allowExtensions = arrayOf("txt", "json")
+                )
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage -> GroupManageDialog()
@@ -96,15 +100,45 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         return super.onCompatOptionsItemSelected(item)
     }
 
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
+            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
+            R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
+            R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
+        }
+        return true
+    }
+
+    private fun initUriScheme() {
+        intent.data?.let {
+            when (it.path) {
+                "/importonline" -> it.getQueryParameter("src")?.let { url ->
+                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    if (url.startsWith("http", false)){
+                        viewModel.importSource(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
+                    }
+                    else{
+                        viewModel.importSourceFromFilePath(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
+                    }
+                }
+                else -> {
+                    toast("格式不对")
+                }
+            }
+        }
+    }
+
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply {
-                ContextCompat.getDrawable(baseContext, R.drawable.ic_divider)?.let {
-                    this.setDrawable(it)
-                }
-            })
+        recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = RssSourceAdapter(this, this)
         recycler_view.adapter = adapter
         val itemTouchCallback = ItemTouchCallback()
@@ -140,11 +174,40 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         })
     }
 
+    private fun initViewEvent() {
+        select_action_bar.setMainActionText(R.string.delete)
+        select_action_bar.inflateMenu(R.menu.rss_source_sel)
+        select_action_bar.setOnMenuItemClickListener(this)
+        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
+            override fun selectAll(selectAll: Boolean) {
+                if (selectAll) {
+                    adapter.selectAll()
+                } else {
+                    adapter.revertSelection()
+                }
+            }
+
+            override fun revertSelection() {
+                adapter.revertSelection()
+            }
+
+            override fun onClickMainAction() {
+                this@RssSourceActivity
+                    .alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
+                        okButton { viewModel.delSelection(adapter.getSelection()) }
+                        noButton { }
+                    }
+                    .show().applyTint()
+            }
+        })
+    }
+
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
-        groups.map {
-            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-        }
+        groups.sortedWith(Collator.getInstance(Locale.CHINESE))
+            .map {
+                groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            }
     }
 
     private fun initLiveDataSource(key: String? = null) {
@@ -158,26 +221,31 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         sourceLiveData?.observe(this, Observer {
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(adapter.getItems(), it))
-            adapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(adapter)
+            adapter.setItems(it, diffResult)
+            upCountView()
         })
+    }
+
+    override fun upCountView() {
+        select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
     }
 
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
         val aCache = ACache.get(this, cacheDir = false)
         val cacheUrls: MutableList<String> = aCache
-            .getAsString("sourceUrl")
+            .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_book_source_on_line) {
-            var editText: ATEAutoCompleteTextView? = null
+            var editText: AutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
-                    edit_view.setFilterValues(cacheUrls) {
+                    edit_view.setFilterValues(cacheUrls)
+                    edit_view.delCallBack = {
                         cacheUrls.remove(it)
-                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                 }
             }
@@ -186,7 +254,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                 text?.let {
                     if (!cacheUrls.contains(it)) {
                         cacheUrls.add(0, it)
-                        aCache.put("sourceUrl", cacheUrls.joinToString(","))
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
                     viewModel.importSource(it) { msg ->
@@ -198,46 +266,25 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         }.show().applyTint()
     }
 
-    private fun selectFileSys() {
-        try {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "text/*"//设置类型
-            startActivityForResult(intent, importSource)
-        } catch (e: Exception) {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    selectFile()
-                }
-                .request()
-        }
-    }
-
-    private fun selectFile() {
-        FileChooserDialog.show(
-            supportFragmentManager, importSource,
-            allowExtensions = arrayOf("txt", "json")
-        )
-    }
-
     override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == importSource) {
-            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-            viewModel.importSourceFromFilePath(currentPath) { msg ->
-                title_bar.snackbar(msg)
+        when (requestCode) {
+            importRequestCode -> {
+                Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                viewModel.importSourceFromFilePath(currentPath) { msg ->
+                    title_bar.snackbar(msg)
+                }
             }
+            exportRequestCode -> viewModel.exportSelection(
+                adapter.getSelection(),
+                File(currentPath)
+            )
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            importSource -> if (resultCode == Activity.RESULT_OK) {
+            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     try {
                         uri.readText(this)?.let {
@@ -247,17 +294,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                                 title_bar.snackbar(msg)
                             }
                         }
-                    } catch (e: FileNotFoundException) {
-                        PermissionsCompat.Builder(this)
-                            .addPermissions(
-                                Permissions.READ_EXTERNAL_STORAGE,
-                                Permissions.WRITE_EXTERNAL_STORAGE
-                            )
-                            .rationale(R.string.bg_image_per)
-                            .onGranted {
-                                selectFileSys()
-                            }
-                            .request()
                     } catch (e: Exception) {
                         toast(e.localizedMessage ?: "ERROR")
                     }
@@ -268,6 +304,19 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
                     viewModel.importSource(it) { msg ->
                         title_bar.snackbar(msg)
+                    }
+                }
+            }
+            exportRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    if (uri.toString().isContentPath()) {
+                        DocumentFile.fromTreeUri(this, uri)?.let {
+                            viewModel.exportSelection(adapter.getSelection(), it)
+                        }
+                    } else {
+                        uri.path?.let {
+                            viewModel.exportSelection(adapter.getSelection(), File(it))
+                        }
                     }
                 }
             }
@@ -288,6 +337,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
 
     override fun toTop(source: RssSource) {
         viewModel.topSource(source)
+    }
+
+    override fun toBottom(source: RssSource) {
+        viewModel.bottomSource(source)
     }
 
     override fun upOrder() {

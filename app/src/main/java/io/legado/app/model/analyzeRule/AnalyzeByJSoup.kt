@@ -2,6 +2,7 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils.isEmpty
 import android.text.TextUtils.join
+import androidx.annotation.Keep
 import io.legado.app.utils.splitNotBlank
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -15,7 +16,7 @@ import java.util.*
  * Created by GKF on 2018/1/25.
  * 书源规则解析
  */
-
+@Keep
 class AnalyzeByJSoup {
     private var element: Element? = null
 
@@ -51,7 +52,10 @@ class AnalyzeByJSoup {
         val textS = getStringList(ruleStr)
         return if (textS.isEmpty()) {
             null
-        } else join(",", textS).trim { it <= ' ' }
+        } else {
+            textS.joinToString("\n")
+        }
+
     }
 
     /**
@@ -356,8 +360,7 @@ class AnalyzeByJSoup {
         try {
             when (lastRule) {
                 "text" -> for (element in elements) {
-                    val text = element.text()
-                    textS.add(text)
+                    textS.add(element.text())
                 }
                 "textNodes" -> for (element in elements) {
                     val tn = arrayListOf<String>()
@@ -370,12 +373,15 @@ class AnalyzeByJSoup {
                     }
                     textS.add(join("\n", tn))
                 }
-                "ownText", "html" -> {
-                    elements.select("script").remove()
+                "ownText" -> for (element in elements) {
+                    textS.add(element.ownText())
+                }
+                "html" -> {
+                    elements.select("script, style").remove()
                     val html = elements.html()
                     textS.add(html)
                 }
-                "all" -> textS.add(elements.html())
+                "all" -> textS.add(elements.outerHtml())
                 else -> for (element in elements) {
                     val url = element.attr(lastRule)
                     if (!isEmpty(url) && !textS.contains(url)) {

@@ -83,7 +83,7 @@ class BookSourceDebugActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_scan -> {
+            R.id.menu_scan -> {
                 startActivityForResult<QrCodeActivity>(qrRequestCode)
             }
         }

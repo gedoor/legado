@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.legado.app">
 
+    <uses-permission
+        android:name="android.permission.MANAGE_DOCUMENTS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -22,14 +25,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme.Light"
-        android:requestLegacyExternalStorage="false"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
-        <activity
-            android:name=".ui.welcome.WelcomeActivity"
-            android:label="@string/app_name">
+        <!--主入口-->
+        <activity android:name=".ui.welcome.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,49 +40,152 @@
                 android:resource="@xml/shortcuts"
                 android:launchMode="singleTask" />
         </activity>
+        <!--图标1-->
+        <activity
+            android:name=".ui.welcome.Launcher1"
+            android:icon="@mipmap/launcher1"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--图标2-->
+        <activity
+            android:name=".ui.welcome.Launcher2"
+            android:icon="@mipmap/launcher2"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--图标3-->
+        <activity
+            android:name=".ui.welcome.Launcher3"
+            android:icon="@mipmap/launcher3"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--图标4-->
+        <activity
+            android:name=".ui.welcome.Launcher4"
+            android:icon="@mipmap/launcher4"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--图标5-->
+        <activity
+            android:name=".ui.welcome.Launcher5"
+            android:icon="@mipmap/launcher5"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--图标6-->
+        <activity
+            android:name=".ui.welcome.Launcher6"
+            android:icon="@mipmap/launcher6"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"
+                android:launchMode="singleTask" />
+        </activity>
+        <!--主界面-->
         <activity
             android:name=".ui.main.MainActivity"
             android:launchMode="singleTask"
             android:alwaysRetainTaskState="true" />
+        <!--阅读界面-->
         <activity
             android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask" />
+        <!--书籍详情页-->
+        <activity
+            android:name=".ui.book.info.BookInfoActivity"
+            android:launchMode="singleTop" />
+        <!--书籍信息编辑-->
+        <activity
+            android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity"
+            android:launchMode="singleTask" />
+        <!--音频播放界面-->
+        <activity
+            android:name=".ui.audio.AudioPlayActivity"
+            android:launchMode="singleTask" />
+        <!--授权界面-->
         <activity
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
+        <!--二维码扫描-->
+        <activity
+            android:name=".ui.qrcode.QrCodeActivity"
+            android:launchMode="singleTask" />
+        <!--书源编辑-->
         <activity
             android:name=".ui.book.source.edit.BookSourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!--订阅源编辑-->
         <activity
             android:name=".ui.rss.source.edit.RssSourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!--配置界面-->
         <activity
             android:name=".ui.config.ConfigActivity"
             android:launchMode="singleTask" />
-        <activity
-            android:name=".ui.replacerule.ReplaceRuleActivity"
-            android:launchMode="singleTask" />
+        <!--搜索界面-->
         <activity
             android:name="io.legado.app.ui.book.search.SearchActivity"
             android:launchMode="singleTask" />
+        <!--关于界面-->
         <activity
             android:name=".ui.about.AboutActivity"
             android:launchMode="singleTask" />
-        <activity
-            android:name=".ui.qrcode.QrCodeActivity"
-            android:launchMode="singleTask" />
+        <!--捐赠界面-->
         <activity
             android:name=".ui.about.DonateActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".ui.book.info.BookInfoActivity" />
-        <activity android:name="io.legado.app.ui.book.info.edit.BookInfoEditActivity" />
-        <activity android:name=".ui.book.source.debug.BookSourceDebugActivity" />
-        <activity android:name=".ui.book.source.manage.BookSourceActivity">
+        <!--书源管理-->
+        <activity
+            android:name=".ui.book.source.manage.BookSourceActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -93,17 +197,85 @@
                     android:scheme="yuedu" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.chapterlist.ChapterListActivity" />
-        <activity android:name=".ui.rss.read.ReadRssActivity" />
+        <!--订阅源管理-->
         <activity
-            android:name=".ui.audio.AudioPlayActivity"
-            android:launchMode="singleTask" />
-        <activity android:name=".ui.importbook.ImportBookActivity" />
-        <activity android:name=".ui.explore.ExploreShowActivity" />
-        <activity android:name=".ui.rss.source.manage.RssSourceActivity" />
-        <activity android:name=".ui.rss.source.debug.RssSourceDebugActivity" />
-        <activity android:name=".ui.rss.article.RssArticlesActivity" />
-        <activity android:name=".ui.download.DownloadActivity" />
+            android:name=".ui.rss.source.manage.RssSourceActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="rsssource"
+                    android:scheme="yuedu" />
+            </intent-filter>
+        </activity>
+        <!--替换规则界面-->
+        <activity
+            android:name=".ui.replacerule.ReplaceRuleActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="replace"
+                    android:scheme="yuedu" />
+            </intent-filter>
+        </activity>
+        <!--书籍管理-->
+        <activity
+            android:name=".ui.book.arrange.ArrangeBookActivity"
+            android:launchMode="singleTop" />
+        <!--书源调试-->
+        <activity
+            android:name=".ui.book.source.debug.BookSourceDebugActivity"
+            android:launchMode="singleTop" />
+        <!--目录-->
+        <activity
+            android:name="io.legado.app.ui.book.chapterlist.ChapterListActivity"
+            android:screenOrientation="behind"
+            android:launchMode="singleTop" />
+        <!--RSS阅读-->
+        <activity
+            android:name=".ui.rss.read.ReadRssActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop" />
+        <!--导入书籍-->
+        <activity
+            android:name="io.legado.app.ui.book.local.ImportBookActivity"
+            android:launchMode="singleTop" />
+        <!--发现界面-->
+        <activity
+            android:name="io.legado.app.ui.book.explore.ExploreShowActivity"
+            android:launchMode="singleTop" />
+        <!--订阅源调试-->
+        <activity
+            android:name=".ui.rss.source.debug.RssSourceDebugActivity"
+            android:launchMode="singleTop" />
+        <!--订阅条目-->
+        <activity
+            android:name=".ui.rss.article.RssSortActivity"
+            android:launchMode="singleTop" />
+        <!--Rss收藏-->
+        <activity
+            android:name=".ui.rss.favorites.RssFavoritesActivity"
+            android:launchMode="singleTop" />
+        <!--下载界面-->
+        <activity
+            android:name="io.legado.app.ui.book.download.DownloadActivity"
+            android:launchMode="singleTop" />
+        <!--书源登录-->
+        <activity
+            android:name=".ui.login.SourceLogin"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
+        <!--文字处理-->
         <activity
             android:name=".receiver.SharedReceiverActivity"
             android:label="@string/receiving_shared_label">
@@ -116,6 +288,19 @@
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.config.FileAssociationActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="application/json" />
             </intent-filter>
         </activity>
 
@@ -141,6 +326,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <meta-data
+            android:name="channel"
+            android:value="${APP_CHANNEL_VALUE}" />
     </application>
 
 </manifest>

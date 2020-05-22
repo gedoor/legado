@@ -9,6 +9,8 @@ import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
 
+
+@Suppress("unused")
 object SystemUtils {
 
     fun getScreenOffTime(context: Context): Int {

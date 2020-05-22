@@ -3,7 +3,7 @@ package io.legado.app.service.help
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.constant.Action
+import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.model.WebBook
@@ -27,14 +27,14 @@ object AudioPlay {
 
     fun play(context: Context) {
         val intent = Intent(context, AudioPlayService::class.java)
-        intent.action = Action.play
+        intent.action = IntentAction.play
         context.startService(intent)
     }
 
     fun pause(context: Context) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.pause
+            intent.action = IntentAction.pause
             context.startService(intent)
         }
     }
@@ -42,7 +42,7 @@ object AudioPlay {
     fun resume(context: Context) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.resume
+            intent.action = IntentAction.resume
             context.startService(intent)
         }
     }
@@ -50,7 +50,7 @@ object AudioPlay {
     fun stop(context: Context) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.stop
+            intent.action = IntentAction.stop
             context.startService(intent)
         }
     }
@@ -58,7 +58,7 @@ object AudioPlay {
     fun adjustSpeed(context: Context, adjust: Float) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.adjustSpeed
+            intent.action = IntentAction.adjustSpeed
             intent.putExtra("adjust", adjust)
             context.startService(intent)
         }
@@ -67,7 +67,7 @@ object AudioPlay {
     fun adjustProgress(context: Context, position: Int) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.adjustProgress
+            intent.action = IntentAction.adjustProgress
             intent.putExtra("position", position)
             context.startService(intent)
         }
@@ -76,7 +76,7 @@ object AudioPlay {
     fun prev(context: Context) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.prev
+            intent.action = IntentAction.prev
             context.startService(intent)
         }
     }
@@ -84,7 +84,7 @@ object AudioPlay {
     fun next(context: Context) {
         if (AudioPlayService.isRun) {
             val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = Action.next
+            intent.action = IntentAction.next
             context.startService(intent)
         }
     }

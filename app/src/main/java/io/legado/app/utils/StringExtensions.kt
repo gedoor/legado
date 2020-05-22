@@ -1,8 +1,8 @@
 package io.legado.app.utils
 
-// import org.apache.commons.text.StringEscapeUtils
-
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
+
+fun String?.isContentPath(): Boolean = this?.startsWith("content://") == true
 
 fun String?.isAbsUrl() =
     this?.let {
@@ -48,7 +48,25 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
     this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
-fun String.startWithIgnoreCase(start: String): Boolean {
-    return if (this.isBlank()) false else startsWith(start, true)
+fun String.toStringArray(): Array<String> {
+    var codePointIndex = 0
+    return Array(codePointCount(0, length)) {
+        substring(
+            codePointIndex,
+            offsetByCodePoints(codePointIndex, 1)
+                .apply { codePointIndex = this }
+        )
+    }
 }
 
+fun Char?.isHAN(): Boolean {
+    this ?: return false
+    val ub: Character.UnicodeBlock = Character.UnicodeBlock.of(this) ?: return false
+    return ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C
+            || ub === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D
+            || ub === Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+            || ub === Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT
+}

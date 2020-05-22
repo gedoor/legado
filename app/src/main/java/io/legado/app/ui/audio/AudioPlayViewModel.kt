@@ -11,7 +11,6 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.service.help.AudioPlay
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
 
@@ -72,7 +71,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         execute {
             AudioPlay.webBook?.getChapterList(book, this)
                 ?.onSuccess(Dispatchers.IO) { cList ->
-                    if (!cList.isNullOrEmpty()) {
+                    if (cList.isNotEmpty()) {
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao().insert(*cList.toTypedArray())
                             AudioPlay.chapterSize = cList.size
@@ -91,10 +90,8 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun changeTo(book1: Book) {
         execute {
             AudioPlay.book?.let {
-                App.db.bookDao().delete(it.bookUrl)
-            }
-            withContext(Dispatchers.Main) {
-
+                book1.order = it.order
+                App.db.bookDao().delete(it)
             }
             App.db.bookDao().insert(book1)
             AudioPlay.book = book1
@@ -142,7 +139,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
             AudioPlay.book?.let {
-                App.db.bookDao().delete(it.bookUrl)
+                App.db.bookDao().delete(it)
             }
         }.onSuccess {
             success?.invoke()

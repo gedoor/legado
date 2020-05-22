@@ -23,13 +23,11 @@ import java.util.*
 
 class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rect) :
     ValueAnimator() {
-    private val mPaint: Paint
+    private val mPaint: Paint = Paint()
     private val mParticles: Array<Particle?>
-    private val mBound: Rect
+    private val mBound: Rect = Rect(bound)
 
     init {
-        mPaint = Paint()
-        mBound = Rect(bound)
         val partLen = 15
         mParticles = arrayOfNulls(partLen * partLen)
         val random = Random(System.currentTimeMillis())
@@ -97,7 +95,7 @@ class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rec
 
     override fun start() {
         super.start()
-        mContainer.invalidate(mBound)
+        mContainer.invalidate()
     }
 
     private inner class Particle {
@@ -141,7 +139,7 @@ class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rec
 
         internal var DEFAULT_DURATION: Long = 0x400
         private val DEFAULT_INTERPOLATOR = AccelerateInterpolator(0.6f)
-        private val END_VALUE = 1.4f
+        private const val END_VALUE = 1.4f
         private val X = Utils.dp2Px(5).toFloat()
         private val Y = Utils.dp2Px(20).toFloat()
         private val V = Utils.dp2Px(2).toFloat()

@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+@Suppress("unused")
 object UTF8BOMFighter {
     private val UTF8_BOM_BYTES = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
 

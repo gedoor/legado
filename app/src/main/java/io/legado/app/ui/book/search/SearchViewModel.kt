@@ -1,91 +1,85 @@
 package io.legado.app.ui.book.search
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.help.AppConfig
-import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.WebBook
+import io.legado.app.model.SearchBookModel
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefString
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
-import java.util.concurrent.Executors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
 
-class SearchViewModel(application: Application) : BaseViewModel(application) {
-    private var searchPool =
-        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    private var task: Coroutine<*>? = null
-    var callBack: CallBack? = null
+class SearchViewModel(application: Application) : BaseViewModel(application)
+    , SearchBookModel.CallBack {
+    private val searchBookModel = SearchBookModel(this, this)
+    var isSearchLiveData = MutableLiveData<Boolean>()
+    var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
-    var searchPage = 1
     var isLoading = false
-    private var searchBooks = arrayListOf<SearchBook>()
+    var searchBooks = arrayListOf<SearchBook>()
+    private var searchID = 0L
 
+    /**
+     * 开始搜索
+     */
     fun search(key: String) {
-        task?.cancel()
-        if (key.isEmpty() && searchKey.isEmpty()) {
-            return
-        } else if (key.isEmpty()) {
-            isLoading = true
-            searchPage++
-        } else if (key.isNotEmpty()) {
-            isLoading = true
-            searchPage = 1
-            searchKey = key
+        if (searchKey != key && key.isNotEmpty()) {
+            searchBookModel.cancelSearch()
             searchBooks.clear()
+            searchBookLiveData.postValue(searchBooks)
+            searchID = System.currentTimeMillis()
+            searchKey = key
         }
-        callBack?.startSearch()
-        task = execute {
-            val searchGroup = context.getPrefString("searchGroup") ?: ""
-            val bookSourceList = if (searchGroup.isBlank()) {
-                App.db.bookSourceDao().allEnabled
-            } else {
-                App.db.bookSourceDao().getEnabledByGroup(searchGroup)
-            }
-            for (item in bookSourceList) {
-                //task取消时自动取消 by （scope = this@execute）
-                WebBook(item).searchBook(
-                    searchKey,
-                    searchPage,
-                    scope = this@execute,
-                    context = searchPool
-                )
-                    .timeout(30000L)
-                    .onSuccess(Dispatchers.IO) {
-                        it?.let { list ->
-                            searchSuccess(list)
-                        }
-                    }
-            }
-        }
+        searchBookModel.search(searchID, searchKey)
+    }
 
-        task?.invokeOnCompletion {
-            callBack?.searchFinally()
-            isLoading = false
+    override fun onSearchStart() {
+        isSearchLiveData.postValue(true)
+    }
+
+    override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
+        if (context.getPrefBoolean(PreferKey.precisionSearch)) {
+            precisionSearch(this, searchBooks)
+        } else {
+            App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+            mergeItems(this, searchBooks)
         }
     }
 
-    private fun searchSuccess(searchBooks: List<SearchBook>) {
+    override fun onSearchFinish() {
+        isSearchLiveData.postValue(false)
+        isLoading = false
+    }
+
+    override fun onSearchCancel() {
+        isSearchLiveData.postValue(false)
+        isLoading = false
+    }
+
+    /**
+     * 精确搜索处理
+     */
+    private fun precisionSearch(scope: CoroutineScope, searchBooks: List<SearchBook>) {
         val books = arrayListOf<SearchBook>()
         searchBooks.forEach { searchBook ->
-            if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-                if (searchBook.name.equals(searchKey, true)
-                    || searchBook.author.equals(searchKey, true)
-                ) books.add(searchBook)
-            } else
-                books.add(searchBook)
+            if (searchBook.name.contains(searchKey, true)
+                || searchBook.author.contains(searchKey, true)
+            ) books.add(searchBook)
         }
         App.db.searchBookDao().insert(*books.toTypedArray())
-        addToAdapter(books)
+        if (scope.isActive) {
+            mergeItems(scope, books)
+        }
     }
 
+    /**
+     * 合并搜索结果并排序
+     */
     @Synchronized
-    private fun addToAdapter(newDataS: List<SearchBook>) {
+    private fun mergeItems(scope: CoroutineScope, newDataS: List<SearchBook>) {
         if (newDataS.isNotEmpty()) {
             val copyDataS = ArrayList(searchBooks)
             val searchBooksAdd = ArrayList<SearchBook>()
@@ -93,56 +87,84 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 copyDataS.addAll(newDataS)
             } else {
                 //存在
-                for (temp in newDataS) {
+                newDataS.forEach { item ->
                     var hasSame = false
-                    for (i in copyDataS.indices) {
-                        val searchBook = copyDataS[i]
-                        if (temp.name == searchBook.name
-                            && temp.author == searchBook.author
+                    for (searchBook in copyDataS) {
+                        if (item.name == searchBook.name
+                            && item.author == searchBook.author
                         ) {
                             hasSame = true
-                            searchBook.addOrigin(temp.bookUrl)
+                            searchBook.addOrigin(item.bookUrl)
                             break
                         }
                     }
                     if (!hasSame) {
-                        searchBooksAdd.add(temp)
+                        searchBooksAdd.add(item)
                     }
                 }
                 //添加
-                for (temp in searchBooksAdd) {
-                    if (searchKey == temp.name) {
-                        for (i in copyDataS.indices) {
-                            val searchBook = copyDataS[i]
+                searchBooksAdd.forEach { item ->
+                    if (searchKey == item.name) {
+                        for ((index, searchBook) in copyDataS.withIndex()) {
                             if (searchKey != searchBook.name) {
-                                copyDataS.add(i, temp)
+                                copyDataS.add(index, item)
                                 break
                             }
                         }
-                    } else if (searchKey == temp.author) {
-                        for (i in copyDataS.indices) {
-                            val searchBook = copyDataS[i]
+                    } else if (searchKey == item.author) {
+                        for ((index, searchBook) in copyDataS.withIndex()) {
                             if (searchKey != searchBook.name && searchKey == searchBook.author) {
-                                copyDataS.add(i, temp)
+                                copyDataS.add(index, item)
                                 break
                             }
                         }
                     } else {
-                        copyDataS.add(temp)
+                        copyDataS.add(item)
                     }
                 }
             }
-            launch {
-                searchBooks = copyDataS
-                callBack?.adapter?.setItems(searchBooks)
-            }
+            if (!scope.isActive) return
+            searchBooks.sortWith(Comparator { o1, o2 ->
+                if (o1.name == searchKey && o2.name != searchKey) {
+                    1
+                } else if (o1.name != searchKey && o2.name == searchKey) {
+                    -1
+                } else if (o1.author == searchKey && o2.author != searchKey) {
+                    1
+                } else if (o1.author != searchKey && o2.author == searchKey) {
+                    -1
+                } else if (o1.name == o2.name) {
+                    when {
+                        o1.origins.size > o2.origins.size -> {
+                            1
+                        }
+                        o1.origins.size < o2.origins.size -> {
+                            -1
+                        }
+                        else -> {
+                            0
+                        }
+                    }
+                } else {
+                    0
+                }
+            })
+            if (!scope.isActive) return
+            searchBooks = copyDataS
+            searchBookLiveData.postValue(copyDataS)
         }
     }
 
+    /**
+     * 停止搜索
+     */
     fun stop() {
-        task?.cancel()
+        searchBookModel.cancelSearch()
     }
 
+    /**
+     * 按书名和作者获取书源排序最前的搜索结果
+     */
     fun getSearchBook(name: String, author: String, success: ((searchBook: SearchBook?) -> Unit)?) {
         execute {
             val searchBook = App.db.searchBookDao().getFirstByNameAuthor(name, author)
@@ -150,6 +172,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 保存搜索关键字
+     */
     fun saveSearchKey(key: String) {
         execute {
             App.db.searchKeywordDao().get(key)?.let {
@@ -159,6 +184,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 清楚搜索关键字
+     */
     fun clearHistory() {
         execute {
             App.db.searchKeywordDao().deleteAll()
@@ -167,12 +195,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
-        searchPool.close()
+        searchBookModel.close()
     }
 
-    interface CallBack {
-        var adapter: SearchAdapter
-        fun startSearch()
-        fun searchFinally()
-    }
 }

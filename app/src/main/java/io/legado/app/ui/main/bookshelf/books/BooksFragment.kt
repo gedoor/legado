@@ -7,11 +7,13 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentDataHelp
@@ -26,10 +28,11 @@ import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
+import kotlin.math.max
 
 
 class BooksFragment : BaseFragment(R.layout.fragment_books),
-    BooksAdapter.CallBack {
+    BaseBooksAdapter.CallBack {
 
     companion object {
         fun newInstance(position: Int, groupId: Int): BooksFragment {
@@ -43,12 +46,12 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     private lateinit var activityViewModel: MainViewModel
-    private lateinit var booksAdapter: BooksAdapter
+    private lateinit var booksAdapter: BaseBooksAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var position = 0
     private var groupId = -1
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
         arguments?.let {
             position = it.getInt("position", 0)
@@ -56,9 +59,6 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
         initRecyclerView()
         upRecyclerData()
-        observeEvent<String>(Bus.UP_BOOK) {
-            booksAdapter.notification(it)
-        }
     }
 
     private fun initRecyclerView() {
@@ -74,29 +74,47 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             booksAdapter = BooksAdapterList(requireContext(), this)
         } else {
             rv_bookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
-            booksAdapter = BooksAdapterGrid(requireContext(),this)
+            booksAdapter = BooksAdapterGrid(requireContext(), this)
         }
         rv_bookshelf.adapter = booksAdapter
+        booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                val layoutManager = rv_bookshelf.layoutManager
+                if (positionStart == 0 && layoutManager is LinearLayoutManager) {
+                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                    rv_bookshelf.scrollToPosition(max(0, scrollTo))
+                }
+            }
+
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                val layoutManager = rv_bookshelf.layoutManager
+                if (toPosition == 0 && layoutManager is LinearLayoutManager) {
+                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                    rv_bookshelf.scrollToPosition(max(0, scrollTo))
+                }
+            }
+        })
     }
 
     private fun upRecyclerData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = when (groupId) {
-            -1 -> App.db.bookDao().observeAll()
-            -2 -> App.db.bookDao().observeLocal()
-            -3 -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
+            AppConst.bookGroupLocal.groupId -> App.db.bookDao().observeLocal()
+            AppConst.bookGroupAudio.groupId -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
-        bookshelfLiveData?.observe(this, Observer {
-            val diffResult =
-                DiffUtil.calculateDiff(
-                    BooksDiffCallBack(
-                        booksAdapter.getItems(),
-                        it
-                    )
-                )
-            booksAdapter.setItems(it, false)
-            diffResult.dispatchUpdatesTo(booksAdapter)
+        bookshelfLiveData?.observe(this, Observer { list ->
+            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                1 -> list.sortedByDescending { it.latestChapterTime }
+                2 -> list.sortedBy { it.name }
+                3 -> list.sortedBy { it.order }
+                else -> list.sortedByDescending { it.durChapterTime }
+            }
+            val diffResult = DiffUtil
+                .calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), books))
+            booksAdapter.setItems(books, diffResult)
         })
     }
 
@@ -119,4 +137,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         return bookUrl in activityViewModel.updateList
     }
 
+    override fun observeLiveBus() {
+        super.observeLiveBus()
+        observeEvent<String>(EventBus.UP_BOOK) {
+            booksAdapter.notification(it)
+        }
+    }
 }

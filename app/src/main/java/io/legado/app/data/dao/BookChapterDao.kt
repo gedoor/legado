@@ -10,14 +10,17 @@ import io.legado.app.data.entities.BookChapter
 @Dao
 interface BookChapterDao {
 
-    @Query("select * from chapters where bookUrl = :bookUrl")
+    @Query("select * from chapters where bookUrl = :bookUrl order by `index`")
     fun observeByBook(bookUrl: String): LiveData<List<BookChapter>>
 
-    @Query("SELECT * FROM chapters where bookUrl = :bookUrl and title like '%'||:key||'%'")
+    @Query("SELECT * FROM chapters where bookUrl = :bookUrl and title like '%'||:key||'%' order by `index`")
     fun liveDataSearch(bookUrl: String, key: String): LiveData<List<BookChapter>>
 
-    @Query("select * from chapters where bookUrl = :bookUrl")
+    @Query("select * from chapters where bookUrl = :bookUrl order by `index`")
     fun getChapterList(bookUrl: String): List<BookChapter>
+
+    @Query("select * from chapters where bookUrl = :bookUrl and `index` >= :start and `index` <= :end order by `index`")
+    fun getChapterList(bookUrl: String, start: Int, end: Int): List<BookChapter>
 
     @Query("select * from chapters where bookUrl = :bookUrl and `index` = :index")
     fun getChapter(bookUrl: String, index: Int): BookChapter?

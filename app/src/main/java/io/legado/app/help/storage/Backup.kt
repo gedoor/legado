@@ -4,131 +4,124 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 object Backup {
 
-    val backupPath = App.INSTANCE.filesDir.absolutePath + File.separator + "backup"
-
-    val defaultPath by lazy {
-        FileUtils.getSdCardPath() + File.separator + "YueDu"
-    }
-
-    val legadoPath by lazy {
-        FileUtils.getSdCardPath() + File.separator + "YueDu3.0"
-    }
-
-    val exportPath by lazy {
-        legadoPath + File.separator + "Export"
+    val backupPath: String by lazy {
+        FileUtils.getDirFile(App.INSTANCE.filesDir, "backup").absolutePath
     }
 
     val backupFileNames by lazy {
         arrayOf(
-            "bookshelf.json",
-            "bookGroup.json",
-            "bookSource.json",
-            "rssSource.json",
-            "replaceRule.json",
-            ReadBookConfig.readConfigFileName,
-            "config.xml"
+            "bookshelf.json", "bookGroup.json", "bookSource.json", "rssSource.json",
+            "rssStar.json", "replaceRule.json", ReadBookConfig.readConfigFileName, "config.xml"
         )
     }
 
-    suspend fun backup(context: Context, uri: Uri?) {
+    fun autoBack(context: Context) {
+        val lastBackup = context.getPrefLong(PreferKey.lastBackup)
+        if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
+            Coroutine.async {
+                backup(context, context.getPrefString(PreferKey.backupPath) ?: "", true)
+            }
+        }
+    }
+
+    suspend fun backup(context: Context, path: String, isAuto: Boolean = false) {
+        context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
         withContext(IO) {
-            App.db.bookDao().allBooks.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "bookshelf.json")
-                        .writeText(json)
+            synchronized(this@Backup) {
+                writeListToJson(App.db.bookDao().all, "bookshelf.json", backupPath)
+                writeListToJson(App.db.bookGroupDao().all, "bookGroup.json", backupPath)
+                writeListToJson(App.db.bookSourceDao().all, "bookSource.json", backupPath)
+                writeListToJson(App.db.rssSourceDao().all, "rssSource.json", backupPath)
+                writeListToJson(App.db.rssStarDao().all, "rssStar.json", backupPath)
+                writeListToJson(App.db.replaceRuleDao().all, "replaceRule.json", backupPath)
+                GSON.toJson(ReadBookConfig.configList)?.let {
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.readConfigFileName)
+                        .writeText(it)
                 }
-            }
-            App.db.bookGroupDao().all().let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "bookGroup.json")
-                        .writeText(json)
+                Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
+                    val edit = sp.edit()
+                    App.INSTANCE.defaultSharedPreferences.all.map {
+                        when (val value = it.value) {
+                            is Int -> edit.putInt(it.key, value)
+                            is Boolean -> edit.putBoolean(it.key, value)
+                            is Long -> edit.putLong(it.key, value)
+                            is Float -> edit.putFloat(it.key, value)
+                            is String -> edit.putString(it.key, value)
+                            else -> Unit
+                        }
+                    }
+                    edit.commit()
                 }
-            }
-            App.db.bookSourceDao().all.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "bookSource.json")
-                        .writeText(json)
-                }
-            }
-            App.db.rssSourceDao().all.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "rssSource.json")
-                        .writeText(json)
-                }
-            }
-            App.db.replaceRuleDao().all.let {
-                if (it.isNotEmpty()) {
-                    val json = GSON.toJson(it)
-                    FileUtils.getFile(backupPath + File.separator + "replaceRule.json")
-                        .writeText(json)
-                }
-            }
-            GSON.toJson(ReadBookConfig.configList)?.let {
-                FileUtils.getFile(backupPath + File.separator + ReadBookConfig.readConfigFileName)
-                    .writeText(it)
-            }
-            Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
-                val edit = sp.edit()
-                App.INSTANCE.defaultSharedPreferences.all.map {
-                    when (val value = it.value) {
-                        is Int -> edit.putInt(it.key, value)
-                        is Boolean -> edit.putBoolean(it.key, value)
-                        is Long -> edit.putLong(it.key, value)
-                        is Float -> edit.putFloat(it.key, value)
-                        is String -> edit.putString(it.key, value)
-                        else -> Unit
+                WebDavHelp.backUpWebDav(backupPath)
+                if (path.isContentPath()) {
+                    copyBackup(context, Uri.parse(path), isAuto)
+                } else {
+                    if (path.isEmpty()) {
+                        copyBackup(context.getExternalFilesDir(null)!!, false)
+                    } else {
+                        copyBackup(File(path), isAuto)
                     }
                 }
-                edit.commit()
-            }
-            WebDavHelp.backUpWebDav(backupPath)
-            if (uri != null) {
-                copyBackup(context, uri)
-            } else {
-                copyBackup()
             }
         }
     }
 
-    private fun copyBackup(context: Context, uri: Uri) {
+    private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
+        if (list.isNotEmpty()) {
+            val json = GSON.toJson(list)
+            FileUtils.createFileIfNotExist(path + File.separator + fileName).writeText(json)
+        }
+    }
+
+    @Throws(java.lang.Exception::class)
+    private fun copyBackup(context: Context, uri: Uri, isAuto: Boolean) {
         DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
             for (fileName in backupFileNames) {
-                val doc = treeDoc.findFile(fileName) ?: treeDoc.createFile("", fileName)
-                doc?.let {
-                    DocumentUtils.writeText(
-                        context,
-                        FileUtils.getFile(backupPath + File.separator + fileName).readText(),
-                        doc.uri
-                    )
+                val file = File(backupPath + File.separator + fileName)
+                if (file.exists()) {
+                    if (isAuto) {
+                        treeDoc.findFile("auto")?.findFile(fileName)?.delete()
+                        DocumentUtils.createFileIfNotExist(
+                            treeDoc,
+                            fileName,
+                            subDirs = *arrayOf("auto")
+                        )?.writeBytes(context, file.readBytes())
+                    } else {
+                        treeDoc.findFile(fileName)?.delete()
+                        treeDoc.createFile("", fileName)
+                            ?.writeBytes(context, file.readBytes())
+                    }
                 }
             }
         }
     }
 
-    private fun copyBackup() {
-        try {
-            for (fileName in backupFileNames) {
-                FileUtils.getFile(backupPath + File.separator + "bookshelf.json")
-                    .copyTo(FileUtils.getFile(legadoPath + File.separator + "bookshelf.json"), true)
+    @Throws(java.lang.Exception::class)
+    private fun copyBackup(rootFile: File, isAuto: Boolean) {
+        for (fileName in backupFileNames) {
+            val file = File(backupPath + File.separator + fileName)
+            if (file.exists()) {
+                file.copyTo(
+                    if (isAuto) {
+                        FileUtils.createFileIfNotExist(rootFile, fileName, "auto")
+                    } else {
+                        FileUtils.createFileIfNotExist(rootFile, fileName)
+                    }, true
+                )
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 }

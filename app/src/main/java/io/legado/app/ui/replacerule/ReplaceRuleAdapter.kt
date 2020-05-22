@@ -1,8 +1,11 @@
 package io.legado.app.ui.replacerule
 
 import android.content.Context
-import android.view.Menu
+import android.os.Bundle
+import android.view.View
 import android.widget.PopupMenu
+import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -11,37 +14,40 @@ import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
 import kotlinx.android.synthetic.main.item_replace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
 
 
 class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     SimpleRecyclerAdapter<ReplaceRule>(context, R.layout.item_replace_rule),
     ItemTouchCallback.OnItemTouchCallbackListener {
 
-    private val selectedIds = linkedSetOf<Long>()
+    private val selected = linkedSetOf<ReplaceRule>()
 
     fun selectAll() {
         getItems().forEach {
-            selectedIds.add(it.id)
+            selected.add(it)
         }
-        notifyItemRangeChanged(0, itemCount, 1)
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
     }
 
     fun revertSelection() {
         getItems().forEach {
-            if (selectedIds.contains(it.id)) {
-                selectedIds.remove(it.id)
+            if (selected.contains(it)) {
+                selected.remove(it)
             } else {
-                selectedIds.add(it.id)
+                selected.add(it)
             }
         }
-        notifyItemRangeChanged(0, itemCount, 1)
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
     }
 
-    fun getSelectionIds(): LinkedHashSet<Long> {
-        val selection = linkedSetOf<Long>()
+    fun getSelection(): LinkedHashSet<ReplaceRule> {
+        val selection = linkedSetOf<ReplaceRule>()
         getItems().map {
-            if (selectedIds.contains(it.id)) {
-                selection.add(it.id)
+            if (selected.contains(it)) {
+                selection.add(it)
             }
         }
         return selection
@@ -49,7 +55,8 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
     override fun convert(holder: ItemViewHolder, item: ReplaceRule, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            if (payloads.isEmpty()) {
+            val bundle = payloads.getOrNull(0) as? Bundle
+            if (bundle == null) {
                 this.setBackgroundColor(context.backgroundColor)
                 if (item.group.isNullOrEmpty()) {
                     cb_name.text = item.name
@@ -58,41 +65,66 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                         String.format("%s (%s)", item.name, item.group)
                 }
                 swt_enabled.isChecked = item.isEnabled
-                swt_enabled.onClick {
-                    item.isEnabled = swt_enabled.isChecked
-                    callBack.update(item)
-                }
-                iv_edit.onClick {
-                    callBack.edit(item)
-                }
-                cb_name.isChecked = selectedIds.contains(item.id)
-                cb_name.onClick {
-                    if (cb_name.isChecked) {
-                        selectedIds.add(item.id)
-                    } else {
-                        selectedIds.remove(item.id)
-                    }
-                }
-                iv_menu_more.onClick {
-                    val popupMenu = PopupMenu(context, it)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_top, Menu.NONE, R.string.to_top)
-                    popupMenu.menu.add(Menu.NONE, R.id.menu_del, Menu.NONE, R.string.delete)
-                    popupMenu.setOnMenuItemClickListener { menuItem ->
-                        when (menuItem.itemId) {
-                            R.id.menu_top -> callBack.toTop(item)
-                            R.id.menu_del -> callBack.delete(item)
-                        }
-                        true
-                    }
-                    popupMenu.show()
-                }
+                cb_name.isChecked = selected.contains(item)
             } else {
-                when (payloads[0]) {
-                    1 -> cb_name.isChecked = selectedIds.contains(item.id)
-                    2 -> swt_enabled.isChecked = item.isEnabled
+                bundle.keySet().map {
+                    when (it) {
+                        "selected" -> cb_name.isChecked = selected.contains(item)
+                        "name", "group" ->
+                            if (item.group.isNullOrEmpty()) {
+                                cb_name.text = item.name
+                            } else {
+                                cb_name.text =
+                                    String.format("%s (%s)", item.name, item.group)
+                            }
+                        "enabled" -> swt_enabled.isChecked = item.isEnabled
+                    }
                 }
             }
         }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.apply {
+            swt_enabled.setOnCheckedChangeListener { _, isChecked ->
+                getItem(holder.layoutPosition)?.let {
+                    it.isEnabled = isChecked
+                    callBack.update(it)
+                }
+            }
+            iv_edit.onClick {
+                getItem(holder.layoutPosition)?.let {
+                    callBack.edit(it)
+                }
+            }
+            cb_name.onClick {
+                getItem(holder.layoutPosition)?.let {
+                    if (cb_name.isChecked) {
+                        selected.add(it)
+                    } else {
+                        selected.remove(it)
+                    }
+                }
+                callBack.upCountView()
+            }
+            iv_menu_more.onClick {
+                showMenu(iv_menu_more, holder.layoutPosition)
+            }
+        }
+    }
+
+    private fun showMenu(view: View, position: Int) {
+        val item = getItem(position) ?: return
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.inflate(R.menu.replace_rule_item)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_top -> callBack.toTop(item)
+                R.id.menu_del -> callBack.delete(item)
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
@@ -105,14 +137,22 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 val srcOrder = srcItem.order
                 srcItem.order = targetItem.order
                 targetItem.order = srcOrder
-                callBack.update(srcItem, targetItem)
+                movedItems.add(srcItem)
+                movedItems.add(targetItem)
             }
         }
+        Collections.swap(getItems(), srcPosition, targetPosition)
+        notifyItemMoved(srcPosition, targetPosition)
         return true
     }
 
-    override fun onSwiped(adapterPosition: Int) {
+    private val movedItems = linkedSetOf<ReplaceRule>()
 
+    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        if (movedItems.isNotEmpty()) {
+            callBack.update(*movedItems.toTypedArray())
+            movedItems.clear()
+        }
     }
 
     interface CallBack {
@@ -121,5 +161,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         fun edit(rule: ReplaceRule)
         fun toTop(rule: ReplaceRule)
         fun upOrder()
+        fun upCountView()
     }
 }

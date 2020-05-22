@@ -10,9 +10,10 @@ import android.widget.SeekBar
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
@@ -48,6 +49,7 @@ class ReadMenu : FrameLayout {
             fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
         initAnimation()
+        ll_bottom_bg.setBackgroundColor(context.bottomBackground)
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
         seek_brightness.progress = context.getPrefInt("brightness", 100)
@@ -138,7 +140,11 @@ class ReadMenu : FrameLayout {
         })
 
         //自动翻页
-        fabAutoPage.onClick { callBack?.autoPage() }
+        fabAutoPage.onClick {
+            runMenuOut {
+                callBack?.autoPage()
+            }
+        }
 
         //替换
         fabReplaceRule.onClick { callBack?.openReplaceRule() }
@@ -199,9 +205,8 @@ class ReadMenu : FrameLayout {
                 vw_menu_bg.onClick { runMenuOut() }
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
                     height =
-                        if (context.getPrefBoolean(PreferKey.hideNavigationBar)
-                            && Help.isNavigationBarExist(activity)
-                        ) context.getNavigationBarHeight()
+                        if (ReadBookConfig.hideNavigationBar && Help.isNavigationBarExist(activity))
+                            context.navigationBarHeight
                         else 0
                 }
             }

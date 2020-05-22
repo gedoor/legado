@@ -6,7 +6,6 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-
     <dimen name="font_size_normal">14sp</dimen>
     <dimen name="font_size_middle">16sp</dimen>
     <dimen name="font_size_large">18sp</dimen>
@@ -35,4 +34,6 @@
     <dimen name="fastscroll_scrollbar_margin_bottom">8dp</dimen>
     <dimen name="fastscroll_scrollbar_padding_start">8dp</dimen>
     <dimen name="fastscroll_scrollbar_padding_end">8dp</dimen>
+
+    <dimen name="fixed_height_bottom_padding">8dp</dimen>
 </resources>

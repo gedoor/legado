@@ -27,7 +27,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="@string/chapter"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -38,7 +37,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="@string/chapter"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -81,8 +79,9 @@
         <LinearLayout
             android:id="@+id/ll_floating_button"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:paddingStart="32dp"
             android:paddingEnd="32dp">
 
@@ -90,7 +89,7 @@
                 android:id="@+id/fabAutoPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="16dp"
                 android:contentDescription="@string/auto_next_page"
                 android:src="@drawable/ic_auto_page"
                 android:tint="@color/tv_text_default"
@@ -110,7 +109,7 @@
                 android:id="@+id/fabReplaceRule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="16dp"
                 android:contentDescription="@string/replace_rule_title"
                 android:src="@drawable/ic_find_replace"
                 android:tint="@color/tv_text_default"
@@ -130,7 +129,7 @@
                 android:id="@+id/fabNightTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="16dp"
                 android:contentDescription="@string/dark_theme"
                 android:src="@drawable/ic_brightness"
                 android:tint="@color/tv_text_default"
@@ -143,8 +142,6 @@
 
         </LinearLayout>
 
-        <View style="@style/Style.Shadow.Bottom" />
-
         <!--底部设置栏-->
         <FrameLayout
             android:layout_width="match_parent"
@@ -156,6 +153,7 @@
                 android:layout_height="match_parent" />
 
             <LinearLayout
+                android:id="@+id/ll_bottom_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/background_menu"
@@ -212,7 +210,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:orientation="horizontal">
 

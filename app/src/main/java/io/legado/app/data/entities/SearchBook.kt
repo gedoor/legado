@@ -21,7 +21,7 @@ import kotlinx.android.parcel.Parcelize
 )
 data class SearchBook(
     @PrimaryKey
-    var bookUrl: String = "",
+    override var bookUrl: String = "",
     var origin: String = "",                     // 书源规则
     var originName: String = "",
     var type: Int = 0,                          // @BookType
@@ -78,16 +78,21 @@ data class SearchBook(
         variable = GSON.toJson(variableMap)
     }
 
-    @Ignore
+    @delegate:Ignore
     @IgnoredOnParcel
-    var origins: LinkedHashSet<String>? = null
-        private set
+    val origins: LinkedHashSet<String> by lazy { linkedSetOf(origin) }
 
     fun addOrigin(origin: String) {
-        if (origins == null) {
-            origins = linkedSetOf(this.origin)
+        origins.add(origin)
+    }
+
+    fun getDisplayLastChapterTitle(): String {
+        latestChapterTitle?.let {
+            if (it.isNotEmpty()) {
+                return it
+            }
         }
-        origins?.add(origin)
+        return "无最新章节"
     }
 
     fun toBook(): Book {

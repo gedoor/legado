@@ -20,15 +20,19 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
-import io.legado.app.data.entities.EditEntity
 import io.legado.app.data.entities.rule.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
+import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.shareWithQr
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import kotlin.math.abs
@@ -64,30 +68,26 @@ class BookSourceEditActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_save -> {
-                val source = getSource()
+            R.id.menu_save -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) { setResult(Activity.RESULT_OK); finish() }
                 }
             }
-            R.id.menu_debug_source -> {
-                val source = getSource()
+            R.id.menu_debug_source -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) {
                         startActivity<BookSourceDebugActivity>(Pair("key", source.bookSourceUrl))
                     }
                 }
             }
-            R.id.menu_copy_source -> {
-                GSON.toJson(getSource())?.let { sourceStr ->
+            R.id.menu_copy_source -> getSource().let { source ->
+                GSON.toJson(source)?.let { sourceStr ->
                     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                     clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
                 }
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
-            R.id.menu_share_str -> GSON.toJson(getSource())?.let { sourceStr ->
-                shareText(getString(R.string.share_book_source), sourceStr)
-            }
+            R.id.menu_share_str -> GSON.toJson(getSource())?.let { share(it) }
             R.id.menu_share_qr -> GSON.toJson(getSource())?.let { sourceStr ->
                 shareWithQr(getString(R.string.share_book_source), sourceStr)
             }
@@ -98,6 +98,18 @@ class BookSourceEditActivity :
                     startActivity(intent)
                 } catch (e: Exception) {
                     toast(R.string.can_not_open)
+                }
+            }
+            R.id.menu_login -> getSource().let {
+                if (checkSource(it)) {
+                    if (it.loginUrl.isNullOrEmpty()) {
+                        toast(R.string.source_no_login)
+                    } else {
+                        startActivity<SourceLogin>(
+                            Pair("sourceUrl", it.bookSourceUrl),
+                            Pair("loginUrl", it.loginUrl)
+                        )
+                    }
                 }
             }
         }
@@ -322,11 +334,11 @@ class BookSourceEditActivity :
                 "sourceRegex" -> contentRule.sourceRegex = it.value
             }
         }
-        source.ruleSearch = GSON.toJson(searchRule)
-        source.ruleExplore = GSON.toJson(exploreRule)
-        source.ruleBookInfo = GSON.toJson(bookInfoRule)
-        source.ruleToc = GSON.toJson(tocRule)
-        source.ruleContent = GSON.toJson(contentRule)
+        source.ruleSearch = searchRule
+        source.ruleExplore = exploreRule
+        source.ruleBookInfo = bookInfoRule
+        source.ruleToc = tocRule
+        source.ruleContent = contentRule
         return source
     }
 
@@ -338,7 +350,7 @@ class BookSourceEditActivity :
         return true
     }
 
-    override fun sendText(text: String) {
+    private fun insertText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -353,19 +365,25 @@ class BookSourceEditActivity :
         }
     }
 
+    override fun sendText(text: String) {
+        if (text == AppConst.keyboardToolChars[0]) {
+            insertText(AppConst.urlOption)
+        } else {
+            insertText(text)
+        }
+    }
+
     private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.isShowing?.let { if (it) return }
-        if (!isFinishing) {
-            mSoftKeyboardTool?.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+        mSoftKeyboardTool?.let {
+            if (it.isShowing) return
+            if (!isFinishing) {
+                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+            }
         }
     }
 
     private fun closePopupWindow() {
-        mSoftKeyboardTool?.let {
-            if (it.isShowing) {
-                it.dismiss()
-            }
-        }
+        mSoftKeyboardTool?.dismiss()
     }
 
     private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {

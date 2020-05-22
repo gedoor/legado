@@ -2,6 +2,7 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.View
@@ -10,10 +11,12 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
+import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
-import io.legado.app.utils.getNavigationBarHeight
-import io.legado.app.utils.getStatusBarHeight
+import io.legado.app.utils.navigationBarHeight
+import io.legado.app.utils.statusBarHeight
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
@@ -132,14 +135,21 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
-            topPadding = context.getStatusBarHeight()
+            topPadding = context.statusBarHeight
         }
 
         if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
-            bottomPadding = context.getNavigationBarHeight()
+            bottomPadding = context.navigationBarHeight
         }
 
         backgroundColor = context.primaryColor
+
+        stateListAnimator = null
+        elevation = if (AppConfig.elevation < 0) {
+            context.elevation
+        } else {
+            AppConfig.elevation.toFloat()
+        }
 
         a.recycle()
     }
@@ -175,6 +185,11 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
 
     fun setSubTitleTextAppearance(@StyleRes resId: Int) {
         toolbar.setSubtitleTextAppearance(context, resId)
+    }
+
+    fun transparent() {
+        elevation = 0f
+        backgroundColor = Color.TRANSPARENT
     }
 
     private fun attachToActivity() {

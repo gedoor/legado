@@ -4,12 +4,14 @@
     <color name="colorPrimaryDark">@color/md_blue_grey_700</color>
     <color name="colorAccent">@color/md_deep_orange_800</color>
 
-    <color name="background">@color/md_grey_800</color>
-    <color name="background_card">#353535</color>
-    <color name="background_menu">#282828</color>
+    <color name="background">@color/md_grey_900</color>
+    <color name="background_card">@color/md_grey_850</color>
+    <color name="background_menu">@color/md_grey_800</color>
+    <color name="background_prefs">#10303030</color>
 
     <color name="night_mask">#69000000</color>
 
+    <color name="transparent10">#10ffffff</color>
     <color name="transparent30">#30ffffff</color>
 
     <color name="bg_divider_line">#363636</color>

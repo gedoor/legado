@@ -15,27 +15,35 @@ import kotlin.coroutines.CoroutineContext
 object Rss {
 
     fun getArticles(
+        sortName: String,
+        sortUrl: String,
         rssSource: RssSource,
         pageUrl: String? = null,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<Result> {
         return Coroutine.async(scope, context) {
-            val analyzeUrl = AnalyzeUrl(pageUrl ?: rssSource.sourceUrl)
+            val analyzeUrl = AnalyzeUrl(
+                pageUrl ?: sortUrl,
+                headerMapF = rssSource.getHeaderMap()
+            )
             val body = analyzeUrl.getResponseAwait(rssSource.sourceUrl).body
-            RssParserByRule.parseXML(body, rssSource)
+            RssParserByRule.parseXML(sortName, sortUrl, body, rssSource)
         }
     }
 
     fun getContent(
         rssArticle: RssArticle,
         ruleContent: String,
+        rssSource: RssSource?,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            val body = AnalyzeUrl(rssArticle.link, baseUrl = rssArticle.origin)
-                .getResponseAwait()
+            val body = AnalyzeUrl(
+                rssArticle.link, baseUrl = rssArticle.origin,
+                headerMapF = rssSource?.getHeaderMap()
+            ).getResponseAwait(rssArticle.origin)
                 .body
             val analyzeRule = AnalyzeRule()
             analyzeRule.setContent(

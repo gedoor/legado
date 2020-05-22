@@ -1,8 +1,11 @@
 package io.legado.app.help.permission
 
+import android.os.Build
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import org.jetbrains.anko.startActivity
+import java.util.ArrayList
 
 class PermissionsCompat private constructor() {
 
@@ -10,6 +13,17 @@ class PermissionsCompat private constructor() {
 
     fun request() {
         RequestManager.pushRequest(request)
+    }
+
+    companion object {
+        // 检查权限, 如果已经拥有返回 true
+        fun check(activity: AppCompatActivity, vararg permissions: String): Boolean {
+            var request: Request = Request(activity)
+            var pers = ArrayList<String>()
+            pers.addAll(listOf(*permissions))
+            var data = request.getDeniedPermissions(pers.toTypedArray())
+            return data == null;
+        }
     }
 
     class Builder {

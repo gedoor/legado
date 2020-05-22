@@ -1,10 +1,8 @@
 package io.legado.app.ui.main
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
-import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -14,19 +12,18 @@ import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.ui.about.UpdateLog
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -37,18 +34,33 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         get() = getViewModel(MainViewModel::class.java)
 
     private var pagePosition = 0
-    private val fragmentList = arrayListOf<Fragment>()
+    private val fragmentId = arrayOf(0, 1, 2, 3)
+    private val fragmentMap = mapOf<Int, Fragment>(
+        Pair(fragmentId[0], BookshelfFragment()),
+        Pair(fragmentId[1], ExploreFragment()),
+        Pair(fragmentId[2], RssFragment()),
+        Pair(fragmentId[3], MyFragment())
+    )
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(view_pager_main)
         ATH.applyBottomNavigationColor(bottom_navigation_view)
         view_pager_main.offscreenPageLimit = 3
-        upFragmentList()
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
         bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         upVersion()
+        //自动更新书籍
+        if (AppConfig.autoRefreshBook) {
+            view_pager_main.postDelayed({
+                viewModel.upChapterList()
+            }, 1000)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -61,31 +73,18 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         return false
     }
 
-    private fun upFragmentList() {
-        if (fragmentList.isEmpty()) {
-            fragmentList.add(BookshelfFragment())
-            fragmentList.add(ExploreFragment())
-            fragmentList.add(RssFragment())
-            fragmentList.add(MyFragment())
-        }
-        if (AppConfig.isShowRSS && fragmentList.size < 4) {
-            fragmentList.add(2, RssFragment())
-        }
-        if (!AppConfig.isShowRSS && fragmentList.size == 4) {
-            fragmentList.removeAt(2)
-        }
-    }
-
     private fun upVersion() {
-        if (getPrefInt("versionCode") != App.INSTANCE.versionCode) {
-            putPrefInt("versionCode", App.INSTANCE.versionCode)
+        if (getPrefInt(PreferKey.versionCode) != App.INSTANCE.versionCode) {
+            putPrefInt(PreferKey.versionCode, App.INSTANCE.versionCode)
             if (!BuildConfig.DEBUG) {
-                UpdateLog().show(supportFragmentManager, "updateLog")
+                val log = String(assets.open("updateLog.md").readBytes())
+                TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
             }
         }
     }
 
     override fun onPageSelected(position: Int) {
+        view_pager_main.hideSoftInput()
         pagePosition = position
         when (position) {
             0, 1, 3 -> bottom_navigation_view.menu.getItem(position).isChecked = true
@@ -115,25 +114,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         return super.onKeyUp(keyCode, event)
     }
 
-    override fun finish() {
+    override fun onPause() {
+        super.onPause()
         if (!BuildConfig.DEBUG) {
-            backup()
-        }
-        super.finish()
-    }
-
-    private fun backup() {
-        Coroutine.async {
-            val backupPath = getPrefString(PreferKey.backupPath)
-            if (backupPath?.isNotEmpty() == true) {
-                val uri = Uri.parse(backupPath)
-                val doc = DocumentFile.fromTreeUri(this@MainActivity, uri)
-                if (doc?.canWrite() == true) {
-                    Backup.backup(this@MainActivity, uri)
-                }
-            } else {
-                Backup.backup(this@MainActivity, null)
-            }
+            Backup.autoBack(this)
         }
     }
 
@@ -143,12 +127,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     override fun observeLiveBus() {
-        observeEvent<String>(Bus.RECREATE) {
+        observeEvent<String>(EventBus.RECREATE) {
             recreate()
         }
-        observeEvent<String>(Bus.SHOW_RSS) {
+        observeEvent<String>(EventBus.SHOW_RSS) {
             bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
-            upFragmentList()
             view_pager_main.adapter?.notifyDataSetChanged()
             if (AppConfig.isShowRSS) {
                 view_pager_main.setCurrentItem(3, false)
@@ -164,7 +147,16 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
 
         override fun getItem(position: Int): Fragment {
-            return fragmentList[position]
+            return when (position) {
+                0 -> fragmentMap.getValue(fragmentId[0])
+                1 -> fragmentMap.getValue(fragmentId[1])
+                2 -> if (AppConfig.isShowRSS) {
+                    fragmentMap.getValue(fragmentId[2])
+                } else {
+                    fragmentMap.getValue(fragmentId[3])
+                }
+                else -> fragmentMap.getValue(fragmentId[3])
+            }
         }
 
         override fun getCount(): Int {
@@ -172,4 +164,5 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
 
     }
+
 }

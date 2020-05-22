@@ -1,7 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/titleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/book_local" />
+
+    <!--path-->
+    <LinearLayout
+        android:id="@+id/layTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/titleBar"
+        android:background="@color/background"
+        android:minHeight="36dp"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:elevation="1dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_path"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/tv_text_secondary"
+            android:textSize="13sp"
+            android:focusable="true"
+            tools:text="/" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_go_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_margin="4dp"
+            app:cornerRadius="5dp"
+            android:text="@string/go_back"
+            android:textFontWeight="800"
+            android:textSize="14sp"
+            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/layTop"
+        app:layout_constraintBottom_toTopOf="@id/select_action_bar"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <io.legado.app.ui.widget.SelectActionBar
+        android:id="@+id/select_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/hint_per"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
+        android:padding="36dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/tip_local_perm_request_storage"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </TextView>
+
+        <io.legado.app.ui.widget.text.AccentBgTextView
+            android:id="@+id/tv_request_per"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:minHeight="42dp"
+            android:gravity="center"
+            android:text="@string/request_permission"
+            android:textSize="14sp"
+            app:radius="30dp" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

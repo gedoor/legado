@@ -3,6 +3,7 @@ package io.legado.app.utils
 import android.util.Base64
 import java.nio.charset.StandardCharsets
 
+@Suppress("unused")
 object EncoderUtils {
 
     fun escape(src: String): String {

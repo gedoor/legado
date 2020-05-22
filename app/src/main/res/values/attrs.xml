@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <attr name="radius" format="dimension" />
+
     <declare-styleable name="TitleBar">
         <attr name="title"/>
         <attr name="subtitle"/>
@@ -65,6 +67,11 @@
         <attr name="speed" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="DetailSeekBar">
+        <attr name="title" format="string" />
+        <attr name="max" format="integer" />
+    </declare-styleable>
+
     <declare-styleable name="SmoothCheckBox">
         <attr name="duration" format="integer"/>
         <attr name="stroke_width" format="dimension"/>
@@ -97,7 +104,7 @@
     </declare-styleable>
 
     <declare-styleable name="FilletImageView">
-        <attr name="radius" format="dimension"/>
+        <attr name="radius" />
         <attr name="left_top_radius" format="dimension"/>
         <attr name="right_top_radius" format="dimension"/>
         <attr name="right_bottom_radius" format="dimension"/>
@@ -126,6 +133,17 @@
         <attr name="civ_border_color" format="color" />
         <attr name="civ_border_overlay" format="boolean" />
         <attr name="civ_circle_background_color" format="color" />
+        <attr name="text" format="string" />
+        <attr name="textColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="Battery">
+        <attr name="batteryOrientation">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="batteryColor" format="color" />
+        <attr name="batteryPower" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="VerticalSeekBar">
@@ -137,12 +155,35 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ATEAccentBgTextView">
-        <attr name="abt_radius" format="dimension" />
+    <declare-styleable name="AccentBgTextView">
+        <attr name="radius" />
+    </declare-styleable>
+
+    <declare-styleable name="StrokeTextView">
+        <attr name="radius" />
     </declare-styleable>
 
     <declare-styleable name="BadgeView">
-        <attr name="bv_radius" format="dimension" />
+        <attr name="radius" />
         <attr name="up_flat_angle" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ArcView">
+        <attr name="arcHeight" format="dimension" />
+        <attr name="bgColor" format="color" />
+        <attr name="arcDirectionTop" format="boolean" />
+    </declare-styleable>
+
+
+    <declare-styleable name="ShadowLayout"><attr format="color" name="shadowColor"/><attr format="dimension" name="shadowRadius"/><attr format="dimension" name="shadowDx"/><attr format="dimension" name="shadowDy"/><attr name="shadowShape">
+        <flag name="rectangle" value="0x0001"/>
+        <flag name="oval" value="0x0010"/>
+        </attr><attr name="shadowSide">
+            <flag name="all" value="0x1111"/>
+            <flag name="left" value="0x0001"/>
+            <flag name="top" value="0x0010"/>
+            <flag name="right" value="0x0100"/>
+            <flag name="bottom" value="0x1000"/>
+        </attr>
     </declare-styleable>
 </resources>

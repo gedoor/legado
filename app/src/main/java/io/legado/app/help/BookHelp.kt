@@ -1,147 +1,107 @@
 package io.legado.app.help
 
-import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
-import io.legado.app.constant.PreferKey
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.*
+import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.postEvent
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
+import org.jetbrains.anko.toast
 import java.io.File
 import kotlin.math.min
 
 object BookHelp {
     private const val cacheFolderName = "book_cache"
-    private var downloadPath: String =
-        App.INSTANCE.getPrefString(PreferKey.downloadPath)
-            ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
-            ?: App.INSTANCE.cacheDir.absolutePath
-
-    fun upDownloadPath() {
-        downloadPath =
-            App.INSTANCE.getPrefString(PreferKey.downloadPath)
-                ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
-                        ?: App.INSTANCE.cacheDir.absolutePath
-    }
-
-    private val downloadUri get() = Uri.parse(downloadPath)
+    private val downloadDir: File =
+        App.INSTANCE.getExternalFilesDir(null)
+            ?: App.INSTANCE.cacheDir
 
     private fun bookFolderName(book: Book): String {
         return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
     }
 
-    private fun bookChapterName(bookChapter: BookChapter): String {
-        return String.format("%05d-%s", bookChapter.index, MD5Utils.md5Encode(bookChapter.title))
-    }
-
-    private fun getBookCachePath(): String {
-        return "$downloadPath${File.separator}$cacheFolderName"
+    fun formatChapterName(bookChapter: BookChapter): String {
+        return String.format(
+            "%05d-%s.nb",
+            bookChapter.index,
+            MD5Utils.md5Encode16(bookChapter.title)
+        )
     }
 
     fun clearCache() {
-        FileUtils.deleteFile(getBookCachePath())
-        FileUtils.getFolder(getBookCachePath())
+        FileUtils.deleteFile(
+            FileUtils.getPath(
+                downloadDir,
+                subDirs = *arrayOf(cacheFolderName)
+            )
+        )
     }
 
     @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
-                DocumentUtils.createFileIfNotExist(
-                    it,
-                    "${bookChapterName(bookChapter)}.nb",
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.uri?.writeText(App.INSTANCE, content)
-            }
-        } else {
-            FileUtils.createFileIfNotExist(
-                File(downloadPath),
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).listFiles()?.forEach {
-                if (it.name.startsWith(String.format("%05d", bookChapter.index))) {
-                    it.delete()
-                    return@forEach
-                }
-            }
-            FileUtils.createFileIfNotExist(
-                File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).writeText(content)
-        }
+        FileUtils.createFileIfNotExist(
+            downloadDir,
+            formatChapterName(bookChapter),
+            subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+        ).writeText(content)
+        postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
-    fun getChapterCount(book: Book): Int {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
-                return DocumentUtils.createFileIfNotExist(
-                    it,
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.listFiles()?.size ?: 0
-            }
-        } else {
-            return FileUtils.createFileIfNotExist(
-                File(downloadPath),
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).list()?.size ?: 0
+    fun getChapterFiles(book: Book): List<String> {
+        val fileNameList = arrayListOf<String>()
+        FileUtils.createFolderIfNotExist(
+            downloadDir,
+            subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+        ).list()?.let {
+            fileNameList.addAll(it)
         }
-        return 0
+        return fileNameList
     }
 
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
-                return DocumentUtils.exists(
-                    it,
-                    "${bookChapterName(bookChapter)}.nb",
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )
-            }
+        return if (book.isLocalBook()) {
+            true
         } else {
-            return FileUtils.exists(
-                File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
+            FileUtils.exists(
+                downloadDir,
+                formatChapterName(bookChapter),
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
             )
         }
-        return false
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
-                return DocumentUtils.createFileIfNotExist(
-                    it,
-                    "${bookChapterName(bookChapter)}.nb",
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.uri?.readText(App.INSTANCE)
-            }
+        if (book.isLocalBook()) {
+            return AnalyzeTxtFile.getContent(book, bookChapter)
         } else {
-            return FileUtils.createFileIfNotExist(
-                File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
+            val file = FileUtils.getFile(
+                downloadDir,
+                formatChapterName(bookChapter),
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-            ).readText()
+            )
+            if (file.exists()) {
+                return file.readText()
+            }
         }
         return null
     }
 
     fun delContent(book: Book, bookChapter: BookChapter) {
-        if (downloadUri.isDocumentUri(App.INSTANCE)) {
-            DocumentFile.fromTreeUri(App.INSTANCE, downloadUri)?.let {
-                DocumentUtils.createFileIfNotExist(
-                    it,
-                    "${bookChapterName(bookChapter)}.nb",
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
-                )?.delete()
-            }
+        if (book.isLocalBook()) {
+            return
         } else {
             FileUtils.createFileIfNotExist(
-                File(downloadPath),
-                "${bookChapterName(bookChapter)}.nb",
+                downloadDir,
+                formatChapterName(bookChapter),
                 subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
             ).delete()
         }
@@ -153,7 +113,7 @@ object BookHelp {
 
     fun formatAuthor(author: String?): String {
         return author
-            ?.replace("作\\s*者[\\s:：]*".toRegex(), "")
+            ?.replace("作\\s*者\\s*[：:]\n*".toRegex(), "")
             ?.replace("\\s+".toRegex(), " ")
             ?.trim { it <= ' ' }
             ?: ""
@@ -210,42 +170,87 @@ object BookHelp {
         return newIndex
     }
 
-    var bookName: String? = null
-    var bookOrigin: String? = null
-    var replaceRules: List<ReplaceRule> = arrayListOf()
+    private var bookName: String? = null
+    private var bookOrigin: String? = null
+    private var replaceRules: List<ReplaceRule> = arrayListOf()
 
-    fun disposeContent(
+    @Synchronized
+    suspend fun upReplaceRules() {
+        withContext(IO) {
+            synchronized(this) {
+                val o = bookOrigin
+                bookName?.let {
+                    replaceRules = if (o.isNullOrEmpty()) {
+                        App.db.replaceRuleDao().findEnabledByScope(it)
+                    } else {
+                        App.db.replaceRuleDao().findEnabledByScope(it, o)
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun disposeContent(
         title: String,
         name: String,
         origin: String?,
         content: String,
         enableReplace: Boolean
-    ): String {
+    ): List<String> {
         var c = content
-        synchronized(this) {
-            if (enableReplace && (bookName != name || bookOrigin != origin)) {
-                replaceRules = if (origin.isNullOrEmpty()) {
-                    App.db.replaceRuleDao().findEnabledByScope(name)
-                } else {
-                    App.db.replaceRuleDao().findEnabledByScope(name, origin)
+        if (enableReplace) {
+            synchronized(this) {
+                if (bookName != name || bookOrigin != origin) {
+                    bookName = name
+                    bookOrigin = origin
+                    replaceRules = if (origin.isNullOrEmpty()) {
+                        App.db.replaceRuleDao().findEnabledByScope(name)
+                    } else {
+                        App.db.replaceRuleDao().findEnabledByScope(name, origin)
+                    }
                 }
             }
-        }
-        if (!content.substringBefore("\n").contains(title)) {
-            c = title + "\n" + c
-        }
-        for (item in replaceRules) {
-            item.pattern.let {
-                if (it.isNotEmpty()) {
-                    c = if (item.isRegex) {
-                        c.replace(it.toRegex(), item.replacement)
-                    } else {
-                        c.replace(it, item.replacement)
+            replaceRules.forEach { item ->
+                item.pattern.let {
+                    if (it.isNotEmpty()) {
+                        try {
+                            c = if (item.isRegex) {
+                                c.replace(it.toRegex(), item.replacement)
+                            } else {
+                                c.replace(it, item.replacement)
+                            }
+                        } catch (e: Exception) {
+                            withContext(Main) {
+                                App.INSTANCE.toast("${item.name}替换出错")
+                            }
+                        }
                     }
                 }
             }
         }
-        val indent = App.INSTANCE.getPrefInt("textIndent", 2)
-        return c.replace("\\s*\\n+\\s*".toRegex(), "\n" + "　".repeat(indent))
+        try {
+            when (AppConfig.chineseConverterType) {
+                1 -> c = HanLP.convertToSimplifiedChinese(c)
+                2 -> c = HanLP.convertToTraditionalChinese(c)
+            }
+        } catch (e: Exception) {
+            withContext(Main) {
+                App.INSTANCE.toast("简繁转换出错")
+            }
+        }
+        val contents = arrayListOf<String>()
+        c.split("\n").forEach {
+            val str = it.replace("^\\s+".toRegex(), "")
+                .replace("\r", "")
+            if (contents.isEmpty()) {
+                contents.add(title)
+                if (str != title && it.isNotEmpty()) {
+                    contents.add("${ReadBookConfig.bodyIndent}$str")
+                }
+            } else if (str.isNotEmpty()) {
+                contents.add("${ReadBookConfig.bodyIndent}$str")
+            }
+        }
+        return contents
     }
 }

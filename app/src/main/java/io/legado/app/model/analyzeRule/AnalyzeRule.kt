@@ -3,11 +3,12 @@ package io.legado.app.model.analyzeRule
 import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
-import io.legado.app.constant.Pattern.JS_PATTERN
+import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.JsExtensions
 import io.legado.app.utils.*
+import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
 import java.util.*
 import java.util.regex.Pattern
@@ -108,18 +109,21 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     @Throws(Exception::class)
     @JvmOverloads
-    fun getStringList(rule: String, isUrl: Boolean = false): List<String>? {
-        if (TextUtils.isEmpty(rule)) return null
+    fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
+        if (rule.isNullOrEmpty()) return null
         val ruleList = splitSourceRule(rule)
         return getStringList(ruleList, isUrl)
     }
 
     @Throws(Exception::class)
-    fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean): List<String>? {
+    fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
-        content?.let { o ->
-            if (ruleList.isNotEmpty()) {
-                if (ruleList.isNotEmpty()) result = o
+        val content = this.content
+        if (content != null && ruleList.isNotEmpty()) {
+            result = content
+            if (content is NativeObject) {
+                result = content[ruleList[0].rule]?.toString()
+            } else {
                 for (sourceRule in ruleList) {
                     putRule(sourceRule.putMap)
                     sourceRule.makeUpRule(result)
@@ -203,7 +207,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                                 else -> sourceRule.rule
                             }
                         }
-                        if (sourceRule.replaceRegex.isNotEmpty()) {
+                        if ((result != null) && sourceRule.replaceRegex.isNotEmpty()) {
                             result = replaceRegex(result.toString(), sourceRule)
                         }
                     }
@@ -211,10 +215,15 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             }
         }
         if (result == null) result = ""
-        if (isUrl) {
-            return NetworkUtils.getAbsoluteURL(baseUrl, result.toString()) ?: ""
+        val str = try {
+            Entities.unescape(result.toString())
+        } catch (e: Exception) {
+            result.toString()
         }
-        return result.toString()
+        if (isUrl) {
+            return NetworkUtils.getAbsoluteURL(baseUrl, str) ?: ""
+        }
+        return str
     }
 
     /**
@@ -582,12 +591,17 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     @Throws(Exception::class)
     private fun evalJS(jsStr: String, result: Any?): Any? {
-        val bindings = SimpleBindings()
-        bindings["java"] = this
-        bindings["book"] = book
-        bindings["result"] = result
-        bindings["baseUrl"] = baseUrl
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
+        try {
+            val bindings = SimpleBindings()
+            bindings["java"] = this
+            bindings["book"] = book
+            bindings["result"] = result
+            bindings["baseUrl"] = baseUrl
+            return SCRIPT_ENGINE.eval(jsStr, bindings)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     /**
@@ -596,7 +610,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     override fun ajax(urlStr: String): String? {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, baseUrl, book)
-            val call = analyzeUrl.getResponse()
+            val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response.body()
         } catch (e: Exception) {

@@ -3,12 +3,12 @@ package io.legado.app.service
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.Action
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.IntentHelp
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getPrefInt
@@ -32,7 +32,7 @@ class WebService : BaseService() {
         fun stop(context: Context) {
             if (isRun) {
                 val intent = Intent(context, WebService::class.java)
-                intent.action = Action.stop
+                intent.action = IntentAction.stop
                 context.startService(intent)
             }
         }
@@ -56,12 +56,12 @@ class WebService : BaseService() {
         if (webSocketServer?.isAlive == true) {
             webSocketServer?.stop()
         }
-        postEvent(Bus.WEB_SERVICE_STOP, true)
+        postEvent(EventBus.WEB_SERVICE_STOP, true)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            Action.stop -> stopSelf()
+            IntentAction.stop -> stopSelf()
             else -> upWebServer()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -96,7 +96,7 @@ class WebService : BaseService() {
     }
 
     private fun getPort(): Int {
-        var port = App.INSTANCE.getPrefInt("webPort", 1122)
+        var port = getPrefInt(PreferKey.webPort, 1122)
         if (port > 65530 || port < 1024) {
             port = 1122
         }
@@ -115,7 +115,7 @@ class WebService : BaseService() {
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<WebService>(this, Action.stop)
+            IntentHelp.servicePendingIntent<WebService>(this, IntentAction.stop)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()

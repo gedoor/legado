@@ -5,12 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
 import io.legado.app.App
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ActivityHelp
+import io.legado.app.service.AudioPlayService
+import io.legado.app.service.BaseReadAloudService
+import io.legado.app.service.help.AudioPlay
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -45,16 +50,28 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     }
                 }
             }
-            return false
+            return true
         }
 
         private fun readAloud(context: Context) {
             when {
+                BaseReadAloudService.isRun -> if (BaseReadAloudService.isPlay()) {
+                    ReadAloud.pause(context)
+                    AudioPlay.pause(context)
+                } else {
+                    ReadAloud.resume(context)
+                    AudioPlay.resume(context)
+                }
+                AudioPlayService.isRun -> if (AudioPlayService.pause) {
+                    AudioPlay.resume(context)
+                } else {
+                    AudioPlay.pause(context)
+                }
                 ActivityHelp.isExist(AudioPlayActivity::class.java) ->
-                    postEvent(Bus.MEDIA_BUTTON, true)
+                    postEvent(EventBus.MEDIA_BUTTON, true)
                 ActivityHelp.isExist(ReadBookActivity::class.java) ->
-                    postEvent(Bus.MEDIA_BUTTON, true)
-                else -> {
+                    postEvent(EventBus.MEDIA_BUTTON, true)
+                else -> if (context.getPrefBoolean("mediaButtonOnExit", true)) {
                     GlobalScope.launch(Main) {
                         val lastBook: Book? = withContext(IO) {
                             App.db.bookDao().lastReadBook

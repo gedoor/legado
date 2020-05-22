@@ -2,52 +2,67 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/web_dav_set"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
-        <androidx.preference.EditTextPreference
+        <io.legado.app.ui.widget.prefs.EditTextPreference
             android:key="web_dav_url"
-            android:title="WebDav 服务器地址"
-            android:summary="@string/web_dav_url_s"
+                android:title="@string/web_dav_url"
+                android:summary="@string/web_dav_url_s"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.EditTextPreference
-            android:key="web_dav_account"
-            android:title="WebDav 账号"
-            android:summary="@string/web_dav_account_s"
+        <io.legado.app.ui.widget.prefs.EditTextPreference
+                android:key="web_dav_account"
+                android:title="@string/web_dav_account"
+                android:summary="@string/web_dav_account_s"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.EditTextPreference
-            android:key="web_dav_password"
-            android:title="WebDav 密码"
-            android:summary="@string/web_dav_pw_s"
+        <io.legado.app.ui.widget.prefs.EditTextPreference
+                android:key="web_dav_password"
+                android:title="@string/web_dav_pw"
+                android:summary="@string/web_dav_pw_s"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+                android:key="webDavCreateDir"
+                android:defaultValue="true"
+                android:title="@string/mkdirs"
+                android:summary="@string/mkdirs_description"
+                app:allowDividerAbove="false"
+                app:allowDividerBelow="false"
+                app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory app:iconSpaceReserved="false">
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-        <androidx.preference.Preference
-            android:key="backupUri"
-            android:title="备份路径"
-            app:iconSpaceReserved="false" />
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        app:layout="@layout/view_preference_category"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
 
-        <androidx.preference.Preference
-            android:key="web_dav_backup"
-            android:title="备份"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+                android:key="backupUri"
+                android:title="@string/backup_path"
+                app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
-            android:key="web_dav_restore"
-            android:title="恢复"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+                android:key="web_dav_backup"
+                android:title="@string/backup"
+                app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
-            android:key="import_old"
-            android:title="导入旧版本数据"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+                android:key="web_dav_restore"
+                android:title="@string/restore"
+                app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+        <io.legado.app.ui.widget.prefs.Preference
+                android:key="import_old"
+                android:title="@string/menu_import_old_version"
+                app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

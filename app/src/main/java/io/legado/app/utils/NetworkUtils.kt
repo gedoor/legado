@@ -8,11 +8,12 @@ import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 
+@Suppress("unused")
 object NetworkUtils {
     fun getUrl(response: Response<*>): String {
-        val networkResponse = response.raw().networkResponse
-        return networkResponse?.request?.url?.toString()
-            ?: response.raw().request.url.toString()
+        val networkResponse = response.raw().networkResponse()
+        return networkResponse?.request()?.url()?.toString()
+            ?: response.raw().request().url().toString()
     }
 
     private val notNeedEncoding: BitSet by lazy {

@@ -130,7 +130,7 @@ object ATH {
     fun setTint(
         view: View,
         @ColorInt color: Int,
-        isDark: Boolean = AppConfig.isNightTheme
+        isDark: Boolean = AppConfig.isNightTheme(view.context)
     ) {
         TintHelper.setTintAuto(view, color, false, isDark)
     }
@@ -199,16 +199,12 @@ object ATH {
 
     fun applyBottomNavigationColor(bottomBar: BottomNavigationView?) {
         bottomBar?.apply {
-            setBackgroundColor(ThemeStore.backgroundColor(context))
+            setBackgroundColor(ThemeStore.bottomBackground(context))
             val colorStateList = Selector.colorBuild()
                 .setDefaultColor(context.getCompatColor(R.color.btn_bg_press_tp))
                 .setSelectedColor(ThemeStore.accentColor(bottom_navigation_view.context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
-            itemBackgroundResource = when (AppConfig.isNightTheme) {
-                true -> R.drawable.item_bg_dark
-                false -> R.drawable.item_bg_light
-            }
         }
     }
 

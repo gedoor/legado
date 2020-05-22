@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
@@ -12,10 +13,7 @@ import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
 import io.legado.app.App
 import java.io.IOException
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.min
-import kotlin.math.sqrt
+import kotlin.math.*
 
 
 @Suppress("unused", "WeakerAccess")
@@ -121,7 +119,12 @@ object BitmapUtils {
      * @throws IOException
      */
     @Throws(IOException::class)
-    fun decodeBitmap(context: Context, fileNameInAssets: String, width: Int, height: Int): Bitmap? {
+    fun decodeAssetsBitmap(
+        context: Context,
+        fileNameInAssets: String,
+        width: Int,
+        height: Int
+    ): Bitmap? {
 
         var inputStream = context.assets.open(fileNameInAssets)
         val op = BitmapFactory.Options()
@@ -147,7 +150,7 @@ object BitmapUtils {
 
     //图片不被压缩
     fun convertViewToBitmap(view: View, bitmapWidth: Int, bitmapHeight: Int): Bitmap {
-        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Config.ARGB_8888)
         view.draw(Canvas(bitmap))
         return bitmap
     }
@@ -250,6 +253,33 @@ object BitmapUtils {
         output.copyTo(blurredBitmap)
 
         return blurredBitmap
+    }
+
+    fun getMeanColor(bitmap: Bitmap): Int {
+        val width: Int = bitmap.width
+        val height: Int = bitmap.height
+        var pixel: Int
+        var pixelSumRed = 0
+        var pixelSumBlue = 0
+        var pixelSumGreen = 0
+        for (i in 0..99) {
+            for (j in 70..99) {
+                pixel = bitmap.getPixel(
+                    (i * width / 100.toFloat()).roundToInt(),
+                    (j * height / 100.toFloat()).roundToInt()
+                )
+                pixelSumRed += Color.red(pixel)
+                pixelSumGreen += Color.green(pixel)
+                pixelSumBlue += Color.blue(pixel)
+            }
+        }
+        val averagePixelRed = pixelSumRed / 3000
+        val averagePixelBlue = pixelSumBlue / 3000
+        val averagePixelGreen = pixelSumGreen / 3000
+        return Color.rgb(
+            averagePixelRed + 3,
+            averagePixelGreen + 3, averagePixelBlue + 3
+        )
     }
 
 }

@@ -8,24 +8,22 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
+import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.model.localBook.LocalBook
 import kotlinx.coroutines.Dispatchers.IO
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
-    val isLoadingData = MutableLiveData<Boolean>()
     var durChapterIndex = 0
     var inBookshelf = false
-    var groupData = MutableLiveData<BookGroup>()
 
     fun initData(intent: Intent) {
         execute {
             intent.getStringExtra("bookUrl")?.let {
                 App.db.bookDao().getBook(it)?.let { book ->
-                    groupData.postValue(App.db.bookGroupDao().getByID(book.group))
                     inBookshelf = true
                     setBook(book)
                 } ?: App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
@@ -44,7 +42,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val chapterList = App.db.bookChapterDao().getChapterList(book.bookUrl)
             if (chapterList.isNotEmpty()) {
                 chapterListData.postValue(chapterList)
-                isLoadingData.postValue(false)
             } else {
                 loadChapter(book)
             }
@@ -56,24 +53,24 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            isLoadingData.postValue(true)
-            App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-                WebBook(bookSource).getBookInfo(book, this)
-                    .onSuccess(IO) {
-                        it?.let {
+            if (book.isLocalBook()) {
+                loadChapter(book, changeDruChapterIndex)
+            } else {
+                App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                    WebBook(bookSource).getBookInfo(book, this)
+                        .onSuccess(IO) {
                             bookData.postValue(book)
                             if (inBookshelf) {
                                 App.db.bookDao().update(book)
                             }
                             loadChapter(it, changeDruChapterIndex)
+                        }.onError {
+                            toast(R.string.error_get_book_info)
                         }
-                    }.onError {
-                        isLoadingData.postValue(false)
-                        toast(R.string.error_get_book_info)
-                    }
-            } ?: let {
-                isLoadingData.postValue(false)
-                toast(R.string.error_no_source)
+                } ?: let {
+                    chapterListData.postValue(null)
+                    toast(R.string.error_no_source)
+                }
             }
         }
     }
@@ -83,11 +80,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            isLoadingData.postValue(true)
-            App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-                WebBook(bookSource).getChapterList(book, this)
-                    .onSuccess(IO) {
-                        it?.let {
+            if (book.isLocalBook()) {
+                AnalyzeTxtFile().analyze(context, book).let {
+                    App.db.bookDao().update(book)
+                    App.db.bookChapterDao().insert(*it.toTypedArray())
+                    chapterListData.postValue(it)
+                }
+            } else {
+                App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                    WebBook(bookSource).getChapterList(book, this)
+                        .onSuccess(IO) {
                             if (it.isNotEmpty()) {
                                 if (inBookshelf) {
                                     App.db.bookDao().update(book)
@@ -95,23 +97,37 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 }
                                 if (changeDruChapterIndex == null) {
                                     chapterListData.postValue(it)
-                                    isLoadingData.postValue(false)
                                 } else {
                                     changeDruChapterIndex(it)
                                 }
                             } else {
-                                isLoadingData.postValue(false)
                                 toast(R.string.chapter_list_empty)
                             }
+                        }.onError {
+                            chapterListData.postValue(null)
+                            toast(R.string.error_get_chapter_list)
                         }
-                    }.onError {
-                        isLoadingData.postValue(false)
-                        toast(R.string.error_get_chapter_list)
-                    }
-            } ?: let {
-                isLoadingData.postValue(false)
-                toast(R.string.error_no_source)
+                } ?: let {
+                    chapterListData.postValue(null)
+                    toast(R.string.error_no_source)
+                }
             }
+        }.onError {
+            toast("LoadTocError:${it.localizedMessage}")
+        }
+    }
+
+    fun loadGroup(groupId: Int, success: ((groupNames: String?) -> Unit)) {
+        execute {
+            val groupNames = arrayListOf<String>()
+            App.db.bookGroupDao().all.forEach {
+                if (groupId and it.groupId > 0) {
+                    groupNames.add(it.groupName)
+                }
+            }
+            groupNames.joinToString(",")
+        }.onSuccess {
+            success.invoke(it)
         }
     }
 
@@ -119,7 +135,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             if (inBookshelf) {
                 bookData.value?.let {
-                    App.db.bookDao().delete(it.bookUrl)
+                    book.group = it.group
+                    book.order = it.order
+                    App.db.bookDao().delete(it)
                 }
                 App.db.bookDao().insert(book)
             }
@@ -140,8 +158,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 chapters
             )
             book.durChapterTitle = chapters[book.durChapterIndex].title
-            App.db.bookDao().insert(book)
-            App.db.bookChapterDao().insert(*chapters.toTypedArray())
+            if (inBookshelf) {
+                App.db.bookDao().insert(book)
+                App.db.bookChapterDao().insert(*chapters.toTypedArray())
+            }
             bookData.postValue(book)
             chapterListData.postValue(chapters)
         }
@@ -150,6 +170,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun saveBook(success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let { book ->
+                if (book.order == 0) {
+                    book.order = App.db.bookDao().maxOrder + 1
+                }
+                App.db.bookDao().getBook(book.name, book.author)?.let {
+                    book.durChapterPos = it.durChapterPos
+                    book.durChapterTitle = it.durChapterTitle
+                }
                 App.db.bookDao().insert(book)
             }
         }.onSuccess {
@@ -170,6 +197,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun addToBookshelf(success: (() -> Unit)?) {
         execute {
             bookData.value?.let { book ->
+                if (book.order == 0) {
+                    book.order = App.db.bookDao().maxOrder + 1
+                }
+                App.db.bookDao().getBook(book.name, book.author)?.let {
+                    book.durChapterPos = it.durChapterPos
+                    book.durChapterTitle = it.durChapterTitle
+                }
                 App.db.bookDao().insert(book)
             }
             chapterListData.value?.let {
@@ -181,12 +215,15 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun delBook(success: (() -> Unit)?) {
+    fun delBook(deleteOriginal: Boolean = false, success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let {
-                App.db.bookDao().delete(it.bookUrl)
+                App.db.bookDao().delete(it)
+                inBookshelf = false
+                if (it.isLocalBook()) {
+                    LocalBook.deleteBook(it, deleteOriginal)
+                }
             }
-            inBookshelf = false
         }.onSuccess {
             success?.invoke()
         }

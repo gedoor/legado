@@ -1,12 +1,11 @@
 package io.legado.app
 
-import android.app.Activity
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
-import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -19,7 +18,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
 
@@ -48,19 +46,22 @@ class App : Application() {
             versionCode = it.versionCode
             versionName = it.versionName
         }
-
-        if (!ThemeStore.isConfigured(this, versionCode)) applyTheme()
-        initNightMode()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
-
-        LiveEventBus.get()
+        applyDayNight()
+        LiveEventBus
             .config()
             .supportBroadcast(this)
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
 
-        registerActivityLife()
+        registerActivityLifecycleCallbacks(ActivityHelp)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        when (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES, Configuration.UI_MODE_NIGHT_NO -> applyDayNight()
+        }
     }
 
     /**
@@ -70,29 +71,26 @@ class App : Application() {
         if (AppConfig.isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
-                )
-                .accentColor(
-                    getPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
-                )
-                .backgroundColor(
+                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
+                ).accentColor(
+                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
+                ).backgroundColor(
                     getPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
-                )
-                .apply()
+                ).bottomBackground(
+                    getPrefInt("colorBottomBackgroundNight", getCompatColor(R.color.md_grey_850))
+                ).apply()
         } else {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
-                )
-                .accentColor(
-                    getPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
-                )
-                .backgroundColor(
+                    getPrefInt("colorPrimary", getCompatColor(R.color.md_indigo_800))
+                ).accentColor(
+                    getPrefInt("colorAccent", getCompatColor(R.color.md_red_600))
+                ).backgroundColor(
                     getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                )
-                .apply()
+                ).bottomBackground(
+                    getPrefInt("colorBottomBackground", getCompatColor(R.color.md_grey_200))
+                ).apply()
         }
-        ChapterProvider.upReadAloudSpan()
     }
 
     fun applyDayNight() {
@@ -116,9 +114,7 @@ class App : Application() {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannelId() {
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-        notificationManager?.let {
+        (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.let {
             //用唯一的ID创建渠道对象
             val downloadChannel = NotificationChannel(
                 channelIdDownload,
@@ -157,32 +153,4 @@ class App : Application() {
         }
     }
 
-    private fun registerActivityLife() {
-        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-            override fun onActivityPaused(activity: Activity) {
-            }
-
-            override fun onActivityResumed(activity: Activity) {
-            }
-
-            override fun onActivityStarted(activity: Activity) {
-
-            }
-
-            override fun onActivityDestroyed(activity: Activity) {
-                ActivityHelp.remove(activity)
-            }
-
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
-            }
-
-            override fun onActivityStopped(activity: Activity) {
-            }
-
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                ActivityHelp.add(activity)
-            }
-
-        })
-    }
 }

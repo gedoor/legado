@@ -1,7 +1,6 @@
 package io.legado.app.help.http
 
 import android.annotation.SuppressLint
-import android.net.http.SslError
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -167,10 +166,6 @@ class AjaxWebView {
                 ).sendToTarget()
             }
         }
-
-        override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-            handler.proceed()
-        }
     }
 
     private class EvalJsRunnable(
@@ -185,6 +180,7 @@ class AjaxWebView {
             mWebView.get()?.evaluateJavascript(mJavaScript) {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
+                        .replace("^\"|\"$".toRegex(), "")
                     handler.obtainMessage(MSG_SUCCESS, Res(url, content))
                         .sendToTarget()
                     handler.removeCallbacks(this)
@@ -240,10 +236,6 @@ class AjaxWebView {
                     Exception(error.description.toString())
                 ).sendToTarget()
             }
-        }
-
-        override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-            handler.proceed()
         }
 
         override fun onPageFinished(view: WebView, url: String) {

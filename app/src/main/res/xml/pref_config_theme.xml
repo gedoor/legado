@@ -2,84 +2,127 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+    <io.legado.app.ui.widget.prefs.IconListPreference
+        android:defaultValue="ic_launcher"
+        android:key="launcherIcon"
+        android:title="@string/change_icon"
+        android:summary="@string/change_icon_summary"
+        android:entryValues="@array/icons"
+        android:entries="@array/icon_names"
+        app:icons="@array/icons"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
         android:key="transparentStatusBar"
         android:summary="@string/status_bar_immersion"
         android:title="@string/immersion_status_bar"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="navigationBarColorChange"
         android:summary="@string/navigation_bar_color_change_s"
         android:title="@string/navigation_bar_color_change"
         app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
+    <io.legado.app.ui.widget.prefs.Preference
+        android:defaultValue="true"
+        android:key="barElevation"
+        android:summary="@string/bar_elevation_s"
+        android:title="@string/bar_elevation"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.Preference
         android:key="defaultTheme"
         android:summary="@string/restore_default_theme"
         android:title="@string/default_theme"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
-        android:title="白天"
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/day"
+            app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_light_blue_600"
-            android:key="colorPrimary"
-            android:summary="白天，主色调"
-            android:title="主色调"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_light_blue_600"
+                android:key="colorPrimary"
+                android:summary="@string/day_color_primary"
+                android:title="@string/primary"
+                app:cpv_dialogType="preset"
+                app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_pink_800"
-            android:key="colorAccent"
-            android:summary="白天，强调色"
-            android:title="强调色"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_pink_800"
+                android:key="colorAccent"
+                android:summary="@string/day_color_accent"
+                android:title="@string/accent"
+                app:cpv_dialogType="preset"
+                app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_grey_100"
-            android:key="colorBackground"
-            android:summary="白天，背景色"
-            android:title="背景色"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_grey_100"
+                android:key="colorBackground"
+                android:summary="@string/day_background_color"
+                android:title="@string/background_color"
+                app:cpv_dialogType="preset"
+                app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_grey_200"
+                android:key="colorBottomBackground"
+                android:summary="@string/day_navbar_color"
+                android:title="@string/navbar_color"
+                app:cpv_dialogType="preset"
+                app:allowDividerAbove="false"
+                app:allowDividerBelow="false"
+                app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
-        android:title="夜间"
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+            android:title="@string/night"
+            app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_grey_900"
-            android:key="colorPrimaryNight"
-            android:summary="夜间，主色调"
-            android:title="主色调"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_grey_900"
+                android:key="colorPrimaryNight"
+                android:summary="@string/night_primary"
+                android:title="@string/primary"
+                app:cpv_dialogType="preset"
+                app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_deep_orange_800"
-            android:key="colorAccentNight"
-            android:summary="夜间，强调色"
-            android:title="强调色"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_deep_orange_800"
+                android:key="colorAccentNight"
+                android:summary="@string/night_accent"
+                android:title="@string/accent"
+                app:cpv_dialogType="preset"
+                app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.theme.prefs.ATEColorPreference
-            android:defaultValue="@color/md_black_1000"
-            android:key="colorBackgroundNight"
-            android:summary="夜间，背景色"
-            android:title="背景色"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_black_1000"
+                android:key="colorBackgroundNight"
+                android:summary="@string/night_background_color"
+                android:title="@string/background_color"
+                app:cpv_dialogType="preset"
+                app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+        <io.legado.app.ui.widget.prefs.ColorPreference
+                android:defaultValue="@color/md_grey_800"
+                android:key="colorBottomBackgroundNight"
+                android:summary="@string/night_navbar_color"
+                android:title="@string/navbar_color"
+                app:cpv_dialogType="preset"
+                app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

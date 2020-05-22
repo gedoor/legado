@@ -1,5 +1,6 @@
 package io.legado.app.base
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.view.SupportMenuInflater
@@ -18,6 +19,7 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
         private set
 
     val menuInflater: MenuInflater
+        @SuppressLint("RestrictedApi")
         get() = SupportMenuInflater(requireContext())
 
     override val coroutineContext: CoroutineContext
@@ -31,6 +33,14 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
         job = Job()
         return super.onCreateView(inflater, container, savedInstanceState)
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onFragmentCreated(view, savedInstanceState)
+        observeLiveBus()
+    }
+
+    abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
 
     override fun onDestroy() {
         super.onDestroy()
@@ -52,6 +62,8 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
         }
     }
 
+    open fun observeLiveBus() {
+    }
 
     open fun onCompatCreateOptionsMenu(menu: Menu) {
     }

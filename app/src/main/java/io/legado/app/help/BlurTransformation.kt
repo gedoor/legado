@@ -8,10 +8,8 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
-
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import java.security.MessageDigest
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -21,15 +19,16 @@ import kotlin.math.roundToInt
  * 模糊
  * @radius: 0..25
  */
-class BlurTransformation(context: Context, private val radius: Int) : BitmapTransformation() {
+class BlurTransformation(context: Context, private val radius: Int) : CenterCrop() {
     private val rs: RenderScript = RenderScript.create(context)
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
+        val transform = super.transform(pool, toTransform, outWidth, outHeight)
         //图片缩小1/2
-        val width = (min(outWidth, toTransform.width) / 2f).roundToInt()
-        val height = (min(outHeight, toTransform.height) / 2f).roundToInt()
-        val blurredBitmap = Bitmap.createScaledBitmap(toTransform, width, height, false);
+        val width = (min(outWidth, transform.width) / 2f).roundToInt()
+        val height = (min(outHeight, transform.height) / 2f).roundToInt()
+        val blurredBitmap = Bitmap.createScaledBitmap(transform, width, height, false);
         // Allocate memory for Renderscript to work with
         //分配用于渲染脚本的内存
         val input = Allocation.createFromBitmap(

@@ -7,18 +7,19 @@
 
     <color name="lightBlue_color">#FF578FCC</color>
     <color name="shine_color">#FF212227</color>
-    <color name="item_bg_color">#FF272731</color>
 
     <color name="error">#eb4333</color>
     <color name="success">#439b53</color>
 
     <color name="night_mask">#00000000</color>
 
-    <color name="background">@color/md_grey_100</color>
-    <color name="background_card">#dedede</color>
-    <color name="background_menu">#fcfcfc</color>
+    <color name="background">@color/md_grey_50</color>
+    <color name="background_card">@color/md_grey_100</color>
+    <color name="background_menu">@color/md_grey_200</color>
+    <color name="background_prefs">#7fffffff</color>
     <color name="transparent">#00000000</color>
 
+    <color name="transparent10">#10000000</color>
     <color name="transparent30">#30000000</color>
 
     <color name="highlight">#d3321b</color>

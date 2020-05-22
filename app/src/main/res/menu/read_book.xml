@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.main.MainActivity">
 
-    <group android:id="@+id/menuOnLine">
+    <group android:id="@+id/menu_group_on_line">
         <item
             android:id="@+id/menu_change_source"
             android:icon="@drawable/ic_exchange"
@@ -41,9 +41,9 @@
 
     <group android:id="@+id/menu_group_text">
         <item
-            android:id="@+id/menu_set_regex"
+            android:id="@+id/menu_toc_regex"
             android:icon="@drawable/ic_exchange"
-            android:title="@string/txt_chapter_regex"
+            android:title="@string/txt_toc_regex"
             android:visible="false"
             app:showAsAction="always" />
     </group>
@@ -80,9 +80,9 @@
             app:showAsAction="never" />
 
         <item
-            android:id="@+id/menu_update_chapter_list"
+            android:id="@+id/menu_update_toc"
             android:icon="@drawable/ic_update"
-            android:title="@string/update_chapter"
+            android:title="@string/update_toc"
             app:showAsAction="never" />
 
         <item

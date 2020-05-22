@@ -1,6 +1,7 @@
 package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
+import androidx.annotation.Keep
 import io.legado.app.utils.splitNotBlank
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -9,6 +10,7 @@ import org.seimicrawler.xpath.JXDocument
 import org.seimicrawler.xpath.JXNode
 import java.util.*
 
+@Keep
 class AnalyzeByXPath {
     private var jxDocument: JXDocument? = null
     private var jxNode: JXNode? = null
@@ -181,7 +183,7 @@ class AnalyzeByXPath {
                     }
                 }
             }
-            return TextUtils.join(",", textList)
+            return textList.joinToString("\n")
         }
     }
 }

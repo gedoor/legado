@@ -6,9 +6,9 @@ import android.graphics.drawable.Drawable
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.ui.filechooser.FilePickerIcon
 import io.legado.app.ui.filechooser.entity.FileItem
 import io.legado.app.ui.filechooser.utils.ConvertUtils
+import io.legado.app.ui.filechooser.utils.FilePickerIcon
 import io.legado.app.ui.filechooser.utils.FileUtils
 import kotlinx.android.synthetic.main.item_path_filepicker.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -64,7 +64,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             fileParent.icon = upIcon
             fileParent.name = DIR_PARENT
             fileParent.size = 0
-            fileParent.path = File(path).parent
+            fileParent.path = File(path).parent ?: ""
             data.add(fileParent)
         }
         currentPath?.let { currentPath ->
@@ -110,16 +110,19 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.apply {
             image_view.setImageDrawable(item.icon)
             text_view.text = item.name
-            onClick {
-                callBack.onFileClick(holder.layoutPosition)
-            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            callBack.onFileClick(holder.layoutPosition)
         }
     }
 
     interface CallBack {
         fun onFileClick(position: Int)
         //允许的扩展名
-        var allowExtensions: Array<String?>?
+        var allowExtensions: Array<String>?
         /**
          * 是否仅仅读取目录
          */

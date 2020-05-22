@@ -13,22 +13,24 @@ import org.jetbrains.anko.textColorResource
 class ChapterListAdapter(context: Context, var callBack: CallBack) :
     SimpleRecyclerAdapter<BookChapter>(context, R.layout.item_chapter_list) {
 
-    var reorder: Boolean = false; // 是否倒序
-
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         holder.itemView.apply {
-            var _item: BookChapter = item;
-            if (reorder) {
-                _item = getItems().get(getItems().size - item.index - 1);
-            }
-            tv_chapter_name.text = _item.title
-            if (_item.index == callBack.durChapterIndex()) {
+            tv_chapter_name.text = item.title
+            if (item.index == callBack.durChapterIndex()) {
                 tv_chapter_name.setTextColor(context.accentColor)
             } else {
                 tv_chapter_name.textColorResource = R.color.tv_text_secondary
             }
+
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.apply {
             this.onClick {
-                callBack.openChapter(_item)
+                getItem(holder.layoutPosition)?.let {
+                    callBack.openChapter(it)
+                }
             }
         }
     }

@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/tv_last"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
         app:layout_constraintTop_toBottomOf="@+id/tv_origin"

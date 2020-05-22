@@ -11,10 +11,10 @@ import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.Status
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
@@ -25,8 +25,8 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
-import io.legado.app.ui.changesource.ChangeSourceDialog
-import io.legado.app.ui.chapterlist.ChapterListActivity
+import io.legado.app.ui.book.changesource.ChangeSourceDialog
+import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import org.apache.commons.lang3.time.DateFormatUtils
@@ -46,7 +46,7 @@ class AudioPlayActivity :
     private var adjustProgress = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        title_bar.background.alpha = 0
+        title_bar.transparent()
         AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
         AudioPlay.coverData.observe(this, Observer { upCover(it) })
         viewModel.initData(intent)
@@ -119,19 +119,17 @@ class AudioPlayActivity :
         ImageLoader.load(this, path)
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
-            .centerCrop()
             .into(iv_cover)
         ImageLoader.load(this, path)
             .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
-            .centerCrop()
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
             .into(iv_bg)
     }
 
     private fun defaultCover(): RequestBuilder<Drawable> {
         return ImageLoader.load(this, R.drawable.image_cover_default)
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(this, 25)))
+            .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
     private fun playButton() {
@@ -193,12 +191,12 @@ class AudioPlayActivity :
     }
 
     override fun observeLiveBus() {
-        observeEvent<Boolean>(Bus.MEDIA_BUTTON) {
+        observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
                 playButton()
             }
         }
-        observeEventSticky<Int>(Bus.AUDIO_STATE) {
+        observeEventSticky<Int>(EventBus.AUDIO_STATE) {
             AudioPlay.status = it
             if (it == Status.PLAY) {
                 fab_play_stop.setImageResource(R.drawable.ic_pause_24dp)
@@ -206,19 +204,19 @@ class AudioPlayActivity :
                 fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
             }
         }
-        observeEventSticky<String>(Bus.AUDIO_SUB_TITLE) {
+        observeEventSticky<String>(EventBus.AUDIO_SUB_TITLE) {
             tv_sub_title.text = it
         }
-        observeEventSticky<Int>(Bus.AUDIO_SIZE) {
+        observeEventSticky<Int>(EventBus.AUDIO_SIZE) {
             player_progress.max = it
             tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
-        observeEventSticky<Int>(Bus.AUDIO_PROGRESS) {
+        observeEventSticky<Int>(EventBus.AUDIO_PROGRESS) {
             AudioPlay.durPageIndex = it
             if (!adjustProgress) player_progress.progress = it
             tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
-        observeEventSticky<Float>(Bus.AUDIO_SPEED) {
+        observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
             tv_speed.text = String.format("%.1fX", it)
             tv_speed.visible()
         }

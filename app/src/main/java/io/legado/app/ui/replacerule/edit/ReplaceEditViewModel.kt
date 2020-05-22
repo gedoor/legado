@@ -19,6 +19,13 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
                     App.db.replaceRuleDao().findById(id)?.let {
                         replaceRuleData.postValue(it)
                     }
+                } else {
+                    bundle.getString("pattern")?.let { pattern ->
+                        val isRegex = bundle.getBoolean("isRegex")
+                        replaceRuleData.postValue(
+                            ReplaceRule(name = pattern, pattern = pattern, isRegex = isRegex)
+                        )
+                    }
                 }
             }
         }

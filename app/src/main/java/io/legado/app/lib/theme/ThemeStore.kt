@@ -147,6 +147,11 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         return this
     }
 
+    override fun bottomBackground(color: Int): ThemeStore {
+        mEditor.putInt(ThemeStorePrefKeys.KEY_BOTTOM_BACKGROUND, color)
+        return this
+    }
+
     override fun coloredStatusBar(colored: Boolean): ThemeStore {
         mEditor.putBoolean(ThemeStorePrefKeys.KEY_APPLY_PRIMARYDARK_STATUSBAR, colored)
         return this
@@ -275,6 +280,23 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         fun backgroundColor(context: Context): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_BACKGROUND_COLOR,
+                ATHUtils.resolveColor(context, android.R.attr.colorBackground)
+            )
+        }
+
+        @CheckResult
+        fun elevation(context: Context): Float {
+            return prefs(context).getFloat(
+                ThemeStorePrefKeys.KEY_ELEVATION,
+                ATHUtils.resolveFloat(context, android.R.attr.elevation, context.resources.getDimension(R.dimen.design_appbar_elevation))
+            )
+        }
+
+        @CheckResult
+        @ColorInt
+        fun bottomBackground(context: Context): Int {
+            return prefs(context).getInt(
+                ThemeStorePrefKeys.KEY_BOTTOM_BACKGROUND,
                 ATHUtils.resolveColor(context, android.R.attr.colorBackground)
             )
         }

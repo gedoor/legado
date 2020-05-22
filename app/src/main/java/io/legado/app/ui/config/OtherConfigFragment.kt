@@ -1,8 +1,6 @@
 package io.legado.app.ui.config
 
-import android.app.Activity.RESULT_OK
 import android.content.ComponentName
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,51 +10,43 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
-import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.service.WebService
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 
 
 class OtherConfigFragment : PreferenceFragmentCompat(),
-    FileChooserDialog.CallBack,
-    Preference.OnPreferenceChangeListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeDownloadPath = 25324
     private val packageManager = App.INSTANCE.packageManager
     private val componentName = ComponentName(
         App.INSTANCE,
         SharedReceiverActivity::class.java.name
     )
+    private val webPort get() = getPrefInt(PreferKey.webPort, 1122)
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        putPrefBoolean("process_text", isProcessTextEnabled())
+        putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
-        bindPreferenceSummaryToValue(findPreference(PreferKey.downloadPath))
-        bindPreferenceSummaryToValue(findPreference(PreferKey.threadCount))
+        upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
+        upPreferenceSummary(PreferKey.webPort, webPort.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         ATH.applyEdgeEffectColor(listView)
     }
 
-    override fun onResume() {
-        super.onResume()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onPause() {
+    override fun onDestroy() {
+        super.onDestroy()
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        super.onPause()
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
@@ -67,11 +57,16 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 .setMinValue(1)
                 .setValue(AppConfig.threadCount)
                 .show {
-                    requireContext().putPrefInt(PreferKey.threadCount, it)
-                    findPreference<Preference>(PreferKey.threadCount)?.summary =
-                        getString(R.string.threads_num, it.toString())
+                    AppConfig.threadCount = it
                 }
-            PreferKey.downloadPath -> selectDownloadPathSys()
+            PreferKey.webPort -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.web_port_title))
+                .setMaxValue(60000)
+                .setMinValue(1024)
+                .setValue(webPort)
+                .show {
+                    putPrefInt(PreferKey.webPort, it)
+                }
             PreferKey.cleanCache -> {
                 BookHelp.clearCache()
                 toast(R.string.clear_cache_success)
@@ -82,50 +77,36 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.downloadPath -> {
-                BookHelp.upDownloadPath()
-                findPreference<Preference>(key)?.summary = getPreferenceString(key).toString()
+            PreferKey.threadCount -> upPreferenceSummary(
+                key, AppConfig.threadCount.toString()
+            )
+            PreferKey.webPort -> {
+                upPreferenceSummary(key, webPort.toString())
+                if (WebService.isRun) {
+                    WebService.stop(requireContext())
+                    WebService.start(requireContext())
+                }
             }
             PreferKey.recordLog -> LogUtils.upLevel()
             PreferKey.processText -> sharedPreferences?.let {
-                setProcessTextEnable(it.getBoolean("process_text", true))
+                setProcessTextEnable(it.getBoolean(key, true))
             }
-            PreferKey.showRss -> postEvent(Bus.SHOW_RSS, "unused")
+            PreferKey.showRss -> postEvent(EventBus.SHOW_RSS, "unused")
         }
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        val stringValue = newValue.toString()
-        when {
-            preference is ListPreference -> {
-                val index = preference.findIndexOfValue(stringValue)
+    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+        val preference = findPreference<Preference>(preferenceKey) ?: return
+        when (preferenceKey) {
+            PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
+            PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
+            else -> if (preference is ListPreference) {
+                val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.
-                preference.setSummary(if (index >= 0) preference.entries[index] else null)
+                preference.summary = if (index >= 0) preference.entries[index] else null
+            } else {
+                preference.summary = value
             }
-            preference?.key == PreferKey.threadCount -> preference.summary =
-                getString(R.string.threads_num, stringValue)
-            else -> preference?.summary = stringValue
-        }
-        return true
-    }
-
-    private fun bindPreferenceSummaryToValue(preference: Preference?) {
-        preference?.let {
-            preference.onPreferenceChangeListener = this
-            onPreferenceChange(
-                preference,
-                getPreferenceString(preference.key)
-            )
-        }
-    }
-
-    private fun getPreferenceString(key: String): Any {
-        return when (key) {
-            PreferKey.downloadPath -> getPrefString(PreferKey.downloadPath)
-                ?: App.INSTANCE.getExternalFilesDir(null)?.absolutePath
-                ?: App.INSTANCE.cacheDir.absolutePath
-            PreferKey.threadCount -> AppConfig.threadCount
-            else -> getPrefString(key) ?: ""
         }
     }
 
@@ -147,49 +128,4 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         }
     }
 
-    private fun selectDownloadPathSys() {
-        try {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, requestCodeDownloadPath)
-        } catch (e: Exception) {
-            selectDownloadPath()
-        }
-    }
-
-    private fun selectDownloadPath() {
-        PermissionsCompat.Builder(this)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                FileChooserDialog.show(
-                    childFragmentManager,
-                    requestCodeDownloadPath,
-                    mode = FileChooserDialog.DIRECTORY,
-                    initPath = getPreferenceString(PreferKey.downloadPath).toString()
-                )
-            }
-            .request()
-    }
-
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        if (requestCode == requestCodeDownloadPath) {
-            putPrefString(PreferKey.downloadPath, currentPath)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeDownloadPath -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    requireContext().contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    putPrefString(PreferKey.downloadPath, uri.toString())
-                }
-            }
-        }
-    }
 }

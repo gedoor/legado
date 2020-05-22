@@ -7,10 +7,10 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="6dp"
+        android:layout_height="45dp"
+        android:elevation="10dp"
         android:background="@color/background"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/main_bnv"
         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -22,4 +22,3 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

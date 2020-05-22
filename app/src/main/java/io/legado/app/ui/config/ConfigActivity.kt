@@ -3,7 +3,9 @@ package io.legado.app.ui.config
 import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.EventBus
 import io.legado.app.utils.getViewModel
+import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_config.*
 
 class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config) {
@@ -47,4 +49,10 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
 
     }
 
+    override fun observeLiveBus() {
+        super.observeLiveBus()
+        observeEvent<String>(EventBus.RECREATE) {
+            recreate()
+        }
+    }
 }

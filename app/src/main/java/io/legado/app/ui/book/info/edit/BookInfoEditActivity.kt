@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.info.edit
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,8 +9,7 @@ import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
-import io.legado.app.help.ImageLoader
-import io.legado.app.ui.changecover.ChangeCoverDialog
+import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -17,6 +17,9 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class BookInfoEditActivity :
     VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit),
     ChangeCoverDialog.CallBack {
+
+    private val resultSelectCover = 132
+
     override val viewModel: BookInfoEditViewModel
         get() = getViewModel(BookInfoEditViewModel::class.java)
 
@@ -48,6 +51,13 @@ class BookInfoEditActivity :
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
+        tv_select_cover.onClick {
+            selectImage()
+        }
+        tv_refresh_cover.onClick {
+            viewModel.book?.customCoverUrl = tie_cover_url.text?.toString()
+            upCover()
+        }
     }
 
     private fun upView(book: Book) {
@@ -59,10 +69,8 @@ class BookInfoEditActivity :
     }
 
     private fun upCover() {
-        viewModel.book?.getDisplayCover()?.let {
-            ImageLoader.load(this, it)
-                .centerCrop()
-                .into(iv_cover)
+        viewModel.book.let {
+            iv_cover.load(it?.getDisplayCover(), it?.name, it?.author)
         }
     }
 
@@ -80,9 +88,29 @@ class BookInfoEditActivity :
         }
     }
 
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "image/*"
+        startActivityForResult(intent, resultSelectCover)
+    }
+
     override fun coverChangeTo(coverUrl: String) {
         viewModel.book?.customCoverUrl = coverUrl
         tie_cover_url.setText(coverUrl)
         upCover()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            resultSelectCover -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    data?.data?.let { uri ->
+                        coverChangeTo(uri.toString())
+                    }
+                }
+            }
+        }
     }
 }

@@ -54,6 +54,9 @@ val Context.accentColor: Int
 val Context.backgroundColor: Int
     get() = ThemeStore.backgroundColor(this)
 
+val Context.bottomBackground: Int
+    get() = ThemeStore.bottomBackground(this)
+
 val Context.primaryTextColor: Int
     get() = getPrimaryTextColor(isDarkTheme)
 
@@ -77,6 +80,9 @@ val Fragment.accentColor: Int
 
 val Fragment.backgroundColor: Int
     get() = ThemeStore.backgroundColor(requireContext())
+
+val Fragment.bottomBackground: Int
+    get() = ThemeStore.bottomBackground(requireContext())
 
 val Fragment.primaryTextColor: Int
     get() = requireContext().getPrimaryTextColor(isDarkTheme)
@@ -102,3 +108,6 @@ val Context.isDarkTheme: Boolean
 
 val Fragment.isDarkTheme: Boolean
     get() = requireContext().isDarkTheme
+
+val Context.elevation: Float
+    get() = ThemeStore.elevation(this)

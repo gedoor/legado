@@ -3,7 +3,8 @@ package io.legado.app.service.help
 import android.content.Context
 import android.content.Intent
 import io.legado.app.App
-import io.legado.app.constant.Action
+import io.legado.app.constant.IntentAction
+import io.legado.app.constant.PreferKey
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
@@ -13,7 +14,7 @@ object ReadAloud {
     var aloudClass: Class<*> = getReadAloudClass()
 
     fun getReadAloudClass(): Class<*> {
-        return if (App.INSTANCE.getPrefBoolean("readAloudOnLine")) {
+        return if (App.INSTANCE.getPrefBoolean(PreferKey.readAloudOnLine)) {
             HttpReadAloudService::class.java
         } else {
             TTSReadAloudService::class.java
@@ -29,7 +30,7 @@ object ReadAloud {
         play: Boolean = true
     ) {
         val intent = Intent(context, aloudClass)
-        intent.action = Action.play
+        intent.action = IntentAction.play
         intent.putExtra("title", title)
         intent.putExtra("subtitle", subtitle)
         intent.putExtra("pageIndex", pageIndex)
@@ -41,7 +42,7 @@ object ReadAloud {
     fun pause(context: Context) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
-            intent.action = Action.pause
+            intent.action = IntentAction.pause
             context.startService(intent)
         }
     }
@@ -49,7 +50,7 @@ object ReadAloud {
     fun resume(context: Context) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
-            intent.action = Action.resume
+            intent.action = IntentAction.resume
             context.startService(intent)
         }
     }
@@ -57,7 +58,7 @@ object ReadAloud {
     fun stop(context: Context) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
-            intent.action = Action.stop
+            intent.action = IntentAction.stop
             context.startService(intent)
         }
     }
@@ -65,7 +66,7 @@ object ReadAloud {
     fun prevParagraph(context: Context) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
-            intent.action = Action.prevParagraph
+            intent.action = IntentAction.prevParagraph
             context.startService(intent)
         }
     }
@@ -73,7 +74,7 @@ object ReadAloud {
     fun nextParagraph(context: Context) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
-            intent.action = Action.nextParagraph
+            intent.action = IntentAction.nextParagraph
             context.startService(intent)
         }
     }
@@ -81,7 +82,7 @@ object ReadAloud {
     fun upTtsSpeechRate(context: Context) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
-            intent.action = Action.upTtsSpeechRate
+            intent.action = IntentAction.upTtsSpeechRate
             context.startService(intent)
         }
     }
@@ -89,7 +90,7 @@ object ReadAloud {
     fun setTimer(context: Context, minute: Int) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
-            intent.action = Action.setTimer
+            intent.action = IntentAction.setTimer
             intent.putExtra("minute", minute)
             context.startService(intent)
         }

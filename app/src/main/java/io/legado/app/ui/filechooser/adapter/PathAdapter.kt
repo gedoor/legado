@@ -5,8 +5,8 @@ import android.os.Environment
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.ui.filechooser.FilePickerIcon
 import io.legado.app.ui.filechooser.utils.ConvertUtils
+import io.legado.app.ui.filechooser.utils.FilePickerIcon
 import kotlinx.android.synthetic.main.item_path_filepicker.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
@@ -15,6 +15,7 @@ import java.util.*
 class PathAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<String>(context, R.layout.item_path_filepicker) {
     private val paths = LinkedList<String>()
+    @Suppress("DEPRECATION")
     private val sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
     private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getARROW())
 
@@ -35,9 +36,11 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         path1 = path1.replace(sdCardDirectory, "")
         paths.clear()
         if (path1 != "/" && path1 != "") {
-            val tmps = path1.substring(path1.indexOf("/") + 1).split("/".toRegex())
-                .dropLastWhile { it.isEmpty() }.toTypedArray()
-            Collections.addAll(paths, *tmps)
+            val subDirs = path1.substring(path1.indexOf("/") + 1)
+                .split("/".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .toTypedArray()
+            Collections.addAll(paths, *subDirs)
         }
         paths.addFirst(ROOT_HINT)
         setItems(paths)
@@ -47,9 +50,12 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.apply {
             text_view.text = item
             image_view.setImageDrawable(arrowIcon)
-            onClick {
-                callBack.onPathClick(holder.layoutPosition)
-            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            callBack.onPathClick(holder.layoutPosition)
         }
     }
 
@@ -58,6 +64,6 @@ class PathAdapter(context: Context, val callBack: CallBack) :
     }
 
     companion object {
-        private val ROOT_HINT = "SD"
+        private const val ROOT_HINT = "SD"
     }
 }

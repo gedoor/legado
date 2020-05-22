@@ -12,12 +12,14 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.getPrefString
 import io.legado.app.utils.postEvent
 
 class ReadAloudConfigDialog : DialogFragment() {
@@ -41,8 +43,8 @@ class ReadAloudConfigDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = LinearLayout(context)
-        view.setBackgroundResource(R.color.background)
+        val view = LinearLayout(requireContext())
+        view.setBackgroundColor(requireContext().backgroundColor)
         view.id = R.id.tag1
         container?.addView(view)
         return view
@@ -58,17 +60,19 @@ class ReadAloudConfigDialog : DialogFragment() {
     }
 
     class ReadAloudPreferenceFragment : PreferenceFragmentCompat(),
-        SharedPreferences.OnSharedPreferenceChangeListener,
-        Preference.OnPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
+            upPreferenceSummary(
+                findPreference<ListPreference>(PreferKey.ttsSpeechPer),
+                AppConfig.ttsSpeechPer
+            )
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             ATH.applyEdgeEffectColor(listView)
-            bindPreferenceSummaryToValue(findPreference("ttsSpeechPer"))
         }
 
         override fun onResume() {
@@ -86,42 +90,35 @@ class ReadAloudConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                "readAloudByPage" -> {
+                PreferKey.readAloudByPage -> {
                     if (BaseReadAloudService.isRun) {
-                        postEvent(Bus.MEDIA_BUTTON, false)
+                        postEvent(EventBus.MEDIA_BUTTON, false)
                     }
                 }
-                "readAloudOnLine" -> {
-                    if (BaseReadAloudService.isRun) {
-                        ReadAloud.stop(requireContext())
-                        ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
-                    }
+                PreferKey.readAloudOnLine -> {
+                    ReadAloud.stop(requireContext())
+                    ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
                 }
-                "ttsSpeechPer" -> ReadAloud.upTtsSpeechRate(requireContext())
+                PreferKey.ttsSpeechPer -> {
+                    upPreferenceSummary(
+                        findPreference<ListPreference>(PreferKey.ttsSpeechPer),
+                        AppConfig.ttsSpeechPer
+                    )
+                    ReadAloud.upTtsSpeechRate(requireContext())
+                }
             }
         }
 
-        override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-            val stringValue = newValue.toString()
-
-            if (preference is ListPreference) {
-                val index = preference.findIndexOfValue(stringValue)
-                // Set the summary to reflect the new value.
-                preference.setSummary(if (index >= 0) preference.entries[index] else null)
-            } else {
-                // For all other preferences, set the summary to the value's
-                preference?.summary = stringValue
-            }
-            return true
-        }
-
-        private fun bindPreferenceSummaryToValue(preference: Preference?) {
-            preference?.apply {
-                onPreferenceChangeListener = this@ReadAloudPreferenceFragment
-                onPreferenceChange(
-                    this,
-                    context.getPrefString(key)
-                )
+        private fun upPreferenceSummary(preference: Preference?, value: String) {
+            when (preference) {
+                is ListPreference -> {
+                    val index = preference.findIndexOfValue(value)
+                    // Set the summary to reflect the new value.
+                    preference.summary = if (index >= 0) preference.entries[index] else null
+                }
+                else -> {
+                    preference?.summary = value
+                }
             }
         }
 

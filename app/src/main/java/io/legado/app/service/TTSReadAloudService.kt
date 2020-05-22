@@ -1,17 +1,16 @@
 package io.legado.app.service
 
 import android.app.PendingIntent
-import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.legado.app.R
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
+import io.legado.app.constant.EventBus
+import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
@@ -20,21 +19,32 @@ import java.util.*
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
     companion object {
-        var textToSpeech: TextToSpeech? = null
+        private var textToSpeech: TextToSpeech? = null
+        private var ttsInitFinish = false
 
         fun clearTTS() {
-            textToSpeech?.stop()
-            textToSpeech?.shutdown()
+            textToSpeech?.let {
+                it.stop()
+                it.shutdown()
+            }
             textToSpeech = null
+            ttsInitFinish = false
         }
     }
 
-    private var ttsIsSuccess: Boolean = false
+    private val ttsUtteranceListener = TTSUtteranceListener()
 
     override fun onCreate() {
         super.onCreate()
-        textToSpeech = TextToSpeech(this, this)
+        initTts()
         upSpeechRate()
+    }
+
+    private fun initTts() {
+        ttsInitFinish = false
+        textToSpeech = TextToSpeech(this, this).apply {
+            setOnUtteranceProgressListener(ttsUtteranceListener)
+        }
     }
 
     override fun onDestroy() {
@@ -43,46 +53,33 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     }
 
     override fun onInit(status: Int) {
-        launch {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeech?.language = Locale.CHINA
-                textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
-                ttsIsSuccess = true
+        if (status == TextToSpeech.SUCCESS) {
+            textToSpeech?.let {
+                it.language = Locale.CHINA
+                ttsInitFinish = true
                 play()
-            } else {
+            }
+        } else {
+            launch {
                 toast(R.string.tts_init_failed)
             }
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Synchronized
     override fun play() {
-        if (contentList.isEmpty() || !ttsIsSuccess) {
-            return
-        }
-        if (requestFocus()) {
+        if (contentList.isNotEmpty() && ttsInitFinish && requestFocus()) {
             MediaHelp.playSilentSound(this)
             super.play()
+            textToSpeech?.stop()
             for (i in nowSpeak until contentList.size) {
-                if (i == 0) {
-                    speak(contentList[i], TextToSpeech.QUEUE_FLUSH, AppConst.APP_TAG + i)
-                } else {
-                    speak(contentList[i], TextToSpeech.QUEUE_ADD, AppConst.APP_TAG + i)
-                }
+                textToSpeech?.speak(
+                    contentList[i],
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    AppConst.APP_TAG + i
+                )
             }
-        }
-    }
-
-    private fun speak(content: String, queueMode: Int, utteranceId: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            textToSpeech?.speak(content, queueMode, null, utteranceId)
-        } else {
-            @Suppress("DEPRECATION")
-            textToSpeech?.speak(
-                content,
-                queueMode,
-                hashMapOf(Pair(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId))
-            )
         }
     }
 
@@ -93,10 +90,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         if (this.getPrefBoolean("ttsFollowSys", true)) {
             if (reset) {
                 clearTTS()
-                textToSpeech = TextToSpeech(this, this)
+                initTts()
             }
         } else {
-            textToSpeech?.setSpeechRate((this.getPrefInt("ttsSpeechRate", 5) + 5) / 10f)
+            textToSpeech?.setSpeechRate((AppConfig.ttsSpeechRate + 5) / 10f)
         }
     }
 
@@ -151,8 +148,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     pageIndex++
                     ReadBook.moveToNextPage()
                 }
+                postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             }
-            postEvent(Bus.TTS_START, readAloudNumber + 1)
         }
 
         override fun onDone(s: String) {
@@ -169,15 +166,13 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
                     ReadBook.moveToNextPage()
-                    postEvent(Bus.TTS_START, readAloudNumber + start)
+                    postEvent(EventBus.TTS_PROGRESS, readAloudNumber + start)
                 }
             }
         }
 
         override fun onError(s: String) {
-            launch {
-                toast(s)
-            }
+            //nothing
         }
 
     }

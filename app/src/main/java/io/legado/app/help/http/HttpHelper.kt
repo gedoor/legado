@@ -1,23 +1,27 @@
 package io.legado.app.help.http
 
+import io.legado.app.constant.AppConst
+import io.legado.app.help.http.api.HttpGetApi
+import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.*
+import okhttp3.ConnectionSpec
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
+@Suppress("unused")
 object HttpHelper {
 
     val client: OkHttpClient by lazy {
-        val default = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-            .tlsVersions(TlsVersion.TLS_1_2)
-            .build()
 
-        val specs = ArrayList<ConnectionSpec>()
-        specs.add(default)
-        specs.add(ConnectionSpec.COMPATIBLE_TLS)
-        specs.add(ConnectionSpec.CLEARTEXT)
+        val specs = arrayListOf(
+            ConnectionSpec.MODERN_TLS,
+            ConnectionSpec.COMPATIBLE_TLS,
+            ConnectionSpec.CLEARTEXT
+        )
 
         val builder = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
@@ -35,11 +39,36 @@ object HttpHelper {
         builder.build()
     }
 
-    inline fun <reified T> getApiService(baseUrl: String): T {
-        return getRetrofit(baseUrl).create(T::class.java)
+    fun simpleGet(url: String, encode: String? = null): String? {
+        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
+            val response = getApiService<HttpGetApi>(baseUrl, encode)
+                .get(url, mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
+                .execute()
+            return response.body()
+        }
+        return null
     }
 
-    inline fun <reified T> getApiService(baseUrl: String, encode: String): T {
+    suspend fun simpleGetAsync(url: String, encode: String? = null): String? {
+        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
+            val response = getApiService<HttpGetApi>(baseUrl, encode)
+                .getAsync(url, mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun simpleGetByteAsync(url: String): ByteArray? {
+        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
+            return getByteRetrofit(baseUrl)
+                .create(HttpGetApi::class.java)
+                .getMapByteAsync(url, mapOf(), mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
+                .body()
+        }
+        return null
+    }
+
+    inline fun <reified T> getApiService(baseUrl: String, encode: String? = null): T {
         return getRetrofit(baseUrl, encode).create(T::class.java)
     }
 
@@ -47,8 +76,6 @@ object HttpHelper {
         return Retrofit.Builder().baseUrl(baseUrl)
             //增加返回值为字符串的支持(以实体类返回)
             .addConverterFactory(EncodeConverter(encode))
-            //增加返回值为Observable<T>的支持
-            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
             .client(client)
             .build()
     }
@@ -56,8 +83,6 @@ object HttpHelper {
     fun getByteRetrofit(baseUrl: String): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl)
             .addConverterFactory(ByteConverter())
-            //增加返回值为Observable<T>的支持
-            .addCallAdapterFactory(CoroutinesCallAdapterFactory.create())
             .client(client)
             .build()
     }

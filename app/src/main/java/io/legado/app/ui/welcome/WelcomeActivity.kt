@@ -1,50 +1,64 @@
 package io.legado.app.ui.welcome
 
-import android.animation.Animator
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
+import com.hankcs.hanlp.HanLP
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.help.AppConfig
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
+import io.legado.app.utils.getPrefBoolean
 import kotlinx.android.synthetic.main.activity_welcome.*
 import org.jetbrains.anko.startActivity
+import java.util.concurrent.TimeUnit
 
-class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
+open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        iv_bg.setColorFilter(accentColor)
+        iv_book.setColorFilter(accentColor)
+        vw_title_line.setBackgroundColor(accentColor)
         // 避免从桌面启动程序后，会重新实例化入口类的activity
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
             finish()
-            return
+        } else {
+            init()
         }
-        val welAnimator = ValueAnimator.ofFloat(1f, 0f).setDuration(800)
-        welAnimator.startDelay = 100
-        welAnimator.addUpdateListener { animation ->
-            val alpha = animation.animatedValue as Float
-            iv_bg.alpha = alpha
+    }
+
+    private fun init() {
+        Coroutine.async {
+            //清楚过期数据
+            App.db.searchBookDao()
+                .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+            //初始化简繁转换引擎
+            when (AppConfig.chineseConverterType) {
+                1 -> HanLP.convertToSimplifiedChinese("初始化")
+                2 -> HanLP.convertToTraditionalChinese("初始化")
+                else -> null
+            }
         }
-        welAnimator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-                startActivity<MainActivity>()
-                finish()
-            }
+        SyncBookProgress.downloadBookProgress()
+        root_view.postDelayed({ startMainActivity() }, 300)
+    }
 
-            override fun onAnimationEnd(animation: Animator) {
-
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        welAnimator.start()
+    private fun startMainActivity() {
+        startActivity<MainActivity>()
+        if (getPrefBoolean(R.string.pk_default_read)) {
+            startActivity<ReadBookActivity>()
+        }
+        finish()
     }
 
 }
+
+class Launcher1 : WelcomeActivity()
+class Launcher2 : WelcomeActivity()
+class Launcher3 : WelcomeActivity()
+class Launcher4 : WelcomeActivity()
+class Launcher5 : WelcomeActivity()
+class Launcher6 : WelcomeActivity()

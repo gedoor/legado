@@ -12,9 +12,7 @@ import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -24,6 +22,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.requestInputMethod
@@ -65,9 +64,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
-        )
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
         App.db.replaceRuleDao().liveGroup().observe(viewLifecycleOwner, Observer {
             val groups = linkedSetOf<String>()
@@ -132,8 +129,20 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 tv_group.text = item
-                tv_edit.onClick { editGroup(item) }
-                tv_del.onClick { viewModel.delGroup(item) }
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder) {
+            holder.itemView.apply {
+                tv_edit.onClick {
+                    getItem(holder.layoutPosition)?.let {
+                        editGroup(it)
+                    }
+                }
+
+                tv_del.onClick {
+                    getItem(holder.layoutPosition)?.let { viewModel.delGroup(it) }
+                }
             }
         }
     }

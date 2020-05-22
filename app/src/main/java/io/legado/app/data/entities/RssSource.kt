@@ -23,6 +23,8 @@ data class RssSource(
     var sourceIcon: String = "",
     var sourceGroup: String? = null,
     var enabled: Boolean = true,
+    var sortUrl: String? = null,
+    var articleStyle: Int = 0,
     //列表规则
     var ruleArticles: String? = null,
     var ruleNextPage: String? = null,
@@ -33,11 +35,24 @@ data class RssSource(
     var ruleImage: String? = null,
     var ruleLink: String? = null,
     var ruleContent: String? = null,
+    var style: String? = null,
     var header: String? = null,
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
+
     var customOrder: Int = 0
 ) : Parcelable, JsExtensions {
+
+    override fun equals(other: Any?): Boolean {
+        if (other is RssSource) {
+            return other.sourceUrl == sourceUrl
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return sourceUrl.hashCode()
+    }
 
     @Throws(Exception::class)
     fun getHeaderMap(): Map<String, String> {
@@ -88,4 +103,16 @@ data class RssSource(
         return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
 
+    fun sortUrls(): LinkedHashMap<String, String> {
+        val sortMap = linkedMapOf<String, String>()
+        sortUrl?.split("(&&|\n)+".toRegex())?.forEach { c ->
+            val d = c.split("::")
+            if (d.size > 1)
+                sortMap[d[0]] = d[1]
+        }
+        if (sortMap.isEmpty()) {
+            sortMap[""] = sourceUrl
+        }
+        return sortMap
+    }
 }

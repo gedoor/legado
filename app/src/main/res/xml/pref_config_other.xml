@@ -2,52 +2,80 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="true"
-        android:key="@string/pk_auto_refresh"
-        android:summary="@string/ps_auto_refresh"
-        android:title="@string/pt_auto_refresh"
-        app:iconSpaceReserved="false" />
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/main_activity"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pk_default_read"
-        android:summary="@string/ps_default_read"
-        android:title="@string/pt_default_read"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pk_auto_refresh"
+            android:summary="@string/ps_auto_refresh"
+            android:title="@string/pt_auto_refresh"
+            app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="true"
-        android:key="showRss"
-        android:title="显示订阅"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pk_default_read"
+            android:summary="@string/ps_default_read"
+            android:title="@string/pt_default_read"
+            app:iconSpaceReserved="false" />
 
-    <Preference
-        android:key="threadCount"
-        android:title="@string/threads_num_title"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="showRss"
+            android:title="@string/show_rss"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
 
-    <Preference
-        android:key="downloadPath"
-        android:title="@string/download_path"
-        app:iconSpaceReserved="false" />
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <Preference
-        android:key="cleanCache"
-        android:title="@string/cleanCache"
-        app:iconSpaceReserved="false" />
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/other_setting"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="true"
-        android:key="process_text"
-        android:summary="长按文字在操作菜单中显示阅读·搜索"
-        android:title="文字操作显示搜索"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="threadCount"
+            android:title="@string/threads_num_title"
+            app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="false"
-        android:key="recordLog"
-        android:title="记录日志"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="mediaButtonOnExit"
+            android:title="@string/media_button_on_exit_title"
+            android:summary="@string/media_button_on_exit_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="webPort"
+            android:title="@string/web_port_title"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="cleanCache"
+            android:title="@string/cleanCache"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="process_text"
+            android:summary="@string/add_to_text_context_menu_s"
+            android:title="@string/add_to_text_context_menu_t"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="recordLog"
+            android:title="@string/record_log"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
 
 </androidx.preference.PreferenceScreen>

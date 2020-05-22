@@ -13,7 +13,7 @@ class BookshelfController {
 
     val bookshelf: ReturnData
         get() {
-            val books = App.db.bookDao().allBooks
+            val books = App.db.bookDao().all
             val returnData = ReturnData()
             return if (books.isEmpty()) {
                 returnData.setErrorMsg("还没有添加小说")
@@ -21,41 +21,41 @@ class BookshelfController {
         }
 
     fun getChapterList(parameters: Map<String, List<String>>): ReturnData {
-        val strings = parameters["url"]
+        val bookUrl = parameters["url"]?.getOrNull(0)
         val returnData = ReturnData()
-        if (strings == null) {
+        if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
-        val chapterList = App.db.bookChapterDao().getChapterList(strings[0])
+        val chapterList = App.db.bookChapterDao().getChapterList(bookUrl)
         return returnData.setData(chapterList)
     }
 
     fun getBookContent(parameters: Map<String, List<String>>): ReturnData {
-        val strings = parameters["url"]
+        val bookUrl = parameters["url"]?.getOrNull(0)
+        val index = parameters["index"]?.getOrNull(0)?.toInt()
         val returnData = ReturnData()
-        if (strings == null) {
-            return returnData.setErrorMsg("参数url不能为空，请指定内容地址")
+        if (bookUrl.isNullOrEmpty()) {
+            return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
-        val book = App.db.bookDao().getBook(strings[0])
-        val chapter = App.db.bookChapterDao().getChapter(strings[0], strings[1].toInt())
+        if (index == null) {
+            return returnData.setErrorMsg("参数index不能为空, 请指定目录序号")
+        }
+        val book = App.db.bookDao().getBook(bookUrl)
+        val chapter = App.db.bookChapterDao().getChapter(bookUrl, index)
         if (book == null || chapter == null) {
             returnData.setErrorMsg("未找到")
         } else {
-            val content = BookHelp.getContent(book, chapter)
+            val content: String? = BookHelp.getContent(book, chapter)
             if (content != null) {
                 returnData.setData(content)
             } else {
-                runBlocking {
-                    App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
-                        WebBook(source).getContent(book, chapter)
-                            .onSuccess {
-                                returnData.setData(it!!)
-                            }
-                            .onError {
-                                returnData.setErrorMsg(it.localizedMessage)
-                            }
-                    } ?: returnData.setErrorMsg("未找到书源")
-                }
+                App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
+                    runBlocking {
+                        WebBook(source).getContentSuspend(book, chapter)
+                    }.let {
+                        returnData.setData(it)
+                    }
+                } ?: returnData.setErrorMsg("未找到书源")
             }
         }
         return returnData

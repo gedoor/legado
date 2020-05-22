@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException
 /**
  * 将字符串转化为MD5
  */
-
+@Suppress("unused")
 object MD5Utils {
 
     fun md5Encode(str: String?): String? {

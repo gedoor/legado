@@ -20,29 +20,6 @@
         <item>百度主持</item>
     </string-array>
 
-    <string-array name="tts_speech_per_value">
-        <item>0</item>
-        <item>1</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>103</item>
-        <item>106</item>
-        <item>110</item>
-        <item>111</item>
-        <item>11</item>
-        <item>6</item>
-        <item>9</item>
-    </string-array>
-
-    <string-array name="bookshelf_layout">
-        <item>@string/layout_list</item>
-        <item>@string/layout_grid3</item>
-        <item>@string/layout_grid4</item>
-        <item>@string/layout_grid5</item>
-        <item>@string/layout_grid6</item>
-    </string-array>
-
     <string-array name="indent">
         <item>@string/indent_0</item>
         <item>@string/indent_1</item>
@@ -69,12 +46,6 @@
         <item>暗色主题</item>
     </string-array>
 
-    <string-array name="theme_mode_v">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
     <string-array name="NavBarColors">
         <item>自动</item>
         <item>黑色</item>
@@ -90,50 +61,49 @@
         <item>常亮</item>
     </string-array>
 
-    <string-array name="screen_time_out_value">
-        <item>0</item>
-        <item>60</item>
-        <item>120</item>
-        <item>180</item>
-        <item>-1</item>
+    <string-array name="select_folder">
+        <item>@string/default_path</item>
+        <item>@string/sys_folder_picker</item>
+        <item>@string/app_folder_picker</item>
     </string-array>
 
-    <string-array name="screen_direction_list_title">
+    <string-array name="screen_direction_title">
         <item>@string/screen_unspecified</item>
         <item>@string/screen_portrait</item>
         <item>@string/screen_landscape</item>
         <item>@string/screen_sensor</item>
     </string-array>
 
-    <string-array name="bookshelf_px_title">
-        <item>@string/bookshelf_px_0</item>
-        <item>@string/bookshelf_px_1</item>
-        <item>@string/bookshelf_px_2</item>
-    </string-array>
-
-    <string-array name="bookshelf_px_value">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
-    <declare-styleable name="Battery">
-        <attr name="batteryOrientation">
-            <enum name="horizontal" value="0" />
-            <enum name="vertical" value="1" />
-        </attr>
-        <attr name="batteryColor" format="color" />
-        <attr name="batteryPower" format="integer" />
-    </declare-styleable>
-
     <string-array name="icon_names">
+        <item>iconMain</item>
         <item>icon1</item>
         <item>icon2</item>
+        <item>icon3</item>
+        <item>icon4</item>
+        <item>icon5</item>
+        <item>icon6</item>
     </string-array>
 
-    <string-array name="icons">
-        <item>@string/icon_main</item>
-        <item>@string/icon_book</item>
+    <string-array name="chinese_mode">
+        <item>关闭</item>
+        <item>繁体转简体</item>
+        <item>简体转繁体</item>
+    </string-array>
+
+    <string-array name="system_typefaces">
+        <item>系统默认字体</item>
+        <item>系统衬线字体</item>
+        <item>系统等宽字体</item>
+    </string-array>
+
+    <string-array name="read_tip">
+        <item>无</item>
+        <item>标题</item>
+        <item>时间</item>
+        <item>电量</item>
+        <item>页数</item>
+        <item>进度</item>
+        <item>页数及进度</item>
     </string-array>
 
 </resources>

@@ -1,13 +1,14 @@
 package io.legado.app.help
 
 import android.util.Base64
-import io.legado.app.constant.AppConst.DATE_FORMAT
+import androidx.annotation.Keep
+import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
 import java.util.*
 
-
+@Keep
 @Suppress("unused")
 interface JsExtensions {
 
@@ -17,7 +18,7 @@ interface JsExtensions {
     fun ajax(urlStr: String): String? {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
-            val call = analyzeUrl.getResponse()
+            val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response.body()
         } catch (e: Exception) {
@@ -49,6 +50,6 @@ interface JsExtensions {
     }
 
     fun timeFormat(time: Long): String {
-        return DATE_FORMAT.format(Date(time))
+        return dateFormat.format(Date(time))
     }
 }

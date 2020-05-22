@@ -4,77 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:clickable="true"
-    android:focusable="true"
-    tools:ignore="UnusedAttribute">
+    android:paddingTop="2dp"
+    android:paddingRight="10dp"
+    android:paddingLeft="10dp">
 
-    <io.legado.app.ui.widget.image.CoverImageView
-        android:id="@+id/iv_cover"
+    <io.legado.app.ui.widget.ShadowLayout
+        android:id="@+id/bg_cover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/img_cover"
-        android:scaleType="centerCrop"
-        android:src="@drawable/image_cover_default"
-        android:transitionName="img_cover"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        tools:ignore="UnusedAttribute"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute" />
+        app:shadowColor="#16000000"
+        app:shadowShape="rectangle"
+        app:shadowDx="1dp"
+        app:shadowDy="3dp"
+        app:shadowRadius="4dp"
+        app:shadowSide="all">
 
-    <FrameLayout
-        android:id="@+id/fl_has_new"
+        <io.legado.app.ui.widget.image.CoverImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_cover_default"
+            android:transitionName="img_cover"
+            tools:ignore="UnusedAttribute" />
+
+    </io.legado.app.ui.widget.ShadowLayout>
+
+    <io.legado.app.ui.widget.text.BadgeView
+        android:id="@+id/bv_unread"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="@id/iv_cover"
-        app:layout_constraintTop_toTopOf="@id/iv_cover">
-
-        <io.legado.app.ui.widget.BadgeView
-            android:id="@+id/bv_unread"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="5dp"
-            android:includeFontPadding="false"
-            tools:ignore="RtlHardcoded" />
-
-        <io.legado.app.ui.widget.anima.RotateLoading
-            android:id="@+id/rl_loading"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_gravity="right"
-            android:visibility="invisible"
-            app:loading_width="2dp"
-            tools:ignore="RtlHardcoded" />
-    </FrameLayout>
-
-    <io.legado.app.ui.widget.BadgeView
-        android:id="@+id/bv_author"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="right"
+        android:layout_margin="5dp"
         android:includeFontPadding="false"
-        android:singleLine="true"
-        app:bv_radius="1dp"
-        app:up_flat_angle="true"
-        app:layout_constraintLeft_toLeftOf="@id/iv_cover"
-        app:layout_constraintBottom_toBottomOf="@id/iv_cover"
+        app:layout_constraintTop_toTopOf="@+id/bg_cover"
+        app:layout_constraintRight_toRightOf="@+id/bg_cover"
+        tools:ignore="RtlHardcoded" />
+
+    <io.legado.app.ui.widget.anima.RotateLoading
+        android:id="@+id/rl_loading"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="right"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/bg_cover"
+        app:layout_constraintRight_toRightOf="@+id/bg_cover"
+        app:loading_color="@color/colorAccent"
+        app:loading_width="2dp"
         tools:ignore="RtlHardcoded" />
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="4dp"
         android:includeFontPadding="false"
-        android:gravity="center"
+        android:gravity="top|center_horizontal"
         android:lines="2"
         android:ellipsize="end"
         android:text="@string/book_name"
         android:textColor="@color/tv_text_default"
         android:textSize="12sp"
-        app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
-        app:layout_constraintRight_toRightOf="@+id/iv_cover"
-        app:layout_constraintTop_toBottomOf="@+id/iv_cover"
+        app:layout_constraintLeft_toLeftOf="@+id/bg_cover"
+        app:layout_constraintRight_toRightOf="@+id/bg_cover"
+        app:layout_constraintTop_toBottomOf="@+id/bg_cover"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

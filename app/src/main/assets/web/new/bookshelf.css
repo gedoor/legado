@@ -1,0 +1,176 @@
+﻿html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.hide {
+    display: none;
+}
+
+.top, .showchapter, .hidebooks {
+    width: 60px;
+    height: 50px;
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    color: black;
+    font-size: 28px;
+    background-color: #ddd;
+    opacity: 0.85;
+}
+
+.top {
+    bottom: 150px;
+}
+
+.showchapter {
+    bottom: 90px;
+    bottom: 90px;
+}
+
+.address {
+    width: 270px;
+}
+
+.nav {
+    border-bottom: solid 1px #ccc;
+}
+
+input, button {
+    width: 110px;
+    line-height: 34px;
+    background-color: #eee;
+    color: #555;
+    border: none;
+    margin: 10px 5px;
+    font-weight: 500;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+input {
+    padding: 0 10px;
+    cursor: text;
+}
+
+    input:hover, button:hover {
+        border-color: #aaa;
+        background-color: #efefef;
+        color: #222;
+        outline: solid 1px #ccc;
+    }
+
+.allcontent {
+    height: calc(100% - 60px);
+}
+
+.allscreen {
+    height: 100%
+}
+
+.books > div {
+    display: inline-block;
+    margin: 10px;
+    vertical-align: top;
+    border: solid 1px #ddd;
+}
+
+.read > .books {
+    width: 420px;
+    float: left;
+    height: 100%;
+    overflow: auto;
+    border-right: solid 1px #ccc;
+}
+
+    .read > .books > div {
+        margin-right: 0;
+        border-right: none;
+    }
+
+
+.more {
+    overflow-y: auto;
+    height: 100%;
+    display: none;
+}
+
+.read .more {
+    display: block;
+}
+
+.books > div > img {
+    width: 120px;
+    height: 180px;
+    float: left;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.info {
+    padding: 10px 20px 0 20px;
+    width: 600px;
+    margin: 0 auto;
+}
+
+    .info > img {
+        width: 600px;
+        height: 900px;
+    }
+
+    .info p {
+        line-height: 1.5;
+        text-align: justify;
+        margin: 0;
+    }
+
+.books tr:nth-child(n+2) td {
+    border-top: solid 1px #999;
+}
+
+.books td:nth-child(1) {
+    vertical-align: top;
+    width: 50px;
+}
+
+.books td:nth-child(2) {
+    vertical-align: top;
+    width: 200px;
+}
+
+.clear {
+    clear: both;
+}
+
+.chapter {
+    margin: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+    border-top: solid 1px #333;
+    border-bottom: solid 1px #333;
+}
+
+    .chapter button {
+        width: 230px;
+        text-align: left;
+        text-indent: 14px;
+        margin: 10px 4px;
+    }
+
+
+.content {
+    padding: 20px;
+    text-align: justify;
+    min-height: 1000px;
+    padding-bottom: 200px;
+}
+
+    .content h2 {
+        font-family: "Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+        font-weight: 500;
+        text-align: center;
+        line-height: 100px;
+        font-size: 40px;
+        margin: 0;
+    }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_book_group"
+        android:title="@string/group"
+        android:icon="@drawable/ic_groups"
+        app:showAsAction="always">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_group_manage"
+                android:title="@string/group_manage" />
+
+            <item
+                android:id="@+id/menu_no_group"
+                android:title="@string/no_group" />
+
+            <item
+                android:id="@+id/menu_all"
+                android:title="@string/all" />
+
+            <item
+                android:id="@+id/menu_local"
+                android:title="@string/local" />
+
+            <item
+                android:id="@+id/menu_audio"
+                android:title="@string/audio" />
+
+        </menu>
+
+    </item>
+
+</menu>

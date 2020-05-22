@@ -71,4 +71,16 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             }
         }
     }
+
+    fun importSource(text: String, finally: (source: RssSource) -> Unit) {
+        execute {
+            val text1 = text.trim()
+            GSON.fromJsonObject<RssSource>(text1)?.let {
+                finally.invoke(it)
+            }
+        }.onError {
+            toast(it.localizedMessage ?: "Error")
+        }
+    }
+
 }

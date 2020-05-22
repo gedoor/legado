@@ -1,95 +1,130 @@
 package io.legado.app.ui.book.read.page
 
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.entities.TextPage
 
 class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
 
     override fun hasPrev(): Boolean = with(dataSource) {
-        return if (isScrollDelegate) {
-            hasPrevChapter()
-        } else {
-            hasPrevChapter() || pageIndex > 0
-        }
+        return hasPrevChapter() || pageIndex > 0
     }
 
     override fun hasNext(): Boolean = with(dataSource) {
-        return if (isScrollDelegate) {
-            hasNextChapter()
-        } else {
-            hasNextChapter()
-                    || getCurrentChapter()?.isLastIndex(pageIndex) != true
-        }
+        return hasNextChapter() || currentChapter?.isLastIndex(pageIndex) != true
+    }
+
+    override fun hasNextPlus(): Boolean = with(dataSource) {
+        return hasNextChapter() || pageIndex < (currentChapter?.pageSize ?: 1) - 2
     }
 
     override fun moveToFirst() {
-        dataSource.setPageIndex(0)
+        ReadBook.setPageIndex(0)
     }
 
     override fun moveToLast() = with(dataSource) {
-        getCurrentChapter()?.let {
-            if (it.pageSize() == 0) {
-                setPageIndex(0)
+        currentChapter?.let {
+            if (it.pageSize == 0) {
+                ReadBook.setPageIndex(0)
             } else {
-                setPageIndex(it.pageSize().minus(1))
+                ReadBook.setPageIndex(it.pageSize.minus(1))
             }
-        } ?: setPageIndex(0)
+        } ?: ReadBook.setPageIndex(0)
     }
 
-    override fun moveToNext(): Boolean = with(dataSource) {
+    override fun moveToNext(upContent: Boolean): Boolean = with(dataSource) {
         return if (hasNext()) {
-            if (getCurrentChapter()?.isLastIndex(pageIndex) == true
-                || isScrollDelegate
-            ) {
-                ReadBook.moveToNextChapter(false)
+            if (currentChapter?.isLastIndex(pageIndex) == true) {
+                ReadBook.moveToNextChapter(upContent)
             } else {
-                setPageIndex(pageIndex.plus(1))
+                ReadBook.setPageIndex(pageIndex.plus(1))
             }
+            if (upContent) upContent(resetPageOffset = false)
             true
         } else
             false
     }
 
-    override fun moveToPrevious(): Boolean = with(dataSource) {
+    override fun moveToPrev(upContent: Boolean): Boolean = with(dataSource) {
         return if (hasPrev()) {
-            if (pageIndex <= 0 || isScrollDelegate) {
-                ReadBook.moveToPrevChapter(false)
+            if (pageIndex <= 0) {
+                ReadBook.moveToPrevChapter(upContent)
             } else {
-                setPageIndex(pageIndex.minus(1))
+                ReadBook.setPageIndex(pageIndex.minus(1))
             }
+            if (upContent) upContent(resetPageOffset = false)
             true
         } else
             false
     }
 
-    override fun currentPage(): TextPage? = with(dataSource) {
-        return if (isScrollDelegate) {
-            getCurrentChapter()?.scrollPage()
-        } else {
-            getCurrentChapter()?.page(pageIndex)
-        }
-    }
-
-    override fun nextPage(): TextPage? = with(dataSource) {
-        if (isScrollDelegate) {
-            return getNextChapter()?.scrollPage()
-        }
-        getCurrentChapter()?.let {
-            if (pageIndex < it.pageSize() - 1) {
-                return getCurrentChapter()?.page(pageIndex + 1)?.removePageAloudSpan()
+    override val currentPage: TextPage
+        get() = with(dataSource) {
+            ReadBook.msg?.let {
+                return@with TextPage(text = it).format()
             }
+            currentChapter?.let {
+                return@with it.page(pageIndex)
+                    ?: TextPage(title = it.title).format()
+            }
+            return TextPage().format()
         }
-        return getNextChapter()?.page(0)?.removePageAloudSpan()
-    }
 
-    override fun previousPage(): TextPage? = with(dataSource) {
-        if (isScrollDelegate) {
-            return getPreviousChapter()?.scrollPage()
+    override val nextPage: TextPage
+        get() = with(dataSource) {
+            ReadBook.msg?.let {
+                return@with TextPage(text = it).format()
+            }
+            currentChapter?.let {
+                if (pageIndex < it.pageSize - 1) {
+                    return@with it.page(pageIndex + 1)?.removePageAloudSpan()
+                        ?: TextPage(title = it.title).format()
+                }
+            }
+            if (!hasNextChapter()) {
+                return@with TextPage(text = "")
+            }
+            nextChapter?.let {
+                return@with it.page(0)?.removePageAloudSpan()
+                    ?: TextPage(title = it.title).format()
+            }
+            return TextPage().format()
         }
-        if (pageIndex > 0) {
-            return getCurrentChapter()?.page(pageIndex - 1)?.removePageAloudSpan()
+
+    override val prevPage: TextPage
+        get() = with(dataSource) {
+            ReadBook.msg?.let {
+                return@with TextPage(text = it).format()
+            }
+            if (pageIndex > 0) {
+                currentChapter?.let {
+                    return@with it.page(pageIndex - 1)?.removePageAloudSpan()
+                        ?: TextPage(title = it.title).format()
+                }
+            }
+            prevChapter?.let {
+                return@with it.lastPage?.removePageAloudSpan()
+                    ?: TextPage(title = it.title).format()
+            }
+            return TextPage().format()
         }
-        return getPreviousChapter()?.lastPage()?.removePageAloudSpan()
-    }
 
+    override val nextPagePlus: TextPage
+        get() = with(dataSource) {
+            currentChapter?.let {
+                if (pageIndex < it.pageSize - 2) {
+                    return@with it.page(pageIndex + 2)?.removePageAloudSpan()
+                        ?: TextPage(title = it.title).format()
+                }
+                nextChapter?.let { nc ->
+                    if (pageIndex < it.pageSize - 1) {
+                        return@with nc.page(0)?.removePageAloudSpan()
+                            ?: TextPage(title = nc.title).format()
+                    }
+                    return@with nc.page(1)?.removePageAloudSpan()
+                        ?: TextPage(title = nc.title).format()
+                }
 
+            }
+            return TextPage().format()
+        }
 }

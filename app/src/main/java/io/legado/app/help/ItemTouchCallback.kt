@@ -104,13 +104,21 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
         viewPager?.requestDisallowInterceptTouchEvent(swiping)
     }
 
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
+        onItemTouchCallbackListener?.onClearView(recyclerView, viewHolder)
+    }
+
     interface OnItemTouchCallbackListener {
+
         /**
          * 当某个Item被滑动删除的时候
          *
          * @param adapterPosition item的position
          */
-        fun onSwiped(adapterPosition: Int)
+        fun onSwiped(adapterPosition: Int) {
+
+        }
 
         /**
          * 当两个Item位置互换的时候被回调
@@ -119,6 +127,16 @@ class ItemTouchCallback : ItemTouchHelper.Callback() {
          * @param targetPosition 目的地的Item的position
          * @return 开发者处理了操作应该返回true，开发者没有处理就返回false
          */
-        fun onMove(srcPosition: Int, targetPosition: Int): Boolean
+        fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            return true
+        }
+
+        /**
+         * 手指松开
+         */
+        fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+
+        }
+
     }
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/wechat"
+            app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <io.legado.app.ui.widget.prefs.Preference
+                android:key="gzGzh"
+                android:title="@string/follow_official_account"
+                android:summary="关注[开源阅读软件]点击广告支持我"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="wxZsm"
+            android:title="微信赞赏码"
+            android:summary="点击打开"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="支付宝"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="zfbHbSsm"
+            android:title="支付宝红包搜索码"
+            android:summary="537954522 点击复制"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="zfbHbRwm"
+            android:title="支付宝红包二维码"
+            android:summary="点击打开"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="zfbSkRwm"
+            android:title="支付宝收款二维码"
+            android:summary="点击打开"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="QQ"
+        app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="qqSkRwm"
+            android:title="QQ收款二维码"
+            android:summary="点击打开"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

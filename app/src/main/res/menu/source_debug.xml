@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_scan"
+        android:id="@+id/menu_scan"
         android:icon="@drawable/ic_scan"
         android:title="@string/scan_qr_code"
         app:showAsAction="ifRoom" />

@@ -2,50 +2,82 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.preference.Preference
+    <io.legado.app.ui.widget.prefs.Preference
         android:key="contributors"
-        android:title="开发人员"
-        android:summary="gedoor,Invinciblelee等, 详情请在github中查看"
+            android:title="@string/contributors"
+            android:summary="gedoor,Invinciblelee等, 详情请在github中查看"
         app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
+    <io.legado.app.ui.widget.prefs.Preference
         android:key="check_update"
         android:title="@string/check_update"
         app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
+    <io.legado.app.ui.widget.prefs.Preference
         android:key="update_log"
         android:title="@string/update_log"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="qq"
-        android:title="@string/join_qq_group"
-        app:iconSpaceReserved="false" />
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+            android:title="@string/contact"
+            app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
 
-    <androidx.preference.Preference
-        android:key="mail"
-        android:title="@string/send_mail"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+                android:key="gzGzh"
+                android:title="@string/follow_official_account"
+                android:summary="@string/official_account"
+                app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="git"
-        android:title="@string/git_hub"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="qq"
+            android:title="@string/join_qq_group"
+                android:summary="@string/click_to_apply"
+                app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="home_page"
-        android:title="@string/home_page"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="mail"
+            android:title="@string/send_mail"
+            android:summary="kunfei.ge@gmail.com"
+            app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="share_app"
-        android:title="@string/share_app"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="git"
+            android:title="@string/git_hub"
+            android:summary="@string/this_github_url"
+            app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="disclaimer"
-        android:title="@string/disclaimer"
-        app:iconSpaceReserved="false" />
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="home_page"
+            android:title="@string/home_page"
+            android:summary="@string/home_page_url"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+            android:title="@string/other"
+            app:layout="@layout/view_preference_category"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <io.legado.app.ui.widget.prefs.Preference
+                android:key="license"
+                android:title="@string/license"
+                app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="disclaimer"
+            android:title="@string/disclaimer"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>
