@@ -121,6 +121,9 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     }
                 }
                 "recordLog" -> LogUtils.upLevel()
+                PreferKey.einkMode -> {
+                    postEvent(EventBus.RECREATE, "")
+                }
             }
         }
 

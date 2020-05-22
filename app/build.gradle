@@ -193,6 +193,8 @@ dependencies {
     //转换繁体
     implementation 'com.hankcs:hanlp:portable-1.7.7'
 
+    //E-Ink
+    implementation 'fadeapp.widgets:scrollless-recyclerView:1.0.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

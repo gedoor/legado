@@ -156,18 +156,20 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                             putPrefInt("colorPrimary", getCompatColor(R.color.white))
                             putPrefInt("colorAccent", getCompatColor(R.color.black))
                             putPrefInt("colorBackground", getCompatColor(R.color.white))
+                            putPrefInt("colorBottomBackground", getCompatColor(R.color.white))
                             AppConfig.isNightTheme = false
                         }
                         4 -> {
                             putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
                             putPrefInt(
                                 "colorAccentNight",
-                                getCompatColor(R.color.md_grey_600)
+                                getCompatColor(R.color.md_grey_500)
                             )
                             putPrefInt(
                                 "colorBackgroundNight",
                                 getCompatColor(R.color.black)
                             )
+                            putPrefInt("colorBottomBackgroundNight", getCompatColor(R.color.black))
                             AppConfig.isNightTheme = true
                         }
                     }

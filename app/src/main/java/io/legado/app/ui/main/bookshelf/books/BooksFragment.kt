@@ -16,6 +16,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
+import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -76,6 +77,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             rv_bookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
             booksAdapter = BooksAdapterGrid(requireContext(), this)
         }
+        rv_bookshelf.isEnableScroll = !AppConfig.isEInkMode
         rv_bookshelf.adapter = booksAdapter
         booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
