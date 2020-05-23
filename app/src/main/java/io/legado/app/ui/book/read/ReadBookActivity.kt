@@ -569,6 +569,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             autoPageStop()
         } else {
             isAutoPage = true
+            page_view.upContent()
+            page_view.upContent(1)
             autoPagePlus()
         }
         read_menu.setAutoPage(isAutoPage)
