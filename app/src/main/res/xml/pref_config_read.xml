@@ -2,12 +2,6 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.ui.widget.prefs.PreferenceCategory
-        android:title="@string/setting"
-        app:allowDividerAbove="false"
-        app:allowDividerBelow="false"
-        app:iconSpaceReserved="false">
-
         <io.legado.app.ui.widget.prefs.NameListPreference
             android:key="@string/pk_requested_direction"
             android:defaultValue="0"
@@ -82,8 +76,5 @@
             android:key="customPageKey"
             android:title="@string/custom_page_key"
             app:iconSpaceReserved="false" />
-
-
-    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>
