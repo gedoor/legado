@@ -691,4 +691,5 @@
     <string name="hideFooter">隱藏頁脚</string>
     <string name="auto_change_source">自動換源</string>
     <string name="to_bottom">置底</string>
+    <string name="text_full_justify">文字兩端對齊</string>
 </resources>

@@ -127,6 +127,7 @@ object ReadBookConfig {
         }
     var isScroll = pageAnim == 3
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
+    val textFullJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textFullJustify, true)
     var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
         set(value) {
             field = value

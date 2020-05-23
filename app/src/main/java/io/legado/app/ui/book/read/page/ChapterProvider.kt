@@ -161,6 +161,10 @@ object ChapterProvider {
         desiredWidth: Float
     ) {
         var x = 0f
+        if (!ReadBookConfig.textFullJustify) {
+            addCharsToLineLast(textLine, words, textPaint, x)
+            return
+        }
         val bodyIndent = ReadBookConfig.bodyIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         bodyIndent.toStringArray().forEach {
@@ -186,6 +190,10 @@ object ChapterProvider {
         desiredWidth: Float,
         startX: Float
     ) {
+        if (!ReadBookConfig.textFullJustify) {
+            addCharsToLineLast(textLine, words, textPaint, startX)
+            return
+        }
         val gapCount: Int = words.length - 1
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
