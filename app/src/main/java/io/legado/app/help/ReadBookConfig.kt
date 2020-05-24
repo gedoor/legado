@@ -105,8 +105,8 @@ object ReadBookConfig {
     //配置写入读取
     var autoReadSpeed = App.INSTANCE.getPrefInt(PreferKey.autoReadSpeed, 46)
         set(value) {
-            App.INSTANCE.putPrefInt(PreferKey.autoReadSpeed, value)
             field = value
+            App.INSTANCE.putPrefInt(PreferKey.autoReadSpeed, value)
         }
     var styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
         set(value) {
