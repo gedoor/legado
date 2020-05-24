@@ -69,6 +69,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
+    AutoReadDialog.CallBack,
     TocRegexDialog.CallBack,
     ReplaceEditDialog.CallBack,
     ColorPickerDialogListener {
@@ -547,10 +548,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun clickCenter() {
-        if (BaseReadAloudService.isRun) {
-            showReadAloudDialog()
-        } else {
-            read_menu.runMenuIn()
+        when {
+            BaseReadAloudService.isRun -> {
+                showReadAloudDialog()
+            }
+            isAutoPage -> {
+                AutoReadDialog().show(supportFragmentManager, "autoRead")
+            }
+            else -> {
+                read_menu.runMenuIn()
+            }
         }
     }
 
@@ -576,7 +583,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         read_menu.setAutoPage(isAutoPage)
     }
 
-    private fun autoPageStop() {
+    override fun autoPageStop() {
         isAutoPage = false
         mHandler.removeCallbacks(autoPageRunnable)
         page_view.upContent()

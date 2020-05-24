@@ -13,138 +13,6 @@
     android:orientation="vertical">
 
     <LinearLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tv_pre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/previous_chapter"
-            android:textColor="@color/tv_text_default"
-            android:textSize="14sp" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/iv_play_prev"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tooltipText="@string/prev_sentence"
-            android:contentDescription="@string/prev_sentence"
-            android:src="@drawable/ic_skip_previous"
-            android:tint="@color/tv_text_default"
-            tools:ignore="UnusedAttribute" />
-
-        <ImageView
-            android:id="@+id/iv_play_pause"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tooltipText="@string/audio_play"
-            android:contentDescription="@string/audio_play"
-            android:src="@drawable/ic_play_24dp"
-            android:tint="@color/tv_text_default"
-            tools:ignore="UnusedAttribute" />
-
-        <ImageView
-            android:id="@+id/iv_stop"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/stop"
-            android:tooltipText="@string/stop"
-            android:src="@drawable/ic_stop_black_24dp"
-            android:tint="@color/tv_text_default"
-            tools:ignore="UnusedAttribute" />
-
-        <ImageView
-            android:id="@+id/iv_play_next"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/next_sentence"
-            android:tooltipText="@string/next_sentence"
-            android:src="@drawable/ic_skip_next"
-            android:tint="@color/tv_text_default"
-            tools:ignore="UnusedAttribute" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/tv_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/next_chapter"
-            android:textColor="@color/tv_text_default"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="6dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:tooltipText="@string/set_timer"
-            android:contentDescription="@string/set_timer"
-            android:src="@drawable/ic_time_add_24dp"
-            android:tint="@color/tv_text_default"
-            tools:ignore="UnusedAttribute" />
-
-        <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_timer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="60" />
-
-        <TextView
-            android:id="@+id/tv_timer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/timer_m" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -162,23 +30,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="@string/read_aloud_speed"
+                android:text="@string/auto_page_speed"
                 android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
-
-            <io.legado.app.lib.theme.view.ATESwitch
-                android:id="@+id/cb_tts_follow_sys"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/flow_sys"
-                android:text="@string/flow_sys"
-                tools:ignore="RtlHardcoded" />
 
         </LinearLayout>
 
         <io.legado.app.lib.theme.view.ATESeekBar
-            android:id="@+id/seek_tts_SpeechRate"
+            android:id="@+id/seek_auto_read"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
@@ -268,12 +127,12 @@
             android:layout_weight="2" />
         <!--界面按钮-->
         <LinearLayout
-            android:id="@+id/ll_to_backstage"
+            android:id="@+id/ll_auto_page_stop"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:contentDescription="@string/to_backstage"
+            android:contentDescription="@string/stop"
             android:focusable="true"
             android:orientation="vertical"
             android:paddingBottom="7dp">
@@ -282,8 +141,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:contentDescription="@string/to_backstage"
-                android:src="@drawable/ic_visibility_off"
+                android:contentDescription="@string/stop"
+                android:src="@drawable/ic_auto_page_stop"
                 app:tint="@color/tv_text_default"
                 tools:ignore="NestedWeights" />
 
@@ -292,7 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
-                android:text="@string/to_backstage"
+                android:text="@string/stop"
                 android:maxLines="1"
                 android:textColor="@color/tv_text_default"
                 android:textSize="12sp" />

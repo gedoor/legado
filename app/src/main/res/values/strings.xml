@@ -694,5 +694,6 @@
     <string name="night_navbar_color">夜间，底栏色</string>
     <string name="auto_change_source">自动换源</string>
     <string name="text_full_justify">文字两端对齐</string>
+    <string name="auto_page_speed">自动翻页速度</string>
 
 </resources>
