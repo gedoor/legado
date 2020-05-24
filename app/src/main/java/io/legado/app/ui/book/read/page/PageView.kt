@@ -58,7 +58,8 @@ class PageView(context: Context, attrs: AttributeSet) :
         pageDelegate?.onDraw(canvas)
         if (callBack.isAutoPage) {
             nextPage.screenshot()?.let {
-                val bottom = page_view.height * callBack.autoPageProgress / 460
+                val bottom =
+                    page_view.height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 10)
                 autoPageRect.set(0, 0, page_view.width, bottom)
                 canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
                 canvas.drawRect(

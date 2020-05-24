@@ -592,7 +592,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private fun autoPagePlus() {
         mHandler.removeCallbacks(autoPageRunnable)
         autoPageProgress++
-        if (autoPageProgress >= 460) {
+        if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 10) {
             autoPageProgress = 0
             page_view.fillPage(PageDelegate.Direction.NEXT)
         } else {
