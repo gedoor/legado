@@ -78,7 +78,10 @@ class AutoReadDialog : BaseDialogFragment() {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
         ll_catalog.onClick { callBack?.openChapterList() }
-        ll_auto_page_stop.onClick { callBack?.autoPageStop() }
+        ll_auto_page_stop.onClick {
+            callBack?.autoPageStop()
+            dismiss()
+        }
     }
 
     private fun upTtsSpeechRate() {
