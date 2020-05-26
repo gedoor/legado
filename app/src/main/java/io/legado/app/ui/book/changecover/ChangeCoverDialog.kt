@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.Theme
+import io.legado.app.help.AppConfig
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
@@ -73,6 +74,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
     }
 
     private fun initView() {
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = CoverAdapter(requireContext(), this)
         recycler_view.adapter = adapter

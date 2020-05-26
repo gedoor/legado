@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:text="@string/bg_image" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <fadeapp.widgets.ScrollLessRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="100dp" />

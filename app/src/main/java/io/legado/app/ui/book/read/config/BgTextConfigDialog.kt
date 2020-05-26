@@ -22,6 +22,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.EventBus
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
@@ -83,6 +84,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
     private fun initData() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.isChecked = statusIconDark()
         adapter = BgAdapter(requireContext())
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager =
             LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
         recycler_view.adapter = adapter

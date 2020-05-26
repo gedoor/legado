@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.AppConfig
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -32,6 +33,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
     }
 
     private fun initRecyclerView() {
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         adapter = ExploreShowAdapter(this, this)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(VerticalDivider(this))

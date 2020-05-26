@@ -20,6 +20,7 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.help.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.gone
 import io.legado.app.utils.isAbsUrl
@@ -61,6 +62,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     }
 
     private fun initRecyclerView() = with(contentView) {
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.adapter = adapter
         recycler_view_more.adapter = adapter
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)

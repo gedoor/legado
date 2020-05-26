@@ -71,6 +71,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private fun initData() {
         adapter = GroupAdapter(requireContext())
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter

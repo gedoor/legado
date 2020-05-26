@@ -14,7 +14,7 @@
         app:contentLayout="@layout/view_search"
         app:title="@string/replace_purify" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <fadeapp.widgets.ScrollLessRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"

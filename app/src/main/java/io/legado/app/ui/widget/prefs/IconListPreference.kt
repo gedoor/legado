@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.help.AppConfig
 import io.legado.app.utils.getCompatDrawable
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_icon_preference.view.*
@@ -138,6 +139,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             tool_bar.setTitle(R.string.change_icon)
+            recycler_view.isEnableScroll = !AppConfig.isEInkMode
             recycler_view.layoutManager = LinearLayoutManager(requireContext())
             val adapter = Adapter(requireContext())
             recycler_view.adapter = adapter

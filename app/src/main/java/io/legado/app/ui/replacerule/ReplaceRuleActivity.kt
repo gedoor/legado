@@ -20,6 +20,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.coroutine.Coroutine
@@ -101,6 +102,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ReplaceRuleAdapter(this, this)
         recycler_view.adapter = adapter

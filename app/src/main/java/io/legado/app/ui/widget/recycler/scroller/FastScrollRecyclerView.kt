@@ -5,9 +5,11 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
+import fadeapp.widgets.ScrollLessRecyclerView
 import io.legado.app.R
+import io.legado.app.help.AppConfig
 
-class FastScrollRecyclerView : RecyclerView {
+class FastScrollRecyclerView : ScrollLessRecyclerView {
 
     private var mFastScroller: FastScroller? = null
 
@@ -189,7 +191,7 @@ class FastScrollRecyclerView : RecyclerView {
     private fun layout(context: Context, attrs: AttributeSet?) {
         mFastScroller = FastScroller(context, attrs)
         mFastScroller?.id = R.id.fast_scroller
-
+        isEnableScroll = !AppConfig.isEInkMode
     }
 
 }

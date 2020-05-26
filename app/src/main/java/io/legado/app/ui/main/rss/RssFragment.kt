@@ -10,6 +10,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.rss.article.RssSortActivity
@@ -51,6 +52,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         adapter = RssAdapter(requireContext(), this)
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = GridLayoutManager(requireContext(), 4)
         recycler_view.adapter = adapter
     }
