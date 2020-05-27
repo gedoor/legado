@@ -3,8 +3,8 @@ package io.legado.app.help
 import androidx.recyclerview.widget.RecyclerView
 
 internal class AdapterDataObserverHeader(
-    var adapterDataObserver: RecyclerView.AdapterDataObserver,
-    var headerCount: Int
+    private var adapterDataObserver: RecyclerView.AdapterDataObserver,
+    private var headerCount: Int
 ) : RecyclerView.AdapterDataObserver() {
     override fun onChanged() {
         adapterDataObserver.onChanged()
