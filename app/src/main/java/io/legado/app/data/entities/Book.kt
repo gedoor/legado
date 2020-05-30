@@ -71,15 +71,16 @@ data class Book(
         return bookUrl.hashCode()
     }
 
-    @Ignore
+    @delegate:Ignore
     @IgnoredOnParcel
-    override var variableMap: HashMap<String, String>? = null
-        get() {
-            if (field == null) {
-                field = GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
-            }
-            return field
-        }
+    override val variableMap by lazy {
+        GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+    }
+
+    override fun putVariable(key: String, value: String) {
+        variableMap[key] = value
+        variable = GSON.toJson(variableMap)
+    }
 
     @Ignore
     @IgnoredOnParcel
@@ -96,11 +97,6 @@ data class Book(
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
-
-    override fun putVariable(key: String, value: String) {
-        variableMap?.put(key, value)
-        variable = GSON.toJson(variableMap)
-    }
 
     fun fileCharset(): Charset {
         return charset(charset ?: "UTF-8")
