@@ -71,6 +71,7 @@ data class Book(
         return bookUrl.hashCode()
     }
 
+    @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     override val variableMap by lazy {

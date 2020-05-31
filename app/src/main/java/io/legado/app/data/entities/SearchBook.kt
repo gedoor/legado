@@ -63,6 +63,7 @@ data class SearchBook(
         return other.originOrder - this.originOrder
     }
 
+    @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     override val variableMap by lazy {
@@ -74,6 +75,7 @@ data class SearchBook(
         variable = GSON.toJson(variableMap)
     }
 
+    @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     val origins: LinkedHashSet<String> by lazy { linkedSetOf(origin) }
