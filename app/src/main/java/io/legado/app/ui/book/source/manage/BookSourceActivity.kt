@@ -57,6 +57,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
+    private var sort = 0
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initUriScheme()
@@ -92,6 +93,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     allowExtensions = arrayOf("txt", "json")
                 )
             R.id.menu_import_source_onLine -> showImportDialog()
+            R.id.menu_sort_manual -> {
+                item.isChecked = true
+                sort = 0
+            }
+            R.id.menu_sort_auto -> {
+                item.isChecked = true
+                sort = 2
+            }
+            R.id.menu_sort_pin_yin -> {
+                item.isChecked = true
+                sort = 3
+            }
+            R.id.menu_sort_url -> {
+                item.isChecked = true
+                sort = 4
+            }
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)
@@ -104,14 +121,14 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
                     Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-                    if (url.startsWith("http", false)){
+                    if (url.startsWith("http", false)) {
                         viewModel.importSource(url) { msg ->
                             title_bar.snackbar(msg)
                         }
-                    }
-                    else{
-                        viewModel.importSourceFromFilePath(url){msg ->
-                            title_bar.snackbar(msg)}
+                    } else {
+                        viewModel.importSourceFromFilePath(url) { msg ->
+                            title_bar.snackbar(msg)
+                        }
                     }
                 }
                 else -> {
@@ -148,10 +165,16 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         } else {
             App.db.bookSourceDao().liveDataSearch("%$searchKey%")
         }
-        bookSourceLiveDate?.observe(this, Observer {
+        bookSourceLiveDate?.observe(this, Observer { data ->
+            val sourceList = when (sort) {
+                1 -> data.sortedBy { it.weight }
+                2 -> data.sortedBy { it.bookSourceName }
+                3 -> data.sortedBy { it.bookSourceUrl }
+                else -> data
+            }
             val diffResult = DiffUtil
-                .calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), it))
-            adapter.setItems(it, diffResult)
+                .calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), sourceList))
+            adapter.setItems(sourceList, diffResult)
             upCountView()
         })
     }

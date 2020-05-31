@@ -693,4 +693,5 @@
     <string name="to_bottom">置底</string>
     <string name="text_full_justify">文字兩端對齊</string>
     <string name="auto_page_speed">自動翻頁速度</string>
+    <string name="sort_by_url">地址排序</string>
 </resources>

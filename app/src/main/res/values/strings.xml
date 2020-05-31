@@ -695,5 +695,6 @@
     <string name="auto_change_source">自动换源</string>
     <string name="text_full_justify">文字两端对齐</string>
     <string name="auto_page_speed">自动翻页速度</string>
+    <string name="sort_by_url">地址排序</string>
 
 </resources>
