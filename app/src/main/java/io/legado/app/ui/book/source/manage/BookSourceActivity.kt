@@ -75,6 +75,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
+        groupMenu?.findItem(R.id.action_sort)?.subMenu
+            ?.setGroupCheckable(R.id.menu_group_sort, true, true)
         upGroupMenu()
         return super.onPrepareOptionsMenu(menu)
     }
