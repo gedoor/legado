@@ -96,18 +96,22 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_sort_manual -> {
                 item.isChecked = true
                 sort = 0
+                initLiveDataBookSource(search_view.query?.toString())
             }
             R.id.menu_sort_auto -> {
                 item.isChecked = true
                 sort = 2
+                initLiveDataBookSource(search_view.query?.toString())
             }
             R.id.menu_sort_pin_yin -> {
                 item.isChecked = true
                 sort = 3
+                initLiveDataBookSource(search_view.query?.toString())
             }
             R.id.menu_sort_url -> {
                 item.isChecked = true
                 sort = 4
+                initLiveDataBookSource(search_view.query?.toString())
             }
         }
         if (item.groupId == R.id.source_group) {
