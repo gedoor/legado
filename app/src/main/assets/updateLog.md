@@ -5,6 +5,7 @@
 
 **2020/06/03**
 * zh-TW translation by david082321
+* 修复音频播放时播放速度调节会再下一章失效的bug
 
 **2020/05/31**
 * 更新到android studio 4.0
