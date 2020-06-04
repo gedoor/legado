@@ -146,14 +146,18 @@ class AudioPlayService : BaseService(),
         if (url.contains(".m3u8", false)) {
             stopSelf()
         } else {
-            AudioPlayService.pause = pause
-            handler.removeCallbacks(mpRunnable)
-            position = mediaPlayer.currentPosition
-            mediaPlayer.pause()
-            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
-            AudioPlay.status = Status.PAUSE
-            postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
-            upNotification()
+            try {
+                AudioPlayService.pause = pause
+                handler.removeCallbacks(mpRunnable)
+                position = mediaPlayer.currentPosition
+                mediaPlayer.pause()
+                upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+                AudioPlay.status = Status.PAUSE
+                postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
+                upNotification()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
