@@ -179,7 +179,7 @@ data class BookSource(
 
     class Converters {
         @TypeConverter
-        fun exploreRuleToString(exploreRule: ExploreRule?): String {
+        fun exploreRuleToString(exploreRule: ExploreRule?): String? {
             return GSON.toJson(exploreRule)
         }
 
@@ -189,7 +189,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun searchRuleToString(searchRule: SearchRule): String {
+        fun searchRuleToString(searchRule: SearchRule?): String? {
             return GSON.toJson(searchRule)
         }
 
@@ -199,7 +199,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun bookInfoRuleToString(bookInfoRule: BookInfoRule): String {
+        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String? {
             return GSON.toJson(bookInfoRule)
         }
 
@@ -209,7 +209,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun tocRuleToString(tocRule: TocRule): String {
+        fun tocRuleToString(tocRule: TocRule?): String? {
             return GSON.toJson(tocRule)
         }
 
@@ -219,7 +219,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun contentRuleToString(contentRule: ContentRule): String {
+        fun contentRuleToString(contentRule: ContentRule?): String? {
             return GSON.toJson(contentRule)
         }
 
