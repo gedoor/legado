@@ -82,6 +82,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.callBack?.upContent(resetPageOffset = false)
                 }
             }
+            if (ReadBook.inBookshelf) {
+                ReadBook.saveRead()
+            }
         }
     }
 
