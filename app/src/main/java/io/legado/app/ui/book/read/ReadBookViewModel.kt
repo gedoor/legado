@@ -35,6 +35,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } ?: App.db.bookDao().lastReadBook?.let {
                 initBook(it)
             }
+        }.onFinally {
+            if (ReadBook.inBookshelf) {
+                ReadBook.saveRead()
+            }
         }
     }
 
@@ -79,9 +83,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.callBack?.upContent(resetPageOffset = false)
                 }
             }
-        }
-        if (ReadBook.inBookshelf) {
-            ReadBook.saveRead()
         }
     }
 
