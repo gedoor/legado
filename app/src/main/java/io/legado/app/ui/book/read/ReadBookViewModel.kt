@@ -59,9 +59,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
                 ReadBook.loadContent(resetPageOffset = true)
             }
-            if (ReadBook.inBookshelf) {
-                ReadBook.saveRead()
-            }
         } else {
             isInitFinish = true
             ReadBook.titleDate.postValue(book.name)
@@ -82,9 +79,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.callBack?.upContent(resetPageOffset = false)
                 }
             }
-            if (ReadBook.inBookshelf) {
-                ReadBook.saveRead()
-            }
+        }
+        if (ReadBook.inBookshelf) {
+            ReadBook.saveRead()
         }
     }
 
