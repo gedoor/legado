@@ -196,8 +196,8 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 
-afterEvaluate {
-    for (Task task : project.tasks.matching { it.name.startsWith('crashlyticsUploadDeobs') }) {
-        task.enabled = false
-    }
-}
+//afterEvaluate {
+//    for (Task task : project.tasks.matching { it.name.startsWith('crashlyticsUploadDeobs') }) {
+//        task.enabled = false
+//    }
+//}
