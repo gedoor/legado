@@ -47,8 +47,8 @@ class BooksDiffCallBack(private val oldItems: List<Book>, private val newItems: 
         if (oldItem.durChapterTitle != newItem.durChapterTitle) bundle.putString("dur", null)
         if (oldItem.latestChapterTitle != newItem.latestChapterTitle) bundle.putString("last", null)
         if (oldItem.getDisplayCover() != newItem.getDisplayCover()) bundle.putString("cover", null)
-        if (oldItem.lastCheckCount != newItem.lastCheckCount) bundle.putString("refresh", null)
-        if (oldItem.durChapterTime != newItem.durChapterTime
+        if (oldItem.lastCheckCount != newItem.lastCheckCount
+            || oldItem.durChapterTime != newItem.durChapterTime
             || oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum()
             || oldItem.lastCheckCount != newItem.lastCheckCount
         ) {
