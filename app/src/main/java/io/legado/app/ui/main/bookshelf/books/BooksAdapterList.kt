@@ -48,8 +48,8 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
             rl_loading.show()
         } else {
             rl_loading.hide()
-            bv_unread.setBadgeCount(item.getUnreadChapterNum())
             bv_unread.setHighlight(item.lastCheckCount > 0)
+            bv_unread.setBadgeCount(item.getUnreadChapterNum())
         }
     }
 
