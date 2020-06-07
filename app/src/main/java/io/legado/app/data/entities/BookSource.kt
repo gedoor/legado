@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import android.text.TextUtils
 import androidx.room.*
 import io.legado.app.App
 import io.legado.app.constant.AppConst
@@ -8,10 +9,7 @@ import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.JsExtensions
-import io.legado.app.utils.ACache
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.getPrefString
+import io.legado.app.utils.*
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 import javax.script.SimpleBindings
@@ -102,6 +100,13 @@ data class BookSource(
             }
         } ?: let {
             bookSourceGroup = group
+        }
+    }
+
+    fun removeGroup(group: String) {
+        bookSourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
+            it.remove(group)
+            bookSourceGroup = TextUtils.join(",", it)
         }
     }
 

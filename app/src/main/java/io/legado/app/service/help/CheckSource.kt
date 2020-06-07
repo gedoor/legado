@@ -53,6 +53,9 @@ class CheckSource(val source: BookSource) {
             .onError(Dispatchers.IO) {
                 source.addGroup("失效")
                 App.db.bookSourceDao().update(source)
+            }.onSuccess(Dispatchers.IO) {
+                source.removeGroup("失效")
+                App.db.bookSourceDao().update(source)
             }.onFinally(Dispatchers.IO) {
                 onNext(source.bookSourceUrl)
             }

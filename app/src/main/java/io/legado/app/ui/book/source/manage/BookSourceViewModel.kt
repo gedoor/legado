@@ -158,10 +158,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             execute {
                 val sources = App.db.bookSourceDao().getByGroup(group)
                 sources.map { source ->
-                    source.bookSourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
-                        it.remove(group)
-                        source.bookSourceGroup = TextUtils.join(",", it)
-                    }
+                    source.removeGroup(group)
                 }
                 App.db.bookSourceDao().update(*sources.toTypedArray())
             }
