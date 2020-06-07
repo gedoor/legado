@@ -132,6 +132,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onPause() {
         super.onPause()
+        ReadBook.saveRead()
         timeBatteryReceiver?.let {
             unregisterReceiver(it)
             timeBatteryReceiver = null
