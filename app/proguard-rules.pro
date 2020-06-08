@@ -68,10 +68,10 @@
 
 
 # 保留androidx下的所有类及其内部类
--keep class androidx** {*;}
+-keep class androidx.** {*;}
 
 # 保留继承的
--keep public class * extends androidx**
+-keep public class * extends androidx.**
 
 # 保留R下面的资源
 -keep class **.R$* {*;}
@@ -104,7 +104,6 @@
 
 # 保留Parcelable序列化类不被混淆
 -keep class * implements android.os.Parcelable {
-    #noinspection ShrinkerUnresolvedReference
     public static final android.os.Parcelable$Creator *;
 }
 
@@ -146,11 +145,11 @@
 }
 
 # 保持js引擎调用的java类
--keep class **.analyzeRule**{*;}
+-keep class **.analyzeRule.**{*;}
 # 保持web类
--keep class **.web**{*;}
+-keep class **.web.**{*;}
 #数据类
--keep class **.data**{*;}
+-keep class **.data.**{*;}
 
 -dontwarn rx.**
 
@@ -165,49 +164,49 @@
 -dontwarn org.conscrypt.**
 -dontwarn com.jeremyliao.liveeventbus.**
 
--keep class com.jeremyliao.liveeventbus** { *; }
--keep class okhttp3**{*;}
--keep class okio**{*;}
--keep class com.hwangjr.rxbus**{*;}
--keep class org.conscrypt**{*;}
--keep class android.support**{*;}
--keep class me.grantland.widget**{*;}
--keep class de.hdodenhof.circleimageview**{*;}
--keep class tyrant.explosionfield**{*;}
--keep class tyrantgit.explosionfield**{*;}
--keep class freemarker**{*;}
--keep class com.gyf.barlibrary.* {*;}
+-keep class com.jeremyliao.liveeventbus.** { *; }
+-keep class okhttp3.**{*;}
+-keep class okio.**{*;}
+-keep class com.hwangjr.rxbus.**{*;}
+-keep class org.conscrypt.**{*;}
+-keep class android.support.**{*;}
+-keep class me.grantland.widget.**{*;}
+-keep class de.hdodenhof.circleimageview.**{*;}
+-keep class tyrant.explosionfield.**{*;}
+-keep class tyrantgit.explosionfield.**{*;}
+-keep class freemarker.**{*;}
+-keep class com.gyf.barlibrary.** {*;}
 ##JSOUP
--keep class org.jsoup**{*;}
--keep class **.xpath**{*;}
+-keep class org.jsoup.**{*;}
+-keep class **.xpath.**{*;}
 
--keep class org.slf4j**{*;}
+-keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.**
 
--keep class org.codehaus**{*;}
+-keep class org.codehaus.**{*;}
 -dontwarn org.codehaus.**
--keep class com.jayway**{*;}
+-keep class com.jayway.**{*;}
 -dontwarn com.jayway.**
--keep class com.fasterxml**{*;}
+-keep class com.fasterxml.**{*;}
 
--keep class javax.swing**{*;}
+-keep class javax.swing.**{*;}
 -dontwarn javax.swing.**
--keep class java.awt**{*;}
+-keep class java.awt.**{*;}
 -dontwarn java.awt.**
--keep class sun.misc**{*;}
+-keep class sun.misc.**{*;}
 -dontwarn sun.misc.**
--keep class sun.reflect**{*;}
+-keep class sun.reflect.**{*;}
 -dontwarn sun.reflect.**
 
 ## Rhino
--keep class javax.script** { *; }
--keep class com.sun.script.javascript** { *; }
--keep class org.mozilla.javascript** { *; }
+-keep class javax.script.** { *; }
+-keep class com.sun.script.javascript.** { *; }
+-keep class org.mozilla.javascript.** { *; }
 
 ###EPUB
 -dontwarn nl.siegmann.epublib.**
 -dontwarn org.xmlpull.**
--keep class nl.siegmann.epublib**{*;}
+-keep class nl.siegmann.epublib.**{*;}
 -keep class javax.xml**{*;}
 -keep class org.xmlpull**{*;}
 
