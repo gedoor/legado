@@ -147,7 +147,7 @@ object ReadBookConfig {
 
     private val config get() = if (shareLayout) getConfig(5) else durConfig
 
-    var textBold: Boolean
+    var textBold: Int
         get() = config.textBold
         set(value) {
             config.textBold = value
@@ -294,7 +294,7 @@ object ReadBookConfig {
         private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
         private var textColor: String = "#3E3D3B",//白天文字颜色
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
-        var textBold: Boolean = false,//是否粗体字
+        var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小
         var letterSpacing: Float = 0.5f,//字间距
         var lineSpacingExtra: Int = 12,//行间距

@@ -676,6 +676,7 @@
     <string name="hideHeader">隐藏页眉</string>
     <string name="hideFooter">隐藏页脚</string>
     <string name="switchLayout">切换布局</string>
+    <string name="text_font_weight_converter">文章字重切换</string>
   
     <!--color-->
     <string name="primary">主色调</string>

@@ -1,11 +1,13 @@
 package io.legado.app.service.help
 
 import androidx.lifecycle.MutableLiveData
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
@@ -292,6 +294,11 @@ object ReadBook {
     ) {
         Coroutine.async {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
+                chapter.title = when (AppConfig.chineseConverterType) {
+                    1 -> HanLP.convertToSimplifiedChinese(chapter.title)
+                    2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                    else -> chapter.title
+                }
                 val contents = BookHelp.disposeContent(
                     chapter.title,
                     book!!.name,
