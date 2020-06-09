@@ -317,7 +317,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
-                startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
+                startActivity<BookInfoActivity>(
+                    Pair("name", it.name),
+                    Pair("author", it.author)
+                )
             }
         }
     }
@@ -327,7 +330,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      */
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
-            Pair("bookUrl", book.bookUrl)
+            Pair("name", book.name),
+            Pair("author", book.author)
         )
     }
 
