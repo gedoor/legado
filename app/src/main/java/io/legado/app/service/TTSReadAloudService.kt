@@ -72,7 +72,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             execute {
                 MediaHelp.playSilentSound(this@TTSReadAloudService)
                 textToSpeech?.let {
-                    it.stop()
+                    it.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
                     for (i in nowSpeak until contentList.size) {
                         it.speak(
                             contentList[i],
