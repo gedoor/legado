@@ -65,6 +65,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
         } else {
             isInitFinish = true
+            ReadBook.book!!.group = book.group
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
             if (!book.isLocalBook() && ReadBook.webBook == null) {
