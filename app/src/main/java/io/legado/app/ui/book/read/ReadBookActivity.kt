@@ -523,6 +523,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 seek_read_page.progress = ReadBook.durPageIndex
                 tv_pre.isEnabled = ReadBook.durChapterIndex != 0
                 tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
+            } ?: let {
+                tv_chapter_name.gone()
+                tv_chapter_url.gone()
             }
         }
     }
