@@ -164,6 +164,8 @@
 -dontwarn org.conscrypt.**
 -dontwarn com.jeremyliao.liveeventbus.**
 
+-keep class com.google.gson.** { *; }
+-keep class com.ke.gson.** { *; }
 -keep class com.jeremyliao.liveeventbus.** { *; }
 -keep class okhttp3.**{*;}
 -keep class okio.**{*;}

@@ -15,6 +15,7 @@ val GSON: Gson by lazy {
             object : TypeToken<Map<String?, Any?>?>() {}.type,
             MapDeserializerDoubleAsIntFix()
         )
+        .registerTypeAdapter(Int::class.java, IntJsonDeserializer())
         .disableHtmlEscaping()
         .setPrettyPrinting()
         .create()
@@ -45,6 +46,32 @@ class ParameterizedTypeImpl(private val clazz: Class<*>) : ParameterizedType {
 }
 
 /**
+ * int类型转化失败时跳过
+ */
+class IntJsonDeserializer : JsonDeserializer<Int?> {
+
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?
+    ): Int? {
+        return when {
+            json.isJsonPrimitive -> {
+                val prim = json.asJsonPrimitive
+                if (prim.isNumber) {
+                    prim.asNumber.toInt()
+                } else {
+                    null
+                }
+            }
+            else -> null
+        }
+    }
+
+}
+
+
+/**
  * 修复Int变为Double的问题
  */
 class MapDeserializerDoubleAsIntFix :
@@ -60,20 +87,20 @@ class MapDeserializerDoubleAsIntFix :
         return read(jsonElement) as? Map<String, Any?>
     }
 
-    fun read(`in`: JsonElement): Any? {
+    fun read(json: JsonElement): Any? {
         when {
-            `in`.isJsonArray -> {
+            json.isJsonArray -> {
                 val list: MutableList<Any?> = ArrayList()
-                val arr = `in`.asJsonArray
+                val arr = json.asJsonArray
                 for (anArr in arr) {
                     list.add(read(anArr))
                 }
                 return list
             }
-            `in`.isJsonObject -> {
+            json.isJsonObject -> {
                 val map: MutableMap<String, Any?> =
                     LinkedTreeMap()
-                val obj = `in`.asJsonObject
+                val obj = json.asJsonObject
                 val entitySet =
                     obj.entrySet()
                 for ((key, value) in entitySet) {
@@ -81,8 +108,8 @@ class MapDeserializerDoubleAsIntFix :
                 }
                 return map
             }
-            `in`.isJsonPrimitive -> {
-                val prim = `in`.asJsonPrimitive
+            json.isJsonPrimitive -> {
+                val prim = json.asJsonPrimitive
                 when {
                     prim.isBoolean -> {
                         return prim.asBoolean

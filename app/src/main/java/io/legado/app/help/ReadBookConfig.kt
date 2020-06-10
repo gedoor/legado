@@ -59,6 +59,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 return GSON.fromJsonArray(json)
             } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         return null
