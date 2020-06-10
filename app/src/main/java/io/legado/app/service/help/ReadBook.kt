@@ -40,7 +40,6 @@ object ReadBook {
 
     fun resetData(book: Book) {
         this.book = book
-        titleDate.postValue(book.name)
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
@@ -48,11 +47,11 @@ object ReadBook {
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
+        titleDate.postValue(book.name)
         upWebBook(book)
     }
 
-    fun upWebBook(book: Book?) {
-        book ?: return
+    fun upWebBook(book: Book) {
         webBook = if (book.origin == BookType.local) {
             null
         } else {
