@@ -694,4 +694,5 @@
     <string name="text_full_justify">文字兩端對齊</string>
     <string name="auto_page_speed">自動翻頁速度</string>
     <string name="sort_by_url">地址排序</string>
+    <string name="text_font_weight_converter">文章字體轉換</string>
 </resources>

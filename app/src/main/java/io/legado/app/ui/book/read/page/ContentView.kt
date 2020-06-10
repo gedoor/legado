@@ -207,11 +207,7 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
-        val title = when (AppConfig.chineseConverterType) {
-            1 -> HanLP.convertToSimplifiedChinese(textPage.title)
-            2 -> HanLP.convertToTraditionalChinese(textPage.title)
-            else -> textPage.title
-        }
+        val title = textPage.title
         tvTitle?.text = title
         tvPage?.text = "${index.plus(1)}/$pageSize"
         tvTotalProgress?.text = readProgress
