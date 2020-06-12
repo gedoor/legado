@@ -60,7 +60,6 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
             when (it.itemId) {
                 R.id.menu_disable_book_source -> {
                     callBack.disableSource(searchBook)
-                    removeItem(searchBook)
                 }
             }
             true

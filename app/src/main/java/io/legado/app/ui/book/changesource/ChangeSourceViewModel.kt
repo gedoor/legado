@@ -2,6 +2,7 @@ package io.legado.app.ui.book.changesource
 
 import android.app.Application
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
@@ -22,6 +23,7 @@ import java.util.concurrent.Executors
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     private var searchPool =
         Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
+    val handler = Handler()
     val searchStateData = MutableLiveData<Boolean>()
     val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
     var name: String = ""
@@ -29,6 +31,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private var task: Coroutine<*>? = null
     private var screenKey: String = ""
     private val searchBooks = hashSetOf<SearchBook>()
+    private var postTime = 0L
+    private val sendRunnable = Runnable { upAdapter() }
+
 
     fun initData(arguments: Bundle?) {
         arguments?.let { bundle ->
@@ -55,9 +60,16 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
+    @Synchronized
     private fun upAdapter() {
-        val books = searchBooks.toList()
-        searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
+        if (System.currentTimeMillis() > postTime + 500) {
+            postTime = System.currentTimeMillis()
+            handler.removeCallbacks(sendRunnable)
+            val books = searchBooks.toList()
+            searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
+        } else {
+            handler.postDelayed(sendRunnable, 500)
+        }
     }
 
     private fun searchFinish(searchBook: SearchBook) {
@@ -172,6 +184,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 App.db.bookSourceDao().update(source)
             }
             searchBooks.remove(searchBook)
+            upAdapter()
         }
     }
 
