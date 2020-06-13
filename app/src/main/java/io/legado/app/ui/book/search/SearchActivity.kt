@@ -8,7 +8,6 @@ import android.view.View.VISIBLE
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -283,10 +282,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      */
     @Synchronized
     private fun upSearchItems(items: List<SearchBook>) {
-        val searchItems = ArrayList(items)
-        val diffResult =
-            DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), searchItems))
-        adapter.setItems(searchItems, diffResult)
+        adapter.setItems(items)
     }
 
     /**
