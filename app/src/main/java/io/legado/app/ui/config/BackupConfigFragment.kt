@@ -8,15 +8,15 @@ import android.view.View
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.utils.PreferenceFragmentSupport
 import io.legado.app.utils.getPrefString
 
-class BackupConfigFragment : PreferenceFragmentCompat(),
+class BackupConfigFragment : PreferenceFragmentSupport(),
     SharedPreferences.OnSharedPreferenceChangeListener,
     FileChooserDialog.CallBack {
 

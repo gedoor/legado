@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
@@ -21,7 +20,7 @@ import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 
 
-class OtherConfigFragment : PreferenceFragmentCompat(),
+class OtherConfigFragment : PreferenceFragmentSupport(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val packageManager = App.INSTANCE.packageManager

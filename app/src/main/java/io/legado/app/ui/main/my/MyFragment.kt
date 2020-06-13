@@ -7,13 +7,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -65,7 +65,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
         BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
     }
 
-    class PreferenceFragment : PreferenceFragmentCompat(),
+    class PreferenceFragment : PreferenceFragmentSupport(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -123,6 +123,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                 "recordLog" -> LogUtils.upLevel()
                 PreferKey.einkMode -> {
                     postEvent(EventBus.RECREATE, "")
+                    ReadBookConfig.pageAnim = 4
                 }
             }
         }

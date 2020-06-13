@@ -194,8 +194,8 @@ class ReadMenu : FrameLayout {
     }
 
     private fun initAnimation() {
-        menuTopIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_in)
-        menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
+        menuTopIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_in)
+        menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 callBack?.upSystemUiVisibility()
@@ -217,8 +217,8 @@ class ReadMenu : FrameLayout {
         })
 
         //隐藏菜单
-        menuTopOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_out)
-        menuBottomOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_out)
+        menuTopOut = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_out)
+        menuBottomOut = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_out)
         menuTopOut.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 vw_menu_bg.setOnClickListener(null)
