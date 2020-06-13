@@ -13,11 +13,3 @@ node_modules/
 /app/google
 /app/gradle.properties
 package-lock.json
-
-*__gen.go
-*__ignore.go
-*.swp
-*.swo
-~i_*
-ig_*
-zzzig_*

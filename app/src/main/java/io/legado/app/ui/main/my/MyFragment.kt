@@ -122,8 +122,17 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                 }
                 "recordLog" -> LogUtils.upLevel()
                 PreferKey.einkMode -> {
-                    postEvent(EventBus.RECREATE, "")
-                    ReadBookConfig.pageAnim = 4
+                    //既然是 E-Ink 模式，为什么不一步到位呢
+                    if (AppConfig.isEInkMode) {
+                        ReadBookConfig.pageAnim = 4
+                        putPrefInt("colorPrimary", getCompatColor(R.color.white))
+                        putPrefInt("colorAccent", getCompatColor(R.color.black))
+                        putPrefInt("colorBackground", getCompatColor(R.color.white))
+                        putPrefInt("colorBottomBackground", getCompatColor(R.color.white))
+                        AppConfig.isNightTheme = false
+                        App.INSTANCE.applyDayNight()
+                        postEvent(EventBus.RECREATE, "")
+                    }
                 }
             }
         }
