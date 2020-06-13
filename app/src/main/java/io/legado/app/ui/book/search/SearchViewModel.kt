@@ -42,12 +42,13 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
 
     @Synchronized
     private fun upAdapter() {
-        if (System.currentTimeMillis() > postTime + 500) {
+        if (System.currentTimeMillis() >= postTime + 500) {
             handler.removeCallbacks(sendRunnable)
             postTime = System.currentTimeMillis()
             searchBookLiveData.postValue(searchBooks)
         } else {
-            handler.postDelayed(sendRunnable, 500)
+            handler.removeCallbacks(sendRunnable)
+            handler.postDelayed(sendRunnable, 500 - System.currentTimeMillis() + postTime)
         }
     }
 
