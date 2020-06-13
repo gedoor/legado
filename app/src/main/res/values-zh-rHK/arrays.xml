@@ -49,4 +49,9 @@
         <item>系統等寬字體</item>
     </string-array>
 
+    <string-array name="text_font_weight">
+        <item>正常</item>
+        <item>粗體</item>
+        <item>細體</item>
+    </string-array>
 </resources>

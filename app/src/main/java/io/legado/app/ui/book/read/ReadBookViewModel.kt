@@ -35,6 +35,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } ?: App.db.bookDao().lastReadBook?.let {
                 initBook(it)
             }
+        }.onFinally {
+            if (ReadBook.inBookshelf) {
+                ReadBook.saveRead()
+            }
         }
     }
 
@@ -59,11 +63,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
                 ReadBook.loadContent(resetPageOffset = true)
             }
-            if (ReadBook.inBookshelf) {
-                ReadBook.saveRead()
-            }
         } else {
             isInitFinish = true
+            ReadBook.book!!.group = book.group
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
             if (!book.isLocalBook() && ReadBook.webBook == null) {

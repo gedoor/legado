@@ -63,6 +63,7 @@ class AudioPlayService : BaseService(),
     private val dsRunnable: Runnable = Runnable { doDs() }
     private var mpRunnable: Runnable = Runnable { upPlayProgress() }
     private var bookChapter: BookChapter? = null
+    private var playSpeed: Float = 1f
 
     override fun onCreate() {
         super.onCreate()
@@ -95,7 +96,12 @@ class AudioPlayService : BaseService(),
                 IntentAction.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
                 IntentAction.addTimer -> addTimer()
                 IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
-                IntentAction.adjustProgress -> adjustProgress(intent.getIntExtra("position", position))
+                IntentAction.adjustProgress -> adjustProgress(
+                    intent.getIntExtra(
+                        "position",
+                        position
+                    )
+                )
                 else -> stopSelf()
             }
         }
@@ -140,14 +146,18 @@ class AudioPlayService : BaseService(),
         if (url.contains(".m3u8", false)) {
             stopSelf()
         } else {
-            AudioPlayService.pause = pause
-            handler.removeCallbacks(mpRunnable)
-            position = mediaPlayer.currentPosition
-            mediaPlayer.pause()
-            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
-            AudioPlay.status = Status.PAUSE
-            postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
-            upNotification()
+            try {
+                AudioPlayService.pause = pause
+                handler.removeCallbacks(mpRunnable)
+                position = mediaPlayer.currentPosition
+                mediaPlayer.pause()
+                upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+                AudioPlay.status = Status.PAUSE
+                postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
+                upNotification()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -174,12 +184,12 @@ class AudioPlayService : BaseService(),
     private fun upSpeed(adjust: Float) {
         kotlin.runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                with(mediaPlayer) {
-                    if (isPlaying) {
-                        playbackParams = playbackParams.apply { speed += adjust }
-                    }
-                    postEvent(EventBus.AUDIO_SPEED, playbackParams.speed)
+                playSpeed += adjust
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.playbackParams =
+                        mediaPlayer.playbackParams.apply { speed = playSpeed }
                 }
+                postEvent(EventBus.AUDIO_SPEED, playSpeed)
             }
         }
     }
@@ -189,7 +199,11 @@ class AudioPlayService : BaseService(),
      */
     override fun onPrepared(mp: MediaPlayer?) {
         if (pause) return
-        mediaPlayer.start()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mediaPlayer.playbackParams = mediaPlayer.playbackParams.apply { speed = playSpeed }
+        } else {
+            mediaPlayer.start()
+        }
         mediaPlayer.seekTo(position)
         postEvent(EventBus.AUDIO_SIZE, mediaPlayer.duration)
         bookChapter?.let {
@@ -506,7 +520,6 @@ class AudioPlayService : BaseService(),
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionCompat?.sessionToken)
                 .setShowActionsInCompactView(0, 1, 2)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

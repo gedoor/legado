@@ -58,14 +58,13 @@
 # 保留我们使用的四大组件，自定义的Application等等这些类不被混淆
 # 因为这些子类都有可能被外部调用
 -keep public class * extends android.app.Activity
--keep public class * extends android.app.Appliction
+-keep public class * extends android.app.Application
 -keep public class * extends android.app.Service
 -keep public class * extends android.content.BroadcastReceiver
 -keep public class * extends android.content.ContentProvider
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.preference.Preference
 -keep public class * extends android.view.View
--keep public class com.android.vending.licensing.ILicensingService
 
 
 # 保留androidx下的所有类及其内部类
@@ -128,15 +127,10 @@
 }
 
 # webView处理，项目中没有使用到webView忽略即可
--keepclassmembers class fqcn.of.javascript.interface.for.webview {
-    public *;
-}
--keepclassmembers class * extends android.webkit.webViewClient {
+-keepclassmembers class * extends android.webkit.WebViewClient {
+    public void *(android.webkit.WebView, java.lang.String);
     public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
     public boolean *(android.webkit.WebView, java.lang.String);
-}
--keepclassmembers class * extends android.webkit.webViewClient {
-    public void *(android.webkit.webView, jav.lang.String);
 }
 
 # 移除Log类打印各个等级日志的代码，打正式包的时候可以做为禁log使用，这里可以作为禁止log打印的功能使用
@@ -170,20 +164,20 @@
 -dontwarn org.conscrypt.**
 -dontwarn com.jeremyliao.liveeventbus.**
 
+-keep class com.google.gson.** { *; }
+-keep class com.ke.gson.** { *; }
 -keep class com.jeremyliao.liveeventbus.** { *; }
 -keep class okhttp3.**{*;}
 -keep class okio.**{*;}
 -keep class com.hwangjr.rxbus.**{*;}
 -keep class org.conscrypt.**{*;}
--keep class com.kunfei.bookshelf.widget.**{*;}
--keep class com.kunfei.bookshelf.bean.**{*;}
 -keep class android.support.**{*;}
 -keep class me.grantland.widget.**{*;}
 -keep class de.hdodenhof.circleimageview.**{*;}
 -keep class tyrant.explosionfield.**{*;}
 -keep class tyrantgit.explosionfield.**{*;}
 -keep class freemarker.**{*;}
--keep class com.gyf.barlibrary.* {*;}
+-keep class com.gyf.barlibrary.** {*;}
 ##JSOUP
 -keep class org.jsoup.**{*;}
 -keep class **.xpath.**{*;}
@@ -197,7 +191,7 @@
 -dontwarn com.jayway.**
 -keep class com.fasterxml.**{*;}
 
--keep class javax.swing..**{*;}
+-keep class javax.swing.**{*;}
 -dontwarn javax.swing.**
 -keep class java.awt.**{*;}
 -dontwarn java.awt.**
@@ -215,10 +209,10 @@
 -dontwarn nl.siegmann.epublib.**
 -dontwarn org.xmlpull.**
 -keep class nl.siegmann.epublib.**{*;}
--keep class javax.xml.**{*;}
--keep class org.xmlpull.**{*;}
+-keep class javax.xml**{*;}
+-keep class org.xmlpull**{*;}
 
--keep class org.simpleframework.xml.**{*;}
+-keep class org.simpleframework.xml**{*;}
 -dontwarn org.simpleframework.xml.**
 
 -keepclassmembers class * {

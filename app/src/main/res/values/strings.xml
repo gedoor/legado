@@ -11,6 +11,7 @@
     <string name="mkdirs">创建子文件夹</string>
     <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
     <string name="backup_path">备份路径</string>
+    <string name="select_backup_path">请选择备份路径</string>
     <string name="menu_import_old_version">导入旧版数据</string>
     <string name="menu_import_github">导入Github数据</string>
     <string name="menu_replace_rule">净化替换</string>
@@ -663,8 +664,8 @@
     <string name="contributors">开发人员</string>
     <string name="contact">联系我们</string>
     <string name="license">开源许可</string>
-    <string name="other" translatable="false">其它</string>
-    <string name="official_account" translatable="false">开源阅读</string>
+    <string name="other">其它</string>
+    <string name="official_account">开源阅读</string>
     <string name="follow_official_account">关注公众号</string>
     <string name="wechat">微信</string>
     <string name="thanks">您的支持是我更新的动力</string>
@@ -676,6 +677,7 @@
     <string name="hideHeader">隐藏页眉</string>
     <string name="hideFooter">隐藏页脚</string>
     <string name="switchLayout">切换布局</string>
+    <string name="text_font_weight_converter">文章字重切换</string>
   
     <!--color-->
     <string name="primary">主色调</string>
@@ -693,5 +695,10 @@
     <string name="night_background_color">夜间，背景色</string>
     <string name="night_navbar_color">夜间，底栏色</string>
     <string name="auto_change_source">自动换源</string>
-
+    <string name="text_full_justify">文字两端对齐</string>
+    <string name="auto_page_speed">自动翻页速度</string>
+    <string name="sort_by_url">地址排序</string>
+    <string name="backup_summary">本地和WebDav一起备份</string>
+    <string name="restore_summary">优先从WebDav恢复,失败时从本地恢复</string>
+    <string name="import_old_summary">选择旧版备份文件夹</string>
 </resources>

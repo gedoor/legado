@@ -8,15 +8,15 @@
     <string-array name="tts_speech_per">
         <item>度小美</item>
         <item>度小宇</item>
-        <item>度逍遥</item>
+        <item>度逍遙</item>
         <item>度丫丫</item>
-        <item>度小娇</item>
+        <item>度小嬌</item>
         <item>度米朵</item>
         <item>度博文</item>
         <item>度小童</item>
         <item>度小萌</item>
-        <item>百度骚男</item>
-        <item>百度评书</item>
+        <item>百度騷男</item>
+        <item>百度評書</item>
         <item>百度主持</item>
     </string-array>
 
@@ -41,23 +41,23 @@
     </string-array>
 
     <string-array name="theme_mode">
-        <item>跟随系统</item>
-        <item>亮色主题</item>
-        <item>暗色主题</item>
+        <item>跟隨系統</item>
+        <item>亮色主題</item>
+        <item>暗色主題</item>
     </string-array>
 
     <string-array name="NavBarColors">
-        <item>自动</item>
+        <item>自動</item>
         <item>黑色</item>
         <item>白色</item>
-        <item>跟随背景</item>
+        <item>跟隨背景</item>
     </string-array>
 
     <string-array name="screen_time_out">
-        <item>默认</item>
-        <item>1分钟</item>
-        <item>2分钟</item>
-        <item>3分钟</item>
+        <item>預設</item>
+        <item>1分鐘</item>
+        <item>2分鐘</item>
+        <item>3分鐘</item>
         <item>常亮</item>
     </string-array>
 
@@ -85,31 +85,30 @@
     </string-array>
 
     <string-array name="chinese_mode">
-        <item>关闭</item>
-        <item>繁体转简体</item>
-        <item>简体转繁体</item>
+        <item>關閉</item>
+        <item>繁體轉簡體</item>
+        <item>簡體轉繁體</item>
     </string-array>
 
     <string-array name="system_typefaces">
-        <item>系统默认字体</item>
-        <item>系统衬线字体</item>
-        <item>系统等宽字体</item>
+        <item>系統預設字體</item>
+        <item>系統襯線字體</item>
+        <item>系統等寬字體</item>
     </string-array>
 
     <string-array name="read_tip">
-        <item>无</item>
-        <item>标题</item>
-        <item>时间</item>
-        <item>电量</item>
-        <item>页数</item>
-        <item>进度</item>
-        <item>页数及进度</item>
+        <item>無</item>
+        <item>標題</item>
+        <item>時間</item>
+        <item>電量</item>
+        <item>頁數</item>
+        <item>進度</item>
+        <item>頁數及進度</item>
     </string-array>
 
     <string-array name="text_font_weight">
         <item>正常</item>
-        <item>粗体</item>
-        <item>细体</item>
+        <item>粗體</item>
+        <item>細體</item>
     </string-array>
-
 </resources>

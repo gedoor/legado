@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import android.text.TextUtils
 import androidx.room.*
 import io.legado.app.App
 import io.legado.app.constant.AppConst
@@ -8,10 +9,7 @@ import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.JsExtensions
-import io.legado.app.utils.ACache
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.getPrefString
+import io.legado.app.utils.*
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 import javax.script.SimpleBindings
@@ -105,6 +103,13 @@ data class BookSource(
         }
     }
 
+    fun removeGroup(group: String) {
+        bookSourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
+            it.remove(group)
+            bookSourceGroup = TextUtils.join(",", it)
+        }
+    }
+
     fun getExploreKinds(): ArrayList<ExploreKind>? {
         val exploreKinds = arrayListOf<ExploreKind>()
         exploreUrl?.let {
@@ -179,7 +184,7 @@ data class BookSource(
 
     class Converters {
         @TypeConverter
-        fun exploreRuleToString(exploreRule: ExploreRule?): String {
+        fun exploreRuleToString(exploreRule: ExploreRule?): String? {
             return GSON.toJson(exploreRule)
         }
 
@@ -189,7 +194,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun searchRuleToString(searchRule: SearchRule): String {
+        fun searchRuleToString(searchRule: SearchRule?): String? {
             return GSON.toJson(searchRule)
         }
 
@@ -199,7 +204,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun bookInfoRuleToString(bookInfoRule: BookInfoRule): String {
+        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String? {
             return GSON.toJson(bookInfoRule)
         }
 
@@ -209,7 +214,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun tocRuleToString(tocRule: TocRule): String {
+        fun tocRuleToString(tocRule: TocRule?): String? {
             return GSON.toJson(tocRule)
         }
 
@@ -219,7 +224,7 @@ data class BookSource(
         }
 
         @TypeConverter
-        fun contentRuleToString(contentRule: ContentRule): String {
+        fun contentRuleToString(contentRule: ContentRule?): String? {
             return GSON.toJson(contentRule)
         }
 

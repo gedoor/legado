@@ -12,7 +12,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.getCompatColor
 
 
 class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCategory(context, attrs) {
@@ -28,12 +27,9 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCate
             val view = it.findViewById(R.id.preference_title)
             if (view is TextView) {  //  && !view.isInEditMode
                 view.text = title
-                if (view.isInEditMode) {
-                    view.setTextColor(context.getCompatColor(R.color.colorAccent))
-                } else {
-                    view.setBackgroundColor(context.backgroundColor)
-                    view.setTextColor(context.accentColor)
-                }
+                if (view.isInEditMode) return
+                view.setBackgroundColor(context.backgroundColor)
+                view.setTextColor(context.accentColor)
                 view.isVisible = title != null && title.isNotEmpty()
 
                 val da = it.findViewById(R.id.preference_divider_above)

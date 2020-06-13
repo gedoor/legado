@@ -7,13 +7,11 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
-import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
-import io.legado.app.model.WebBook
+import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
@@ -80,22 +78,13 @@ class CheckSourceService : BaseService() {
                     if (source.searchUrl.isNullOrEmpty()) {
                         onNext(sourceUrl)
                     } else {
-                        check(source)
+                        CheckSource(source).check(this, searchPool) {
+                            onNext(it)
+                        }
                     }
                 } ?: onNext(sourceUrl)
             }
         }
-    }
-
-    private fun check(source: BookSource) {
-        val webBook = WebBook(source)
-        tasks.add(webBook.searchBook("我的", scope = this, context = searchPool)
-            .onError(IO) {
-                source.addGroup("失效")
-                App.db.bookSourceDao().update(source)
-            }.onFinally(IO) {
-                onNext(source.bookSourceUrl)
-            })
     }
 
     private fun onNext(sourceUrl: String) {

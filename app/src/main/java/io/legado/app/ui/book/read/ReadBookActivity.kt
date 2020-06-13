@@ -69,6 +69,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
+    AutoReadDialog.CallBack,
     TocRegexDialog.CallBack,
     ReplaceEditDialog.CallBack,
     ColorPickerDialogListener {
@@ -131,6 +132,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onPause() {
         super.onPause()
+        ReadBook.saveRead()
         timeBatteryReceiver?.let {
             unregisterReceiver(it)
             timeBatteryReceiver = null
@@ -240,7 +242,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 onReplaceRuleSave()
             }
             R.id.menu_book_info -> ReadBook.book?.let {
-                startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
+                startActivity<BookInfoActivity>(
+                    Pair("name", it.name),
+                    Pair("author", it.author)
+                )
             }
             R.id.menu_toc_regex -> TocRegexDialog.show(
                 supportFragmentManager,
@@ -518,6 +523,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 seek_read_page.progress = ReadBook.durPageIndex
                 tv_pre.isEnabled = ReadBook.durChapterIndex != 0
                 tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
+            } ?: let {
+                tv_chapter_name.gone()
+                tv_chapter_url.gone()
             }
         }
     }
@@ -547,10 +555,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun clickCenter() {
-        if (BaseReadAloudService.isRun) {
-            showReadAloudDialog()
-        } else {
-            read_menu.runMenuIn()
+        when {
+            BaseReadAloudService.isRun -> {
+                showReadAloudDialog()
+            }
+            isAutoPage -> {
+                AutoReadDialog().show(supportFragmentManager, "autoRead")
+            }
+            else -> {
+                read_menu.runMenuIn()
+            }
         }
     }
 
@@ -569,12 +583,14 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             autoPageStop()
         } else {
             isAutoPage = true
+            page_view.upContent()
+            page_view.upContent(1)
             autoPagePlus()
         }
         read_menu.setAutoPage(isAutoPage)
     }
 
-    private fun autoPageStop() {
+    override fun autoPageStop() {
         isAutoPage = false
         mHandler.removeCallbacks(autoPageRunnable)
         page_view.upContent()
@@ -583,7 +599,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private fun autoPagePlus() {
         mHandler.removeCallbacks(autoPageRunnable)
         autoPageProgress++
-        if (autoPageProgress >= 460) {
+        if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 10) {
             autoPageProgress = 0
             page_view.fillPage(PageDelegate.Direction.NEXT)
         } else {

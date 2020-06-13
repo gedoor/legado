@@ -26,7 +26,7 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
             widgetLayoutResource,
             R.id.switchWidget
         )
-        if (v is SwitchCompat) {
+        if (v is SwitchCompat && !v.isInEditMode) {
             ATH.setTint(v, context.accentColor)
         }
         super.onBindViewHolder(holder)

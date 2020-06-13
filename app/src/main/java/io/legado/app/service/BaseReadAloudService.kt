@@ -323,7 +323,6 @@ abstract class BaseReadAloudService : BaseService(),
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionCompat.sessionToken)
                 .setShowActionsInCompactView(0, 1, 2)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

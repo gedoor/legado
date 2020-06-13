@@ -58,7 +58,8 @@ class PageView(context: Context, attrs: AttributeSet) :
         pageDelegate?.onDraw(canvas)
         if (callBack.isAutoPage) {
             nextPage.screenshot()?.let {
-                val bottom = page_view.height * callBack.autoPageProgress / 460
+                val bottom =
+                    page_view.height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 10)
                 autoPageRect.set(0, 0, page_view.width, bottom)
                 canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
                 canvas.drawRect(
@@ -118,9 +119,10 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
-        if (ReadBookConfig.isScroll) {
+        if (ReadBookConfig.isScroll && !callBack.isAutoPage) {
             curPage.setContent(pageFactory.currentPage, resetPageOffset)
         } else {
+            curPage.resetPageOffset()
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
                 1 -> nextPage.setContent(pageFactory.nextPage)

@@ -103,9 +103,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         tv_title_mode.onClick {
             showTitleConfig()
         }
-        tv_text_bold.onClick {
-            ReadBookConfig.textBold = !ReadBookConfig.textBold
-            tv_text_bold.isSelected = ReadBookConfig.textBold
+        text_font_weight_converter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
         tv_text_font.onClick {
@@ -215,7 +213,6 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
 
     private fun upStyle() {
         ReadBookConfig.let {
-            tv_text_bold.isSelected = it.textBold
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
             dsb_line_size.progress = it.lineSpacingExtra
