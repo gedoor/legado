@@ -63,8 +63,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     @Synchronized
     private fun upAdapter() {
         if (System.currentTimeMillis() > postTime + 500) {
-            postTime = System.currentTimeMillis()
             handler.removeCallbacks(sendRunnable)
+            postTime = System.currentTimeMillis()
             val books = searchBooks.toList()
             searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
         } else {

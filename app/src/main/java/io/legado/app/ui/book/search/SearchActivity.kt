@@ -52,7 +52,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
-    private var refreshTime = System.currentTimeMillis()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -181,14 +180,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             upGroupMenu()
         })
         viewModel.searchBookLiveData.observe(this, Observer {
-            upSearchItems(it, false)
+            upSearchItems(it)
         })
         viewModel.isSearchLiveData.observe(this, Observer {
             if (it) {
                 startSearch()
             } else {
                 searchFinally()
-                upSearchItems(viewModel.searchBooks, true)
             }
         })
     }
@@ -284,14 +282,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      * 更新搜索结果
      */
     @Synchronized
-    private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
+    private fun upSearchItems(items: List<SearchBook>) {
         val searchItems = ArrayList(items)
-        if (isMandatoryUpdate || System.currentTimeMillis() - refreshTime > 500) {
-            refreshTime = System.currentTimeMillis()
-            val diffResult =
-                DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), searchItems))
-            adapter.setItems(searchItems, diffResult)
-        }
+        val diffResult =
+            DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), searchItems))
+        adapter.setItems(searchItems, diffResult)
     }
 
     /**
