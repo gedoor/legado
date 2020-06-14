@@ -701,4 +701,6 @@
     <string name="backup_summary">本地和WebDav壹起備份</string>
     <string name="restore_summary">優先從WebDav恢復,失敗時從本地恢復</string>
     <string name="import_old_summary">選擇舊版備份文件夾</string>
+    <string name="enabled">已啓用</string>
+    <string name="disabled">已禁用</string>
 </resources>

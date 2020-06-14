@@ -52,6 +52,14 @@
 
             </item>
 
+            <item
+                android:id="@+id/menu_enabled_group"
+                android:title="@string/enabled" />
+
+            <item
+                android:id="@+id/menu_disabled_group"
+                android:title="@string/disabled" />
+
             <group android:id="@+id/source_group">
 
             </group>
