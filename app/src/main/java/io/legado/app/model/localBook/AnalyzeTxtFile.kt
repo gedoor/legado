@@ -278,18 +278,20 @@ class AnalyzeTxtFile {
         }
 
         private fun getTocRules(): List<TxtTocRule> {
-            val rules = App.db.txtTocRule().all
+            val rules = App.db.txtTocRule().enabled
             if (rules.isEmpty()) {
-                return getDefaultRules()
+                return getDefaultEnabledRules()
             }
             return rules
         }
 
-        fun getDefaultRules(): List<TxtTocRule> {
+        fun getDefaultEnabledRules(): List<TxtTocRule> {
             App.INSTANCE.assets.open("txtTocRule.json").readBytes().let { byteArray ->
-                GSON.fromJsonArray<TxtTocRule>(String(byteArray))?.let {
-                    App.db.txtTocRule().insert(*it.toTypedArray())
-                    return it
+                GSON.fromJsonArray<TxtTocRule>(String(byteArray))?.let { txtTocRules ->
+                    App.db.txtTocRule().insert(*txtTocRules.toTypedArray())
+                    return txtTocRules.filter {
+                        it.enable
+                    }
                 }
             }
             return emptyList()
