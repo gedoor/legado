@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.info.edit
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +17,9 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class BookInfoEditActivity :
     VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit),
     ChangeCoverDialog.CallBack {
+
+    private val resultSelectCover = 132
+
     override val viewModel: BookInfoEditViewModel
         get() = getViewModel(BookInfoEditViewModel::class.java)
 
@@ -47,6 +51,13 @@ class BookInfoEditActivity :
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
+        tv_select_cover.onClick {
+            selectImage()
+        }
+        tv_refresh_cover.onClick {
+            viewModel.book?.customCoverUrl = tie_cover_url.text?.toString()
+            upCover()
+        }
     }
 
     private fun upView(book: Book) {
@@ -77,9 +88,29 @@ class BookInfoEditActivity :
         }
     }
 
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "image/*"
+        startActivityForResult(intent, resultSelectCover)
+    }
+
     override fun coverChangeTo(coverUrl: String) {
         viewModel.book?.customCoverUrl = coverUrl
         tie_cover_url.setText(coverUrl)
         upCover()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            resultSelectCover -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    data?.data?.let { uri ->
+                        coverChangeTo(uri.toString())
+                    }
+                }
+            }
+        }
     }
 }

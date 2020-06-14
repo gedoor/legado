@@ -14,7 +14,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun hasNextPlus(): Boolean = with(dataSource) {
-        return hasNextChapter() || pageIndex < (currentChapter?.pageSize() ?: 1) - 2
+        return hasNextChapter() || pageIndex < (currentChapter?.pageSize ?: 1) - 2
     }
 
     override fun moveToFirst() {
@@ -23,10 +23,10 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override fun moveToLast() = with(dataSource) {
         currentChapter?.let {
-            if (it.pageSize() == 0) {
+            if (it.pageSize == 0) {
                 ReadBook.setPageIndex(0)
             } else {
-                ReadBook.setPageIndex(it.pageSize().minus(1))
+                ReadBook.setPageIndex(it.pageSize.minus(1))
             }
         } ?: ReadBook.setPageIndex(0)
     }
@@ -75,7 +75,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 return@with TextPage(text = it).format()
             }
             currentChapter?.let {
-                if (pageIndex < it.pageSize() - 1) {
+                if (pageIndex < it.pageSize - 1) {
                     return@with it.page(pageIndex + 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
                 }
@@ -102,7 +102,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 }
             }
             prevChapter?.let {
-                return@with it.lastPage()?.removePageAloudSpan()
+                return@with it.lastPage?.removePageAloudSpan()
                     ?: TextPage(title = it.title).format()
             }
             return TextPage().format()
@@ -111,12 +111,12 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     override val nextPagePlus: TextPage
         get() = with(dataSource) {
             currentChapter?.let {
-                if (pageIndex < it.pageSize() - 2) {
+                if (pageIndex < it.pageSize - 2) {
                     return@with it.page(pageIndex + 2)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
                 }
                 nextChapter?.let { nc ->
-                    if (pageIndex < it.pageSize() - 1) {
+                    if (pageIndex < it.pageSize - 1) {
                         return@with nc.page(0)?.removePageAloudSpan()
                             ?: TextPage(title = nc.title).format()
                     }

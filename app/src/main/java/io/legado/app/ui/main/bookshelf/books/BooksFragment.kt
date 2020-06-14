@@ -130,7 +130,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     override fun openBookInfo(book: Book) {
-        context?.startActivity<BookInfoActivity>(Pair("bookUrl", book.bookUrl))
+        context?.startActivity<BookInfoActivity>(
+            Pair("name", book.name),
+            Pair("author", book.author)
+        )
     }
 
     override fun isUpdate(bookUrl: String): Boolean {

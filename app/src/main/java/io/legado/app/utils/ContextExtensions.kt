@@ -3,6 +3,7 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.content.*
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -179,3 +180,15 @@ fun Context.openUrl(uri: Uri) {
         }
     }
 }
+
+val Context.channel: String
+    get() {
+        try {
+            val pm = packageManager
+            val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            return appInfo.metaData.getString("channel") ?: ""
+        } catch (e: Exception) {
+            e.printStackTrace();
+        }
+        return ""
+    }

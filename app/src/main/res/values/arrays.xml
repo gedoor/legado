@@ -106,4 +106,10 @@
         <item>页数及进度</item>
     </string-array>
 
+    <string-array name="text_font_weight">
+        <item>正常</item>
+        <item>粗体</item>
+        <item>细体</item>
+    </string-array>
+
 </resources>

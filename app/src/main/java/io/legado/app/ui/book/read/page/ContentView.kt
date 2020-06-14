@@ -49,15 +49,19 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun upStyle() {
         ReadBookConfig.apply {
+            bv_header_left.typeface = ChapterProvider.typeface
             tv_header_left.typeface = ChapterProvider.typeface
             tv_header_middle.typeface = ChapterProvider.typeface
             tv_header_right.typeface = ChapterProvider.typeface
+            bv_footer_left.typeface = ChapterProvider.typeface
             tv_footer_left.typeface = ChapterProvider.typeface
             tv_footer_middle.typeface = ChapterProvider.typeface
             tv_footer_right.typeface = ChapterProvider.typeface
+            bv_header_left.setColor(durConfig.textColor())
             tv_header_left.setColor(durConfig.textColor())
             tv_header_middle.setColor(durConfig.textColor())
             tv_header_right.setColor(durConfig.textColor())
+            bv_footer_left.setColor(durConfig.textColor())
             tv_footer_left.setColor(durConfig.textColor())
             tv_footer_middle.setColor(durConfig.textColor())
             tv_footer_right.setColor(durConfig.textColor())
@@ -86,18 +90,14 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     fun upTipStyle() {
         ReadTipConfig.apply {
-            val tipHeaderLeftNone = tipHeaderLeft == none
-            val tipHeaderRightNone = tipHeaderRight == none
-            val tipHeaderMiddleNone = tipHeaderMiddle == none
-            val tipFooterLeftNone = tipFooterLeft == none
-            val tipFooterRightNone = tipFooterRight == none
-            val tipFooterMiddleNone = tipFooterMiddle == none
-            tv_header_left.isInvisible = tipHeaderLeftNone
-            tv_header_right.isGone = tipHeaderRightNone
-            tv_header_middle.isGone = tipHeaderMiddleNone
-            tv_footer_left.isInvisible = tipFooterLeftNone
-            tv_footer_right.isGone = tipFooterRightNone
-            tv_footer_middle.isGone = tipFooterMiddleNone
+            tv_header_left.isInvisible = tipHeaderLeft != chapterTitle
+            bv_header_left.isInvisible = tipHeaderLeft == none || !tv_header_left.isInvisible
+            tv_header_right.isGone = tipHeaderRight == none
+            tv_header_middle.isGone = tipHeaderMiddle == none
+            tv_footer_left.isInvisible = tipFooterLeft != chapterTitle
+            bv_footer_left.isInvisible = tipFooterLeft == none || !tv_footer_left.isInvisible
+            tv_footer_right.isGone = tipFooterRight == none
+            tv_footer_middle.isGone = tipFooterMiddle == none
             ll_header.isGone = hideHeader
             ll_footer.isGone = hideFooter
         }
@@ -115,10 +115,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvTime = when (ReadTipConfig.time) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -128,10 +128,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvBattery = when (ReadTipConfig.battery) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -141,10 +141,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 10f
         }
         tvPage = when (ReadTipConfig.page) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -154,10 +154,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvTotalProgress = when (ReadTipConfig.totalProgress) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -167,10 +167,10 @@ class ContentView(context: Context) : FrameLayout(context) {
             textSize = 12f
         }
         tvPageAndTotal = when (ReadTipConfig.pageAndTotal) {
-            ReadTipConfig.tipHeaderLeft -> tv_header_left
+            ReadTipConfig.tipHeaderLeft -> bv_header_left
             ReadTipConfig.tipHeaderMiddle -> tv_header_middle
             ReadTipConfig.tipHeaderRight -> tv_header_right
-            ReadTipConfig.tipFooterLeft -> tv_footer_left
+            ReadTipConfig.tipFooterLeft -> bv_footer_left
             ReadTipConfig.tipFooterMiddle -> tv_footer_middle
             ReadTipConfig.tipFooterRight -> tv_footer_right
             else -> null
@@ -207,11 +207,7 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
-        val title = when (AppConfig.chineseConverterType) {
-            1 -> HanLP.convertToSimplifiedChinese(textPage.title)
-            2 -> HanLP.convertToTraditionalChinese(textPage.title)
-            else -> textPage.title
-        }
+        val title = textPage.title
         tvTitle?.text = title
         tvPage?.text = "${index.plus(1)}/$pageSize"
         tvTotalProgress?.text = readProgress

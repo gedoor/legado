@@ -334,11 +334,11 @@ class BookSourceEditActivity :
                 "sourceRegex" -> contentRule.sourceRegex = it.value
             }
         }
-        source.ruleSearch = GSON.toJson(searchRule)
-        source.ruleExplore = GSON.toJson(exploreRule)
-        source.ruleBookInfo = GSON.toJson(bookInfoRule)
-        source.ruleToc = GSON.toJson(tocRule)
-        source.ruleContent = GSON.toJson(contentRule)
+        source.ruleSearch = searchRule
+        source.ruleExplore = exploreRule
+        source.ruleBookInfo = bookInfoRule
+        source.ruleToc = tocRule
+        source.ruleContent = contentRule
         return source
     }
 
@@ -350,7 +350,7 @@ class BookSourceEditActivity :
         return true
     }
 
-    override fun sendText(text: String) {
+    private fun insertText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -362,6 +362,14 @@ class BookSourceEditActivity :
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
+        }
+    }
+
+    override fun sendText(text: String) {
+        if (text == AppConst.keyboardToolChars[0]) {
+            insertText(AppConst.urlOption)
+        } else {
+            insertText(text)
         }
     }
 

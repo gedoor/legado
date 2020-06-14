@@ -6,6 +6,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
@@ -44,23 +45,23 @@ object ChapterProvider {
      */
     fun getTextChapter(
         bookChapter: BookChapter,
-        content: String,
+        contents: List<String>,
         chapterSize: Int
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()
         val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
-        val contents = content.split("\n")
         var durY = 0f
         textPages.add(TextPage())
-        for ((index, text) in contents.withIndex()) {
+        contents.forEachIndexed { index, text ->
             val isTitle = index == 0
-            if (isTitle && ReadBookConfig.titleMode == 2) {
-                continue
+            if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                durY = setTypeText(
+                    text, durY, textPages, pageLines,
+                    pageLengths, stringBuilder, isTitle
+                )
             }
-            durY =
-                setTypeText(text, durY, textPages, pageLines, pageLengths, stringBuilder, isTitle)
         }
         textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
@@ -70,7 +71,7 @@ object ChapterProvider {
         if (pageLengths.size < textPages.size) {
             pageLengths.add(textPages.last().text.length)
         }
-        for ((index, item) in textPages.withIndex()) {
+        textPages.forEachIndexed { index, item ->
             item.index = index
             item.pageSize = textPages.size
             item.chapterIndex = bookChapter.index
@@ -78,6 +79,7 @@ object ChapterProvider {
             item.title = bookChapter.title
             item.upLinesPosition()
         }
+
         return TextChapter(
             bookChapter.index,
             bookChapter.title,
@@ -161,6 +163,10 @@ object ChapterProvider {
         desiredWidth: Float
     ) {
         var x = 0f
+        if (!ReadBookConfig.textFullJustify) {
+            addCharsToLineLast(textLine, words, textPaint, x)
+            return
+        }
         val bodyIndent = ReadBookConfig.bodyIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         bodyIndent.toStringArray().forEach {
@@ -186,14 +192,18 @@ object ChapterProvider {
         desiredWidth: Float,
         startX: Float
     ) {
+        if (!ReadBookConfig.textFullJustify) {
+            addCharsToLineLast(textLine, words, textPaint, startX)
+            return
+        }
         val gapCount: Int = words.length - 1
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
-        for ((i, char) in words.toStringArray().withIndex()) {
-            val cw = StaticLayout.getDesiredWidth(char, textPaint)
-            val x1 = if (i != words.lastIndex) (x + cw + d) else (x + cw)
+        words.toStringArray().forEachIndexed { index, s ->
+            val cw = StaticLayout.getDesiredWidth(s, textPaint)
+            val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
             textLine.addTextChar(
-                charData = char,
+                charData = s,
                 start = paddingLeft + x,
                 end = paddingLeft + x1
             )
@@ -262,23 +272,37 @@ object ChapterProvider {
             App.INSTANCE.removePref(PreferKey.readBookFont)
             Typeface.SANS_SERIF
         }
+        // 字体统一处理
+        val bold = Typeface.create(typeface, Typeface.BOLD)
+        val normal = Typeface.create(typeface, Typeface.NORMAL)
+        val (titleFont, textFont) = when (ReadBookConfig.textBold) {
+            1 -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                    Pair(Typeface.create(typeface, 900, false), bold)
+                else
+                    Pair(bold, bold)
+            }
+            2 -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                    Pair(normal, Typeface.create(typeface, 300, false))
+                else
+                    Pair(normal, normal)
+            }
+            else -> Pair(bold, normal)
+        }
+
         //标题
         titlePaint = TextPaint()
         titlePaint.color = ReadBookConfig.durConfig.textColor()
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
-        titlePaint.typeface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Typeface.create(typeface, if (ReadBookConfig.textBold) 900 else 700, false)
-        } else {
-            Typeface.create(typeface, Typeface.BOLD)
-        }
+        titlePaint.typeface = titleFont
         titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
         titlePaint.isAntiAlias = true
         //正文
         contentPaint = TextPaint()
         contentPaint.color = ReadBookConfig.durConfig.textColor()
         contentPaint.letterSpacing = ReadBookConfig.letterSpacing
-        val style = if (ReadBookConfig.textBold) Typeface.BOLD else Typeface.NORMAL
-        contentPaint.typeface = Typeface.create(typeface, style)
+        contentPaint.typeface = textFont
         contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
         contentPaint.isAntiAlias = true
         //间距

@@ -19,10 +19,23 @@ import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
-    fun topSource(bookSource: BookSource) {
+    fun topSource(vararg sources: BookSource) {
         execute {
-            bookSource.customOrder = App.db.bookSourceDao().minOrder - 1
-            App.db.bookSourceDao().insert(bookSource)
+            val minOrder = App.db.bookSourceDao().minOrder - 1
+            sources.forEachIndexed { index, bookSource ->
+                bookSource.customOrder = minOrder - index
+            }
+            App.db.bookSourceDao().update(*sources)
+        }
+    }
+
+    fun bottomSource(vararg sources: BookSource) {
+        execute {
+            val maxOrder = App.db.bookSourceDao().maxOrder + 1
+            sources.forEachIndexed { index, bookSource ->
+                bookSource.customOrder = maxOrder + index
+            }
+            App.db.bookSourceDao().update(*sources)
         }
     }
 
@@ -44,7 +57,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun enableSelection(sources: LinkedHashSet<BookSource>) {
+    fun enableSelection(sources: List<BookSource>) {
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach {
@@ -54,7 +67,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun disableSelection(sources: LinkedHashSet<BookSource>) {
+    fun disableSelection(sources: List<BookSource>) {
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach {
@@ -64,7 +77,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun enableSelectExplore(sources: LinkedHashSet<BookSource>) {
+    fun enableSelectExplore(sources: List<BookSource>) {
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach {
@@ -74,7 +87,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun disableSelectExplore(sources: LinkedHashSet<BookSource>) {
+    fun disableSelectExplore(sources: List<BookSource>) {
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach {
@@ -84,13 +97,13 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun delSelection(sources: LinkedHashSet<BookSource>) {
+    fun delSelection(sources: List<BookSource>) {
         execute {
             App.db.bookSourceDao().delete(*sources.toTypedArray())
         }
     }
 
-    fun exportSelection(sources: LinkedHashSet<BookSource>, file: File) {
+    fun exportSelection(sources: List<BookSource>, file: File) {
         execute {
             val json = GSON.toJson(sources)
             FileUtils.createFileIfNotExist(file, "exportBookSource.json")
@@ -102,7 +115,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun exportSelection(sources: LinkedHashSet<BookSource>, doc: DocumentFile) {
+    fun exportSelection(sources: List<BookSource>, doc: DocumentFile) {
         execute {
             val json = GSON.toJson(sources)
             doc.findFile("exportBookSource.json")?.delete()
@@ -145,10 +158,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             execute {
                 val sources = App.db.bookSourceDao().getByGroup(group)
                 sources.map { source ->
-                    source.bookSourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
-                        it.remove(group)
-                        source.bookSourceGroup = TextUtils.join(",", it)
-                    }
+                    source.removeGroup(group)
                 }
                 App.db.bookSourceDao().update(*sources.toTypedArray())
             }
@@ -220,6 +230,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 else -> "格式不对"
             }
         }.onError {
+            it.printStackTrace()
             finally(it.localizedMessage ?: "")
         }.onSuccess {
             finally(it)
@@ -227,7 +238,11 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     private fun importSourceUrl(url: String): Int {
-        HttpHelper.simpleGet(url, "UTF-8")?.let { body ->
+        HttpHelper.simpleGet(url, "UTF-8").let { body ->
+            if (body == null) {
+                toast("访问网站失败")
+                return 0
+            }
             val bookSources = mutableListOf<BookSource>()
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
@@ -239,6 +254,5 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             App.db.bookSourceDao().insert(*bookSources.toTypedArray())
             return bookSources.size
         }
-        return 0
     }
 }

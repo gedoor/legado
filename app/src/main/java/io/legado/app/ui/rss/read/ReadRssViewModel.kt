@@ -138,17 +138,28 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     fun clHtml(content: String): String {
-        return if (content.contains("<style>".toRegex())) {
-            content
-        } else {
-            """
-                <style>
-                    img{max-width:100% !important; width:auto; height:auto;}
-                    video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
-                    body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
-                </style>
-                $content
-            """.trimIndent()
+        return when {
+            !rssSource?.style.isNullOrEmpty() -> {
+                """
+                    <style>
+                        ${rssSource?.style}
+                    </style>
+                    $content
+                """.trimIndent()
+            }
+            content.contains("<style>".toRegex()) -> {
+                content
+            }
+            else -> {
+                """
+                    <style>
+                        img{max-width:100% !important; width:auto; height:auto;}
+                        video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
+                        body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
+                    </style>
+                    $content
+                """.trimIndent()
+            }
         }
     }
 

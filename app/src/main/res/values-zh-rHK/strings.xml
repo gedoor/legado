@@ -88,7 +88,7 @@
     <string name="download_offline_s">下載已選擇的章節到本地</string>
     <string name="change_origin">換源</string>
     <string name="about_description">
-        \u3000\u3000這是一款使用 Kotlin 全新開發的開源的閲讀應用程式，歡迎你的加入。關注公眾號[开源阅读软件]！
+        \u3000\u3000這是一款使用 Kotlin 全新開發的開源的閲讀應用程式，歡迎你的加入。關注公眾號[开源阅读]！
     </string>
     <string name="app_share_description">
         閲讀3.0下載地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
@@ -401,7 +401,7 @@
     <string name="rule_chapter_name">章節名稱規則 (ChapterName)</string>
     <string name="rule_chapter_url">章節 URL 規則 (chapterUrl)</string>
     <string name="rule_is_vip">VIP 標識 (isVip)</string>
-    <string name="rule_update_time">章節信息 (ChapterInfo)</string>
+    <string name="rule_update_time">更新時間 (ChapterInfo)</string>
     <string name="rule_book_content">正文規則 (content)</string>
     <string name="rule_next_content">正文下一頁 URL 規則 (nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
@@ -417,6 +417,7 @@
     <string name="r_description">描述規則 (ruleDescription)</string>
     <string name="r_image">圖片 url 規則 (ruleImage)</string>
     <string name="r_content">內容規則 (ruleContent)</string>
+    <string name="r_style">樣式 (style)</string>
     <string name="r_link">鏈接規則 (ruleLink)</string>
     <!-- source end-->
 
@@ -664,11 +665,12 @@
     <string name="follow_official_account">關注公衆號</string>
     <string name="wechat">WeChat</string>
     <string name="thanks">你的支持是我更新的動力</string>
-    <string name="about_official_account">公众号[开源阅读软件]</string>
+    <string name="about_official_account">公众号[开源阅读]</string>
     <string name="source_auto_changing">正在自動換源</string>
     <string name="click_to_apply">點擊加入</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
+    <string name="switchLayout">切換佈局</string>
 
     <!--color-->
     <string name="primary">主色調</string>
@@ -685,4 +687,18 @@
     <string name="night_accent">夜間，強調色</string>
     <string name="night_background_color">夜間，背景色</string>
     <string name="night_navbar_color">夜間，導航欄顏色</string>
+    <string name="hideHeader">隱藏頁眉</string>
+    <string name="hideFooter">隱藏頁脚</string>
+    <string name="auto_change_source">自動換源</string>
+    <string name="to_bottom">置底</string>
+    <string name="text_full_justify">文字兩端對齊</string>
+    <string name="auto_page_speed">自動翻頁速度</string>
+    <string name="sort_by_url">地址排序</string>
+    <string name="text_font_weight_converter">文章字體轉換</string>
+    <string name="select_backup_path">請選擇備份路徑</string>
+    <string name="other">其它</string>
+    <string name="official_account" translatable="false">legado-top</string>
+    <string name="backup_summary">本地和WebDav壹起備份</string>
+    <string name="restore_summary">優先從WebDav恢復,失敗時從本地恢復</string>
+    <string name="import_old_summary">選擇舊版備份文件夾</string>
 </resources>

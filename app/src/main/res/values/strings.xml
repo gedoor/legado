@@ -11,6 +11,7 @@
     <string name="mkdirs">创建子文件夹</string>
     <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
     <string name="backup_path">备份路径</string>
+    <string name="select_backup_path">请选择备份路径</string>
     <string name="menu_import_old_version">导入旧版数据</string>
     <string name="menu_import_github">导入Github数据</string>
     <string name="menu_replace_rule">净化替换</string>
@@ -88,7 +89,7 @@
     <string name="download_offline_s">下载选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
-        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读软件]！
+        \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读]！
     </string>
     <string name="app_share_description">
         阅读3.0下载地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
@@ -308,6 +309,7 @@
     <string name="line_size">行距</string>
     <string name="paragraph_size">段距</string>
     <string name="to_top">置顶</string>
+    <string name="to_bottom">置底</string>
     <string name="auto_expand_find">自动展开发现</string>
     <string name="default_expand_first">默认展开第一组发现</string>
     <string name="threads_num">当前线程数 %s</string>
@@ -401,7 +403,7 @@
     <string name="rule_chapter_name">章节名称规则(ChapterName)</string>
     <string name="rule_chapter_url">章节URL规则(chapterUrl)</string>
     <string name="rule_is_vip">VIP标识(isVip)</string>
-    <string name="rule_update_time">章节信息(ChapterInfo)</string>
+    <string name="rule_update_time">更新时间(ChapterInfo)</string>
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
@@ -417,6 +419,7 @@
     <string name="r_description">描述规则(ruleDescription)</string>
     <string name="r_image">图片url规则(ruleImage)</string>
     <string name="r_content">内容规则(ruleContent)</string>
+    <string name="r_style">样式(style)</string>
     <string name="r_link">链接规则(ruleLink)</string>
     <!-- source end-->
 
@@ -661,18 +664,20 @@
     <string name="contributors">开发人员</string>
     <string name="contact">联系我们</string>
     <string name="license">开源许可</string>
-    <string name="other" translatable="false">其它</string>
-    <string name="official_account" translatable="false">开源阅读软件</string>
+    <string name="other">其它</string>
+    <string name="official_account">开源阅读</string>
     <string name="follow_official_account">关注公众号</string>
     <string name="wechat">微信</string>
     <string name="thanks">您的支持是我更新的动力</string>
-    <string name="about_official_account">公众号[开源阅读软件]</string>
+    <string name="about_official_account">公众号[开源阅读]</string>
     <string name="source_auto_changing">正在自动换源</string>
     <string name="click_to_apply">点击加入</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
     <string name="hideHeader">隐藏页眉</string>
     <string name="hideFooter">隐藏页脚</string>
+    <string name="switchLayout">切换布局</string>
+    <string name="text_font_weight_converter">文章字重切换</string>
   
     <!--color-->
     <string name="primary">主色调</string>
@@ -689,5 +694,11 @@
     <string name="night_accent">夜间，强调色</string>
     <string name="night_background_color">夜间，背景色</string>
     <string name="night_navbar_color">夜间，底栏色</string>
-
+    <string name="auto_change_source">自动换源</string>
+    <string name="text_full_justify">文字两端对齐</string>
+    <string name="auto_page_speed">自动翻页速度</string>
+    <string name="sort_by_url">地址排序</string>
+    <string name="backup_summary">本地和WebDav一起备份</string>
+    <string name="restore_summary">优先从WebDav恢复,失败时从本地恢复</string>
+    <string name="import_old_summary">选择旧版备份文件夹</string>
 </resources>

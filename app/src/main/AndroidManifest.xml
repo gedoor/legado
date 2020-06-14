@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.legado.app">
 
+    <uses-permission
+        android:name="android.permission.MANAGE_DOCUMENTS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />

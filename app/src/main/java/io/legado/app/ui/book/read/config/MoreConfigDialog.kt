@@ -18,6 +18,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.book.read.Help
+import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 
@@ -38,7 +39,7 @@ class MoreConfigDialog : DialogFragment() {
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
             it.attributes = attr
-            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 360.dp)
         }
     }
 
@@ -109,6 +110,9 @@ class MoreConfigDialog : DialogFragment() {
                     activity?.let {
                         Help.setOrientation(it)
                     }
+                }
+                PreferKey.textFullJustify -> {
+                    postEvent(EventBus.UP_CONFIG, true)
                 }
             }
         }
