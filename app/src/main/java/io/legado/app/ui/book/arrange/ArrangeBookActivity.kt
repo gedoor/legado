@@ -15,6 +15,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
@@ -65,6 +66,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
 
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = ArrangeBookAdapter(this, this)

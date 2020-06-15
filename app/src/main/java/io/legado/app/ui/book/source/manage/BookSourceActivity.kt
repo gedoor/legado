@@ -20,6 +20,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
@@ -152,6 +153,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = BookSourceAdapter(this, this)

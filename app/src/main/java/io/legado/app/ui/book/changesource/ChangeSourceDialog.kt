@@ -19,6 +19,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.AppConfig
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefBoolean
@@ -92,6 +93,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     private fun initRecyclerView() {
         adapter = ChangeSourceAdapter(requireContext(), this)
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter

@@ -6,16 +6,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.PreferenceFragmentSupport
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.toast
 
-class AboutFragment : PreferenceFragmentCompat() {
+class AboutFragment : PreferenceFragmentSupport() {
 
     private val licenseUrl = "https://github.com/gedoor/legado/blob/master/LICENSE"
     private val disclaimerUrl = "https://gedoor.github.io/MyBookshelf/disclaimer.html"

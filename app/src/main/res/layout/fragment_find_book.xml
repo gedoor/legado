@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/find" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <fadeapp.widgets.ScrollLessRecyclerView
         android:id="@+id/rv_find"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

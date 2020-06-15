@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.help.AppConfig
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.popup_keyboard_tool.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -34,6 +35,7 @@ class KeyboardToolPop(
 
     private fun initRecyclerView() = with(contentView) {
         val adapter = Adapter(context)
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         recycler_view.adapter = adapter
         adapter.setItems(chars)

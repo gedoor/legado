@@ -26,12 +26,25 @@ object ReadBookConfig {
         val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
         GSON.fromJsonArray<Config>(json)!!
     }
-    val durConfig get() = getConfig(styleSelect)
+    val durConfig get() =
+        if (AppConfig.isEInkMode)
+            einkConfig
+        else
+            getConfig(styleSelect)
+
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
+    val einkConfig:Config
 
     init {
         upConfig()
+        einkConfig = Config(
+            bgStr = "#FFFFFF",
+            bgStrNight = "#FFFFFF",
+            textColor = "#000000",
+            textColorNight = "#000000",
+            darkStatusIconNight = true
+        )
     }
 
     @Synchronized

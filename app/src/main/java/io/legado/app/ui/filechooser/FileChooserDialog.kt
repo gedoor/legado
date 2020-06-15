@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.constant.Theme
+import io.legado.app.help.AppConfig
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -137,10 +138,12 @@ class FileChooserDialog : DialogFragment(),
         fileAdapter = FileAdapter(requireContext(), this)
         pathAdapter = PathAdapter(requireContext(), this)
 
+        rv_file.isEnableScroll = !AppConfig.isEInkMode
         rv_file.addItemDecoration(VerticalDivider(requireContext()))
         rv_file.layoutManager = LinearLayoutManager(activity)
         rv_file.adapter = fileAdapter
 
+        rv_path.isEnableScroll = !AppConfig.isEInkMode
         rv_path.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
         rv_path.adapter = pathAdapter
 

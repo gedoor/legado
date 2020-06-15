@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <fadeapp.widgets.ScrollLessRecyclerView
         android:id="@+id/recycler_view"
         android:background="@color/background_card"
         android:layout_width="match_parent"

@@ -16,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.service.help.Download
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -74,6 +75,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     }
 
     private fun initRecyclerView() {
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = DownloadAdapter(this, this)
         recycler_view.adapter = adapter

@@ -22,6 +22,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
@@ -96,6 +97,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.setGroupVisible(R.id.menu_groups, false)
         adapter = GroupAdapter(requireContext())
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter

@@ -9,7 +9,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
@@ -26,7 +25,7 @@ import io.legado.app.ui.widget.prefs.IconListPreference
 import io.legado.app.utils.*
 
 
-class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class ThemeConfigFragment : PreferenceFragmentSupport(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     val items = arrayListOf("极简", "曜夜", "经典", "黑白", "A屏黑")
 
@@ -156,18 +155,20 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                             putPrefInt("colorPrimary", getCompatColor(R.color.white))
                             putPrefInt("colorAccent", getCompatColor(R.color.black))
                             putPrefInt("colorBackground", getCompatColor(R.color.white))
+                            putPrefInt("colorBottomBackground", getCompatColor(R.color.white))
                             AppConfig.isNightTheme = false
                         }
                         4 -> {
                             putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
                             putPrefInt(
                                 "colorAccentNight",
-                                getCompatColor(R.color.md_grey_600)
+                                getCompatColor(R.color.md_grey_500)
                             )
                             putPrefInt(
                                 "colorBackgroundNight",
                                 getCompatColor(R.color.black)
                             )
+                            putPrefInt("colorBottomBackgroundNight", getCompatColor(R.color.black))
                             AppConfig.isNightTheme = true
                         }
                     }

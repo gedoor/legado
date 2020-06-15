@@ -13,7 +13,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <fadeapp.widgets.ScrollLessRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <fadeapp.widgets.ScrollLessRecyclerView
         android:id="@+id/recycler_view_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

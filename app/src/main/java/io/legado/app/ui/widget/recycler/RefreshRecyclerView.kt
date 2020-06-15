@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
+import io.legado.app.help.AppConfig
 import kotlinx.android.synthetic.main.view_refresh_recycler.view.*
 
 
@@ -22,6 +23,7 @@ class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayou
     init {
         orientation = VERTICAL
         LayoutInflater.from(context).inflate(R.layout.view_refresh_recycler, this, true)
+        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.setOnTouchListener(object : OnTouchListener {
             @SuppressLint("ClickableViewAccessibility")
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {

@@ -15,6 +15,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
@@ -75,6 +76,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(rv_find)
+        rv_find.isEnableScroll = !AppConfig.isEInkMode
         linearLayoutManager = LinearLayoutManager(context)
         rv_find.layoutManager = linearLayoutManager
         adapter = ExploreAdapter(requireContext(), this, this)

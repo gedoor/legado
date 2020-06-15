@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <fadeapp.widgets.ScrollLessRecyclerView
         android:id="@+id/rv_path"
         android:layout_width="match_parent"
         android:layout_height="24dp"
@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         android:background="@color/background_card">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <fadeapp.widgets.ScrollLessRecyclerView
             android:id="@+id/rv_file"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
