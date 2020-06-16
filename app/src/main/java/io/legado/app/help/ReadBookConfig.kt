@@ -34,7 +34,7 @@ object ReadBookConfig {
 
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
-    val einkConfig:Config
+    private val einkConfig: Config
 
     init {
         upConfig()
