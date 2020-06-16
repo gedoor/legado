@@ -4,6 +4,7 @@ import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.EventBus
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
@@ -17,9 +18,9 @@ import kotlinx.coroutines.delay
 class MainViewModel(application: Application) : BaseViewModel(application) {
     val updateList = hashSetOf<String>()
 
-    fun upChapterList() {
+    fun upChapterList(books: List<Book>) {
         execute {
-            App.db.bookDao().hasUpdateBooks.forEach { book ->
+            books.forEach { book ->
                 if (!updateList.contains(book.bookUrl)) {
                     App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                         synchronized(this) {
