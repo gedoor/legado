@@ -105,16 +105,17 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                         view_pager_main.currentItem = 0
                         return true
                     }
-                    if (!BaseReadAloudService.pause) {
-                        if (System.currentTimeMillis() - exitTime > 2000) {
-                            toast(R.string.double_click_exit)
-                            exitTime = System.currentTimeMillis()
+                    if (System.currentTimeMillis() - exitTime > 2000) {
+                        toast(R.string.double_click_exit)
+                        exitTime = System.currentTimeMillis()
+                    } else {
+                        if (BaseReadAloudService.pause) {
+                            finish()
                         } else {
                             moveTaskToBack(true)
-                            return true
                         }
-                        return false
                     }
+                    return true
                 }
             }
         }
@@ -125,15 +126,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         super.onPause()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
-        }
-    }
-
-    override fun finish() {
-        if (System.currentTimeMillis() - exitTime > 2000) {
-            toast(R.string.double_click_exit)
-            exitTime = System.currentTimeMillis()
-        } else {
-            super.finish()
         }
     }
 
