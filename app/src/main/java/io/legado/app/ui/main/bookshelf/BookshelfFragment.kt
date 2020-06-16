@@ -31,6 +31,7 @@ import io.legado.app.ui.book.download.DownloadActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.main.bookshelf.books.BooksFragment
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
@@ -52,11 +53,12 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
-
+    private val activityViewModel: MainViewModel
+        get() = getViewModelOfActivity(MainViewModel::class.java)
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private var noGroupLiveData: LiveData<Int>? = null
     private val bookGroups = mutableListOf<BookGroup>()
-    private val fragmentMap = hashMapOf<Int, Fragment>()
+    private val fragmentMap = hashMapOf<Int, BooksFragment>()
     private var showGroupNone = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,6 +75,13 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
+            R.id.menu_update_toc -> {
+                val group = bookGroups[tab_layout.selectedTabPosition]
+                val fragment = fragmentMap[group.groupId]
+                fragment?.getBooks()?.let {
+                    activityViewModel.upChapterList(it)
+                }
+            }
             R.id.menu_bookshelf_layout -> configBookshelf()
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(childFragmentManager, "groupManageDialog")

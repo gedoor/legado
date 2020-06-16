@@ -46,14 +46,14 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    private lateinit var activityViewModel: MainViewModel
+    private val activityViewModel: MainViewModel
+        get() = getViewModelOfActivity(MainViewModel::class.java)
     private lateinit var booksAdapter: BaseBooksAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var position = 0
     private var groupId = -1
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
         arguments?.let {
             position = it.getInt("position", 0)
             groupId = it.getInt("groupId", -1)
@@ -118,6 +118,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
                 .calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), books))
             booksAdapter.setItems(books, diffResult)
         })
+    }
+
+    fun getBooks(): List<Book> {
+        return booksAdapter.getItems()
     }
 
     override fun open(book: Book) {
