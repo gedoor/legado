@@ -18,6 +18,12 @@ import kotlinx.coroutines.delay
 class MainViewModel(application: Application) : BaseViewModel(application) {
     val updateList = hashSetOf<String>()
 
+    fun upChapterList() {
+        execute {
+            upChapterList(App.db.bookDao().hasUpdateBooks)
+        }
+    }
+
     fun upChapterList(books: List<Book>) {
         execute {
             books.forEach { book ->
