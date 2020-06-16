@@ -663,8 +663,8 @@
     <string name="contributors">開發人員</string>
     <string name="contact">聯繫我們</string>
     <string name="license">開源許可</string>
-    <string name="other" translatable="false">其它</string>
-    <string name="official_account" translatable="false">legado-top</string>
+    <string name="other">其它</string>
+    <string name="official_account">legado-top</string>
     <string name="follow_official_account">關注公眾號</string>
     <string name="wechat">微信</string>
     <string name="thanks">您的支援是我更新的動力</string>
