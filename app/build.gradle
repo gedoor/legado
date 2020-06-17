@@ -66,6 +66,7 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix 'debug'
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         android.applicationVariants.all { variant ->
             variant.outputs.all {
@@ -86,7 +87,7 @@ android {
     }
     compileOptions {
         // Flag to enable support for the new language APIs
-        //coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled true
         // Sets Java compatibility to Java 8
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -108,6 +109,7 @@ kapt {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
@@ -197,9 +199,3 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-//afterEvaluate {
-//    for (Task task : project.tasks.matching { it.name.startsWith('crashlyticsUploadDeobs') }) {
-//        task.enabled = false
-//    }
-//}
