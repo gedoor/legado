@@ -37,6 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
                         GlobalScope.launch { Restore.restoreDatabase(Backup.backupPath) }
                     }
                 })
+                .allowMainThreadQueries()
                 .build()
         }
 
