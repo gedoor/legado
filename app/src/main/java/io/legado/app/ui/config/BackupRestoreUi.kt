@@ -190,10 +190,11 @@ object BackupRestoreUi {
                     AppConfig.backupPath = uri.toString()
                 }
             }
-            oldDataRequestCode ->
-                if (resultCode == RESULT_OK) data?.data?.let { uri ->
+            oldDataRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
                     ImportOldData.importUri(uri)
                 }
+            }
         }
     }
 
