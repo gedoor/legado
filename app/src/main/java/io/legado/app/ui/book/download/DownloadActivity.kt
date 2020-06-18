@@ -79,7 +79,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
         when (item.itemId) {
             R.id.menu_download -> launch(IO) {
                 if (adapter.downloadMap.isNullOrEmpty()) {
-                    App.db.bookDao().webBooks.forEach { book ->
+                    adapter.getItems().forEach { book ->
                         Download.start(
                             this@DownloadActivity,
                             book.bookUrl,
