@@ -6,6 +6,7 @@
 **2020/06/18**
 * fadeapp.widgets:scrollless-recyclerView导致有些手机重影,暂时去除
 * 下载界面添加分组
+* 修复eInk bug
 
 **2020/06/17**
 * 修复更新书架时更新禁止更新的问题
