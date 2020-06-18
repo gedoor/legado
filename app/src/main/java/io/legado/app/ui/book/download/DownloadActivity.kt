@@ -125,7 +125,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
         }
         booksLiveData?.observe(this, Observer { list ->
             val booksDownload = list.filter {
-                !it.isLocalBook() && it.isTxt()
+                it.isOnLineTxt()
             }
             val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                 1 -> booksDownload.sortedByDescending { it.latestChapterTime }

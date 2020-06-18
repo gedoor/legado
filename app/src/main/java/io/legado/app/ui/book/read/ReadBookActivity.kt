@@ -198,7 +198,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     when (item.groupId) {
                         R.id.menu_group_on_line -> item.isVisible = onLine
                         R.id.menu_group_local -> item.isVisible = !onLine
-                        R.id.menu_group_text -> item.isVisible = book.isTxt()
+                        R.id.menu_group_text -> item.isVisible = book.isLocalTxt()
                         R.id.menu_group_login ->
                             item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
                         else -> if (item.itemId == R.id.menu_enable_replace) {

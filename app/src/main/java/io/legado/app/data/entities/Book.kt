@@ -56,8 +56,12 @@ data class Book(
         return origin == BookType.local
     }
 
-    fun isTxt(): Boolean {
+    fun isLocalTxt(): Boolean {
         return isLocalBook() && originName.endsWith(".txt", true)
+    }
+
+    fun isOnLineTxt(): Boolean {
+        return !isLocalBook() && type == 0
     }
 
     override fun equals(other: Any?): Boolean {
