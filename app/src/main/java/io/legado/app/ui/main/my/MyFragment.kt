@@ -16,7 +16,6 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
@@ -128,10 +127,10 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     if (AppConfig.isEInkMode) {
                         //保存开启前的设置
                         putPrefInt(PreferKey.lastPageAnim, ReadBookConfig.pageAnim)
-                        putPrefInt(PreferKey.cLPrimary, ThemeStore.primaryColor())
-                        putPrefInt(PreferKey.cLAccent, ThemeStore.accentColor())
-                        putPrefInt(PreferKey.cLBackground, ThemeStore.backgroundColor())
-                        putPrefInt(PreferKey.cLBBackground, ThemeStore.bottomBackground())
+                        putPrefInt(PreferKey.cLPrimary, getPrefInt(PreferKey.cPrimary))
+                        putPrefInt(PreferKey.cLAccent, getPrefInt(PreferKey.cAccent))
+                        putPrefInt(PreferKey.cLBackground, getPrefInt(PreferKey.cBackground))
+                        putPrefInt(PreferKey.cLBBackground, getPrefInt(PreferKey.cBBackground))
                         putPrefBoolean(PreferKey.lastIsNight, AppConfig.isNightTheme)
                         putPrefString(
                             PreferKey.lastThemeMode,
@@ -147,21 +146,16 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                         AppConfig.isNightTheme = false
                         App.INSTANCE.applyDayNight()
                         postEvent(EventBus.RECREATE, "")
-                    } else if (getPrefString(PreferKey.themeMode) != null) {
+                    } else if (getPrefString(PreferKey.lastThemeMode) != null) {
                         ReadBookConfig.pageAnim = getPrefInt(PreferKey.lastPageAnim)
-                        val isNightTheme = getPrefBoolean(PreferKey.lastIsNight)
-                        if (isNightTheme) {
-                            putPrefInt(PreferKey.cNPrimary, getPrefInt(PreferKey.cLPrimary))
-                            putPrefInt(PreferKey.cNAccent, getPrefInt(PreferKey.cLAccent))
-                            putPrefInt(PreferKey.cNBackground, getPrefInt(PreferKey.cLBackground))
-                            putPrefInt(PreferKey.cNBBackground, getPrefInt(PreferKey.cLBBackground))
-                        } else {
-                            putPrefInt(PreferKey.cPrimary, getPrefInt(PreferKey.cLPrimary))
-                            putPrefInt(PreferKey.cAccent, getPrefInt(PreferKey.cLAccent))
-                            putPrefInt(PreferKey.cBackground, getPrefInt(PreferKey.cLBackground))
-                            putPrefInt(PreferKey.cBBackground, getPrefInt(PreferKey.cLBBackground))
-                        }
-                        AppConfig.isNightTheme = isNightTheme
+                        putPrefInt(PreferKey.cPrimary, getPrefInt(PreferKey.cLPrimary))
+                        putPrefInt(PreferKey.cAccent, getPrefInt(PreferKey.cLAccent))
+                        putPrefInt(PreferKey.cBackground, getPrefInt(PreferKey.cLBackground))
+                        putPrefInt(PreferKey.cBBackground, getPrefInt(PreferKey.cLBBackground))
+                        putPrefString(
+                            PreferKey.themeMode,
+                            getPrefString(PreferKey.lastThemeMode) ?: "0"
+                        )
                         App.INSTANCE.applyDayNight()
                         postEvent(EventBus.RECREATE, "")
                     }
