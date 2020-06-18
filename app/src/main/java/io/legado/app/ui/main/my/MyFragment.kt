@@ -131,7 +131,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                         putPrefInt(PreferKey.cLAccent, getPrefInt(PreferKey.cAccent))
                         putPrefInt(PreferKey.cLBackground, getPrefInt(PreferKey.cBackground))
                         putPrefInt(PreferKey.cLBBackground, getPrefInt(PreferKey.cBBackground))
-                        putPrefBoolean(PreferKey.lastIsNight, AppConfig.isNightTheme)
                         putPrefString(
                             PreferKey.lastThemeMode,
                             getPrefString(PreferKey.themeMode) ?: "0"
