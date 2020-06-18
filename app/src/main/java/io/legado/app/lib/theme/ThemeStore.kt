@@ -9,6 +9,7 @@ import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import io.legado.app.App
 import io.legado.app.R
 
 /**
@@ -194,7 +195,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
 
         @CheckResult
         @ColorInt
-        fun primaryColor(context: Context): Int {
+        fun primaryColor(context: Context = App.INSTANCE): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_PRIMARY_COLOR,
                 ATHUtils.resolveColor(context, R.attr.colorPrimary, Color.parseColor("#455A64"))
@@ -212,7 +213,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
 
         @CheckResult
         @ColorInt
-        fun accentColor(context: Context): Int {
+        fun accentColor(context: Context = App.INSTANCE): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_ACCENT_COLOR,
                 ATHUtils.resolveColor(context, R.attr.colorAccent, Color.parseColor("#263238"))
@@ -277,7 +278,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
 
         @CheckResult
         @ColorInt
-        fun backgroundColor(context: Context): Int {
+        fun backgroundColor(context: Context = App.INSTANCE): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_BACKGROUND_COLOR,
                 ATHUtils.resolveColor(context, android.R.attr.colorBackground)
@@ -294,7 +295,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
 
         @CheckResult
         @ColorInt
-        fun bottomBackground(context: Context): Int {
+        fun bottomBackground(context: Context = App.INSTANCE): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_BOTTOM_BACKGROUND,
                 ATHUtils.resolveColor(context, android.R.attr.colorBackground)

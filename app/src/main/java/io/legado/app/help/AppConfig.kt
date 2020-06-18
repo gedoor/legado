@@ -81,7 +81,7 @@ object AppConfig {
         get() = App.INSTANCE.getPrefString(PreferKey.ttsSpeechPer) ?: "0"
 
     val isEInkMode: Boolean
-        get() = App.INSTANCE.getPrefBoolean(PreferKey.einkMode)
+        get() = App.INSTANCE.getPrefBoolean(PreferKey.eInkMode)
 
     val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
 

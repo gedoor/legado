@@ -123,46 +123,45 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     }
                 }
                 "recordLog" -> LogUtils.upLevel()
-                PreferKey.einkMode -> {
+                PreferKey.eInkMode -> {
                     //既然是 E-Ink 模式，为什么不一步到位呢
                     if (AppConfig.isEInkMode) {
                         //保存开启前的设置
-                        putPrefInt("lastReadBookPageAnim", ReadBookConfig.pageAnim)
-                        putPrefInt("lastColorPrimary", ThemeStore.primaryColor(requireContext()))
-                        putPrefInt("lastColorAccent", ThemeStore.accentColor(requireContext()))
-                        putPrefInt("lastColorBackground", ThemeStore.backgroundColor(requireContext()))
-                        putPrefInt("lastColorBottomBackground", ThemeStore.bottomBackground(requireContext()))
-                        putPrefBoolean("lastIsNightTheme", AppConfig.isNightTheme)
+                        putPrefInt(PreferKey.lastPageAnim, ReadBookConfig.pageAnim)
+                        putPrefInt(PreferKey.cLPrimary, ThemeStore.primaryColor())
+                        putPrefInt(PreferKey.cLAccent, ThemeStore.accentColor())
+                        putPrefInt(PreferKey.cLBackground, ThemeStore.backgroundColor())
+                        putPrefInt(PreferKey.cLBBackground, ThemeStore.bottomBackground())
+                        putPrefBoolean(PreferKey.lastIsNight, AppConfig.isNightTheme)
+                        putPrefString(
+                            PreferKey.lastThemeMode,
+                            getPrefString(PreferKey.themeMode) ?: "0"
+                        )
 
                         //设置 E-Ink 模式配置
                         ReadBookConfig.pageAnim = 4
-                        putPrefInt("colorPrimary", getCompatColor(R.color.white))
-                        putPrefInt("colorAccent", getCompatColor(R.color.black))
-                        putPrefInt("colorBackground", getCompatColor(R.color.white))
-                        putPrefInt("colorBottomBackground", getCompatColor(R.color.white))
+                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.white))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.white))
+                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.white))
                         AppConfig.isNightTheme = false
                         App.INSTANCE.applyDayNight()
                         postEvent(EventBus.RECREATE, "")
-                    } else {
-                        ReadBookConfig.pageAnim = getPrefInt("lastReadBookPageAnim")
-                        if (getPrefBoolean("lastIsNightTheme")) {
-                            putPrefInt("colorPrimaryNight", getPrefInt("lastColorPrimary"))
-                            putPrefInt("colorAccentNight", getPrefInt("lastColorAccent"))
-                            putPrefInt("colorBackgroundNight", getPrefInt("lastColorBackground"))
-                            putPrefInt(
-                                "colorBottomBackgroundNight",
-                                getPrefInt("lastColorBottomBackground")
-                            )
+                    } else if (getPrefString(PreferKey.themeMode) != null) {
+                        ReadBookConfig.pageAnim = getPrefInt(PreferKey.lastPageAnim)
+                        val isNightTheme = getPrefBoolean(PreferKey.lastIsNight)
+                        if (isNightTheme) {
+                            putPrefInt(PreferKey.cNPrimary, getPrefInt(PreferKey.cLPrimary))
+                            putPrefInt(PreferKey.cNAccent, getPrefInt(PreferKey.cLAccent))
+                            putPrefInt(PreferKey.cNBackground, getPrefInt(PreferKey.cLBackground))
+                            putPrefInt(PreferKey.cNBBackground, getPrefInt(PreferKey.cLBBackground))
                         } else {
-                            putPrefInt("colorPrimary", getPrefInt("lastColorPrimary"))
-                            putPrefInt("colorAccent", getPrefInt("lastColorAccent"))
-                            putPrefInt("colorBackground", getPrefInt("lastColorBackground"))
-                            putPrefInt(
-                                "colorBottomBackground",
-                                getPrefInt("lastColorBottomBackground")
-                            )
+                            putPrefInt(PreferKey.cPrimary, getPrefInt(PreferKey.cLPrimary))
+                            putPrefInt(PreferKey.cAccent, getPrefInt(PreferKey.cLAccent))
+                            putPrefInt(PreferKey.cBackground, getPrefInt(PreferKey.cLBackground))
+                            putPrefInt(PreferKey.cBBackground, getPrefInt(PreferKey.cLBBackground))
                         }
-                        AppConfig.isNightTheme = getPrefBoolean("lastIsNightTheme")
+                        AppConfig.isNightTheme = isNightTheme
                         App.INSTANCE.applyDayNight()
                         postEvent(EventBus.RECREATE, "")
                     }

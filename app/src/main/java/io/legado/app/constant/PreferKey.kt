@@ -43,7 +43,26 @@ object PreferKey {
     const val readStyleSelect = "readStyleSelect"
     const val systemTypefaces = "system_typefaces"
     const val readBodyToLh = "readBodyToLh"
-    const val einkMode = "isEInkMode"
+    const val eInkMode = "isEInkMode"
     const val textFullJustify = "textFullJustify"
     const val autoReadSpeed = "autoReadSpeed"
+
+    const val cPrimary = "colorPrimary"
+    const val cAccent = "colorAccent"
+    const val cBackground = "colorBackground"
+    const val cBBackground = "colorBottomBackground"
+
+    const val cNPrimary = "colorPrimaryNight"
+    const val cNAccent = "colorAccentNight"
+    const val cNBackground = "colorBackgroundNight"
+    const val cNBBackground = "colorBottomBackgroundNight"
+
+    const val cLPrimary = "lastColorPrimary"
+    const val cLAccent = "lastColorAccent"
+    const val cLBackground = "lastColorBackground"
+    const val cLBBackground = "lastColorBottomBackground"
+
+    const val lastPageAnim = "lastPageAnim"
+    const val lastIsNight = "lastIsNightTheme"
+    const val lastThemeMode = "lastThemeMode"
 }

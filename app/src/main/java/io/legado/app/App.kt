@@ -12,6 +12,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.AppDatabase
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.AppConfig
@@ -71,24 +72,24 @@ class App : Application() {
         if (AppConfig.isNightTheme) {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
+                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
                 ).accentColor(
-                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_deep_orange_800))
+                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
                 ).backgroundColor(
-                    getPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
+                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.shine_color))
                 ).bottomBackground(
-                    getPrefInt("colorBottomBackgroundNight", getCompatColor(R.color.md_grey_850))
+                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
                 ).apply()
         } else {
             ThemeStore.editTheme(this)
                 .primaryColor(
-                    getPrefInt("colorPrimary", getCompatColor(R.color.md_indigo_800))
+                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_indigo_800))
                 ).accentColor(
-                    getPrefInt("colorAccent", getCompatColor(R.color.md_red_600))
+                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
                 ).backgroundColor(
-                    getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
+                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
                 ).bottomBackground(
-                    getPrefInt("colorBottomBackground", getCompatColor(R.color.md_grey_200))
+                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
                 ).apply()
         }
     }
