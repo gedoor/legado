@@ -145,10 +145,23 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                         postEvent(EventBus.RECREATE, "")
                     } else {
                         ReadBookConfig.pageAnim = getPrefInt("lastReadBookPageAnim")
-                        putPrefInt("colorPrimary", getPrefInt("lastColorPrimary"))
-                        putPrefInt("colorAccent", getPrefInt("lastColorAccent"))
-                        putPrefInt("colorBackground", getPrefInt("lastColorBackground"))
-                        putPrefInt("colorBottomBackground", getPrefInt("lastColorBottomBackground"))
+                        if (getPrefBoolean("lastIsNightTheme")) {
+                            putPrefInt("colorPrimaryNight", getPrefInt("lastColorPrimary"))
+                            putPrefInt("colorAccentNight", getPrefInt("lastColorAccent"))
+                            putPrefInt("colorBackgroundNight", getPrefInt("lastColorBackground"))
+                            putPrefInt(
+                                "colorBottomBackgroundNight",
+                                getPrefInt("lastColorBottomBackground")
+                            )
+                        } else {
+                            putPrefInt("colorPrimary", getPrefInt("lastColorPrimary"))
+                            putPrefInt("colorAccent", getPrefInt("lastColorAccent"))
+                            putPrefInt("colorBackground", getPrefInt("lastColorBackground"))
+                            putPrefInt(
+                                "colorBottomBackground",
+                                getPrefInt("lastColorBottomBackground")
+                            )
+                        }
                         AppConfig.isNightTheme = getPrefBoolean("lastIsNightTheme")
                         App.INSTANCE.applyDayNight()
                         postEvent(EventBus.RECREATE, "")
