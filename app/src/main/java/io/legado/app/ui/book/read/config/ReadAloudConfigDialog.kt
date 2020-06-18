@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -19,7 +20,6 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.PreferenceFragmentSupport
 import io.legado.app.utils.postEvent
 
 class ReadAloudConfigDialog : DialogFragment() {
@@ -59,7 +59,7 @@ class ReadAloudConfigDialog : DialogFragment() {
             .commit()
     }
 
-    class ReadAloudPreferenceFragment : PreferenceFragmentSupport(),
+    class ReadAloudPreferenceFragment : PreferenceFragmentCompat(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

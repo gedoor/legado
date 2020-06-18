@@ -21,7 +21,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -121,7 +120,6 @@ class BookSourceEditActivity :
         ATH.applyEdgeEffectColor(recycler_view)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
-        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
         tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

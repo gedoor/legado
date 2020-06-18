@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getViewModel
@@ -41,7 +40,6 @@ class RssSourceDebugActivity : VMBaseActivity<RssSourceDebugModel>(R.layout.acti
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         adapter = RssSourceDebugAdapter(this)
-        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
         rotate_loading.loadingColor = accentColor

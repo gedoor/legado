@@ -53,7 +53,7 @@
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
-    <fadeapp.widgets.ScrollLessRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         app:layout_constraintTop_toBottomOf="@id/layTop"

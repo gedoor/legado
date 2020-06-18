@@ -64,7 +64,6 @@ class FontSelectDialog : BaseDialogFragment(),
         tool_bar.setTitle(R.string.select_font)
         tool_bar.inflateMenu(R.menu.font_select)
         tool_bar.setOnMenuItemClickListener(this)
-        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         adapter = FontAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.adapter = adapter

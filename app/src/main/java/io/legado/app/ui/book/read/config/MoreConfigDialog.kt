@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -17,7 +18,6 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.PreferenceFragmentSupport
 import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
@@ -64,7 +64,7 @@ class MoreConfigDialog : DialogFragment() {
             .commit()
     }
 
-    class ReadPreferenceFragment : PreferenceFragmentSupport(),
+    class ReadPreferenceFragment : PreferenceFragmentCompat(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

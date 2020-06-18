@@ -5,14 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.utils.ACache
-import io.legado.app.utils.PreferenceFragmentSupport
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
 import org.jetbrains.anko.longToast
 
-class DonateFragment : PreferenceFragmentSupport() {
+class DonateFragment : PreferenceFragmentCompat() {
 
     private val zfbHbRwmUrl = "https://gitee.com/gekunfei/Donate/raw/master/zfbhbrwm.png"
     private val zfbSkRwmUrl = "https://gitee.com/gekunfei/Donate/raw/master/zfbskrwm.jpg"

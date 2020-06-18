@@ -62,7 +62,6 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     private fun initView() {
-        recycler_view.isEnableScroll = !AppConfig.isEInkMode
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = ImportBookAdapter(this, this)
         recycler_view.adapter = adapter

@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -66,7 +67,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
         BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
     }
 
-    class PreferenceFragment : PreferenceFragmentSupport(),
+    class PreferenceFragment : PreferenceFragmentCompat(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
