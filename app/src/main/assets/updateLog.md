@@ -5,6 +5,8 @@
 
 **2020/06/19**
 * 修复eInk bug
+* 修复分组下载bug
+* 导入本地添加滚动条
 
 **2020/06/18**
 * fadeapp.widgets:scrollless-recyclerView导致有些手机重影,暂时去除
