@@ -6,7 +6,6 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookChapter
@@ -293,14 +292,14 @@ object ChapterProvider {
 
         //标题
         titlePaint = TextPaint()
-        titlePaint.color = ReadBookConfig.durConfig.textColor()
+        titlePaint.color = ReadBookConfig.textColor
         titlePaint.letterSpacing = ReadBookConfig.letterSpacing
         titlePaint.typeface = titleFont
         titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
         titlePaint.isAntiAlias = true
         //正文
         contentPaint = TextPaint()
-        contentPaint.color = ReadBookConfig.durConfig.textColor()
+        contentPaint.color = ReadBookConfig.textColor
         contentPaint.letterSpacing = ReadBookConfig.letterSpacing
         contentPaint.typeface = textFont
         contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()

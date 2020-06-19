@@ -26,25 +26,20 @@ object ReadBookConfig {
         val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
         GSON.fromJsonArray<Config>(json)!!
     }
-    val durConfig get() =
-        if (AppConfig.isEInkMode)
-            einkConfig
-        else
-            getConfig(styleSelect)
+    val durConfig get() = getConfig(styleSelect)
 
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
-    private val einkConfig: Config
+    val textColor: Int
+        get() =
+            if (AppConfig.isEInkMode && !AppConfig.isNightTheme) {
+                Color.BLACK
+            } else {
+                durConfig.textColor()
+            }
 
     init {
         upConfig()
-        einkConfig = Config(
-            bgStr = "#FFFFFF",
-            bgStrNight = "#FFFFFF",
-            textColor = "#000000",
-            textColorNight = "#000000",
-            darkStatusIconNight = true
-        )
     }
 
     @Synchronized
@@ -83,11 +78,16 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        bg = durConfig.bgDrawable(width, height).apply {
-            if (this is BitmapDrawable) {
-                bgMeanColor = BitmapUtils.getMeanColor(bitmap)
-            } else if (this is ColorDrawable) {
-                bgMeanColor = color
+        if (AppConfig.isEInkMode && !AppConfig.isNightTheme) {
+            bg = ColorDrawable(Color.WHITE)
+            bgMeanColor = Color.WHITE
+        } else {
+            bg = durConfig.bgDrawable(width, height).apply {
+                if (this is BitmapDrawable) {
+                    bgMeanColor = BitmapUtils.getMeanColor(bitmap)
+                } else if (this is ColorDrawable) {
+                    bgMeanColor = color
+                }
             }
         }
     }

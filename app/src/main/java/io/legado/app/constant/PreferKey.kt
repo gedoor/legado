@@ -63,6 +63,5 @@ object PreferKey {
     const val cLBBackground = "lastColorBottomBackground"
 
     const val lastPageAnim = "lastPageAnim"
-    const val lastIsNight = "lastIsNightTheme"
     const val lastThemeMode = "lastThemeMode"
 }
