@@ -266,6 +266,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }
     }
 
+    fun gotoTop() {
+        fragmentMap[selectedGroup.groupId]?.gotoTop()
+    }
+
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 

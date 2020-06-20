@@ -16,6 +16,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
+import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -120,6 +121,14 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
 
     fun getBooks(): List<Book> {
         return booksAdapter.getItems()
+    }
+
+    fun gotoTop() {
+        if (AppConfig.isEInkMode) {
+            rv_bookshelf.scrollToPosition(0)
+        } else {
+            rv_bookshelf.smoothScrollToPosition(0)
+        }
     }
 
     override fun open(book: Book) {

@@ -30,10 +30,12 @@ import org.jetbrains.anko.toast
 
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
+    BottomNavigationView.OnNavigationItemReselectedListener,
     ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
     override val viewModel: MainViewModel
         get() = getViewModel(MainViewModel::class.java)
     private var exitTime: Long = 0
+    private var bookshelfReselected: Long = 0
     private var pagePosition = 0
     private val fragmentId = arrayOf(0, 1, 2, 3)
     private val fragmentMap = mapOf<Int, Fragment>(
@@ -50,6 +52,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
+        bottom_navigation_view.setOnNavigationItemReselectedListener(this)
         bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
     }
 
@@ -72,6 +75,18 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
         return false
+    }
+
+    override fun onNavigationItemReselected(item: MenuItem) {
+        when (item.itemId) {
+            R.id.menu_bookshelf -> {
+                if (System.currentTimeMillis() - bookshelfReselected > 300) {
+                    bookshelfReselected = System.currentTimeMillis()
+                } else {
+                    (fragmentMap[0] as? BookshelfFragment)?.gotoTop()
+                }
+            }
+        }
     }
 
     private fun upVersion() {
