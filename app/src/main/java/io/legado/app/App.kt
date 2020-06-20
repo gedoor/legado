@@ -71,6 +71,7 @@ class App : Application() {
     fun applyTheme() {
         if (AppConfig.isNightTheme) {
             ThemeStore.editTheme(this)
+                .coloredNavigationBar(true)
                 .primaryColor(
                     getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
                 ).accentColor(
@@ -82,6 +83,7 @@ class App : Application() {
                 ).apply()
         } else {
             ThemeStore.editTheme(this)
+                .coloredNavigationBar(true)
                 .primaryColor(
                     getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_indigo_800))
                 ).accentColor(

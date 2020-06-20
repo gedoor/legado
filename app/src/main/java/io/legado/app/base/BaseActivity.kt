@@ -107,6 +107,7 @@ abstract class BaseActivity(
         } else if (theme == Theme.Light) {
             ATH.setLightStatusBar(this, true)
         }
+        ATH.setNavigationBarColorAuto(this)
     }
 
     open fun observeLiveBus() {

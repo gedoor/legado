@@ -237,7 +237,10 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         fun navigationBarColor(context: Context): Int {
             return if (!coloredNavigationBar(context)) {
                 Color.BLACK
-            } else prefs(context).getInt(ThemeStorePrefKeys.KEY_NAVIGATION_BAR_COLOR, primaryColor(context))
+            } else prefs(context).getInt(
+                ThemeStorePrefKeys.KEY_NAVIGATION_BAR_COLOR,
+                bottomBackground(context)
+            )
         }
 
         @CheckResult
