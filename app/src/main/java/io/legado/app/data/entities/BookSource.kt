@@ -96,7 +96,7 @@ data class BookSource(
     fun addGroup(group: String) {
         bookSourceGroup?.let {
             if (!it.contains(group)) {
-                bookSourceGroup = "$it;$group"
+                bookSourceGroup = "$it,$group"
             }
         } ?: let {
             bookSourceGroup = group
@@ -104,7 +104,7 @@ data class BookSource(
     }
 
     fun removeGroup(group: String) {
-        bookSourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
+        bookSourceGroup?.splitNotBlank("[,;]".toRegex())?.toHashSet()?.let {
             it.remove(group)
             bookSourceGroup = TextUtils.join(",", it)
         }
