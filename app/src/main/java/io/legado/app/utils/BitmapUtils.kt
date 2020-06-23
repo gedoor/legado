@@ -18,6 +18,7 @@ import kotlin.math.*
 
 @Suppress("unused", "WeakerAccess")
 object BitmapUtils {
+
     /**
      * 从path中获取图片信息,在通过BitmapFactory.decodeFile(String path)方法将突破转成Bitmap时，
      * 遇到大一些的图片，我们经常会遇到OOM(Out Of Memory)的问题。所以用到了我们上面提到的BitmapFactory.Options这个类。
@@ -51,15 +52,11 @@ object BitmapUtils {
      * @param path 图片路径
      * @return
      */
-
     fun decodeBitmap(path: String): Bitmap {
         val opts = BitmapFactory.Options()
-
         opts.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, opts)
-
         opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
-
         opts.inJustDecodeBounds = false
 
         return BitmapFactory.decodeFile(path, opts)
@@ -125,7 +122,6 @@ object BitmapUtils {
         width: Int,
         height: Int
     ): Bitmap? {
-
         var inputStream = context.assets.open(fileNameInAssets)
         val op = BitmapFactory.Options()
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
@@ -171,11 +167,8 @@ object BitmapUtils {
         minSideLength: Int,
         maxNumOfPixels: Int
     ): Int {
-
         val initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels)
-
         var roundedSize: Int
-
         if (initialSize <= 8) {
             roundedSize = 1
             while (roundedSize < initialSize) {
@@ -184,7 +177,6 @@ object BitmapUtils {
         } else {
             roundedSize = (initialSize + 7) / 8 * 8
         }
-
         return roundedSize
     }
 
@@ -198,27 +190,34 @@ object BitmapUtils {
         val w = options.outWidth.toDouble()
         val h = options.outHeight.toDouble()
 
-        val lowerBound = if (maxNumOfPixels == -1)
-            1
-        else
-            ceil(sqrt(w * h / maxNumOfPixels)).toInt()
+        val lowerBound = when (maxNumOfPixels) {
+            -1 -> 1
+            else -> ceil(sqrt(w * h / maxNumOfPixels)).toInt()
+        }
 
-        val upperBound = if (minSideLength == -1) 128 else min(
-            floor(w / minSideLength),
-            floor(h / minSideLength)
-        ).toInt()
+        val upperBound = when (minSideLength) {
+            -1 -> 128
+            else -> min(
+                floor(w / minSideLength),
+                floor(h / minSideLength)
+            ).toInt()
+        }
 
         if (upperBound < lowerBound) {
             // return the larger one when there is no overlapping zone.
             return lowerBound
         }
 
-        return if (maxNumOfPixels == -1 && minSideLength == -1) {
-            1
-        } else if (minSideLength == -1) {
-            lowerBound
-        } else {
-            upperBound
+        return when {
+            maxNumOfPixels == -1 && minSideLength == -1 -> {
+                1
+            }
+            minSideLength == -1 -> {
+                lowerBound
+            }
+            else -> {
+                upperBound
+            }
         }
     }
 
@@ -278,7 +277,8 @@ object BitmapUtils {
         val averagePixelGreen = pixelSumGreen / 3000
         return Color.rgb(
             averagePixelRed + 3,
-            averagePixelGreen + 3, averagePixelBlue + 3
+            averagePixelGreen + 3,
+            averagePixelBlue + 3
         )
     }
 
