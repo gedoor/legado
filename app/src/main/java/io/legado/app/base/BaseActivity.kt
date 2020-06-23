@@ -107,6 +107,10 @@ abstract class BaseActivity(
         } else if (theme == Theme.Light) {
             ATH.setLightStatusBar(this, true)
         }
+        upNavigationBarColor()
+    }
+
+    open fun upNavigationBarColor() {
         ATH.setNavigationBarColorAuto(this)
     }
 
