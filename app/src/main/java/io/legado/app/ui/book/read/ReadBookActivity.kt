@@ -149,6 +149,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun upNavigationBarColor() {
         when {
+            read_menu == null -> return
             read_menu.isVisible -> {
                 ATH.setNavigationBarColorAuto(this)
             }
