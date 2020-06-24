@@ -16,6 +16,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
@@ -127,10 +128,10 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     if (AppConfig.isEInkMode) {
                         //保存开启前的设置
                         putPrefInt(PreferKey.lastPageAnim, ReadBookConfig.pageAnim)
-                        putPrefInt(PreferKey.cLPrimary, getPrefInt(PreferKey.cPrimary))
-                        putPrefInt(PreferKey.cLAccent, getPrefInt(PreferKey.cAccent))
-                        putPrefInt(PreferKey.cLBackground, getPrefInt(PreferKey.cBackground))
-                        putPrefInt(PreferKey.cLBBackground, getPrefInt(PreferKey.cBBackground))
+                        putPrefInt(PreferKey.cLPrimary, getPrefInt(PreferKey.cPrimary, ThemeStore.primaryColor()))
+                        putPrefInt(PreferKey.cLAccent, getPrefInt(PreferKey.cAccent, ThemeStore.accentColor()))
+                        putPrefInt(PreferKey.cLBackground, getPrefInt(PreferKey.cBackground, ThemeStore.backgroundColor()))
+                        putPrefInt(PreferKey.cLBBackground, getPrefInt(PreferKey.cBBackground, ThemeStore.bottomBackground()))
                         putPrefString(
                             PreferKey.lastThemeMode,
                             getPrefString(PreferKey.themeMode) ?: "0"
