@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.WindowManager
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
@@ -153,6 +153,7 @@ class ReadMenu : FrameLayout {
         fabNightTheme.onClick {
             AppConfig.isNightTheme = !AppConfig.isNightTheme
             App.INSTANCE.applyDayNight()
+            postEvent(EventBus.RECREATE, "")
         }
 
         //上一章
