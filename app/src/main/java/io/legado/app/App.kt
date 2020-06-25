@@ -25,6 +25,7 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.putPrefInt
 
 @Suppress("DEPRECATION")
 class App : Application() {
@@ -105,10 +106,18 @@ class App : Application() {
                     getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_indigo_800))
                 val accent =
                     getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
-                val background =
+                var background =
                     getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-                val bBackground =
+                if (!ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_100)
+                    putPrefInt(PreferKey.cBackground, background)
+                }
+                var bBackground =
                     getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                if (!ColorUtils.isColorLight(bBackground)) {
+                    bBackground = getCompatColor(R.color.md_grey_200)
+                    putPrefInt(PreferKey.cBBackground, bBackground)
+                }
                 ThemeStore.editTheme(this)
                     .coloredNavigationBar(true)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
