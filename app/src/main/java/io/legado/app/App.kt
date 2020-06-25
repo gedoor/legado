@@ -13,6 +13,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.AppDatabase
 import io.legado.app.help.ActivityHelp
@@ -22,6 +23,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.postEvent
 
 @Suppress("DEPRECATION")
 class App : Application() {
@@ -113,6 +115,7 @@ class App : Application() {
         ReadBookConfig.upBg()
         applyTheme()
         initNightMode()
+        postEvent(EventBus.RECREATE, "")
     }
 
     private fun initNightMode() {
