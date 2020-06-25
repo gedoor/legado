@@ -14,7 +14,6 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
-import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -122,43 +121,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     }
                 }
                 "recordLog" -> LogUtils.upLevel()
-                PreferKey.eInkMode -> {
-                    //既然是 E-Ink 模式，为什么不一步到位呢
-                    if (AppConfig.isEInkMode) {
-                        //保存开启前的设置
-                        putPrefInt(PreferKey.lastPageAnim, ReadBookConfig.pageAnim)
-                        putPrefInt(PreferKey.cLPrimary, getPrefInt(PreferKey.cPrimary))
-                        putPrefInt(PreferKey.cLAccent, getPrefInt(PreferKey.cAccent))
-                        putPrefInt(PreferKey.cLBackground, getPrefInt(PreferKey.cBackground))
-                        putPrefInt(PreferKey.cLBBackground, getPrefInt(PreferKey.cBBackground))
-                        putPrefString(
-                            PreferKey.lastThemeMode,
-                            getPrefString(PreferKey.themeMode) ?: "0"
-                        )
-
-                        //设置 E-Ink 模式配置
-                        ReadBookConfig.pageAnim = 4
-                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.white))
-                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.black))
-                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.white))
-                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.white))
-                        AppConfig.isNightTheme = false
-                        App.INSTANCE.applyDayNight()
-                        postEvent(EventBus.RECREATE, "")
-                    } else if (getPrefString(PreferKey.lastThemeMode) != null) {
-                        ReadBookConfig.pageAnim = getPrefInt(PreferKey.lastPageAnim)
-                        putPrefInt(PreferKey.cPrimary, getPrefInt(PreferKey.cLPrimary))
-                        putPrefInt(PreferKey.cAccent, getPrefInt(PreferKey.cLAccent))
-                        putPrefInt(PreferKey.cBackground, getPrefInt(PreferKey.cLBackground))
-                        putPrefInt(PreferKey.cBBackground, getPrefInt(PreferKey.cLBBackground))
-                        putPrefString(
-                            PreferKey.themeMode,
-                            getPrefString(PreferKey.lastThemeMode) ?: "0"
-                        )
-                        App.INSTANCE.applyDayNight()
-                        postEvent(EventBus.RECREATE, "")
-                    }
-                }
             }
         }
 

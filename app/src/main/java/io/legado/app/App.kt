@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -69,30 +70,42 @@ class App : Application() {
      * 更新主题
      */
     fun applyTheme() {
-        if (AppConfig.isNightTheme) {
-            ThemeStore.editTheme(this)
-                .coloredNavigationBar(true)
-                .primaryColor(
-                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
-                ).accentColor(
-                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
-                ).backgroundColor(
-                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.shine_color))
-                ).bottomBackground(
-                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
-                ).apply()
-        } else {
-            ThemeStore.editTheme(this)
-                .coloredNavigationBar(true)
-                .primaryColor(
-                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_indigo_800))
-                ).accentColor(
-                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
-                ).backgroundColor(
-                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-                ).bottomBackground(
-                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
-                ).apply()
+        when {
+            AppConfig.isEInkMode -> {
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(Color.WHITE)
+                    .accentColor(Color.BLACK)
+                    .backgroundColor(Color.WHITE)
+                    .bottomBackground(Color.WHITE)
+                    .apply()
+            }
+            AppConfig.isNightTheme -> {
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(
+                        getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
+                    ).accentColor(
+                        getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
+                    ).backgroundColor(
+                        getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.shine_color))
+                    ).bottomBackground(
+                        getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
+                    ).apply()
+            }
+            else -> {
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(
+                        getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_indigo_800))
+                    ).accentColor(
+                        getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
+                    ).backgroundColor(
+                        getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                    ).bottomBackground(
+                        getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                    ).apply()
+            }
         }
     }
 
