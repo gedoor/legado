@@ -136,13 +136,10 @@ object ReadBookConfig {
                 App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
             }
         }
-    var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+    var pageAnim: Int
+        get() = if (AppConfig.isEInkMode) -1 else App.INSTANCE.getPrefInt(PreferKey.pageAnim)
         set(value) {
-            field = value
-            isScroll = value == 3
-            if (App.INSTANCE.getPrefInt(PreferKey.pageAnim) != value) {
-                App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
-            }
+            App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
         }
     var isScroll = pageAnim == 3
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
