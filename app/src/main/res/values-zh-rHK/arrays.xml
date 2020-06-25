@@ -20,6 +20,7 @@
         <item>跟隨系統</item>
         <item>亮色主題</item>
         <item>暗色主題</item>
+        <item>E-Ink(墨水屏)</item>
     </string-array>
 
     <string-array name="NavBarColors">

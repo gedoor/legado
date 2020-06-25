@@ -43,7 +43,6 @@ object PreferKey {
     const val readStyleSelect = "readStyleSelect"
     const val systemTypefaces = "system_typefaces"
     const val readBodyToLh = "readBodyToLh"
-    const val eInkMode = "isEInkMode"
     const val textFullJustify = "textFullJustify"
     const val autoReadSpeed = "autoReadSpeed"
 

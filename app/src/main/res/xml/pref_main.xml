@@ -32,14 +32,6 @@
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
-        android:icon="@drawable/ic_cfg_e_lnk"
-        android:key="isEInkMode"
-        android:summary="@string/eink_theme_desc"
-        android:title="@string/eink_theme"
-        app:iconSpaceReserved="false" />
-
-    <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="false"
         android:key="webService"
         android:title="@string/web_service"
         android:summary="@string/web_service_desc"

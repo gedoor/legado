@@ -13,6 +13,7 @@ object AppConfig {
         return when (context.getPrefString(PreferKey.themeMode, "0")) {
             "1" -> false
             "2" -> true
+            "3" -> false
             else -> context.sysIsDarkMode()
         }
     }
@@ -26,6 +27,9 @@ object AppConfig {
                 App.INSTANCE.putPrefString(PreferKey.themeMode, "1")
             }
         }
+
+    val isEInkMode: Boolean
+        get() = App.INSTANCE.getPrefString(PreferKey.themeMode) == "3"
 
     var isTransparentStatusBar: Boolean
         get() = App.INSTANCE.getPrefBoolean("transparentStatusBar")
@@ -79,9 +83,6 @@ object AppConfig {
 
     val ttsSpeechPer: String
         get() = App.INSTANCE.getPrefString(PreferKey.ttsSpeechPer) ?: "0"
-
-    val isEInkMode: Boolean
-        get() = App.INSTANCE.getPrefBoolean(PreferKey.eInkMode)
 
     val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
 
