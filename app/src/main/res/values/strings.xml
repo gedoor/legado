@@ -377,6 +377,8 @@
     <string name="login_source">登录%s</string>
     <string name="success">成功</string>
     <string name="source_no_login">当前源没有配置登陆地址</string>
+    <string name="no_prev_page">没有上一页</string>
+    <string name="no_next_page">没有下一页</string>
 
     <!-- source start-->
     <string name="source_name">源名称(sourceName)</string>
