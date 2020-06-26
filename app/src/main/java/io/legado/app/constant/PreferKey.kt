@@ -56,11 +56,4 @@ object PreferKey {
     const val cNBackground = "colorBackgroundNight"
     const val cNBBackground = "colorBottomBackgroundNight"
 
-    const val cLPrimary = "lastColorPrimary"
-    const val cLAccent = "lastColorAccent"
-    const val cLBackground = "lastColorBackground"
-    const val cLBBackground = "lastColorBottomBackground"
-
-    const val lastPageAnim = "lastPageAnim"
-    const val lastThemeMode = "lastThemeMode"
 }
