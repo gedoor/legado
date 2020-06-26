@@ -77,17 +77,17 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
         when (key) {
             PreferKey.launcherIcon -> LauncherIconHelp.changeIcon(getPrefString(key))
             "transparentStatusBar" -> recreateActivities()
-            "colorPrimary",
-            "colorAccent",
-            "colorBackground",
-            "colorBottomBackground" -> {
+            PreferKey.cPrimary,
+            PreferKey.cAccent,
+            PreferKey.cBackground,
+            PreferKey.cBBackground -> {
                 if (backgroundIsDark(sharedPreferences)) {
                     alert {
                         title = "白天背景太暗"
                         message = "将会恢复默认背景？"
                         yesButton {
                             putPrefInt(
-                                "colorBackground",
+                                PreferKey.cBackground,
                                 getCompatColor(R.color.md_grey_100)
                             )
                             upTheme(false)
@@ -101,17 +101,17 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
                     upTheme(false)
                 }
             }
-            "colorPrimaryNight",
-            "colorAccentNight",
-            "colorBackgroundNight",
-            "colorBottomBackgroundNight" -> {
+            PreferKey.cNPrimary,
+            PreferKey.cNAccent,
+            PreferKey.cNBackground,
+            PreferKey.cNBBackground -> {
                 if (backgroundIsLight(sharedPreferences)) {
                     alert {
                         title = "夜间背景太亮"
                         message = "将会恢复默认背景？"
                         yesButton {
                             putPrefInt(
-                                "colorBackgroundNight",
+                                PreferKey.cNBackground,
                                 getCompatColor(R.color.md_grey_800)
                             )
                             upTheme(true)
@@ -200,7 +200,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
     private fun backgroundIsDark(sharedPreferences: SharedPreferences): Boolean {
         return !ColorUtils.isColorLight(
             sharedPreferences.getInt(
-                "colorBackground",
+                PreferKey.cBackground,
                 getCompatColor(R.color.md_grey_100)
             )
         )
@@ -209,7 +209,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
     private fun backgroundIsLight(sharedPreferences: SharedPreferences): Boolean {
         return ColorUtils.isColorLight(
             sharedPreferences.getInt(
-                "colorBackgroundNight",
+                PreferKey.cNBackground,
                 getCompatColor(R.color.md_grey_800)
             )
         )
