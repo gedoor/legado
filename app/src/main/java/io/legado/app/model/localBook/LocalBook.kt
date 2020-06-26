@@ -47,7 +47,7 @@ object LocalBook {
 
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
-            if (book.isTxt()) {
+            if (book.isLocalTxt()) {
                 val bookFile = FileUtils.getFile(AnalyzeTxtFile.cacheFolder, book.originName)
                 bookFile.delete()
             }

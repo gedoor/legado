@@ -25,12 +25,10 @@ class TipConfigDialog : BaseDialogFragment() {
             Help.upSystemUiVisibility(it)
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
-        dialog?.window?.let {
-            val attr = it.attributes
-            attr.dimAmount = 0.0f
-            it.attributes = attr
-            it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun onCreateView(
@@ -60,43 +58,187 @@ class TipConfigDialog : BaseDialogFragment() {
     private fun initEvent() {
         tv_header_left.onClick {
             selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.tipHeaderLeft = i
-                tv_header_left.text = ReadTipConfig.tipArray[i]
+                ReadTipConfig.apply {
+                    if (i != none) {
+                        if (tipHeaderMiddle == i) {
+                            tipHeaderMiddle = none
+                            tv_header_middle.text = tipArray[none]
+                        }
+                        if (tipHeaderRight == i) {
+                            tipHeaderRight = none
+                            tv_header_right.text = tipArray[none]
+                        }
+                        if (tipFooterLeft == i) {
+                            tipFooterLeft = none
+                            tv_footer_left.text = tipArray[none]
+                        }
+                        if (tipFooterMiddle == i) {
+                            tipFooterMiddle = none
+                            tv_footer_middle.text = tipArray[none]
+                        }
+                        if (tipFooterRight == i) {
+                            tipFooterRight = none
+                            tv_footer_right.text = tipArray[none]
+                        }
+                    }
+                    tipHeaderLeft = i
+                    tv_header_left.text = tipArray[i]
+                }
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         tv_header_middle.onClick {
             selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.tipHeaderMiddle = i
-                tv_header_middle.text = ReadTipConfig.tipArray[i]
+                ReadTipConfig.apply {
+                    if (i != none) {
+                        if (tipHeaderLeft == i) {
+                            tipHeaderLeft = none
+                            tv_header_left.text = tipArray[none]
+                        }
+                        if (tipHeaderRight == i) {
+                            tipHeaderRight = none
+                            tv_header_right.text = tipArray[none]
+                        }
+                        if (tipFooterLeft == i) {
+                            tipFooterLeft = none
+                            tv_footer_left.text = tipArray[none]
+                        }
+                        if (tipFooterMiddle == i) {
+                            tipFooterMiddle = none
+                            tv_footer_middle.text = tipArray[none]
+                        }
+                        if (tipFooterRight == i) {
+                            tipFooterRight = none
+                            tv_footer_right.text = tipArray[none]
+                        }
+                    }
+                    tipHeaderMiddle = i
+                    tv_header_middle.text = tipArray[i]
+                }
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         tv_header_right.onClick {
             selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.tipHeaderRight = i
-                tv_header_right.text = ReadTipConfig.tipArray[i]
+                ReadTipConfig.apply {
+                    if (i != none) {
+                        if (tipHeaderLeft == i) {
+                            tipHeaderLeft = none
+                            tv_header_left.text = tipArray[none]
+                        }
+                        if (tipHeaderMiddle == i) {
+                            tipHeaderMiddle = none
+                            tv_header_middle.text = tipArray[none]
+                        }
+                        if (tipFooterLeft == i) {
+                            tipFooterLeft = none
+                            tv_footer_left.text = tipArray[none]
+                        }
+                        if (tipFooterMiddle == i) {
+                            tipFooterMiddle = none
+                            tv_footer_middle.text = tipArray[none]
+                        }
+                        if (tipFooterRight == i) {
+                            tipFooterRight = none
+                            tv_footer_right.text = tipArray[none]
+                        }
+                    }
+                    tipHeaderRight = i
+                    tv_header_right.text = tipArray[i]
+                }
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         tv_footer_left.onClick {
             selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.tipFooterLeft = i
-                tv_footer_left.text = ReadTipConfig.tipArray[i]
+                ReadTipConfig.apply {
+                    if (i != none) {
+                        if (tipHeaderLeft == i) {
+                            tipHeaderLeft = none
+                            tv_header_left.text = tipArray[none]
+                        }
+                        if (tipHeaderMiddle == i) {
+                            tipHeaderMiddle = none
+                            tv_header_middle.text = tipArray[none]
+                        }
+                        if (tipHeaderRight == i) {
+                            tipHeaderRight = none
+                            tv_header_right.text = tipArray[none]
+                        }
+                        if (tipFooterMiddle == i) {
+                            tipFooterMiddle = none
+                            tv_footer_middle.text = tipArray[none]
+                        }
+                        if (tipFooterRight == i) {
+                            tipFooterRight = none
+                            tv_footer_right.text = tipArray[none]
+                        }
+                    }
+                    tipFooterLeft = i
+                    tv_footer_left.text = tipArray[i]
+                }
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         tv_footer_middle.onClick {
             selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.tipFooterMiddle = i
-                tv_footer_middle.text = ReadTipConfig.tipArray[i]
+                ReadTipConfig.apply {
+                    if (i != none) {
+                        if (tipHeaderLeft == i) {
+                            tipHeaderLeft = none
+                            tv_header_left.text = tipArray[none]
+                        }
+                        if (tipHeaderMiddle == i) {
+                            tipHeaderMiddle = none
+                            tv_header_middle.text = tipArray[none]
+                        }
+                        if (tipHeaderRight == i) {
+                            tipHeaderRight = none
+                            tv_header_right.text = tipArray[none]
+                        }
+                        if (tipFooterLeft == i) {
+                            tipFooterLeft = none
+                            tv_footer_left.text = tipArray[none]
+                        }
+                        if (tipFooterRight == i) {
+                            tipFooterRight = none
+                            tv_footer_right.text = tipArray[none]
+                        }
+                    }
+                    tipFooterMiddle = i
+                    tv_footer_middle.text = tipArray[i]
+                }
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         tv_footer_right.onClick {
             selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.tipFooterRight = i
-                tv_footer_right.text = ReadTipConfig.tipArray[i]
+                ReadTipConfig.apply {
+                    if (i != none) {
+                        if (tipHeaderLeft == i) {
+                            tipHeaderLeft = none
+                            tv_header_left.text = tipArray[none]
+                        }
+                        if (tipHeaderMiddle == i) {
+                            tipHeaderMiddle = none
+                            tv_header_middle.text = tipArray[none]
+                        }
+                        if (tipHeaderRight == i) {
+                            tipHeaderRight = none
+                            tv_header_right.text = tipArray[none]
+                        }
+                        if (tipFooterLeft == i) {
+                            tipFooterLeft = none
+                            tv_footer_left.text = tipArray[none]
+                        }
+                        if (tipFooterMiddle == i) {
+                            tipFooterMiddle = none
+                            tv_footer_middle.text = tipArray[none]
+                        }
+                    }
+                    tipFooterRight = i
+                    tv_footer_right.text = tipArray[i]
+                }
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }

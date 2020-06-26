@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
@@ -34,13 +35,19 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } ?: App.db.bookDao().lastReadBook?.let {
                 initBook(it)
             }
+        }.onFinally {
+            if (ReadBook.inBookshelf) {
+                ReadBook.saveRead()
+            }
         }
     }
 
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
-            ReadBook.resetData(book) { name, author ->
-                autoChangeSource(name, author)
+            ReadBook.resetData(book)
+            if (!book.isLocalBook() && ReadBook.webBook == null) {
+                autoChangeSource(book.name, book.author)
+                return
             }
             isInitFinish = true
             ReadBook.chapterSize = App.db.bookChapterDao().getChapterCount(book.bookUrl)
@@ -56,14 +63,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
                 ReadBook.loadContent(resetPageOffset = true)
             }
-            if (ReadBook.inBookshelf) {
-                ReadBook.saveRead()
-            }
         } else {
             isInitFinish = true
+            ReadBook.book!!.group = book.group
             ReadBook.titleDate.postValue(book.name)
-            ReadBook.upWebBook(book) { name, author ->
-                autoChangeSource(name, author)
+            ReadBook.upWebBook(book)
+            if (!book.isLocalBook() && ReadBook.webBook == null) {
+                autoChangeSource(book.name, book.author)
+                return
             }
             ReadBook.chapterSize = App.db.bookChapterDao().getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
@@ -163,6 +170,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun autoChangeSource(name: String, author: String) {
+        if (!AppConfig.autoChangeSource) return
         execute {
             App.db.bookSourceDao().allTextEnabled.forEach { source ->
                 try {

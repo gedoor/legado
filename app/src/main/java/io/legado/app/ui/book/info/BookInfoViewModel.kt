@@ -12,6 +12,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
 import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.service.help.ReadBook
 import kotlinx.coroutines.Dispatchers.IO
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
@@ -22,13 +23,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun initData(intent: Intent) {
         execute {
-            intent.getStringExtra("bookUrl")?.let {
-                App.db.bookDao().getBook(it)?.let { book ->
-                    inBookshelf = true
-                    setBook(book)
-                } ?: App.db.searchBookDao().getSearchBook(it)?.toBook()?.let { book ->
-                    setBook(book)
-                }
+            val name = intent.getStringExtra("name") ?: ""
+            val author = intent.getStringExtra("author") ?: ""
+            App.db.bookDao().getBook(name, author)?.let { book ->
+                inBookshelf = true
+                setBook(book)
+            } ?: App.db.searchBookDao().getFirstByNameAuthor(name, author)?.toBook()?.let { book ->
+                setBook(book)
             }
         }
     }
@@ -178,6 +179,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     book.durChapterTitle = it.durChapterTitle
                 }
                 App.db.bookDao().insert(book)
+                if (ReadBook.book?.name == book.name && ReadBook.book?.author == book.author) {
+                    ReadBook.book = book
+                }
             }
         }.onSuccess {
             success?.invoke()

@@ -28,4 +28,6 @@ interface TxtTocRuleDao {
     @Delete
     fun delete(vararg rule: TxtTocRule)
 
+    @Query("delete from txtTocRules where id < 0")
+    fun deleteDefault()
 }

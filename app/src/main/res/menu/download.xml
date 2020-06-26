@@ -8,4 +8,25 @@
         android:icon="@drawable/ic_play_24dp"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/menu_book_group"
+        android:title="@string/group"
+        android:icon="@drawable/ic_groups"
+        app:showAsAction="always">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_no_group"
+                android:title="@string/no_group" />
+
+            <item
+                android:id="@+id/menu_all"
+                android:title="@string/all" />
+
+
+        </menu>
+
+    </item>
+
 </menu>

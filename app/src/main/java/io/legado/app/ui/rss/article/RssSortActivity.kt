@@ -53,6 +53,10 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
                     viewModel.clearArticles()
                 }
             }
+            R.id.menu_switch_layout -> {
+                viewModel.switchLayout()
+                upFragments()
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -83,6 +87,10 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
 
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
 
         override fun getPageTitle(position: Int): CharSequence? {
             return fragments.keys.elementAt(position)

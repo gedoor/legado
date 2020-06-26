@@ -1,26 +1,21 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import android.text.TextUtils
+import androidx.room.*
 import io.legado.app.App
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.JsExtensions
-import io.legado.app.utils.ACache
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.getPrefString
-import kotlinx.android.parcel.IgnoredOnParcel
+import io.legado.app.utils.*
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 import javax.script.SimpleBindings
 
 @Parcelize
+@TypeConverters(BookSource.Converters::class)
 @Entity(
     tableName = "book_sources",
     indices = [(Index(value = ["bookSourceUrl"], unique = false))]
@@ -40,12 +35,12 @@ data class BookSource(
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
     var weight: Int = 0,                            // 智能排序的权重
     var exploreUrl: String? = null,                 // 发现url
-    var ruleExplore: String? = null,                // 发现规则
+    var ruleExplore: ExploreRule? = null,           // 发现规则
     var searchUrl: String? = null,                  // 搜索url
-    var ruleSearch: String? = null,                 // 搜索规则
-    var ruleBookInfo: String? = null,               // 书籍信息页规则
-    var ruleToc: String? = null,                    // 目录页规则
-    var ruleContent: String? = null                 // 正文页规则
+    var ruleSearch: SearchRule? = null,             // 搜索规则
+    var ruleBookInfo: BookInfoRule? = null,         // 书籍信息页规则
+    var ruleToc: TocRule? = null,                   // 目录页规则
+    var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, JsExtensions {
 
     override fun hashCode(): Int {
@@ -58,26 +53,6 @@ data class BookSource(
         }
         return false
     }
-
-    @Ignore
-    @IgnoredOnParcel
-    private var searchRuleV: SearchRule? = null
-
-    @Ignore
-    @IgnoredOnParcel
-    private var exploreRuleV: ExploreRule? = null
-
-    @Ignore
-    @IgnoredOnParcel
-    private var bookInfoRuleV: BookInfoRule? = null
-
-    @Ignore
-    @IgnoredOnParcel
-    private var tocRuleV: TocRule? = null
-
-    @Ignore
-    @IgnoredOnParcel
-    private var contentRuleV: ContentRule? = null
 
     @Throws(Exception::class)
     fun getHeaderMap(): Map<String, String> {
@@ -99,52 +74,39 @@ data class BookSource(
     }
 
     fun getSearchRule(): SearchRule {
-        searchRuleV ?: let {
-            searchRuleV = GSON.fromJsonObject<SearchRule>(ruleSearch)
-            searchRuleV ?: let { searchRuleV = SearchRule() }
-        }
-        return searchRuleV!!
+        return ruleSearch ?: SearchRule()
     }
 
     fun getExploreRule(): ExploreRule {
-        exploreRuleV ?: let {
-            exploreRuleV = GSON.fromJsonObject<ExploreRule>(ruleExplore)
-            exploreRuleV ?: let { exploreRuleV = ExploreRule() }
-        }
-        return exploreRuleV!!
+        return ruleExplore ?: ExploreRule()
     }
 
     fun getBookInfoRule(): BookInfoRule {
-        bookInfoRuleV ?: let {
-            bookInfoRuleV = GSON.fromJsonObject<BookInfoRule>(ruleBookInfo)
-            bookInfoRuleV ?: let { bookInfoRuleV = BookInfoRule() }
-        }
-        return bookInfoRuleV!!
+        return ruleBookInfo ?: BookInfoRule()
     }
 
     fun getTocRule(): TocRule {
-        tocRuleV ?: let {
-            tocRuleV = GSON.fromJsonObject<TocRule>(ruleToc)
-            tocRuleV ?: let { tocRuleV = TocRule() }
-        }
-        return tocRuleV!!
+        return ruleToc ?: TocRule()
     }
 
     fun getContentRule(): ContentRule {
-        contentRuleV ?: let {
-            contentRuleV = GSON.fromJsonObject<ContentRule>(ruleContent)
-            contentRuleV ?: let { contentRuleV = ContentRule() }
-        }
-        return contentRuleV!!
+        return ruleContent ?: ContentRule()
     }
 
     fun addGroup(group: String) {
         bookSourceGroup?.let {
             if (!it.contains(group)) {
-                bookSourceGroup = "$it;$group"
+                bookSourceGroup = "$it,$group"
             }
         } ?: let {
             bookSourceGroup = group
+        }
+    }
+
+    fun removeGroup(group: String) {
+        bookSourceGroup?.splitNotBlank("[,;]".toRegex())?.toHashSet()?.let {
+            it.remove(group)
+            bookSourceGroup = TextUtils.join(",", it)
         }
     }
 
@@ -219,4 +181,57 @@ data class BookSource(
         var title: String,
         var url: String? = null
     )
+
+    class Converters {
+        @TypeConverter
+        fun exploreRuleToString(exploreRule: ExploreRule?): String? {
+            return GSON.toJson(exploreRule)
+        }
+
+        @TypeConverter
+        fun stringToExploreRule(json: String?): ExploreRule? {
+            return GSON.fromJsonObject<ExploreRule>(json)
+        }
+
+        @TypeConverter
+        fun searchRuleToString(searchRule: SearchRule?): String? {
+            return GSON.toJson(searchRule)
+        }
+
+        @TypeConverter
+        fun stringToSearchRule(json: String?): SearchRule? {
+            return GSON.fromJsonObject<SearchRule>(json)
+        }
+
+        @TypeConverter
+        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String? {
+            return GSON.toJson(bookInfoRule)
+        }
+
+        @TypeConverter
+        fun stringToBookInfoRule(json: String?): BookInfoRule? {
+            return GSON.fromJsonObject<BookInfoRule>(json)
+        }
+
+        @TypeConverter
+        fun tocRuleToString(tocRule: TocRule?): String? {
+            return GSON.toJson(tocRule)
+        }
+
+        @TypeConverter
+        fun stringToTocRule(json: String?): TocRule? {
+            return GSON.fromJsonObject<TocRule>(json)
+        }
+
+        @TypeConverter
+        fun contentRuleToString(contentRule: ContentRule?): String? {
+            return GSON.toJson(contentRule)
+        }
+
+        @TypeConverter
+        fun stringToContentRule(json: String?): ContentRule? {
+            return GSON.fromJsonObject<ContentRule>(json)
+        }
+
+    }
 }

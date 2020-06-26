@@ -47,12 +47,13 @@ class AboutFragment : PreferenceFragmentCompat() {
             "update_log" -> showUpdateLog()
             "check_update" -> openUrl(R.string.latest_release_url)
             "mail" -> sendMail()
+            "sourceRuleSummary" -> openUrl(R.string.source_rule_url)
             "git" -> openUrl(R.string.this_github_url)
             "home_page" -> openUrl(R.string.home_page_url)
             "license" -> requireContext().openUrl(licenseUrl)
             "disclaimer" -> requireContext().openUrl(disclaimerUrl)
             "qq" -> showQqGroups()
-            "gzGzh" -> requireContext().sendToClip("开源阅读软件")
+            "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
         }
         return super.onPreferenceTreeClick(preference)
     }

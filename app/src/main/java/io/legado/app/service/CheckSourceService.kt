@@ -7,20 +7,18 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
-import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
-import io.legado.app.model.WebBook
+import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
 import kotlin.math.min
 
 class CheckSourceService : BaseService() {
-    private val threadCount = AppConfig.threadCount
+    private var threadCount = AppConfig.threadCount
     private var searchPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
@@ -58,40 +56,35 @@ class CheckSourceService : BaseService() {
         checkedIds.clear()
         allIds.addAll(ids)
         processIndex = 0
+        threadCount = min(allIds.size, threadCount)
         updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
-        for (i in 0 until min(threadCount, allIds.size)) {
+        for (i in 0 until threadCount) {
             check()
         }
     }
 
-
+    /**
+     * 检测
+     */
     private fun check() {
+        val index = processIndex
         synchronized(this) {
             processIndex++
         }
         execute {
-            if (processIndex < allIds.size) {
-                val sourceUrl = allIds[processIndex]
+            if (index < allIds.size) {
+                val sourceUrl = allIds[index]
                 App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
                     if (source.searchUrl.isNullOrEmpty()) {
                         onNext(sourceUrl)
                     } else {
-                        check(source)
+                        CheckSource(source).check(this, searchPool) {
+                            onNext(it)
+                        }
                     }
                 } ?: onNext(sourceUrl)
             }
         }
-    }
-
-    private fun check(source: BookSource) {
-        val webBook = WebBook(source)
-        tasks.add(webBook.searchBook("我的", scope = this, context = searchPool)
-            .onError(IO) {
-                source.addGroup("失效")
-                App.db.bookSourceDao().update(source)
-            }.onFinally(IO) {
-                onNext(source.bookSourceUrl)
-            })
     }
 
     private fun onNext(sourceUrl: String) {
@@ -102,7 +95,7 @@ class CheckSourceService : BaseService() {
                 checkedIds.size,
                 getString(R.string.progress_show, checkedIds.size, allIds.size)
             )
-            if (processIndex >= allIds.size + min(threadCount, allIds.size) - 1) {
+            if (processIndex >= allIds.size + threadCount - 1) {
                 stopSelf()
             }
         }

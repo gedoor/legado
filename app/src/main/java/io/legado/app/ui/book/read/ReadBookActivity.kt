@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -30,6 +32,7 @@ import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
@@ -69,6 +72,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
+    AutoReadDialog.CallBack,
     TocRegexDialog.CallBack,
     ReplaceEditDialog.CallBack,
     ColorPickerDialogListener {
@@ -85,7 +89,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     private val mHandler = Handler()
     private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
-
+    private val autoPageRunnable: Runnable = Runnable { autoPagePlus() }
+    override var autoPageProgress = 0
+    override var isAutoPage = false
     private var screenTimeOut: Long = 0
     private var timeBatteryReceiver: TimeBatteryReceiver? = null
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
@@ -129,6 +135,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onPause() {
         super.onPause()
+        ReadBook.saveRead()
         timeBatteryReceiver?.let {
             unregisterReceiver(it)
             timeBatteryReceiver = null
@@ -137,6 +144,21 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         if (!BuildConfig.DEBUG) {
             SyncBookProgress.uploadBookProgress()
             Backup.autoBack(this)
+        }
+    }
+
+    override fun upNavigationBarColor() {
+        when {
+            read_menu == null -> return
+            read_menu.isVisible -> {
+                ATH.setNavigationBarColorAuto(this)
+            }
+            ReadBookConfig.bg is ColorDrawable -> {
+                ATH.setNavigationBarColorAuto(this, ReadBookConfig.bgMeanColor)
+            }
+            else -> {
+                ATH.setNavigationBarColorAuto(this, Color.BLACK)
+            }
         }
     }
 
@@ -194,7 +216,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     when (item.groupId) {
                         R.id.menu_group_on_line -> item.isVisible = onLine
                         R.id.menu_group_local -> item.isVisible = !onLine
-                        R.id.menu_group_text -> item.isVisible = book.isTxt()
+                        R.id.menu_group_text -> item.isVisible = book.isLocalTxt()
                         R.id.menu_group_login ->
                             item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
                         else -> if (item.itemId == R.id.menu_enable_replace) {
@@ -238,7 +260,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 onReplaceRuleSave()
             }
             R.id.menu_book_info -> ReadBook.book?.let {
-                startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
+                startActivity<BookInfoActivity>(
+                    Pair("name", it.name),
+                    Pair("author", it.author)
+                )
             }
             R.id.menu_toc_regex -> TocRegexDialog.show(
                 supportFragmentManager,
@@ -280,6 +305,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
+            getPrefInt(PreferKey.prevKey) -> {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.PREV)
+                    return true
+                }
+            }
+            getPrefInt(PreferKey.nextKey) -> {
+                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
+                    return true
+                }
+            }
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 if (volumeKeyPage(PageDelegate.Direction.PREV)) {
                     return true
@@ -293,18 +330,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             KeyEvent.KEYCODE_SPACE -> {
                 page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
                 return true
-            }
-            getPrefInt(PreferKey.prevKey) -> {
-                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.PREV)
-                    return true
-                }
-            }
-            getPrefInt(PreferKey.nextKey) -> {
-                if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
-                    return true
-                }
             }
         }
         return super.onKeyDown(keyCode, event)
@@ -342,6 +367,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         if (BaseReadAloudService.isPlay()) {
                             ReadAloud.pause(this)
                             toast(R.string.read_aloud_pause)
+                            return true
+                        }
+                        if (isAutoPage) {
+                            autoPageStop()
                             return true
                         }
                     }
@@ -466,6 +495,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 if (getPrefBoolean("volumeKeyPageOnPlay")
                     || BaseReadAloudService.pause
                 ) {
+                    page_view.pageDelegate?.isCancel = false
                     page_view.pageDelegate?.keyTurnPage(direction)
                     return true
                 }
@@ -507,18 +537,22 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 } else {
                     tv_chapter_url.gone()
                 }
-                seek_read_page.max = it.pageSize().minus(1)
+                seek_read_page.max = it.pageSize.minus(1)
                 seek_read_page.progress = ReadBook.durPageIndex
                 tv_pre.isEnabled = ReadBook.durChapterIndex != 0
                 tv_next.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
+            } ?: let {
+                tv_chapter_name.gone()
+                tv_chapter_url.gone()
             }
         }
     }
 
     /**
-     * 更新进度条
+     * 页面改变
      */
-    override fun upPageProgress() {
+    override fun pageChanged() {
+        autoPageProgress = 0
         launch {
             seek_read_page.progress = ReadBook.durPageIndex
         }
@@ -539,10 +573,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     override fun clickCenter() {
-        if (BaseReadAloudService.isRun) {
-            showReadAloudDialog()
-        } else {
-            read_menu.runMenuIn()
+        when {
+            BaseReadAloudService.isRun -> {
+                showReadAloudDialog()
+            }
+            isAutoPage -> {
+                AutoReadDialog().show(supportFragmentManager, "autoRead")
+            }
+            else -> {
+                read_menu.runMenuIn()
+            }
         }
     }
 
@@ -557,7 +597,33 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 自动翻页
      */
     override fun autoPage() {
+        if (isAutoPage) {
+            autoPageStop()
+        } else {
+            isAutoPage = true
+            page_view.upContent()
+            page_view.upContent(1)
+            autoPagePlus()
+        }
+        read_menu.setAutoPage(isAutoPage)
+    }
 
+    override fun autoPageStop() {
+        isAutoPage = false
+        mHandler.removeCallbacks(autoPageRunnable)
+        page_view.upContent()
+    }
+
+    private fun autoPagePlus() {
+        mHandler.removeCallbacks(autoPageRunnable)
+        autoPageProgress++
+        if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 10) {
+            autoPageProgress = 0
+            page_view.fillPage(PageDelegate.Direction.NEXT)
+        } else {
+            page_view.invalidate()
+        }
+        mHandler.postDelayed(autoPageRunnable, 100)
     }
 
     /**
@@ -608,6 +674,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun upSystemUiVisibility() {
         Help.upSystemUiVisibility(this, !read_menu.isVisible)
+        upNavigationBarColor()
     }
 
     /**

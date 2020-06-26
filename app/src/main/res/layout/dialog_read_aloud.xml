@@ -273,7 +273,7 @@
             android:layout_height="50dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:contentDescription="@string/interface_setting"
+            android:contentDescription="@string/to_backstage"
             android:focusable="true"
             android:orientation="vertical"
             android:paddingBottom="7dp">

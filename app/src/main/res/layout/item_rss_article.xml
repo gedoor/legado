@@ -43,6 +43,7 @@
         android:paddingLeft="16dp"
         android:visibility="gone"
         android:scaleType="centerCrop"
+        android:src="@drawable/image_rss_article"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded,RtlSymmetry" />

@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "txtTocRules")
 data class TxtTocRule(
     @PrimaryKey
+    var id: Long = System.currentTimeMillis(),
     var name: String = "",
     var rule: String = "",
     var serialNumber: Int = -1,

@@ -63,21 +63,19 @@ data class SearchBook(
         return other.originOrder - this.originOrder
     }
 
-    @Ignore
+    @delegate:Transient
+    @delegate:Ignore
     @IgnoredOnParcel
-    override var variableMap: HashMap<String, String>? = null
-        get() {
-            if (field == null) {
-                field = GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
-            }
-            return field
-        }
+    override val variableMap by lazy {
+        GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+    }
 
     override fun putVariable(key: String, value: String) {
-        variableMap?.put(key, value)
+        variableMap[key] = value
         variable = GSON.toJson(variableMap)
     }
 
+    @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     val origins: LinkedHashSet<String> by lazy { linkedSetOf(origin) }

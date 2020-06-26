@@ -39,10 +39,6 @@ object CookieStore {
         App.db.cookieDao().delete(url)
     }
 
-    fun clearCookies() {
-
-    }
-
     private fun cookieToMap(cookie: String): MutableMap<String, String> {
         val cookieMap = mutableMapOf<String, String>()
         if (cookie.isBlank()) {

@@ -126,6 +126,7 @@ object Restore {
                 hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
                 hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
                 bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
+                autoReadSpeed = App.INSTANCE.getPrefInt(PreferKey.autoReadSpeed, 46)
             }
             ChapterProvider.upStyle()
             ReadBook.loadContent(resetPageOffset = false)

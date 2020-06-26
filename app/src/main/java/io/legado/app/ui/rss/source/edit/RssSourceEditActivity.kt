@@ -144,6 +144,7 @@ class RssSourceEditActivity :
             add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.r_image))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.r_link))
             add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.r_content))
+            add(EditEntity("style", rssSource?.style, R.string.r_style))
             add(EditEntity("header", rssSource?.header, R.string.source_http_header))
         }
         adapter.editEntities = sourceEntities
@@ -169,6 +170,7 @@ class RssSourceEditActivity :
                 "ruleImage" -> source.ruleImage = it.value
                 "ruleLink" -> source.ruleLink = it.value
                 "ruleContent" -> source.ruleContent = it.value
+                "style" -> source.style = it.value
                 "header" -> source.header = it.value
             }
         }
@@ -183,7 +185,7 @@ class RssSourceEditActivity :
         return true
     }
 
-    override fun sendText(text: String) {
+    private fun insertText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -195,6 +197,14 @@ class RssSourceEditActivity :
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
+        }
+    }
+
+    override fun sendText(text: String) {
+        if (text == AppConst.keyboardToolChars[0]) {
+            insertText(AppConst.urlOption)
+        } else {
+            insertText(text)
         }
     }
 

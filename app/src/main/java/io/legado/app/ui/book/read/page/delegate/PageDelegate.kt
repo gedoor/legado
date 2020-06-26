@@ -15,6 +15,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.abs
+import io.legado.app.R
 
 abstract class PageDelegate(protected val pageView: PageView) :
     GestureDetector.SimpleOnGestureListener() {
@@ -170,13 +171,9 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     open fun onScroll() {}//移动contentView， slidePage
 
-    open fun nextPageByAnim() {
-        abort()
-    }
+    abstract fun nextPageByAnim()
 
-    open fun prevPageByAnim() {
-        abort()
-    }
+    abstract fun prevPageByAnim()
 
     open fun keyTurnPage(direction: Direction) {
         if (isRunning) return
@@ -320,7 +317,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         val hasPrev = pageView.pageFactory.hasPrev()
         if (!hasPrev) {
             if (!snackBar.isShown) {
-                snackBar.setText("没有上一页")
+                snackBar.setText(R.string.no_prev_page)
                 snackBar.show()
             }
         }
@@ -334,7 +331,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         val hasNext = pageView.pageFactory.hasNext()
         if (!hasNext) {
             if (!snackBar.isShown) {
-                snackBar.setText("没有下一页")
+                snackBar.setText(R.string.no_next_page)
                 snackBar.show()
             }
         }

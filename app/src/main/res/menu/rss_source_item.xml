@@ -6,6 +6,10 @@
         android:title="@string/to_top" />
 
     <item
+        android:id="@+id/menu_bottom"
+        android:title="@string/to_bottom" />
+
+    <item
         android:id="@+id/menu_del"
         android:title="@string/delete" />
 

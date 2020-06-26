@@ -185,6 +185,10 @@ class ChangeSourceDialog : BaseDialogFragment(),
     override val bookUrl: String?
         get() = callBack?.oldBook?.bookUrl
 
+    override fun disableSource(searchBook: SearchBook) {
+        viewModel.disableSource(searchBook)
+    }
+
     interface CallBack {
         val oldBook: Book?
         fun changeTo(book: Book)

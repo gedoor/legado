@@ -43,85 +43,85 @@
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/day"
-            app:layout="@layout/view_preference_category"
+        app:layout="@layout/view_preference_category"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_light_blue_600"
-                android:key="colorPrimary"
-                android:summary="@string/day_color_primary"
-                android:title="@string/primary"
-                app:cpv_dialogType="preset"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_light_blue_600"
+            android:key="colorPrimary"
+            android:summary="@string/day_color_primary"
+            android:title="@string/primary"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_pink_800"
-                android:key="colorAccent"
-                android:summary="@string/day_color_accent"
-                android:title="@string/accent"
-                app:cpv_dialogType="preset"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_pink_800"
+            android:key="colorAccent"
+            android:summary="@string/day_color_accent"
+            android:title="@string/accent"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_grey_100"
-                android:key="colorBackground"
-                android:summary="@string/day_background_color"
-                android:title="@string/background_color"
-                app:cpv_dialogType="preset"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_grey_100"
+            android:key="colorBackground"
+            android:summary="@string/day_background_color"
+            android:title="@string/background_color"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_grey_200"
-                android:key="colorBottomBackground"
-                android:summary="@string/day_navbar_color"
-                android:title="@string/navbar_color"
-                app:cpv_dialogType="preset"
-                app:allowDividerAbove="false"
-                app:allowDividerBelow="false"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_grey_200"
+            android:key="colorBottomBackground"
+            android:summary="@string/day_navbar_color"
+            android:title="@string/navbar_color"
+            app:cpv_dialogType="preset"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
-            android:title="@string/night"
-            app:layout="@layout/view_preference_category"
+        android:title="@string/night"
+        app:layout="@layout/view_preference_category"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_grey_900"
-                android:key="colorPrimaryNight"
-                android:summary="@string/night_primary"
-                android:title="@string/primary"
-                app:cpv_dialogType="preset"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_grey_900"
+            android:key="colorPrimaryNight"
+            android:summary="@string/night_primary"
+            android:title="@string/primary"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_deep_orange_800"
-                android:key="colorAccentNight"
-                android:summary="@string/night_accent"
-                android:title="@string/accent"
-                app:cpv_dialogType="preset"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_deep_orange_800"
+            android:key="colorAccentNight"
+            android:summary="@string/night_accent"
+            android:title="@string/accent"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_black_1000"
-                android:key="colorBackgroundNight"
-                android:summary="@string/night_background_color"
-                android:title="@string/background_color"
-                app:cpv_dialogType="preset"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_black_1000"
+            android:key="colorBackgroundNight"
+            android:summary="@string/night_background_color"
+            android:title="@string/background_color"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.ColorPreference
-                android:defaultValue="@color/md_grey_800"
-                android:key="colorBottomBackgroundNight"
-                android:summary="@string/night_navbar_color"
-                android:title="@string/navbar_color"
-                app:cpv_dialogType="preset"
-                app:iconSpaceReserved="false" />
+            android:defaultValue="@color/md_grey_800"
+            android:key="colorBottomBackgroundNight"
+            android:summary="@string/night_navbar_color"
+            android:title="@string/navbar_color"
+            app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 

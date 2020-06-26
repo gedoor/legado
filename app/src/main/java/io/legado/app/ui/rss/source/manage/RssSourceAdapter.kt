@@ -40,14 +40,14 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
-    fun getSelection(): LinkedHashSet<RssSource> {
-        val selection = linkedSetOf<RssSource>()
+    fun getSelection(): List<RssSource> {
+        val selection = arrayListOf<RssSource>()
         getItems().forEach {
             if (selected.contains(it)) {
                 selection.add(it)
             }
         }
-        return selection
+        return selection.sortedBy { it.customOrder }
     }
 
     override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
@@ -111,6 +111,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
+                R.id.menu_bottom -> callBack.toBottom(source)
                 R.id.menu_del -> callBack.del(source)
             }
             true
@@ -151,6 +152,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         fun edit(source: RssSource)
         fun update(vararg source: RssSource)
         fun toTop(source: RssSource)
+        fun toBottom(source: RssSource)
         fun upOrder()
         fun upCountView()
     }
