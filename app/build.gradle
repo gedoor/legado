@@ -144,7 +144,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     //paging
-    implementation 'androidx.paging:paging-runtime:2.1.2'
+    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
 
     //anko
     def anko_version = '0.10.8'
