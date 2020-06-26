@@ -53,7 +53,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "license" -> requireContext().openUrl(licenseUrl)
             "disclaimer" -> requireContext().openUrl(disclaimerUrl)
             "qq" -> showQqGroups()
-            "gzGzh" -> requireContext().sendToClip("开源阅读软件")
+            "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
         }
         return super.onPreferenceTreeClick(preference)
     }
