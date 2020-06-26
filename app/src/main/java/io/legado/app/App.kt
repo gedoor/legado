@@ -89,10 +89,18 @@ class App : Application() {
                     getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
                 val accent =
                     getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
-                val background =
-                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.shine_color))
-                val bBackground =
+                var background =
+                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                if (ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_900)
+                    putPrefInt(PreferKey.cNBackground, background)
+                }
+                var bBackground =
                     getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
+                if (!ColorUtils.isColorLight(bBackground)) {
+                    bBackground = getCompatColor(R.color.md_grey_850)
+                    putPrefInt(PreferKey.cNBBackground, bBackground)
+                }
                 ThemeStore.editTheme(this)
                     .coloredNavigationBar(true)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))

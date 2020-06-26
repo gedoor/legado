@@ -132,59 +132,15 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
     @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "defaultTheme" -> alert(title = "切换默认主题") {
-                items(items) { _, which ->
-                    when (which) {
-                        0 -> {
-                            putPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
-                            putPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
-                            putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                            AppConfig.isNightTheme = false
-                        }
-                        1 -> {
-                            putPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
-                            putPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
-                            putPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
-                            AppConfig.isNightTheme = true
-                        }
-                        2 -> {
-                            putPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
-                            putPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
-                            putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                            AppConfig.isNightTheme = false
-                        }
-                        3 -> {
-                            putPrefInt("colorPrimary", getCompatColor(R.color.white))
-                            putPrefInt("colorAccent", getCompatColor(R.color.black))
-                            putPrefInt("colorBackground", getCompatColor(R.color.white))
-                            putPrefInt("colorBottomBackground", getCompatColor(R.color.white))
-                            AppConfig.isNightTheme = false
-                        }
-                        4 -> {
-                            putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
-                            putPrefInt(
-                                "colorAccentNight",
-                                getCompatColor(R.color.md_grey_500)
-                            )
-                            putPrefInt(
-                                "colorBackgroundNight",
-                                getCompatColor(R.color.black)
-                            )
-                            putPrefInt("colorBottomBackgroundNight", getCompatColor(R.color.black))
-                            AppConfig.isNightTheme = true
-                        }
-                    }
-                    App.INSTANCE.applyDayNight()
-                    recreateActivities()
-                }
-            }.show().applyTint()
+            "defaultTheme" -> changeTheme()
             "barElevation" -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.bar_elevation))
                 .setMaxValue(32)
                 .setMinValue(0)
                 .setValue(AppConfig.elevation)
                 .setCustomButton((R.string.btn_default_s)) {
-                    AppConfig.elevation = App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+                    AppConfig.elevation =
+                        App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
                     recreateActivities()
                 }
                 .show {
@@ -193,6 +149,52 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
                 }
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun changeTheme() {
+        alert(title = "切换默认主题") {
+            items(items) { _, which ->
+                when (which) {
+                    0 -> {
+                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_grey_100))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.lightBlue_color))
+                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                        AppConfig.isNightTheme = false
+                    }
+                    1 -> {
+                        putPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_grey_900))
+                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.lightBlue_color))
+                        putPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                        putPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_900))
+                        AppConfig.isNightTheme = true
+                    }
+                    2 -> {
+                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_light_blue_500))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_pink_800))
+                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                        AppConfig.isNightTheme = false
+                    }
+                    3 -> {
+                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.white))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.white))
+                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.white))
+                        AppConfig.isNightTheme = false
+                    }
+                    4 -> {
+                        putPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_grey_500))
+                        putPrefInt(PreferKey.cNBackground, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.black))
+                        AppConfig.isNightTheme = true
+                    }
+                }
+                App.INSTANCE.applyDayNight()
+                recreateActivities()
+            }
+        }.show().applyTint()
     }
 
     private fun backgroundIsDark(sharedPreferences: SharedPreferences): Boolean {
