@@ -45,6 +45,7 @@ object PreferKey {
     const val readBodyToLh = "readBodyToLh"
     const val textFullJustify = "textFullJustify"
     const val autoReadSpeed = "autoReadSpeed"
+    const val barElevation = "barElevation"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

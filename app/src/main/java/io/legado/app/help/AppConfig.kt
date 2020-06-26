@@ -125,11 +125,11 @@ object AppConfig {
     var elevation: Int
         @SuppressLint("PrivateResource")
         get() = App.INSTANCE.getPrefInt(
-            "elevation",
+            PreferKey.barElevation,
             App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
         )
         set(value) {
-            App.INSTANCE.putPrefInt("elevation", value)
+            App.INSTANCE.putPrefInt(PreferKey.barElevation, value)
         }
 
     val autoChangeSource: Boolean get() = App.INSTANCE.getPrefBoolean("autoChangeSource", true)

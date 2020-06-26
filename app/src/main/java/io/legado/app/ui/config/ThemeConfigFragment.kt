@@ -38,7 +38,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
                 preferenceScreen.removePreference(it)
             }
         }
-        upPreferenceSummary("barElevation", AppConfig.elevation.toString())
+        upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -133,7 +133,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "defaultTheme" -> changeTheme()
-            "barElevation" -> NumberPickerDialog(requireContext())
+            PreferKey.barElevation -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.bar_elevation))
                 .setMaxValue(32)
                 .setMinValue(0)
@@ -231,7 +231,8 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
-            "barElevation" -> preference.summary = getString(R.string.bar_elevation_s, value)
+            PreferKey.barElevation -> preference.summary =
+                getString(R.string.bar_elevation_s, value)
         }
     }
 }
