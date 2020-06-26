@@ -32,9 +32,9 @@ object AppConfig {
         get() = App.INSTANCE.getPrefString(PreferKey.themeMode) == "3"
 
     var isTransparentStatusBar: Boolean
-        get() = App.INSTANCE.getPrefBoolean("transparentStatusBar")
+        get() = App.INSTANCE.getPrefBoolean(PreferKey.transparentStatusBar)
         set(value) {
-            App.INSTANCE.putPrefBoolean("transparentStatusBar", value)
+            App.INSTANCE.putPrefBoolean(PreferKey.transparentStatusBar, value)
         }
 
     val requestedDirection: String?

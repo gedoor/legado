@@ -76,7 +76,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
         sharedPreferences ?: return
         when (key) {
             PreferKey.launcherIcon -> LauncherIconHelp.changeIcon(getPrefString(key))
-            "transparentStatusBar" -> recreateActivities()
+            PreferKey.transparentStatusBar -> recreateActivities()
             PreferKey.cPrimary,
             PreferKey.cAccent,
             PreferKey.cBackground,
