@@ -124,7 +124,7 @@ object ChapterProvider {
                 val x = if (isTitle && ReadBookConfig.titleMode == 1)
                     (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
-                addCharsToLineLast(textLine, words, textPaint, x)
+                addCharsToLineLast(textLine, words, textPaint, x, true)
             } else {
                 //中间行
                 addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
@@ -163,7 +163,7 @@ object ChapterProvider {
     ) {
         var x = 0f
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(textLine, words, textPaint, x)
+            addCharsToLineLast(textLine, words, textPaint, x, false)
             return
         }
         val bodyIndent = ReadBookConfig.bodyIndent
@@ -192,7 +192,7 @@ object ChapterProvider {
         startX: Float
     ) {
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(textLine, words, textPaint, startX)
+            addCharsToLineLast(textLine, words, textPaint, startX, false)
             return
         }
         val gapCount: Int = words.length - 1
@@ -218,9 +218,10 @@ object ChapterProvider {
         textLine: TextLine,
         words: String,
         textPaint: TextPaint,
-        startX: Float
+        startX: Float,
+        isLast: Boolean
     ) {
-        textLine.text = "$words\n"
+        textLine.text = if (isLast) "$words\n" else words
         var x = startX
         words.toStringArray().forEach {
             val cw = StaticLayout.getDesiredWidth(it, textPaint)
