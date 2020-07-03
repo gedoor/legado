@@ -44,6 +44,7 @@ object PreferKey {
     const val systemTypefaces = "system_typefaces"
     const val readBodyToLh = "readBodyToLh"
     const val textFullJustify = "textFullJustify"
+    const val textBottomJustify = "textBottomJustify"
     const val autoReadSpeed = "autoReadSpeed"
     const val barElevation = "barElevation"
     const val transparentStatusBar = "transparentStatusBar"

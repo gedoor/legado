@@ -705,5 +705,6 @@
     <string name="import_old_summary">選擇舊版備份文件夾</string>
     <string name="enabled">已啓用</string>
     <string name="disabled">已禁用</string>
+    <string name="text_bottom_justify">文字底部對齊</string>
 
 </resources>
