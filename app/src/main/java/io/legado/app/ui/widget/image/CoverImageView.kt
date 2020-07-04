@@ -130,7 +130,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
 
     fun load(path: String?, name: String?, author: String?) {
         setText(name, author)
-        ImageLoader.load(context, path)//Glide自动识别http://和file://
+        ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
             .placeholder(R.drawable.image_cover_default)
             .error(R.drawable.image_cover_default)
             .listener(object : RequestListener<Drawable> {

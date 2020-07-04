@@ -65,6 +65,9 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
         BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
     }
 
+    /**
+     * 配置
+     */
     class PreferenceFragment : PreferenceFragmentCompat(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 

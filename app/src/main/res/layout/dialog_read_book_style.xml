@@ -37,15 +37,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_text_bold"
+        <io.legado.app.ui.book.read.config.TextFontWeightConverter
+            android:id="@+id/text_font_weight_converter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
-            android:text="@string/text_bold"
             android:gravity="center"
             android:textSize="14sp"
             app:radius="3dp" />

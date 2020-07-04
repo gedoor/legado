@@ -44,7 +44,7 @@ abstract class BaseReadAloudService : BaseService(),
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var mediaSessionCompat: MediaSessionCompat? = null
+    private lateinit var mediaSessionCompat: MediaSessionCompat
     private var title: String = ""
     private var subtitle: String = ""
     internal val contentList = arrayListOf<String>()
@@ -59,6 +59,7 @@ abstract class BaseReadAloudService : BaseService(),
         isRun = true
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         mFocusRequest = MediaHelp.getFocusRequest(this)
+        mediaSessionCompat = MediaSessionCompat(this, "readAloud")
         initMediaSession()
         initBroadcastReceiver()
         upNotification()
@@ -72,7 +73,7 @@ abstract class BaseReadAloudService : BaseService(),
         unregisterReceiver(broadcastReceiver)
         postEvent(EventBus.ALOUD_STATE, Status.STOP)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
-        mediaSessionCompat?.release()
+        mediaSessionCompat.release()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -116,7 +117,9 @@ abstract class BaseReadAloudService : BaseService(),
                     }
                 } else {
                     textChapter.getUnRead(pageIndex).split("\n").forEach {
-                        contentList.add(it)
+                        if (it.isNotEmpty()) {
+                            contentList.add(it)
+                        }
                     }
                 }
                 if (play) play()
@@ -200,7 +203,7 @@ abstract class BaseReadAloudService : BaseService(),
      * 更新媒体状态
      */
     private fun upMediaSessionPlaybackState(state: Int) {
-        mediaSessionCompat?.setPlaybackState(
+        mediaSessionCompat.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
                 .setState(state, nowSpeak.toLong(), 1f)
@@ -212,13 +215,12 @@ abstract class BaseReadAloudService : BaseService(),
      * 初始化MediaSession, 注册多媒体按钮
      */
     private fun initMediaSession() {
-        mediaSessionCompat = MediaSessionCompat(this, "readAloud")
-        mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
+        mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
             }
         })
-        mediaSessionCompat?.setMediaButtonReceiver(
+        mediaSessionCompat.setMediaButtonReceiver(
             PendingIntent.getBroadcast(
                 this,
                 0,
@@ -231,7 +233,7 @@ abstract class BaseReadAloudService : BaseService(),
                 PendingIntent.FLAG_CANCEL_CURRENT
             )
         )
-        mediaSessionCompat?.isActive = true
+        mediaSessionCompat.isActive = true
     }
 
     /**
@@ -321,7 +323,6 @@ abstract class BaseReadAloudService : BaseService(),
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionCompat?.sessionToken)
                 .setShowActionsInCompactView(0, 1, 2)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

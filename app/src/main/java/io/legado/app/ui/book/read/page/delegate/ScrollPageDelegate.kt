@@ -79,12 +79,12 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun nextPageByAnim() {
-        super.nextPageByAnim()
+        abort()
         startScroll(0, 0, 0, -ChapterProvider.visibleHeight)
     }
 
     override fun prevPageByAnim() {
-        super.prevPageByAnim()
+        abort()
         startScroll(0, 0, 0, ChapterProvider.visibleHeight)
     }
 }

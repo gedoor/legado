@@ -72,7 +72,8 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
 
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
-            Pair("bookUrl", book.bookUrl)
+            Pair("name", book.name),
+            Pair("author", book.author)
         )
     }
 }

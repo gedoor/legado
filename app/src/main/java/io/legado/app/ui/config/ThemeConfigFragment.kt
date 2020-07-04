@@ -1,8 +1,12 @@
 package io.legado.app.ui.config
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -22,7 +26,8 @@ import io.legado.app.ui.widget.prefs.IconListPreference
 import io.legado.app.utils.*
 
 
-class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class ThemeConfigFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     val items = arrayListOf("极简", "曜夜", "经典", "黑白", "A屏黑")
 
@@ -33,12 +38,13 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                 preferenceScreen.removePreference(it)
             }
         }
-        upPreferenceSummary("barElevation", AppConfig.elevation.toString())
+        upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ATH.applyEdgeEffectColor(listView)
+        setHasOptionsMenu(true)
     }
 
     override fun onResume() {
@@ -51,22 +57,37 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         super.onPause()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.theme_config, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_theme_mode -> {
+                AppConfig.isNightTheme = !AppConfig.isNightTheme
+                App.INSTANCE.applyDayNight()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
             PreferKey.launcherIcon -> LauncherIconHelp.changeIcon(getPrefString(key))
-            "transparentStatusBar" -> recreateActivities()
-            "colorPrimary",
-            "colorAccent",
-            "colorBackground",
-            "colorBottomBackground" -> {
+            PreferKey.transparentStatusBar -> recreateActivities()
+            PreferKey.cPrimary,
+            PreferKey.cAccent,
+            PreferKey.cBackground,
+            PreferKey.cBBackground -> {
                 if (backgroundIsDark(sharedPreferences)) {
                     alert {
                         title = "白天背景太暗"
                         message = "将会恢复默认背景？"
                         yesButton {
                             putPrefInt(
-                                "colorBackground",
+                                PreferKey.cBackground,
                                 getCompatColor(R.color.md_grey_100)
                             )
                             upTheme(false)
@@ -80,17 +101,17 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                     upTheme(false)
                 }
             }
-            "colorPrimaryNight",
-            "colorAccentNight",
-            "colorBackgroundNight",
-            "colorBottomBackgroundNight" -> {
+            PreferKey.cNPrimary,
+            PreferKey.cNAccent,
+            PreferKey.cNBackground,
+            PreferKey.cNBBackground -> {
                 if (backgroundIsLight(sharedPreferences)) {
                     alert {
                         title = "夜间背景太亮"
                         message = "将会恢复默认背景？"
                         yesButton {
                             putPrefInt(
-                                "colorBackgroundNight",
+                                PreferKey.cNBackground,
                                 getCompatColor(R.color.md_grey_800)
                             )
                             upTheme(true)
@@ -108,59 +129,18 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     }
 
+    @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            "defaultTheme" -> alert(title = "切换默认主题") {
-                items(items) { _, which ->
-                    when (which) {
-                        0 -> {
-                            putPrefInt("colorPrimary", getCompatColor(R.color.md_grey_100))
-                            putPrefInt("colorAccent", getCompatColor(R.color.lightBlue_color))
-                            putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                            AppConfig.isNightTheme = false
-                        }
-                        1 -> {
-                            putPrefInt("colorPrimaryNight", getCompatColor(R.color.shine_color))
-                            putPrefInt("colorAccentNight", getCompatColor(R.color.lightBlue_color))
-                            putPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
-                            AppConfig.isNightTheme = true
-                        }
-                        2 -> {
-                            putPrefInt("colorPrimary", getCompatColor(R.color.md_light_blue_500))
-                            putPrefInt("colorAccent", getCompatColor(R.color.md_pink_800))
-                            putPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                            AppConfig.isNightTheme = false
-                        }
-                        3 -> {
-                            putPrefInt("colorPrimary", getCompatColor(R.color.white))
-                            putPrefInt("colorAccent", getCompatColor(R.color.black))
-                            putPrefInt("colorBackground", getCompatColor(R.color.white))
-                            AppConfig.isNightTheme = false
-                        }
-                        4 -> {
-                            putPrefInt("colorPrimaryNight", getCompatColor(R.color.black))
-                            putPrefInt(
-                                "colorAccentNight",
-                                getCompatColor(R.color.md_grey_600)
-                            )
-                            putPrefInt(
-                                "colorBackgroundNight",
-                                getCompatColor(R.color.black)
-                            )
-                            AppConfig.isNightTheme = true
-                        }
-                    }
-                    App.INSTANCE.applyDayNight()
-                    recreateActivities()
-                }
-            }.show().applyTint()
-            "barElevation" -> NumberPickerDialog(requireContext())
+            "defaultTheme" -> changeTheme()
+            PreferKey.barElevation -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.bar_elevation))
                 .setMaxValue(32)
                 .setMinValue(0)
                 .setValue(AppConfig.elevation)
                 .setCustomButton((R.string.btn_default_s)) {
-                    AppConfig.elevation = App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+                    AppConfig.elevation =
+                        App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
                     recreateActivities()
                 }
                 .show {
@@ -171,10 +151,56 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         return super.onPreferenceTreeClick(preference)
     }
 
+    private fun changeTheme() {
+        alert(title = "切换默认主题") {
+            items(items) { _, which ->
+                when (which) {
+                    0 -> {
+                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_grey_100))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.lightBlue_color))
+                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                        AppConfig.isNightTheme = false
+                    }
+                    1 -> {
+                        putPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_grey_900))
+                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.lightBlue_color))
+                        putPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                        putPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_900))
+                        AppConfig.isNightTheme = true
+                    }
+                    2 -> {
+                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_light_blue_500))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_pink_800))
+                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                        AppConfig.isNightTheme = false
+                    }
+                    3 -> {
+                        putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.white))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cBackground, getCompatColor(R.color.white))
+                        putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.white))
+                        AppConfig.isNightTheme = false
+                    }
+                    4 -> {
+                        putPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_grey_500))
+                        putPrefInt(PreferKey.cNBackground, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.black))
+                        AppConfig.isNightTheme = true
+                    }
+                }
+                App.INSTANCE.applyDayNight()
+                recreateActivities()
+            }
+        }.show().applyTint()
+    }
+
     private fun backgroundIsDark(sharedPreferences: SharedPreferences): Boolean {
         return !ColorUtils.isColorLight(
             sharedPreferences.getInt(
-                "colorBackground",
+                PreferKey.cBackground,
                 getCompatColor(R.color.md_grey_100)
             )
         )
@@ -183,7 +209,7 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     private fun backgroundIsLight(sharedPreferences: SharedPreferences): Boolean {
         return ColorUtils.isColorLight(
             sharedPreferences.getInt(
-                "colorBackgroundNight",
+                PreferKey.cNBackground,
                 getCompatColor(R.color.md_grey_800)
             )
         )
@@ -205,7 +231,8 @@ class ThemeConfigFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
-            "barElevation" -> preference.summary = getString(R.string.bar_elevation_s, value)
+            PreferKey.barElevation -> preference.summary =
+                getString(R.string.bar_elevation_s, value)
         }
     }
 }

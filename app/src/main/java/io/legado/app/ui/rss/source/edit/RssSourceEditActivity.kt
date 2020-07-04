@@ -144,6 +144,7 @@ class RssSourceEditActivity :
             add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.r_image))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.r_link))
             add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.r_content))
+            add(EditEntity("style", rssSource?.style, R.string.r_style))
             add(EditEntity("header", rssSource?.header, R.string.source_http_header))
         }
         adapter.editEntities = sourceEntities
@@ -169,6 +170,7 @@ class RssSourceEditActivity :
                 "ruleImage" -> source.ruleImage = it.value
                 "ruleLink" -> source.ruleLink = it.value
                 "ruleContent" -> source.ruleContent = it.value
+                "style" -> source.style = it.value
                 "header" -> source.header = it.value
             }
         }
@@ -200,17 +202,7 @@ class RssSourceEditActivity :
 
     override fun sendText(text: String) {
         if (text == AppConst.keyboardToolChars[0]) {
-            insertText(
-                """
-                ,{
-                "charset": "",
-                "method": "POST",
-                "body": "",
-                "headers": {"User-Agent": ""}
-                }
-
-            """.trimIndent()
-            )
+            insertText(AppConst.urlOption)
         } else {
             insertText(text)
         }

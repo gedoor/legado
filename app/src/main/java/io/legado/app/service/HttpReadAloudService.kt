@@ -76,7 +76,9 @@ class HttpReadAloudService : BaseReadAloudService(),
                         val file = getSpeakFile(index)
                         file.writeBytes(bytes)
                         if (index == nowSpeak) {
-                            playAudio(FileInputStream(file).fd)
+                            @Suppress("BlockingMethodInNonBlockingContext")
+                            val fis = FileInputStream(file)
+                            playAudio(fis.fd)
                         }
                     }
                 } else {
@@ -204,7 +206,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             } else {
                 nextChapter()
             }
-        }, 1000)
+        }, 50)
         return true
     }
 

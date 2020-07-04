@@ -16,7 +16,6 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     var isLoading = true
     var order = System.currentTimeMillis()
     private var nextPageUrl: String? = null
-    private val articles = arrayListOf<RssArticle>()
     var sortName: String = ""
     var sortUrl: String = ""
 
@@ -60,26 +59,35 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             Rss.getArticles(sortName, pageUrl, rssSource, pageUrl)
                 .onSuccess(Dispatchers.IO) {
                     nextPageUrl = it.nextPageUrl
-                    it.articles.let { list ->
-                        if (list.isEmpty()) {
-                            loadFinally.postValue(true)
-                            return@let
-                        }
-                        if (articles.contains(list.first())) {
-                            loadFinally.postValue(false)
-                        } else {
-                            list.forEach { rssArticle ->
-                                rssArticle.order = order--
-                            }
-                            App.db.rssArticleDao().insert(*list.toTypedArray())
-                        }
-                    }
-                    isLoading = false
+                    loadMoreSuccess(it.articles)
+                }
+                .onError {
+                    loadFinally.postValue(false)
                 }
         } else {
             loadFinally.postValue(false)
         }
     }
 
+    private fun loadMoreSuccess(articles: MutableList<RssArticle>) {
+        articles.let { list ->
+            if (list.isEmpty()) {
+                loadFinally.postValue(false)
+                return@let
+            }
+            val firstArticle = list.first()
+            val dbArticle = App.db.rssArticleDao()
+                .get(firstArticle.origin, firstArticle.link)
+            if (dbArticle != null) {
+                loadFinally.postValue(false)
+            } else {
+                list.forEach { rssArticle ->
+                    rssArticle.order = order--
+                }
+                App.db.rssArticleDao().insert(*list.toTypedArray())
+            }
+        }
+        isLoading = false
+    }
 
 }

@@ -144,7 +144,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     ) {
         val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
         textPaint.color =
-            if (isReadAloud) context.accentColor else ReadBookConfig.durConfig.textColor()
+            if (isReadAloud) context.accentColor else ReadBookConfig.textColor
         textChars.forEach {
             canvas.drawText(it.charData, it.start, lineBase, textPaint)
             if (it.selected) {

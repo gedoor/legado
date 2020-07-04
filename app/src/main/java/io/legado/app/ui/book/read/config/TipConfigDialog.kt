@@ -25,12 +25,10 @@ class TipConfigDialog : BaseDialogFragment() {
             Help.upSystemUiVisibility(it)
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
-        dialog?.window?.let {
-            val attr = it.attributes
-            attr.dimAmount = 0.0f
-            it.attributes = attr
-            it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun onCreateView(

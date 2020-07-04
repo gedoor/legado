@@ -35,7 +35,7 @@ class DonateFragment : PreferenceFragmentCompat() {
             "zfbSkRwm" -> requireContext().openUrl(zfbSkRwmUrl)
             "qqSkRwm" -> requireContext().openUrl(qqSkRwmUrl)
             "zfbHbSsm" -> getZfbHb(requireContext())
-            "gzGzh" -> requireContext().sendToClip("开源阅读软件")
+            "gzGzh" -> requireContext().sendToClip("开源阅读")
         }
         return super.onPreferenceTreeClick(preference)
     }

@@ -1,11 +1,13 @@
 package io.legado.app.service.help
 
 import androidx.lifecycle.MutableLiveData
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
@@ -36,9 +38,8 @@ object ReadBook {
     var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
 
-    fun resetData(book: Book, noSource: (name: String, author: String) -> Unit) {
+    fun resetData(book: Book) {
         this.book = book
-        titleDate.postValue(book.name)
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
@@ -46,20 +47,19 @@ object ReadBook {
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
-        upWebBook(book, noSource)
+        titleDate.postValue(book.name)
+        upWebBook(book)
     }
 
-    fun upWebBook(book: Book?, noSource: (name: String, author: String) -> Unit) {
-        book ?: return
-        if (book.origin == BookType.local) {
-            webBook = null
+    fun upWebBook(book: Book) {
+        webBook = if (book.origin == BookType.local) {
+            null
         } else {
             val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
             if (bookSource != null) {
-                webBook = WebBook(bookSource)
+                WebBook(bookSource)
             } else {
-                webBook = null
-                noSource.invoke(book.name, book.author)
+                null
             }
         }
     }
@@ -149,7 +149,7 @@ object ReadBook {
     }
 
     private fun curPageChanged() {
-        callBack?.upPageProgress()
+        callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
             readAloud(!BaseReadAloudService.pause)
         }
@@ -293,6 +293,11 @@ object ReadBook {
     ) {
         Coroutine.async {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
+                chapter.title = when (AppConfig.chineseConverterType) {
+                    1 -> HanLP.convertToSimplifiedChinese(chapter.title)
+                    2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                    else -> chapter.title
+                }
                 val contents = BookHelp.disposeContent(
                     chapter.title,
                     book!!.name,
@@ -345,7 +350,7 @@ object ReadBook {
     interface CallBack {
         fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
         fun upView()
-        fun upPageProgress()
+        fun pageChanged()
         fun contentLoadFinish()
     }
 }

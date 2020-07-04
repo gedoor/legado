@@ -189,7 +189,6 @@ class FastScrollRecyclerView : RecyclerView {
     private fun layout(context: Context, attrs: AttributeSet?) {
         mFastScroller = FastScroller(context, attrs)
         mFastScroller?.id = R.id.fast_scroller
-
     }
 
 }

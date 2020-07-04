@@ -3,14 +3,19 @@ package io.legado.app.ui.book.read.page
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.activity
+import io.legado.app.utils.screenshot
+import kotlinx.android.synthetic.main.activity_book_read.view.*
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -23,6 +28,12 @@ class PageView(context: Context, attrs: AttributeSet) :
     var prevPage: ContentView = ContentView(context)
     var curPage: ContentView = ContentView(context)
     var nextPage: ContentView = ContentView(context)
+    private val autoPageRect by lazy { Rect() }
+    private val autoPagePint by lazy {
+        Paint().apply {
+            color = context.accentColor
+        }
+    }
 
     init {
         addView(nextPage)
@@ -44,8 +55,22 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-
         pageDelegate?.onDraw(canvas)
+        if (callBack.isAutoPage) {
+            nextPage.screenshot()?.let {
+                val bottom =
+                    page_view.height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 10)
+                autoPageRect.set(0, 0, page_view.width, bottom)
+                canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
+                canvas.drawRect(
+                    0f,
+                    bottom.toFloat() - 1,
+                    page_view.width.toFloat(),
+                    bottom.toFloat(),
+                    autoPagePint
+                )
+            }
+        }
     }
 
     override fun computeScroll() {
@@ -94,9 +119,10 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
-        if (ReadBookConfig.isScroll) {
+        if (ReadBookConfig.isScroll && !callBack.isAutoPage) {
             curPage.setContent(pageFactory.currentPage, resetPageOffset)
         } else {
+            curPage.resetPageOffset()
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
                 1 -> nextPage.setContent(pageFactory.nextPage)
@@ -146,18 +172,18 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override val currentChapter: TextChapter?
         get() {
-        return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
-    }
+            return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
+        }
 
     override val nextChapter: TextChapter?
         get() {
-        return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
-    }
+            return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
+        }
 
     override val prevChapter: TextChapter?
         get() {
-        return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
-    }
+            return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
+        }
 
     override fun hasNextChapter(): Boolean {
         return ReadBook.durChapterIndex < ReadBook.chapterSize - 1
@@ -169,6 +195,8 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     interface CallBack {
         val isInitFinish: Boolean
+        val isAutoPage: Boolean
+        val autoPageProgress: Int
         fun clickCenter()
         fun screenOffTimerStart()
         fun showTextActionMenu()

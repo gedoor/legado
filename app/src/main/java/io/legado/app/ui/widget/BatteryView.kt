@@ -39,9 +39,9 @@ class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(co
         if (!isBattery) return
         outFrame.set(
             1.dp,
-            layout.getLineTop(0) + 2.dp,
+            layout.getLineBaseline(0) + layout.getLineAscent(0) + 2.dp,
             width - 3.dp,
-            layout.getLineBottom(0) - 2.dp
+            layout.getLineBaseline(0) + 2.dp
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
         polar.set(

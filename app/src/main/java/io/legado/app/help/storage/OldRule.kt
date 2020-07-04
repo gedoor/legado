@@ -1,9 +1,9 @@
 package io.legado.app.help.storage
 
+import androidx.annotation.Keep
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
-import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
@@ -14,13 +14,15 @@ object OldRule {
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
 
     fun jsonToBookSource(json: String): BookSource? {
-        var source: BookSource? = null
-        runCatching {
-            source = GSON.fromJsonObject<BookSource>(json.trim())
+        val source = BookSource()
+        val sourceAny = try {
+            GSON.fromJsonObject<BookSourceAny>(json.trim())
+        } catch (e: Exception) {
+            null
         }
-        runCatching {
-            if (source == null || source?.ruleToc == null) {
-                source = BookSource().apply {
+        try {
+            if (sourceAny?.ruleToc == null) {
+                source.apply {
                     val jsonItem = jsonPath.parse(json.trim())
                     bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
@@ -82,10 +84,75 @@ object OldRule {
                         nextContentUrl = toNewRule(jsonItem.readString("ruleContentUrlNext"))
                     )
                 }
+            } else {
+                source.bookSourceUrl = sourceAny.bookSourceUrl
+                source.bookSourceName = sourceAny.bookSourceName
+                source.bookSourceGroup = sourceAny.bookSourceGroup
+                source.bookSourceType = sourceAny.bookSourceType
+                source.bookUrlPattern = sourceAny.bookUrlPattern
+                source.customOrder = sourceAny.customOrder
+                source.enabled = sourceAny.enabled
+                source.enabledExplore = sourceAny.enabledExplore
+                source.header = sourceAny.header
+                source.loginUrl = sourceAny.loginUrl
+                source.lastUpdateTime = sourceAny.lastUpdateTime
+                source.weight = sourceAny.weight
+                source.exploreUrl = sourceAny.exploreUrl
+                source.ruleExplore = if (sourceAny.ruleExplore is String) {
+                    GSON.fromJsonObject(sourceAny.ruleExplore as? String)
+                } else {
+                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleExplore))
+                }
+                source.searchUrl = sourceAny.searchUrl
+                source.ruleSearch = if (sourceAny.ruleSearch is String) {
+                    GSON.fromJsonObject(sourceAny.ruleSearch as? String)
+                } else {
+                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleSearch))
+                }
+                source.ruleBookInfo = if (sourceAny.ruleBookInfo is String) {
+                    GSON.fromJsonObject(sourceAny.ruleBookInfo as? String)
+                } else {
+                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleBookInfo))
+                }
+                source.ruleToc = if (sourceAny.ruleToc is String) {
+                    GSON.fromJsonObject(sourceAny.ruleToc as? String)
+                } else {
+                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleToc))
+                }
+                source.ruleContent = if (sourceAny.ruleContent is String) {
+                    GSON.fromJsonObject(sourceAny.ruleContent as? String)
+                } else {
+                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleContent))
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         return source
     }
+
+    @Keep
+    data class BookSourceAny(
+        var bookSourceName: String = "",                // 名称
+        var bookSourceGroup: String? = null,            // 分组
+        var bookSourceUrl: String = "",                 // 地址，包括 http/https
+        var bookSourceType: Int = BookType.default,     // 类型，0 文本，1 音频
+        var bookUrlPattern: String? = null,             // 详情页url正则
+        var customOrder: Int = 0,                       // 手动排序编号
+        var enabled: Boolean = true,                    // 是否启用
+        var enabledExplore: Boolean = true,             // 启用发现
+        var header: String? = null,                     // 请求头
+        var loginUrl: String? = null,                   // 登录地址
+        var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
+        var weight: Int = 0,                            // 智能排序的权重
+        var exploreUrl: String? = null,                 // 发现url
+        var ruleExplore: Any? = null,           // 发现规则
+        var searchUrl: String? = null,                  // 搜索url
+        var ruleSearch: Any? = null,             // 搜索规则
+        var ruleBookInfo: Any? = null,         // 书籍信息页规则
+        var ruleToc: Any? = null,                   // 目录页规则
+        var ruleContent: Any? = null            // 正文页规则
+    )
 
     // default规则适配
     // #正则#替换内容 替换成 ##正则##替换内容
@@ -109,8 +176,8 @@ object OldRule {
             !newRule.startsWith("//") &&
             !newRule.startsWith("##") &&
             !newRule.startsWith(":") &&
-            !newRule.contains("@js:",true) &&
-            !newRule.contains("<js>",true)
+            !newRule.contains("@js:", true) &&
+            !newRule.contains("<js>", true)
         ) {
             if (newRule.contains("#") && !newRule.contains("##")) {
                 newRule = oldRule.replace("#", "##")
@@ -137,10 +204,10 @@ object OldRule {
             }
         }
         if (allinone) {
-            newRule = "+" + newRule
+            newRule = "+$newRule"
         }
         if (reverse) {
-            newRule = "-" + newRule
+            newRule = "-$newRule"
         }
         return newRule
     }
@@ -211,27 +278,4 @@ object OldRule {
         return GSON.toJson(map)
     }
 
-    fun jsonToReplaceRule(json: String): ReplaceRule? {
-        var replaceRule: ReplaceRule? = null
-        runCatching {
-            replaceRule = GSON.fromJsonObject<ReplaceRule>(json.trim())
-        }
-        runCatching {
-            if (replaceRule == null || replaceRule?.pattern.isNullOrBlank()) {
-                val jsonItem = jsonPath.parse(json.trim())
-                val rule = ReplaceRule()
-                rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis()
-                rule.pattern = jsonItem.readString("$.regex") ?: ""
-                if (rule.pattern.isEmpty()) return null
-                rule.name = jsonItem.readString("$.replaceSummary") ?: ""
-                rule.replacement = jsonItem.readString("$.replacement") ?: ""
-                rule.isRegex = jsonItem.readBool("$.isRegex") == true
-                rule.scope = jsonItem.readString("$.useTo")
-                rule.isEnabled = jsonItem.readBool("$.enable") == true
-                rule.order = jsonItem.readInt("$.serialNumber") ?: 0
-                return rule
-            }
-        }
-        return replaceRule
-    }
 }

@@ -38,6 +38,18 @@
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
+        android:title="@string/text_full_justify"
+        android:key="textFullJustify"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/text_bottom_justify"
+        android:key="textBottomJustify"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
         android:title="@string/volume_key_page"
         android:key="volumeKeyPage"
         app:iconSpaceReserved="false" />
@@ -58,6 +70,12 @@
         android:defaultValue="false"
         android:title="@string/volume_key_page_on_play"
         android:key="volumeKeyPageOnPlay"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/auto_change_source"
+        android:key="autoChangeSource"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference

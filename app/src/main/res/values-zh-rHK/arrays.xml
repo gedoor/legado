@@ -20,6 +20,7 @@
         <item>跟隨系統</item>
         <item>亮色主題</item>
         <item>暗色主題</item>
+        <item>E-Ink(墨水屏)</item>
     </string-array>
 
     <string-array name="NavBarColors">
@@ -49,4 +50,9 @@
         <item>系統等寬字體</item>
     </string-array>
 
+    <string-array name="text_font_weight">
+        <item>正常</item>
+        <item>粗體</item>
+        <item>細體</item>
+    </string-array>
 </resources>

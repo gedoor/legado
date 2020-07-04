@@ -8,7 +8,6 @@ import android.view.View.VISIBLE
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -52,7 +51,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
-    private var refreshTime = System.currentTimeMillis()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -181,14 +179,13 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             upGroupMenu()
         })
         viewModel.searchBookLiveData.observe(this, Observer {
-            upSearchItems(it, false)
+            upSearchItems(it)
         })
         viewModel.isSearchLiveData.observe(this, Observer {
             if (it) {
                 startSearch()
             } else {
                 searchFinally()
-                upSearchItems(viewModel.searchBooks, true)
             }
         })
     }
@@ -284,14 +281,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      * 更新搜索结果
      */
     @Synchronized
-    private fun upSearchItems(items: List<SearchBook>, isMandatoryUpdate: Boolean) {
-        val searchItems = ArrayList(items)
-        if (isMandatoryUpdate || System.currentTimeMillis() - refreshTime > 500) {
-            refreshTime = System.currentTimeMillis()
-            val diffResult =
-                DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), searchItems))
-            adapter.setItems(searchItems, diffResult)
-        }
+    private fun upSearchItems(items: List<SearchBook>) {
+        adapter.setItems(items)
     }
 
     /**
@@ -317,7 +308,10 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
-                startActivity<BookInfoActivity>(Pair("bookUrl", it.bookUrl))
+                startActivity<BookInfoActivity>(
+                    Pair("name", it.name),
+                    Pair("author", it.author)
+                )
             }
         }
     }
@@ -327,7 +321,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      */
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
-            Pair("bookUrl", book.bookUrl)
+            Pair("name", book.name),
+            Pair("author", book.author)
         )
     }
 

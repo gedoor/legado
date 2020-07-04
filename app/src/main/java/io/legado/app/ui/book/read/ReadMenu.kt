@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.WindowManager
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
@@ -140,7 +140,11 @@ class ReadMenu : FrameLayout {
         })
 
         //自动翻页
-        fabAutoPage.onClick { callBack?.autoPage() }
+        fabAutoPage.onClick {
+            runMenuOut {
+                callBack?.autoPage()
+            }
+        }
 
         //替换
         fabReplaceRule.onClick { callBack?.openReplaceRule() }
@@ -149,6 +153,7 @@ class ReadMenu : FrameLayout {
         fabNightTheme.onClick {
             AppConfig.isNightTheme = !AppConfig.isNightTheme
             App.INSTANCE.applyDayNight()
+            postEvent(EventBus.RECREATE, "")
         }
 
         //上一章
@@ -190,8 +195,8 @@ class ReadMenu : FrameLayout {
     }
 
     private fun initAnimation() {
-        menuTopIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_in)
-        menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
+        menuTopIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_in)
+        menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 callBack?.upSystemUiVisibility()
@@ -213,8 +218,8 @@ class ReadMenu : FrameLayout {
         })
 
         //隐藏菜单
-        menuTopOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_out)
-        menuBottomOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_out)
+        menuTopOut = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_out)
+        menuBottomOut = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_out)
         menuTopOut.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 vw_menu_bg.setOnClickListener(null)

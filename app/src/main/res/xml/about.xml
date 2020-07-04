@@ -52,6 +52,12 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
+            android:key="sourceRuleSummary"
+            android:title="@string/source_rule_s"
+            android:summary="@string/source_rule_url"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="home_page"
             android:title="@string/home_page"
             android:summary="@string/home_page_url"

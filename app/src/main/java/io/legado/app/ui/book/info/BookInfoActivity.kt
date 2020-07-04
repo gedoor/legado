@@ -86,6 +86,9 @@ class BookInfoActivity :
             R.id.menu_refresh -> {
                 upLoading(true)
                 viewModel.bookData.value?.let {
+                    if (it.isLocalBook()) {
+                        it.tocUrl = ""
+                    }
                     viewModel.loadBookInfo(it)
                 }
             }

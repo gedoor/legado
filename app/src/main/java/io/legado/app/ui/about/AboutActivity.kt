@@ -24,14 +24,19 @@ class AboutActivity : BaseActivity(R.layout.activity_about) {
             .replace(R.id.fl_fragment, aboutFragment, fTag)
             .commit()
         tv_app_summary.post {
-            val span = ForegroundColorSpan(accentColor)
-            val spannableString = SpannableString(tv_app_summary.text)
-            val start = spannableString.indexOf("开源阅读软件")
-            spannableString.setSpan(
-                span, start, start + 6,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            tv_app_summary.text = spannableString
+            try {
+                val span = ForegroundColorSpan(accentColor)
+                val spannableString = SpannableString(tv_app_summary.text)
+                val gzh = getString(R.string.legado_gzh)
+                val start = spannableString.indexOf(gzh)
+                spannableString.setSpan(
+                    span, start, start + gzh.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                tv_app_summary.text = spannableString
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

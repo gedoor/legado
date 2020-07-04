@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.legado.app">
 
+    <uses-permission
+        android:name="android.permission.MANAGE_DOCUMENTS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -237,6 +240,10 @@
             android:name="io.legado.app.ui.book.chapterlist.ChapterListActivity"
             android:screenOrientation="behind"
             android:launchMode="singleTop" />
+        <!--RSS条目-->
+        <activity
+            android:name=".ui.rss.article.RssSortActivity"
+            android:launchMode="singleTop" />
         <!--RSS阅读-->
         <activity
             android:name=".ui.rss.read.ReadRssActivity"
@@ -254,10 +261,6 @@
         <!--订阅源调试-->
         <activity
             android:name=".ui.rss.source.debug.RssSourceDebugActivity"
-            android:launchMode="singleTop" />
-        <!--订阅条目-->
-        <activity
-            android:name=".ui.rss.article.RssSortActivity"
             android:launchMode="singleTop" />
         <!--Rss收藏-->
         <activity

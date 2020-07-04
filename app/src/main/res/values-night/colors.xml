@@ -7,7 +7,7 @@
     <color name="background">@color/md_grey_900</color>
     <color name="background_card">@color/md_grey_850</color>
     <color name="background_menu">@color/md_grey_800</color>
-    <color name="background_prefs">#AA111111</color>
+    <color name="background_prefs">#10303030</color>
 
     <color name="night_mask">#69000000</color>
 

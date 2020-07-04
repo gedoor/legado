@@ -24,6 +24,7 @@ data class RssSource(
     var sourceGroup: String? = null,
     var enabled: Boolean = true,
     var sortUrl: String? = null,
+    var articleStyle: Int = 0,
     //列表规则
     var ruleArticles: String? = null,
     var ruleNextPage: String? = null,
@@ -34,9 +35,11 @@ data class RssSource(
     var ruleImage: String? = null,
     var ruleLink: String? = null,
     var ruleContent: String? = null,
+    var style: String? = null,
     var header: String? = null,
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
+
     var customOrder: Int = 0
 ) : Parcelable, JsExtensions {
 

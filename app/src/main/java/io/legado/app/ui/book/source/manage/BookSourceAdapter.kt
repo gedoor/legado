@@ -46,14 +46,14 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
-    fun getSelection(): LinkedHashSet<BookSource> {
-        val selection = linkedSetOf<BookSource>()
+    fun getSelection(): List<BookSource> {
+        val selection = arrayListOf<BookSource>()
         getItems().map {
             if (selected.contains(it)) {
                 selection.add(it)
             }
         }
-        return selection
+        return selection.sortedBy { it.customOrder }
     }
 
     override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
@@ -138,6 +138,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
+                R.id.menu_bottom -> callBack.toBottom(source)
                 R.id.menu_del -> callBack.del(source)
                 R.id.menu_enable_explore -> {
                     callBack.update(source.copy(enabledExplore = !source.enabledExplore))
@@ -197,6 +198,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun edit(bookSource: BookSource)
         fun update(vararg bookSource: BookSource)
         fun toTop(bookSource: BookSource)
+        fun toBottom(bookSource: BookSource)
         fun upOrder()
         fun upCountView()
     }
