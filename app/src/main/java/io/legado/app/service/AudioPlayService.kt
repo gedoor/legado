@@ -96,12 +96,9 @@ class AudioPlayService : BaseService(),
                 IntentAction.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
                 IntentAction.addTimer -> addTimer()
                 IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
-                IntentAction.adjustProgress -> adjustProgress(
-                    intent.getIntExtra(
-                        "position",
-                        position
-                    )
-                )
+                IntentAction.adjustProgress -> {
+                    adjustProgress(intent.getIntExtra("position", position))
+                }
                 else -> stopSelf()
             }
         }

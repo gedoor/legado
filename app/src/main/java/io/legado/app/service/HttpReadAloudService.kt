@@ -206,7 +206,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             } else {
                 nextChapter()
             }
-        }, 100)
+        }, 50)
         return true
     }
 
