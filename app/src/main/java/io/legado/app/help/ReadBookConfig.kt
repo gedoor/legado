@@ -141,7 +141,7 @@ object ReadBookConfig {
         set(value) {
             App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
         }
-    var isScroll = pageAnim == 3
+    val isScroll get() = pageAnim == 3
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     val textFullJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textFullJustify, true)
     val textBottomJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textBottomJustify, true)
