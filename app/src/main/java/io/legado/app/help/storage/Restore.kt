@@ -2,7 +2,6 @@ package io.legado.app.help.storage
 
 import android.content.Context
 import android.net.Uri
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
@@ -13,7 +12,6 @@ import io.legado.app.BuildConfig
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
-import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
@@ -132,13 +130,8 @@ object Restore {
             ReadBook.loadContent(resetPageOffset = false)
         }
         withContext(Main) {
-            if (AppConfig.isNightTheme && AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES) {
-                App.INSTANCE.applyDayNight()
-            } else if (!AppConfig.isNightTheme && AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                App.INSTANCE.applyDayNight()
-            } else {
-                postEvent(EventBus.RECREATE, "true")
-            }
+            App.INSTANCE.applyDayNight()
+            postEvent(EventBus.RECREATE, "true")
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
