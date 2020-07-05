@@ -93,7 +93,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
                 }
             }
             R.id.menu_log -> {
-                TextListDialog.show(supportFragmentManager, Download.logs)
+                TextListDialog.show(supportFragmentManager, getString(R.string.log), Download.logs)
             }
             R.id.menu_no_group -> {
                 title_bar.subtitle = getString(R.string.no_group)

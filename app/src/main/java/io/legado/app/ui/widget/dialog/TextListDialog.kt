@@ -18,9 +18,10 @@ import kotlinx.android.synthetic.main.item_log.view.*
 class TextListDialog : BaseDialogFragment() {
 
     companion object {
-        fun show(fragmentManager: FragmentManager, values: ArrayList<String>) {
+        fun show(fragmentManager: FragmentManager, title: String, values: ArrayList<String>) {
             TextListDialog().apply {
                 val bundle = Bundle()
+                bundle.putString("title", title)
                 bundle.putStringArrayList("values", values)
                 arguments = bundle
             }.show(fragmentManager, "textListDialog")
@@ -46,8 +47,8 @@ class TextListDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.title = getString(R.string.log)
         arguments?.let {
+            tool_bar.title = it.getString("title")
             values = it.getStringArrayList("values")
         }
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
