@@ -89,10 +89,15 @@ class DownloadService : BaseService() {
     private fun getBook(bookUrl: String): Book? {
         var book = bookMap[bookUrl]
         if (book == null) {
-            book = App.db.bookDao().getBook(bookUrl)
-        }
-        if (book == null) {
-            removeDownload(bookUrl)
+            synchronized(this) {
+                book = bookMap[bookUrl]
+                if (book == null) {
+                    book = App.db.bookDao().getBook(bookUrl)
+                }
+                if (book == null) {
+                    removeDownload(bookUrl)
+                }
+            }
         }
         return book
     }
@@ -100,12 +105,17 @@ class DownloadService : BaseService() {
     private fun getWebBook(bookUrl: String, origin: String): WebBook? {
         var webBook = webBookMap[origin]
         if (webBook == null) {
-            App.db.bookSourceDao().getBookSource(origin)?.let {
-                webBook = WebBook(it)
+            synchronized(this) {
+                webBook = webBookMap[origin]
+                if (webBook == null) {
+                    App.db.bookSourceDao().getBookSource(origin)?.let {
+                        webBook = WebBook(it)
+                    }
+                }
+                if (webBook == null) {
+                    removeDownload(bookUrl)
+                }
             }
-        }
-        if (webBook == null) {
-            removeDownload(bookUrl)
         }
         return webBook
     }
