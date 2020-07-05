@@ -51,7 +51,7 @@
 * 修复因繁体语言导致的崩溃bug
 
 **2020/06/15**
-* 添加 E-Ink 模式 by Modificator
+* 添加 E-Ink 模式 by [Modificator](https://github.com/Modificator)
 * 修复发现打开书时可能的错误
 
 **2020/06/14**
@@ -65,7 +65,7 @@
 * 修复分组变化的bug
 
 **2020/06/10**
-* 正文字体的粗细选择增加可以选择细体(Android O生效) by hingbong
+* 正文字体的粗细选择增加可以选择细体(Android O生效) by [hingbong](https://github.com/hingbong)
 * 修复bug
 
 **2020/06/09**
@@ -106,7 +106,7 @@
 * 替换规则输入时弹出辅助输入条
 
 **2020/05/10**
-* 添加识别rss分组中的频道信息，在菜单中可以切换频道 from yangyxd
+* 添加识别rss分组中的频道信息，在菜单中可以切换频道 from [yangyxd](https://github.com/yangyxd)
 * 源管理添加置底,批量置顶,批量置地
 * 封面选择本地图片完成
 
@@ -154,7 +154,7 @@
 * 添加阅读界面各种信息设置
 
 **2020/04/18**
-* feat: 中文简繁处理库换成 HanLP, 中文增加 zh-rHK 翻译, hingbong
+* feat: 中文简繁处理库换成 HanLP, 中文增加 zh-rHK 翻译, [hingbong](https://github.com/hingbong)
 * 修复更新时间不对的bug
 
 **2020/04/13**
@@ -202,10 +202,10 @@
 **2020/03/24**
 * txt文件第一章之前的文字不再放到简介里
 * 优化txt目录识别,章节超过3万字判断为目录识别错误重新识别
-* 修复文件关联 by wqfantexi
+* 修复文件关联 by [wqfantexi](https://github.com/wqfantexi)
 
 **2020/03/22**
-* 添加文件关联 by wqfantexi
+* 添加文件关联 by [wqfantexi](https://github.com/wqfantexi)
 * 手动排序可以了,在书架整理里面拖动排序
 * 删除分组时同时删除书籍里的分组信息,下次添加新分组时不会自动出现在分组内
 * 修复换源丢失分组信息的bug
@@ -220,14 +220,14 @@
 * 修复rss请求头无效bug
 
 **2020/03/19**
-* 美化界面我的 by yangyxd
+* 美化界面我的 by [yangyxd](https://github.com/yangyxd)
 * 优化搜索
 
 **2020/03/18**
 * 尝试修复搜索时崩溃
 * 解决看过书籍的移到顶部需要向上滚动才能看到的bug
 * 只有再书源被删除找不到书源时才会自动换源
-* 美化界面 by yangyxd
+* 美化界面 by [yangyxd](https://github.com/yangyxd)
 * 订阅后台播放
 
 **2020/03/16**
@@ -252,8 +252,8 @@
 
 **2020/03/11**
 * 修复调节上边距时下边距一起动的bug
-* 适配沚水的web阅读 by 六月
-* 分组管理页面调整 by yangyxd
+* 适配沚水的web阅读 by [六月](https://github.com/Celeter)
+* 分组管理页面调整 by [yangyxd](https://github.com/yangyxd)
 
 **2020/03/10**
 * 优化文字选择菜单弹出位置
@@ -262,13 +262,13 @@
 
 **2020/03/09**
 * 底部文字对齐
-* 主题添加阴影调节 by yangyxd
+* 主题添加阴影调节 by [yangyxd](https://github.com/yangyxd)
 
 **2020/03/08**
 * 订阅长按保存图片
 * 订阅全屏播放
 * 书架全部分组可以隐藏了
-* 内置web书架基本能用了 by 六月
+* 内置web书架基本能用了 by [六月](https://github.com/Celeter)
 * 书架整理加入未分组
 * 显示总进度
 * 隐藏状态栏时,标题显示在上方
@@ -340,7 +340,7 @@
 
 **2020/02/26**
 * 修复仿真翻页
-* 功能添加: 选择默认字体时, 可选择字体默认字体(非衬线), 系统衬线字体, 系统等宽字体by hingbong
+* 功能添加: 选择默认字体时, 可选择字体默认字体(非衬线), 系统衬线字体, 系统等宽字体by [hingbong](https://github.com/hingbong)
 
 **2020/02/25**
 * 优化文本选择和滚动,感觉很完美了
