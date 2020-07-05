@@ -112,22 +112,24 @@ object ChapterProvider {
             val textLine = TextLine(isTitle = isTitle)
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
-            textLine.text = words
             val desiredWidth = layout.getLineWidth(lineIndex)
             var isLastLine = false
             if (lineIndex == 0 && layout.lineCount > 1 && !isTitle) {
                 //第一行
-                addCharsToLineFirst(textLine, words, textPaint, desiredWidth)
+                textLine.text = words
+                addCharsToLineFirst(textLine, words.toStringArray(), textPaint, desiredWidth)
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
+                textLine.text = "$words\n"
                 isLastLine = true
                 val x = if (isTitle && ReadBookConfig.titleMode == 1)
                     (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
-                addCharsToLineLast(textLine, words, textPaint, x, true)
+                addCharsToLineLast(textLine, words.toStringArray(), textPaint, x)
             } else {
                 //中间行
-                addCharsToLineMiddle(textLine, words, textPaint, desiredWidth, 0f)
+                textLine.text = words
+                addCharsToLineMiddle(textLine, words.toStringArray(), textPaint, desiredWidth, 0f)
             }
             if (durY + textPaint.textHeight > visibleHeight) {
                 //当前页面结束,设置各种值
@@ -157,13 +159,13 @@ object ChapterProvider {
      */
     private fun addCharsToLineFirst(
         textLine: TextLine,
-        words: String,
+        words: Array<String>,
         textPaint: TextPaint,
         desiredWidth: Float
     ) {
         var x = 0f
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(textLine, words, textPaint, x, false)
+            addCharsToLineLast(textLine, words, textPaint, x)
             return
         }
         val bodyIndent = ReadBookConfig.bodyIndent
@@ -177,7 +179,7 @@ object ChapterProvider {
             )
             x = x1
         }
-        val words1 = words.replaceFirst(bodyIndent, "")
+        val words1 = words.copyOfRange(bodyIndent.length, words.size)
         addCharsToLineMiddle(textLine, words1, textPaint, desiredWidth, x)
     }
 
@@ -186,19 +188,19 @@ object ChapterProvider {
      */
     private fun addCharsToLineMiddle(
         textLine: TextLine,
-        words: String,
+        words: Array<String>,
         textPaint: TextPaint,
         desiredWidth: Float,
         startX: Float
     ) {
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(textLine, words, textPaint, startX, false)
+            addCharsToLineLast(textLine, words, textPaint, startX)
             return
         }
-        val gapCount: Int = words.length - 1
+        val gapCount: Int = words.lastIndex
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
-        words.toStringArray().forEachIndexed { index, s ->
+        words.forEachIndexed { index, s ->
             val cw = StaticLayout.getDesiredWidth(s, textPaint)
             val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
             textLine.addTextChar(
@@ -216,14 +218,12 @@ object ChapterProvider {
      */
     private fun addCharsToLineLast(
         textLine: TextLine,
-        words: String,
+        words: Array<String>,
         textPaint: TextPaint,
-        startX: Float,
-        isLast: Boolean
+        startX: Float
     ) {
-        textLine.text = if (isLast) "$words\n" else words
         var x = startX
-        words.toStringArray().forEach {
+        words.forEach {
             val cw = StaticLayout.getDesiredWidth(it, textPaint)
             val x1 = x + cw
             textLine.addTextChar(
@@ -239,13 +239,13 @@ object ChapterProvider {
     /**
      * 超出边界处理
      */
-    private fun exceed(textLine: TextLine, words: String) {
+    private fun exceed(textLine: TextLine, words: Array<String>) {
         val endX = textLine.textChars.last().end
         if (endX > visibleRight) {
-            val cc = (endX - visibleRight) / words.length
+            val cc = (endX - visibleRight) / words.size
             for (i in 0..words.lastIndex) {
                 textLine.getTextCharReverseAt(i).let {
-                    val py = cc * (words.length - i)
+                    val py = cc * (words.size - i)
                     it.start = it.start - py
                     it.end = it.end - py
                 }
