@@ -93,9 +93,9 @@ class DownloadService : BaseService() {
                 book = bookMap[bookUrl]
                 if (book == null) {
                     book = App.db.bookDao().getBook(bookUrl)
-                }
-                if (book == null) {
-                    removeDownload(bookUrl)
+                    if (book == null) {
+                        removeDownload(bookUrl)
+                    }
                 }
             }
         }
@@ -111,9 +111,9 @@ class DownloadService : BaseService() {
                     App.db.bookSourceDao().getBookSource(origin)?.let {
                         webBook = WebBook(it)
                     }
-                }
-                if (webBook == null) {
-                    removeDownload(bookUrl)
+                    if (webBook == null) {
+                        removeDownload(bookUrl)
+                    }
                 }
             }
         }
