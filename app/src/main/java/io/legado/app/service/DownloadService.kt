@@ -184,9 +184,7 @@ class DownloadService : BaseService() {
                         scope = this,
                         context = searchPool
                     ).onError {
-                        it.localizedMessage?.let {
-                            Download.addLog(it)
-                        }
+                        Download.addLog(it.localizedMessage)
                     }.onSuccess(IO) { content ->
                         downloadCount[book.bookUrl]?.increaseSuccess()
                         BookHelp.saveContent(book, bookChapter, content)

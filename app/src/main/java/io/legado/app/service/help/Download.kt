@@ -9,7 +9,8 @@ object Download {
 
     val logs = arrayListOf<String>()
 
-    fun addLog(log: String) {
+    fun addLog(log: String?) {
+        log ?: return
         synchronized(this) {
             if (logs.size > 30) {
                 logs.removeAt(0)
