@@ -7,6 +7,7 @@
 * 修复夜间模式底栏颜色调整无效的bug
 * 【web看书】加了翻页、排序等 by [Celeter](https://github.com/Celeter)
 * 两部xx' is recognized as a title by [52fisher](https://github.com/52fisher)
+* 添加下载错误日志,从下载菜单浏览
 
 **2020/07/04**
 * 修复滚动bug
