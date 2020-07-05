@@ -26,6 +26,7 @@ import io.legado.app.ui.widget.prefs.IconListPreference
 import io.legado.app.utils.*
 
 
+@Suppress("SameParameterValue")
 class ThemeConfigFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -86,13 +87,8 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
                         title = "白天背景太暗"
                         message = "将会恢复默认背景？"
                         yesButton {
-                            putPrefInt(
-                                PreferKey.cBackground,
-                                getCompatColor(R.color.md_grey_100)
-                            )
                             upTheme(false)
                         }
-
                         noButton {
                             upTheme(false)
                         }
@@ -110,13 +106,8 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
                         title = "夜间背景太亮"
                         message = "将会恢复默认背景？"
                         yesButton {
-                            putPrefInt(
-                                PreferKey.cNBackground,
-                                getCompatColor(R.color.md_grey_800)
-                            )
                             upTheme(true)
                         }
-
                         noButton {
                             upTheme(true)
                         }
@@ -199,19 +190,17 @@ class ThemeConfigFragment : PreferenceFragmentCompat(),
 
     private fun backgroundIsDark(sharedPreferences: SharedPreferences): Boolean {
         return !ColorUtils.isColorLight(
-            sharedPreferences.getInt(
-                PreferKey.cBackground,
-                getCompatColor(R.color.md_grey_100)
-            )
+            sharedPreferences.getInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+        ) && !ColorUtils.isColorLight(
+            sharedPreferences.getInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
         )
     }
 
     private fun backgroundIsLight(sharedPreferences: SharedPreferences): Boolean {
         return ColorUtils.isColorLight(
-            sharedPreferences.getInt(
-                PreferKey.cNBackground,
-                getCompatColor(R.color.md_grey_800)
-            )
+            sharedPreferences.getInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_800))
+        ) && ColorUtils.isColorLight(
+            sharedPreferences.getInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
         )
     }
 

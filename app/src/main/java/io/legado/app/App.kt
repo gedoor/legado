@@ -97,7 +97,7 @@ class App : Application() {
                 }
                 var bBackground =
                     getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
-                if (!ColorUtils.isColorLight(bBackground)) {
+                if (ColorUtils.isColorLight(bBackground)) {
                     bBackground = getCompatColor(R.color.md_grey_850)
                     putPrefInt(PreferKey.cNBBackground, bBackground)
                 }
