@@ -22,6 +22,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.service.help.Download
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
+import io.legado.app.ui.widget.dialog.TextListDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.coroutines.Dispatchers
@@ -90,6 +91,9 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
                 } else {
                     Download.stop(this@DownloadActivity)
                 }
+            }
+            R.id.menu_log -> {
+                TextListDialog.show(supportFragmentManager, Download.logs)
             }
             R.id.menu_no_group -> {
                 title_bar.subtitle = getString(R.string.no_group)

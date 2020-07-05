@@ -620,6 +620,7 @@
     <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示阅读·搜索</string>
     <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
     <string name="record_log">记录日志</string>
+    <string name="log">日志</string>
     <string name="chinese_converter">中文简繁体转换</string>
     <string name="chage_icon_error">图标为矢量图标,Android8.0以前不支持</string>
     <string name="aloud_config">朗读设置</string>

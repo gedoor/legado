@@ -17,6 +17,7 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
+import io.legado.app.service.help.Download
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -182,7 +183,11 @@ class DownloadService : BaseService() {
                         bookChapter,
                         scope = this,
                         context = searchPool
-                    ).onSuccess(IO) { content ->
+                    ).onError {
+                        it.localizedMessage?.let {
+                            Download.addLog(it)
+                        }
+                    }.onSuccess(IO) { content ->
                         downloadCount[book.bookUrl]?.increaseSuccess()
                         BookHelp.saveContent(book, bookChapter, content)
                     }.onFinally(IO) {
