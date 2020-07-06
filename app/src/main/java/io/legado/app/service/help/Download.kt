@@ -12,7 +12,7 @@ object Download {
     fun addLog(log: String?) {
         log ?: return
         synchronized(this) {
-            if (logs.size > 30) {
+            if (logs.size > 1000) {
                 logs.removeAt(0)
             }
             logs.add(log)

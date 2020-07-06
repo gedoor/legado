@@ -151,6 +151,7 @@ class DownloadService : BaseService() {
 
     private fun download() {
         downloadingCount += 1
+        Download.addLog("downloadingCount++")
         tasks.add(Coroutine.async(this, context = searchPool) {
             if (!isActive) return@async
             val bookChapter: BookChapter? = synchronized(this@DownloadService) {
@@ -184,12 +185,14 @@ class DownloadService : BaseService() {
                         scope = this,
                         context = searchPool
                     ).onError {
+                        synchronized(this) {
+                            downloadingList.remove(bookChapter.url)
+                        }
                         Download.addLog(it.localizedMessage)
                     }.onSuccess(IO) { content ->
-                        downloadCount[book.bookUrl]?.increaseSuccess()
                         BookHelp.saveContent(book, bookChapter, content)
-                    }.onFinally(IO) {
                         synchronized(this@DownloadService) {
+                            downloadCount[book.bookUrl]?.increaseSuccess()
                             downloadCount[book.bookUrl]?.increaseFinished()
                             downloadCount[book.bookUrl]?.let {
                                 updateNotification(
@@ -210,8 +213,9 @@ class DownloadService : BaseService() {
                                 downloadCount.remove(book.bookUrl)
                             }
                         }
+                    }.onFinally(IO) {
+                        postDownloading(true)
                     }
-                    postDownloading(true)
                 } else {
                     //无需下载的，设置为增加成功
                     downloadCount[book.bookUrl]?.increaseSuccess()
@@ -224,6 +228,8 @@ class DownloadService : BaseService() {
 
     private fun postDownloading(hasChapter: Boolean) {
         downloadingCount -= 1
+        Download.addLog("downloadingCount--")
+        Download.addLog("downloadingCount $downloadingCount")
         if (hasChapter) {
             download()
         } else {
