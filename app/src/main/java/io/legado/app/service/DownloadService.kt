@@ -151,7 +151,6 @@ class DownloadService : BaseService() {
 
     private fun download() {
         downloadingCount += 1
-        Download.addLog("downloadingCount++")
         tasks.add(Coroutine.async(this, context = searchPool) {
             if (!isActive) return@async
             val bookChapter: BookChapter? = synchronized(this@DownloadService) {
@@ -228,8 +227,6 @@ class DownloadService : BaseService() {
 
     private fun postDownloading(hasChapter: Boolean) {
         downloadingCount -= 1
-        Download.addLog("downloadingCount--")
-        Download.addLog("downloadingCount $downloadingCount")
         if (hasChapter) {
             download()
         } else {
