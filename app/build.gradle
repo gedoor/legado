@@ -194,6 +194,12 @@ dependencies {
     //转换繁体
     implementation 'com.hankcs:hanlp:portable-1.7.7'
 
+    //epub
+    implementation('com.positiondev.epublib:epublib-core:3.1') {
+        exclude group: 'org.slf4j'
+        exclude group: 'xmlpull'
+    }
+
     //E-Ink 有些手机会出现重影
     //implementation 'fadeapp.widgets:scrollless-recyclerView:1.0.2'
 }

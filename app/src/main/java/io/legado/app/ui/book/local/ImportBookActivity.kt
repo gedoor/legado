@@ -172,7 +172,10 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                     val item = docList[i]
                     if (item.name.startsWith(".")) {
                         docList.removeAt(i)
-                    } else if (!item.isDir && !item.name.endsWith(".txt", true)) {
+                    } else if (!item.isDir
+                        && !item.name.endsWith(".txt", true)
+                        && !item.name.endsWith(".epub", true)
+                    ) {
                         docList.removeAt(i)
                     }
                 }
@@ -196,7 +199,9 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                                 Uri.parse(it.absolutePath)
                             )
                         )
-                } else if (it.name.endsWith(".txt", true)) {
+                } else if (it.name.endsWith(".txt", true)
+                    || it.name.endsWith(".epub", true)
+                ) {
                     docList.add(
                         DocItem(
                             it.name,
