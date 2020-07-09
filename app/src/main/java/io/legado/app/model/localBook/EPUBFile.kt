@@ -1,13 +1,14 @@
 package io.legado.app.model.localBook
 
 import android.content.Context
+import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.entities.BookChapter
-import net.sf.jazzlib.ZipFile
+import io.legado.app.utils.htmlFormat
+import io.legado.app.utils.isContentPath
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
-import nl.siegmann.epublib.service.MediatypeService
 import org.jsoup.Jsoup
 import java.io.File
 import java.io.IOException
@@ -19,26 +20,41 @@ class EPUBFile(context: Context, val book: io.legado.app.data.entities.Book) {
     private lateinit var mCharset: Charset
 
     init {
-
+        try {
+            val epubReader = EpubReader()
+            val inputStream = if (book.bookUrl.isContentPath()) {
+                val uri = Uri.parse(book.bookUrl)
+                context.contentResolver.openInputStream(uri)
+            } else {
+                File(book.bookUrl).inputStream()
+            }
+            epubBook = epubReader.readEpub(inputStream)
+        } catch (e: Exception) {
+        }
     }
 
-    fun readBook(file: File?): Book? {
-        return try {
-            val epubReader = EpubReader()
-            val lazyTypes =
-                arrayOf(
-                    MediatypeService.CSS,
-                    MediatypeService.GIF,
-                    MediatypeService.JPG,
-                    MediatypeService.PNG,
-                    MediatypeService.MP3,
-                    MediatypeService.MP4
-                )
-            val zipFile = ZipFile(file)
-            epubReader.readEpubLazy(zipFile, "utf-8", Arrays.asList(*lazyTypes))
-        } catch (e: Exception) {
-            null
+    fun getContent(chapter: BookChapter): String {
+        val resource = epubBook!!.resources.getByHref(chapter.url)
+        val content = StringBuilder()
+        val doc = Jsoup.parse(String(resource.data, mCharset))
+        val elements = doc.allElements
+        for (element in elements) {
+            val contentEs = element.textNodes()
+            for (i in contentEs.indices) {
+                val text = contentEs[i].text().trim { it <= ' ' }.htmlFormat()
+                if (elements.size > 1) {
+                    if (text.isNotEmpty()) {
+                        if (content.isNotEmpty()) {
+                            content.append("\r\n")
+                        }
+                        content.append("\u3000\u3000").append(text)
+                    }
+                } else {
+                    content.append(text)
+                }
+            }
         }
+        return content.toString()
     }
 
     fun getChapterList(epubBook: Book): ArrayList<BookChapter> {
@@ -113,7 +129,7 @@ class EPUBFile(context: Context, val book: io.legado.app.data.entities.Book) {
                 chapter.url = ref.completeHref
                 chapterList.add(chapter)
             }
-            if (ref.children != null && !ref.children.isEmpty()) {
+            if (ref.children != null && ref.children.isNotEmpty()) {
                 parseMenu(chapterList, ref.children, level + 1)
             }
         }
