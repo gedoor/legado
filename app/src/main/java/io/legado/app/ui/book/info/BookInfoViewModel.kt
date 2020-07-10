@@ -10,7 +10,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.WebBook
-import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.service.help.ReadBook
 import kotlinx.coroutines.Dispatchers.IO
@@ -82,7 +81,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute {
             if (book.isLocalBook()) {
-                AnalyzeTxtFile().analyze(context, book).let {
+                LocalBook.getChapterList(book).let {
                     App.db.bookDao().update(book)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     chapterListData.postValue(it)
