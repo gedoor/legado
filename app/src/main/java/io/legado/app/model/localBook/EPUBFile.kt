@@ -22,7 +22,7 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
 
         @Synchronized
         fun getEFile(book: io.legado.app.data.entities.Book): EPUBFile {
-            if (eFile == null || eFile?.book?.bookUrl == book.bookUrl) {
+            if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EPUBFile(book)
                 return eFile!!
             }
@@ -39,7 +39,7 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
     }
 
     private var epubBook: Book? = null
-    private lateinit var mCharset: Charset
+    private var mCharset: Charset = Charset.defaultCharset()
 
     init {
         try {
