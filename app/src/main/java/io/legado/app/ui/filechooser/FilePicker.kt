@@ -172,6 +172,7 @@ object FilePicker {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.type = "*/*"
         return intent
     }
 
