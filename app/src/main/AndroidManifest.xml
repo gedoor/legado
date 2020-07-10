@@ -301,6 +301,7 @@
                 <data android:scheme="content"/>
                 <data android:mimeType="text/plain" />
                 <data android:mimeType="application/json" />
+                <data android:mimeType="application/epub" />
             </intent-filter>
         </activity>
 
