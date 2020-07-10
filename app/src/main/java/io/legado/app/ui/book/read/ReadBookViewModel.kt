@@ -11,7 +11,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
-import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -109,7 +109,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute {
             if (book.isLocalBook()) {
-                AnalyzeTxtFile().analyze(context, book).let {
+                LocalBook.getChapterList(book).let {
                     App.db.bookChapterDao().delByBook(book.bookUrl)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     App.db.bookDao().update(book)

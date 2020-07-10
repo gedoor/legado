@@ -60,6 +60,10 @@ data class Book(
         return isLocalBook() && originName.endsWith(".txt", true)
     }
 
+    fun isEpub(): Boolean {
+        return originName.endsWith(".epub", true)
+    }
+
     fun isOnLineTxt(): Boolean {
         return !isLocalBook() && type == 0
     }

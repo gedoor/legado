@@ -10,11 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.Theme
@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: RssSourceViewModel
     private lateinit var adapter: GroupAdapter
 
@@ -50,12 +50,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initData()
-    }
-
-    private fun initData() {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         tool_bar.title = getString(R.string.group_manage)
         tool_bar.inflateMenu(R.menu.group_manage)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())

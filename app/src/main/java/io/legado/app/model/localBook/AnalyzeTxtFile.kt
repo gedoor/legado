@@ -1,6 +1,5 @@
 package io.legado.app.model.localBook
 
-import android.content.Context
 import android.net.Uri
 import io.legado.app.App
 import io.legado.app.data.entities.Book
@@ -19,8 +18,8 @@ class AnalyzeTxtFile {
     private lateinit var charset: Charset
 
     @Throws(Exception::class)
-    fun analyze(context: Context, book: Book): ArrayList<BookChapter> {
-        val bookFile = getBookFile(context, book)
+    fun analyze(book: Book): ArrayList<BookChapter> {
+        val bookFile = getBookFile(book)
         book.charset = EncodingDetect.getEncode(bookFile)
         charset = book.fileCharset()
         val rulePattern = if (book.tocUrl.isNotEmpty()) {
@@ -253,7 +252,7 @@ class AnalyzeTxtFile {
         }
 
         fun getContent(book: Book, bookChapter: BookChapter): String {
-            val bookFile = getBookFile(App.INSTANCE, book)
+            val bookFile = getBookFile(book)
             //获取文件流
             val bookStream = RandomAccessFile(bookFile, "r")
             val content = ByteArray((bookChapter.end!! - bookChapter.start!!).toInt())
@@ -262,13 +261,13 @@ class AnalyzeTxtFile {
             return String(content, book.fileCharset())
         }
 
-        private fun getBookFile(context: Context, book: Book): File {
+        private fun getBookFile(book: Book): File {
             if (book.bookUrl.isContentPath()) {
                 val uri = Uri.parse(book.bookUrl)
                 val bookFile = FileUtils.getFile(cacheFolder, book.originName, subDirs = *arrayOf())
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
-                    DocumentUtils.readBytes(context, uri)?.let {
+                    DocumentUtils.readBytes(App.INSTANCE, uri)?.let {
                         bookFile.writeBytes(it)
                     }
                 }

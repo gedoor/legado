@@ -6,7 +6,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.postEvent
@@ -81,7 +81,7 @@ object BookHelp {
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (book.isLocalBook()) {
-            return AnalyzeTxtFile.getContent(book, bookChapter)
+            return LocalBook.getContext(book, bookChapter)
         } else {
             val file = FileUtils.getFile(
                 downloadDir,

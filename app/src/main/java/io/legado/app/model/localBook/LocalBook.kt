@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentPath
@@ -11,6 +12,22 @@ import java.io.File
 
 
 object LocalBook {
+
+    fun getChapterList(book: Book): ArrayList<BookChapter> {
+        return if (book.isEpub()) {
+            EPUBFile.getChapterList(book)
+        } else {
+            AnalyzeTxtFile().analyze(book)
+        }
+    }
+
+    fun getContext(book: Book, chapter: BookChapter): String? {
+        return if (book.isEpub()) {
+            EPUBFile.getContent(book, chapter)
+        } else {
+            AnalyzeTxtFile.getContent(book, chapter)
+        }
+    }
 
     fun importFile(path: String) {
         val fileName = if (path.isContentPath()) {

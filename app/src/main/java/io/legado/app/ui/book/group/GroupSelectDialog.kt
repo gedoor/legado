@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.Theme
@@ -40,7 +40,7 @@ import kotlinx.android.synthetic.main.item_group_select.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
-class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     companion object {
         const val tag = "groupSelectDialog"
@@ -78,8 +78,7 @@ class GroupSelectDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         return inflater.inflate(R.layout.dialog_book_group_picker, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         callBack = activity as? CallBack
         arguments?.let {
             groupId = it.getInt("groupId")
