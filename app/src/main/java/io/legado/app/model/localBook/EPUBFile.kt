@@ -83,7 +83,7 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
             val resource = eBook.resources.getByHref(chapter.url)
             val content = StringBuilder()
             val doc = Jsoup.parse(String(resource.data, mCharset))
-            val elements = doc.allElements
+            val elements = doc.body().allElements
             for (element in elements) {
                 val contentEs = element.textNodes()
                 for (i in contentEs.indices) {
