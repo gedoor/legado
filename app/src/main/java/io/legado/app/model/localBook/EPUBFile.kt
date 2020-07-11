@@ -6,7 +6,10 @@ import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.externalFilesDir
+import io.legado.app.utils.isContentPath
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
@@ -14,6 +17,7 @@ import org.jsoup.Jsoup
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
 
@@ -21,7 +25,6 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
 
     companion object {
         private var eFile: EPUBFile? = null
-        private val coverDir = App.INSTANCE.externalFilesDir
 
         @Synchronized
         private fun getEFile(book: io.legado.app.data.entities.Book): EPUBFile {
@@ -40,6 +43,14 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
         @Synchronized
         fun getContent(book: io.legado.app.data.entities.Book, chapter: BookChapter): String? {
             return getEFile(book).getContent(chapter)
+        }
+
+        @Synchronized
+        fun getImage(
+            book: io.legado.app.data.entities.Book,
+            href: String
+        ): InputStream? {
+            return getEFile(book).getImage(href)
         }
     }
 
@@ -64,13 +75,12 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
                 )
             }
             if (!File(book.coverUrl!!).exists()) {
-                epubBook!!.coverImage?.inputStream?.let {
+                epubBook!!.coverImage?.inputStream?.use {
                     val cover = BitmapFactory.decodeStream(it)
                     val out = FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
                     cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
                     out.flush()
                     out.close()
-                    it.close()
                 }
             }
         } catch (e: Exception) {
@@ -81,28 +91,18 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
     private fun getContent(chapter: BookChapter): String? {
         epubBook?.let { eBook ->
             val resource = eBook.resources.getByHref(chapter.url)
-            val content = StringBuilder()
             val doc = Jsoup.parse(String(resource.data, mCharset))
-            val elements = doc.body().allElements
-            for (element in elements) {
-                val contentEs = element.textNodes()
-                for (i in contentEs.indices) {
-                    val text = contentEs[i].text().trim { it <= ' ' }.htmlFormat()
-                    if (elements.size > 1) {
-                        if (text.isNotEmpty()) {
-                            if (content.isNotEmpty()) {
-                                content.append("\r\n")
-                            }
-                            content.append("\u3000\u3000").append(text)
-                        }
-                    } else {
-                        content.append(text)
-                    }
-                }
-            }
-            return content.toString()
+            val elements = doc.body().children()
+            elements.select("script, style").remove()
+            return elements.outerHtml()
+                .replace("</?(?:div|p|b|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex(), "\n")
         }
         return null
+    }
+
+    private fun getImage(href: String): InputStream? {
+        val abHref = href.replace("../", "")
+        return epubBook?.resources?.getByHref(abHref)?.inputStream
     }
 
     private fun getChapterList(): ArrayList<BookChapter> {

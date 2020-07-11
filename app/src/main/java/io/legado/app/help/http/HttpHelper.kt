@@ -49,6 +49,17 @@ object HttpHelper {
         return null
     }
 
+    fun getBytes(url: String): ByteArray? {
+        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
+            return getByteRetrofit(baseUrl)
+                .create(HttpGetApi::class.java)
+                .getMapByte(url, mapOf(), mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
+                .execute()
+                .body()
+        }
+        return null
+    }
+
     suspend fun simpleGetAsync(url: String, encode: String? = null): String? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             val response = getApiService<HttpGetApi>(baseUrl, encode)
@@ -58,7 +69,7 @@ object HttpHelper {
         return null
     }
 
-    suspend fun simpleGetByteAsync(url: String): ByteArray? {
+    suspend fun simpleGetBytesAsync(url: String): ByteArray? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             return getByteRetrofit(baseUrl)
                 .create(HttpGetApi::class.java)

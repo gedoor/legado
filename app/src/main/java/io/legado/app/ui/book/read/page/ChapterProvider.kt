@@ -8,6 +8,7 @@ import android.text.TextPaint
 import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
@@ -15,6 +16,7 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
+import java.util.regex.Pattern
 
 
 @Suppress("DEPRECATION")
@@ -34,6 +36,7 @@ object ChapterProvider {
     var typeface: Typeface = Typeface.SANS_SERIF
     lateinit var titlePaint: TextPaint
     lateinit var contentPaint: TextPaint
+    private val srcPattern = Pattern.compile("<img .*?src=\"(.*?)\".*?>", Pattern.CASE_INSENSITIVE)
 
     init {
         upStyle()
@@ -43,6 +46,7 @@ object ChapterProvider {
      * 获取拆分完的章节数据
      */
     fun getTextChapter(
+        book: Book,
         bookChapter: BookChapter,
         contents: List<String>,
         chapterSize: Int
@@ -54,12 +58,27 @@ object ChapterProvider {
         var durY = 0f
         textPages.add(TextPage())
         contents.forEachIndexed { index, text ->
-            val isTitle = index == 0
-            if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                durY = setTypeText(
-                    text, durY, textPages, pageLines,
-                    pageLengths, stringBuilder, isTitle
-                )
+            val matcher = srcPattern.matcher(text)
+            if (matcher.find()) {
+                var src = matcher.group(1)
+                if (!book.isEpub()) {
+                    src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
+                }
+                src?.let {
+                    durY = setTypeImage(
+                        book, src, durY,
+                        textPages, pageLines,
+                        pageLengths, stringBuilder
+                    )
+                }
+            } else {
+                val isTitle = index == 0
+                if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                    durY = setTypeText(
+                        text, durY, textPages, pageLines,
+                        pageLengths, stringBuilder, isTitle
+                    )
+                }
             }
         }
         textPages.last().height = durY + 20.dp
@@ -88,6 +107,26 @@ object ChapterProvider {
             pageLengths,
             chapterSize
         )
+    }
+
+    private fun setTypeImage(
+        book: Book,
+        src: String,
+        y: Float,
+        textPages: ArrayList<TextPage>,
+        pageLines: ArrayList<Int>,
+        pageLengths: ArrayList<Int>,
+        stringBuilder: StringBuilder
+    ): Float {
+        var durY = y
+        ImageProvider.getImage(book, src)?.let {
+            val textLine = TextLine(text = src, isImage = true)
+            textLine.lineTop = durY
+            durY += it.height
+            textLine.lineBottom = durY
+            textPages.last().textLines.add(textLine)
+        }
+        return durY + paragraphSpacing / 10f
     }
 
     /**
