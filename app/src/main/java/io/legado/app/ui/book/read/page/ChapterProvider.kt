@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
@@ -36,7 +37,8 @@ object ChapterProvider {
     var typeface: Typeface = Typeface.SANS_SERIF
     lateinit var titlePaint: TextPaint
     lateinit var contentPaint: TextPaint
-    private val srcPattern = Pattern.compile("<img .*?src=\"(.*?)\".*?>", Pattern.CASE_INSENSITIVE)
+    private val srcPattern =
+        Pattern.compile("<img .*?src.*?=.*?\"(.*?)\".*?>", Pattern.CASE_INSENSITIVE)
 
     init {
         upStyle()
@@ -120,10 +122,34 @@ object ChapterProvider {
     ): Float {
         var durY = y
         ImageProvider.getImage(book, src)?.let {
-            val textLine = TextLine(text = src, isImage = true)
+            var height = it.height
+            val width = if (it.width > visibleWidth) {
+                height = it.height * visibleWidth / it.width
+                visibleWidth
+            } else {
+                it.width
+            }
+            val textLine = TextLine(isImage = true)
             textLine.lineTop = durY
-            durY += it.height
+            durY += height
             textLine.lineBottom = durY
+            val (start, end) = if (visibleWidth > width) {
+                val adjustWidth = (visibleWidth - width) / 2f
+                Pair(
+                    paddingLeft.toFloat() + adjustWidth,
+                    paddingLeft.toFloat() + adjustWidth + width
+                )
+            } else {
+                Pair(paddingLeft.toFloat(), (paddingLeft + width).toFloat())
+            }
+            textLine.textChars.add(
+                TextChar(
+                    charData = src,
+                    start = start,
+                    end = end,
+                    isImage = true
+                )
+            )
             textPages.last().textLines.add(textLine)
         }
         return durY + paragraphSpacing / 10f

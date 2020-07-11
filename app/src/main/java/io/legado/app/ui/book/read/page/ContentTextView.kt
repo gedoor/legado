@@ -154,8 +154,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineTop: Float,
         lineBottom: Float
     ) {
-        ImageProvider.getImage(ReadBook.book!!, textLine.text)?.let {
-            canvas.drawBitmap(it, ChapterProvider.paddingLeft.toFloat(), lineTop, null)
+        textLine.textChars.forEach { textChar ->
+            val rectF = RectF(textChar.start, lineTop, textChar.end, lineBottom)
+            ImageProvider.getImage(ReadBook.book!!, textChar.charData)?.let {
+                canvas.drawBitmap(it, null, rectF, null)
+            }
         }
     }
 
