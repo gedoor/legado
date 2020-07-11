@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">阅读·D</string>
+    <string name="receiving_shared_label" translatable="false">阅读·D·搜索</string>
+</resources>
