@@ -114,8 +114,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     App.db.bookDao().update(book)
                     ReadBook.chapterSize = it.size
-                    ReadBook.upMsg(null)
-                    ReadBook.loadContent(resetPageOffset = true)
+                    if (it.isEmpty()) {
+                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                    } else {
+                        ReadBook.upMsg(null)
+                        ReadBook.loadContent(resetPageOffset = true)
+                    }
                 }
             } else {
                 ReadBook.webBook?.getChapterList(book, this)
