@@ -7,6 +7,8 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.externalFilesDir
 import io.legado.app.utils.isContentPath
 import java.io.File
 
@@ -57,7 +59,12 @@ object LocalBook {
             bookUrl = path,
             name = name,
             author = author,
-            originName = fileName
+            originName = fileName,
+            coverUrl = FileUtils.getPath(
+                App.INSTANCE.externalFilesDir,
+                "${MD5Utils.md5Encode16(path)}.jpg",
+                "covers"
+            )
         )
         App.db.bookDao().insert(book)
     }

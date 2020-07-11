@@ -20,6 +20,7 @@ import androidx.core.content.edit
 import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import org.jetbrains.anko.defaultSharedPreferences
@@ -157,7 +158,10 @@ val Context.sysBattery: Int
         val iFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         val batteryStatus = registerReceiver(null, iFilter)
         return batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-}
+    }
+
+val Context.externalFilesDir: File
+    get() = App.INSTANCE.getExternalFilesDir(null) ?: App.INSTANCE.filesDir
 
 fun Context.openUrl(url: String) {
     openUrl(Uri.parse(url))

@@ -1,16 +1,18 @@
 package io.legado.app.model.localBook
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.htmlFormat
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.*
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
 import org.jsoup.Jsoup
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.Charset
 import java.util.*
@@ -19,6 +21,7 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
 
     companion object {
         private var eFile: EPUBFile? = null
+        private val coverDir = App.INSTANCE.externalFilesDir
 
         @Synchronized
         private fun getEFile(book: io.legado.app.data.entities.Book): EPUBFile {
@@ -53,7 +56,25 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
                 File(book.bookUrl).inputStream()
             }
             epubBook = epubReader.readEpub(inputStream)
+            if (book.coverUrl.isNullOrEmpty()) {
+                book.coverUrl = FileUtils.getPath(
+                    App.INSTANCE.externalFilesDir,
+                    "${MD5Utils.md5Encode16(book.bookUrl)}.jpg",
+                    "covers"
+                )
+            }
+            if (!File(book.coverUrl!!).exists()) {
+                epubBook!!.coverImage?.inputStream?.let {
+                    val cover = BitmapFactory.decodeStream(it)
+                    val out = FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
+                    cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                    out.flush()
+                    out.close()
+                    it.close()
+                }
+            }
         } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
