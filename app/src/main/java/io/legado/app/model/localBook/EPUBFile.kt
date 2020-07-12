@@ -156,6 +156,7 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
                 }
             }
         }
+        book.latestChapterTitle = chapterList.lastOrNull()?.title
         return chapterList
     }
 
