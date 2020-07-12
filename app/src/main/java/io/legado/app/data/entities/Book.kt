@@ -139,6 +139,8 @@ data class Book(
         newBook.group = group
         newBook.order = order
         newBook.customCoverUrl = customCoverUrl
+        newBook.customIntro = customIntro
+        newBook.customTag = customTag
         newBook.canUpdate = canUpdate
         App.db.bookDao().delete(this)
         App.db.bookDao().insert(newBook)
