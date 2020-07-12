@@ -352,7 +352,7 @@ class BookInfoActivity :
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             requestCodeSourceEdit -> if (resultCode == Activity.RESULT_OK) {
-                viewModel.initData(intent)
+                viewModel.upEditBook()
             }
             requestCodeChapterList -> if (resultCode == Activity.RESULT_OK) {
                 viewModel.bookData.value?.let {

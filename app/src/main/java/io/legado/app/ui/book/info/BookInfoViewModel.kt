@@ -226,4 +226,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             success?.invoke()
         }
     }
+
+    fun upEditBook() {
+        bookData.value?.let {
+            App.db.bookDao().getBook(it.bookUrl)?.let { book ->
+                bookData.postValue(book)
+            }
+        }
+    }
 }
