@@ -5,7 +5,7 @@ import android.text.StaticLayout
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.book.read.page.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import java.text.DecimalFormat
 
 data class TextPage(

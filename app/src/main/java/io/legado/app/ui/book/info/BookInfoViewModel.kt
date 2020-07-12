@@ -131,21 +131,20 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeTo(book: Book) {
+    fun changeTo(newBook: Book) {
         execute {
             if (inBookshelf) {
                 bookData.value?.let {
-                    book.group = it.group
-                    book.order = it.order
+                    it.changeSource(newBook)
                     App.db.bookDao().delete(it)
                 }
-                App.db.bookDao().insert(book)
+                App.db.bookDao().insert(newBook)
             }
-            bookData.postValue(book)
-            if (book.tocUrl.isEmpty()) {
-                loadBookInfo(book) { upChangeDurChapterIndex(book, it) }
+            bookData.postValue(newBook)
+            if (newBook.tocUrl.isEmpty()) {
+                loadBookInfo(newBook) { upChangeDurChapterIndex(newBook, it) }
             } else {
-                loadChapter(book) { upChangeDurChapterIndex(book, it) }
+                loadChapter(newBook) { upChangeDurChapterIndex(newBook, it) }
             }
         }
     }

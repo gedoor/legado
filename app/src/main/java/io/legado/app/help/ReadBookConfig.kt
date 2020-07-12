@@ -9,7 +9,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.ui.book.read.page.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
 import java.io.File
 

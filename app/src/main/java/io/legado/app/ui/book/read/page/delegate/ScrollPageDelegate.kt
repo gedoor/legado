@@ -2,8 +2,8 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.view.MotionEvent
 import android.view.VelocityTracker
-import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
 class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 

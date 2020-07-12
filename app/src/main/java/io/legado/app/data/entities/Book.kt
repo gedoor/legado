@@ -133,4 +133,11 @@ data class Book(
             this.tocHtml = this@Book.tocHtml
         }
     }
+
+    fun changeSource(newBook: Book) {
+        newBook.group = group
+        newBook.order = order
+        newBook.customCoverUrl = customCoverUrl
+        newBook.canUpdate = canUpdate
+    }
 }

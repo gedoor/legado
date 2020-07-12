@@ -15,7 +15,7 @@ import io.legado.app.data.entities.*
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
-import io.legado.app.ui.book.read.page.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main

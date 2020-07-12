@@ -12,6 +12,7 @@ import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor

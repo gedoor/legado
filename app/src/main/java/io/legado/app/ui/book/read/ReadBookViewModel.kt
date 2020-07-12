@@ -146,12 +146,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeTo(book1: Book) {
+    fun changeTo(newBook: Book) {
         execute {
             ReadBook.upMsg(null)
             ReadBook.book?.let {
-                book1.group = it.group
-                book1.order = it.order
+                it.changeSource(newBook)
                 App.db.bookDao().delete(it)
             }
             ReadBook.prevTextChapter = null
@@ -160,15 +159,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             withContext(Main) {
                 ReadBook.callBack?.upContent()
             }
-            App.db.bookDao().insert(book1)
-            ReadBook.book = book1
-            App.db.bookSourceDao().getBookSource(book1.origin)?.let {
+            App.db.bookDao().insert(newBook)
+            ReadBook.book = newBook
+            App.db.bookSourceDao().getBookSource(newBook.origin)?.let {
                 ReadBook.webBook = WebBook(it)
             }
-            if (book1.tocUrl.isEmpty()) {
-                loadBookInfo(book1) { upChangeDurChapterIndex(book1, it) }
+            if (newBook.tocUrl.isEmpty()) {
+                loadBookInfo(newBook) { upChangeDurChapterIndex(newBook, it) }
             } else {
-                loadChapterList(book1) { upChangeDurChapterIndex(book1, it) }
+                loadChapterList(newBook) { upChangeDurChapterIndex(newBook, it) }
             }
         }
     }

@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.read.page
+package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
 import io.legado.app.App
@@ -29,7 +29,9 @@ object ImageProvider {
                     out.close()
                 }
             } else {
-                HttpHelper.getBytes(src)
+                HttpHelper.getBytes(src)?.let {
+                    FileUtils.createFileIfNotExist(vFile.absolutePath).writeBytes(it)
+                }
             }
         }
         return try {

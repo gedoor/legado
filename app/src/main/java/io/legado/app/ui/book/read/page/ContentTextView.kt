@@ -14,6 +14,8 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
