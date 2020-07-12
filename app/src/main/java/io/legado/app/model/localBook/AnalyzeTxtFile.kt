@@ -204,7 +204,7 @@ class AnalyzeTxtFile {
             val bean = toc[i]
             bean.index = i
             bean.bookUrl = book.bookUrl
-            bean.url = (MD5Utils.md5Encode16(book.originName + i + bean.title) ?: "")
+            bean.url = (MD5Utils.md5Encode16(book.originName + i + bean.title))
         }
         book.latestChapterTitle = toc.last().title
         book.totalChapterNum = toc.size

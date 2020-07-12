@@ -69,9 +69,7 @@ object ChapterProvider {
                 src?.let {
                     durY =
                         setTypeImage(
-                            book, src, durY,
-                            textPages, pageLines,
-                            pageLengths, stringBuilder
+                            book, src, durY, textPages
                         )
                 }
             } else {
@@ -117,10 +115,7 @@ object ChapterProvider {
         book: Book,
         src: String,
         y: Float,
-        textPages: ArrayList<TextPage>,
-        pageLines: ArrayList<Int>,
-        pageLengths: ArrayList<Int>,
-        stringBuilder: StringBuilder
+        textPages: ArrayList<TextPage>
     ): Float {
         var durY = y
         ImageProvider.getImage(book, src)?.let {
