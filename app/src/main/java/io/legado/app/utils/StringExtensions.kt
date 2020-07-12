@@ -34,7 +34,6 @@ fun String?.isJsonArray(): Boolean =
 
 fun String?.htmlFormat(): String =
     this?.replace("</?(?:div|p|b|br|hr|h\\d|article|dd|dl|span|link|title)[^>]*>".toRegex(), "\n")
-        ?.replace("<[script>]*.*?>|&nbsp;".toRegex(), "")
         ?.replace("\\s*\\n+\\s*".toRegex(), "\n　　")
         ?.replace("^[\\n\\s]+".toRegex(), "　　")
         ?.replace("[\\n\\s]+$".toRegex(), "")
