@@ -149,17 +149,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun changeTo(newBook: Book) {
         execute {
             ReadBook.upMsg(null)
-            ReadBook.book?.let {
-                it.changeSource(newBook)
-                App.db.bookDao().delete(it)
-            }
+            ReadBook.book?.changeTo(newBook)
             ReadBook.prevTextChapter = null
             ReadBook.curTextChapter = null
             ReadBook.nextTextChapter = null
             withContext(Main) {
                 ReadBook.callBack?.upContent()
             }
-            App.db.bookDao().insert(newBook)
             ReadBook.book = newBook
             App.db.bookSourceDao().getBookSource(newBook.origin)?.let {
                 ReadBook.webBook = WebBook(it)

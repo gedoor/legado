@@ -134,11 +134,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun changeTo(newBook: Book) {
         execute {
             if (inBookshelf) {
-                bookData.value?.let {
-                    it.changeSource(newBook)
-                    App.db.bookDao().delete(it)
-                }
-                App.db.bookDao().insert(newBook)
+                bookData.value?.changeTo(newBook)
             }
             bookData.postValue(newBook)
             if (newBook.tocUrl.isEmpty()) {
