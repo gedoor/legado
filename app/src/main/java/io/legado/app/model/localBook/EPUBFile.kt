@@ -6,10 +6,7 @@ import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFilesDir
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.*
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
@@ -95,11 +92,7 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
             val elements = doc.body().children()
             elements.select("script").remove()
             elements.select("style").remove()
-            return elements.outerHtml()
-                .replace("</?(?:div|p|b|br|hr|h\\d|article|dd|dl|span)[^>]*>".toRegex(), "\n")
-                .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-                .replace("^[\\n\\s]+".toRegex(), "　　")
-                .replace("[\\n\\s]+$".toRegex(), "")
+            return elements.outerHtml().htmlFormat()
         }
         return null
     }
