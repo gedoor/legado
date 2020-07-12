@@ -93,9 +93,13 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
             val resource = eBook.resources.getByHref(chapter.url)
             val doc = Jsoup.parse(String(resource.data, mCharset))
             val elements = doc.body().children()
-            elements.select("script, style").remove()
+            elements.select("script").remove()
+            elements.select("style").remove()
             return elements.outerHtml()
-                .replace("</?(?:div|p|b|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex(), "\n")
+                .replace("</?(?:div|p|b|br|hr|h\\d|article|dd|dl|span)[^>]*>".toRegex(), "\n")
+                .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
+                .replace("^[\\n\\s]+".toRegex(), "　　")
+                .replace("[\\n\\s]+$".toRegex(), "")
         }
         return null
     }
