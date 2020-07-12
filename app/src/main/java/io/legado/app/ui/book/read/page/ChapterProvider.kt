@@ -123,11 +123,18 @@ object ChapterProvider {
         var durY = y
         ImageProvider.getImage(book, src)?.let {
             var height = it.height
-            val width = if (it.width > visibleWidth) {
+            var width = it.width
+            if (it.width > visibleWidth) {
                 height = it.height * visibleWidth / it.width
-                visibleWidth
-            } else {
-                it.width
+                width = visibleWidth
+            }
+            if (height > visibleHeight) {
+                width = width * visibleHeight / height
+                height = visibleHeight
+            }
+            if (durY + height > visibleHeight) {
+                textPages.add(TextPage())
+                durY = 0f
             }
             val textLine = TextLine(isImage = true)
             textLine.lineTop = durY
