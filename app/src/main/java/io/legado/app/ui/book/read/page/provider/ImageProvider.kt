@@ -29,7 +29,7 @@ object ImageProvider {
                     out.close()
                 }
             } else {
-                HttpHelper.getBytes(src)?.let {
+                HttpHelper.getBytes(src, src)?.let {
                     FileUtils.createFileIfNotExist(vFile.absolutePath).writeBytes(it)
                 }
             }
