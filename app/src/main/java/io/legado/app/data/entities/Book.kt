@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
+import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
@@ -142,7 +143,14 @@ data class Book(
         newBook.customIntro = customIntro
         newBook.customTag = customTag
         newBook.canUpdate = canUpdate
-        App.db.bookDao().delete(this)
+        delete()
         App.db.bookDao().insert(newBook)
+    }
+
+    fun delete() {
+        if (ReadBook.book?.bookUrl == bookUrl) {
+            ReadBook.book = null
+        }
+        App.db.bookDao().delete(this)
     }
 }

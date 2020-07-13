@@ -222,9 +222,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
-            ReadBook.book?.let {
-                App.db.bookDao().delete(it)
-            }
+            ReadBook.book?.delete()
         }.onSuccess {
             success?.invoke()
         }
