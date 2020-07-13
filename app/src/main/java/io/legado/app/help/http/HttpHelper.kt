@@ -1,5 +1,9 @@
 package io.legado.app.help.http
 
+import com.franmontiel.persistentcookiejar.PersistentCookieJar
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import io.legado.app.App
 import io.legado.app.constant.AppConst
 import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.utils.NetworkUtils
@@ -16,6 +20,9 @@ import kotlin.coroutines.resume
 object HttpHelper {
 
     val client: OkHttpClient by lazy {
+
+        val cookieJar =
+            PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(App.INSTANCE))
 
         val specs = arrayListOf(
             ConnectionSpec.MODERN_TLS,
@@ -35,6 +42,7 @@ object HttpHelper {
             .followSslRedirects(true)
             .protocols(listOf(Protocol.HTTP_1_1))
             .addInterceptor(getHeaderInterceptor())
+            .cookieJar(cookieJar)
 
         builder.build()
     }

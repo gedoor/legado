@@ -171,6 +171,7 @@ dependencies {
     //网络
     //noinspection GradleDependency
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
