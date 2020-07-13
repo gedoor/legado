@@ -518,8 +518,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 更新内容
      */
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
+        autoPageProgress = 0
         launch {
             page_view.upContent(relativePosition, resetPageOffset)
+            seek_read_page.progress = ReadBook.durPageIndex
         }
     }
 
