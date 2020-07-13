@@ -143,6 +143,7 @@ data class Book(
         newBook.customIntro = customIntro
         newBook.customTag = customTag
         newBook.canUpdate = canUpdate
+        newBook.useReplaceRule = useReplaceRule
         delete()
         App.db.bookDao().insert(newBook)
     }
