@@ -23,7 +23,7 @@ import kotlin.math.max
 )
 data class Book(
     @PrimaryKey
-    override var bookUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
+    override var bookUrl: String = "",          // 详情页Url(本地书源存储完整文件路径)
     var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
     var origin: String = BookType.local,        // 书源URL(默认BookType.local)
     var originName: String = "",                //书源名称 or 本地书籍文件名

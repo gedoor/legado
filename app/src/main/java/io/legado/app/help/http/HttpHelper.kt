@@ -19,8 +19,7 @@ object HttpHelper {
 
     val client: OkHttpClient by lazy {
 
-        val cookieJar =
-            PersistentCookieJar(SetCookieCache(), CookieStore)
+        val cookieJar = PersistentCookieJar(SetCookieCache(), CookieStore)
 
         val specs = arrayListOf(
             ConnectionSpec.MODERN_TLS,
