@@ -13,12 +13,30 @@ import java.io.FileOutputStream
 
 object ImageProvider {
 
-    val bitmaps = hashMapOf<String, Bitmap?>()
+    private val cache = hashMapOf<Int, HashMap<String, Bitmap>>()
+
+    @Synchronized
+    fun getCache(chapterIndex: Int, src: String): Bitmap? {
+        return cache[chapterIndex]?.get(src)
+    }
+
+    @Synchronized
+    fun setCache(chapterIndex: Int, src: String, bitmap: Bitmap) {
+        var indexCache = cache[chapterIndex]
+        if (indexCache == null) {
+            indexCache = hashMapOf()
+            cache[chapterIndex] = indexCache
+        }
+        indexCache[src] = bitmap
+    }
 
     fun getImage(book: Book, chapterIndex: Int, src: String): Bitmap? {
+        getCache(chapterIndex, src)?.let {
+            return it
+        }
         val vFile = FileUtils.getFile(
             App.INSTANCE.externalFilesDir,
-            "${MD5Utils.md5Encode16(src)}.jpg",
+            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".")}",
             "images", book.name
         )
         if (!vFile.exists()) {
@@ -36,13 +54,35 @@ object ImageProvider {
             }
         }
         return try {
-            BitmapUtils.decodeBitmap(
+            val bitmap = BitmapUtils.decodeBitmap(
                 vFile.absolutePath,
                 ChapterProvider.visibleWidth,
                 ChapterProvider.visibleHeight
             )
+            setCache(chapterIndex, src, bitmap)
+            bitmap
         } catch (e: Exception) {
             null
+        }
+    }
+
+    fun clearAllCache() {
+        cache.forEach {indexCache->
+            indexCache.value.forEach {
+                it.value.recycle()
+            }
+        }
+        cache.clear()
+    }
+
+    fun clearOut(chapterIndex: Int) {
+        cache.forEach {indexCache->
+            if (indexCache.key !in chapterIndex - 1..chapterIndex + 1) {
+                indexCache.value.forEach {
+                    it.value.recycle()
+                }
+                cache.remove(indexCache.key)
+            }
         }
     }
 
