@@ -620,7 +620,7 @@
     <string name="record_log">記錄日誌</string>
     <string name="log">日誌</string>
     <string name="chinese_converter">中文簡繁體轉換</string>
-    <string name="chage_icon_error">圖標為矢量圖標，Android8.0 以前不支持</string>
+    <string name="change_icon_error">圖標為矢量圖標，Android8.0 以前不支持</string>
     <string name="aloud_config">朗讀設置</string>
     <string name="main_activity">主界面</string>
     <string name="selectText">長按選擇文本</string>

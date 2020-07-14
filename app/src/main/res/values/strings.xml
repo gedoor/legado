@@ -14,7 +14,7 @@
     <string name="select_backup_path">Please select a backup path.</string>
     <string name="menu_import_old_version">Import legacy data</string>
     <string name="menu_import_github">Import github data</string>
-    <string name="menu_replace_rule">Relpacement</string>
+    <string name="menu_replace_rule">Replacement</string>
     <string name="menu_send">Send</string>
 
     <string name="dialog_title">Prompt</string>
@@ -28,7 +28,7 @@
     <string name="draw">Warning</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-    <string name="replace">Repalce</string>
+    <string name="replace">Replace</string>
     <string name="replace_purify">Replacement</string>
     <string name="replace_purify_desc">Configure replacement rules</string>
     <string name="not_available">Not available now</string>
@@ -43,7 +43,7 @@
     <string name="all">ALL</string>
     <string name="recent_reading">Recent reading</string>
     <string name="last_read">Last reading</string>
-    <string name="update_log">What's new</string>
+    <string name="update_log">What\'s new</string>
     <string name="bookshelf_empty">Still empty,please add it first.</string>
     <string name="action_search">Search</string>
     <string name="action_download">Download</string>
@@ -193,10 +193,10 @@
     <string name="img_cover">Cover</string>
     <string name="book">Book</string>
     <string name="volume_key_page">Volume keys to turn page</string>
-    <string name="click_turn_page">Tap screen to trun page</string>
+    <string name="click_turn_page">Tap screen to turn page</string>
     <string name="click_all_next_page">Tap screen always to next page</string>
     <string name="page_anim">Flip animation</string>
-    <string name="keep_light">Keep creen awake</string>
+    <string name="keep_light">Keep screen awake</string>
     <string name="back">Back</string>
     <string name="menu">Menu</string>
     <string name="adjust">Adjust</string>
@@ -249,7 +249,7 @@
     <string name="no_last_chapter">No latest chapter.</string>
     <string name="showTimeBattery">Display time and battery</string>
     <string name="showLine">Display divider</string>
-    <string name="dark_status_icon">Darken the status bar's icon color</string>
+    <string name="dark_status_icon">Darken the status bar\'s icon color</string>
     <string name="content">Content</string>
     <string name="copy_text">Copy</string>
     <string name="download_all">Download all</string>
@@ -271,7 +271,7 @@
     <string name="arrange_bookshelf">Arrange bookshelf</string>
     <string name="clear_bookshelf_s">it will delete all books. Be careful,please.</string>
     <string name="search_book_source">Search book sources</string>
-    <string name="search_rss_source">search subscription scources</string>
+    <string name="search_rss_source">search subscription sources</string>
     <string name="search_book_source_num">Search( %d sources in total)</string>
     <string name="chapter_list_size">Chapters(%d)</string>
     <string name="text_bold">Bold</string>
@@ -333,11 +333,11 @@
     <string name="allow_update">Allow update</string>
     <string name="disable_update">Disable update</string>
     <string name="revert_selection">Invert selection</string>
-    <string name="search_book_key">Search bookname/author</string>
-    <string name="debug_hint">Bookname,Author,URL</string>
+    <string name="search_book_key">Search bookName/author</string>
+    <string name="debug_hint">BookName,Author,URL</string>
     <string name="faq">FAQ</string>
     <string name="pt_show_all_find">Display all Discovery</string>
-    <string name="ps_show_all_find">Display the selected origin's Discovery if closed</string>
+    <string name="ps_show_all_find">Display the selected origin\'s Discovery if closed</string>
     <string name="update_toc">Update chapters</string>
     <string name="txt_toc_regex">Txt Chapters Regex</string>
     <string name="set_charset">Text encoding</string>
@@ -366,7 +366,7 @@
     <string name="page_anim_cover">Cover</string>
     <string name="page_anim_slide">Slide</string>
     <string name="page_anim_simulation">Simulation</string>
-    <string name="page_anim_scroll">Sroll</string>
+    <string name="page_anim_scroll">Scroll</string>
     <string name="page_anim_none">None</string>
     <string name="donate_s">This book source uses advanced features, please go to the Donations and tap the Alipay red envelope search code to receive the red envelope,then you can use it.</string>
     <string name="up_change_source_last_chapter_t">Update the latest chapter after changed origin in the background</string>
@@ -470,7 +470,7 @@
     <string name="network_connection_unavailable">Network connection is not available</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="sure">Ok</string>
+    <string name="sure">OK</string>
     <string name="sure_del">Are you sure to delete?</string>
     <string name="sure_del_all_book">Are sure to delete all books？</string>
     <string name="sure_del_download_book">Do you want to delete the downloaded book chapters at the same time?</string>
@@ -479,12 +479,12 @@
     <string name="input_charset">Input encoding</string>
     <string name="text_chapter_list_rule">Txt Chapters Regex</string>
     <string name="open_local_book_per">Open local books requires Storage permission</string>
-    <string name="no_book_name">No Bookname</string>
+    <string name="no_book_name">No BookName</string>
     <string name="input_replace_url">Input replacement rule URL</string>
     <string name="get_book_list_success">Search list obtained successfully%d</string>
     <string name="non_null_source_name_url">Source name and URL cannot be empty</string>
     <string name="gallery">Gallery</string>
-    <string name="get_ali_pay_hb">get Alipay red envelopes</string>
+    <string name="get_ali_pay_hb">get AliPay red envelopes</string>
     <string name="non_update_url">No update address</string>
     <string name="check_host_cookie">Opening the homepage, it will return to start page automatically after success</string>
     <string name="click_check_after_success">After successful login, please tap the icon on the upper right corner to test the homepage access</string>
@@ -496,10 +496,10 @@
     <string name="indent_1">Indent with 1 chars</string>
     <string name="indent_2">Indent with 2 chars</string>
     <string name="indent_3">Indent with 3 chars</string>
-    <string name="indent_4">INdent with 4 chars</string>
+    <string name="indent_4">Indent with 4 chars</string>
     <string name="select_folder">Select a folder</string>
     <string name="select_file">Select a file</string>
-    <string name="no_find">No Discovery, you can add it in Booksource</string>
+    <string name="no_find">No Discovery, you can add it in BookSource</string>
     <string name="restore_default">Restore default</string>
     <string name="set_download_per">Custom cache path requires Storage permission</string>
     <string name="black">Black</string>
@@ -586,7 +586,7 @@
     <string name="bottom_line">I AM OVER!</string>
     <string name="uri_to_path_fail">Uri To Path failed</string>
     <string name="refresh_cover">refresh cover</string>
-    <string name="change_cover_source">Change cover's origin</string>
+    <string name="change_cover_source">Change cover\'s origin</string>
     <string name="select_local_image">Select local image</string>
     <string name="book_type">Type:</string>
     <string name="book_type_text">Text</string>
@@ -606,7 +606,7 @@
     <string name="share_rss_source">Subscription sources sharing</string>
     <string name="share_book_source">Book sources sharing</string>
     <string name="auto_dark_mode">Automatic switching dark mode</string>
-    <string name="auto_dark_mode_s">Followinng system dark mode</string>
+    <string name="auto_dark_mode_s">Following system dark mode</string>
     <string name="go_back">Go back</string>
     <string name="tone_colour">Online Speech tone</string>
     <string name="select_count">(%1$d/%2$d)</string>
@@ -622,7 +622,7 @@
     <string name="record_log">Log</string>
     <string name="log">Log</string>
     <string name="chinese_converter">Simplified conversion</string>
-    <string name="chage_icon_error">The icon is a vector icon, which was not supported before Android 8.0</string>
+    <string name="change_icon_error">The icon is a vector icon, which was not supported before Android 8.0</string>
     <string name="aloud_config">Speech setting</string>
     <string name="main_activity">Start page</string>
     <string name="selectText">Long Tap to select text</string>
@@ -669,8 +669,8 @@
     <string name="license">License</string>
     <string name="other">Other</string>
     <string name="official_account">开源阅读</string>
-    <string name="follow_official_account">Follow Wechat Official Accounts</string>
-    <string name="wechat">Wechat</string>
+    <string name="follow_official_account">Follow WeChat Official Accounts</string>
+    <string name="wechat">WeChat</string>
     <string name="thanks">Supporting me will be appreciated</string>
     <string name="about_official_account">Official Accounts[开源阅读]</string>
     <string name="source_auto_changing">Changing source</string>
@@ -686,17 +686,17 @@
     <string name="primary">Primary</string>
     <string name="accent">Accent</string>
     <string name="background_color">Background color</string>
-    <string name="navbar_color">Navbar color</string>
+    <string name="navbar_color">NavBar color</string>
     <string name="day">Day</string>
     <string name="day_color_primary">Day,Primary</string>
     <string name="day_color_accent">Day,Accent</string>
     <string name="day_background_color">Day,Background color</string>
-    <string name="day_navbar_color">Day,Navbar color</string>
+    <string name="day_navbar_color">Day,NavBar color</string>
     <string name="night">Night</string>
     <string name="night_primary">Night,Primary</string>
     <string name="night_accent">Night,Accent</string>
     <string name="night_background_color">Night,Background color</string>
-    <string name="night_navbar_color">Night,Navbar color</string>
+    <string name="night_navbar_color">Night,NavBar color</string>
     <string name="auto_change_source">Changing source automatically</string>
     <string name="text_full_justify">Text justified</string>
     <string name="text_bottom_justify">Text align bottom</string>
