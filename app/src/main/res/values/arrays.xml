@@ -1,116 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="book_type">
-        <item>@string/book_type_text</item>
-        <item>@string/book_type_audio</item>
-    </string-array>
-
-    <string-array name="tts_speech_per">
-        <item>度小美</item>
-        <item>度小宇</item>
-        <item>度逍遥</item>
-        <item>度丫丫</item>
-        <item>度小娇</item>
-        <item>度米朵</item>
-        <item>度博文</item>
-        <item>度小童</item>
-        <item>度小萌</item>
-        <item>百度骚男</item>
-        <item>百度评书</item>
-        <item>百度主持</item>
-    </string-array>
-
-    <string-array name="indent">
-        <item>@string/indent_0</item>
-        <item>@string/indent_1</item>
-        <item>@string/indent_2</item>
-        <item>@string/indent_3</item>
-        <item>@string/indent_4</item>
-    </string-array>
-
-    <string-array name="text_suffix">
-        <item>.txt</item>
-        <item>.json</item>
-        <item>.xml</item>
-    </string-array>
-
-    <string-array name="convert_s">
-        <item>@string/jf_convert_o</item>
-        <item>@string/jf_convert_j</item>
-        <item>@string/jf_convert_f</item>
-    </string-array>
-
-    <string-array name="theme_mode">
-        <item>跟随系统</item>
-        <item>亮色主题</item>
-        <item>暗色主题</item>
-        <item>E-Ink(墨水屏)</item>
-    </string-array>
-
-    <string-array name="NavBarColors">
-        <item>自动</item>
-        <item>黑色</item>
-        <item>白色</item>
-        <item>跟随背景</item>
-    </string-array>
-
-    <string-array name="screen_time_out">
-        <item>默认</item>
-        <item>1分钟</item>
-        <item>2分钟</item>
-        <item>3分钟</item>
-        <item>常亮</item>
-    </string-array>
-
-    <string-array name="select_folder">
-        <item>@string/default_path</item>
-        <item>@string/sys_folder_picker</item>
-        <item>@string/app_folder_picker</item>
-    </string-array>
-
-    <string-array name="screen_direction_title">
-        <item>@string/screen_unspecified</item>
-        <item>@string/screen_portrait</item>
-        <item>@string/screen_landscape</item>
-        <item>@string/screen_sensor</item>
-    </string-array>
-
-    <string-array name="icon_names">
-        <item>iconMain</item>
-        <item>icon1</item>
-        <item>icon2</item>
-        <item>icon3</item>
-        <item>icon4</item>
-        <item>icon5</item>
-        <item>icon6</item>
-    </string-array>
-
-    <string-array name="chinese_mode">
-        <item>关闭</item>
-        <item>繁体转简体</item>
-        <item>简体转繁体</item>
-    </string-array>
-
-    <string-array name="system_typefaces">
-        <item>系统默认字体</item>
-        <item>系统衬线字体</item>
-        <item>系统等宽字体</item>
-    </string-array>
-
-    <string-array name="read_tip">
-        <item>无</item>
-        <item>标题</item>
-        <item>时间</item>
-        <item>电量</item>
-        <item>页数</item>
-        <item>进度</item>
-        <item>页数及进度</item>
-    </string-array>
-
-    <string-array name="text_font_weight">
-        <item>正常</item>
-        <item>粗体</item>
-        <item>细体</item>
-    </string-array>
-
-</resources>
+	<resources>
+	    <string-array name="book_type">
+	        <item>@string/book_type_text</item>
+	        <item>@string/book_type_audio</item>
+	    </string-array>
+	
+	    <string-array name="tts_speech_per">
+	        <item>du Xiao Mei</item>
+	        <item>du Xiao Yu</item>
+	        <item>du Xiao Yao</item>
+	        <item>du Ya Ya</item>
+	        <item>du Xiao Jiao</item>
+	        <item>du Mi Duo</item>
+	        <item>du Bo Wen</item>
+	        <item>du Xiao Tong</item>
+	        <item>du Xiao Meng</item>
+	        <item>baidu SaoNan</item>
+	        <item>baidu PingShu</item>
+	        <item>baidu ZhuChi</item>
+	    </string-array>
+	
+	    <string-array name="indent">
+	        <item>@string/indent_0</item>
+	        <item>@string/indent_1</item>
+	        <item>@string/indent_2</item>
+	        <item>@string/indent_3</item>
+	        <item>@string/indent_4</item>
+	    </string-array>
+	
+	    <string-array name="text_suffix">
+	        <item>.txt</item>
+	        <item>.json</item>
+	        <item>.xml</item>
+	    </string-array>
+	
+	    <string-array name="convert_s">
+	        <item>@string/jf_convert_o</item>
+	        <item>@string/jf_convert_j</item>
+	        <item>@string/jf_convert_f</item>
+	    </string-array>
+	
+	    <string-array name="theme_mode">
+	        <item>Follow system</item>
+	        <item>Bright theme</item>
+	        <item>Dark theme</item>
+	        <item>E-Ink</item>
+	    </string-array>
+	
+	    <string-array name="NavBarColors">
+	        <item>Auto</item>
+	        <item>Black</item>
+	        <item>White</item>
+	        <item>Following</item>
+	    </string-array>
+	
+	    <string-array name="screen_time_out">
+	        <item>Default</item>
+	        <item>1 min</item>
+	        <item>2 min</item>
+	        <item>3 min</item>
+	        <item>Always</item>
+	    </string-array>
+	
+	    <string-array name="select_folder">
+	        <item>@string/default_path</item>
+	        <item>@string/sys_folder_picker</item>
+	        <item>@string/app_folder_picker</item>
+	    </string-array>
+	
+	    <string-array name="screen_direction_title">
+	        <item>@string/screen_unspecified</item>
+	        <item>@string/screen_portrait</item>
+	        <item>@string/screen_landscape</item>
+	        <item>@string/screen_sensor</item>
+	    </string-array>
+	
+	    <string-array name="icon_names">
+	        <item>iconMain</item>
+	        <item>icon1</item>
+	        <item>icon2</item>
+	        <item>icon3</item>
+	        <item>icon4</item>
+	        <item>icon5</item>
+	        <item>icon6</item>
+	    </string-array>
+	
+	    <string-array name="chinese_mode">
+	        <item>Off</item>
+	        <item>Traditional to Simplified</item>
+	        <item>Simplified to Traditional</item>
+	    </string-array>
+	
+	    <string-array name="system_typefaces">
+	        <item>Default font</item>
+	        <item>Serif font</item>
+	        <item>Monospaced font</item>
+	    </string-array>
+	
+	    <string-array name="read_tip">
+	        <item>Blank</item>
+	        <item>Heading</item>
+	        <item>Time</item>
+	        <item>Battery</item>
+	        <item>Pages</item>
+	        <item>Progress</item>
+	        <item>Pages and progress</item>
+	    </string-array>
+	
+	    <string-array name="text_font_weight">
+	        <item>Normal</item>
+	        <item>Bold</item>
+	        <item>Light</item>
+	    </string-array>
+	
+	</resources>
