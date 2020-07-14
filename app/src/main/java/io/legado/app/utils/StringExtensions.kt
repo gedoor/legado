@@ -1,5 +1,8 @@
 package io.legado.app.utils
 
+val removeHtmlRegex =
+    "</?(?:html|head|div|a|p|b|br|hr|h\\d|article|dd|dl|span|link|title)[^>]*>".toRegex()
+
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
 fun String?.isContentPath(): Boolean = this?.startsWith("content://") == true
@@ -32,12 +35,13 @@ fun String?.isJsonArray(): Boolean =
         str.startsWith("[") && str.endsWith("]")
     } ?: false
 
-fun String?.htmlFormat(): String =
-    this?.replace("</?(?:div|p|b|br|hr|h\\d|article|dd|dl|span|link|title)[^>]*>".toRegex(), "\n")
-        ?.replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-        ?.replace("^[\\n\\s]+".toRegex(), "　　")
-        ?.replace("[\\n\\s]+$".toRegex(), "")
-        ?: ""
+fun String?.htmlFormat(): String {
+    this ?: return ""
+    return this.replace(removeHtmlRegex, "\n")
+        .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
+        .replace("^[\\n\\s]+".toRegex(), "　　")
+        .replace("[\\n\\s]+$".toRegex(), "")
+}
 
 fun String.splitNotBlank(vararg delimiter: String): Array<String> = run {
     this.split(*delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()

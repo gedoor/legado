@@ -13,8 +13,9 @@ import java.io.FileOutputStream
 
 object ImageProvider {
 
+    val bitmaps = hashMapOf<String, Bitmap?>()
 
-    fun getImage(book: Book, src: String): Bitmap? {
+    fun getImage(book: Book, chapterIndex: Int, src: String): Bitmap? {
         val vFile = FileUtils.getFile(
             App.INSTANCE.externalFilesDir,
             "${MD5Utils.md5Encode16(src)}.jpg",

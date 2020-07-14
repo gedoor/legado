@@ -158,7 +158,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     ) {
         textLine.textChars.forEach { textChar ->
             val rectF = RectF(textChar.start, lineTop, textChar.end, lineBottom)
-            ImageProvider.getImage(ReadBook.book!!, textChar.charData)?.let {
+            ImageProvider.getImage(
+                ReadBook.book!!,
+                textPage.chapterIndex,
+                textChar.charData
+            )?.let {
                 canvas.drawBitmap(it, null, rectF, null)
             }
         }

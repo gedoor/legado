@@ -69,7 +69,7 @@ object ChapterProvider {
                 src?.let {
                     durY =
                         setTypeImage(
-                            book, src, durY, textPages
+                            book, bookChapter, src, durY, textPages
                         )
                 }
             } else {
@@ -113,12 +113,13 @@ object ChapterProvider {
 
     private fun setTypeImage(
         book: Book,
+        chapter: BookChapter,
         src: String,
         y: Float,
         textPages: ArrayList<TextPage>
     ): Float {
         var durY = y
-        ImageProvider.getImage(book, src)?.let {
+        ImageProvider.getImage(book, chapter.index, src)?.let {
             var height = it.height
             var width = it.width
             if (it.width > visibleWidth) {
