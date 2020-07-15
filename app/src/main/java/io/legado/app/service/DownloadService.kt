@@ -126,6 +126,7 @@ class DownloadService : BaseService() {
     private fun addDownloadData(bookUrl: String?, start: Int, end: Int) {
         bookUrl ?: return
         if (downloadMap.containsKey(bookUrl)) {
+            updateNotification(getString(R.string.already_in_download))
             toast(R.string.already_in_download)
             return
         }
@@ -136,6 +137,8 @@ class DownloadService : BaseService() {
                     val chapters = CopyOnWriteArraySet<BookChapter>()
                     chapters.addAll(it)
                     downloadMap[bookUrl] = chapters
+                } else {
+                    Download.addLog("${getBook(bookUrl)?.name} is empty")
                 }
             }
             for (i in 0 until threadCount) {
@@ -153,7 +156,7 @@ class DownloadService : BaseService() {
 
     private fun download() {
         downloadingCount += 1
-        tasks.add(Coroutine.async(this, context = searchPool) {
+        val task = Coroutine.async(this, context = searchPool) {
             if (!isActive) return@async
             val bookChapter: BookChapter? = synchronized(this@DownloadService) {
                 downloadMap.forEach {
@@ -224,7 +227,10 @@ class DownloadService : BaseService() {
                     postDownloading(true)
                 }
             }
-        })
+        }.onError {
+            Download.addLog("ERROR:${it.localizedMessage}")
+        }
+        tasks.add(task)
     }
 
     private fun postDownloading(hasChapter: Boolean) {
