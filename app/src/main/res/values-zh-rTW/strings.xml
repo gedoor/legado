@@ -707,5 +707,7 @@
     <string name="enabled">已啓用</string>
     <string name="disabled">已禁用</string>
     <string name="text_bottom_justify">文字底部對齊</string>
+    <string name="starting_download">正在启动下载</string>
+    <string name="already_in_download">该书已在下载列表</string>
 
 </resources>

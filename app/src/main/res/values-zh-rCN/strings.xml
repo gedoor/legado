@@ -707,4 +707,6 @@
     <string name="import_old_summary">选择旧版备份文件夹</string>
     <string name="enabled">已启用</string>
     <string name="disabled">已禁用</string>
+    <string name="starting_download">正在启动下载</string>
+    <string name="already_in_download">该书已在下载列表</string>
 </resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="starting_download">正在启动下载</string>
+    <string name="already_in_download">该书已在下载列表</string>
+</resources>

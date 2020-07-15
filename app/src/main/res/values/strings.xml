@@ -707,4 +707,6 @@
     <string name="import_old_summary">Select legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="starting_download">正在启动下载</string>
+    <string name="already_in_download">该书已在下载列表</string>
 </resources>

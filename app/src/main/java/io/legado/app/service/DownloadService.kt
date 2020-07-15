@@ -43,7 +43,7 @@ class DownloadService : BaseService() {
 
     @Volatile
     private var downloadingCount = 0
-    private var notificationContent = "正在启动下载"
+    private var notificationContent = getString(R.string.starting_download)
 
     private val notificationBuilder by lazy {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
@@ -126,7 +126,7 @@ class DownloadService : BaseService() {
     private fun addDownloadData(bookUrl: String?, start: Int, end: Int) {
         bookUrl ?: return
         if (downloadMap.containsKey(bookUrl)) {
-            toast("该书已在下载列表")
+            toast(R.string.already_in_download)
             return
         }
         downloadCount[bookUrl] = DownloadCount()
@@ -256,7 +256,7 @@ class DownloadService : BaseService() {
         content: String
     ) {
         notificationContent =
-            "进度:${downloadCount.downloadFinishedCount}/$totalCount,成功:${downloadCount.successCount},$content"
+            "进度:" + downloadCount.downloadFinishedCount + "/" + totalCount + ",成功:" + downloadCount.successCount + "," + content
     }
 
     /**
