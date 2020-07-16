@@ -707,6 +707,17 @@
     <string name="import_old_summary">Select a legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+
     <string name="starting_download">Starting download</string>
     <string name="already_in_download">This book is already in Download list</string>
+    <string name="click_to_open">click to open</string>
+    <string name="follow_public_account_summary">关注[开源阅读]点击广告支持我</string>
+    <string name="weChat_appreciation_code">微信赞赏码</string>
+    <string name="alipay">支付宝</string>
+    <string name="alipay_red_envelope_search_code">支付宝红包搜索码</string>
+    <string name="alipay_red_envelope_copy">537954522 点击复制</string>
+    <string name="alipay_red_envelope_qr_code">支付宝红包二维码</string>
+    <string name="alipay_payment_qr_code">支付宝收款二维码</string>
+    <string name="qq_collection_qr_code">QQ收款二维码</string>
+
 </resources>
