@@ -710,7 +710,7 @@
     <string name="starting_download">正在启动下载</string>
     <string name="already_in_download">该书已在下载列表</string>
     <string name="click_to_open">点击打开</string>
-    <string name="follow_public_account_summary">关注[开源阅读软件]点击广告支持我</string>
+    <string name="follow_public_account_summary">关注[开源阅读]点击广告支持我</string>
     <string name="weChat_appreciation_code">微信赞赏码</string>
     <string name="alipay">支付宝</string>
     <string name="alipay_red_envelope_search_code">支付宝红包搜索码</string>
