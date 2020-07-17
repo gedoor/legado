@@ -719,5 +719,6 @@
     <string name="alipay_red_envelope_qr_code">支付宝红包二维码</string>
     <string name="alipay_payment_qr_code">支付宝收款二维码</string>
     <string name="qq_collection_qr_code">QQ收款二维码</string>
+    <string name="contributors_summary">gedoor,Invinciblelee等,详情请在github中查看</string>
 
 </resources>
