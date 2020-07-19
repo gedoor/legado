@@ -10,8 +10,11 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.ImageLoader
+import io.legado.app.utils.getPrefString
 
 
 class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
@@ -131,8 +134,8 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     fun load(path: String?, name: String?, author: String?) {
         setText(name, author)
         ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
-            .placeholder(R.drawable.image_cover_default)
-            .error(R.drawable.image_cover_default)
+            .placeholder(defaultDrawable)
+            .error(defaultDrawable)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -158,5 +161,20 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             })
             .centerCrop()
             .into(this)
+    }
+
+    companion object {
+        lateinit var defaultDrawable: Drawable
+
+        init {
+            upDefaultCover()
+        }
+
+        fun upDefaultCover() {
+            val path = App.INSTANCE.getPrefString(PreferKey.defaultCover)
+            defaultDrawable = Drawable.createFromPath(path)
+                ?: App.INSTANCE.resources.getDrawable(R.drawable.image_cover_default, null)
+        }
+
     }
 }

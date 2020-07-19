@@ -104,19 +104,24 @@ object Restore {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all?.map {
-                val edit = App.INSTANCE.defaultSharedPreferences.edit()
-                when (val value = it.value) {
-                    is Int -> edit.putInt(it.key, value)
-                    is Boolean -> edit.putBoolean(it.key, value)
-                    is Long -> edit.putLong(it.key, value)
-                    is Float -> edit.putFloat(it.key, value)
-                    is String -> edit.putString(it.key, value)
-                    else -> Unit
+            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all
+                ?.let { map ->
+                    val ignoreKeys = arrayOf(PreferKey.versionCode, PreferKey.defaultCover)
+                    val edit = App.INSTANCE.defaultSharedPreferences.edit()
+                    map.forEach {
+                        if (!ignoreKeys.contains(it.key)) {
+                            when (val value = it.value) {
+                                is Int -> edit.putInt(it.key, value)
+                                is Boolean -> edit.putBoolean(it.key, value)
+                                is Long -> edit.putLong(it.key, value)
+                                is Float -> edit.putFloat(it.key, value)
+                                is String -> edit.putString(it.key, value)
+                                else -> Unit
+                            }
+                        }
+                    }
+                    edit.apply()
                 }
-                edit.putInt(PreferKey.versionCode, App.INSTANCE.versionCode)
-                edit.apply()
-            }
             ReadBookConfig.apply {
                 styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
                 shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)

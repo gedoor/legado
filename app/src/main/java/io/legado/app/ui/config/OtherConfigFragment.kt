@@ -1,10 +1,14 @@
 package io.legado.app.ui.config
 
+import android.app.Activity.RESULT_OK
 import android.content.ComponentName
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -14,15 +18,21 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
+import java.io.File
 
 
 class OtherConfigFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private val requestCodeCover = 231
 
     private val packageManager = App.INSTANCE.packageManager
     private val componentName = ComponentName(
@@ -36,6 +46,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
         addPreferencesFromResource(R.xml.pref_config_other)
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
         upPreferenceSummary(PreferKey.webPort, webPort.toString())
+        upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,8 +85,11 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 }
                 toast(R.string.clear_cache_success)
             }
-            "defaultCover" -> {
-                
+            PreferKey.defaultCover -> {
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                intent.type = "image/*"
+                startActivityForResult(intent, requestCodeCover)
             }
         }
         return super.onPreferenceTreeClick(preference)
@@ -98,6 +112,10 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 setProcessTextEnable(it.getBoolean(key, true))
             }
             PreferKey.showRss -> postEvent(EventBus.SHOW_RSS, "unused")
+            PreferKey.defaultCover -> upPreferenceSummary(
+                key,
+                getPrefString(PreferKey.defaultCover)
+            )
         }
     }
 
@@ -131,6 +149,54 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 componentName,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
             )
+        }
+    }
+
+    private fun setCoverFromUri(uri: Uri) {
+        if (uri.toString().isContentPath()) {
+            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
+            doc?.name?.let {
+                var file = requireContext().externalFilesDir
+                file = FileUtils.createFileIfNotExist(file, it, "covers")
+                kotlin.runCatching {
+                    DocumentUtils.readBytes(requireContext(), doc.uri)
+                }.getOrNull()?.let { byteArray ->
+                    file.writeBytes(byteArray)
+                    putPrefString(PreferKey.defaultCover, file.absolutePath)
+                    CoverImageView.upDefaultCover()
+                } ?: toast("获取文件出错")
+            }
+        } else {
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                        val imgFile = File(path)
+                        if (imgFile.exists()) {
+                            var file = requireContext().externalFilesDir
+                            file = FileUtils.createFileIfNotExist(file, imgFile.name, "covers")
+                            file.writeBytes(imgFile.readBytes())
+                            putPrefString(PreferKey.defaultCover, file.absolutePath)
+                            CoverImageView.upDefaultCover()
+                        }
+                    }
+                }
+                .request()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            requestCodeCover -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    setCoverFromUri(uri)
+                }
+            }
         }
     }
 

@@ -48,6 +48,7 @@ object PreferKey {
     const val autoReadSpeed = "autoReadSpeed"
     const val barElevation = "barElevation"
     const val transparentStatusBar = "transparentStatusBar"
+    const val defaultCover = "defaultCover"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
