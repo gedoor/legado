@@ -2,17 +2,23 @@ package io.legado.app.ui.book.info.edit
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
-import io.legado.app.utils.getViewModel
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_info_edit.*
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.toast
+import java.io.File
 
 class BookInfoEditActivity :
     VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit),
@@ -101,13 +107,48 @@ class BookInfoEditActivity :
         upCover()
     }
 
+    private fun coverChangeTo(uri: Uri) {
+        if (uri.toString().isContentPath()) {
+            val doc = DocumentFile.fromSingleUri(this, uri)
+            doc?.name?.let {
+                var file = this.externalFilesDir
+                file = FileUtils.createFileIfNotExist(file, it, "covers")
+                kotlin.runCatching {
+                    DocumentUtils.readBytes(this, doc.uri)
+                }.getOrNull()?.let { byteArray ->
+                    file.writeBytes(byteArray)
+                    coverChangeTo(file.absolutePath)
+                } ?: toast("获取文件出错")
+            }
+        } else {
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    RealPathUtil.getPath(this, uri)?.let { path ->
+                        val imgFile = File(path)
+                        if (imgFile.exists()) {
+                            var file = this.externalFilesDir
+                            file = FileUtils.createFileIfNotExist(file, imgFile.name, "covers")
+                            file.writeBytes(imgFile.readBytes())
+                            coverChangeTo(file.absolutePath)
+                        }
+                    }
+                }
+                .request()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             resultSelectCover -> {
                 if (resultCode == Activity.RESULT_OK) {
                     data?.data?.let { uri ->
-                        coverChangeTo(uri.toString())
+                        coverChangeTo(uri)
                     }
                 }
             }
