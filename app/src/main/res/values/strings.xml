@@ -652,7 +652,7 @@
     <string name="save_image">Save image</string>
     <string name="no_default_path">No default path</string>
     <string name="change_group">Group settings</string>
-    <string name="view_toc">View chapters</string>
+    <string name="view_toc">View Chapters</string>
     <string name="bar_elevation">Navigation bar shadow</string>
     <string name="bar_elevation_s">Current shadow size(elevation): %s</string>
     <string name="btn_default_s">Default</string>
