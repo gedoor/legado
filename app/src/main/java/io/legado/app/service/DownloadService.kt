@@ -43,7 +43,7 @@ class DownloadService : BaseService() {
 
     @Volatile
     private var downloadingCount = 0
-    private var notificationContent = getString(R.string.starting_download)
+    private var notificationContent = App.INSTANCE.getString(R.string.starting_download)
 
     private val notificationBuilder by lazy {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
