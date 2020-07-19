@@ -15,6 +15,7 @@ import io.legado.app.model.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -49,6 +50,7 @@ object ReadBook {
         nextTextChapter = null
         titleDate.postValue(book.name)
         upWebBook(book)
+        ImageProvider.clearAllCache()
     }
 
     fun upWebBook(book: Book) {
@@ -316,6 +318,7 @@ object ReadBook {
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
+                        ImageProvider.clearOut(durChapterIndex)
                     }
                     durChapterIndex - 1 -> {
                         prevTextChapter =
