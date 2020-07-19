@@ -27,6 +27,7 @@ import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.chapterlist.ChapterListActivity
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import org.apache.commons.lang3.time.DateFormatUtils
@@ -117,8 +118,8 @@ class AudioPlayActivity :
 
     private fun upCover(path: String?) {
         ImageLoader.load(this, path)
-            .placeholder(R.drawable.image_cover_default)
-            .error(R.drawable.image_cover_default)
+            .placeholder(CoverImageView.defaultDrawable)
+            .error(CoverImageView.defaultDrawable)
             .into(iv_cover)
         ImageLoader.load(this, path)
             .transition(DrawableTransitionOptions.withCrossFade(1500))
@@ -128,7 +129,7 @@ class AudioPlayActivity :
     }
 
     private fun defaultCover(): RequestBuilder<Drawable> {
-        return ImageLoader.load(this, R.drawable.image_cover_default)
+        return ImageLoader.load(this, CoverImageView.defaultDrawable)
             .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 

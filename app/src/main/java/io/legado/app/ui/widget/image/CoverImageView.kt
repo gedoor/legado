@@ -165,7 +165,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
 
     companion object {
         private var showBookName = false
-        private lateinit var defaultDrawable: Drawable
+        lateinit var defaultDrawable: Drawable
 
         init {
             upDefaultCover()
