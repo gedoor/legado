@@ -74,6 +74,9 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 }
                 toast(R.string.clear_cache_success)
             }
+            "defaultCover" -> {
+                
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
