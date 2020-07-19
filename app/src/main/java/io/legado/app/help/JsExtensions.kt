@@ -41,11 +41,11 @@ interface JsExtensions {
         return EncoderUtils.base64Encode(str, flags)
     }
 
-    fun md5Encode(str: String): String? {
+    fun md5Encode(str: String): String {
         return MD5Utils.md5Encode(str)
     }
 
-    fun md5Encode16(str: String): String? {
+    fun md5Encode16(str: String): String {
         return MD5Utils.md5Encode16(str)
     }
 

@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.search
 
 import android.app.Application
+import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
@@ -12,15 +13,18 @@ import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 
-class SearchViewModel(application: Application) : BaseViewModel(application)
-    , SearchBookModel.CallBack {
+class SearchViewModel(application: Application) : BaseViewModel(application),
+    SearchBookModel.CallBack {
+    val handler = Handler()
     private val searchBookModel = SearchBookModel(this, this)
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
     var isLoading = false
-    var searchBooks = arrayListOf<SearchBook>()
+    private var searchBooks = arrayListOf<SearchBook>()
     private var searchID = 0L
+    private var postTime = 0L
+    private val sendRunnable = Runnable { upAdapter() }
 
     /**
      * 开始搜索
@@ -34,6 +38,18 @@ class SearchViewModel(application: Application) : BaseViewModel(application)
             searchKey = key
         }
         searchBookModel.search(searchID, searchKey)
+    }
+
+    @Synchronized
+    private fun upAdapter() {
+        if (System.currentTimeMillis() >= postTime + 500) {
+            handler.removeCallbacks(sendRunnable)
+            postTime = System.currentTimeMillis()
+            searchBookLiveData.postValue(searchBooks)
+        } else {
+            handler.removeCallbacks(sendRunnable)
+            handler.postDelayed(sendRunnable, 500 - System.currentTimeMillis() + postTime)
+        }
     }
 
     override fun onSearchStart() {
@@ -151,7 +167,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application)
             })
             if (!scope.isActive) return
             searchBooks = copyDataS
-            searchBookLiveData.postValue(copyDataS)
+            upAdapter()
         }
     }
 

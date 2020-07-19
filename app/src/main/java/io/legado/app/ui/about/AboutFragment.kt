@@ -27,7 +27,8 @@ class AboutFragment : PreferenceFragmentCompat() {
         Pair("(QQ群2)773736122", "5Bm5w6OgLupXnICbYvbgzpPUgf0UlsJF"),
         Pair("(QQ群3)981838750", "g_Sgmp2nQPKqcZQ5qPcKLHziwX_mpps9"),
         Pair("(QQ群4)256929088", "czEJPLDnT4Pd9SKQ6RoRVzKhDxLchZrO"),
-        Pair("(QQ群5)811843556", "zKZ2UYGZ7o5CzcA6ylxzlqi21si_iqaX")
+        Pair("(QQ群5)811843556", "zKZ2UYGZ7o5CzcA6ylxzlqi21si_iqaX"),
+        Pair("(QQ群6)870270970", "FeCF8iSxfQbe90HPvGsvcqs5P5oSeY5n")
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -47,12 +48,13 @@ class AboutFragment : PreferenceFragmentCompat() {
             "update_log" -> showUpdateLog()
             "check_update" -> openUrl(R.string.latest_release_url)
             "mail" -> sendMail()
+            "sourceRuleSummary" -> openUrl(R.string.source_rule_url)
             "git" -> openUrl(R.string.this_github_url)
             "home_page" -> openUrl(R.string.home_page_url)
             "license" -> requireContext().openUrl(licenseUrl)
             "disclaimer" -> requireContext().openUrl(disclaimerUrl)
             "qq" -> showQqGroups()
-            "gzGzh" -> requireContext().sendToClip("开源阅读软件")
+            "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
         }
         return super.onPreferenceTreeClick(preference)
     }

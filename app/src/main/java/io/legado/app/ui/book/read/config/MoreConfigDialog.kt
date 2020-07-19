@@ -111,7 +111,8 @@ class MoreConfigDialog : DialogFragment() {
                         Help.setOrientation(it)
                     }
                 }
-                PreferKey.textFullJustify -> {
+                PreferKey.textFullJustify,
+                PreferKey.textBottomJustify -> {
                     postEvent(EventBus.UP_CONFIG, true)
                 }
             }

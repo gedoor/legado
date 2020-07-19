@@ -131,7 +131,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
 
     private suspend fun webData2bitmap(data: String): ByteArray? {
         return if (URLUtil.isValidUrl(data)) {
-            HttpHelper.simpleGetByteAsync(data)
+            HttpHelper.simpleGetBytesAsync(data)
         } else {
             Base64.decode(data.split(",").toTypedArray()[1], Base64.DEFAULT)
         }

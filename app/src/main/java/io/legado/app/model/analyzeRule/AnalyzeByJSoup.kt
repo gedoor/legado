@@ -377,8 +377,9 @@ class AnalyzeByJSoup {
                     textS.add(element.ownText())
                 }
                 "html" -> {
-                    elements.select("script, style").remove()
-                    val html = elements.html()
+                    elements.select("script").remove()
+                    elements.select("style").remove()
+                    val html = elements.outerHtml()
                     textS.add(html)
                 }
                 "all" -> textS.add(elements.outerHtml())

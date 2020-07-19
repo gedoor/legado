@@ -44,6 +44,12 @@
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
+        android:title="@string/text_bottom_justify"
+        android:key="textBottomJustify"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
         android:title="@string/volume_key_page"
         android:key="volumeKeyPage"
         app:iconSpaceReserved="false" />

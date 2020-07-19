@@ -190,7 +190,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 .selectFile(
                     this,
                     importRequestCode,
-                    type = "text/*",
+                    type = arrayOf("text/*", "application/json"),
                     allowExtensions = arrayOf("txt", "json")
                 )
         }

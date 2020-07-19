@@ -24,13 +24,11 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
-        if (oldItem.originName != newItem.originName) {
-            return false
+        return when {
+            oldItem.originName != newItem.originName -> false
+            oldItem.latestChapterTitle != newItem.latestChapterTitle -> false
+            else -> true
         }
-        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
-            return false
-        }
-        return true
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {

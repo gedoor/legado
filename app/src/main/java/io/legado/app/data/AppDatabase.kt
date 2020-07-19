@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class],
-    version = 13,
+    version = 14,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -31,12 +31,13 @@ abstract class AppDatabase : RoomDatabase() {
         fun createDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
-                .addMigrations(migration_10_11, migration_11_12, migration_12_13)
+                .addMigrations(migration_10_11, migration_11_12, migration_12_13, migration_13_14)
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
                         GlobalScope.launch { Restore.restoreDatabase(Backup.backupPath) }
                     }
                 })
+                .allowMainThreadQueries()
                 .build()
         }
 
@@ -68,6 +69,41 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL(
                     """
                     ALTER TABLE rssSources ADD articleStyle INTEGER NOT NULL DEFAULT 0
+                    """
+                )
+            }
+        }
+
+        private val migration_13_14 = object : Migration(13, 14) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `books_new` (`bookUrl` TEXT NOT NULL, `tocUrl` TEXT NOT NULL, `origin` TEXT NOT NULL, `originName` TEXT NOT NULL, 
+                    `name` TEXT NOT NULL, `author` TEXT NOT NULL, `kind` TEXT, `customTag` TEXT, `coverUrl` TEXT, `customCoverUrl` TEXT, `intro` TEXT,
+                    `customIntro` TEXT, `charset` TEXT, `type` INTEGER NOT NULL, `group` INTEGER NOT NULL, `latestChapterTitle` TEXT, `latestChapterTime` INTEGER NOT NULL,
+                    `lastCheckTime` INTEGER NOT NULL, `lastCheckCount` INTEGER NOT NULL, `totalChapterNum` INTEGER NOT NULL, `durChapterTitle` TEXT, 
+                    `durChapterIndex` INTEGER NOT NULL, `durChapterPos` INTEGER NOT NULL, `durChapterTime` INTEGER NOT NULL, `wordCount` TEXT, `canUpdate` INTEGER NOT NULL, 
+                    `order` INTEGER NOT NULL, `originOrder` INTEGER NOT NULL, `useReplaceRule` INTEGER NOT NULL, `variable` TEXT, PRIMARY KEY(`bookUrl`))
+                    """
+                )
+                database.execSQL(
+                    """
+                    CREATE UNIQUE INDEX IF NOT EXISTS `index_books_name_author` ON `books_new` (`name`, `author`)
+                    """
+                )
+                database.execSQL(
+                    """
+                    INSERT INTO books_new select * from books
+                    """
+                )
+                database.execSQL(
+                    """
+                    DROP TABLE books
+                    """
+                )
+                database.execSQL(
+                    """
+                    ALTER TABLE books_new RENAME TO books
                     """
                 )
             }

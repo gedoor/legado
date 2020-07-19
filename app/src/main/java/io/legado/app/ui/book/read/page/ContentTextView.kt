@@ -10,8 +10,12 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
@@ -78,18 +82,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private fun drawPage(canvas: Canvas) {
         var relativeOffset = relativeOffset(0)
         textPage.textLines.forEach { textLine ->
-            val lineTop = textLine.lineTop + relativeOffset
-            val lineBase = textLine.lineBase + relativeOffset
-            val lineBottom = textLine.lineBottom + relativeOffset
-            drawChars(
-                canvas,
-                textLine.textChars,
-                lineTop,
-                lineBase,
-                lineBottom,
-                textLine.isTitle,
-                textLine.isReadAloud
-            )
+            draw(canvas, textLine, relativeOffset)
         }
         if (!ReadBookConfig.isScroll) return
         //滚动翻页
@@ -97,36 +90,37 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val nextPage = relativePage(1)
         relativeOffset = relativeOffset(1)
         nextPage.textLines.forEach { textLine ->
-            val lineTop = textLine.lineTop + relativeOffset
-            val lineBase = textLine.lineBase + relativeOffset
-            val lineBottom = textLine.lineBottom + relativeOffset
+            draw(canvas, textLine, relativeOffset)
+        }
+        if (!pageFactory.hasNextPlus()) return
+        relativeOffset = relativeOffset(2)
+        if (relativeOffset < ChapterProvider.visibleHeight) {
+            relativePage(2).textLines.forEach { textLine ->
+                draw(canvas, textLine, relativeOffset)
+            }
+        }
+    }
+
+    private fun draw(
+        canvas: Canvas,
+        textLine: TextLine,
+        relativeOffset: Float
+    ) {
+        val lineTop = textLine.lineTop + relativeOffset
+        val lineBase = textLine.lineBase + relativeOffset
+        val lineBottom = textLine.lineBottom + relativeOffset
+        if (textLine.isImage) {
+            drawImage(canvas, textLine, lineTop, lineBottom)
+        } else {
             drawChars(
                 canvas,
                 textLine.textChars,
                 lineTop,
                 lineBase,
                 lineBottom,
-                textLine.isTitle,
-                textLine.isReadAloud
+                isTitle = textLine.isTitle,
+                isReadAloud = textLine.isReadAloud
             )
-        }
-        if (!pageFactory.hasNextPlus()) return
-        relativeOffset = relativeOffset(2)
-        if (relativeOffset < ChapterProvider.visibleHeight) {
-            relativePage(2).textLines.forEach { textLine ->
-                val lineTop = textLine.lineTop + relativeOffset
-                val lineBase = textLine.lineBase + relativeOffset
-                val lineBottom = textLine.lineBottom + relativeOffset
-                drawChars(
-                    canvas,
-                    textLine.textChars,
-                    lineTop,
-                    lineBase,
-                    lineBottom,
-                    textLine.isTitle,
-                    textLine.isReadAloud
-                )
-            }
         }
     }
 
@@ -144,11 +138,32 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     ) {
         val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
         textPaint.color =
-            if (isReadAloud) context.accentColor else ReadBookConfig.durConfig.textColor()
+            if (isReadAloud) context.accentColor else ReadBookConfig.textColor
         textChars.forEach {
             canvas.drawText(it.charData, it.start, lineBase, textPaint)
             if (it.selected) {
                 canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
+            }
+        }
+    }
+
+    /**
+     * 绘制图片
+     */
+    private fun drawImage(
+        canvas: Canvas,
+        textLine: TextLine,
+        lineTop: Float,
+        lineBottom: Float
+    ) {
+        textLine.textChars.forEach { textChar ->
+            val rectF = RectF(textChar.start, lineTop, textChar.end, lineBottom)
+            ImageProvider.getImage(
+                ReadBook.book!!,
+                textPage.chapterIndex,
+                textChar.charData
+            )?.let {
+                canvas.drawBitmap(it, null, rectF, null)
             }
         }
     }

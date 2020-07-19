@@ -10,7 +10,6 @@ import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.DrawableUtils
-import io.legado.app.lib.theme.primaryTextColor
 import java.lang.reflect.Method
 import java.util.*
 

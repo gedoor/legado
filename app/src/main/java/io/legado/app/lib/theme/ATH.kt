@@ -93,18 +93,13 @@ object ATH {
         }
     }
 
-    fun setLightNavigationBarAuto(activity: Activity, bgColor: Int) {
-        setLightNavigationBar(activity, ColorUtils.isColorLight(bgColor))
-    }
-
-    fun setNavigationBarColorAuto(activity: Activity) {
-        setNavigationBarColor(activity, ThemeStore.navigationBarColor(activity))
-    }
-
-    fun setNavigationBarColor(activity: Activity, color: Int) {
+    fun setNavigationBarColorAuto(
+        activity: Activity,
+        color: Int = ThemeStore.navigationBarColor(activity)
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity.window.navigationBarColor = color
-            setLightNavigationBarAuto(activity, color)
+            setLightNavigationBar(activity, ColorUtils.isColorLight(color))
         }
     }
 

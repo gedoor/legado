@@ -4,7 +4,8 @@ import android.text.Layout
 import android.text.StaticLayout
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.ui.book.read.page.ChapterProvider
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import java.text.DecimalFormat
 
 data class TextPage(
@@ -19,6 +20,7 @@ data class TextPage(
 ) {
 
     fun upLinesPosition() = ChapterProvider.apply {
+        if (!ReadBookConfig.textBottomJustify) return@apply
         if (textLines.size <= 1) return@apply
         if (visibleHeight - height >= with(textLines.last()) { lineBottom - lineTop }) return@apply
         val surplus = (visibleBottom - textLines.last().lineBottom)

@@ -16,6 +16,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
+import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -45,14 +46,14 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    private lateinit var activityViewModel: MainViewModel
+    private val activityViewModel: MainViewModel
+        get() = getViewModelOfActivity(MainViewModel::class.java)
     private lateinit var booksAdapter: BaseBooksAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var position = 0
     private var groupId = -1
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        activityViewModel = getViewModelOfActivity(MainViewModel::class.java)
         arguments?.let {
             position = it.getInt("position", 0)
             groupId = it.getInt("groupId", -1)
@@ -66,7 +67,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         refresh_layout.setColorSchemeColors(accentColor)
         refresh_layout.setOnRefreshListener {
             refresh_layout.isRefreshing = false
-            activityViewModel.upChapterList()
+            activityViewModel.upChapterList(booksAdapter.getItems())
         }
         val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
         if (bookshelfLayout == 0) {
@@ -118,6 +119,18 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         })
     }
 
+    fun getBooks(): List<Book> {
+        return booksAdapter.getItems()
+    }
+
+    fun gotoTop() {
+        if (AppConfig.isEInkMode) {
+            rv_bookshelf.scrollToPosition(0)
+        } else {
+            rv_bookshelf.smoothScrollToPosition(0)
+        }
+    }
+
     override fun open(book: Book) {
         when (book.type) {
             BookType.audio ->
@@ -130,7 +143,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     override fun openBookInfo(book: Book) {
-        context?.startActivity<BookInfoActivity>(Pair("bookUrl", book.bookUrl))
+        context?.startActivity<BookInfoActivity>(
+            Pair("name", book.name),
+            Pair("author", book.author)
+        )
     }
 
     override fun isUpdate(bookUrl: String): Boolean {

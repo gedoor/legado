@@ -32,6 +32,7 @@ import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.dp
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
@@ -86,6 +87,9 @@ class BookInfoActivity :
             R.id.menu_refresh -> {
                 upLoading(true)
                 viewModel.bookData.value?.let {
+                    if (it.isLocalBook()) {
+                        it.tocUrl = ""
+                    }
                     viewModel.loadBookInfo(it)
                 }
             }
@@ -138,7 +142,7 @@ class BookInfoActivity :
     }
 
     private fun defaultCover(): RequestBuilder<Drawable> {
-        return ImageLoader.load(this, R.drawable.image_cover_default)
+        return ImageLoader.load(this, CoverImageView.defaultDrawable)
             .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
@@ -349,7 +353,7 @@ class BookInfoActivity :
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             requestCodeSourceEdit -> if (resultCode == Activity.RESULT_OK) {
-                viewModel.initData(intent)
+                viewModel.upEditBook()
             }
             requestCodeChapterList -> if (resultCode == Activity.RESULT_OK) {
                 viewModel.bookData.value?.let {

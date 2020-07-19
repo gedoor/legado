@@ -13,6 +13,7 @@ object AppConfig {
         return when (context.getPrefString(PreferKey.themeMode, "0")) {
             "1" -> false
             "2" -> true
+            "3" -> false
             else -> context.sysIsDarkMode()
         }
     }
@@ -27,10 +28,13 @@ object AppConfig {
             }
         }
 
+    val isEInkMode: Boolean
+        get() = App.INSTANCE.getPrefString(PreferKey.themeMode) == "3"
+
     var isTransparentStatusBar: Boolean
-        get() = App.INSTANCE.getPrefBoolean("transparentStatusBar")
+        get() = App.INSTANCE.getPrefBoolean(PreferKey.transparentStatusBar)
         set(value) {
-            App.INSTANCE.putPrefBoolean("transparentStatusBar", value)
+            App.INSTANCE.putPrefBoolean(PreferKey.transparentStatusBar, value)
         }
 
     val requestedDirection: String?
@@ -80,9 +84,6 @@ object AppConfig {
     val ttsSpeechPer: String
         get() = App.INSTANCE.getPrefString(PreferKey.ttsSpeechPer) ?: "0"
 
-    val isEInkMode: Boolean
-        get() = App.INSTANCE.getPrefBoolean("isEInkMode")
-
     val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
 
     var chineseConverterType: Int
@@ -124,11 +125,11 @@ object AppConfig {
     var elevation: Int
         @SuppressLint("PrivateResource")
         get() = App.INSTANCE.getPrefInt(
-            "elevation",
+            PreferKey.barElevation,
             App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
         )
         set(value) {
-            App.INSTANCE.putPrefInt("elevation", value)
+            App.INSTANCE.putPrefInt(PreferKey.barElevation, value)
         }
 
     val autoChangeSource: Boolean get() = App.INSTANCE.getPrefBoolean("autoChangeSource", true)

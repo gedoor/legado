@@ -7,6 +7,18 @@ import io.legado.app.service.DownloadService
 
 object Download {
 
+    val logs = arrayListOf<String>()
+
+    fun addLog(log: String?) {
+        log ?: return
+        synchronized(this) {
+            if (logs.size > 1000) {
+                logs.removeAt(0)
+            }
+            logs.add(log)
+        }
+    }
+
     fun start(context: Context, bookUrl: String, start: Int, end: Int) {
         Intent(context, DownloadService::class.java).let {
             it.action = IntentAction.start

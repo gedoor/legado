@@ -3,7 +3,9 @@ package io.legado.app.ui.main
 import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
@@ -19,7 +21,15 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upChapterList() {
         execute {
-            App.db.bookDao().hasUpdateBooks.forEach { book ->
+            upChapterList(App.db.bookDao().hasUpdateBooks)
+        }
+    }
+
+    fun upChapterList(books: List<Book>) {
+        execute {
+            books.filter {
+                it.origin != BookType.local && it.canUpdate
+            }.forEach { book ->
                 if (!updateList.contains(book.bookUrl)) {
                     App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                         synchronized(this) {

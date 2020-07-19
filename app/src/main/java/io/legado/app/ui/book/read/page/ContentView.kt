@@ -7,13 +7,12 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
-import com.hankcs.hanlp.HanLP
 import io.legado.app.R
 import io.legado.app.constant.AppConst.timeFormat
-import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
@@ -57,14 +56,14 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_footer_left.typeface = ChapterProvider.typeface
             tv_footer_middle.typeface = ChapterProvider.typeface
             tv_footer_right.typeface = ChapterProvider.typeface
-            bv_header_left.setColor(durConfig.textColor())
-            tv_header_left.setColor(durConfig.textColor())
-            tv_header_middle.setColor(durConfig.textColor())
-            tv_header_right.setColor(durConfig.textColor())
-            bv_footer_left.setColor(durConfig.textColor())
-            tv_footer_left.setColor(durConfig.textColor())
-            tv_footer_middle.setColor(durConfig.textColor())
-            tv_footer_right.setColor(durConfig.textColor())
+            bv_header_left.setColor(textColor)
+            tv_header_left.setColor(textColor)
+            tv_header_middle.setColor(textColor)
+            tv_header_right.setColor(textColor)
+            bv_footer_left.setColor(textColor)
+            tv_footer_left.setColor(textColor)
+            tv_footer_middle.setColor(textColor)
+            tv_footer_right.setColor(textColor)
             //显示状态栏时隐藏header
             vw_status_bar.setPadding(0, context.statusBarHeight, 0, 0)
             vw_status_bar.isGone = hideStatusBar
@@ -207,11 +206,7 @@ class ContentView(context: Context) : FrameLayout(context) {
 
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
-        val title = when (AppConfig.chineseConverterType) {
-            1 -> HanLP.convertToSimplifiedChinese(textPage.title)
-            2 -> HanLP.convertToTraditionalChinese(textPage.title)
-            else -> textPage.title
-        }
+        val title = textPage.title
         tvTitle?.text = title
         tvPage?.text = "${index.plus(1)}/$pageSize"
         tvTotalProgress?.text = readProgress

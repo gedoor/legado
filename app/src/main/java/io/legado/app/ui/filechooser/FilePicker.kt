@@ -91,7 +91,7 @@ object FilePicker {
         activity: BaseActivity,
         requestCode: Int,
         title: String = activity.getString(R.string.select_file),
-        type: String,
+        type: Array<String>,
         allowExtensions: Array<String>?,
         default: (() -> Unit)? = null
     ) {
@@ -107,7 +107,7 @@ object FilePicker {
                     1 -> {
                         try {
                             val intent = createSelectFileIntent()
-                            intent.type = type//设置类型
+                            intent.putExtra(Intent.EXTRA_MIME_TYPES, type)
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
@@ -131,7 +131,7 @@ object FilePicker {
         fragment: Fragment,
         requestCode: Int,
         title: String = fragment.getString(R.string.select_file),
-        type: String,
+        type: Array<String>,
         allowExtensions: Array<String>,
         default: (() -> Unit)? = null
     ) {
@@ -148,7 +148,7 @@ object FilePicker {
                         1 -> {
                             try {
                                 val intent = createSelectFileIntent()
-                                intent.type = type//设置类型
+                                intent.putExtra(Intent.EXTRA_MIME_TYPES, type)
                                 fragment.startActivityForResult(intent, requestCode)
                             } catch (e: java.lang.Exception) {
                                 e.printStackTrace()
@@ -172,6 +172,7 @@ object FilePicker {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.type = "*/*"
         return intent
     }
 

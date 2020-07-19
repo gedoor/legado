@@ -9,7 +9,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.ui.book.read.page.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
 import java.io.File
 
@@ -27,8 +27,16 @@ object ReadBookConfig {
         GSON.fromJsonArray<Config>(json)!!
     }
     val durConfig get() = getConfig(styleSelect)
+
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
+    val textColor: Int
+        get() =
+            if (AppConfig.isEInkMode && !AppConfig.isNightTheme) {
+                Color.BLACK
+            } else {
+                durConfig.textColor()
+            }
 
     init {
         upConfig()
@@ -59,6 +67,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 return GSON.fromJsonArray(json)
             } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         return null
@@ -69,13 +78,19 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        bg = durConfig.bgDrawable(width, height).apply {
-            if (this is BitmapDrawable) {
-                bgMeanColor = BitmapUtils.getMeanColor(bitmap)
-            } else if (this is ColorDrawable) {
-                bgMeanColor = color
+        if (AppConfig.isEInkMode && !AppConfig.isNightTheme) {
+            bg = ColorDrawable(Color.WHITE)
+            bgMeanColor = Color.WHITE
+        } else {
+            bg = durConfig.bgDrawable(width, height).apply {
+                if (this is BitmapDrawable) {
+                    bgMeanColor = BitmapUtils.getMeanColor(bitmap)
+                } else if (this is ColorDrawable) {
+                    bgMeanColor = color
+                }
             }
         }
+        isScroll = pageAnim == 3
     }
 
     fun save() {
@@ -122,17 +137,16 @@ object ReadBookConfig {
                 App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
             }
         }
-    var pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
+    var pageAnim: Int
+        get() = if (AppConfig.isEInkMode) -1 else App.INSTANCE.getPrefInt(PreferKey.pageAnim)
         set(value) {
-            field = value
-            isScroll = value == 3
-            if (App.INSTANCE.getPrefInt(PreferKey.pageAnim) != value) {
-                App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
-            }
+            App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
+            isScroll = pageAnim == 3
         }
     var isScroll = pageAnim == 3
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     val textFullJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textFullJustify, true)
+    val textBottomJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textBottomJustify, true)
     var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
         set(value) {
             field = value
@@ -147,7 +161,7 @@ object ReadBookConfig {
 
     private val config get() = if (shareLayout) getConfig(5) else durConfig
 
-    var textBold: Boolean
+    var textBold: Int
         get() = config.textBold
         set(value) {
             config.textBold = value
@@ -294,11 +308,11 @@ object ReadBookConfig {
         private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
         private var textColor: String = "#3E3D3B",//白天文字颜色
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
-        var textBold: Boolean = false,//是否粗体字
+        var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小
-        var letterSpacing: Float = 0.5f,//字间距
+        var letterSpacing: Float = 0.1f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
-        var paragraphSpacing: Int = 12,//段距
+        var paragraphSpacing: Int = 4,//段距
         var titleMode: Int = 0,//标题居中
         var titleSize: Int = 0,
         var titleTopSpacing: Int = 0,

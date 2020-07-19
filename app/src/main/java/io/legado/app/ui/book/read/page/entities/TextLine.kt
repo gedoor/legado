@@ -1,8 +1,8 @@
 package io.legado.app.ui.book.read.page.entities
 
 import android.text.TextPaint
-import io.legado.app.ui.book.read.page.ChapterProvider
-import io.legado.app.ui.book.read.page.ChapterProvider.textHeight
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ChapterProvider.textHeight
 
 data class TextLine(
     var text: String = "",
@@ -11,6 +11,7 @@ data class TextLine(
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
     val isTitle: Boolean = false,
+    val isImage: Boolean = false,
     var isReadAloud: Boolean = false
 ) {
 

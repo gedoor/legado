@@ -40,7 +40,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         const val BG_COLOR = 122
     }
 
-    private val resultSelectBg = 123
+    private val requestCodeBg = 123
     private lateinit var adapter: BgAdapter
 
     override fun onStart() {
@@ -136,7 +136,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "image/*"
-        startActivityForResult(intent, resultSelectBg)
+        startActivityForResult(intent, requestCodeBg)
     }
 
     class BgAdapter(context: Context) :
@@ -167,11 +167,9 @@ class BgTextConfigDialog : BaseDialogFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            resultSelectBg -> {
-                if (resultCode == RESULT_OK) {
-                    data?.data?.let { uri ->
-                        setBgFromUri(uri)
-                    }
+            requestCodeBg -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    setBgFromUri(uri)
                 }
             }
         }

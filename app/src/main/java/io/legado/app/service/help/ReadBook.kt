@@ -1,18 +1,21 @@
 package io.legado.app.service.help
 
 import androidx.lifecycle.MutableLiveData
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.WebBook
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.ui.book.read.page.ChapterProvider
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -38,7 +41,6 @@ object ReadBook {
 
     fun resetData(book: Book) {
         this.book = book
-        titleDate.postValue(book.name)
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
@@ -46,11 +48,12 @@ object ReadBook {
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
+        titleDate.postValue(book.name)
         upWebBook(book)
+        ImageProvider.clearAllCache()
     }
 
-    fun upWebBook(book: Book?) {
-        book ?: return
+    fun upWebBook(book: Book) {
         webBook = if (book.origin == BookType.local) {
             null
         } else {
@@ -210,7 +213,7 @@ object ReadBook {
                 Coroutine.async {
                     App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
                         BookHelp.getContent(book, chapter)?.let {
-                            contentLoadFinish(chapter, it, upContent, resetPageOffset)
+                            contentLoadFinish(book, chapter, it, upContent, resetPageOffset)
                             removeLoading(chapter.index)
                         } ?: download(chapter, resetPageOffset = resetPageOffset)
                     } ?: removeLoading(index)
@@ -246,6 +249,7 @@ object ReadBook {
                 ?.onSuccess(Dispatchers.IO) { content ->
                     if (content.isEmpty()) {
                         contentLoadFinish(
+                            book,
                             chapter,
                             App.INSTANCE.getString(R.string.content_empty),
                             resetPageOffset = resetPageOffset
@@ -253,11 +257,12 @@ object ReadBook {
                         removeLoading(chapter.index)
                     } else {
                         BookHelp.saveContent(book, chapter, content)
-                        contentLoadFinish(chapter, content, resetPageOffset = resetPageOffset)
+                        contentLoadFinish(book, chapter, content, resetPageOffset = resetPageOffset)
                         removeLoading(chapter.index)
                     }
                 }?.onError {
                     contentLoadFinish(
+                        book,
                         chapter,
                         it.localizedMessage ?: "未知错误",
                         resetPageOffset = resetPageOffset
@@ -285,6 +290,7 @@ object ReadBook {
      * 内容加载完成
      */
     private fun contentLoadFinish(
+        book: Book,
         chapter: BookChapter,
         content: String,
         upContent: Boolean = true,
@@ -292,30 +298,36 @@ object ReadBook {
     ) {
         Coroutine.async {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
+                chapter.title = when (AppConfig.chineseConverterType) {
+                    1 -> HanLP.convertToSimplifiedChinese(chapter.title)
+                    2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                    else -> chapter.title
+                }
                 val contents = BookHelp.disposeContent(
                     chapter.title,
-                    book!!.name,
+                    book.name,
                     webBook?.bookSource?.bookSourceUrl,
                     content,
-                    book!!.useReplaceRule
+                    book.useReplaceRule
                 )
                 when (chapter.index) {
                     durChapterIndex -> {
                         curTextChapter =
-                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
+                            ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(resetPageOffset = resetPageOffset)
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
+                        ImageProvider.clearOut(durChapterIndex)
                     }
                     durChapterIndex - 1 -> {
                         prevTextChapter =
-                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
+                            ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(-1, resetPageOffset)
                     }
                     durChapterIndex + 1 -> {
                         nextTextChapter =
-                            ChapterProvider.getTextChapter(chapter, contents, chapterSize)
+                            ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
                         if (upContent) callBack?.upContent(1, resetPageOffset)
                     }
                 }

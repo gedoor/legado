@@ -1,39 +1,13 @@
 package io.legado.app.data.entities.rule
 
-import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class ContentRule(
     var content: String? = null,
     var nextContentUrl: String? = null,
     var webJs: String? = null,
-    var sourceRegex: String? = null
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString()
-    )
-
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(content)
-        dest.writeString(nextContentUrl)
-        dest.writeString(webJs)
-        dest.writeString(sourceRegex)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<ContentRule> {
-        override fun createFromParcel(parcel: Parcel): ContentRule {
-            return ContentRule(parcel)
-        }
-
-        override fun newArray(size: Int): Array<ContentRule?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
+    var sourceRegex: String? = null,
+    var imageStyle: Int = 0  //0默认大小居中,1最大宽度
+) : Parcelable

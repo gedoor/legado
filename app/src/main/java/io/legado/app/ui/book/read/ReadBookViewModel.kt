@@ -11,7 +11,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.WebBook
-import io.legado.app.model.localBook.AnalyzeTxtFile
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -34,6 +34,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             } ?: App.db.bookDao().lastReadBook?.let {
                 initBook(it)
+            }
+        }.onFinally {
+            if (ReadBook.inBookshelf) {
+                ReadBook.saveRead()
             }
         }
     }
@@ -59,11 +63,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
                 ReadBook.loadContent(resetPageOffset = true)
             }
-            if (ReadBook.inBookshelf) {
-                ReadBook.saveRead()
-            }
         } else {
             isInitFinish = true
+            ReadBook.book!!.group = book.group
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
             if (!book.isLocalBook() && ReadBook.webBook == null) {
@@ -107,13 +109,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute {
             if (book.isLocalBook()) {
-                AnalyzeTxtFile().analyze(context, book).let {
+                LocalBook.getChapterList(book).let {
                     App.db.bookChapterDao().delByBook(book.bookUrl)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
                     App.db.bookDao().update(book)
                     ReadBook.chapterSize = it.size
-                    ReadBook.upMsg(null)
-                    ReadBook.loadContent(resetPageOffset = true)
+                    if (it.isEmpty()) {
+                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                    } else {
+                        ReadBook.upMsg(null)
+                        ReadBook.loadContent(resetPageOffset = true)
+                    }
                 }
             } else {
                 ReadBook.webBook?.getChapterList(book, this)
@@ -140,29 +146,24 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeTo(book1: Book) {
+    fun changeTo(newBook: Book) {
         execute {
             ReadBook.upMsg(null)
-            ReadBook.book?.let {
-                book1.group = it.group
-                book1.order = it.order
-                App.db.bookDao().delete(it)
-            }
+            ReadBook.book?.changeTo(newBook)
             ReadBook.prevTextChapter = null
             ReadBook.curTextChapter = null
             ReadBook.nextTextChapter = null
             withContext(Main) {
                 ReadBook.callBack?.upContent()
             }
-            App.db.bookDao().insert(book1)
-            ReadBook.book = book1
-            App.db.bookSourceDao().getBookSource(book1.origin)?.let {
+            ReadBook.book = newBook
+            App.db.bookSourceDao().getBookSource(newBook.origin)?.let {
                 ReadBook.webBook = WebBook(it)
             }
-            if (book1.tocUrl.isEmpty()) {
-                loadBookInfo(book1) { upChangeDurChapterIndex(book1, it) }
+            if (newBook.tocUrl.isEmpty()) {
+                loadBookInfo(newBook) { upChangeDurChapterIndex(newBook, it) }
             } else {
-                loadChapterList(book1) { upChangeDurChapterIndex(book1, it) }
+                loadChapterList(newBook) { upChangeDurChapterIndex(newBook, it) }
             }
         }
     }
@@ -221,9 +222,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
-            ReadBook.book?.let {
-                App.db.bookDao().delete(it)
-            }
+            ReadBook.book?.delete()
         }.onSuccess {
             success?.invoke()
         }
