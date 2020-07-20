@@ -60,11 +60,14 @@ object FileUtils {
     }
 
     fun getPath(root: File, fileName: String? = null, vararg subDirs: String): String {
-        return if (fileName.isNullOrEmpty()) {
-            root.absolutePath + File.separator + subDirs.joinToString(File.separator)
-        } else {
-            root.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+        val path = StringBuilder(root.absolutePath).append(File.separator)
+        subDirs.forEach {
+            path.append(it).append(File.separator)
         }
+        if (!fileName.isNullOrEmpty()) {
+            path.append(fileName)
+        }
+        return path.toString()
     }
 
     //递归删除文件夹下的数据

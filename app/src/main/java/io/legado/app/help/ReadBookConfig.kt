@@ -19,8 +19,7 @@ import java.io.File
 @Keep
 object ReadBookConfig {
     const val readConfigFileName = "readConfig.json"
-    private val configFilePath =
-        App.INSTANCE.filesDir.absolutePath + File.separator + readConfigFileName
+    private val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, readConfigFileName)
     val configList: ArrayList<Config> = arrayListOf()
     private val defaultConfigs by lazy {
         val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
