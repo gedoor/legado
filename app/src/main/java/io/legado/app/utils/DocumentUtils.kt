@@ -138,6 +138,8 @@ data class DocItem(
     val isDir: Boolean by lazy {
         DocumentsContract.Document.MIME_TYPE_DIR == attr
     }
+
+    val isContentPath get() = uri.toString().isContentPath()
 }
 
 @Throws(Exception::class)

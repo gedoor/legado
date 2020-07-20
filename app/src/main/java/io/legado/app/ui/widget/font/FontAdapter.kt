@@ -2,9 +2,12 @@ package io.legado.app.ui.widget.font
 
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Build
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.utils.DocItem
+import io.legado.app.utils.RealPathUtil
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_font.view.*
@@ -13,12 +16,24 @@ import org.jetbrains.anko.toast
 import java.io.File
 
 class FontAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<File>(context, R.layout.item_font) {
+    SimpleRecyclerAdapter<DocItem>(context, R.layout.item_font) {
 
-    override fun convert(holder: ItemViewHolder, item: File, payloads: MutableList<Any>) {
+    override fun convert(holder: ItemViewHolder, item: DocItem, payloads: MutableList<Any>) {
         with(holder.itemView) {
             try {
-                val typeface = Typeface.createFromFile(item)
+                val typeface: Typeface? = if (item.isContentPath) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.contentResolver
+                            .openFileDescriptor(item.uri, "r")
+                            ?.fileDescriptor?.let {
+                                Typeface.Builder(it).build()
+                            }
+                    } else {
+                        Typeface.createFromFile(RealPathUtil.getPath(context, item.uri))
+                    }
+                } else {
+                    Typeface.createFromFile(item.uri.toString())
+                }
                 tv_font.typeface = typeface
             } catch (e: Exception) {
                 context.toast("读取${item.name}字体失败")
@@ -42,7 +57,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
-        fun onClick(file: File)
+        fun onClick(docItem: DocItem)
         val curFilePath: String
     }
 }
