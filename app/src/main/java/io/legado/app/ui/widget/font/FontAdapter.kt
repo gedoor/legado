@@ -37,7 +37,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
                 tv_font.typeface = typeface
             } catch (e: Exception) {
                 e.printStackTrace()
-                context.toast("Read Fond Error: ${e.localizedMessage}")
+                context.toast("Read ${item.name} Error: ${e.localizedMessage}")
             }
             tv_font.text = item.name
             this.onClick { callBack.onClick(item) }
