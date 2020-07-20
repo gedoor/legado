@@ -39,6 +39,7 @@
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/backup_restore"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
@@ -59,6 +60,12 @@
             android:key="web_dav_restore"
             android:title="@string/restore"
             android:summary="@string/restore_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="restoreIgnore"
+            android:title="@string/restore_ignore"
+            android:summary="@string/restore_ignore_summary"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference

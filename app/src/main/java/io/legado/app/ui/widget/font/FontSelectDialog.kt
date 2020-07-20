@@ -26,11 +26,11 @@ import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_font_select.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.*
 
 class FontSelectDialog : BaseDialogFragment(),
     FileChooserDialog.CallBack,
@@ -39,9 +39,6 @@ class FontSelectDialog : BaseDialogFragment(),
     private val fontFolderRequestCode = 35485
     private val fontFolder by lazy {
         FileUtils.createFolderIfNotExist(App.INSTANCE.filesDir, "Fonts")
-    }
-    private val fontCacheFolder by lazy {
-        FileUtils.createFolderIfNotExist(App.INSTANCE.cacheDir, "Fonts")
     }
     private var adapter: FontAdapter? = null
 
@@ -90,7 +87,9 @@ class FontSelectDialog : BaseDialogFragment(),
             R.id.menu_default -> {
                 val requireContext = requireContext()
                 requireContext.alert(titleResource = R.string.system_typeface) {
-                    items(requireContext.resources.getStringArray(R.array.system_typefaces).toList()) { _, i ->
+                    items(
+                        requireContext.resources.getStringArray(R.array.system_typefaces).toList()
+                    ) { _, i ->
                         AppConfig.systemTypefaces = i
                         onDefaultFontChange()
                         dismiss()
@@ -117,40 +116,16 @@ class FontSelectDialog : BaseDialogFragment(),
     @SuppressLint("DefaultLocale")
     private fun getFontFiles(doc: DocumentFile) {
         execute {
+            val fontItems = arrayListOf<DocItem>()
             val docItems = DocumentUtils.listFiles(App.INSTANCE, doc.uri)
-            fontCacheFolder.listFiles()?.forEach { fontFile ->
-                var contain = false
-                for (item in docItems) {
-                    if (fontFile.name == item.name) {
-                        contain = true
-                        break
-                    }
-                }
-                if (!contain) {
-                    fontFile.delete()
-                }
-            }
             docItems.forEach { item ->
                 if (item.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())) {
-                    val fontFile = FileUtils.getFile(fontCacheFolder, item.name)
-                    if (!fontFile.exists()) {
-                        DocumentUtils.readBytes(App.INSTANCE, item.uri)?.let { byteArray ->
-                            fontFile.writeBytes(byteArray)
-                        }
-                    }
+                    fontItems.add(item)
                 }
             }
-            try {
-                fontCacheFolder.listFiles { pathName ->
-                    pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
-                }?.let {
-                    withContext(Main) {
-                        adapter?.setItems(it.toList())
-                    }
-                }
-            } catch (e: Exception) {
-                toast(e.localizedMessage ?: "")
-            }
+            fontItems
+        }.onSuccess {
+            adapter?.setItems(it)
         }.onError {
             toast("getFontFiles:${it.localizedMessage}")
         }
@@ -163,12 +138,22 @@ class FontSelectDialog : BaseDialogFragment(),
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
                 try {
+                    val fontItems = arrayListOf<DocItem>()
                     val file = File(path)
                     file.listFiles { pathName ->
                         pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
-                    }?.let {
-                        adapter?.setItems(it.toList())
+                    }?.forEach {
+                        fontItems.add(
+                            DocItem(
+                                it.name,
+                                it.extension,
+                                it.length(),
+                                Date(it.lastModified()),
+                                Uri.parse(it.absolutePath)
+                            )
+                        )
                     }
+                    adapter?.setItems(fontItems)
                 } catch (e: Exception) {
                     toast(e.localizedMessage ?: "")
                 }
@@ -176,16 +161,32 @@ class FontSelectDialog : BaseDialogFragment(),
             .request()
     }
 
-    override fun onClick(file: File) {
-        launch(IO) {
-            file.copyTo(FileUtils.createFileIfNotExist(fontFolder, file.name), true)
-                .absolutePath.let { path ->
-                if (curFilePath != path) {
-                    withContext(Main) {
-                        callBack?.selectFile(path)
+    override fun onClick(docItem: DocItem) {
+        execute {
+            fontFolder.listFiles()?.forEach {
+                it.delete()
+            }
+            if (docItem.isContentPath) {
+                val file = FileUtils.createFileIfNotExist(fontFolder, docItem.name)
+                @Suppress("BlockingMethodInNonBlockingContext")
+                requireActivity().contentResolver.openInputStream(docItem.uri)?.use { input ->
+                    file.outputStream().use { output ->
+                        input.copyTo(output)
                     }
                 }
+                callBack?.selectFile(file.path)
+            } else {
+                val file = File(docItem.uri.toString())
+                file.copyTo(FileUtils.createFileIfNotExist(fontFolder, file.name), true)
+                    .absolutePath.let { path ->
+                        if (curFilePath != path) {
+                            withContext(Main) {
+                                callBack?.selectFile(path)
+                            }
+                        }
+                    }
             }
+        }.onSuccess {
             dialog?.dismiss()
         }
     }

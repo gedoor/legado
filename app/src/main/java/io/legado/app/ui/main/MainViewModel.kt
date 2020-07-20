@@ -10,6 +10,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
 import io.legado.app.model.WebBook
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.postEvent
@@ -74,6 +75,16 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
                 App.db.rssSourceDao().insert(*sources.toTypedArray())
+            }
+        }
+    }
+
+    fun postLoad() {
+        execute {
+            FileUtils.getDirFile(context.cacheDir, "Fonts").let {
+                if (it.exists()) {
+                    it.delete()
+                }
             }
         }
     }

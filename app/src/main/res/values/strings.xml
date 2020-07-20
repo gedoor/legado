@@ -722,5 +722,7 @@
     <string name="contributors_summary">gedoor,Invinciblelee etc. Checking in github for details</string>
     <string name="clear_cache_summary">Clear the cache of the downloaded books and fonts</string>
     <string name="default_cover">Default cover</string>
+    <string name="restore_ignore">恢复忽略列表</string>
+    <string name="restore_ignore_summary">恢复时忽略一些内容不恢复,方便不同手机配置不同</string>
 
 </resources>
