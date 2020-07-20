@@ -24,6 +24,16 @@ import org.jetbrains.anko.defaultSharedPreferences
 import java.io.File
 
 object Restore {
+    private val ignoreConfigPath =
+        App.INSTANCE.filesDir.absolutePath + File.separator + "restoreIgnore.json"
+    val ignoreConfig: HashMap<String, Boolean> by lazy {
+        val file = FileUtils.createFileIfNotExist(ignoreConfigPath)
+        val json = file.readText()
+        GSON.fromJsonObject<HashMap<String, Boolean>>(json) ?: hashMapOf()
+    }
+    val ignoreKeys = arrayOf("readConfig")
+    val ignoreTitle = arrayOf("阅读界面设置")
+
     val jsonPath: ParseContext by lazy {
         JsonPath.using(
             Configuration.builder()
@@ -141,6 +151,11 @@ object Restore {
                 LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
         }
+    }
+
+    fun saveIgnoreConfig() {
+        val json = GSON.toJson(ignoreConfig)
+        FileUtils.createFileIfNotExist(ignoreConfigPath).writeText(json)
     }
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {

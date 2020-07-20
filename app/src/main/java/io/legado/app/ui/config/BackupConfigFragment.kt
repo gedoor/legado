@@ -11,6 +11,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.storage.Restore
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.filechooser.FileChooserDialog
@@ -104,11 +106,25 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             PreferKey.backupPath -> BackupRestoreUi.selectBackupFolder(this)
+            PreferKey.restoreIgnore -> restoreIgnore()
             "web_dav_backup" -> BackupRestoreUi.backup(this)
             "web_dav_restore" -> BackupRestoreUi.restore(this)
             "import_old" -> BackupRestoreUi.importOldData(this)
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun restoreIgnore() {
+        val checkedItems = BooleanArray(Restore.ignoreKeys.size) {
+            Restore.ignoreConfig[Restore.ignoreKeys[it]] ?: false
+        }
+        alert(R.string.restore_ignore) {
+            multiChoiceItems(Restore.ignoreTitle, checkedItems) { _, which, isChecked ->
+                Restore.ignoreConfig[Restore.ignoreKeys[which]] = isChecked
+            }
+        }.show().setOnDismissListener {
+            Restore.saveIgnoreConfig()
+        }
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
