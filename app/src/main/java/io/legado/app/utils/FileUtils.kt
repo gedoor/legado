@@ -60,12 +60,12 @@ object FileUtils {
     }
 
     fun getPath(root: File, fileName: String? = null, vararg subDirs: String): String {
-        val path = StringBuilder(root.absolutePath).append(File.separator)
+        val path = StringBuilder(root.absolutePath)
         subDirs.forEach {
-            path.append(it).append(File.separator)
+            path.append(File.separator).append(it)
         }
         if (!fileName.isNullOrEmpty()) {
-            path.append(fileName)
+            path.append(File.separator).append(fileName)
         }
         return path.toString()
     }
