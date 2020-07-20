@@ -18,7 +18,7 @@ object FileUtils {
     }
 
     fun createFolderIfNotExist(root: File, vararg subDirs: String): File {
-        val filePath = root.absolutePath + File.separator + subDirs.joinToString(File.separator)
+        val filePath = getPath(root, subDirs = *subDirs)
         return createFolderIfNotExist(filePath)
     }
 
