@@ -9,6 +9,7 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
 import io.legado.app.BuildConfig
+import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
@@ -31,8 +32,11 @@ object Restore {
         val json = file.readText()
         GSON.fromJsonObject<HashMap<String, Boolean>>(json) ?: hashMapOf()
     }
-    val ignoreKeys = arrayOf("readConfig")
-    val ignoreTitle = arrayOf("阅读界面设置")
+    val ignoreKeys = arrayOf("readConfig", "themeMode")
+    val ignoreTitle = arrayOf(
+        App.INSTANCE.getString(R.string.read_config),
+        App.INSTANCE.getString(R.string.theme_mode)
+    )
     private val ignorePrefKeys = arrayOf(PreferKey.versionCode, PreferKey.defaultCover)
     private val readPrefKeys = arrayOf(
         PreferKey.readStyleSelect,
@@ -130,9 +134,7 @@ object Restore {
                 ?.let { map ->
                     val edit = App.INSTANCE.defaultSharedPreferences.edit()
                     map.forEach {
-                        if (!ignorePrefKeys.contains(it.key)
-                            && !(readPrefKeys.contains(it.key) && ignoreReadConfig)
-                        ) {
+                        if (keyIsNotIgnore(it.key)) {
                             when (val value = it.value) {
                                 is Int -> edit.putInt(it.key, value)
                                 is Boolean -> edit.putBoolean(it.key, value)
@@ -166,7 +168,17 @@ object Restore {
         }
     }
 
-    val ignoreReadConfig: Boolean get() = ignoreConfig["readConfig"] == true
+    private fun keyIsNotIgnore(key: String): Boolean {
+        return when {
+            ignorePrefKeys.contains(key) -> false
+            readPrefKeys.contains(key) && ignoreReadConfig -> false
+            PreferKey.themeMode == key && ignoreThemeMode -> false
+            else -> true
+        }
+    }
+
+    private val ignoreReadConfig: Boolean get() = ignoreConfig["readConfig"] == true
+    private val ignoreThemeMode: Boolean get() = ignoreConfig["themeMode"] == true
 
     fun saveIgnoreConfig() {
         val json = GSON.toJson(ignoreConfig)
