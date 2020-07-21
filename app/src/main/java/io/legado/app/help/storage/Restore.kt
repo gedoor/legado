@@ -25,19 +25,32 @@ import org.jetbrains.anko.defaultSharedPreferences
 import java.io.File
 
 object Restore {
-    private val ignoreConfigPath =
-        App.INSTANCE.filesDir.absolutePath + File.separator + "restoreIgnore.json"
+    private val ignoreConfigPath = FileUtils.getPath(App.INSTANCE.filesDir, "restoreIgnore.json")
     val ignoreConfig: HashMap<String, Boolean> by lazy {
         val file = FileUtils.createFileIfNotExist(ignoreConfigPath)
         val json = file.readText()
         GSON.fromJsonObject<HashMap<String, Boolean>>(json) ?: hashMapOf()
     }
-    val ignoreKeys = arrayOf("readConfig", "themeMode")
+
+    //忽略key
+    val ignoreKeys = arrayOf(
+        "readConfig",
+        PreferKey.themeMode,
+        PreferKey.bookshelfLayout
+    )
+
+    //忽略标题
     val ignoreTitle = arrayOf(
         App.INSTANCE.getString(R.string.read_config),
-        App.INSTANCE.getString(R.string.theme_mode)
+        App.INSTANCE.getString(R.string.theme_mode),
+        App.INSTANCE.getString(R.string.bookshelf_layout)
     )
-    private val ignorePrefKeys = arrayOf(PreferKey.versionCode, PreferKey.defaultCover)
+
+    //默认忽略keys
+    private val ignorePrefKeys = arrayOf(
+        PreferKey.versionCode,
+        PreferKey.defaultCover
+    )
     private val readPrefKeys = arrayOf(
         PreferKey.readStyleSelect,
         PreferKey.shareLayout,
@@ -173,12 +186,17 @@ object Restore {
             ignorePrefKeys.contains(key) -> false
             readPrefKeys.contains(key) && ignoreReadConfig -> false
             PreferKey.themeMode == key && ignoreThemeMode -> false
+            PreferKey.bookshelfLayout == key && ignoreBookshelfLayout -> false
             else -> true
         }
     }
 
-    private val ignoreReadConfig: Boolean get() = ignoreConfig["readConfig"] == true
-    private val ignoreThemeMode: Boolean get() = ignoreConfig["themeMode"] == true
+    private val ignoreReadConfig: Boolean
+        get() = ignoreConfig["readConfig"] == true
+    private val ignoreThemeMode: Boolean
+        get() = ignoreConfig[PreferKey.themeMode] == true
+    private val ignoreBookshelfLayout: Boolean
+        get() = ignoreConfig[PreferKey.bookshelfLayout] == true
 
     fun saveIgnoreConfig() {
         val json = GSON.toJson(ignoreConfig)
