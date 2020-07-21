@@ -88,18 +88,18 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> addBookByUrl()
             R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity>(
-                Pair("groupId", selectedGroup.groupId),
-                Pair("groupName", selectedGroup.groupName)
+                Pair("groupId", selectedGroup?.groupId ?: 0),
+                Pair("groupName", selectedGroup?.groupName ?: 0)
             )
             R.id.menu_download -> startActivity<DownloadActivity>(
-                Pair("groupId", selectedGroup.groupId),
-                Pair("groupName", selectedGroup.groupName)
+                Pair("groupId", selectedGroup?.groupId ?: 0),
+                Pair("groupName", selectedGroup?.groupName ?: 0)
             )
         }
     }
 
-    private val selectedGroup: BookGroup
-        get() = bookGroups[view_pager_bookshelf.currentItem]
+    private val selectedGroup: BookGroup?
+        get() = bookGroups.getOrNull(view_pager_bookshelf?.currentItem ?: 0)
 
     private fun initView() {
         ATH.applyEdgeEffectColor(view_pager_bookshelf)
@@ -267,7 +267,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     fun gotoTop() {
-        fragmentMap[selectedGroup.groupId]?.gotoTop()
+        fragmentMap[selectedGroup?.groupId]?.gotoTop()
     }
 
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
