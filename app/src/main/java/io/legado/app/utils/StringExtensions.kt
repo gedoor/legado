@@ -2,7 +2,7 @@ package io.legado.app.utils
 
 val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
 val imgRegex = "<img[^>]*>".toRegex()
-val notImgHtmlRegex = "^\\s*|</?(?!img)\\w+[^>]*>".toRegex()
+val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
