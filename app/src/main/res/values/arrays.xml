@@ -42,9 +42,9 @@
 	
 	    <string-array name="theme_mode">
 	        <item>Follow system</item>
-	        <item>Bright theme</item>
-	        <item>Dark theme</item>
-	        <item>E-Ink</item>
+	        <item>Bright mode</item>
+	        <item>Dark mode</item>
+	        <item>E-Ink mode</item>
 	    </string-array>
 	
 	    <string-array name="NavBarColors">

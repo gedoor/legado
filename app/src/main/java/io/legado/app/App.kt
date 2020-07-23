@@ -1,6 +1,5 @@
 package io.legado.app
 
-import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -9,6 +8,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
@@ -28,7 +28,7 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.putPrefInt
 
 @Suppress("DEPRECATION")
-class App : Application() {
+class App : MultiDexApplication() {
 
     companion object {
         @JvmStatic

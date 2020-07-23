@@ -218,7 +218,7 @@
     <string name="import_select_book">Import selected book(s)</string>
     <string name="threads_num_title">Number of concurrent tasks</string>
     <string name="change_icon">Change icon</string>
-    <string name="remove_from_bookshelf">Remove books</string>
+    <string name="remove_from_bookshelf">Remove</string>
     <string name="start_read">Start reading</string>
     <string name="data_loading">Loading…</string>
     <string name="load_error_retry">Load failed, tap to retry</string>
@@ -332,7 +332,7 @@
     <string name="tip_margin_change">Margin adjustment</string>
     <string name="allow_update">Allow update</string>
     <string name="disable_update">Disable update</string>
-    <string name="revert_selection">Invert selection</string>
+    <string name="revert_selection">Inverse</string>
     <string name="search_book_key">Search bookName/author</string>
     <string name="debug_hint">BookName,Author,URL</string>
     <string name="faq">FAQ</string>
@@ -586,8 +586,8 @@
     <string name="bottom_line">I AM OVER!</string>
     <string name="uri_to_path_fail">Uri To Path failed</string>
     <string name="refresh_cover">Refresh cover</string>
-    <string name="change_cover_source">Change cover\'s origin</string>
-    <string name="select_local_image">Select a local image</string>
+    <string name="change_cover_source">Change origin</string>
+    <string name="select_local_image">Local image</string>
     <string name="book_type">Type:</string>
     <string name="book_type_text">Text</string>
     <string name="book_type_audio">Audio</string>
@@ -652,7 +652,7 @@
     <string name="save_image">Save image</string>
     <string name="no_default_path">No default path</string>
     <string name="change_group">Group settings</string>
-    <string name="view_toc">View changes</string>
+    <string name="view_toc">View Chapters</string>
     <string name="bar_elevation">Navigation bar shadow</string>
     <string name="bar_elevation_s">Current shadow size(elevation): %s</string>
     <string name="btn_default_s">Default</string>
@@ -697,13 +697,13 @@
     <string name="night_accent">Night,Accent</string>
     <string name="night_background_color">Night,Background color</string>
     <string name="night_navbar_color">Night,NavBar color</string>
-    <string name="auto_change_source">Changing source automatically</string>
+    <string name="auto_change_source">Change source automatically</string>
     <string name="text_full_justify">Text justified</string>
     <string name="text_bottom_justify">Text align bottom</string>
     <string name="auto_page_speed">Auto scroll speed</string>
     <string name="sort_by_url">Sort by URL</string>
-    <string name="backup_summary">The local backup and WebDav backup at the same time</string>
-    <string name="restore_summary">Restore from WebDAV first, and Restore form local backups if failed</string>
+    <string name="backup_summary">Backup the local and WebDav simultaneously</string>
+    <string name="restore_summary">Restore from WebDAV first, and Restore form the local backup if failed</string>
     <string name="import_old_summary">Select a legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
@@ -711,16 +711,19 @@
     <string name="starting_download">Starting download</string>
     <string name="already_in_download">This book is already in Download list</string>
     <string name="click_to_open">click to open</string>
-    <string name="follow_public_account_summary">关注[开源阅读]点击广告支持我</string>
-    <string name="weChat_appreciation_code">微信赞赏码</string>
-    <string name="alipay">支付宝</string>
-    <string name="alipay_red_envelope_search_code">支付宝红包搜索码</string>
-    <string name="alipay_red_envelope_copy">537954522 点击复制</string>
-    <string name="alipay_red_envelope_qr_code">支付宝红包二维码</string>
-    <string name="alipay_payment_qr_code">支付宝收款二维码</string>
-    <string name="qq_collection_qr_code">QQ收款二维码</string>
-    <string name="contributors_summary">gedoor,Invinciblelee等,详情请在github中查看</string>
-    <string name="clear_cache_summary">清除已下载书籍和字体缓存</string>
-    <string name="default_cover">默认封面</string>
+    <string name="follow_public_account_summary">Follow [开源阅读] to support me by clicking on ads</string>
+    <string name="weChat_appreciation_code">WeChat Tipping Code</string>
+    <string name="alipay">AliPay</string>
+    <string name="alipay_red_envelope_search_code">AliPay red envelope search code</string>
+    <string name="alipay_red_envelope_copy">537954522 Click to copy</string>
+    <string name="alipay_red_envelope_qr_code">AliPay red envelope QR code</string>
+    <string name="alipay_payment_qr_code">AliPay QR code</string>
+    <string name="qq_collection_qr_code">QQ Collection QR code</string>
+    <string name="contributors_summary">gedoor,Invinciblelee etc. Checking in github for details</string>
+    <string name="clear_cache_summary">Clear the cache of the downloaded books and fonts</string>
+    <string name="default_cover">Default cover</string>
+    <string name="restore_ignore">恢复忽略列表</string>
+    <string name="restore_ignore_summary">恢复时忽略一些内容不恢复,方便不同手机配置不同</string>
+    <string name="read_config">阅读界面设置</string>
 
 </resources>

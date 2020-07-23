@@ -64,6 +64,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                 viewModel.upChapterList()
             }, 1000)
         }
+        view_pager_main.postDelayed({
+            viewModel.postLoad()
+        }, 3000)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

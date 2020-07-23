@@ -75,7 +75,16 @@ interface AlertBuilder<out D : DialogInterface> {
     fun onKeyPressed(handler: (dialog: DialogInterface, keyCode: Int, e: KeyEvent) -> Boolean)
 
     fun items(items: List<CharSequence>, onItemSelected: (dialog: DialogInterface, index: Int) -> Unit)
-    fun <T> items(items: List<T>, onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit)
+    fun <T> items(
+        items: List<T>,
+        onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit
+    )
+
+    fun multiChoiceItems(
+        items: Array<String>,
+        checkedItems: BooleanArray,
+        onClick: (dialog: DialogInterface, which: Int, isChecked: Boolean) -> Unit
+    )
 
     fun build(): D
     fun show(): D

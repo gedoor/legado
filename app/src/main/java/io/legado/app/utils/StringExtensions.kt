@@ -1,7 +1,8 @@
 package io.legado.app.utils
 
-val removeHtmlRegex =
-    "</?(?:html|head|div|a|p|b|br|hr|h\\d|article|dd|dl|span|link|title)[^>]*>".toRegex()
+val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
+val imgRegex = "<img[^>]*>".toRegex()
+val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
@@ -37,7 +38,10 @@ fun String?.isJsonArray(): Boolean =
 
 fun String?.htmlFormat(): String {
     this ?: return ""
-    return this.replace(removeHtmlRegex, "\n")
+    return this
+        .replace(imgRegex, "\n$0\n")
+        .replace(removeHtmlRegex, "\n")
+        .replace(notImgHtmlRegex, "")
         .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
         .replace("^[\\n\\s]+".toRegex(), "　　")
         .replace("[\\n\\s]+$".toRegex(), "")

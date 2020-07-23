@@ -105,9 +105,22 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
         }
     }
 
-    override fun <T> items(items: List<T>, onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit) {
+    override fun <T> items(
+        items: List<T>,
+        onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit
+    ) {
         builder.setItems(Array(items.size) { i -> items[i].toString() }) { dialog, which ->
             onItemSelected(dialog, items[which], which)
+        }
+    }
+
+    override fun multiChoiceItems(
+        items: Array<String>,
+        checkedItems: BooleanArray,
+        onClick: (dialog: DialogInterface, which: Int, isChecked: Boolean) -> Unit
+    ) {
+        builder.setMultiChoiceItems(items, checkedItems) { dialog, which, isChecked ->
+            onClick(dialog, which, isChecked)
         }
     }
 

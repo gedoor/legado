@@ -222,7 +222,7 @@
                     <!--目录按钮-->
                     <LinearLayout
                         android:id="@+id/ll_catalog"
-                        android:layout_width="50dp"
+                        android:layout_width="60dp"
                         android:layout_height="50dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
@@ -245,6 +245,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
+                            android:maxLines="1"
                             android:text="@string/chapter_list"
                             android:textColor="@color/tv_text_default"
                             android:textSize="12sp" />
@@ -257,7 +258,7 @@
                     <!--调节按钮-->
                     <LinearLayout
                         android:id="@+id/ll_read_aloud"
-                        android:layout_width="50dp"
+                        android:layout_width="60dp"
                         android:layout_height="50dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
@@ -280,6 +281,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
+                            android:maxLines="1"
                             android:text="@string/read_aloud"
                             android:textColor="@color/tv_text_default"
                             android:textSize="12sp" />
@@ -292,7 +294,7 @@
                     <!--界面按钮-->
                     <LinearLayout
                         android:id="@+id/ll_font"
-                        android:layout_width="50dp"
+                        android:layout_width="60dp"
                         android:layout_height="50dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
@@ -315,6 +317,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
+                            android:maxLines="1"
                             android:text="@string/interface_setting"
                             android:textColor="@color/tv_text_default"
                             android:textSize="12sp" />
@@ -327,7 +330,7 @@
                     <!--设置按钮-->
                     <LinearLayout
                         android:id="@+id/ll_setting"
-                        android:layout_width="50dp"
+                        android:layout_width="60dp"
                         android:layout_height="50dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
@@ -350,6 +353,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
+                            android:maxLines="1"
                             android:text="@string/setting"
                             android:textColor="@color/tv_text_default"
                             android:textSize="12sp" />

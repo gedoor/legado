@@ -18,7 +18,7 @@ object FileUtils {
     }
 
     fun createFolderIfNotExist(root: File, vararg subDirs: String): File {
-        val filePath = root.absolutePath + File.separator + subDirs.joinToString(File.separator)
+        val filePath = getPath(root, subDirs = *subDirs)
         return createFolderIfNotExist(filePath)
     }
 
@@ -60,11 +60,14 @@ object FileUtils {
     }
 
     fun getPath(root: File, fileName: String? = null, vararg subDirs: String): String {
-        return if (fileName.isNullOrEmpty()) {
-            root.absolutePath + File.separator + subDirs.joinToString(File.separator)
-        } else {
-            root.absolutePath + File.separator + subDirs.joinToString(File.separator) + File.separator + fileName
+        val path = StringBuilder(root.absolutePath)
+        subDirs.forEach {
+            path.append(File.separator).append(it)
         }
+        if (!fileName.isNullOrEmpty()) {
+            path.append(File.separator).append(fileName)
+        }
+        return path.toString()
     }
 
     //递归删除文件夹下的数据
