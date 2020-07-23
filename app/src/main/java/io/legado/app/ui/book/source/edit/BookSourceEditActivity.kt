@@ -233,7 +233,7 @@ class BookSourceEditActivity :
             add(EditEntity("nextContentUrl", cr?.nextContentUrl, R.string.rule_next_content))
             add(EditEntity("webJs", cr?.webJs, R.string.rule_web_js))
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
-            add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.replace))
+            add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
         }
         //发现
