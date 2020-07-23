@@ -233,6 +233,8 @@ class BookSourceEditActivity :
             add(EditEntity("nextContentUrl", cr?.nextContentUrl, R.string.rule_next_content))
             add(EditEntity("webJs", cr?.webJs, R.string.rule_web_js))
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
+            add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.replace))
+            add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
         }
         //发现
         val er = source?.getExploreRule()
@@ -332,6 +334,8 @@ class BookSourceEditActivity :
                 "nextContentUrl" -> contentRule.nextContentUrl = it.value
                 "webJs" -> contentRule.webJs = it.value
                 "sourceRegex" -> contentRule.sourceRegex = it.value
+                "replaceRegex" -> contentRule.replaceRegex = it.value
+                "imageStyle" -> contentRule.imageStyle = it.value
             }
         }
         source.ruleSearch = searchRule
