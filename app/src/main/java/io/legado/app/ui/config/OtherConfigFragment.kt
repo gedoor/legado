@@ -80,9 +80,7 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 }
             PreferKey.cleanCache -> {
                 BookHelp.clearCache()
-                requireActivity().cacheDir.listFiles()?.forEach {
-                    it.delete()
-                }
+                FileUtils.deleteFile(requireActivity().cacheDir.absolutePath)
                 toast(R.string.clear_cache_success)
             }
             PreferKey.defaultCover -> {
