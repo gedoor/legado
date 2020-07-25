@@ -299,14 +299,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="file"
-                    android:host="*" />
+                <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="text/plain" />
                 <data android:mimeType="application/json" />
                 <data android:mimeType="application/epub" />
-                <data android:pathPattern=".*\\.json" />
             </intent-filter>
         </activity>
 
