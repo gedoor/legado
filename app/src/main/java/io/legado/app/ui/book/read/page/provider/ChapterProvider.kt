@@ -51,7 +51,8 @@ object ChapterProvider {
         book: Book,
         bookChapter: BookChapter,
         contents: List<String>,
-        chapterSize: Int
+        chapterSize: Int,
+        imageStyle: String?
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()
@@ -69,7 +70,7 @@ object ChapterProvider {
                 src?.let {
                     durY =
                         setTypeImage(
-                            book, bookChapter, src, durY, textPages
+                            book, bookChapter, src, durY, textPages, imageStyle
                         )
                 }
             } else {
@@ -116,25 +117,32 @@ object ChapterProvider {
         chapter: BookChapter,
         src: String,
         y: Float,
-        textPages: ArrayList<TextPage>
+        textPages: ArrayList<TextPage>,
+        imageStyle: String?
     ): Float {
         var durY = y
         ImageProvider.getImage(book, chapter.index, src)?.let {
             var height = it.height
             var width = it.width
-            if (it.width > visibleWidth) {
-                height = it.height * visibleWidth / it.width
-                width =
-                    visibleWidth
-            }
-            if (height > visibleHeight) {
-                width = width * visibleHeight / height
-                height =
-                    visibleHeight
-            }
-            if (durY + height > visibleHeight) {
-                textPages.add(TextPage())
-                durY = 0f
+            when (imageStyle?.toUpperCase()) {
+                "FULL" -> {
+                    width = visibleWidth
+                    height = it.width / width * it.height
+                }
+                else -> {
+                    if (it.width > visibleWidth) {
+                        height = it.height * visibleWidth / it.width
+                        width = visibleWidth
+                    }
+                    if (height > visibleHeight) {
+                        width = width * visibleHeight / height
+                        height = visibleHeight
+                    }
+                    if (durY + height > visibleHeight) {
+                        textPages.add(TextPage())
+                        durY = 0f
+                    }
+                }
             }
             val textLine = TextLine(isImage = true)
             textLine.lineTop = durY

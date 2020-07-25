@@ -313,7 +313,13 @@ object ReadBook {
                 when (chapter.index) {
                     durChapterIndex -> {
                         curTextChapter =
-                            ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
+                            ChapterProvider.getTextChapter(
+                                book,
+                                chapter,
+                                contents,
+                                chapterSize,
+                                imageStyle
+                            )
                         if (upContent) callBack?.upContent(resetPageOffset = resetPageOffset)
                         callBack?.upView()
                         curPageChanged()
@@ -322,12 +328,24 @@ object ReadBook {
                     }
                     durChapterIndex - 1 -> {
                         prevTextChapter =
-                            ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
+                            ChapterProvider.getTextChapter(
+                                book,
+                                chapter,
+                                contents,
+                                chapterSize,
+                                imageStyle
+                            )
                         if (upContent) callBack?.upContent(-1, resetPageOffset)
                     }
                     durChapterIndex + 1 -> {
                         nextTextChapter =
-                            ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
+                            ChapterProvider.getTextChapter(
+                                book,
+                                chapter,
+                                contents,
+                                chapterSize,
+                                imageStyle
+                            )
                         if (upContent) callBack?.upContent(1, resetPageOffset)
                     }
                 }
@@ -337,6 +355,8 @@ object ReadBook {
             App.INSTANCE.toast(it.localizedMessage ?: "ChapterProvider ERROR")
         }
     }
+
+    private val imageStyle get() = webBook?.bookSource?.ruleContent?.imageStyle
 
     fun saveRead() {
         Coroutine.async {
