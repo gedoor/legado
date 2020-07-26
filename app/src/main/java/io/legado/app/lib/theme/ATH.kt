@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -17,6 +18,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.R
 import io.legado.app.help.AppConfig
+import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 import kotlinx.android.synthetic.main.activity_main.view.*
 import org.jetbrains.anko.backgroundColor
@@ -138,6 +140,10 @@ object ATH {
     }
 
     fun setAlertDialogTint(dialog: AlertDialog): AlertDialog {
+        val background = GradientDrawable()
+        background.cornerRadius = 3F.dp
+        background.setColor(dialog.context.backgroundColor)
+        dialog.window?.setBackgroundDrawable(background)
         val colorStateList = Selector.colorBuild()
             .setDefaultColor(ThemeStore.accentColor(dialog.context))
             .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(dialog.context)))
