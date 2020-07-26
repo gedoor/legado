@@ -127,7 +127,7 @@ object ChapterProvider {
             when (imageStyle?.toUpperCase()) {
                 "FULL" -> {
                     width = visibleWidth
-                    height = it.width / width * it.height
+                    height = it.height * visibleWidth / it.width
                 }
                 else -> {
                     if (it.width > visibleWidth) {
