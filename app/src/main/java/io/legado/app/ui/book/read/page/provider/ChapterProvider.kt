@@ -124,6 +124,7 @@ object ChapterProvider {
         var durY = y
         ImageProvider.getImage(book, chapter.index, src)?.let {
             if (durY > visibleHeight) {
+                textPages.last().height = durY
                 textPages.add(TextPage())
                 durY = 0f
             }
@@ -144,6 +145,7 @@ object ChapterProvider {
                         height = visibleHeight
                     }
                     if (durY + height > visibleHeight) {
+                        textPages.last().height = durY
                         textPages.add(TextPage())
                         durY = 0f
                     }
