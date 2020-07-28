@@ -200,7 +200,7 @@ class PhotoView : ImageView {
     override fun setImageResource(resId: Int) {
         var drawable: Drawable? = null
         try {
-            drawable = resources.getDrawable(resId)
+            drawable = resources.getDrawable(resId, null)
         } catch (e: Exception) {
         }
         setImageDrawable(drawable)
@@ -402,8 +402,8 @@ class PhotoView : ImageView {
         val pHeight = MeasureSpec.getSize(heightMeasureSpec)
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-        var width = 0
-        var height = 0
+        var width: Int
+        var height: Int
         var p = layoutParams
         if (p == null) {
             p = ViewGroup.LayoutParams(
@@ -703,47 +703,47 @@ class PhotoView : ImageView {
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                var distanceX = distanceX
-                var distanceY = distanceY
+                var x = distanceX
+                var y = distanceY
                 if (mTranslate.isRunning) {
                     mTranslate.stop()
                 }
-                if (canScrollHorizontallySelf(distanceX)) {
-                    if (distanceX < 0 && mImgRect.left - distanceX > mWidgetRect.left) distanceX =
-                        mImgRect.left
-                    if (distanceX > 0 && mImgRect.right - distanceX < mWidgetRect.right) distanceX =
-                        mImgRect.right - mWidgetRect.right
-                    mAnimMatrix.postTranslate(-distanceX, 0f)
-                    mTranslateX -= distanceX.toInt()
+                if (canScrollHorizontallySelf(x)) {
+                    if (x < 0 && mImgRect.left - x > mWidgetRect.left)
+                        x = mImgRect.left
+                    if (x > 0 && mImgRect.right - x < mWidgetRect.right)
+                        x = mImgRect.right - mWidgetRect.right
+                    mAnimMatrix.postTranslate(-x, 0f)
+                    mTranslateX -= x.toInt()
                 } else if (imgLargeWidth || hasMultiTouch || hasOverTranslate) {
                     checkRect()
                     if (!hasMultiTouch) {
-                        if (distanceX < 0 && mImgRect.left - distanceX > mCommonRect.left) distanceX =
-                            resistanceScrollByX(mImgRect.left - mCommonRect.left, distanceX)
-                        if (distanceX > 0 && mImgRect.right - distanceX < mCommonRect.right) distanceX =
-                            resistanceScrollByX(mImgRect.right - mCommonRect.right, distanceX)
+                        if (x < 0 && mImgRect.left - x > mCommonRect.left) x =
+                            resistanceScrollByX(mImgRect.left - mCommonRect.left, x)
+                        if (x > 0 && mImgRect.right - x < mCommonRect.right) x =
+                            resistanceScrollByX(mImgRect.right - mCommonRect.right, x)
                     }
-                    mTranslateX -= distanceX.toInt()
-                    mAnimMatrix.postTranslate(-distanceX, 0f)
+                    mTranslateX -= x.toInt()
+                    mAnimMatrix.postTranslate(-x, 0f)
                     hasOverTranslate = true
                 }
-                if (canScrollVerticallySelf(distanceY)) {
-                    if (distanceY < 0 && mImgRect.top - distanceY > mWidgetRect.top) distanceY =
+                if (canScrollVerticallySelf(y)) {
+                    if (y < 0 && mImgRect.top - y > mWidgetRect.top) y =
                         mImgRect.top
-                    if (distanceY > 0 && mImgRect.bottom - distanceY < mWidgetRect.bottom) distanceY =
+                    if (y > 0 && mImgRect.bottom - y < mWidgetRect.bottom) y =
                         mImgRect.bottom - mWidgetRect.bottom
-                    mAnimMatrix.postTranslate(0f, -distanceY)
-                    mTranslateY -= distanceY.toInt()
+                    mAnimMatrix.postTranslate(0f, -y)
+                    mTranslateY -= y.toInt()
                 } else if (imgLargeHeight || hasOverTranslate || hasMultiTouch) {
                     checkRect()
                     if (!hasMultiTouch) {
-                        if (distanceY < 0 && mImgRect.top - distanceY > mCommonRect.top) distanceY =
-                            resistanceScrollByY(mImgRect.top - mCommonRect.top, distanceY)
-                        if (distanceY > 0 && mImgRect.bottom - distanceY < mCommonRect.bottom) distanceY =
-                            resistanceScrollByY(mImgRect.bottom - mCommonRect.bottom, distanceY)
+                        if (y < 0 && mImgRect.top - y > mCommonRect.top) y =
+                            resistanceScrollByY(mImgRect.top - mCommonRect.top, y)
+                        if (y > 0 && mImgRect.bottom - y < mCommonRect.bottom) y =
+                            resistanceScrollByY(mImgRect.bottom - mCommonRect.bottom, y)
                     }
-                    mAnimMatrix.postTranslate(0f, -distanceY)
-                    mTranslateY -= distanceY.toInt()
+                    mAnimMatrix.postTranslate(0f, -y)
+                    mTranslateY -= y.toInt()
                     hasOverTranslate = true
                 }
                 executeTranslate()
@@ -757,8 +757,8 @@ class PhotoView : ImageView {
 
             override fun onDoubleTap(e: MotionEvent): Boolean {
                 mTranslate.stop()
-                var from = 1f
-                var to = 1f
+                val from: Float
+                val to: Float
                 val imgCx = mImgRect.left + mImgRect.width() / 2
                 val imgCy = mImgRect.top + mImgRect.height() / 2
                 mScaleCenter[imgCx] = imgCy

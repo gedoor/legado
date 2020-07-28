@@ -17,6 +17,7 @@ import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
+import java.util.*
 import java.util.regex.Pattern
 
 
@@ -122,9 +123,13 @@ object ChapterProvider {
     ): Float {
         var durY = y
         ImageProvider.getImage(book, chapter.index, src)?.let {
+            if (durY > visibleHeight) {
+                textPages.add(TextPage())
+                durY = 0f
+            }
             var height = it.height
             var width = it.width
-            when (imageStyle?.toUpperCase()) {
+            when (imageStyle?.toUpperCase(Locale.ROOT)) {
                 "FULL" -> {
                     width = visibleWidth
                     height = it.height * visibleWidth / it.width
