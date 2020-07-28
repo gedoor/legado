@@ -161,7 +161,7 @@
     <string name="background">Background</string>
     <string name="author">Author</string>
     <string name="author_show">Author: %s</string>
-    <string name="aloud_stop">Speak  Stopped</string>
+    <string name="aloud_stop">Speak Stopped</string>
     <string name="clear_cache">Clear cache</string>
     <string name="clear_cache_success">Cache cleared</string>
     <string name="action_save">Save</string>
