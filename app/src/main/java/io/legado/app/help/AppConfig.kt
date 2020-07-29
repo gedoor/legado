@@ -137,5 +137,7 @@ object AppConfig {
     val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
 
     val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
+
+    val isCoolApk: Boolean get() = App.INSTANCE.channel == "coolApk"
 }
 
