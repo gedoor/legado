@@ -64,6 +64,7 @@ object ReadBook {
                 null
             }
         }
+        callBack?.upPageAnim()
     }
 
     fun upMsg(msg: String?) {
@@ -356,7 +357,7 @@ object ReadBook {
         }
     }
 
-    private val imageStyle get() = webBook?.bookSource?.ruleContent?.imageStyle
+    val imageStyle get() = webBook?.bookSource?.ruleContent?.imageStyle
 
     fun saveRead() {
         Coroutine.async {
@@ -378,5 +379,6 @@ object ReadBook {
         fun upView()
         fun pageChanged()
         fun contentLoadFinish()
+        fun upPageAnim()
     }
 }

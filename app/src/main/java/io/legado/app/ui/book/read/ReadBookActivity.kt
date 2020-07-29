@@ -550,6 +550,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
+    override fun upPageAnim() {
+        page_view?.upPageAnim()
+    }
+
     /**
      * 页面改变
      */
