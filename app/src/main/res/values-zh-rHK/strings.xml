@@ -719,9 +719,13 @@
     <string name="alipay_payment_qr_code">支付寶收款二維碼</string>
     <string name="qq_collection_qr_code">QQ收款二維碼</string>
     <string name="contributors_summary">gedoor,Invinciblelee等,详情请在github中查看</string>
-    <string name="clear_cache_summary">清除已下载书籍和字体缓存</string>
-    <string name="default_cover">默认封面</string>
-    <string name="restore_ignore">恢复忽略列表</string>
-    <string name="restore_ignore_summary">恢复时忽略一些内容不恢复,方便不同手机配置不同</string>
-    <string name="read_config">阅读界面设置</string>
+    <string name="clear_cache_summary">清除已下載書籍和字體緩存</string>
+    <string name="default_cover">默認封面</string>
+    <string name="restore_ignore">恢復忽略列表</string>
+    <string name="restore_ignore_summary">恢復時忽略一些內容不恢復,方便不同手機配置不同</string>
+    <string name="read_config">閱讀界面設置</string>
+    <string name="rule_image_style">图片样式(imageStyle)</string>
+    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
+    <string name="group_name">分組名稱</string>
+    <string name="note_content">備註內容</string>
 </resources>

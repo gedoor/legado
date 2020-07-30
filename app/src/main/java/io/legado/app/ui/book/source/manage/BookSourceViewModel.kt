@@ -8,6 +8,7 @@ import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore.jsonPath
@@ -205,7 +206,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                         }
                     } else {
                         OldRule.jsonToBookSource(text1)?.let {
-                            App.db.bookSourceDao().insert(it)
+                            SourceHelp.insertBookSource(it)
                             count = 1
                         }
                     }
@@ -220,7 +221,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                             bookSources.add(it)
                         }
                     }
-                    App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+                    SourceHelp.insertBookSource(*bookSources.toTypedArray())
                     "导入${bookSources.size}条"
                 }
                 text1.isAbsUrl() -> {
@@ -251,7 +252,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                     bookSources.add(source)
                 }
             }
-            App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+            SourceHelp.insertBookSource(*bookSources.toTypedArray())
             return bookSources.size
         }
     }

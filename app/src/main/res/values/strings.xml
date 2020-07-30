@@ -40,7 +40,7 @@
     <string name="in_favorites">in Favorites</string>
     <string name="out_favorites">Not in Favorites</string>
     <string name="rss">Subscription</string>
-    <string name="all">ALL</string>
+    <string name="all">All</string>
     <string name="recent_reading">Recent reading</string>
     <string name="last_read">Last reading</string>
     <string name="update_log">What\'s new</string>
@@ -55,8 +55,8 @@
     <string name="bookshelf_layout">Layout</string>
     <string name="view">View</string>
     <string name="book_library">Library</string>
-    <string name="book_local">Import Books</string>
-    <string name="book_source">Book Sources</string>
+    <string name="book_local">Import books</string>
+    <string name="book_source">Book sources</string>
     <string name="book_source_manage">Sources management</string>
     <string name="book_source_manage_desc">Create/Import/Edit/Manage Book sources</string>
     <string name="setting">Settings</string>
@@ -76,17 +76,17 @@
     <string name="read_dur_progress">Origin: %s</string>
     <string name="book_name">Title</string>
     <string name="lasted_show">Latest: %s</string>
-    <string name="check_add_bookshelf">Would you like to put %s on the bookshelf?</string>
-    <string name="import_books_count">%s text files in total</string>
+    <string name="check_add_bookshelf">Would you like to add %s to your Bookshelf?</string>
+    <string name="import_books_count">%s text file(s) in total</string>
     <string name="is_loading">Loading…</string>
     <string name="retry">Retry</string>
     <string name="web_service">Web service</string>
     <string name="web_service_desc">Enable web service</string>
-    <string name="web_edit_source">web editing book sources</string>
+    <string name="web_edit_source">Edit book sources on the web</string>
     <string name="http_ip">http://%1$s:%2$d</string>
     <string name="download_offline">Offline download</string>
     <string name="download_offline_t">Offline download</string>
-    <string name="download_offline_s">Download the selected chapter to Storage</string>
+    <string name="download_offline_s">Download the selected chapter(s) to Storage</string>
     <string name="change_origin">Change Origin</string>
     <string name="about_description">
         \u3000\u3000 This is an open source reading software newly developed by Kotlin, welcome to join us. Follow the WeChat Official Account [开源阅读]！
@@ -101,7 +101,7 @@
     <string name="ps_auto_download">Download the latest chapters automatically  when updating books</string>
     <string name="backup_restore">Backup and restore</string>
     <string name="web_dav_set">WebDav settings</string>
-    <string name="web_dav_set_import_old">WebDav settings/import legacy data</string>
+    <string name="web_dav_set_import_old">WebDav settings/Import legacy data</string>
     <string name="backup">Backup</string>
     <string name="restore">Restore</string>
     <string name="backup_permission">Backup needs storage permission</string>
@@ -145,7 +145,7 @@
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
     <string name="set_timer">Timer</string>
-    <string name="read_aloud_pause">Speaking Pause</string>
+    <string name="read_aloud_pause">Speak Paused</string>
     <string name="read_aloud_timer">Speaking(%d min left)</string>
     <string name="ps_hide_navigation_bar">Hide virtual buttons when reading</string>
     <string name="pt_hide_navigation_bar">Hide navigation bar</string>
@@ -161,24 +161,24 @@
     <string name="background">Background</string>
     <string name="author">Author</string>
     <string name="author_show">Author: %s</string>
-    <string name="aloud_stop">Pause</string>
+    <string name="aloud_stop">Speak Stopped</string>
     <string name="clear_cache">Clear cache</string>
     <string name="clear_cache_success">Cache cleared</string>
     <string name="action_save">Save</string>
     <string name="edit_source">Edit source</string>
-    <string name="edit_book_source">Edit Book Sources</string>
-    <string name="disable_book_source">Disable Book Source</string>
-    <string name="add_book_source">Add Book Source</string>
+    <string name="edit_book_source">Edit Book source</string>
+    <string name="disable_book_source">Disable Book source</string>
+    <string name="add_book_source">Add Book source</string>
     <string name="add_rss_source">Add subscription source</string>
     <string name="book_file_selector">Add books</string>
     <string name="scan_book_source">Scan</string>
     <string name="copy_source">Copy source</string>
     <string name="paste_source">Paste source</string>
-    <string name="source_rule_s">Source rule description</string>
+    <string name="source_rule_s">Source rules description</string>
     <string name="check_update">Check for Updates</string>
     <string name="camera_scan">Scan QR code</string>
     <string name="scan_image">Scan local images</string>
-    <string name="rule_summary">Rule description</string>
+    <string name="rule_summary">Rules description</string>
     <string name="share">Share</string>
     <string name="share_app">Share to</string>
     <string name="flow_sys">Follow system</string>
@@ -187,7 +187,7 @@
     <string name="import_book_source_local">Import local sources</string>
     <string name="import_book_source_on_line">Import online sources</string>
     <string name="replace_rule_title">Replacement</string>
-    <string name="replace_rule_edit">Edit replacement rules</string>
+    <string name="replace_rule_edit">Edit replacement rule</string>
     <string name="replace_rule">Pattern</string>
     <string name="replace_to">Replacement</string>
     <string name="img_cover">Cover</string>
@@ -204,7 +204,7 @@
     <string name="clear_all_content">Clearing the cache will delete all saved chapters. Are you sure to delete it?</string>
     <string name="book_source_share_url">Book sources sharing</string>
     <string name="replace_rule_summary">Rule name</string>
-    <string name="replace_rule_invalid">Pattern rule is empty or does not meet regular expression requirements</string>
+    <string name="replace_rule_invalid">Pattern rule is empty or does not conform the regex specification.</string>
     <string name="select_action">Selection action</string>
     <string name="select_all">Select all</string>
     <string name="select_all_count">Select all(%1$d/%2$d)</string>
@@ -240,7 +240,7 @@
     <string name="clear_font">Default font</string>
     <string name="find_on_www">Discovery</string>
     <string name="find_source_manage">Discovery</string>
-    <string name="find_empty">No content.Go to Sources Management to add it!</string>
+    <string name="find_empty">No content.Go to Sources management to add it!</string>
     <string name="del_all">Delete all</string>
     <string name="searchHistory">Search history</string>
     <string name="clear">Clear</string>
@@ -268,8 +268,8 @@
     <string name="load_over_time">Loading timeout</string>
     <string name="join_group">Follow:%s</string>
     <string name="copy_complete">Copied successfully</string>
-    <string name="arrange_bookshelf">Bookshelf Arrangement</string>
-    <string name="clear_bookshelf_s">it will delete all books. Be careful,please.</string>
+    <string name="arrange_bookshelf">Bookshelf arrangement</string>
+    <string name="clear_bookshelf_s">It will delete all books. Be careful,please.</string>
     <string name="search_book_source">Search book sources</string>
     <string name="search_rss_source">Search subscription sources</string>
     <string name="search_book_source_num">Search( %d sources in total)</string>
@@ -317,11 +317,11 @@
     <string name="auto_next_page">Auto scroll</string>
     <string name="auto_next_page_stop">Stop Auto scroll</string>
     <string name="auto_next_page_speed">Auto scroll speed</string>
-    <string name="book_info">Book info</string>
-    <string name="book_info_edit">Edit book info</string>
+    <string name="book_info">Book infomation</string>
+    <string name="book_info_edit">Edit book infomation</string>
     <string name="ps_default_read">Use Bookshelf as start page</string>
     <string name="pt_default_read">Auto jump to Recent list</string>
-    <string name="use_to">Replacement object, book name or source name is available</string>
+    <string name="use_to">Replacement object. Book name or source name is available</string>
     <string name="menu_action_group">Groups</string>
     <string name="download_path">Cache path</string>
     <string name="cleanCache">Clear cache</string>
@@ -330,11 +330,11 @@
     <string name="download_update">Download updates</string>
     <string name="volume_key_page_on_play">Volume keys to turn page when reading</string>
     <string name="tip_margin_change">Margin adjustment</string>
-    <string name="allow_update">Allow update</string>
+    <string name="allow_update">Enable update</string>
     <string name="disable_update">Disable update</string>
     <string name="revert_selection">Inverse</string>
-    <string name="search_book_key">Search bookName/author</string>
-    <string name="debug_hint">BookName,Author,URL</string>
+    <string name="search_book_key">Search book name/author</string>
+    <string name="debug_hint">Book name,Author,URL</string>
     <string name="faq">FAQ</string>
     <string name="pt_show_all_find">Display all Discovery</string>
     <string name="ps_show_all_find">Display the selected origin\'s Discovery if closed</string>
@@ -410,6 +410,8 @@
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
+    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
+    <string name="rule_image_style">图片样式(imageStyle)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
     <string name="r_articles">列表规则(ruleArticles)</string>
@@ -554,7 +556,7 @@
     <string name="group_select">Group selection</string>
     <string name="group_edit">Group editing</string>
     <string name="move_to_group">Move to group</string>
-    <string name="add_group">Add to group</string>
+    <string name="add_group">Add to Groups</string>
     <string name="add_replace_rule">New replacement</string>
     <string name="group">Group</string>
     <string name="group_s">Group: %s</string>
@@ -574,7 +576,7 @@
     <string name="web_dav_account">WebDav account</string>
     <string name="web_dav_account_s">Input your WebDav account</string>
     <string name="rss_source">Subscription source</string>
-    <string name="rss_source_edit">Subscription source editing</string>
+    <string name="rss_source_edit">Edit Subscription source</string>
     <string name="screen">Filter</string>
     <string name="screen_find">Search Discovery sources</string>
     <string name="dur_pos">Current location：</string>
@@ -722,8 +724,10 @@
     <string name="contributors_summary">gedoor,Invinciblelee etc. Checking in github for details</string>
     <string name="clear_cache_summary">Clear the cache of the downloaded books and fonts</string>
     <string name="default_cover">Default cover</string>
-    <string name="restore_ignore">恢复忽略列表</string>
-    <string name="restore_ignore_summary">恢复时忽略一些内容不恢复,方便不同手机配置不同</string>
-    <string name="read_config">阅读界面设置</string>
+    <string name="restore_ignore">Bypass list</string>
+    <string name="restore_ignore_summary">Ignore some contents while restoring</string>
+    <string name="read_config">Reading interface settings</string>
+    <string name="group_name">Group name</string>
+    <string name="note_content">Remarks section</string>
 
 </resources>

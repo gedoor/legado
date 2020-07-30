@@ -89,7 +89,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        hint = "分组名称"
+                        setHint(R.string.group_name)
                     }
                 }
             }
@@ -111,7 +111,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        hint = "分组名称"
+                        setHint(R.string.group_name)
                         setText(group)
                     }
                 }

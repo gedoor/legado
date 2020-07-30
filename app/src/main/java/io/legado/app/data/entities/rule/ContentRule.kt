@@ -9,5 +9,6 @@ data class ContentRule(
     var nextContentUrl: String? = null,
     var webJs: String? = null,
     var sourceRegex: String? = null,
-    var imageStyle: Int = 0  //0默认大小居中,1最大宽度
+    var replaceRegex: String? = null,
+    var imageStyle: String? = null  //默认大小居中,1最大宽度
 ) : Parcelable

@@ -10,10 +10,11 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.externalFilesDir
 import java.io.FileOutputStream
+import java.util.concurrent.ConcurrentHashMap
 
 object ImageProvider {
 
-    private val cache = hashMapOf<Int, HashMap<String, Bitmap>>()
+    private val cache = ConcurrentHashMap<Int, ConcurrentHashMap<String, Bitmap>>()
 
     @Synchronized
     fun getCache(chapterIndex: Int, src: String): Bitmap? {
@@ -24,7 +25,7 @@ object ImageProvider {
     fun setCache(chapterIndex: Int, src: String, bitmap: Bitmap) {
         var indexCache = cache[chapterIndex]
         if (indexCache == null) {
-            indexCache = hashMapOf()
+            indexCache = ConcurrentHashMap()
             cache[chapterIndex] = indexCache
         }
         indexCache[src] = bitmap

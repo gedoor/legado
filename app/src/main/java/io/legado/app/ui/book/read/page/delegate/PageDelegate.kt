@@ -10,12 +10,12 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.CallSuper
 import com.google.android.material.snackbar.Snackbar
+import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.abs
-import io.legado.app.R
 
 abstract class PageDelegate(protected val pageView: PageView) :
     GestureDetector.SimpleOnGestureListener() {
@@ -24,6 +24,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.width * 0.66f, pageView.height * 0.66f
     )
     protected val context: Context = pageView.context
+    private val animationSpeed = 300
 
     //起始点
     protected var startX: Float = 0f
@@ -115,13 +116,12 @@ abstract class PageDelegate(protected val pageView: PageView) :
     }
 
     protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int) {
-        scroller.startScroll(
-            startX,
-            startY,
-            dx,
-            dy,
-            if (dx != 0) (abs(dx) * 0.3).toInt() else (abs(dy) * 0.3).toInt()
-        )
+        val duration = if (dx != 0) {
+            (animationSpeed * abs(dx)) / viewWidth
+        } else {
+            (animationSpeed * abs(dy)) / viewHeight
+        }
+        scroller.startScroll(startX, startY, dx, dy, duration)
         isRunning = true
         isStarted = true
         pageView.invalidate()

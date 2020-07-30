@@ -724,4 +724,8 @@
     <string name="restore_ignore">恢复忽略列表</string>
     <string name="restore_ignore_summary">恢复时忽略一些内容不恢复,方便不同手机配置不同</string>
     <string name="read_config">阅读界面设置</string>
+    <string name="rule_image_style">图片样式(imageStyle)</string>
+    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
+    <string name="group_name">分组名称</string>
+    <string name="note_content">备注内容</string>
 </resources>

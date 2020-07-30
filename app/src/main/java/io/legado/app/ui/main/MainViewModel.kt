@@ -81,11 +81,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun postLoad() {
         execute {
-            FileUtils.getDirFile(context.cacheDir, "Fonts").let {
-                if (it.exists()) {
-                    it.delete()
-                }
-            }
+            FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
         }
     }
 }

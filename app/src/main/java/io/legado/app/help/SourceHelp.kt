@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.os.Handler
 import android.os.Looper
 import io.legado.app.App
+import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.NetworkUtils
@@ -33,9 +34,20 @@ object SourceHelp {
         }
     }
 
+    fun insertBookSource(vararg bookSources: BookSource) {
+        bookSources.forEach { bookSource ->
+            if (is18Plus(bookSource.bookSourceUrl)) {
+                handler.post {
+                    App.INSTANCE.toast("${bookSource.bookSourceName}是18+网址,禁止导入.")
+                }
+            } else {
+                App.db.bookSourceDao().insert(bookSource)
+            }
+        }
+    }
+
     private fun is18Plus(url: String?): Boolean {
         url ?: return false
-        if (AppConfig.isGooglePlay) return false
         val baseUrl = NetworkUtils.getBaseUrl(url)
         baseUrl ?: return false
         try {
