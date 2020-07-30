@@ -1,0 +1,41 @@
+name: Android CI
+
+on: 
+  release:
+    types: [published]
+  push:
+    tags:
+    - 'v*'
+  watch:
+    types: [started]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: install git
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install git
+    - name: clone code
+      run: |
+        git clone --depth=1 https://github.com/gedoor/legado.git /opt/legado
+        touch "ojbk">/opt/legado/app/src/main/assets/18PlusList.txt
+    - name: Build with Gradle
+      run: |
+        cd /opt/legado
+        chmod +x gradlew
+        ./gradlew assembleRelease 
+    - name : upload apk
+      uses: actions/upload-artifact@master
+      if: always()
+      with:
+        name: legado apk
+        path: /opt/legado/app/build/outputs/apk/app/release
