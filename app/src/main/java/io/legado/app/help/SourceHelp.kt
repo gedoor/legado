@@ -48,7 +48,7 @@ object SourceHelp {
 
     private fun is18Plus(url: String?): Boolean {
         url ?: return false
-        if (!AppConfig.isCoolApk) return false
+        if (AppConfig.isGooglePlay) return false
         val baseUrl = NetworkUtils.getBaseUrl(url)
         baseUrl ?: return false
         try {
