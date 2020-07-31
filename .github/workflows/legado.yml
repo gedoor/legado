@@ -5,7 +5,7 @@ on:
     types: [published]
   push:
     tags:
-    - 'v*'
+    - '3.*'
   watch:
     types: [started]
 
@@ -27,7 +27,7 @@ jobs:
     - name: clone code
       run: |
         git clone --depth=1 https://github.com/gedoor/legado.git /opt/legado
-        touch "ojbk">/opt/legado/app/src/main/assets/18PlusList.txt
+        echo "ojbk">/opt/legado/app/src/main/assets/18PlusList.txt
     - name: Build with Gradle
       run: |
         cd /opt/legado
