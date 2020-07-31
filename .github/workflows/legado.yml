@@ -36,6 +36,8 @@ jobs:
         sed '$a\RELEASE_KEY_ALIAS=legado' /opt/legado/gradle.properties -i
         sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado' /opt/legado/gradle.properties -i
         sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado' /opt/legado/gradle.properties -i
+        sed "s/'.release'/'.releaseA'/" /opt/legado/app/build.gradle -i
+        sed 's/.release/.releaseA/g' /opt/legado/app/google-services.json -i
     - name: Build with Gradle
       run: |
         cd /opt/legado
