@@ -5,8 +5,8 @@ import android.os.Looper
 import io.legado.app.App
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.EncoderUtils
-import io.legado.app.utils.NetworkUtils
+//import io.legado.app.utils.EncoderUtils
+//import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.splitNotBlank
 import org.jetbrains.anko.toast
 
@@ -47,20 +47,20 @@ object SourceHelp {
     }
 
     private fun is18Plus(url: String?): Boolean {
-        url ?: return false
-        val baseUrl = NetworkUtils.getBaseUrl(url)
-        baseUrl ?: return false
-        if (AppConfig.isGooglePlay) return false
-        try {
-            val host = baseUrl.split("//", ".")
-            val base64Url = EncoderUtils.base64Encode("${host[host.lastIndex - 1]}.${host.last()}")
-            list18Plus.forEach {
-                if (base64Url == it) {
-                    return true
-                }
-            }
-        } catch (e: Exception) {
-        }
+//        url ?: return false
+//        val baseUrl = NetworkUtils.getBaseUrl(url)
+//        baseUrl ?: return false
+//        if (AppConfig.isGooglePlay) return false
+//        try {
+//            val host = baseUrl.split("//", ".")
+//            val base64Url = EncoderUtils.base64Encode("${host[host.lastIndex - 1]}.${host.last()}")
+//            list18Plus.forEach {
+//                if (base64Url == it) {
+//                    return true
+//                }
+//            }
+//        } catch (e: Exception) {
+//        }
         return false
     }
 

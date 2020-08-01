@@ -194,7 +194,7 @@
 
                 <data
                     android:host="booksource"
-                    android:scheme="yuedu" />
+                    android:scheme="legado" />
             </intent-filter>
         </activity>
         <!--订阅源管理-->
@@ -209,7 +209,7 @@
 
                 <data
                     android:host="rsssource"
-                    android:scheme="yuedu" />
+                    android:scheme="legado" />
             </intent-filter>
         </activity>
         <!--替换规则界面-->
@@ -224,7 +224,7 @@
 
                 <data
                     android:host="replace"
-                    android:scheme="yuedu" />
+                    android:scheme="legado" />
             </intent-filter>
         </activity>
         <!--书籍管理-->

@@ -2,11 +2,11 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.ui.widget.prefs.Preference
+    <!--io.legado.app.ui.widget.prefs.Preference
         android:key="contributors"
         android:title="@string/contributors"
         android:summary="@string/contributors_summary"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false" /-->
 
     <io.legado.app.ui.widget.prefs.Preference
         android:key="check_update"
@@ -27,7 +27,7 @@
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <!--io.legado.app.ui.widget.prefs.Preference
             android:key="gzGzh"
             android:title="@string/follow_official_account"
             android:summary="@string/official_account"
@@ -37,7 +37,7 @@
             android:key="qq"
             android:title="@string/join_qq_group"
             android:summary="@string/click_to_apply"
-            app:iconSpaceReserved="false" />
+            app:iconSpaceReserved="false" /-->
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="mail"
@@ -45,11 +45,11 @@
             android:summary="kunfei.ge@gmail.com"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <!--io.legado.app.ui.widget.prefs.Preference
             android:key="git"
             android:title="@string/git_hub"
             android:summary="@string/this_github_url"
-            app:iconSpaceReserved="false" />
+            app:iconSpaceReserved="false" /-->
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="sourceRuleSummary"

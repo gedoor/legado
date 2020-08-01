@@ -96,7 +96,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             putPrefInt(PreferKey.versionCode, App.INSTANCE.versionCode)
             if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
-                TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
+		        // 5s后自动关闭日志
+                // TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
+		        TextDialog.show(supportFragmentManager, log, TextDialog.MD, 0)
             }
         }
     }

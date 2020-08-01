@@ -4,4 +4,10 @@
     <item android:state_pressed="true" android:color="@color/btn_bg_press" />
     <item android:state_focused="true" android:color="@color/btn_bg_press_2" />
     <item android:color="@color/tv_text_default" />
+    <!--
+    <item android:state_enabled="false" android:color="#1F000000" />
+    <item android:state_pressed="true" android:color="#DE000000" />
+    <item android:state_focused="true" android:color="#90000000" />
+    <item android:color="#90000000" />
+    -->
 </selector>

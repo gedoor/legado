@@ -10,6 +10,6 @@
 /tmp
 node_modules/
 /app/app
+/app/coolApk
 /app/google
-/app/gradle.properties
 package-lock.json

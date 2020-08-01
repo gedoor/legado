@@ -61,9 +61,14 @@ object BookInfo {
         Debug.log(bookSource.bookSourceUrl, "└${book.latestChapterTitle}")
         Debug.log(bookSource.bookSourceUrl, "┌获取简介")
         analyzeRule.getString(infoRule.intro).let {
-            if (it.isNotEmpty()) book.intro = it.htmlFormat()
+            if (it.isNotEmpty())
+                book.intro = if (it.startsWith("view-source:\n")) {
+                    it
+                } else {
+                    ("\n" + it).htmlFormat()
+                }
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.intro}", isHtml = true)
+        Debug.log(bookSource.bookSourceUrl, "└${book.intro}")
 
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
         analyzeRule.getString(infoRule.coverUrl).let {
