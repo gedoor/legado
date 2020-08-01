@@ -62,15 +62,15 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                 }
                 // content模式下，需要传递完整的路径，方便后续解析
                 url = if (uri.scheme == "content") {
-                    "legado://${scheme}/importonline?src=$uri"
+                    "yuedu://${scheme}/importonline?src=$uri"
                 } else {
-                    "legado://${scheme}/importonline?src=${uri.path}"
+                    "yuedu://${scheme}/importonline?src=${uri.path}"
                 }
 
             } else if (uri.scheme == "yuedu") {
                 url = uri.toString()
             } else {
-                url = "legado://booksource/importonline?src=${uri.path}"
+                url = "yuedu://booksource/importonline?src=${uri.path}"
             }
             val data = Uri.parse(url)
             val newIndent = Intent(Intent.ACTION_VIEW)

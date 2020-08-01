@@ -20,7 +20,7 @@ object AppConst {
     const val UA_NAME = "User-Agent"
 
     val userAgent: String by lazy {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.5167.89 Safari/537.36 Edg/86.0.522.88"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36"
     }
 
     val SCRIPT_ENGINE: ScriptEngine by lazy {
@@ -41,8 +41,9 @@ object AppConst {
 
     val keyboardToolChars: List<String> by lazy {
         arrayListOf(
-            "※", "@css:", "<js></js>", "&&", "||", "%%", "/", ":", "[]", "{}", "$.",
-            "VS", "all", "ownText", "href", "src", "textNodes"
+            "※", "@", "&", "|", "%", "/", ":", "[", "]", "{", "}", "<", ">", "\\",
+            "$", "#", "!", ".", "href", "src", "textNodes", "xpath", "json", "css",
+            "id", "class", "tag"
         )
     }
 

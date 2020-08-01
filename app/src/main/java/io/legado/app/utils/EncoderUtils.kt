@@ -25,8 +25,8 @@ object EncoderUtils {
         return tmp.toString()
     }
 
-    fun base64Decode(str: String, flags: Int): String {
-        val bytes = Base64.decode(str, flags)
+    fun base64Decode(str: String): String {
+        val bytes = Base64.decode(str, Base64.DEFAULT)
         return try {
             String(bytes, StandardCharsets.UTF_8)
         } catch (e: Exception) {
@@ -34,7 +34,7 @@ object EncoderUtils {
         }
     }
 
-    fun base64Encode(str: String, flags: Int): String? {
+    fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
         return Base64.encodeToString(str.toByteArray(), flags)
     }
 }

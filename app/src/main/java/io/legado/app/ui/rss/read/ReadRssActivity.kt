@@ -169,7 +169,6 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                         url
                     )//不想用baseUrl进else
                 } else {
-                    //webView.loadData(html, "text/html;charset=utf-8", "utf-8")//经测试可以解决中文乱码
                     web_view.loadDataWithBaseURL(
                         null,
                         html,

@@ -145,9 +145,8 @@ object BookList {
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}")
                 if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取简介")
-                val introStr = analyzeRule.getString(intro)
-                searchBook.intro = introStr
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", isHtml = !introStr.startsWith("view-source:\n"))
+                searchBook.intro = analyzeRule.getString(intro)
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", true)
                 if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
                 searchBook.coverUrl = analyzeRule.getString(coverUrl, true)
@@ -205,9 +204,8 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}", log)
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取简介", log)
-            val introStr = analyzeRule.getString(ruleIntro)
-            searchBook.intro = introStr
-            Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", log, isHtml = !introStr.startsWith("view-source:\n"))
+            searchBook.intro = analyzeRule.getString(ruleIntro)
+            Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", log, true)
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取封面链接", log)
             analyzeRule.getString(ruleCoverUrl).let {

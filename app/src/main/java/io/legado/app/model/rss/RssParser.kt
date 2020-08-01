@@ -117,11 +117,11 @@ object RssParser {
     private fun getImageUrl(input: String): String? {
 
         var url: String? = null
-        val patternImg = "(<img [^>]*>)".toPattern()
+        val patternImg = "(<img .*?>)".toPattern()
         val matcherImg = patternImg.matcher(input)
         if (matcherImg.find()) {
             val imgTag = matcherImg.group(1)
-            val patternLink = "src\\s*=\\s*\"([^\"]+)\"".toPattern()
+            val patternLink = "src\\s*=\\s*\"(.+?)\"".toPattern()
             val matcherLink = patternLink.matcher(imgTag!!)
             if (matcherLink.find()) {
                 url = matcherLink.group(1)!!.trim()

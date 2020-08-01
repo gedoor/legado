@@ -30,18 +30,14 @@ interface JsExtensions {
      * js实现解码,不能删
      */
     fun base64Decode(str: String): String {
-        return EncoderUtils.base64Decode(str, Base64.NO_WRAP)
-    }
-
-    fun base64Decode(str: String, flags: Int): String {
-        return EncoderUtils.base64Decode(str, flags)
+        return EncoderUtils.base64Decode(str)
     }
 
     fun base64Encode(str: String): String? {
-        return EncoderUtils.base64Encode(str, Base64.NO_WRAP)
+        return EncoderUtils.base64Encode(str)
     }
 
-    fun base64Encode(str: String, flags: Int): String? {
+    fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
         return EncoderUtils.base64Encode(str, flags)
     }
 

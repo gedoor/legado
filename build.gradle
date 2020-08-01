@@ -3,27 +3,28 @@
 buildscript {
     ext.kotlin_version = '1.3.72'
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
         google()
         //jcenter()
-        //maven { url 'https://maven.fabric.io/public' }
-        maven { url 'https://plugins.gradle.org/m2' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.3'
-        //classpath 'com.google.gms:google-services:4.3.3'
-        //classpath 'io.fabric.tools:gradle:1.31.2'
+        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'io.fabric.tools:gradle:1.31.2'
     }
 }
 
 allprojects {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
         google()
         //jcenter()
-        maven { url 'https://jitpack.io' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url "https://jitpack.io" }
+        maven { url 'https://maven.google.com/' }
         maven { url 'https://github.com/psiegman/mvn-repo/raw/master/releases' }
     }
 }

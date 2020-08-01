@@ -36,12 +36,12 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun export(doc: DocumentFile, book: Book) {
-        DocumentUtils.createFileIfNotExist(doc, "${book.name}_作者:${book.author}.txt")
+        DocumentUtils.createFileIfNotExist(doc, "${book.name}.txt")
             ?.writeText(context, getAllContents(book))
     }
 
     private fun export(file: File, book: Book) {
-        FileUtils.createFileIfNotExist(file, "${book.name}_作者:${book.author}.txt")
+        FileUtils.createFileIfNotExist(file, "${book.name}.txt")
             .writeText(getAllContents(book))
     }
 
@@ -52,11 +52,10 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
             .append(context.getString(R.string.author_show, book.author))
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let {
-                if (!it.isNullOrEmpty())
-                    stringBuilder.append("\n\n")
-                        .append(chapter.title)
-                        .append("\n")
-                        .append(it)
+                stringBuilder.append("\n\n")
+                    .append(chapter.title)
+                    .append("\n")
+                    .append(it)
             }
         }
         return stringBuilder.toString()

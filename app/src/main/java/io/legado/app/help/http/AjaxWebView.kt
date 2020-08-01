@@ -80,7 +80,7 @@ class AjaxWebView {
     }
 
     fun load(params: AjaxParams) {
-        if (!params.sourceRegex.isNullOrEmpty()) {
+        if (params.sourceRegex != "") {
             mHandler.obtainMessage(MSG_SNIFF_START, params)
                 .sendToTarget()
         } else {
@@ -158,7 +158,7 @@ class AjaxWebView {
             mWebView.get()?.evaluateJavascript(mJavaScript) {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
-                        .replace("^\"|\"$".toRegex(), "")   // 暂时先手动取掉引号
+                        .replace("^\"|\"$".toRegex(), "")
                     handler.obtainMessage(MSG_SUCCESS, Res(url, content))
                         .sendToTarget()
                     handler.removeCallbacks(this)

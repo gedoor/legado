@@ -383,7 +383,6 @@ class AnalyzeByJSoup {
                     textS.add(html)
                 }
                 "all" -> textS.add(elements.outerHtml())
-                "VS" -> textS.add("view-source:\n" + elements.outerHtml())
                 else -> for (element in elements) {
                     val url = element.attr(lastRule)
                     if (!isEmpty(url) && !textS.contains(url)) {

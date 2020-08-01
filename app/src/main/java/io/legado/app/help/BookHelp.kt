@@ -112,7 +112,7 @@ object BookHelp {
 
     fun formatAuthor(author: String?): String {
         return author
-            ?.replace("作\\s*者\\s*[：:]\\s*".toRegex(), "")
+            ?.replace("作\\s*者\\s*[：:]\n*".toRegex(), "")
             ?.replace("\\s+".toRegex(), " ")
             ?.trim { it <= ' ' }
             ?: ""

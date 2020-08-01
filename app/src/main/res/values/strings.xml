@@ -1,6 +1,6 @@
 <resources>
     <!--App-->
-    <string name="app_name">BookSource</string>
+    <string name="app_name">Legado</string>
     <string name="receiving_shared_label">Legado·search</string>
     <string name="tip_perm_request_storage">Legado needs storage access to find and read books. please go "App Settings" to allow "Storage permission".</string>
 

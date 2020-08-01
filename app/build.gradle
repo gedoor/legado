@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'de.timfreiheit.resourceplaceholders'
-//apply plugin: 'io.fabric'
+apply plugin: 'io.fabric'
 
 androidExtensions {
     experimental = true
@@ -33,9 +33,8 @@ android {
         }
     }
     defaultConfig {
-        applicationId "io.legado.application"
-        //minSdkVersion 21
-        minSdkVersion 28
+        applicationId "io.legado.app"
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode gitCommits
         versionName version
@@ -57,7 +56,7 @@ android {
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
             }
-            //applicationIdSuffix '.release'
+            applicationIdSuffix '.release'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -77,19 +76,14 @@ android {
         }
     }
     productFlavors {
-        app {       //书架
+        app {
             dimension "version"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "app"]
         }
         google {
             dimension "version"
-            applicationId "io.legado.celeter"
+            applicationId "io.legado.play"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "google"]
-        }
-        coolApk {       //整理
-            dimension "version"
-            applicationId "io.legado.google"
-            manifestPlaceholders = [APP_CHANNEL_VALUE: "coolApk"]
         }
     }
     compileOptions {
@@ -116,7 +110,7 @@ kapt {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
@@ -126,9 +120,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //fireBase
-    //implementation 'com.google.firebase:firebase-core:17.4.4'
-    //implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'com.google.firebase:firebase-core:17.4.4'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     //androidX
     implementation 'androidx.core:core-ktx:1.3.1'
@@ -214,4 +207,4 @@ dependencies {
     //implementation 'fadeapp.widgets:scrollless-recyclerView:1.0.2'
 }
 
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'

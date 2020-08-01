@@ -132,13 +132,7 @@ object BookContent {
             }
             Debug.log(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
         }
-        val content = analyzeRule.getString(contentRule.content).let {
-            if (it.startsWith("view-source:\n")) {
-                it
-            } else {
-                ("\n" + it).htmlFormat()
-            }
-        }
+        val content = analyzeRule.getString(contentRule.content)
         return ContentData(content, nextUrlList)
     }
 }
