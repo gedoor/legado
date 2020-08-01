@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: remove 18plus
+    - name: clear 18PlusList.txt
       run: |
         echo "">$GITHUB_WORKSPACE/app/src/main/assets/18PlusList.txt
     - name: release apk sign
@@ -34,10 +34,10 @@ jobs:
         sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado' $GITHUB_WORKSPACE/gradle.properties -i
         sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle -i
         sed 's/.release/.releaseA/g' $GITHUB_WORKSPACE/app/google-services.json -i
-    - name: Build with Gradle
+    - name: build with gradle
       run: |
         chmod +x gradlew
-        ./gradlew assembleRelease 
+        ./gradlew aR
     - name : upload apk
       uses: actions/upload-artifact@master
       if: always()
