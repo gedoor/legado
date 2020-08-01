@@ -41,9 +41,11 @@ jobs:
       run: |
         chmod +x gradlew
         ./gradlew assembleRelease 
+        mkdir /opt/build
+        cp -r $GITHUB_WORKSPACE/app/build/outputs/apk/app/release /opt/build
     - name : upload apk
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: legado apk
-        path: $GITHUB_WORKSPACE/app/build/outputs/apk/app/release
+        path: /opt/build/release
