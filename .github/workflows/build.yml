@@ -20,10 +20,9 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: clone code
+      - name: clear [18PlusList.txt]
         run: |
-          echo "clear [18PlusList.txt]"
-          echo "">/opt/legado/app/src/main/assets/18PlusList.txt
+          echo "">$GITHUB_WORKSPACE/app/src/main/assets/18PlusList.txt
 
       - name: Decrypt large secret
         run: bash ./.github/scripts/decrypt_secret.sh
@@ -40,4 +39,4 @@ jobs:
         if: always()
         with:
           name: legado
-          path: $GITHUB_WORKSPACE/app/build/outputs/apk/app/release/
+          path: ./app/build/outputs/apk/app/release/
