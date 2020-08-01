@@ -24,23 +24,21 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -y install git
-    - name: clone code
+    - name: remove 18plus
       run: |
-        git clone https://github.com/gedoor/legado.git /opt/legado
-        echo "ojbk">/opt/legado/app/src/main/assets/18PlusList.txt
+        echo "ojbk">$GITHUB_WORKSPACE/app/src/main/assets/18PlusList.txt
     - name: release apk sign
       run: |
         git clone https://github.com/10bits/gedoor-Build.git /opt/gedoor-Build
-        cp /opt/gedoor-Build/.github/workflows/legado.jks /opt/legado/app/legado.jks
-        sed '$a\RELEASE_STORE_FILE=./legado.jks' /opt/legado/gradle.properties -i 
-        sed '$a\RELEASE_KEY_ALIAS=legado' /opt/legado/gradle.properties -i
-        sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado' /opt/legado/gradle.properties -i
-        sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado' /opt/legado/gradle.properties -i
-        sed "s/'.release'/'.releaseA'/" /opt/legado/app/build.gradle -i
-        sed 's/.release/.releaseA/g' /opt/legado/app/google-services.json -i
+        cp /opt/gedoor-Build/.github/workflows/legado.jks $GITHUB_WORKSPACE/app/legado.jks
+        sed '$a\RELEASE_STORE_FILE=./legado.jks' $GITHUB_WORKSPACE/gradle.properties -i 
+        sed '$a\RELEASE_KEY_ALIAS=legado' $GITHUB_WORKSPACE/gradle.properties -i
+        sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado' $GITHUB_WORKSPACE/gradle.properties -i
+        sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado' $GITHUB_WORKSPACE/gradle.properties -i
+        sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle -i
+        sed 's/.release/.releaseA/g' $GITHUB_WORKSPACE/app/google-services.json -i
     - name: Build with Gradle
       run: |
-        cd /opt/legado
         chmod +x gradlew
         ./gradlew assembleRelease 
     - name : upload apk
@@ -48,4 +46,4 @@ jobs:
       if: always()
       with:
         name: legado apk
-        path: /opt/legado/app/build/outputs/apk/app/release
+        path: $GITHUB_WORKSPACE/app/build/outputs/apk/app/release
