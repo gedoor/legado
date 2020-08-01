@@ -18,8 +18,8 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.lib.theme.*
+import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
@@ -163,11 +163,16 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     private fun initOtherView() {
-        tv_clear_history.onClick { viewModel.clearHistory() }
+        fb_stop.backgroundTintList =
+            Selector.colorBuild()
+                .setDefaultColor(accentColor)
+                .setPressedColor(ColorUtils.darkenColor(accentColor))
+                .create()
         fb_stop.onClick {
             viewModel.stop()
             refresh_progress_bar.isAutoLoading = false
         }
+        tv_clear_history.onClick { viewModel.clearHistory() }
     }
 
     private fun initLiveData() {
