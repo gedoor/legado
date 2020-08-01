@@ -167,13 +167,12 @@ object Help {
                 editText?.text?.toString()?.let { editContent ->
                     AsyncTask.execute {
                         val bookmark = Bookmark(
-                            book.durChapterTime,
-                            book.bookUrl,
-                            book.name,
-                            ReadBook.durChapterIndex,
-                            ReadBook.durPageIndex,
-                            textChapter.title,
-                            editContent
+                            bookUrl = book.bookUrl,
+                            bookName = book.name,
+                            chapterIndex = ReadBook.durChapterIndex,
+                            pageIndex = ReadBook.durPageIndex,
+                            chapterName = textChapter.title,
+                            content = editContent
                         )
                         App.db.bookmarkDao().insert(bookmark)
                     }
