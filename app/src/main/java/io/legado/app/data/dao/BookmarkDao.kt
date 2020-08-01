@@ -1,10 +1,7 @@
 package io.legado.app.data.dao
 
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.Bookmark
 
 
@@ -22,6 +19,9 @@ interface BookmarkDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookmark: Bookmark)
+
+    @Delete
+    fun delete(vararg bookmark: Bookmark)
 
     @Query("delete from bookmarks where bookUrl = :bookUrl and chapterName like '%'||:chapterName||'%'")
     fun delByBookmark(bookUrl: String, chapterName: String)
