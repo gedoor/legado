@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -12,9 +13,8 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.lib.theme.buttonDisabledColor
+import io.legado.app.lib.theme.*
+import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_read_menu.view.*
@@ -28,6 +28,7 @@ class ReadMenu : FrameLayout {
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
     private lateinit var menuBottomOut: Animation
+    private var bottomBackgroundList: ColorStateList
     private var onMenuOutEnd: (() -> Unit)? = null
 
     constructor(context: Context) : super(context)
@@ -42,6 +43,10 @@ class ReadMenu : FrameLayout {
 
     init {
         callBack = activity as? CallBack
+        bottomBackgroundList = Selector.colorBuild()
+            .setDefaultColor(context.bottomBackground)
+            .setPressedColor(ColorUtils.darkenColor(context.bottomBackground))
+            .create()
         inflate(context, R.layout.view_read_menu, this)
         if (AppConfig.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
@@ -140,6 +145,7 @@ class ReadMenu : FrameLayout {
         })
 
         //自动翻页
+        fabAutoPage.backgroundTintList = bottomBackgroundList
         fabAutoPage.onClick {
             runMenuOut {
                 callBack?.autoPage()
@@ -147,9 +153,11 @@ class ReadMenu : FrameLayout {
         }
 
         //替换
+        fabReplaceRule.backgroundTintList = bottomBackgroundList
         fabReplaceRule.onClick { callBack?.openReplaceRule() }
 
         //夜间模式
+        fabNightTheme.backgroundTintList = bottomBackgroundList
         fabNightTheme.onClick {
             AppConfig.isNightTheme = !AppConfig.isNightTheme
             App.INSTANCE.applyDayNight()
