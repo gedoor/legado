@@ -33,7 +33,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
 
     lateinit var adapter: ChapterListAdapter
-    private var book: Book? = null
     private var durChapterIndex = 0
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var tocLiveData: LiveData<List<BookChapter>>? = null
@@ -70,11 +69,8 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     @SuppressLint("SetTextI18n")
     private fun initBook() {
         launch {
-            withContext(IO) {
-                book = App.db.bookDao().getBook(viewModel.bookUrl)
-            }
             initDoc()
-            book?.let {
+            viewModel.book?.let {
                 durChapterIndex = it.durChapterIndex
                 tv_current_chapter_info.text =
                     "${it.durChapterTitle}(${it.durChapterIndex + 1}/${it.totalChapterNum})"
@@ -106,7 +102,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     override fun observeLiveBus() {
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) { chapter ->
-            book?.bookUrl?.let { bookUrl ->
+            viewModel.book?.bookUrl?.let { bookUrl ->
                 if (chapter.bookUrl == bookUrl) {
                     adapter.cacheFileNames.add(BookHelp.formatChapterName(chapter))
                     adapter.notifyItemChanged(chapter.index, true)

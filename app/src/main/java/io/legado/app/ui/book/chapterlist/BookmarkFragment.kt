@@ -43,10 +43,14 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     }
 
     private fun initData() {
-        bookmarkLiveData?.removeObservers(viewLifecycleOwner)
-        bookmarkLiveData =
-            LivePagedListBuilder(App.db.bookmarkDao().observeByBook(viewModel.bookUrl), 20).build()
-        bookmarkLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+        viewModel.book?.let { book ->
+            bookmarkLiveData?.removeObservers(viewLifecycleOwner)
+            bookmarkLiveData =
+                LivePagedListBuilder(
+                    App.db.bookmarkDao().observeByBook(book.bookUrl, book.name, book.author), 20
+                ).build()
+            bookmarkLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+        }
     }
 
     override fun startBookmarkSearch(newText: String?) {

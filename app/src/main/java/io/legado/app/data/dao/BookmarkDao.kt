@@ -11,8 +11,12 @@ interface BookmarkDao {
     @Query("select * from bookmarks")
     fun all(): List<Bookmark>
 
-    @Query("select * from bookmarks where bookUrl = :bookUrl")
-    fun observeByBook(bookUrl: String): DataSource.Factory<Int, Bookmark>
+    @Query("select * from bookmarks where bookUrl = :bookUrl or (bookName = :bookName and bookAuthor = :bookAuthor)")
+    fun observeByBook(
+        bookUrl: String,
+        bookName: String,
+        bookAuthor: String
+    ): DataSource.Factory<Int, Bookmark>
 
     @Query("SELECT * FROM bookmarks where bookUrl = :bookUrl and chapterName like '%'||:key||'%' or content like '%'||:key||'%'")
     fun liveDataSearch(bookUrl: String, key: String): DataSource.Factory<Int, Bookmark>

@@ -13,6 +13,7 @@ data class Bookmark(
     var time: Long = System.currentTimeMillis(),
     var bookUrl: String = "",
     var bookName: String = "",
+    val bookAuthor: String = "",
     var chapterIndex: Int = 0,
     var pageIndex: Int = 0,
     var chapterName: String = "",

@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class],
-    version = 14,
+    version = 15,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -31,7 +31,13 @@ abstract class AppDatabase : RoomDatabase() {
         fun createDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
-                .addMigrations(migration_10_11, migration_11_12, migration_12_13, migration_13_14)
+                .addMigrations(
+                    migration_10_11,
+                    migration_11_12,
+                    migration_12_13,
+                    migration_13_14,
+                    migration_14_15
+                )
                 .addCallback(object : Callback() {
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
                         GlobalScope.launch { Restore.restoreDatabase(Backup.backupPath) }
@@ -56,21 +62,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val migration_11_12 = object : Migration(11, 12) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
-                    """
-                    ALTER TABLE rssSources ADD style TEXT
-                    """
-                )
+                database.execSQL("ALTER TABLE rssSources ADD style TEXT ")
             }
         }
 
         private val migration_12_13 = object : Migration(12, 13) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
-                    """
-                    ALTER TABLE rssSources ADD articleStyle INTEGER NOT NULL DEFAULT 0
-                    """
-                )
+                database.execSQL("ALTER TABLE rssSources ADD articleStyle INTEGER NOT NULL DEFAULT 0 ")
             }
         }
 
@@ -86,26 +84,16 @@ abstract class AppDatabase : RoomDatabase() {
                     `order` INTEGER NOT NULL, `originOrder` INTEGER NOT NULL, `useReplaceRule` INTEGER NOT NULL, `variable` TEXT, PRIMARY KEY(`bookUrl`))
                     """
                 )
-                database.execSQL(
-                    """
-                    CREATE UNIQUE INDEX IF NOT EXISTS `index_books_name_author` ON `books_new` (`name`, `author`)
-                    """
-                )
-                database.execSQL(
-                    """
-                    INSERT INTO books_new select * from books
-                    """
-                )
-                database.execSQL(
-                    """
-                    DROP TABLE books
-                    """
-                )
-                database.execSQL(
-                    """
-                    ALTER TABLE books_new RENAME TO books
-                    """
-                )
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_books_name_author` ON `books_new` (`name`, `author`) ")
+                database.execSQL("INSERT INTO books_new select * from books ")
+                database.execSQL("DROP TABLE books")
+                database.execSQL("ALTER TABLE books_new RENAME TO books")
+            }
+        }
+
+        private val migration_14_15 = object : Migration(14, 15) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE bookmarks ADD bookAuthor TEXT NOT NULL DEFAULT ''")
             }
         }
     }
