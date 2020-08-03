@@ -42,20 +42,21 @@ class BooksDiffCallBack(private val oldItems: List<Book>, private val newItems: 
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
         val bundle = bundleOf()
-        if (oldItem.name != newItem.name) bundle.putString("name", newItem.name)
-        if (oldItem.author != newItem.author) bundle.putString("author", newItem.author)
-        if (oldItem.durChapterTitle != newItem.durChapterTitle) bundle.putString(
-            "dur",
-            newItem.durChapterTitle
-        )
-        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) bundle.putString(
-            "last",
-            newItem.latestChapterTitle
-        )
-        if (oldItem.getDisplayCover() != newItem.getDisplayCover()) bundle.putString(
-            "cover",
-            newItem.getDisplayCover()
-        )
+        if (oldItem.name != newItem.name) {
+            bundle.putString("name", newItem.name)
+        }
+        if (oldItem.author != newItem.author) {
+            bundle.putString("author", newItem.author)
+        }
+        if (oldItem.durChapterTitle != newItem.durChapterTitle) {
+            bundle.putString("dur", newItem.durChapterTitle)
+        }
+        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
+            bundle.putString("last", newItem.latestChapterTitle)
+        }
+        if (oldItem.getDisplayCover() != newItem.getDisplayCover()) {
+            bundle.putString("cover", newItem.getDisplayCover())
+        }
         if (oldItem.lastCheckCount != newItem.lastCheckCount
             || oldItem.durChapterTime != newItem.durChapterTime
             || oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum()
