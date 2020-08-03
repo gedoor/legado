@@ -28,16 +28,14 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                 iv_cover.load(item.getDisplayCover(), item.name, item.author)
                 upRefresh(this, item)
             } else {
+                tv_read.text = item.durChapterTitle
+                tv_last.text = item.latestChapterTitle
                 bundle.keySet().forEach {
                     when (it) {
                         "name" -> tv_name.text = item.name
                         "author" -> tv_author.text = item.author
                         "cover" -> iv_cover.load(item.getDisplayCover(), item.name, item.author)
                         "refresh" -> upRefresh(this, item)
-                        else -> {
-                            tv_read.text = item.durChapterTitle
-                            tv_last.text = item.latestChapterTitle
-                        }
                     }
                 }
             }
