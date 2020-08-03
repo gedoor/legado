@@ -12,7 +12,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     //速度追踪器
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
 
-    override fun onAnimStart() {
+    override fun onAnimStart(animationSpeed: Int) {
         //惯性滚动
         fling(
             0, touchY.toInt(), 0, mVelocity.yVelocity.toInt(),
@@ -78,13 +78,13 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         mVelocity.recycle()
     }
 
-    override fun nextPageByAnim() {
+    override fun nextPageByAnim(animationSpeed: Int) {
         abort()
-        startScroll(0, 0, 0, -ChapterProvider.visibleHeight)
+        startScroll(0, 0, 0, -ChapterProvider.visibleHeight, animationSpeed)
     }
 
-    override fun prevPageByAnim() {
+    override fun prevPageByAnim(animationSpeed: Int) {
         abort()
-        startScroll(0, 0, 0, ChapterProvider.visibleHeight)
+        startScroll(0, 0, 0, ChapterProvider.visibleHeight, animationSpeed)
     }
 }

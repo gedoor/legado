@@ -154,7 +154,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         }
     }
 
-    override fun onAnimStart() {
+    override fun onAnimStart(animationSpeed: Int) {
         var dx: Float
         val dy: Float
         // dy 垂直方向滑动的距离，负值会使滚动向上滚动
@@ -184,7 +184,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 (1 - touchY) // 防止mTouchY最终变为0
             }
         }
-        startScroll(touchX.toInt(), touchY.toInt(), dx.toInt(), dy.toInt())
+        startScroll(touchX.toInt(), touchY.toInt(), dx.toInt(), dy.toInt(), animationSpeed)
     }
 
     override fun onAnimStop() {

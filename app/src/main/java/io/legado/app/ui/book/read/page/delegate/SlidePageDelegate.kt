@@ -8,7 +8,7 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     private val bitmapMatrix = Matrix()
 
-    override fun onAnimStart() {
+    override fun onAnimStart(animationSpeed: Int) {
         val distanceX: Float
         when (mDirection) {
             Direction.NEXT -> distanceX =
@@ -28,7 +28,7 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
                     viewWidth - (touchX - startX)
                 }
         }
-        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
+        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0, animationSpeed)
     }
 
     override fun onDraw(canvas: Canvas) {

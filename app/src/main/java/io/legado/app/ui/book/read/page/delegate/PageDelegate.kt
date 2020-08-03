@@ -24,7 +24,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.width * 0.66f, pageView.height * 0.66f
     )
     protected val context: Context = pageView.context
-    private val animationSpeed = 300
+    private val defaultAnimationSpeed = 300
 
     //起始点
     protected var startX: Float = 0f
@@ -115,7 +115,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         pageView.invalidate()
     }
 
-    protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int) {
+    protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int, animationSpeed: Int) {
         val duration = if (dx != 0) {
             (animationSpeed * abs(dx)) / viewWidth
         } else {
@@ -163,7 +163,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
         return false
     }
 
-    open fun onAnimStart() {}//scroller start
+    open fun onAnimStart(animationSpeed: Int) {}//scroller start
 
     open fun onDraw(canvas: Canvas) {}//绘制
 
@@ -171,15 +171,15 @@ abstract class PageDelegate(protected val pageView: PageView) :
 
     open fun onScroll() {}//移动contentView， slidePage
 
-    abstract fun nextPageByAnim()
+    abstract fun nextPageByAnim(animationSpeed: Int)
 
-    abstract fun prevPageByAnim()
+    abstract fun prevPageByAnim(animationSpeed: Int)
 
     open fun keyTurnPage(direction: Direction) {
         if (isRunning) return
         when (direction) {
-            Direction.NEXT -> nextPageByAnim()
-            Direction.PREV -> prevPageByAnim()
+            Direction.NEXT -> nextPageByAnim(100)
+            Direction.PREV -> prevPageByAnim(100)
             else -> return
         }
     }
@@ -207,7 +207,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
                         if (selectedOnDown) {
                             selectedOnDown = false
                         }
-                        if (!noNext) onAnimStart()
+                        if (!noNext) onAnimStart(defaultAnimationSpeed)
                     }
                 }
             }
@@ -247,7 +247,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
             return true
         }
         if (isMoved) {
-            if (!noNext) onAnimStart()
+            if (!noNext) onAnimStart(defaultAnimationSpeed)
             return true
         }
         val x = e.x
@@ -259,9 +259,9 @@ abstract class PageDelegate(protected val pageView: PageView) :
             if (x > viewWidth / 2 ||
                 AppConfig.clickAllNext
             ) {
-                nextPageByAnim()
+                nextPageByAnim(defaultAnimationSpeed)
             } else {
-                prevPageByAnim()
+                prevPageByAnim(defaultAnimationSpeed)
             }
         }
         return true

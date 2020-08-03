@@ -57,7 +57,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         }
     }
 
-    override fun onAnimStart() {
+    override fun onAnimStart(animationSpeed: Int) {
         val distanceX: Float
         when (mDirection) {
             Direction.NEXT -> distanceX =
@@ -77,7 +77,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
                     viewWidth - (touchX - startX)
                 }
         }
-        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0)
+        startScroll(touchX.toInt(), 0, distanceX.toInt(), 0, animationSpeed)
     }
 
 }
