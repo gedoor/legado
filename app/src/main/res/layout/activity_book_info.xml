@@ -34,20 +34,21 @@
             android:layout_marginTop="8dp">
 
             <io.legado.app.ui.widget.ArcView
-                app:arcHeight="36dp"
-                app:bgColor="@color/background"
-                app:arcDirectionTop="true"
+                android:id="@+id/arc_view"
                 android:layout_marginTop="90dp"
                 android:layout_width="match_parent"
-                android:layout_height="78dp" />
+                android:layout_height="78dp"
+                app:arcDirectionTop="true"
+                app:arcHeight="36dp"
+                app:bgColor="@color/background" />
 
             <androidx.cardview.widget.CardView
-                app:cardCornerRadius="5dp"
-                app:cardElevation="8dp"
                 android:layout_margin="3dp"
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="8dp">
 
                 <io.legado.app.ui.widget.image.CoverImageView
                     android:id="@+id/iv_cover"
@@ -62,6 +63,7 @@
         </RelativeLayout>
 
         <ScrollView
+            android:id="@+id/scroll_view"
             android:background="@color/background"
             android:layout_weight="1.0"
             android:padding="0dp"
@@ -71,9 +73,10 @@
             android:scrollbars="vertical"
             android:fillViewport="true"
             android:fitsSystemWindows="false"
-            android:focusable="true" >
+            android:focusable="true">
 
             <LinearLayout
+                android:id="@+id/ll_info"
                 android:orientation="vertical"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
@@ -85,7 +88,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/background"
                     android:orientation="vertical"
                     android:paddingLeft="10dp"
                     android:paddingTop="8dp"
@@ -121,10 +123,8 @@
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:paddingBottom="8dp"
-                    android:background="@color/background"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -346,11 +346,6 @@
             </LinearLayout>
 
         </ScrollView>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:background="@color/background" />
 
         <View
             android:layout_width="match_parent"

@@ -43,9 +43,10 @@
                 android:layout_marginTop="68dp">
 
                 <io.legado.app.ui.widget.ArcView
+                    android:id="@+id/arc_view"
                     android:layout_width="match_parent"
                     android:layout_height="78dp"
-                    android:layout_marginTop="120dp"
+                    android:layout_marginTop="128dp"
                     app:arcDirectionTop="true"
                     app:arcHeight="36dp"
                     app:bgColor="@color/background" />
@@ -71,6 +72,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/ll_info"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/background"
@@ -150,6 +152,7 @@
             android:layout_height="match_parent">
 
             <ScrollView
+                android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -174,7 +177,6 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/background"
                         android:orientation="vertical"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
@@ -367,12 +369,6 @@
                 </LinearLayout>
 
             </ScrollView>
-
-            <View
-                android:layout_marginBottom="1px"
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:background="@color/background" />
 
             <LinearLayout
                 android:id="@+id/fl_action"

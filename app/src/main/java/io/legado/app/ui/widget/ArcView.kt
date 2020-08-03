@@ -18,7 +18,7 @@ class ArcView @JvmOverloads constructor(
     private val mArcHeight: Int
 
     //背景颜色
-    private val mBgColor: Int
+    private var mBgColor: Int
     private val mPaint: Paint = Paint()
     private val mDirectionTop: Boolean
     val rect = Rect()
@@ -76,4 +76,8 @@ class ArcView @JvmOverloads constructor(
         setMeasuredDimension(mWidth, mHeight)
     }
 
+    fun setBgColor(color: Int) {
+        mBgColor = color
+        invalidate()
+    }
 }
