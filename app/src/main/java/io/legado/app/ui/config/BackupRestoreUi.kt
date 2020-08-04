@@ -87,7 +87,6 @@ object BackupRestoreUi {
                         val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
                         if (doc?.canWrite() == true) {
                             Restore.restore(fragment.requireContext(), backupPath)
-                            fragment.toast(R.string.restore_success)
                         } else {
                             selectBackupFolder(fragment, restoreSelectRequestCode)
                         }
@@ -135,8 +134,6 @@ object BackupRestoreUi {
                 AppConfig.backupPath = currentPath
                 Coroutine.async {
                     Restore.restore(App.INSTANCE, currentPath)
-                }.onSuccess {
-                    App.INSTANCE.toast(R.string.restore_success)
                 }
             }
             selectFolderRequestCode -> {
@@ -175,8 +172,6 @@ object BackupRestoreUi {
                     AppConfig.backupPath = uri.toString()
                     Coroutine.async {
                         Restore.restore(App.INSTANCE, uri.toString())
-                    }.onSuccess {
-                        App.INSTANCE.toast(R.string.restore_success)
                     }
                 }
             }

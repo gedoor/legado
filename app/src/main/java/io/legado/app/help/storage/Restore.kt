@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.toast
 import java.io.File
 
 object Restore {
@@ -173,11 +174,12 @@ object Restore {
             ReadBook.loadContent(resetPageOffset = false)
         }
         withContext(Main) {
-            App.INSTANCE.applyDayNight()
-            postEvent(EventBus.RECREATE, "true")
+            App.INSTANCE.toast(R.string.restore_success)
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
+            App.INSTANCE.applyDayNight()
+            postEvent(EventBus.RECREATE, "true")
         }
     }
 
