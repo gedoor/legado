@@ -14,6 +14,7 @@
         app:title="@string/about">
 
         <LinearLayout
+            android:id="@+id/ll_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_card_view"
