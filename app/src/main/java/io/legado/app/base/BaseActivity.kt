@@ -1,15 +1,19 @@
 package io.legado.app.base
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyOpenTint
 import io.legado.app.utils.applyTint
@@ -26,6 +30,20 @@ abstract class BaseActivity(
     private val theme: Theme = Theme.Auto
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
+
+    override fun onCreateView(
+        parent: View?,
+        name: String,
+        context: Context,
+        attrs: AttributeSet
+    ): View? {
+        if (name == "androidx.appcompat.view.menu.ListMenuItemView" &&
+            parent?.parent is FrameLayout
+        ) {
+            (parent.parent as View).setBackgroundColor(backgroundColor)
+        }
+        return super.onCreateView(parent, name, context, attrs)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.disableAutoFill()

@@ -35,11 +35,11 @@ object SyncBookProgress {
                     val json = file.readText()
                     GSON.fromJsonArray<BookProgress>(json)?.forEach {
                         App.db.bookDao().upBookProgress(
-                            it.bookUrl,
-                            it.durChapterIndex,
-                            it.durChapterPos,
-                            it.durChapterTime,
-                            it.durChapterTitle
+                            bookUrl = it.bookUrl,
+                            durChapterIndex = it.durChapterIndex,
+                            durChapterPos = it.durChapterPos,
+                            durChapterTime = it.durChapterTime,
+                            durChapterTitle = it.durChapterTitle
                         )
                     }
                 }
