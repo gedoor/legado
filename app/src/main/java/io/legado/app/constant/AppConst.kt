@@ -67,4 +67,9 @@ object AppConst {
         }
         """.trimIndent()
     }
+
+    val menuViewNames = arrayOf(
+        "com.android.internal.view.menu.ListMenuItemView",
+        "androidx.appcompat.view.menu.ListMenuItemView"
+    )
 }

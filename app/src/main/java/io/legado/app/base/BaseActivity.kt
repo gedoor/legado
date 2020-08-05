@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
@@ -37,9 +38,7 @@ abstract class BaseActivity(
         context: Context,
         attrs: AttributeSet
     ): View? {
-        if (name == "androidx.appcompat.view.menu.ListMenuItemView" &&
-            parent?.parent is FrameLayout
-        ) {
+        if (AppConst.menuViewNames.contains(name) && parent?.parent is FrameLayout) {
             (parent.parent as View).setBackgroundColor(backgroundColor)
         }
         return super.onCreateView(parent, name, context, attrs)

@@ -19,6 +19,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefBoolean
@@ -68,6 +69,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(bottomBackground)
         viewModel.initData(arguments)
         showTitle()
         initMenu()

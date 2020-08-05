@@ -7,13 +7,11 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
-        android:background="@color/background_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:background="@color/background_card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

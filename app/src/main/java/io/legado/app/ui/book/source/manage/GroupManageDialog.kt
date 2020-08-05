@@ -22,6 +22,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
@@ -54,6 +55,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.setBackgroundColor(backgroundColor)
         initData()
     }
 
@@ -128,6 +130,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
+                setBackgroundColor(context.backgroundColor)
                 tv_group.text = item
             }
         }
