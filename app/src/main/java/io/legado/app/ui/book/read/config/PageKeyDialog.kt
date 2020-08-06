@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.KeyEvent
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefInt
@@ -17,6 +18,7 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
 
     init {
         setContentView(R.layout.dialog_page_key)
+        content_view.setBackgroundColor(context.backgroundColor)
         et_prev.setText(context.getPrefInt(PreferKey.prevKey).toString())
         et_next.setText(context.getPrefInt(PreferKey.nextKey).toString())
         tv_ok.onClick {
