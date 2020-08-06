@@ -248,22 +248,22 @@ class PhotoView : ImageView {
         val img = drawable
         val w = width
         val h = height
-        val imgw = getDrawableWidth(img)
-        val imgh = getDrawableHeight(img)
-        mBaseRect[0f, 0f, imgw.toFloat()] = imgh.toFloat()
+        val imgW = getDrawableWidth(img)
+        val imgH = getDrawableHeight(img)
+        mBaseRect[0f, 0f, imgW.toFloat()] = imgH.toFloat()
 
         // 以图片中心点居中位移
-        val tx = (w - imgw) / 2
-        val ty = (h - imgh) / 2
+        val tx = (w - imgW) / 2
+        val ty = (h - imgH) / 2
         var sx = 1f
         var sy = 1f
 
         // 缩放，默认不超过屏幕大小
-        if (imgw > w) {
-            sx = w.toFloat() / imgw
+        if (imgW > w) {
+            sx = w.toFloat() / imgW
         }
-        if (imgh > h) {
-            sy = h.toFloat() / imgh
+        if (imgH > h) {
+            sy = h.toFloat() / imgH
         }
         val scale = if (sx < sy) sx else sy
         mBaseMatrix.reset()
@@ -299,11 +299,11 @@ class PhotoView : ImageView {
         if (!hasDrawable) return
         if (!isKnowSize) return
         val img = drawable
-        val imgw = getDrawableWidth(img)
-        val imgh = getDrawableHeight(img)
-        if (imgw > mWidgetRect.width() || imgh > mWidgetRect.height()) {
-            val scaleX = imgw / mImgRect.width()
-            val scaleY = imgh / mImgRect.height()
+        val imgW = getDrawableWidth(img)
+        val imgH = getDrawableHeight(img)
+        if (imgW > mWidgetRect.width() || imgH > mWidgetRect.height()) {
+            val scaleX = imgW / mImgRect.width()
+            val scaleY = imgH / mImgRect.height()
             mScale = if (scaleX > scaleY) scaleX else scaleY
             mAnimMatrix.postScale(mScale, mScale, mScreenCenter.x, mScreenCenter.y)
             executeTranslate()
@@ -370,9 +370,9 @@ class PhotoView : ImageView {
 
     private fun resetBase() {
         val img = drawable
-        val imgw = getDrawableWidth(img)
-        val imgh = getDrawableHeight(img)
-        mBaseRect[0f, 0f, imgw.toFloat()] = imgh.toFloat()
+        val imgW = getDrawableWidth(img)
+        val imgH = getDrawableHeight(img)
+        mBaseRect[0f, 0f, imgW.toFloat()] = imgH.toFloat()
         mBaseMatrix.set(mSynthesisMatrix)
         mBaseMatrix.mapRect(mBaseRect)
         mHalfBaseRectWidth = mBaseRect.width() / 2
