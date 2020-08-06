@@ -703,7 +703,7 @@
     <string name="auto_page_speed">自动翻页速度</string>
     <string name="sort_by_url">地址排序</string>
     <string name="backup_summary">本地和WebDav一起备份</string>
-    <string name="restore_summary">优先从WebDav恢复,失败时从本地恢复</string>
+    <string name="restore_summary">优先从WebDav恢复,长按从本地恢复</string>
     <string name="import_old_summary">选择旧版备份文件夹</string>
     <string name="enabled">已启用</string>
     <string name="disabled">已禁用</string>

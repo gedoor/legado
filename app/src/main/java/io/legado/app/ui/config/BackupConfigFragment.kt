@@ -46,6 +46,8 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
         upPreferenceSummary(PreferKey.webDavAccount, getPrefString(PreferKey.webDavAccount))
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
+        findPreference<io.legado.app.ui.widget.prefs.Preference>("web_dav_restore")
+            ?.onLongClick = { BackupRestoreUi.restoreByFolder(this) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,6 +115,7 @@ class BackupConfigFragment : PreferenceFragmentCompat(),
         }
         return super.onPreferenceTreeClick(preference)
     }
+
 
     private fun restoreIgnore() {
         val checkedItems = BooleanArray(Restore.ignoreKeys.size) {

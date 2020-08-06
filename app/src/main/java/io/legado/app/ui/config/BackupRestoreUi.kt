@@ -100,6 +100,10 @@ object BackupRestoreUi {
         }
     }
 
+    fun restoreByFolder(fragment: Fragment) {
+        selectBackupFolder(fragment, restoreSelectRequestCode)
+    }
+
     private fun restoreUsePermission(fragment: Fragment, path: String) {
         PermissionsCompat.Builder(fragment)
             .addPermissions(*Permissions.Group.STORAGE)

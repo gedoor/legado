@@ -705,7 +705,7 @@
     <string name="auto_page_speed">Auto scroll speed</string>
     <string name="sort_by_url">Sort by URL</string>
     <string name="backup_summary">Backup the local and WebDav simultaneously</string>
-    <string name="restore_summary">Restore from WebDAV first, and Restore form the local backup if failed</string>
+    <string name="restore_summary">Restore from WebDAV first, Restore form the local backup on long click</string>
     <string name="import_old_summary">Select a legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>

@@ -702,7 +702,7 @@
     <string name="text_font_weight_converter">文章字體轉換</string>
     <string name="select_backup_path">請選擇備份路徑</string>
     <string name="backup_summary">本地和WebDav壹起備份</string>
-    <string name="restore_summary">優先從WebDav恢復,失敗時從本地恢復</string>
+    <string name="restore_summary">優先從WebDav恢復,長按從本地恢復</string>
     <string name="import_old_summary">選擇舊版備份文件夾</string>
     <string name="enabled">已啓用</string>
     <string name="disabled">已禁用</string>

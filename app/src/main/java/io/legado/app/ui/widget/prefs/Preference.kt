@@ -14,10 +14,13 @@ import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
 import org.jetbrains.anko.layoutInflater
+import org.jetbrains.anko.sdk27.listeners.onLongClick
 import kotlin.math.roundToInt
 
 class Preference(context: Context, attrs: AttributeSet) :
     androidx.preference.Preference(context, attrs) {
+
+    var onLongClick: (() -> Unit)? = null
 
     init {
         // isPersistent = true
@@ -97,6 +100,10 @@ class Preference(context: Context, attrs: AttributeSet) :
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         bindView<View>(context, holder, icon, title, summary, null, null)
         super.onBindViewHolder(holder)
+        holder?.itemView?.onLongClick {
+            onLongClick?.invoke()
+            true
+        }
     }
 
 }
