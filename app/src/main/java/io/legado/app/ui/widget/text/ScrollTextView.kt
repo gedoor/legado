@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
 
-class ScrollTextView(context: Context?, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
+class ScrollTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     //滑动距离的最大边界
     private var mOffsetHeight = 0
 
