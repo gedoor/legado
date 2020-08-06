@@ -152,7 +152,6 @@
 -keep class **.data.**{*;}
 
 -dontwarn rx.**
-
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 -dontwarn org.apache.log4j.lf5.viewer.**
@@ -209,10 +208,10 @@
 -dontwarn nl.siegmann.epublib.**
 -dontwarn org.xmlpull.**
 -keep class nl.siegmann.epublib.**{*;}
--keep class javax.xml**{*;}
--keep class org.xmlpull**{*;}
+-keep class javax.xml.**{*;}
+-keep class org.xmlpull.**{*;}
 
--keep class org.simpleframework.xml**{*;}
+-keep class org.simpleframework.**{*;}
 -dontwarn org.simpleframework.xml.**
 
 -keepclassmembers class * {
