@@ -729,5 +729,6 @@
     <string name="read_config">Reading interface settings</string>
     <string name="group_name">Group name</string>
     <string name="note_content">Remarks section</string>
+    <string name="e_ink_change_bg">E-Ink模式下只有白纸黑字,不显示其它背景</string>
 
 </resources>

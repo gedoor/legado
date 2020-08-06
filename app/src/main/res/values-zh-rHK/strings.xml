@@ -728,4 +728,5 @@
     <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="group_name">分組名稱</string>
     <string name="note_content">備註內容</string>
+    <string name="e_ink_change_bg">E-Ink模式下只有白纸黑字,不显示其它背景</string>
 </resources>
