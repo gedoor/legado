@@ -17,7 +17,6 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.activity
 import io.legado.app.utils.screenshot
 import kotlinx.android.synthetic.main.activity_book_read.view.*
-import java.util.*
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -110,9 +109,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     fun upPageAnim() {
         pageDelegate?.onDestroy()
         pageDelegate = null
-        pageDelegate = if (ReadBook.imageStyle?.toUpperCase(Locale.ROOT) == "FULL") {
-            ScrollPageDelegate(this)
-        } else when (ReadBookConfig.pageAnim) {
+        pageDelegate = when (ReadBookConfig.pageAnim) {
             0 -> CoverPageDelegate(this)
             1 -> SlidePageDelegate(this)
             2 -> SimulationPageDelegate(this)
