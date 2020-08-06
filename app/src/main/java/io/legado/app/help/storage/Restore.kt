@@ -37,14 +37,16 @@ object Restore {
     val ignoreKeys = arrayOf(
         "readConfig",
         PreferKey.themeMode,
-        PreferKey.bookshelfLayout
+        PreferKey.bookshelfLayout,
+        PreferKey.showRss
     )
 
     //忽略标题
     val ignoreTitle = arrayOf(
         App.INSTANCE.getString(R.string.read_config),
         App.INSTANCE.getString(R.string.theme_mode),
-        App.INSTANCE.getString(R.string.bookshelf_layout)
+        App.INSTANCE.getString(R.string.bookshelf_layout),
+        App.INSTANCE.getString(R.string.show_rss)
     )
 
     //默认忽略keys
@@ -179,7 +181,8 @@ object Restore {
                 LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
             App.INSTANCE.applyDayNight()
-            postEvent(EventBus.RECREATE, "true")
+            postEvent(EventBus.SHOW_RSS, "")
+            postEvent(EventBus.RECREATE, "")
         }
     }
 
@@ -189,6 +192,7 @@ object Restore {
             readPrefKeys.contains(key) && ignoreReadConfig -> false
             PreferKey.themeMode == key && ignoreThemeMode -> false
             PreferKey.bookshelfLayout == key && ignoreBookshelfLayout -> false
+            PreferKey.showRss == key && ignoreShowRss -> false
             else -> true
         }
     }
@@ -199,6 +203,8 @@ object Restore {
         get() = ignoreConfig[PreferKey.themeMode] == true
     private val ignoreBookshelfLayout: Boolean
         get() = ignoreConfig[PreferKey.bookshelfLayout] == true
+    private val ignoreShowRss: Boolean
+        get() = ignoreConfig[PreferKey.showRss] == true
 
     fun saveIgnoreConfig() {
         val json = GSON.toJson(ignoreConfig)
