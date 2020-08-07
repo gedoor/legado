@@ -34,15 +34,17 @@ object BookList {
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
         if (!scope.isActive) throw CancellationException()
-        val analyzeRule = AnalyzeRule(null)
+        val variableBook = SearchBook()
+        val analyzeRule = AnalyzeRule(variableBook)
         analyzeRule.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
             if (baseUrl.matches(it.toRegex())) {
                 Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
-                getInfoItem(scope, analyzeRule, bookSource, baseUrl)?.let { searchBook ->
-                    searchBook.infoHtml = body
-                    bookList.add(searchBook)
-                }
+                getInfoItem(scope, analyzeRule, bookSource, baseUrl, variableBook.variable)
+                    ?.let { searchBook ->
+                        searchBook.infoHtml = body
+                        bookList.add(searchBook)
+                    }
                 return bookList
             }
         }
@@ -65,10 +67,11 @@ object BookList {
         collections = analyzeRule.getElements(ruleList)
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
-            getInfoItem(scope, analyzeRule, bookSource, baseUrl)?.let { searchBook ->
-                searchBook.infoHtml = body
-                bookList.add(searchBook)
-            }
+            getInfoItem(scope, analyzeRule, bookSource, baseUrl, variableBook.variable)
+                ?.let { searchBook ->
+                    searchBook.infoHtml = body
+                    bookList.add(searchBook)
+                }
         } else {
             val ruleName = analyzeRule.splitSourceRule(bookListRule.name)
             val ruleBookUrl = analyzeRule.splitSourceRule(bookListRule.bookUrl)
@@ -82,10 +85,21 @@ object BookList {
             for ((index, item) in collections.withIndex()) {
                 if (!scope.isActive) throw CancellationException()
                 getSearchItem(
-                    scope, item, analyzeRule, bookSource, baseUrl, index == 0,
-                    ruleName = ruleName, ruleBookUrl = ruleBookUrl, ruleAuthor = ruleAuthor,
-                    ruleCoverUrl = ruleCoverUrl, ruleIntro = ruleIntro, ruleKind = ruleKind,
-                    ruleLastChapter = ruleLastChapter, ruleWordCount = ruleWordCount
+                    scope,
+                    item,
+                    analyzeRule,
+                    bookSource,
+                    baseUrl,
+                    variableBook.variable,
+                    index == 0,
+                    ruleName = ruleName,
+                    ruleBookUrl = ruleBookUrl,
+                    ruleAuthor = ruleAuthor,
+                    ruleCoverUrl = ruleCoverUrl,
+                    ruleIntro = ruleIntro,
+                    ruleKind = ruleKind,
+                    ruleLastChapter = ruleLastChapter,
+                    ruleWordCount = ruleWordCount
                 )?.let { searchBook ->
                     if (baseUrl == searchBook.bookUrl) {
                         searchBook.infoHtml = body
@@ -105,9 +119,10 @@ object BookList {
         scope: CoroutineScope,
         analyzeRule: AnalyzeRule,
         bookSource: BookSource,
-        baseUrl: String
+        baseUrl: String,
+        variable: String?
     ): SearchBook? {
-        val searchBook = SearchBook()
+        val searchBook = SearchBook(variable = variable)
         searchBook.bookUrl = baseUrl
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
@@ -164,6 +179,7 @@ object BookList {
         analyzeRule: AnalyzeRule,
         bookSource: BookSource,
         baseUrl: String,
+        variable: String?,
         log: Boolean,
         ruleName: List<AnalyzeRule.SourceRule>,
         ruleBookUrl: List<AnalyzeRule.SourceRule>,
@@ -174,7 +190,7 @@ object BookList {
         ruleIntro: List<AnalyzeRule.SourceRule>,
         ruleLastChapter: List<AnalyzeRule.SourceRule>
     ): SearchBook? {
-        val searchBook = SearchBook()
+        val searchBook = SearchBook(variable = variable)
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
         searchBook.type = bookSource.bookSourceType
