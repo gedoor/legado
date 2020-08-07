@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
+import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
@@ -146,23 +147,24 @@ object Restore {
                     e.printStackTrace()
                 }
             }
-            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all
-                ?.let { map ->
-                    val edit = App.INSTANCE.defaultSharedPreferences.edit()
-                    map.forEach {
-                        if (keyIsNotIgnore(it.key)) {
-                            when (val value = it.value) {
-                                is Int -> edit.putInt(it.key, value)
-                                is Boolean -> edit.putBoolean(it.key, value)
-                                is Long -> edit.putLong(it.key, value)
-                                is Float -> edit.putFloat(it.key, value)
-                                is String -> edit.putString(it.key, value)
-                                else -> Unit
-                            }
+            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all?.let { map ->
+                val edit = App.INSTANCE.defaultSharedPreferences.edit()
+                map.forEach {
+                    if (keyIsNotIgnore(it.key)) {
+                        when (val value = it.value) {
+                            is Int -> edit.putInt(it.key, value)
+                            is Boolean -> edit.putBoolean(it.key, value)
+                            is Long -> edit.putLong(it.key, value)
+                            is Float -> edit.putFloat(it.key, value)
+                            is String -> edit.putString(it.key, value)
+                            else -> Unit
                         }
                     }
-                    edit.apply()
                 }
+                edit.apply()
+                AppConfig.replaceEnableDefault =
+                    App.INSTANCE.getPrefBoolean(PreferKey.replaceEnableDefault, true)
+            }
             ReadBookConfig.apply {
                 styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
                 shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)

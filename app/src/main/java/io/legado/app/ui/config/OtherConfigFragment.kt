@@ -114,6 +114,8 @@ class OtherConfigFragment : PreferenceFragmentCompat(),
                 key,
                 getPrefString(PreferKey.defaultCover)
             )
+            PreferKey.replaceEnableDefault -> AppConfig.replaceEnableDefault =
+                App.INSTANCE.getPrefBoolean(PreferKey.replaceEnableDefault, true)
         }
     }
 

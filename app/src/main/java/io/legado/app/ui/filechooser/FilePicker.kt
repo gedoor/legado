@@ -8,6 +8,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.toast
 import org.jetbrains.anko.toast
 
@@ -47,7 +48,7 @@ object FilePicker {
                     }
                 }
             }
-        }.show()
+        }.show().applyTint()
     }
 
     fun selectFolder(
@@ -84,7 +85,7 @@ object FilePicker {
                         }
                     }
                 }
-            }.show()
+            }.show().applyTint()
     }
 
     fun selectFile(
@@ -124,7 +125,7 @@ object FilePicker {
                     }
                 }
             }
-        }.show()
+        }.show().applyTint()
     }
 
     fun selectFile(
@@ -165,7 +166,7 @@ object FilePicker {
                         }
                     }
                 }
-            }.show()
+            }.show().applyTint()
     }
 
     private fun createSelectFileIntent(): Intent {
