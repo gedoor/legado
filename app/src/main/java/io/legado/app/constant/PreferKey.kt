@@ -50,6 +50,7 @@ object PreferKey {
     const val barElevation = "barElevation"
     const val transparentStatusBar = "transparentStatusBar"
     const val defaultCover = "defaultCover"
+    const val replaceEnableDefault = "replaceEnableDefault"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

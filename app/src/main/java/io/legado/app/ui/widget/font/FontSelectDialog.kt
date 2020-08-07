@@ -22,6 +22,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.*
@@ -58,6 +59,7 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(requireContext().bottomBackground)
         tool_bar.setTitle(R.string.select_font)
         tool_bar.inflateMenu(R.menu.font_select)
         tool_bar.setOnMenuItemClickListener(this)

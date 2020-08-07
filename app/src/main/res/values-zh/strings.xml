@@ -729,4 +729,6 @@
     <string name="group_name">分组名称</string>
     <string name="note_content">备注内容</string>
     <string name="e_ink_change_bg">E-Ink模式下只有白纸黑字,不显示其它背景</string>
+    <string name="replace_enable_default_t">默认启用替换净化</string>
+    <string name="replace_enable_default_s">新加入书架的书是否启用替换净化</string>
 </resources>

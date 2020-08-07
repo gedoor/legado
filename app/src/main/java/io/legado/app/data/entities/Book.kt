@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
+import io.legado.app.help.AppConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -51,7 +52,7 @@ data class Book(
     var canUpdate: Boolean = true,              // 刷新书架时更新书籍信息
     var order: Int = 0,                         // 手动排序
     var originOrder: Int = 0,                   //书源排序
-    var useReplaceRule: Boolean = true,         // 正文使用净化替换规则
+    var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,         // 正文使用净化替换规则
     var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
 ) : Parcelable, BaseBook {
 
