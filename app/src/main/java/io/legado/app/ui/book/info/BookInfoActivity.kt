@@ -24,6 +24,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
@@ -63,6 +64,7 @@ class BookInfoActivity :
         arc_view.setBgColor(backgroundColor)
         ll_info.setBackgroundColor(backgroundColor)
         scroll_view.setBackgroundColor(backgroundColor)
+        tv_shelf.setBackgroundColor(bottomBackground)
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.initData(intent)
