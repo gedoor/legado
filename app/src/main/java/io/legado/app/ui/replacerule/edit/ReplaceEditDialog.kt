@@ -17,6 +17,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
@@ -64,6 +65,7 @@ class ReplaceEditDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(bottomBackground)
         mSoftKeyboardTool = KeyboardToolPop(requireContext(), AppConst.keyboardToolChars, this)
         tool_bar.inflateMenu(R.menu.replace_edit)
         tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
