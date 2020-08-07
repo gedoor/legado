@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.dp
@@ -140,10 +141,7 @@ object ATH {
     }
 
     fun setAlertDialogTint(dialog: AlertDialog): AlertDialog {
-        val background = GradientDrawable()
-        background.cornerRadius = 3F.dp
-        background.setColor(dialog.context.backgroundColor)
-        dialog.window?.setBackgroundDrawable(background)
+        dialog.window?.setBackgroundDrawable(getDialogBackground())
         val colorStateList = Selector.colorBuild()
             .setDefaultColor(ThemeStore.accentColor(dialog.context))
             .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(dialog.context)))
@@ -231,6 +229,13 @@ object ATH {
             is ViewPager -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
             is ScrollView -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
         }
+    }
+
+    fun getDialogBackground(): GradientDrawable {
+        val background = GradientDrawable()
+        background.cornerRadius = 3F.dp
+        background.setColor(App.INSTANCE.backgroundColor)
+        return background
     }
 
     private val DEFAULT_EFFECT_FACTORY = object : RecyclerView.EdgeEffectFactory() {

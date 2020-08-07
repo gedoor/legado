@@ -9,9 +9,9 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
@@ -27,7 +27,7 @@ import io.legado.app.utils.*
 
 
 @Suppress("SameParameterValue")
-class ThemeConfigFragment : PreferenceFragmentCompat(),
+class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     val items = arrayListOf("极简", "曜夜", "经典", "黑白", "A屏黑")

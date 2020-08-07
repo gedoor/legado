@@ -2,9 +2,8 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:divider="@color/transparent"
-    app:allowDividerBelow="false"
     app:allowDividerAbove="false"
-    >
+    app:allowDividerBelow="false">
 
     <io.legado.app.ui.widget.prefs.Preference
         android:key="bookSourceManage"
@@ -41,9 +40,9 @@
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/setting"
-        app:iconSpaceReserved="false"
         app:allowDividerAbove="true"
-        app:allowDividerBelow="false" >
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="web_dav_setting"
@@ -74,8 +73,8 @@
         android:key="aboutCategory"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
-        app:layout="@layout/view_preference_category"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="donate"

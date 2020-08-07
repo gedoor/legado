@@ -1,6 +1,5 @@
 package io.legado.app.ui.about
 
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -9,9 +8,8 @@ import android.view.Menu
 import android.view.MenuItem
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.dp
 import io.legado.app.utils.openUrl
 import kotlinx.android.synthetic.main.activity_about.*
 import org.jetbrains.anko.share
@@ -20,10 +18,7 @@ import org.jetbrains.anko.share
 class AboutActivity : BaseActivity(R.layout.activity_about) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val background = GradientDrawable()
-        background.cornerRadius = 3F.dp
-        background.setColor(backgroundColor)
-        ll_about.background = background
+        ll_about.background = ATH.getDialogBackground()
         val fTag = "aboutFragment"
         var aboutFragment = supportFragmentManager.findFragmentByTag(fTag)
         if (aboutFragment == null) aboutFragment = AboutFragment()

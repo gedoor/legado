@@ -11,9 +11,9 @@ import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
@@ -29,7 +29,7 @@ import io.legado.app.utils.*
 import java.io.File
 
 
-class OtherConfigFragment : PreferenceFragmentCompat(),
+class OtherConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val requestCodeCover = 231
