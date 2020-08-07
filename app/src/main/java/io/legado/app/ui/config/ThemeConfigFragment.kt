@@ -191,7 +191,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private fun backgroundIsDark(sharedPreferences: SharedPreferences): Boolean {
         return !ColorUtils.isColorLight(
             sharedPreferences.getInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-        ) && !ColorUtils.isColorLight(
+        ) || !ColorUtils.isColorLight(
             sharedPreferences.getInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
         )
     }
@@ -199,7 +199,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private fun backgroundIsLight(sharedPreferences: SharedPreferences): Boolean {
         return ColorUtils.isColorLight(
             sharedPreferences.getInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_800))
-        ) && ColorUtils.isColorLight(
+        ) || ColorUtils.isColorLight(
             sharedPreferences.getInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
         )
     }
