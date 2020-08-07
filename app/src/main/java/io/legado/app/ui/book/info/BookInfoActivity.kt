@@ -64,7 +64,7 @@ class BookInfoActivity :
         arc_view.setBgColor(backgroundColor)
         ll_info.setBackgroundColor(backgroundColor)
         scroll_view.setBackgroundColor(backgroundColor)
-        tv_shelf.setBackgroundColor(bottomBackground)
+        fl_action.setBackgroundColor(bottomBackground)
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.initData(intent)
