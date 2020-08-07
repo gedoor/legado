@@ -53,6 +53,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var groups = linkedSetOf<String>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        ll_history.setBackgroundColor(backgroundColor)
         initRecyclerView()
         initSearchView()
         initOtherView()
