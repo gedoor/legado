@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
 import io.legado.app.utils.FileUtils
@@ -15,7 +17,6 @@ import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
 import java.io.File
 import java.text.SimpleDateFormat
@@ -28,16 +29,16 @@ object WebDavHelp {
 
     val rootWebDavUrl: String
         get() {
-        var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
-        if (url.isNullOrEmpty()) {
-            url = defaultWebDavUrl
-        }
+            var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
+            if (url.isNullOrEmpty()) {
+                url = defaultWebDavUrl
+            }
             if (!url.endsWith("/")) url = "${url}/"
             if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
                 url = "${url}legado/"
             }
-        return url
-    }
+            return url
+        }
 
     fun initWebDav(): Boolean {
         val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
@@ -73,7 +74,10 @@ object WebDavHelp {
         val names = withContext(IO) { getWebDavFileNames() }
         return if (names.isNotEmpty()) {
             withContext(Main) {
-                context.selector(title = "选择恢复文件", items = names) { _, index ->
+                context.selector(
+                    title = context.getString(R.string.select_restore_file),
+                    items = names
+                ) { _, index ->
                     if (index in 0 until names.size) {
                         restoreWebDav(names[index], restoreSuccess)
                     }
