@@ -105,6 +105,8 @@ object WebDavHelp {
             }
         }.onSuccess {
             success.invoke()
+        }.onError {
+            App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
         }
     }
 
