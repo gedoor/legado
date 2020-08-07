@@ -43,7 +43,7 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
             }
         }
         SyncBookProgress.downloadBookProgress()
-        root_view.postDelayed({ startMainActivity() }, 300)
+        root_view.postDelayed({ startMainActivity() }, 500)
     }
 
     private fun startMainActivity() {
