@@ -14,8 +14,7 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
-class WebDav @Throws(MalformedURLException::class)
-constructor(urlStr: String) {
+class WebDav(urlStr: String) {
     companion object {
         // 指定返回哪些属性
         private const val DIR =
