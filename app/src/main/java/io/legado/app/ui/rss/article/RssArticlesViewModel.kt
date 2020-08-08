@@ -27,10 +27,10 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-
     fun loadContent(rssSource: RssSource) {
         isLoading = true
-        Rss.getArticles(sortName, sortUrl, rssSource, null, 1)
+        page = 1
+        Rss.getArticles(sortName, sortUrl, rssSource, null, page)
             .onSuccess(Dispatchers.IO) {
                 nextPageUrl = it.nextPageUrl
                 it.articles.let { list ->
