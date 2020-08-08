@@ -48,7 +48,7 @@ object LocalBook {
         } else {
             name = str.substring(0, authorIndex)
             author = str.substring(authorIndex)
-            author = BookHelp.formatAuthor(author)
+            author = BookHelp.formatBookAuthor(author)
         }
         val smhStart = name.indexOf("《")
         val smhEnd = name.indexOf("》")

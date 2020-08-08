@@ -139,12 +139,12 @@ object BookList {
             }
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取书名")
-            searchBook.name = analyzeRule.getString(name).trim { it <= ' ' }
+            searchBook.name = BookHelp.formatBookName(analyzeRule.getString(name))
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.name}")
             if (searchBook.name.isNotEmpty()) {
                 if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取作者")
-                searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(author))
+                searchBook.author = BookHelp.formatBookAuthor(analyzeRule.getString(author))
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.author}")
                 if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取分类")
@@ -199,12 +199,12 @@ object BookList {
         analyzeRule.setContent(item)
         if (!scope.isActive) throw CancellationException()
         Debug.log(bookSource.bookSourceUrl, "┌获取书名", log)
-        searchBook.name = analyzeRule.getString(ruleName).trim { it <= ' ' }
+        searchBook.name = BookHelp.formatBookName(analyzeRule.getString(ruleName))
         Debug.log(bookSource.bookSourceUrl, "└${searchBook.name}", log)
         if (searchBook.name.isNotEmpty()) {
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取作者", log)
-            searchBook.author = BookHelp.formatAuthor(analyzeRule.getString(ruleAuthor))
+            searchBook.author = BookHelp.formatBookAuthor(analyzeRule.getString(ruleAuthor))
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.author}", log)
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取分类", log)

@@ -34,12 +34,12 @@ object BookInfo {
             }
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取书名")
-        analyzeRule.getString(infoRule.name).trim { it <= ' ' }.let {
+        BookHelp.formatBookName(analyzeRule.getString(infoRule.name)).trim { it <= ' ' }.let {
             if (it.isNotEmpty()) book.name = it
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.name}")
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
-        BookHelp.formatAuthor(analyzeRule.getString(infoRule.author)).let {
+        BookHelp.formatBookAuthor(analyzeRule.getString(infoRule.author)).let {
             if (it.isNotEmpty()) book.author = it.replace(AppPattern.authorRegex, "")
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.author}")

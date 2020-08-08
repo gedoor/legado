@@ -110,12 +110,16 @@ object BookHelp {
         return folderName.replace("[\\\\/:*?\"<>|.]".toRegex(), "")
     }
 
-    fun formatAuthor(author: String?): String {
+    fun formatBookName(name: String): String {
+        return name
+            .replace("(.*?)\\s*作\\s*者.*".toRegex(), "$1")
+            .trim { it <= ' ' }
+    }
+
+    fun formatBookAuthor(author: String): String {
         return author
-            ?.replace("作\\s*者\\s*[：:]\n*".toRegex(), "")
-            ?.replace("\\s+".toRegex(), " ")
-            ?.trim { it <= ' ' }
-            ?: ""
+            .replace(".*?作\\s*?者[:：](.+)".toRegex(), "$1")
+            .trim { it <= ' ' }
     }
 
     /**
