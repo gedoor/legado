@@ -5,6 +5,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.NetworkUtils
@@ -33,12 +34,12 @@ object BookInfo {
             }
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取书名")
-        analyzeRule.getString(infoRule.name).let {
+        analyzeRule.getString(infoRule.name).trim { it <= ' ' }.let {
             if (it.isNotEmpty()) book.name = it
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.name}")
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
-        analyzeRule.getString(infoRule.author).let {
+        BookHelp.formatAuthor(analyzeRule.getString(infoRule.author)).let {
             if (it.isNotEmpty()) book.author = it.replace(AppPattern.authorRegex, "")
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.author}")
