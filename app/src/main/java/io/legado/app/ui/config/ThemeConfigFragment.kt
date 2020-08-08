@@ -17,11 +17,10 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.ui.widget.number.NumberPickerDialog
+import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.prefs.IconListPreference
 import io.legado.app.utils.*
 
@@ -40,6 +39,46 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             }
         }
         upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
+        findPreference<ColorPreference>(PreferKey.cBackground)?.let {
+            it.onSaveColor = { color ->
+                if (!ColorUtils.isColorLight(color)) {
+                    toast("白天背景不能太暗")
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+        findPreference<ColorPreference>(PreferKey.cBBackground)?.let {
+            it.onSaveColor = { color ->
+                if (!ColorUtils.isColorLight(color)) {
+                    toast("白天底栏不能太暗")
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+        findPreference<ColorPreference>(PreferKey.cNBackground)?.let {
+            it.onSaveColor = { color ->
+                if (ColorUtils.isColorLight(color)) {
+                    toast("夜间背景不能太亮")
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+        findPreference<ColorPreference>(PreferKey.cNBBackground)?.let {
+            it.onSaveColor = { color ->
+                if (ColorUtils.isColorLight(color)) {
+                    toast("夜间底栏不能太亮")
+                    true
+                } else {
+                    false
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,39 +121,13 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             PreferKey.cAccent,
             PreferKey.cBackground,
             PreferKey.cBBackground -> {
-                if (backgroundIsDark(sharedPreferences)) {
-                    alert {
-                        title = "白天背景太暗"
-                        message = "将会恢复默认背景？"
-                        yesButton {
-                            upTheme(false)
-                        }
-                        noButton {
-                            upTheme(false)
-                        }
-                    }.show().applyTint()
-                } else {
-                    upTheme(false)
-                }
+                upTheme(false)
             }
             PreferKey.cNPrimary,
             PreferKey.cNAccent,
             PreferKey.cNBackground,
             PreferKey.cNBBackground -> {
-                if (backgroundIsLight(sharedPreferences)) {
-                    alert {
-                        title = "夜间背景太亮"
-                        message = "将会恢复默认背景？"
-                        yesButton {
-                            upTheme(true)
-                        }
-                        noButton {
-                            upTheme(true)
-                        }
-                    }.show().applyTint()
-                } else {
-                    upTheme(true)
-                }
+                upTheme(true)
             }
         }
 
@@ -186,22 +199,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 recreateActivities()
             }
         }.show().applyTint()
-    }
-
-    private fun backgroundIsDark(sharedPreferences: SharedPreferences): Boolean {
-        return !ColorUtils.isColorLight(
-            sharedPreferences.getInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-        ) || !ColorUtils.isColorLight(
-            sharedPreferences.getInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
-        )
-    }
-
-    private fun backgroundIsLight(sharedPreferences: SharedPreferences): Boolean {
-        return ColorUtils.isColorLight(
-            sharedPreferences.getInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_800))
-        ) || ColorUtils.isColorLight(
-            sharedPreferences.getInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
-        )
     }
 
     private fun upTheme(isNightTheme: Boolean) {
