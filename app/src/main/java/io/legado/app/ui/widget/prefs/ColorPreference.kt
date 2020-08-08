@@ -19,6 +19,8 @@ import io.legado.app.lib.theme.ColorUtils
 class ColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
     ColorPickerDialogListener {
 
+    var onSaveColor: ((color: Int) -> Boolean)? = null
+
     private val sizeNormal = 0
     private val sizeLarge = 1
 
@@ -140,6 +142,9 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
     }
 
     override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {
+        if (onSaveColor?.invoke(color) == true) {
+            return
+        }
         saveValue(color)
     }
 

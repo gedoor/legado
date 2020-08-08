@@ -139,7 +139,7 @@ object BookList {
             }
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取书名")
-            searchBook.name = analyzeRule.getString(name)
+            searchBook.name = analyzeRule.getString(name).trim { it <= ' ' }
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.name}")
             if (searchBook.name.isNotEmpty()) {
                 if (!scope.isActive) throw CancellationException()
@@ -199,7 +199,7 @@ object BookList {
         analyzeRule.setContent(item)
         if (!scope.isActive) throw CancellationException()
         Debug.log(bookSource.bookSourceUrl, "┌获取书名", log)
-        searchBook.name = analyzeRule.getString(ruleName)
+        searchBook.name = analyzeRule.getString(ruleName).trim { it <= ' ' }
         Debug.log(bookSource.bookSourceUrl, "└${searchBook.name}", log)
         if (searchBook.name.isNotEmpty()) {
             if (!scope.isActive) throw CancellationException()
