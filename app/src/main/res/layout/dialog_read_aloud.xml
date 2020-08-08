@@ -49,7 +49,7 @@
             android:tooltipText="@string/prev_sentence"
             android:contentDescription="@string/prev_sentence"
             android:src="@drawable/ic_skip_previous"
-            android:tint="@color/tv_text_default"
+            app:tint="@color/tv_text_default"
             tools:ignore="UnusedAttribute" />
 
         <ImageView
@@ -62,7 +62,7 @@
             android:tooltipText="@string/audio_play"
             android:contentDescription="@string/audio_play"
             android:src="@drawable/ic_play_24dp"
-            android:tint="@color/tv_text_default"
+            app:tint="@color/tv_text_default"
             tools:ignore="UnusedAttribute" />
 
         <ImageView
@@ -75,7 +75,7 @@
             android:contentDescription="@string/stop"
             android:tooltipText="@string/stop"
             android:src="@drawable/ic_stop_black_24dp"
-            android:tint="@color/tv_text_default"
+            app:tint="@color/tv_text_default"
             tools:ignore="UnusedAttribute" />
 
         <ImageView
@@ -88,7 +88,7 @@
             android:contentDescription="@string/next_sentence"
             android:tooltipText="@string/next_sentence"
             android:src="@drawable/ic_skip_next"
-            android:tint="@color/tv_text_default"
+            app:tint="@color/tv_text_default"
             tools:ignore="UnusedAttribute" />
 
         <View
@@ -134,7 +134,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="60" />
+            android:max="180" />
 
         <TextView
             android:id="@+id/tv_timer"

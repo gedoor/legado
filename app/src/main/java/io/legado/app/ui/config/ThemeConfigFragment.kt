@@ -79,6 +79,16 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             }
         }
+        findPreference<ColorPreference>(PreferKey.cAccent)?.let {
+            it.onSaveColor = { color ->
+                false
+            }
+        }
+        findPreference<ColorPreference>(PreferKey.cNAccent)?.let {
+            it.onSaveColor = { color ->
+                false
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -182,7 +192,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     }
                     3 -> {
                         putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.white))
-                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.black))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.lightBlue_color))
                         putPrefInt(PreferKey.cBackground, getCompatColor(R.color.white))
                         putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.white))
                         AppConfig.isNightTheme = false

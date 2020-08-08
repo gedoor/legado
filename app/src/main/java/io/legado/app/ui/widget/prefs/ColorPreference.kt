@@ -142,6 +142,7 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
     }
 
     override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {
+        //返回值为true时说明已经处理过,不再处理
         if (onSaveColor?.invoke(color) == true) {
             return
         }
