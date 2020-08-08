@@ -80,12 +80,38 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         }
         findPreference<ColorPreference>(PreferKey.cAccent)?.let {
             it.onSaveColor = { color ->
-                false
+                val background =
+                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                val textColor = getCompatColor(R.color.tv_text_default)
+                when {
+                    ColorUtils.getColorDifference(color, background) <= 60 -> {
+                        toast("强调色不能和背景颜色相似")
+                        true
+                    }
+                    ColorUtils.getColorDifference(color, textColor) <= 60 -> {
+                        toast("强调色不能和文字颜色相似")
+                        true
+                    }
+                    else -> false
+                }
             }
         }
         findPreference<ColorPreference>(PreferKey.cNAccent)?.let {
             it.onSaveColor = { color ->
-                false
+                val background =
+                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                val textColor = getCompatColor(R.color.tv_text_default)
+                when {
+                    ColorUtils.getColorDifference(color, background) <= 60 -> {
+                        toast("强调色不能和背景颜色相似")
+                        true
+                    }
+                    ColorUtils.getColorDifference(color, textColor) <= 60 -> {
+                        toast("强调色不能和文字颜色相似")
+                        true
+                    }
+                    else -> false
+                }
             }
         }
     }
