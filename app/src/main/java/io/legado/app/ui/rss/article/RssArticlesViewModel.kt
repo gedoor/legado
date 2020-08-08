@@ -18,6 +18,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     private var nextPageUrl: String? = null
     var sortName: String = ""
     var sortUrl: String = ""
+    var page = 1
 
     fun init(bundle: Bundle?) {
         bundle?.let {
@@ -29,7 +30,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
 
     fun loadContent(rssSource: RssSource) {
         isLoading = true
-        Rss.getArticles(sortName, sortUrl, rssSource, null)
+        Rss.getArticles(sortName, sortUrl, rssSource, null, 1)
             .onSuccess(Dispatchers.IO) {
                 nextPageUrl = it.nextPageUrl
                 it.articles.let { list ->
@@ -54,9 +55,10 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
 
     fun loadMore(rssSource: RssSource) {
         isLoading = true
+        page++
         val pageUrl = nextPageUrl
         if (!pageUrl.isNullOrEmpty()) {
-            Rss.getArticles(sortName, pageUrl, rssSource, pageUrl)
+            Rss.getArticles(sortName, pageUrl, rssSource, pageUrl, page)
                 .onSuccess(Dispatchers.IO) {
                     nextPageUrl = it.nextPageUrl
                     loadMoreSuccess(it.articles)
