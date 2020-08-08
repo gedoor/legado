@@ -19,7 +19,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.lib.theme.*
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView

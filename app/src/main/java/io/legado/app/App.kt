@@ -20,12 +20,8 @@ import io.legado.app.help.ActivityHelp
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.*
 
 @Suppress("DEPRECATION")
 class App : MultiDexApplication() {

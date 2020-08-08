@@ -5,9 +5,9 @@ import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 

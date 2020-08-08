@@ -13,8 +13,10 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.theme.*
-import io.legado.app.lib.theme.ColorUtils
+import io.legado.app.lib.theme.Selector
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.buttonDisabledColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_read_menu.view.*

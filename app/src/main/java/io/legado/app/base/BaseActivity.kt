@@ -13,13 +13,9 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.applyOpenTint
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.disableAutoFill
-import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

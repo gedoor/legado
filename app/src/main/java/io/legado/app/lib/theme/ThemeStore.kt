@@ -11,6 +11,7 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.utils.ColorUtils
 
 /**
  * @author Aidan Follestad (afollestad), Karim Abou Zeid (kabouzeid)

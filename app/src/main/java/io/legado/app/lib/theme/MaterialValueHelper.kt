@@ -6,6 +6,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.legado.app.R
+import io.legado.app.utils.ColorUtils
 
 /**
  * @author Karim Abou Zeid (kabouzeid)

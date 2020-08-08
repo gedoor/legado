@@ -18,7 +18,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.prefs.IconListPreference
@@ -171,14 +170,14 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 when (which) {
                     0 -> {
                         putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_grey_100))
-                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.lightBlue_color))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_deep_orange_600))
                         putPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
                         putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
                         AppConfig.isNightTheme = false
                     }
                     1 -> {
                         putPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_grey_900))
-                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.lightBlue_color))
+                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_600))
                         putPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
                         putPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_900))
                         AppConfig.isNightTheme = true
@@ -192,14 +191,14 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     }
                     3 -> {
                         putPrefInt(PreferKey.cPrimary, getCompatColor(R.color.white))
-                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.lightBlue_color))
+                        putPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_deep_orange_600))
                         putPrefInt(PreferKey.cBackground, getCompatColor(R.color.white))
                         putPrefInt(PreferKey.cBBackground, getCompatColor(R.color.white))
                         AppConfig.isNightTheme = false
                     }
                     4 -> {
                         putPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.black))
-                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_grey_500))
+                        putPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_600))
                         putPrefInt(PreferKey.cNBackground, getCompatColor(R.color.black))
                         putPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.black))
                         AppConfig.isNightTheme = true

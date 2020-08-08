@@ -9,9 +9,9 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 import io.legado.app.help.AppConfig
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.utils.ColorUtils
 
 
 class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCategory(context, attrs) {

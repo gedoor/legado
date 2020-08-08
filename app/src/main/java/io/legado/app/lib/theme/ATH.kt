@@ -19,6 +19,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.AppConfig
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 import kotlinx.android.synthetic.main.activity_main.view.*
