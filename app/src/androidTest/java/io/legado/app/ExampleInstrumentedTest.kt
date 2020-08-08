@@ -1,5 +1,7 @@
 package io.legado.app
 
+import android.net.Uri
+import android.util.Log
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
 
@@ -16,9 +18,12 @@ import org.junit.Assert.*
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
     @Test
-    fun useAppContext() {
+    fun testContentProvider() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("cn.legado.book", appContext.packageName)
-    }
+        Log.d("test",
+            appContext.contentResolver.query(Uri.parse("content://io.legado.app.api.ReaderProvider/sources/query"),null,null,null,null)
+                !!.getString(0)
+        )
+          }
 }
