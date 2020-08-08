@@ -18,14 +18,13 @@ object Rss {
         sortName: String,
         sortUrl: String,
         rssSource: RssSource,
-        pageUrl: String? = null,
         page: Int,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<Result> {
         return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(
-                pageUrl ?: sortUrl,
+                sortUrl,
                 page = page,
                 headerMapF = rssSource.getHeaderMap()
             )

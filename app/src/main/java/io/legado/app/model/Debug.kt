@@ -55,7 +55,7 @@ object Debug {
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析")
         val sort = rssSource.sortUrls().entries.first()
-        Rss.getArticles(sort.key, sort.value, rssSource, null, 1)
+        Rss.getArticles(sort.key, sort.value, rssSource, 1)
             .onSuccess {
                 if (it.articles.isEmpty()) {
                     log(debugSource, "⇒列表页解析成功，为空")
