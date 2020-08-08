@@ -1,116 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-	<resources>
-	    <string-array name="book_type">
-	        <item>@string/book_type_text</item>
-	        <item>@string/book_type_audio</item>
-	    </string-array>
-	
-	    <string-array name="tts_speech_per">
-	        <item>du Xiao Mei</item>
-	        <item>du Xiao Yu</item>
-	        <item>du Xiao Yao</item>
-	        <item>du Ya Ya</item>
-	        <item>du Xiao Jiao</item>
-	        <item>du Mi Duo</item>
-	        <item>du Bo Wen</item>
-	        <item>du Xiao Tong</item>
-	        <item>du Xiao Meng</item>
-	        <item>baidu SaoNan</item>
-	        <item>baidu PingShu</item>
-	        <item>baidu ZhuChi</item>
-	    </string-array>
-	
-	    <string-array name="indent">
-	        <item>@string/indent_0</item>
-	        <item>@string/indent_1</item>
-	        <item>@string/indent_2</item>
-	        <item>@string/indent_3</item>
-	        <item>@string/indent_4</item>
-	    </string-array>
-	
-	    <string-array name="text_suffix">
-	        <item>.txt</item>
-	        <item>.json</item>
-	        <item>.xml</item>
-	    </string-array>
-	
-	    <string-array name="convert_s">
-	        <item>@string/jf_convert_o</item>
-	        <item>@string/jf_convert_j</item>
-	        <item>@string/jf_convert_f</item>
-	    </string-array>
-	
-	    <string-array name="theme_mode">
-	        <item>Follow system</item>
-	        <item>Bright mode</item>
-	        <item>Dark mode</item>
-	        <item>E-Ink mode</item>
-	    </string-array>
-	
-	    <string-array name="NavBarColors">
-	        <item>Auto</item>
-	        <item>Black</item>
-	        <item>White</item>
-	        <item>Following</item>
-	    </string-array>
-	
-	    <string-array name="screen_time_out">
-	        <item>Default</item>
-	        <item>1 min</item>
-	        <item>2 min</item>
-	        <item>3 min</item>
-	        <item>Always</item>
-	    </string-array>
-	
-	    <string-array name="select_folder">
-	        <item>@string/default_path</item>
-	        <item>@string/sys_folder_picker</item>
-	        <item>@string/app_folder_picker</item>
-	    </string-array>
-	
-	    <string-array name="screen_direction_title">
-	        <item>@string/screen_unspecified</item>
-	        <item>@string/screen_portrait</item>
-	        <item>@string/screen_landscape</item>
-	        <item>@string/screen_sensor</item>
-	    </string-array>
-	
-	    <string-array name="icon_names">
-	        <item>iconMain</item>
-	        <item>icon1</item>
-	        <item>icon2</item>
-	        <item>icon3</item>
-	        <item>icon4</item>
-	        <item>icon5</item>
-	        <item>icon6</item>
-	    </string-array>
-	
-	    <string-array name="chinese_mode">
-	        <item>Off</item>
-	        <item>Traditional to Simplified</item>
-	        <item>Simplified to Traditional</item>
-	    </string-array>
-	
-	    <string-array name="system_typefaces">
-	        <item>Default font</item>
-	        <item>Serif font</item>
-	        <item>Monospaced font</item>
-	    </string-array>
-	
-	    <string-array name="read_tip">
-	        <item>Blank</item>
-	        <item>Heading</item>
-	        <item>Time</item>
-	        <item>Battery</item>
-	        <item>Pages</item>
-	        <item>Progress</item>
-	        <item>Pages and progress</item>
-	    </string-array>
-	
-	    <string-array name="text_font_weight">
-	        <item>Normal</item>
-	        <item>Bold</item>
-	        <item>Light</item>
-	    </string-array>
-	
-	</resources>
+<resources>
+	<string-array name="book_type">
+		<item>@string/book_type_text</item>
+		<item>@string/book_type_audio</item>
+	</string-array>
+
+	<string-array name="tts_speech_per">
+		<item>du Xiao Mei</item>
+		<item>du Xiao Yu</item>
+		<item>du Xiao Yao</item>
+		<item>du Ya Ya</item>
+		<item>du Xiao Jiao</item>
+		<item>du Mi Duo</item>
+		<item>du Bo Wen</item>
+		<item>du Xiao Tong</item>
+		<item>du Xiao Meng</item>
+		<item>baidu SaoNan</item>
+		<item>baidu PingShu</item>
+		<item>baidu ZhuChi</item>
+	</string-array>
+
+	<string-array name="indent">
+		<item>@string/indent_0</item>
+		<item>@string/indent_1</item>
+		<item>@string/indent_2</item>
+		<item>@string/indent_3</item>
+		<item>@string/indent_4</item>
+	</string-array>
+
+	<string-array name="text_suffix">
+		<item>.txt</item>
+		<item>.json</item>
+		<item>.xml</item>
+	</string-array>
+
+	<string-array name="convert_s">
+		<item>@string/jf_convert_o</item>
+		<item>@string/jf_convert_j</item>
+		<item>@string/jf_convert_f</item>
+	</string-array>
+
+	<string-array name="theme_mode">
+		<item>Follow system</item>
+		<item>Bright mode</item>
+		<item>Dark mode</item>
+		<item>E-Ink mode</item>
+	</string-array>
+
+	<string-array name="NavBarColors">
+		<item>Auto</item>
+		<item>Black</item>
+		<item>White</item>
+		<item>Following</item>
+	</string-array>
+
+	<string-array name="screen_time_out">
+		<item>Default</item>
+		<item>1 min</item>
+		<item>2 min</item>
+		<item>3 min</item>
+		<item>Always</item>
+	</string-array>
+
+	<string-array name="select_folder">
+		<item>@string/default_path</item>
+		<item>@string/sys_folder_picker</item>
+		<item>@string/app_folder_picker</item>
+	</string-array>
+
+	<string-array name="screen_direction_title">
+		<item>@string/screen_unspecified</item>
+		<item>@string/screen_portrait</item>
+		<item>@string/screen_landscape</item>
+		<item>@string/screen_sensor</item>
+	</string-array>
+
+	<string-array name="icon_names">
+		<item>iconMain</item>
+		<item>icon1</item>
+		<item>icon2</item>
+		<item>icon3</item>
+		<item>icon4</item>
+		<item>icon5</item>
+		<item>icon6</item>
+	</string-array>
+
+	<string-array name="chinese_mode">
+		<item>Off</item>
+		<item>Traditional to Simplified</item>
+		<item>Simplified to Traditional</item>
+	</string-array>
+
+	<string-array name="system_typefaces">
+		<item>Default font</item>
+		<item>Serif font</item>
+		<item>Monospaced font</item>
+	</string-array>
+
+	<string-array name="read_tip">
+		<item>Blank</item>
+		<item>Heading</item>
+		<item>Time</item>
+		<item>Battery</item>
+		<item>Pages</item>
+		<item>Progress</item>
+		<item>Pages and progress</item>
+	</string-array>
+
+	<string-array name="text_font_weight">
+		<item>Normal</item>
+		<item>Bold</item>
+		<item>Light</item>
+	</string-array>
+
+	<string-array name="default_themes">
+		<item>极简</item>
+		<item>曜夜</item>
+		<item>经典</item>
+		<item>黑白</item>
+		<item>A屏黑</item>
+	</string-array>
+
+</resources>

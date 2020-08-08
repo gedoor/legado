@@ -28,7 +28,7 @@ import io.legado.app.utils.*
 class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    val items = arrayListOf("极简", "曜夜", "经典", "黑白", "A屏黑")
+    val items = App.INSTANCE.resources.getStringArray(R.array.default_themes).toList()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
@@ -41,7 +41,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
-                    toast("白天背景不能太暗")
+                    toast(R.string.day_background_too_dark)
                     true
                 } else {
                     false
@@ -51,7 +51,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cBBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
-                    toast("白天底栏不能太暗")
+                    toast(R.string.day_bottom_bar_too_dark)
                     true
                 } else {
                     false
@@ -61,7 +61,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cNBackground)?.let {
             it.onSaveColor = { color ->
                 if (ColorUtils.isColorLight(color)) {
-                    toast("夜间背景不能太亮")
+                    toast(R.string.night_background_too_light)
                     true
                 } else {
                     false
@@ -71,7 +71,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cNBBackground)?.let {
             it.onSaveColor = { color ->
                 if (ColorUtils.isColorLight(color)) {
-                    toast("夜间底栏不能太亮")
+                    toast(R.string.night_bottom_bar_too_light)
                     true
                 } else {
                     false
@@ -85,11 +85,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 val textColor = getCompatColor(R.color.tv_text_default)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toast("强调色不能和背景颜色相似")
+                        toast(R.string.accent_background_diff)
                         true
                     }
                     ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toast("强调色不能和文字颜色相似")
+                        toast(R.string.accent_text_diff)
                         true
                     }
                     else -> false
@@ -103,11 +103,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 val textColor = getCompatColor(R.color.tv_text_default)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toast("强调色不能和背景颜色相似")
+                        toast(R.string.accent_background_diff)
                         true
                     }
                     ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toast("强调色不能和文字颜色相似")
+                        toast(R.string.accent_text_diff)
                         true
                     }
                     else -> false
@@ -191,7 +191,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     private fun changeTheme() {
-        alert(title = "切换默认主题") {
+        alert(title = getString(R.string.select_theme)) {
             items(items) { _, which ->
                 when (which) {
                     0 -> {

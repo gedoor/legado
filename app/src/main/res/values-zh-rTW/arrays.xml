@@ -112,4 +112,13 @@
         <item>粗體</item>
         <item>細體</item>
     </string-array>
+
+    <string-array name="default_themes">
+        <item>极简</item>
+        <item>曜夜</item>
+        <item>经典</item>
+        <item>黑白</item>
+        <item>A屏黑</item>
+    </string-array>
+
 </resources>
