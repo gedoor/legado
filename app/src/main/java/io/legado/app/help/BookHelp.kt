@@ -112,13 +112,13 @@ object BookHelp {
 
     fun formatBookName(name: String): String {
         return name
-            .replace("(.*?)\\s+作\\s*者.*".toRegex(), "$1")
+            .replace("\\s+作\\s*者.*".toRegex(), "")
             .trim { it <= ' ' }
     }
 
     fun formatBookAuthor(author: String): String {
         return author
-            .replace(".*?作\\s*?者[:：](.+)".toRegex(), "$1")
+            .replace(".*?作\\s*?者[:：]".toRegex(), "")
             .trim { it <= ' ' }
     }
 
