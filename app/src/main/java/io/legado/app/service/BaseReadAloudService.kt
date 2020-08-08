@@ -145,6 +145,9 @@ abstract class BaseReadAloudService : BaseService(),
     open fun resumeReadAloud() {
         pause = false
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        if (timeMinute > 1) {
+            doDs()
+        }
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
