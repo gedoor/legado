@@ -42,32 +42,39 @@
 
     </io.legado.app.ui.widget.TitleBar>
 
-    <ImageView
-        android:id="@+id/iv_brightness_auto"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_brightness_auto"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:contentDescription="@string/brightness_auto" />
-
-    <io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper
+    <LinearLayout
+        android:id="@+id/ll_brightness"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/iv_brightness_auto"
-        app:layout_constraintRight_toRightOf="@+id/iv_brightness_auto"
-        app:layout_constraintTop_toBottomOf="@id/iv_brightness_auto"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottom_menu">
 
-        <io.legado.app.ui.widget.seekbar.VerticalSeekBar
-            android:id="@+id/seek_brightness"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:max="255"
-            app:seekBarRotation="CW270" />
+        <ImageView
+            android:id="@+id/iv_brightness_auto"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_brightness_auto"
+            android:contentDescription="@string/brightness_auto" />
 
-    </io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper>
+        <io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <io.legado.app.ui.widget.seekbar.VerticalSeekBar
+                android:id="@+id/seek_brightness"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:max="255"
+                app:seekBarRotation="CW270" />
+
+        </io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottom_menu"
