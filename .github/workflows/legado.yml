@@ -8,8 +8,8 @@ on:
     - '3.*'
   watch:
     types: [started]
-  schedule:
-    - cron: '0 4 * * *'
+  #schedule:
+  #  - cron: '0 4 * * *'
 
 jobs:
   build:
