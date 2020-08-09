@@ -7,6 +7,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.AppConfig
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
 import io.legado.app.model.WebBook
@@ -15,10 +16,18 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
+import java.util.concurrent.Executors
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
+    var upTocPool = Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     val updateList = hashSetOf<String>()
+
+    override fun onCleared() {
+        super.onCleared()
+        upTocPool.close()
+    }
 
     fun upChapterList() {
         execute {
@@ -37,7 +46,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             updateList.add(book.bookUrl)
                             postEvent(EventBus.UP_BOOK, book.bookUrl)
                         }
-                        WebBook(bookSource).getChapterList(book)
+                        WebBook(bookSource).getChapterList(book, context = upTocPool)
                             .timeout(300000)
                             .onSuccess(IO) {
                                 synchronized(this) {
