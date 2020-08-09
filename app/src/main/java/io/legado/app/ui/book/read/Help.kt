@@ -133,7 +133,7 @@ object Help {
                         .apply {
                             view = this
                             setBackgroundColor(context.backgroundColor)
-                            edit_start.setText(book.durChapterIndex.toString())
+                            edit_start.setText((book.durChapterIndex + 1).toString())
                             edit_end.setText(book.totalChapterNum.toString())
                         }
                 }
@@ -141,7 +141,7 @@ object Help {
                     view?.apply {
                         val start = edit_start?.text?.toString()?.toInt() ?: 0
                         val end = edit_end?.text?.toString()?.toInt() ?: book.totalChapterNum
-                        Download.start(context, book.bookUrl, start, end)
+                        Download.start(context, book.bookUrl, start - 1, end - 1)
                     }
                 }
                 noButton()
