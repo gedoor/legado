@@ -28,55 +28,22 @@ class ReaderProvider : ContentProvider() {
     }
 
     private val postBodyKey = "json"
-    private val sMatcher = UriMatcher(UriMatcher.NO_MATCH)
+    private val sMatcher by lazy {
+        val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
+        val authority = "${context?.applicationInfo?.packageName}.ReaderProvider"
+        uriMatcher.addURI(authority, "source/insert", RequestCode.saveSource.ordinal)
+        uriMatcher.addURI(authority, "sources/insert", RequestCode.saveSources.ordinal)
+        uriMatcher.addURI(authority, "book/insert", RequestCode.saveBook.ordinal)
+        uriMatcher.addURI(authority, "sources/delete", RequestCode.deleteSources.ordinal)
+        uriMatcher.addURI(authority, "source/query", RequestCode.getSource.ordinal)
+        uriMatcher.addURI(authority, "sources/query", RequestCode.getSources.ordinal)
+        uriMatcher.addURI(authority, "books/query", RequestCode.getBookshelf.ordinal)
+        uriMatcher.addURI(authority, "book/chapter/query", RequestCode.getChapterList.ordinal)
+        uriMatcher.addURI(authority, "book/content/query", RequestCode.getBookContent.ordinal)
+        return@lazy uriMatcher
+    }
 
     override fun onCreate(): Boolean {
-        val authority = "${context?.applicationInfo?.packageName}.ReaderProvider"
-        sMatcher.addURI(
-            authority,
-            "source/insert",
-            RequestCode.saveSource.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "sources/insert",
-            RequestCode.saveSources.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "book/insert",
-            RequestCode.saveBook.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "sources/delete",
-            RequestCode.deleteSources.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "source/query",
-            RequestCode.getSource.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "sources/query",
-            RequestCode.getSources.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "books/query",
-            RequestCode.getBookshelf.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "book/chapter/query",
-            RequestCode.getChapterList.ordinal
-        )
-        sMatcher.addURI(
-            authority,
-            "book/content/query",
-            RequestCode.getBookContent.ordinal
-        )
         return false
     }
 
