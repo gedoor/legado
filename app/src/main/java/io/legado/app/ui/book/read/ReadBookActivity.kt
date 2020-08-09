@@ -740,7 +740,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             if (!ReadBook.inBookshelf) {
                 this.alert(title = getString(R.string.add_to_shelf)) {
                     message = getString(R.string.check_add_bookshelf, it.name)
-                    okButton { ReadBook.inBookshelf = true }
+                    okButton {
+                        ReadBook.inBookshelf = true
+                        setResult(Activity.RESULT_OK)
+                    }
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
                 }.show().applyTint()
             } else {
