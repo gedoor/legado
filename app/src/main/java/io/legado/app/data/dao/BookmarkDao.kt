@@ -8,8 +8,8 @@ import io.legado.app.data.entities.Bookmark
 @Dao
 interface BookmarkDao {
 
-    @Query("select * from bookmarks")
-    fun all(): List<Bookmark>
+    @get:Query("select * from bookmarks")
+    val all: List<Bookmark>
 
     @Query("select * from bookmarks where bookUrl = :bookUrl or (bookName = :bookName and bookAuthor = :bookAuthor)")
     fun observeByBook(
