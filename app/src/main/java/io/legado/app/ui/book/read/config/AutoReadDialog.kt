@@ -61,7 +61,7 @@ class AutoReadDialog : BaseDialogFragment() {
 
     private fun initOnChange() {
         seek_auto_read.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
