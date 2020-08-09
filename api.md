@@ -5,9 +5,12 @@
 ### Web
 待补充
 ### Content Provider
+* 需声明io.legado.READ_WRITE权限
+* providerHost为"包名.ReaderProvider", 如io.legado.app.release.ReaderProvider,不同包的地址不同,防止冲突安装失败
+* 以下出现的providerHost请自行替换
 #### 插入单个书源
 ```
-URL = content://io.legado.app.api.ReaderProvider/source/insert
+URL = content://providerHost/source/insert
 Method = insert
 ```
 
@@ -16,7 +19,7 @@ Method = insert
 
 #### 插入多个书源
 ```
-URL = content://io.legado.app.api.ReaderProvider/sources/insert
+URL = content://providerHost/sources/insert
 Method = insert
 ```
 
@@ -25,7 +28,7 @@ Method = insert
 
 #### 获取书源
 ```
-URL = content://io.legado.app.api.ReaderProvider/source/query?url=xxx
+URL = content://providerHost/source/query?url=xxx
 Method = query
 ```
 
@@ -34,7 +37,7 @@ Method = query
 
 #### 获取所有书源
 ```
-URL = content://io.legado.app.api.ReaderProvider/sources/query
+URL = content://providerHost/sources/query
 Method = query
 ```
 
@@ -43,7 +46,7 @@ Method = query
 
 #### 删除多个书源
 ```
-URL = content://io.legado.app.api.ReaderProvider/sources/delete
+URL = content://providerHost/sources/delete
 Method = delete
 ```
 
@@ -52,7 +55,7 @@ Method = delete
 
 #### 插入书籍
 ```
-URL = content://io.legado.app.api.ReaderProvider/book/insert
+URL = content://providerHost/book/insert
 Method = insert
 ```
 
@@ -61,7 +64,7 @@ Method = insert
 
 #### 获取所有书籍
 ```
-URL = content://io.legado.app.api.ReaderProvider/books/query
+URL = content://providerHost/books/query
 Method = query
 ```
 
@@ -70,7 +73,7 @@ Method = query
 
 #### 获取书籍章节列表
 ```
-URL = content://io.legado.app.api.ReaderProvider/book/chapter/query?url=xxx
+URL = content://providerHost/book/chapter/query?url=xxx
 Method = query
 ```
 
@@ -80,7 +83,7 @@ Method = query
 #### 获取书籍内容
 
 ```
-URL = content://io.legado.app.api.ReaderProvider/book/content/query?url=xxx&index=1
+URL = content://providerHost/book/content/query?url=xxx&index=1
 Method = query
 ```
 
