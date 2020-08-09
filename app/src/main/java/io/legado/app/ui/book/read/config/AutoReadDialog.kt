@@ -55,7 +55,8 @@ class AutoReadDialog : BaseDialogFragment() {
     }
 
     private fun initData() {
-        seek_auto_read.progress = ReadBookConfig.autoReadSpeed
+        seek_auto_read.progress =
+            if (ReadBookConfig.autoReadSpeed < 10) 10 else ReadBookConfig.autoReadSpeed
     }
 
     private fun initOnChange() {
@@ -63,10 +64,11 @@ class AutoReadDialog : BaseDialogFragment() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+            override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                ReadBookConfig.autoReadSpeed = seek_auto_read.progress
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                ReadBookConfig.autoReadSpeed =
+                    if (seek_auto_read.progress < 10) 10 else seek_auto_read.progress
                 upTtsSpeechRate()
             }
         })
