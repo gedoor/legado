@@ -193,6 +193,9 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                     type = arrayOf("text/*", "application/json"),
                     allowExtensions = arrayOf("txt", "json")
                 )
+            else -> if (item.groupId == R.id.replace_group) {
+                search_view.setQuery(item.title, true)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -207,9 +210,9 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun upGroupMenu() {
-        groupMenu?.removeGroup(R.id.source_group)
+        groupMenu?.removeGroup(R.id.replace_group)
         groups.map {
-            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            groupMenu?.add(R.id.replace_group, Menu.NONE, Menu.NONE, it)
         }
     }
 
